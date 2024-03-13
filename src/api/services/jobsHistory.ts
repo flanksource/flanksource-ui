@@ -1,3 +1,4 @@
+import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import { JobHistory } from "../../components/JobsHistory/JobsHistoryTable";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
@@ -18,14 +19,16 @@ export const getJobsHistory = async (
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   const resourceTypeParam = resourceType
-    ? `&resource_type=eq.${resourceType}`
+    ? tristateOutputToQueryFilterParam(resourceType, "resource_type")
     : "";
 
   const resourceIdParam = resourceId ? `&resource_id=eq.${resourceId}` : "";
 
-  const nameParam = name ? `&name=eq.${name}` : "";
+  const nameParam = name ? tristateOutputToQueryFilterParam(name, "name") : "";
 
-  const statusParam = status ? `&status=eq.${status}` : "";
+  const statusParam = status
+    ? tristateOutputToQueryFilterParam(status, "status")
+    : "";
 
   const sortByParam = sortBy ? `&order=${sortBy}` : "&order=created_at";
 

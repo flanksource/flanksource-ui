@@ -1,8 +1,10 @@
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import { formatJobName } from "@flanksource-ui/utils/common";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { getJobsHistoryNames } from "../../../api/services/jobsHistory";
-import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
 type JobHistoryNamesDropdownProps = {
   paramsToReset?: string[];
@@ -23,10 +25,10 @@ export default function JobHistoryNamesDropdown({
         return data.map(
           (job) =>
             ({
-              label: formatJobName(job.name),
+              label: formatJobName(job.name)!,
               value: job.name,
               id: job.name
-            } as StateOption)
+            } satisfies TriStateOptions)
         );
       }
     }
@@ -34,14 +36,10 @@ export default function JobHistoryNamesDropdown({
 
   return (
     <div className="flex flex-col">
-      <ReactSelectDropdown
-        name="name"
-        label=""
+      <TristateReactSelect
         value={name}
         isLoading={isLoading}
-        items={[{ label: "All", value: "" }, ...jobNames]}
-        className="inline-block p-3 w-auto max-w-[500px]"
-        dropDownClassNames="w-auto max-w-[400px] left-0"
+        options={jobNames}
         onChange={(val) => {
           if (val && val !== "All") {
             searchParams.set("name", val);
@@ -51,7 +49,7 @@ export default function JobHistoryNamesDropdown({
           paramsToReset.forEach((param) => searchParams.delete(param));
           setSearchParams(searchParams);
         }}
-        prefix="Job Type:"
+        label="Job Name"
       />
     </div>
   );
