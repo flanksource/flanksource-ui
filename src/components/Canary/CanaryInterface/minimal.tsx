@@ -2,11 +2,11 @@ import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { orderBy } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CanaryTabs, filterChecksByTabSelection } from "./CanaryTabs";
-import { ChecksListing } from "./ChecksListing";
-import { CanarySorter } from "./data";
-import { filterChecks, filterChecksByText } from "./filter";
-import { filterChecksByLabels, getLabelFilters, getLabels } from "./labels";
+import { CanaryTabs, filterChecksByTabSelection } from "../CanaryTabs";
+import { ChecksListing } from "../ChecksListing";
+import { CanarySorter } from "../data";
+import { filterChecks, filterChecksByText } from "../filter";
+import { filterChecksByLabels, getLabelFilters, getLabels } from "../labels";
 
 type Props = {
   checks?: HealthCheck[];

@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useImage } from "react-image";
-import { BsFillPersonFill } from "react-icons/bs";
 import clsx from "clsx";
-import ReactTooltip from "react-tooltip";
+import React, { useCallback, useMemo, useState } from "react";
+import { BsFillPersonFill } from "react-icons/bs";
+import { useImage } from "react-image";
+import { Tooltip } from "react-tooltip";
 import { User } from "../../api/types/users";
 
 interface IProps {
@@ -83,48 +83,48 @@ export function Avatar({
     [size]
   );
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  }, []);
-
   return (
-    <div
-      {...containerProps}
-      className={clsx(
-        `overflow-hidden justify-center items-center leading-none
+    <>
+      <div
+        {...containerProps}
+        className={clsx(
+          `overflow-hidden justify-center items-center leading-none
         ${inline ? "inline-flex" : "flex"} `,
-        sizeClass,
-        containerProps?.className,
-        !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
-        circular ? "rounded-full" : "rounded-md"
-      )}
-      data-tip={user?.name}
-    >
-      {srcList && src ? (
-        <img
-          src={src}
-          alt={alt}
-          {...imageProps}
-          className={clsx(
-            "w-full h-full overflow-hidden",
-            imageProps?.className,
-            circular ? "rounded-full" : "rounded-md"
-          )}
-        />
-      ) : initials ? (
-        <span
-          style={{
-            fontSize: textSize
-          }}
-          ref={determineTextSize}
-        >
-          {initials}
-        </span>
-      ) : !isLoading && unload ? (
-        unload
-      ) : (
-        <BsFillPersonFill className="text-warmer-gray" />
-      )}
-    </div>
+          sizeClass,
+          containerProps?.className,
+          !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
+          circular ? "rounded-full" : "rounded-md"
+        )}
+        data-tooltip-id="user-name"
+        data-tooltip-content={user?.name}
+      >
+        {srcList && src ? (
+          <img
+            src={src}
+            alt={alt}
+            {...imageProps}
+            className={clsx(
+              "w-full h-full overflow-hidden",
+              imageProps?.className,
+              circular ? "rounded-full" : "rounded-md"
+            )}
+          />
+        ) : initials ? (
+          <span
+            style={{
+              fontSize: textSize
+            }}
+            ref={determineTextSize}
+          >
+            {initials}
+          </span>
+        ) : !isLoading && unload ? (
+          unload
+        ) : (
+          <BsFillPersonFill className="text-warmer-gray" />
+        )}
+      </div>
+      <Tooltip id="user-name" />
+    </>
   );
 }

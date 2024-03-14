@@ -10,11 +10,13 @@ interface IProps {
   onRefresh?: () => void;
   loading?: boolean;
   extra?: React.ReactNode;
+  extraClassName?: string;
 }
 
 export function SearchLayout({
   children,
   contentClass,
+  extraClassName = "",
   title,
   extra,
   loading,
@@ -27,12 +29,14 @@ export function SearchLayout({
           <div className="flex items-center">
             <div>{title}</div>
           </div>
-          <div className="ml-4 flex gap-2 items-center md:ml-6">
-            <HelpDropdown />
+          <div
+            className={`ml-4 flex gap-2 items-center md:ml-6 ${extraClassName}`}
+          >
+            {extra}
             {onRefresh && (
               <RefreshButton onClick={onRefresh} animate={loading} />
             )}
-            {extra}
+            <HelpDropdown />
             <UserProfileDropdown />
           </div>
         </div>

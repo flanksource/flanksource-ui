@@ -1,6 +1,6 @@
 type StatCardProps = {
   className?: string;
-  title: string;
+  title: React.ReactNode;
   value?: string;
   customValue?: React.ReactNode;
 };
@@ -12,22 +12,18 @@ export function StatCard({
   customValue
 }: StatCardProps) {
   return (
-    <div className={`bg-white overflow-hidden shadow rounded-lg ${className}`}>
-      <div className="px-4 py-5 sm:p-6">
-        <dl>
-          <dt className="text-sm leading-5 font-medium text-gray-500 truncate">
-            {title}
-          </dt>
-          {customValue ? (
-            <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-              {customValue}
-            </dd>
-          ) : (
-            <dd className="mt-1 text-3xl leading-9 font-semibold text-gray-900">
-              {value}
-            </dd>
-          )}
-        </dl>
+    <div className={`bg-white  ${className}`}>
+      <div className="flex flex-row gap-1 items-center justify-center">
+        <div className="flex flex-col items-center text-xs text-gray-500 truncate">
+          {title}
+        </div>
+        {customValue ? (
+          <div className="font-semibold text-sm text-gray-900">
+            {customValue}
+          </div>
+        ) : (
+          <div className="font-semibold text-sm text-gray-900">{value}</div>
+        )}
       </div>
     </div>
   );

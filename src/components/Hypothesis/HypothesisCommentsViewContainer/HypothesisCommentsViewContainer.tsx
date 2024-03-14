@@ -21,6 +21,7 @@ import { Tag } from "../../Tag/Tag";
 import { toastError } from "../../Toast/toast";
 import { EvidenceItem } from "../EvidenceSection";
 
+import { Tooltip } from "react-tooltip";
 import { DateType } from "../../../api/types/common";
 import { Evidence } from "../../../api/types/evidence";
 import { Hypothesis } from "../../../api/types/hypothesis";
@@ -245,12 +246,16 @@ export function HypothesisCommentsViewContainer({
                   selected={selectedHypothesis!}
                   selectContainerClassName="bg-white shadow-card rounded-md -mt-20 absolute z-20 w-72 -ml-36"
                   toggleBtn={
-                    <Tag
-                      className="whitespace-nowrap w-32 text-ellipsis overflow-hidden cursor-pointer bg-blue-100 text-blue-800 px-2 z-100 my-2 ml-2"
-                      data-tip={selectedHypothesis?.label}
-                    >
-                      {selectedHypothesis?.label}
-                    </Tag>
+                    <>
+                      <Tag
+                        className="whitespace-nowrap w-32 text-ellipsis overflow-hidden cursor-pointer bg-blue-100 text-blue-800 px-2 z-100 my-2 ml-2"
+                        data-tooltip-id="selected-hypothesis-tooltip"
+                        data-tooltip-content={selectedHypothesis?.label?.toString()}
+                      >
+                        {selectedHypothesis?.label}
+                      </Tag>
+                      <Tooltip id="selected-hypothesis-tooltip" />
+                    </>
                   }
                   menuPlacement="top"
                 />

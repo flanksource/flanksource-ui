@@ -1,3 +1,5 @@
+import CanaryStatsCards from "@flanksource-ui/components/Canary/CanaryStatsCard";
+import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import { useState } from "react";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Canary } from "../components/Canary";
@@ -30,6 +32,10 @@ export function HealthPage({ url }: Props) {
     return refreshRate ?? "";
   });
 
+  const {
+    healthState: { passing, checks, filteredChecks }
+  } = useHealthPageContext();
+
   return (
     <>
       <Head prefix="Health" />
@@ -54,19 +60,33 @@ export function HealthPage({ url }: Props) {
               ]}
             />
           }
+          extraClassName="w-full"
           extra={
-            <RefreshDropdown
-              onClick={() => setTriggerRefresh(triggerRefresh + 1)}
-              isLoading={loading}
-            />
+            <div className="flex flex-row w-full items-center">
+              <div className="flex-1 flex flex-row justify-center">
+                <CanaryStatsCards
+                  checks={checks ?? []}
+                  passing={passing}
+                  filteredChecks={filteredChecks}
+                />
+              </div>
+              <RefreshDropdown
+                onClick={() => setTriggerRefresh(triggerRefresh + 1)}
+                isLoading={loading}
+              />
+            </div>
           }
           contentClass="flex flex-col h-full p-0"
         >
-          <Canary
-            url={url}
-            onLoading={setLoading}
-            triggerRefresh={triggerRefresh}
-          />
+          <div className="flex flex-col w-full h-full">
+            <div className="flex flex-row flex-1 mx-auto w-full max-w-[100rem] overflow-y-auto">
+              <Canary
+                url={url}
+                onLoading={setLoading}
+                triggerRefresh={triggerRefresh}
+              />
+            </div>
+          </div>
         </SearchLayout>
       </HealthRefreshDropdownRateContext.Provider>
     </>

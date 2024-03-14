@@ -1,6 +1,7 @@
 import clsx from "clsx";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
+import { Tooltip } from "react-tooltip";
 
 type TagEntry = {
   key: string;
@@ -63,18 +64,22 @@ export function TagItem({
   valueClassName = "font-light"
 }: TagItemProps) {
   return (
-    <div
-      className={`flex flex-row p-[0.15rem] rounded-md ${className}`}
-      data-tip={`${key}:${value}`}
-    >
+    <>
       <div
-        className="flex flex-row space-x-1 font-semibold p-[0.2rem]  text-xs whitespace-nowrap break-inside-avoid-column"
-        style={containerWidth ? { width: containerWidth } : {}}
+        className={`flex flex-row p-[0.15rem] rounded-md ${className}`}
+        data-tooltip-id="tag-item-tooltip"
+        data-tooltip-content={`${key}:${value}`}
       >
-        <span className={keyClassName}>{key}:</span>
-        <span className={valueClassName}>{value}</span>
+        <div
+          className="flex flex-row space-x-1 font-semibold p-[0.2rem]  text-xs whitespace-nowrap break-inside-avoid-column"
+          style={containerWidth ? { width: containerWidth } : {}}
+        >
+          <span className={keyClassName}>{key}:</span>
+          <span className={valueClassName}>{value}</span>
+        </div>
       </div>
-    </div>
+      <Tooltip id="tag-item-tooltip" />
+    </>
   );
 }
 

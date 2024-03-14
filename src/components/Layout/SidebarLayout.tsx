@@ -2,7 +2,9 @@ import { Float } from "@headlessui-float/react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+import React, { useCallback, useContext } from "react";
 import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
@@ -12,7 +14,6 @@ import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { features } from "../../services/permissions/features";
 import { $ArrayElemType } from "../../types/utility";
-import { getLocalItem, setLocalItem } from "../../utils/storage";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
 import { Icon } from "../Icon";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
@@ -259,28 +260,20 @@ function SideNav({
   );
 }
 
+export const isSidebarCollapsedAtom = atomWithStorage<boolean>(
+  "sidebarCollapsed",
+  false
+);
+
 export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   const { user } = useContext(AuthContext);
-  const [collapseSidebar, setCollapseSidebar] = useState(false);
-
-  useEffect(() => {
-    const localCollapsed = getLocalItem("sidebarCollapsed") ?? false;
-    const sidebarCollapsed =
-      typeof localCollapsed === "string"
-        ? JSON.parse(localCollapsed)
-        : localCollapsed;
-    setCollapseSidebar(sidebarCollapsed);
-  }, []);
-
-  useEffect(() => {
-    setLocalItem("sidebarCollapsed", collapseSidebar);
-  }, [collapseSidebar]);
+  const [collapseSidebar, setCollapseSidebar] = useAtom(isSidebarCollapsedAtom);
 
   const closeOnOuterClick = useCallback(() => {
     if (!collapseSidebar && window.innerWidth < 1024) {
       setCollapseSidebar(true);
     }
-  }, [collapseSidebar]);
+  }, [collapseSidebar, setCollapseSidebar]);
 
   const innerRef = useOuterClick(closeOnOuterClick);
 
@@ -291,7 +284,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
   }
 
   return (
-    <div className="flex flex-row h-screen min-w-[1280px]">
+    <div className="flex flex-row h-screen min-w-[800px]">
       <div
         className={clsx(
           "transform duration-500 z-10 bg-gray-700 flex flex-col",

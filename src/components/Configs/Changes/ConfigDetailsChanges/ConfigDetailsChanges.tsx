@@ -9,8 +9,7 @@ import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import ModalTitleListItems from "@flanksource-ui/ui/Modal/ModalTitleListItems";
 import { Stat } from "@flanksource-ui/ui/stats/Stat";
-import { useEffect, useMemo, useState } from "react";
-import ReactTooltip from "react-tooltip";
+import { useMemo, useState } from "react";
 import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { DiffRenderer } from "../../../DiffRenderer/DiffRenderer";
 import { Icon } from "../../../Icon";
@@ -46,10 +45,6 @@ export function ConfigDetailsChanges({
   // if the change is not loaded, show the data from the props, otherwise show
   // the data from the API which is more detailed
   const changeDetails = useMemo(() => change ?? data, [change, data]);
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  });
 
   let icon = changeDetails?.source;
 

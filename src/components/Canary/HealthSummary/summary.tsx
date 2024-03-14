@@ -1,5 +1,5 @@
+import { Topology } from "@flanksource-ui/api/types/topology";
 import { useMemo } from "react";
-import { Topology } from "../../../api/types/topology";
 import {
   StatusInfo,
   StatusLine,
