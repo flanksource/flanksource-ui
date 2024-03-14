@@ -24,7 +24,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         >
           {authProvider === "clerk" ? (
             <ClerkProvider
-              domain="flanksource.io"
+              domain="flanksource.com"
               isSatellite={isClerkSatellite}
               {...(isClerkSatellite ? { signInUrl } : {})}
               {...pageProps}
