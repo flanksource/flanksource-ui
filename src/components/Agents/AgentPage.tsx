@@ -23,6 +23,8 @@ export type Agent = {
   created_by?: User;
   created_at: Date;
   updated_at: Date;
+  last_seen: string;
+  last_received: string;
 };
 
 export type AgentSummary = Agent & {
@@ -68,8 +70,10 @@ export default function AgentsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/agents">Agents</BreadcrumbRoot>,
-              <AddAgent refresh={refetch} />
+              <BreadcrumbRoot key={"root-agent"} link="/agents">
+                Agents
+              </BreadcrumbRoot>,
+              <AddAgent refresh={refetch} key={"add-agent"} />
             ]}
           />
         }

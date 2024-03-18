@@ -1,4 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
+import clsx from "clsx";
+import dayjs from "dayjs";
+import { FaDotCircle } from "react-icons/fa";
 import { User } from "../../../api/types/users";
 import { Avatar } from "../../../ui/Avatar";
 import { DateCell } from "../../../ui/table";
@@ -26,6 +29,32 @@ export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
   {
     header: "Playbook Runs",
     accessorKey: "playbook_runs_count"
+  },
+  {
+    header: "Status",
+    accessorKey: "status",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const lastSeen = row.original.last_seen;
+      if (!lastSeen) {
+        return null;
+      }
+      const isOnline = dayjs(lastSeen).isAfter("1", "minute");
+      return (
+        <div className="flex flex-row gap-1 items-center">
+          <FaDotCircle
+            className={clsx(isOnline ? "text-green-500" : "text-red-500")}
+          />
+          <span>{isOnline ? "Online" : "Offline"}</span>
+        </div>
+      );
+    }
+  },
+  {
+    header: "Last Pushed",
+    enableSorting: true,
+    accessorKey: "last_received",
+    cell: DateCell
   },
   {
     header: "Created At",
