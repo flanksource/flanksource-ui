@@ -216,8 +216,10 @@ function TriStateCustomControlContainer({
 }: ControlProps<TriStateOptions>) {
   return (
     <components.Control {...props}>
-      <div className="flex flex-row min-h-[35px] w-full max-w-full text-sm text-gray-600 text-nowrap overflow-hidden items-center">
-        <div className="px-2">{props.selectProps.placeholder}:</div>
+      <div className="flex flex-row min-h-[35px] w-full max-w-full text-sm text-gray-600 text-nowrap overflow-hidden items-center px-2">
+        <div className="text-xs text-gray-500">
+          {props.selectProps.placeholder}:
+        </div>
         <div className="flex flex-row flex-1 max-w-full overflow-hidden">
           {children}
         </div>

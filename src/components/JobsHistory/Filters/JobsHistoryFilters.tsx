@@ -178,7 +178,7 @@ export default function JobHistoryFilters({
             paramsToReset.forEach((param) => searchParams.delete(param));
             setSearchParams(searchParams);
           }}
-          prefix="Duration:"
+          prefix={<span className="text-xs">Duration:</span>}
         />
       </div>
       <div className="flex flex-col">
