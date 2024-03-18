@@ -130,7 +130,7 @@ export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
     // We can have a single code type, then we can use this to determine the language
     // e.g. yaml, json, toml, etc.
     language?: string;
-    size: ModalSize;
+    size?: ModalSize;
     jsonSchemaUrl?: string;
   };
 };

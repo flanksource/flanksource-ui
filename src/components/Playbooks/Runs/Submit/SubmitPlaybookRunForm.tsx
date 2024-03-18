@@ -85,6 +85,11 @@ export default function SubmitPlaybookRunForm({
 
   const resource = getResourceForRun(initialValues);
 
+  const isResourceRequired =
+    !!playbook.spec?.configs ||
+    !!playbook.spec?.components ||
+    !!playbook.spec?.checks;
+
   return (
     <Modal
       title={
@@ -128,12 +133,17 @@ export default function SubmitPlaybookRunForm({
                     <PlaybookSelectResource playbook={playbook} />
                   )
                 )}
-                <div className="border-b border-gray-200 mb-4 mt-2" />
+                {isResourceRequired && (
+                  <div className="border-b border-gray-200 mb-4 mt-2" />
+                )}
                 <div className="flex flex-col gap-2 mb-4">
                   <label className="form-label text-lg mb-4">
                     Playbook Parameters
                   </label>
-                  <PlaybookRunParams />
+                  <PlaybookRunParams
+                    isResourceRequired={isResourceRequired}
+                    playbook={playbook}
+                  />
                 </div>
               </div>
 

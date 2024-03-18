@@ -1,7 +1,8 @@
 import { getPlaybookParams } from "@flanksource-ui/api/services/playbooks";
 import {
   PlaybookParam,
-  PlaybookParamCodeEditor
+  PlaybookParamCodeEditor,
+  PlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";
 import FormSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/FormSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +32,15 @@ function parseCodeDefaultValue(parameter: PlaybookParam) {
   return parameter.default;
 }
 
-export default function PlaybookRunParams() {
+type PlaybookRunParamsProps = {
+  isResourceRequired: boolean;
+  playbook: PlaybookSpec;
+};
+
+export default function PlaybookRunParams({
+  isResourceRequired = false,
+  playbook
+}: PlaybookRunParamsProps) {
   const [, setModalSize] = useAtom(submitPlaybookRunFormModalSizesAtom);
 
   const { setFieldValue, values } =
@@ -87,7 +96,7 @@ export default function PlaybookRunParams() {
   }, [data, setFieldValue]);
 
   // if no resource is selected, show a message and hide the parameters
-  if (!componentId && !configId && !checkId) {
+  if (!componentId && !configId && !checkId && isResourceRequired) {
     return (
       <div className="text-gray-400 flex flex-row items-center">
         <FaExclamationTriangle className="inline-block mr-2" />
@@ -96,11 +105,15 @@ export default function PlaybookRunParams() {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && isResourceRequired) {
     return <FormSkeletonLoader />;
   }
 
-  const parameters = data?.params;
+  // if no resource is required, show the playbook parameters, as they are not
+  // dependent on the resource and are always available
+  const parameters = isResourceRequired
+    ? data?.params
+    : playbook.spec.parameters || [];
 
   return (
     <div className="flex flex-col">
