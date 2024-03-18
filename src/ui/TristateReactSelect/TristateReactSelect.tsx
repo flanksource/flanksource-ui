@@ -175,7 +175,7 @@ function ReactSelectTriStateSingleValue({
                 } ${v.label}`}
                 key={v.label}
                 className={clsx(
-                  "w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-400 text-white"
+                  "w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-200"
                 )}
               >
                 <span className="flex-1 text-ellipsis overflow-hidden text-nowrap">
