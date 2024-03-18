@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { BreadcrumbChild } from "../BreadcrumbNav";
 import { ConfigsDetailsBreadcrumbNav } from "../BreadcrumbNav/ConfigsDetailsBreadCrumb";
+import { ErrorBoundary } from "../ErrorBoundary";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
@@ -81,7 +82,7 @@ export function ConfigDetailsTabs({
               tabLinks={configTabList}
               contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2 overflow-y-auto"
             >
-              {children}
+              <ErrorBoundary>{children}</ErrorBoundary>
             </TabbedLinks>
           </div>
           <ConfigSidebar />
