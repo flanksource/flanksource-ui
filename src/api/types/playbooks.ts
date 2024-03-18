@@ -77,7 +77,7 @@ export type PlaybookSpec = {
     actions?: Record<string, any>[];
     configs?: PlaybookSpecFilterType[];
     components?: PlaybookSpecFilterType[];
-    checks: PlaybookSpecFilterType[];
+    checks?: PlaybookSpecFilterType[];
     icons?: string;
     parameters?: PlaybookParam[];
     description?: string;
