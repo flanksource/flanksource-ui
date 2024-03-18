@@ -73,7 +73,7 @@ export default function PlaybookRunParams({
   // update modal size when params are loaded
   useEffect(() => {
     data?.params
-      .filter((param) => param.type === "code")
+      ?.filter((param) => param.type === "code")
       .forEach((param) => {
         const size = (param as PlaybookParamCodeEditor).properties?.size;
         if (size && size !== "medium") {
