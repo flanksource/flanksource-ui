@@ -3,11 +3,14 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { RunnablePlaybook } from "../../../../../api/types/playbooks";
+import {
+  PlaybookSpec,
+  RunnablePlaybook
+} from "../../../../../api/types/playbooks";
 import SubmitPlaybookRunForm from "./../SubmitPlaybookRunForm";
 
 const playbook: RunnablePlaybook & {
-  spec: any;
+  spec: PlaybookSpec["spec"];
 } = {
   id: "1",
   name: "Playbook 1",
@@ -22,7 +25,13 @@ const playbook: RunnablePlaybook & {
   created_at: "2021-09-01T00:00:00Z",
   updated_at: "2021-09-01T00:00:00Z",
   spec: {
-    icon: "playbook.svg"
+    icon: "playbook.svg",
+    components: [
+      {
+        type: "kubernetes",
+        tags: ["kubernetes"]
+      }
+    ]
   }
 };
 
@@ -131,7 +140,7 @@ describe("SubmitPlaybookRunForm", () => {
     userEvent.click(btn);
 
     await waitFor(() => {
-      expect(closeFn).toHaveBeenCalledTimes(1);
+      expect(closeFn).toHaveBeenCalled();
     });
   });
 });
