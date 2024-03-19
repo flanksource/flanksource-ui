@@ -189,8 +189,15 @@ function ReactSelectTriStateSingleValue({
           );
         })
       ) : (
-        <span className="text-sm">
-          Included: {totalIncluded.length}, Excluded: {totalExcluded.length}
+        <span className="text-xs">
+          {(totalIncluded.length > 0 || totalExcluded.length > 0) && (
+            <div className="w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-200">
+              <span className="flex-1 text-ellipsis overflow-hidden text-nowrap">
+                {totalIncluded.length || totalExcluded.length} Items
+              </span>
+              {totalExcluded.length > 0 && <FaBan />}
+            </div>
+          )}
         </span>
       )}
     </div>
