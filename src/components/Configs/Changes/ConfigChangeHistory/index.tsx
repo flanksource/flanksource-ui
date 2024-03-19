@@ -12,6 +12,29 @@ import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsCh
 
 const columns: ColumnDef<ConfigChange>[] = [
   {
+    header: "Created",
+    accessorKey: "created_at",
+    meta: {
+      cellClassName: "text-ellipsis overflow-hidden"
+    },
+    maxSize: 20,
+    cell: DateCell
+  },
+  {
+    header: "Catalog",
+    id: "config_id",
+    accessorKey: "config_id",
+    enableHiding: true,
+    cell: function ConfigLinkCell({ row, column }) {
+      const config = row.original.config_id;
+      if (!config) {
+        return null;
+      }
+      return <ConfigLink configId={config} />;
+    },
+    size: 84
+  },
+  {
     header: "Type",
     accessorKey: "change_type",
     cell: function ConfigChangeTypeCell({ row, column }) {
@@ -40,30 +63,6 @@ const columns: ColumnDef<ConfigChange>[] = [
       cellClassName: "text-ellipsis overflow-hidden"
     },
     size: 70
-  },
-  {
-    header: "Created",
-    accessorKey: "created_at",
-    meta: {
-      cellClassName: "text-ellipsis overflow-hidden"
-    },
-    maxSize: 20,
-    cell: DateCell
-  }
-];
-
-const configLinkCol: ColumnDef<ConfigChange>[] = [
-  {
-    header: "Catalog",
-    accessorKey: "config_id",
-    cell: function ConfigLinkCell({ row, column }) {
-      const config = row.original.config_id;
-      if (!config) {
-        return null;
-      }
-      return <ConfigLink configId={config} />;
-    },
-    size: 84
   }
 ];
 
@@ -105,7 +104,8 @@ export function ConfigChangeHistory({
     <>
       <DataTable
         className={className}
-        columns={linkConfig ? [...configLinkCol, ...columns] : columns}
+        columns={columns}
+        hiddenColumns={linkConfig ? ["config_id"] : undefined}
         data={data}
         isLoading={isLoading}
         stickyHead
