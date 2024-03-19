@@ -32,7 +32,7 @@ export default function PlaybookSelectResource({
               name="config_id"
               required
               filter={{
-                types: configTypes
+                types: configTypes as any
               }}
             />
           </div>
@@ -50,7 +50,7 @@ export default function PlaybookSelectResource({
               required
               name="component_id"
               filter={{
-                types: componentTypes
+                types: componentTypes as any
               }}
             />
           </div>
