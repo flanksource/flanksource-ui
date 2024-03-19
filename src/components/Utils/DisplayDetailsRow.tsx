@@ -13,7 +13,7 @@ export default function DisplayDetailsRow({
   className = "flex flex-col flex-1"
 }: DisplayDetailsRowProps) {
   return (
-    <div className="flex flex-row gap-2 w-full overflow-hidden">
+    <div className="flex flex-row gap-2 w-full">
       {items.map(({ label, value }) => (
         <div className={className} key={label} data-testid="display-item-row">
           <label className="text-sm overflow-hidden truncate text-gray-600 ">
