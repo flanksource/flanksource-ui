@@ -6,7 +6,7 @@ import {
   HiOutlineMinus
 } from "react-icons/hi";
 import { useSearchParams } from "react-router-dom";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
+import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 
 type Props = {
   onChange?: (value: string | undefined) => void;

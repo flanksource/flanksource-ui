@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ConfigRelationshipDropdown } from "../../../ConfigRelationshipDropdown";
-import { ConfigChangeSeverity } from "../../ConfigChangeSeverity";
 import { ChangesTypesDropdown } from "../../ConfigChangesFilters/ChangeTypesDropdown";
+import { ConfigChangeSeverity } from "../../ConfigChangesFilters/ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangesToggledDeletedItems } from "./ConfigChangesToggledDeletedItems";
 
