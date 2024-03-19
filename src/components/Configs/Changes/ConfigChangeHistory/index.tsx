@@ -105,7 +105,7 @@ export function ConfigChangeHistory({
       <DataTable
         className={className}
         columns={columns}
-        hiddenColumns={linkConfig ? ["config_id"] : undefined}
+        hiddenColumns={linkConfig ? [] : ["config_id"]}
         data={data}
         isLoading={isLoading}
         stickyHead

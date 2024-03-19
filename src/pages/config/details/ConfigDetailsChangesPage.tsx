@@ -17,10 +17,12 @@ export function ConfigDetailsChangesPage() {
   const { id } = useParams();
   const [hideDeletedConfigChanges] = useAtom(areDeletedConfigChangesHidden);
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    downstream: "true",
+    upstream: "false"
+  });
   const change_type = params.get("change_type") ?? undefined;
   const severity = params.get("severity") ?? undefined;
-  const relationshipType = params.get("relationshipType") ?? "none";
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;
   const sortBy = params.get("sortBy") ?? "created_at";
@@ -28,6 +30,26 @@ export function ConfigDetailsChangesPage() {
   const configType = params.get("configType") ?? "all";
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
+
+  const upstream = params.get("upstream") === "true";
+  const downstream = params.get("downstream") === "true";
+
+  const all = upstream && downstream;
+
+  const hideConfigColumn = !downstream && !upstream;
+
+  const relationshipType = useMemo(() => {
+    if (all) {
+      return "all";
+    }
+    if (upstream) {
+      return "upstream";
+    }
+    if (downstream) {
+      return "downstream";
+    }
+    return undefined;
+  }, [all, upstream, downstream]);
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: [
@@ -44,12 +66,15 @@ export function ConfigDetailsChangesPage() {
       sortBy,
       sortDirection,
       page,
-      pageSize
+      pageSize,
+      upstream,
+      downstream,
+      all
     ],
     queryFn: () =>
       getConfigsRelatedChanges({
         id: id!,
-        type_filter: relationshipType as any,
+        type_filter: relationshipType,
         include_deleted_configs: hideDeletedConfigChanges !== "yes",
         changeType: change_type,
         severity,
@@ -94,9 +119,6 @@ export function ConfigDetailsChangesPage() {
     return pagination;
   }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
-  const linkConfig =
-    relationshipType !== "none" && relationshipType !== undefined;
-
   const sortState: SortingState = [
     {
       id: sortBy,
@@ -125,7 +147,7 @@ export function ConfigDetailsChangesPage() {
           <ConfigRelatedChangesFilters />
           <div className="flex flex-col flex-1 overflow-y-auto">
             <ConfigChangeHistory
-              linkConfig={linkConfig}
+              linkConfig={!hideConfigColumn}
               data={changes}
               isLoading={isLoading}
               sortBy={sortState}

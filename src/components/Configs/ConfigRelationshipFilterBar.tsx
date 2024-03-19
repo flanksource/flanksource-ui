@@ -1,5 +1,5 @@
+import { ConfigRelationshipToggles } from "./Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
 import { ConfigListToggledDeletedItems } from "./ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
-import { ConfigRelationshipDropdown } from "./ConfigRelationshipDropdown";
 import { ConfigTagsDropdown } from "./ConfigsListFilters/ConfigTagsDropdown";
 import { ConfigTypesDropdown } from "./ConfigsListFilters/ConfigTypesDropdown";
 
@@ -8,7 +8,7 @@ export default function ConfigRelationshipFilterBar() {
     <div className="flex flex-row items-center gap-2">
       <ConfigTypesDropdown />
       <ConfigTagsDropdown />
-      <ConfigRelationshipDropdown />
+      <ConfigRelationshipToggles />
       <ConfigListToggledDeletedItems />
     </div>
   );

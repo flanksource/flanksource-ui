@@ -6,7 +6,7 @@ import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/Conf
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 export function ConfigDetailsRelationshipsPage() {
@@ -20,12 +20,26 @@ export function ConfigDetailsRelationshipsPage() {
 
   const configType = searchParams.get("configType") ?? undefined;
   const tag = searchParams.get("tag") ?? undefined;
-  const relationshipType =
-    (searchParams.get("relationshipType") as
-      | "all"
-      | "none"
-      | "incoming"
-      | "outgoing") ?? "none";
+
+  const incoming = searchParams.get("incoming") === "true";
+  const outgoing = searchParams.get("outgoing") === "true";
+
+  const all = incoming && outgoing;
+
+  const relationshipType = useMemo(() => {
+    if (all) {
+      return "all";
+    }
+    if (incoming) {
+      return "incoming";
+    }
+    if (outgoing) {
+      return "outgoing";
+    }
+    return undefined;
+  }, [all, incoming, outgoing]);
+
+  console.log(all, incoming, outgoing, relationshipType);
 
   const transformConfigRelationships = useCallback(
     (configs: ConfigItem[]) =>
@@ -59,7 +73,9 @@ export function ConfigDetailsRelationshipsPage() {
       hideDeleted,
       tag,
       configType,
-      relationshipType
+      relationshipType,
+      incoming,
+      outgoing
     ],
     queryFn: () =>
       getAConfigRelationships({
