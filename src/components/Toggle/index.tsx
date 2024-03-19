@@ -39,7 +39,7 @@ export function Toggle({
         />
       </Switch>
 
-      <Switch.Label as="span" className="ml-3">
+      <Switch.Label as="span" className="ml-2">
         <span className="text-sm font-medium text-gray-700 ">{label}</span>
         <span className="text-sm text-gray-500">{help}</span>
       </Switch.Label>

@@ -156,7 +156,7 @@ type CatalogChangesSearchResponse = {
 
 type GetConfigsRelatedChangesParams = {
   id: string;
-  type_filter: "all" | "upstream" | "downstream" | "none";
+  type_filter?: "all" | "upstream" | "downstream" | "none";
   include_deleted_configs: boolean;
   changeType?: string;
   severity?: string;
@@ -171,7 +171,7 @@ type GetConfigsRelatedChangesParams = {
 
 export async function getConfigsRelatedChanges({
   id,
-  type_filter = "downstream",
+  type_filter,
   include_deleted_configs = false,
   changeType,
   severity,
@@ -209,10 +209,17 @@ export async function getConfigsRelatedChanges({
     queryParams.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
 
-  queryParams.set(
-    "recursive",
-    type_filter === "all" || type_filter === "none" ? "all" : type_filter
-  );
+  if (type_filter) {
+    queryParams.set(
+      "recursive",
+      type_filter === "all" || type_filter === "none" ? "all" : type_filter
+    );
+  } else {
+    // default to all
+    queryParams.set("recursive", "all");
+    queryParams.set("depth", "1");
+  }
+
   if (severity) {
     queryParams.set("severity", severity);
   }
@@ -286,33 +293,20 @@ type GetAConfigRelationshipsParams = {
   configId: string;
   hideDeleted?: boolean;
   configType?: string;
-  type_filter?: "all" | "none" | "incoming" | "outgoing";
+  type_filter?: "all" | "incoming" | "outgoing";
 };
 
 export const getAConfigRelationships = async ({
   configId,
   hideDeleted,
   configType,
-  type_filter = "all"
+  type_filter
 }: GetAConfigRelationshipsParams) => {
   const configTypeFilter = configType ? `&type=eq.${configType}` : "";
-  // if type_filter is none, we need to fetch the related configs, otherwise we
-  // fetch the related configs using the related_configs_recursive function
-  if (type_filter === "none") {
-    const configFields = `id, type, changes, cost_per_minute, cost_total_1d, cost_total_7d, cost_total_30d, name, config_class, updated_at, created_at, tags, analysis, deleted_at`;
-    const deletedAt = hideDeleted ? `&deleted_at=is.null` : "";
 
-    const res = await ConfigDB.get<ConfigTypeRelationships[] | null>(
-      `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=*,configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})${deletedAt}${configTypeFilter}`
-    );
-
-    return res.data?.map((item) => {
-      if (item.config_id === configId) {
-        return item.related;
-      }
-      return item.configs;
-    });
-  }
+  const typeFilter = type_filter
+    ? `&type_filter=${type_filter}`
+    : `&max_depth=1`;
 
   const res = await ConfigDB.get<
     ({
@@ -320,7 +314,7 @@ export const getAConfigRelationships = async ({
       relation_type: string;
     } & ConfigItem)[]
   >(
-    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${hideDeleted}&type_filter=${type_filter}${configTypeFilter}`
+    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${hideDeleted}${typeFilter}${configTypeFilter}`
   );
 
   return res.data ?? [];

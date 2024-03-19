@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { ConfigRelationshipDropdown } from "../../../ConfigRelationshipDropdown";
 import { ChangesTypesDropdown } from "../../ConfigChangesFilters/ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "../../ConfigChangesFilters/ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChangesDateRangeFIlter";
+import { ConfigRelatedChangesToggles } from "../../ConfigChangesFilters/ConfigRelatedChangesToggles";
 import { ConfigChangesToggledDeletedItems } from "./ConfigChangesToggledDeletedItems";
 
 type ConfigChangeFiltersProps = {
@@ -16,7 +16,7 @@ export function ConfigRelatedChangesFilters({
     <div className={clsx("flex flex-row gap-2", className)}>
       <ChangesTypesDropdown />
       <ConfigChangeSeverity />
-      <ConfigRelationshipDropdown isConfigChanges />
+      <ConfigRelatedChangesToggles />
       <ConfigChangesDateRangeFilter />
       <ConfigChangesToggledDeletedItems />
     </div>
