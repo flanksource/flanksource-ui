@@ -1,29 +1,33 @@
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Control } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
+import { getConfigsAnalysisAnalyzers } from "../../../../api/services/configs";
 import { defaultSelections } from "../../../Incidents/data";
 import { ReactSelectDropdown, StateOption } from "../../../ReactSelectDropdown";
-import { useQuery } from "@tanstack/react-query";
-import { getConfigsAnalysisAnalyzers } from "../../../../api/services/configs";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  control?: Control<any, any>;
-  value?: string;
   prefix?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   showAllOption?: boolean;
+  paramsToReset?: string[];
 };
 
 export default function ConfigInsightsAnalyzerDropdown({
-  control,
-  value,
-  prefix = "Severity:",
-  name = "severity",
+  prefix = "Analyzer:",
+  name = "analyzer",
   className,
   showAllOption,
   dropDownClassNames,
-  hideControlBorder
+  hideControlBorder,
+  paramsToReset = []
 }: Props) {
+  const [params, setParams] = useSearchParams({
+    [name]: "all"
+  });
+
+  const value = params.get(name) || "all";
+
   const { data: analyzers, isLoading } = useQuery(
     ["config_analysis_analyzers"],
     () => getConfigsAnalysisAnalyzers(),
@@ -46,8 +50,16 @@ export default function ConfigInsightsAnalyzerDropdown({
 
   return (
     <ReactSelectDropdown
-      control={control}
-      prefix={prefix}
+      onChange={(value) => {
+        if (value?.toLowerCase() === "all" || !value) {
+          params.delete(name);
+        } else {
+          params.set(name, value);
+        }
+        paramsToReset.forEach((param) => params.delete(param));
+        setParams(params);
+      }}
+      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}

@@ -22,7 +22,6 @@ function FilterIncidentsByComponents({ control, value }: Props) {
   return (
     <div className="flex flex-row items-center space-x-3 mr-2">
       <ComponentNamesDropdown
-        control={control}
         prefix="Component:"
         name="component"
         className="w-auto max-w-[400px] capitalize"
