@@ -5,6 +5,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
@@ -19,7 +20,9 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
-  const { timeRangeAbsoluteValue } = useTimeRangeParams();
+  const { timeRangeAbsoluteValue } = useTimeRangeParams(
+    configChangesDefaultDateFilter
+  );
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
