@@ -77,6 +77,13 @@ export const getAllChanges = (
       );
       return;
     }
+    if (key === "configType" && queryParams[key]) {
+      queryString = tristateOutputToQueryFilterParam(
+        queryParams[key],
+        "config_type"
+      );
+      return;
+    }
     if (queryParams[key] && queryParams[key] !== "All") {
       const queryKey = key === "type" ? `config.type` : key;
       queryString += `&${queryKey}=eq.${queryParams[key]}`;
