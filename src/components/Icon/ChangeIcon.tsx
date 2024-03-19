@@ -3,7 +3,7 @@ import { Icon } from ".";
 import { ConfigChange } from "../../api/types/configs";
 
 interface ChangeIconProps {
-  change?: ConfigChange;
+  change?: Pick<ConfigChange, "change_type">;
   className?: string;
   name?: string;
 }

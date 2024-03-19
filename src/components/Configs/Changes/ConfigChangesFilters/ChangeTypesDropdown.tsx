@@ -2,7 +2,7 @@ import {
   ConfigChangesTypeItem,
   getConfigsChangesTypesFilter
 } from "@flanksource-ui/api/services/configs";
-import { Icon } from "@flanksource-ui/components/Icon";
+import { ChangeIcon } from "@flanksource-ui/components/Icon/ChangeIcon";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
@@ -34,7 +34,12 @@ export function ChangesTypesDropdown({
               id: change_type,
               label: change_type,
               value: change_type,
-              icon: <Icon name={change_type} secondary={change_type} />
+              icon: (
+                <ChangeIcon
+                  change={{ change_type: change_type }}
+                  className="w-5 pr-1"
+                />
+              )
             } satisfies TriStateOptions)
         );
       }, [])
