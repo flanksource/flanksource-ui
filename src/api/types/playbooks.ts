@@ -61,8 +61,9 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
 }
 
 type PlaybookSpecFilterType = {
-  type: string;
+  type?: string;
   tags?: string[];
+  labelSelector?: string[];
 };
 
 export type PlaybookSpec = {

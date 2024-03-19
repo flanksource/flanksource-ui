@@ -129,6 +129,7 @@ function ReactSelectTriStateOptions({
           value={toggleValue}
           label={undefined}
           hideLabel
+          size="sm"
         />
         <div className="flex-1 flex flex-row gap-2 whitespace-nowrap text-ellipsis">
           {data.icon && <span>{data.icon}</span>}
