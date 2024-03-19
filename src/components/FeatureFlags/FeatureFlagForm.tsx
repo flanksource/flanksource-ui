@@ -97,7 +97,10 @@ export default function FeatureFlagForm({
             <div className="flex flex-1 justify-end">
               <button
                 className="btn-secondary-base btn-secondary mr-4"
-                type="reset"
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
               >
                 Cancel
               </button>
