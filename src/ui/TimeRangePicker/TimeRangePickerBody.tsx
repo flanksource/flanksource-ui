@@ -62,6 +62,7 @@ export function TimeRangePickerBody({
     params.delete("timeRange");
     params.delete("rangeType");
     params.delete("display");
+    params.delete("range");
     setParams(params);
     setShowCalendar(false);
     closePicker();
