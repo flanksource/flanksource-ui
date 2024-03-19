@@ -4,7 +4,7 @@ import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import dayjs from "dayjs";
-import { useSearchParams } from "react-router-dom";
+import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 import JobHistoryNamesDropdown from "./JobHistoryNames";
 
@@ -106,6 +106,12 @@ export const jobHistoryResourceTypes: TriStateOptions[] = [
   }
 ];
 
+export const jobHistoryDefaultDateFilter: URLSearchParamsInit = {
+  rangeType: "relative",
+  display: "2 days",
+  range: "now-2d"
+};
+
 type JobHistoryFiltersProps = {
   paramsToReset?: string[];
 };
@@ -117,7 +123,9 @@ export default function JobHistoryFilters({
     status: "FINISHED:-1,SUCCESS:-1"
   });
 
-  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
+  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams(
+    jobHistoryDefaultDateFilter
+  );
 
   const timeRangeValue = getTimeRangeFromUrl();
 

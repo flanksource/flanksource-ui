@@ -5,12 +5,15 @@ import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import JobHistoryFilters, {
-  durationOptions
+  durationOptions,
+  jobHistoryDefaultDateFilter
 } from "./Filters/JobsHistoryFilters";
 import JobsHistoryTable from "./JobsHistoryTable";
 
 export default function JobsHistorySettingsPage() {
-  const { timeRangeAbsoluteValue } = useTimeRangeParams();
+  const { timeRangeAbsoluteValue } = useTimeRangeParams(
+    jobHistoryDefaultDateFilter
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
 
