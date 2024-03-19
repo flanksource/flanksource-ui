@@ -124,7 +124,7 @@ export function Modal({
                 "bg-white rounded-lg text-left shadow-xl transform transition-all w-full  flex flex-col",
                 containerClassName,
                 modalClassMap[size],
-                modalClassHeightMap[size]
+                enforceSizeInHeight && modalClassHeightMap[size]
               )}
             >
               <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
