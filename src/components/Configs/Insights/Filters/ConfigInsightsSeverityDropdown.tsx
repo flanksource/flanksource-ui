@@ -1,31 +1,45 @@
 import React from "react";
-import { Control } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
 import { defaultSelections, severityItems } from "../../../Incidents/data";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  control?: Control<any, any>;
-  value?: string;
   prefix?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   showAllOption?: boolean;
+  paramsToReset?: string[];
 };
 
 export default function ConfigInsightsSeverityDropdown({
-  control,
-  value,
   prefix = "Severity:",
   name = "severity",
   className,
   showAllOption,
   dropDownClassNames,
-  hideControlBorder
+  hideControlBorder,
+  paramsToReset = []
 }: Props) {
+  const [params, setParams] = useSearchParams({
+    [name]: "all"
+  });
+
+  const value = params.get(name) || "all";
+
   return (
     <ReactSelectDropdown
-      control={control}
-      prefix={prefix}
+      prefix={
+        <span className="text-gray-500 text-xs font-semibold">{prefix}</span>
+      }
+      onChange={(value) => {
+        if (value?.toLowerCase() === "all" || !value) {
+          params.delete(name);
+        } else {
+          params.set(name, value);
+        }
+        paramsToReset.forEach((param) => params.delete(param));
+        setParams(params);
+      }}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}

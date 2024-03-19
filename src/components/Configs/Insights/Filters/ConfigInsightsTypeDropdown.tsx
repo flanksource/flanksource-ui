@@ -1,8 +1,8 @@
 import React from "react";
-import { Control } from "react-hook-form";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import { useSearchParams } from "react-router-dom";
 import { defaultSelections } from "../../../Incidents/data";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
 export const configAnalysisTypeItems = {
   Cost: {
@@ -128,28 +128,42 @@ export const configAnalysisTypeItems = {
 } as const;
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  control?: Control<any, any>;
-  value?: string;
   prefix?: string;
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   showAllOption?: boolean;
+  paramsToReset?: string[];
 };
 
 export default function ConfigInsightsTypeDropdown({
-  control,
-  value,
-  prefix = "Severity:",
-  name = "severity",
+  prefix = "Type:",
+  name = "type",
   className,
   showAllOption,
   dropDownClassNames,
-  hideControlBorder
+  hideControlBorder,
+  paramsToReset = []
 }: Props) {
+  const [params, setParams] = useSearchParams({
+    [name]: "all"
+  });
+
+  const value = params.get(name) || "all";
+
   return (
     <ReactSelectDropdown
-      control={control}
-      prefix={prefix}
+      onChange={(value) => {
+        if (value?.toLocaleLowerCase() === "all" || !value) {
+          params.delete(name);
+        } else {
+          params.set(name, value);
+        }
+        paramsToReset.forEach((param) => params.delete(param));
+        setParams(params);
+      }}
+      prefix={
+        <div className="text-xs text-gray-500 whitespace-nowrap">{prefix}</div>
+      }
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}
