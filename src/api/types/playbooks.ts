@@ -46,6 +46,7 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   id: string;
   playbook_id?: string;
   status: PlaybookRunStatus;
+  error?: string;
   start_time: string;
   scheduled_time?: string;
   end_time?: string;
