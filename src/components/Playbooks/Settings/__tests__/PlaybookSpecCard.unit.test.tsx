@@ -21,7 +21,7 @@ const mockPlaybook: PlaybookSpec = {
     ],
     configs: [
       {
-        type: "AWS::EKS::Cluster"
+        types: ["AWS::EKS::Cluster"]
       }
     ],
     parameters: [
