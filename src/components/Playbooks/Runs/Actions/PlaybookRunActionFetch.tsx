@@ -1,7 +1,7 @@
+import { Loading } from "@flanksource-ui/components/Loading";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaybookRunActionById } from "../../../../api/services/playbooks";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
-import { Loading } from "../../../Loading";
 
 type Props = {
   playbookRunActionId: string;
