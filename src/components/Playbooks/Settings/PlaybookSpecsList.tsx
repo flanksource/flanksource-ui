@@ -19,7 +19,9 @@ export default function PlaybookSpecsTable({
 }: Props) {
   const groupPlaybooksByType: GroupedPlaybooks = useMemo(() => {
     return data.reduce((acc, playbook) => {
-      const type = playbook.category ?? "Other";
+      // If playbook has a category, use that, otherwise use "Other", this goes
+      // for empty strings as well
+      const type = !!playbook.category ? playbook.category : "Other";
       if (!acc[type]) {
         acc[type] = [];
       }
