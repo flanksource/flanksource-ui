@@ -3,6 +3,15 @@ import { toastError } from "../components/Toast/toast";
 
 const API_BASE = "/api";
 
+export const apiBase = axios.create({
+  baseURL: `${API_BASE}`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const IncidentCommander = axios.create({
   baseURL: `${API_BASE}/db`,
   headers: {

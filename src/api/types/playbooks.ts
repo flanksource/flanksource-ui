@@ -61,10 +61,17 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
 }
 
-type PlaybookSpecFilterType = {
-  type?: string;
-  tags?: string[];
-  labelSelector?: string[];
+export type PlaybookResourceSelector = {
+  agent?: string;
+  cache?: string;
+  includeDeleted?: boolean;
+  id?: string;
+  name?: string;
+  namespace?: string;
+  types?: string[];
+  statuses?: string[];
+  labelSelector?: string;
+  fieldSelector?: string;
 };
 
 export type PlaybookSpec = {
@@ -76,9 +83,9 @@ export type PlaybookSpec = {
   category?: string;
   spec: {
     actions?: Record<string, any>[];
-    configs?: PlaybookSpecFilterType[];
-    components?: PlaybookSpecFilterType[];
-    checks?: PlaybookSpecFilterType[];
+    configs?: PlaybookResourceSelector[];
+    components?: PlaybookResourceSelector[];
+    checks?: PlaybookResourceSelector[];
     icons?: string;
     parameters?: PlaybookParam[];
     description?: string;
