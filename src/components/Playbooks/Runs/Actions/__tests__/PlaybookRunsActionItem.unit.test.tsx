@@ -1,7 +1,6 @@
-import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
-import PlaybookRunsActionItem from "./../PlaybookRunsActionItem";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PlaybookRunAction } from "../../../../../api/types/playbooks";
+import PlaybookRunsActionItem from "./../PlaybookRunsActionItem";
 
 describe("PlaybookRunsActionItem", () => {
   const mockAction: PlaybookRunAction = {
@@ -21,6 +20,7 @@ describe("PlaybookRunsActionItem", () => {
         action={mockAction}
         onClick={mockOnClick}
         isSelected={false}
+        stepNumber={1}
       />
     );
 
@@ -34,6 +34,7 @@ describe("PlaybookRunsActionItem", () => {
         action={mockAction}
         onClick={mockOnClick}
         isSelected={false}
+        stepNumber={1}
       />
     );
 
@@ -48,6 +49,7 @@ describe("PlaybookRunsActionItem", () => {
         action={mockAction}
         onClick={mockOnClick}
         isSelected={true}
+        stepNumber={1}
       />
     );
 
