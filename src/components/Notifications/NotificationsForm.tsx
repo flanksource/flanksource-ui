@@ -28,7 +28,8 @@ export default function NotificationsForm({
           team: undefined,
           created_by: notification?.created_by?.id,
           created_at: undefined,
-          updated_at: undefined
+          updated_at: undefined,
+          ...(!notification?.id && { source: "UI" })
         }}
         onSubmit={(values) => onSubmit(values as Partial<Notification>)}
         validateOnBlur
@@ -70,11 +71,13 @@ export default function NotificationsForm({
                     onDeleted={onDeleted}
                   />
                 )}
-                <Button
-                  type="submit"
-                  text={!!notification ? "Update" : "Save"}
-                  className="btn-primary"
-                />
+                {(notification?.source === "UI" || !notification?.source) && (
+                  <Button
+                    type="submit"
+                    text={!!notification ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                )}
               </div>
             </div>
           </Form>

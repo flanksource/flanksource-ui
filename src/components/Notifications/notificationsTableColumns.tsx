@@ -118,6 +118,7 @@ export type Notification = {
   id: string;
   title: string;
   events: string[];
+  source?: "KubernetesCRD" | "ConfigFile" | "UI" | "Topology";
   template: string;
   filter?: string;
   properties?: Record<string, any>;
