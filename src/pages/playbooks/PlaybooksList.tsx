@@ -7,7 +7,7 @@ import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
-import PlaybookSpecsTable from "../../components/Playbooks/Settings/PlaybookSpecsList";
+import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {
@@ -55,7 +55,7 @@ export function PlaybooksListPage() {
             {error && !playbooks ? (
               <ErrorPage error={error} />
             ) : (
-              <PlaybookSpecsTable data={playbooks ?? []} refetch={refetch} />
+              <PlaybookSpecsList data={playbooks ?? []} refetch={refetch} />
             )}
           </div>
         </TabbedLinks>

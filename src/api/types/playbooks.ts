@@ -95,6 +95,7 @@ export type PlaybookNames = {
   name: string;
   icon?: string;
   category?: string;
+  description?: string;
 };
 
 export type PlaybookParamCommonFields = {

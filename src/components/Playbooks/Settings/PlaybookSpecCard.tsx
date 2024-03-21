@@ -1,8 +1,9 @@
+import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePlaybookSpec } from "../../../api/services/playbooks";
-import { PlaybookSpec } from "../../../api/types/playbooks";
+import { PlaybookNames } from "../../../api/types/playbooks";
 import { Button } from "../../../ui/Button";
 import { Icon } from "../../Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
@@ -11,7 +12,7 @@ import PlaybookCardMenu from "./PlaybookCardMenu";
 import PlaybookSpecsForm from "./PlaybookSpecsForm";
 
 type PlaybookSpecCardProps = {
-  playbook: PlaybookSpec;
+  playbook: PlaybookNames;
   refetch?: () => void;
 };
 
@@ -22,6 +23,10 @@ export default function PlaybookSpecCard({
   const [isEditPlaybookFormOpen, setIsEditPlaybookFormOpen] = useState(false);
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
+
+  const { data: playbookSpec } = useGetPlaybookSpecsDetails(playbook.id, {
+    enabled: isEditPlaybookFormOpen || isSubmitPlaybookRunFormOpen
+  });
 
   const navigate = useNavigate();
 
@@ -43,7 +48,7 @@ export default function PlaybookSpecCard({
     <>
       <div className="flex flex-col w-full h-full rounded-8px shadow-card card bg-lightest-gray relative">
         <div className="flex flex-row gap-2 p-2 bg-white items-center">
-          <Icon name={playbook.spec.icon} className="w-6 h-6" />
+          <Icon name={playbook.icon} className="w-6 h-6" />
           <h3 className="flex-1 text-lg leading-6 font-medium text-gray-900">
             {playbook.name}
           </h3>
@@ -74,23 +79,24 @@ export default function PlaybookSpecCard({
         </div>
       </div>
 
-      <PlaybookSpecsForm
-        isOpen={isEditPlaybookFormOpen}
-        onClose={() => {
-          setIsEditPlaybookFormOpen(false);
-        }}
-        refresh={refetch}
-        playbook={playbook}
-      />
+      {playbookSpec && (
+        <PlaybookSpecsForm
+          isOpen={isEditPlaybookFormOpen}
+          onClose={() => {
+            setIsEditPlaybookFormOpen(false);
+          }}
+          refresh={refetch}
+          playbook={playbookSpec}
+        />
+      )}
 
-      <SubmitPlaybookRunForm
-        isOpen={isSubmitPlaybookRunFormOpen}
-        onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
-        playbook={{
-          ...playbook,
-          parameters: playbook.spec.parameters ?? []
-        }}
-      />
+      {playbookSpec && (
+        <SubmitPlaybookRunForm
+          isOpen={isSubmitPlaybookRunFormOpen}
+          onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
+          playbook={playbookSpec}
+        />
+      )}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
-import { RunnablePlaybook } from "@flanksource-ui/api/types/playbooks";
+import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import { Button } from "@flanksource-ui/ui/Button";
 import { Modal, ModalSize } from "@flanksource-ui/ui/Modal";
 import { AxiosError } from "axios";
@@ -34,9 +34,7 @@ export type SubmitPlaybookRunFormValues = {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  playbook: RunnablePlaybook & {
-    spec: any;
-  };
+  playbook: PlaybookSpec;
   checkId?: string;
   componentId?: string;
   configId?: string;
