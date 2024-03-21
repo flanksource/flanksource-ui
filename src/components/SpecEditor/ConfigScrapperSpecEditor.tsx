@@ -24,8 +24,6 @@ export default function ConfigScrapperSpecEditor({
   onSubmit = () => {},
   resourceInfo
 }: ConfigScrapperSpecEditorProps) {
-  console.log("resourceValue", resourceValue);
-
   const configTypes: SpecType[] = useMemo(
     () =>
       (
@@ -45,7 +43,9 @@ export default function ConfigScrapperSpecEditor({
             icon: "kubernetes",
             configForm: KubernetesConfigsFormEditor,
             specsMapField: "kubernetes.0",
-            schemaFileName: "config_kubernetes.schema.json"
+            schemaFileName: "config_kubernetes.schema.json",
+            docsLink:
+              "https://docs.flanksource.com/config-db/scrapers/kubernetes"
           },
           {
             type: "form",
@@ -60,7 +60,8 @@ export default function ConfigScrapperSpecEditor({
             icon: "azure",
             configForm: AzureConfigsFormEditor,
             specsMapField: "azure.0",
-            schemaFileName: "config_azure.schema.json"
+            schemaFileName: "config_azure.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/azure"
           },
           {
             type: "form",
@@ -75,7 +76,9 @@ export default function ConfigScrapperSpecEditor({
             icon: "kubernetes",
             configForm: KubernetesFileConfigsFormEditor,
             specsMapField: "kubernetesFile.0",
-            schemaFileName: "config_kubernetesfile.schema.json"
+            schemaFileName: "config_kubernetesfile.schema.json",
+            docsLink:
+              "https://docs.flanksource.com/config-db/scrapers/kubernetes-file"
           },
           {
             type: "form",
@@ -90,7 +93,8 @@ export default function ConfigScrapperSpecEditor({
             icon: "sql",
             configForm: SQLConfigsFormEditor,
             specsMapField: "sql.0",
-            schemaFileName: "config_sql.schema.json"
+            schemaFileName: "config_sql.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/sql"
           },
           {
             type: "form",
@@ -105,7 +109,8 @@ export default function ConfigScrapperSpecEditor({
             icon: "trivy",
             configForm: TrivyConfigsFormEditor,
             specsMapField: "trivy.0",
-            schemaFileName: "config_trivy.schema.json"
+            schemaFileName: "config_trivy.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/trivy"
           },
           {
             type: "form",
@@ -122,7 +127,8 @@ export default function ConfigScrapperSpecEditor({
             configForm: AWSConfigsFormEditor,
             icon: "aws",
             specsMapField: "aws.0",
-            schemaFileName: "config_aws.schema.json"
+            schemaFileName: "config_aws.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/aws"
           },
           {
             type: "form",
@@ -137,7 +143,8 @@ export default function ConfigScrapperSpecEditor({
             icon: "folder",
             configForm: FileConfigsFormEditor,
             specsMapField: "file.0",
-            schemaFileName: "config_file.schema.json"
+            schemaFileName: "config_file.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/file"
           },
           {
             type: "form",
@@ -182,7 +189,9 @@ export default function ConfigScrapperSpecEditor({
             icon: "azure-devops",
             configForm: AzureDevopsConfigsFormEditor,
             specsMapField: "azureDevops.0",
-            schemaFileName: "config_azuredevops.schema.json"
+            schemaFileName: "config_azuredevops.schema.json",
+            docsLink:
+              "https://docs.flanksource.com/config-db/scrapers/azure-devops"
           },
           {
             type: "custom",
@@ -195,7 +204,8 @@ export default function ConfigScrapperSpecEditor({
               return resourceValue ?? {};
             },
             icon: FaCog,
-            schemaFileName: "scrape_config.spec.schema.json"
+            schemaFileName: "scrape_config.spec.schema.json",
+            docsLink: "https://docs.flanksource.com/config-db/scrapers/custom"
           }
         ] satisfies SpecType[]
       ).sort((a, b) => a.label.localeCompare(b.label)),
