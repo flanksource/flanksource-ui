@@ -63,9 +63,9 @@ export default function NotificationsRecipientsTabs() {
         {subjectTabs.map(({ label, value }) => {
           return (
             <Tab
+              key={label}
               label={label}
               value={value}
-              key={label}
               className="flex flex-col p-2"
             >
               <div className={`flex flex-col gap-4`}>
