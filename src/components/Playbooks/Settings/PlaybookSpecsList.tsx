@@ -1,17 +1,17 @@
 import { useMemo } from "react";
-import { PlaybookSpec } from "../../../api/types/playbooks";
+import { PlaybookNames } from "../../../api/types/playbooks";
 import PlaybookSpecCard from "./PlaybookSpecCard";
 
 type GroupedPlaybooks = {
-  [key: string]: PlaybookSpec[];
+  [key: string]: PlaybookNames[];
 };
 
 type Props = {
-  data: PlaybookSpec[];
+  data: PlaybookNames[];
   refetch?: () => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-export default function PlaybookSpecsTable({
+export default function PlaybookSpecsList({
   data,
   className,
   refetch = () => {},
