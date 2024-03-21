@@ -66,9 +66,7 @@ export function ComponentNamesDropdown({
         paramsToReset.forEach((param) => params.delete(param));
         setParams(params);
       }}
-      prefix={
-        <span className="text-gray-500 text-xs font-semibold">{prefix}</span>
-      }
+      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}

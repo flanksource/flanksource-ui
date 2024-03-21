@@ -28,9 +28,7 @@ export default function ConfigInsightsSeverityDropdown({
 
   return (
     <ReactSelectDropdown
-      prefix={
-        <span className="text-gray-500 text-xs font-semibold">{prefix}</span>
-      }
+      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
       onChange={(value) => {
         if (value?.toLowerCase() === "all" || !value) {
           params.delete(name);
