@@ -42,8 +42,6 @@ export default function NotificationsTable({
     ];
   }, [sortBy, sortOrder]);
 
-  const columns = useMemo(() => notificationsTableColumns, []);
-
   const onSelectNotification = useCallback((row: Row<Notification>) => {
     const id = row.original.id;
     setSelectedNotificationId(id);
@@ -54,7 +52,7 @@ export default function NotificationsTable({
     <>
       <DataTable
         data={notifications}
-        columns={columns}
+        columns={notificationsTableColumns}
         isLoading={isLoading}
         handleRowClick={onSelectNotification}
         stickyHead
