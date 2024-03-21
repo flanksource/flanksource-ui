@@ -1,6 +1,8 @@
 import { formatDuration } from "@flanksource-ui/utils/date";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { atom, useAtom } from "jotai";
 import { useState } from "react";
+import { Tooltip } from "react-tooltip";
 import { Team, User } from "../../api/types/users";
 import { Avatar } from "../../ui/Avatar";
 import { Badge } from "../../ui/Badge";
@@ -9,6 +11,10 @@ import { Icon } from "../Icon";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
+
+export const notificationMostCommonErrorAtom = atom<Notification | undefined>(
+  undefined
+);
 
 export const notificationEvents = [
   {
@@ -242,10 +248,76 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
       );
     }
   },
+  // {
+  //   header: "Status",
+  //   id: "job_status",
+  //   cell: StatusColumn
+  // },
   {
-    header: "Status",
-    id: "job_status",
-    cell: StatusColumn
+    header: "Pending",
+    id: "pending",
+    accessorKey: "pending",
+    size: 70
+  },
+  {
+    header: "Failed",
+    id: "failed",
+    accessorKey: "failed",
+    size: 70,
+    cell: ({ getValue, row }) => {
+      const value = getValue<number>();
+      const notification = row.original;
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [, setMostCommonErrorNotification] = useAtom(
+        notificationMostCommonErrorAtom
+      );
+
+      if (!value) {
+        return null;
+      }
+
+      return (
+        <>
+          <div
+            className="w-full"
+            data-tooltip-id="most-common-error-tooltip"
+            data-tooltip-content={
+              value > 0 ? notification.most_common_error : undefined
+            }
+            onClick={(e) => {
+              if (notification.most_common_error) {
+                e.stopPropagation();
+                setMostCommonErrorNotification(notification);
+              }
+            }}
+          >
+            {value}
+          </div>
+          {value > 0 && <Tooltip id="most-common-error-tooltip" />}
+        </>
+      );
+    }
+  },
+  {
+    header: "Success",
+    id: "success",
+    accessorKey: "success",
+    size: 70
+  },
+  {
+    header: "Avg Duration",
+    id: "avg_duration_ms",
+    accessorKey: "avg_duration_ms",
+    size: 70,
+    cell: ({ getValue }) => {
+      const value = getValue<number>();
+      if (!value) {
+        return null;
+      }
+      const formattedDuration = formatDuration(value);
+      return formattedDuration;
+    }
   },
   {
     header: "Created At",
@@ -269,38 +341,6 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     cell: ({ cell }) => {
       const value = cell.row.original.created_by;
       return <Avatar user={value} circular />;
-    }
-  },
-  {
-    header: "Pending",
-    id: "pending",
-    accessorKey: "pending",
-    size: 70
-  },
-  {
-    header: "Failed",
-    id: "failed",
-    accessorKey: "failed",
-    size: 70
-  },
-  {
-    header: "Success",
-    id: "success",
-    accessorKey: "success",
-    size: 70
-  },
-  {
-    header: "Avg Duration",
-    id: "avg_duration_ms",
-    accessorKey: "avg_duration_ms",
-    size: 70,
-    cell: ({ getValue }) => {
-      const value = getValue<number>();
-      if (!value) {
-        return null;
-      }
-      const formattedDuration = formatDuration(value);
-      return formattedDuration;
     }
   }
 ];
