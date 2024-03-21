@@ -1,7 +1,6 @@
 import { BreadcrumbChild, BreadcrumbNav, BreadcrumbRoot } from ".";
 import { ConfigItem } from "../../api/types/configs";
 import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
-import { ConfigIcon } from "../Icon/ConfigIcon";
 import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
@@ -36,10 +35,7 @@ export function ConfigsDetailsBreadcrumbNav({
                 link={`/catalog/${config?.id}`}
                 key="config-name"
               >
-                <span>
-                  <ConfigIcon config={config!} className="h-5 mr-1" />
-                  {config?.name}
-                </span>
+                {config?.name}
               </BreadcrumbChild>
             ]),
         ...(children ? [children] : [])
