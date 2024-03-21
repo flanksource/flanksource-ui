@@ -2,7 +2,6 @@ import { useAtom } from "jotai";
 import { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { BreadcrumbChild } from "../BreadcrumbNav";
 import { ConfigsDetailsBreadcrumbNav } from "../BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { Head } from "../Head/Head";
@@ -57,11 +56,7 @@ export function ConfigDetailsTabs({
               <ConfigsDetailsBreadcrumbNav
                 config={configItem}
                 isLoading={isLoadingConfig}
-              >
-                {activeTabName !== "Catalog" && (
-                  <BreadcrumbChild>{activeTabName}</BreadcrumbChild>
-                )}
-              </ConfigsDetailsBreadcrumbNav>
+              />
             </span>
           </div>
         }
