@@ -63,6 +63,9 @@ const server = setupServer(
         }
       ])
     );
+  }),
+  rest.get("/api/db/playbooks", (req, res, ctx) => {
+    return res(ctx.json([mockPlaybook]));
   })
 );
 

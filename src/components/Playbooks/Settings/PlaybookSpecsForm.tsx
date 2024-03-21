@@ -51,13 +51,24 @@ export default function PlaybookSpecsForm({
   });
 
   const { mutate: updatePlaybook } = useMutation({
-    mutationFn: async ({ id, name, source, spec }: PlaybookSpec) => {
+    mutationFn: async ({
+      id,
+      name,
+      source,
+      spec,
+      description,
+      icon
+    }: PlaybookSpec) => {
       // let's avoid updating fields that are not editable
       const newPayload: UpdatePlaybookSpec = {
         id,
         name,
         source,
-        spec
+        spec,
+        // temporary fix for updating category
+        category: spec.category,
+        description,
+        icon
       };
       const res = await updatePlaybookSpec(newPayload);
       return res;
@@ -103,13 +114,15 @@ export default function PlaybookSpecsForm({
       <Formik
         initialValues={
           playbook || {
-            name: "",
+            name: undefined,
             source: "UI",
-            spec: "",
+            category: undefined,
+            spec: undefined,
             created_by: user?.id
           }
         }
         onSubmit={(value) => {
+          console.log(value);
           if (playbook?.id) {
             updatePlaybook(value as PlaybookSpec);
           } else {
@@ -130,7 +143,6 @@ export default function PlaybookSpecsForm({
               >
                 <div className="flex flex-col flex-1 space-y-4 overflow-y-auto p-4">
                   <FormikTextInput name="name" label="Name" required />
-                  <FormikTextInput name="category" label="Category" />
                   <FormikCodeEditor
                     fieldName="spec"
                     label="Spec"
