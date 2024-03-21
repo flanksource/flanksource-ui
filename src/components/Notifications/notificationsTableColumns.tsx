@@ -1,3 +1,4 @@
+import { formatDuration } from "@flanksource-ui/utils/date";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { Team, User } from "../../api/types/users";
@@ -142,6 +143,11 @@ export type Notification = {
   job_details?: {
     errors?: string[];
   };
+  pending?: number;
+  avg_duration_ms?: number;
+  failed?: number;
+  success?: number;
+  most_common_error?: string;
 };
 
 export type NewNotification = Omit<
@@ -158,7 +164,7 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
   {
     header: "Recipients",
     id: "recipients",
-    size: 100,
+    size: 150,
     cell: ({ cell }) => {
       const person = cell.row.original.person;
       const team = cell.row.original.team;
@@ -215,7 +221,7 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
   {
     header: "Title",
     id: "title",
-    size: 100,
+    size: 150,
     accessorKey: "title",
     cell: ({ getValue }) => {
       const value = getValue<string>();
@@ -263,6 +269,38 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     cell: ({ cell }) => {
       const value = cell.row.original.created_by;
       return <Avatar user={value} circular />;
+    }
+  },
+  {
+    header: "Pending",
+    id: "pending",
+    accessorKey: "pending",
+    size: 70
+  },
+  {
+    header: "Failed",
+    id: "failed",
+    accessorKey: "failed",
+    size: 70
+  },
+  {
+    header: "Success",
+    id: "success",
+    accessorKey: "success",
+    size: 70
+  },
+  {
+    header: "Avg Duration",
+    id: "avg_duration_ms",
+    accessorKey: "avg_duration_ms",
+    size: 70,
+    cell: ({ getValue }) => {
+      const value = getValue<number>();
+      if (!value) {
+        return null;
+      }
+      const formattedDuration = formatDuration(value);
+      return formattedDuration;
     }
   }
 ];
