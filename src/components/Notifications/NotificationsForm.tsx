@@ -20,7 +20,7 @@ export default function NotificationsForm({
   onDeleted = () => {}
 }: NotificationsFormProps) {
   return (
-    <div className="flex flex-col gap-2 h-auto overflow-y-auto">
+    <div className="flex flex-col gap-2 h-full overflow-y-auto">
       <Formik
         initialValues={{
           ...notification,
@@ -39,7 +39,7 @@ export default function NotificationsForm({
           <Form
             onReset={handleReset}
             onSubmit={(e) => handleSubmit(e)}
-            className="flex flex-col overflow-y-auto gap-4"
+            className="flex flex-col flex-1 overflow-y-auto gap-4"
           >
             <div className="flex flex-col overflow-y-auto gap-4 p-4">
               <FormikTextInput name="title" label="Title" />
