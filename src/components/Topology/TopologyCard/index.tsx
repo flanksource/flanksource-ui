@@ -149,8 +149,7 @@ export function TopologyCard({
 
   const allProperties = topology.properties || [];
   const properties = allProperties.filter((i) => !i.headline);
-  const heading = allProperties.filter((i) => i.headline);
-
+  const heading = allProperties.filter((i) => i.headline && !!i.value);
   return (
     <div
       style={{ width: CardWidth[size as Size] || size }}
