@@ -7,6 +7,19 @@ const config = {
     // make the backend URL available to the frontend
     NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL
   },
+  redirects: async () => {
+    if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
+      return [];
+    }
+    // Redirect early, for a better user experience
+    return [
+      {
+        source: "/config/:path*",
+        destination: "/catalog/:path*",
+        permanent: true
+      }
+    ];
+  },
   async rewrites() {
     // if clerk is enabled, we will use next API routes to proxy requests to
     // the backend
