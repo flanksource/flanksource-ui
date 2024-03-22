@@ -114,19 +114,19 @@ export default function InstallAgentModal({
             activeTab={activeTab}
             onSelectTab={(v) => setActiveTab(v as any)}
           >
+            <Tab className="flex flex-col gap-4 p-4" label="Flux" value="flux">
+              <FluxInstallAgent
+                generatedAgent={generatedAgent}
+                agentFormValues={agentFormValues}
+              />
+              <WarningBox />
+            </Tab>
             <Tab
               className="flex flex-col gap-4 p-4"
               label="Helm CLI"
               value="cli"
             >
               <CLIInstallAgent
-                generatedAgent={generatedAgent}
-                agentFormValues={agentFormValues}
-              />
-              <WarningBox />
-            </Tab>
-            <Tab className="flex flex-col gap-4 p-4" label="Flux" value="flux">
-              <FluxInstallAgent
                 generatedAgent={generatedAgent}
                 agentFormValues={agentFormValues}
               />
