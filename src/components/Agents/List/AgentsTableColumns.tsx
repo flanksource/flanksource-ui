@@ -39,7 +39,13 @@ export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
       if (!lastSeen) {
         return null;
       }
-      const isOnline = dayjs(lastSeen).isAfter("1", "minute");
+
+      const lastSeenDate = dayjs(lastSeen).utc();
+      const now = dayjs().utc();
+
+      // If the agent was seen in the last minute, consider it online
+      const isOnline = now.diff(lastSeenDate, "seconds") < 61;
+
       return (
         <div className="flex flex-row gap-1 items-center">
           <FaDotCircle
