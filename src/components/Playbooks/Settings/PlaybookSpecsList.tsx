@@ -31,7 +31,7 @@ export default function PlaybookSpecsList({
   }, [data]);
 
   return (
-    <div className="flex flex-col h-full overflow-y-hidden" {...rest}>
+    <div className="flex flex-col h-full" {...rest}>
       {Object.keys(groupPlaybooksByType).map((type) => {
         const playbooks = groupPlaybooksByType[type];
         return (
