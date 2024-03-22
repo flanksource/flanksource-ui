@@ -124,6 +124,20 @@ type PlaybookParamTextOptions = PlaybookParamCommonFields & {
     // for multiline text, we can use this, to make it a textarea, otherwise
     // it's a single line input
     multiline?: boolean;
+    format?:
+      | "text"
+      | "password"
+      | "email"
+      | "url"
+      | "number"
+      | "bytes"
+      | "millicores"
+      | "dns1123";
+    min?: number;
+    max?: number;
+    minLength?: number;
+    maxLength?: number;
+    regex?: string;
   };
 };
 

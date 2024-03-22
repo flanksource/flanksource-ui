@@ -1,3 +1,5 @@
+import FormikBytesTextField from "@flanksource-ui/components/Forms/Formik/FormikBytesTextField";
+import FormikMillicoresTextField from "@flanksource-ui/components/Forms/Formik/FormikMillicoresTextField";
 import { ModalSize } from "@flanksource-ui/ui/Modal";
 import { PlaybookParam } from "../../../../api/types/playbooks";
 import FormikCheckbox from "../../../Forms/Formik/FormikCheckbox";
@@ -95,11 +97,59 @@ export default function PlaybookParamsFieldsRenderer({
     case "text":
       if (params.properties?.multiline) {
         return (
-          <FormikTextArea name={`params.${fieldName}`} required={required} />
+          <FormikTextArea
+            maxLength={params.properties?.maxLength}
+            minLength={params.properties?.minLength}
+            pattern={params.properties?.regex}
+            name={`params.${fieldName}`}
+            required={required}
+          />
         );
       }
+
+      if (params.properties?.format === "bytes") {
+        return (
+          <FormikBytesTextField
+            name={`params.${fieldName}`}
+            required={required}
+            min={params.properties?.min}
+            max={params.properties?.max}
+          />
+        );
+      }
+
+      if (params.properties?.format === "millicores") {
+        return (
+          <FormikMillicoresTextField
+            name={`params.${fieldName}`}
+            required={required}
+            min={params.properties?.min}
+            max={params.properties?.max}
+          />
+        );
+      }
+
+      if (params.properties?.format === "dns1123") {
+        return (
+          <FormikTextInput
+            name={`params.${fieldName}`}
+            required={required}
+            pattern="[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
+          />
+        );
+      }
+
       return (
-        <FormikTextInput name={`params.${fieldName}`} required={required} />
+        <FormikTextInput
+          type={params.properties?.format}
+          min={params.properties?.min}
+          max={params.properties?.max}
+          maxLength={params.properties?.maxLength}
+          minLength={params.properties?.minLength}
+          pattern={params.properties?.regex}
+          name={`params.${fieldName}`}
+          required={required}
+        />
       );
     default:
       return (
