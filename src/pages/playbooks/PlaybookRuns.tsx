@@ -116,6 +116,7 @@ export default function PlaybookRunsPage() {
                 isLoading={isLoading}
                 playbookId={playbookId}
                 setIsEditPlaybookFormOpen={setIsEditPlaybookFormOpen}
+                playbook={playbook}
               />
             </div>
             <div className="flex flex-col flex-1">

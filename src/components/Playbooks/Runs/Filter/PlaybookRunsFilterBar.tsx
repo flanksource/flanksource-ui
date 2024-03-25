@@ -1,7 +1,10 @@
+import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import { Button } from "@flanksource-ui/ui/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
+import SubmitPlaybookRunForm from "../Submit/SubmitPlaybookRunForm";
 import PlaybookSpecsDropdown from "./PlaybookSpecsDropdown";
 import PlaybookStatusDropdown from "./PlaybookStatusDropdown";
 
@@ -9,14 +12,18 @@ type PlaybookRunsFilterBarProps = {
   playbookId?: string;
   isLoading?: boolean;
   setIsEditPlaybookFormOpen: (isOpen: boolean) => void;
+  playbook?: PlaybookSpec;
 };
 
 export default function PlaybookRunsFilterBar({
   playbookId,
   isLoading,
-  setIsEditPlaybookFormOpen = () => {}
+  setIsEditPlaybookFormOpen = () => {},
+  playbook: playbookSpec
 }: PlaybookRunsFilterBarProps) {
   const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
+  const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
+    useState(false);
 
   const range = getTimeRangeFromUrl();
 
@@ -42,6 +49,20 @@ export default function PlaybookRunsFilterBar({
             disabled={isLoading}
             onClick={() => setIsEditPlaybookFormOpen(true)}
           />
+          {playbookSpec && (
+            <>
+              <Button
+                disabled={isLoading}
+                text="Run Playbook"
+                onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
+              />
+              <SubmitPlaybookRunForm
+                isOpen={isSubmitPlaybookRunFormOpen}
+                onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
+                playbook={playbookSpec}
+              />
+            </>
+          )}
         </>
       )}
     </div>
