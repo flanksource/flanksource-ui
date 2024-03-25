@@ -66,8 +66,7 @@ export default function FormikBytesTextField({
   const onChange = useCallback(
     (v: string, unit: "Mi" | "Gi" | "Ti") => {
       // convert to bytes
-      const bytes = `${v}${unit}`;
-
+      const bytes = v ? `${v}${unit}` : undefined;
       field.onChange({
         target: {
           name: name,

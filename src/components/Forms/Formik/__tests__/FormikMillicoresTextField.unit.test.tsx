@@ -47,6 +47,12 @@ test("it should have a default values", () => {
   expect(screen.getByLabelText("Millicores")).toHaveValue(100);
 });
 
+test("it should be empty if the initial value is null", () => {
+  const submit = jest.fn();
+  render(<TestForm onSubmit={submit} />);
+  expect(screen.getByLabelText("Millicores")).toHaveValue(null);
+});
+
 test("it should submit the form with the correct values", async () => {
   const submit = jest.fn();
   render(<TestForm onSubmit={submit} />);
