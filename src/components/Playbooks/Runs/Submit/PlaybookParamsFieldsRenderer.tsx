@@ -1,11 +1,10 @@
 import FormikBytesTextField from "@flanksource-ui/components/Forms/Formik/FormikBytesTextField";
 import FormikMillicoresTextField from "@flanksource-ui/components/Forms/Formik/FormikMillicoresTextField";
+import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import { ModalSize } from "@flanksource-ui/ui/Modal";
 import { PlaybookParam } from "../../../../api/types/playbooks";
 import FormikCheckbox from "../../../Forms/Formik/FormikCheckbox";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
-import FormikComponentsDropdown from "../../../Forms/Formik/FormikComponentsDropdown";
-import FormikConfigsDropdown from "../../../Forms/Formik/FormikConfigsDropdown";
 import FormikPeopleDropdown from "../../../Forms/Formik/FormikPeopleDropdown";
 import FormikSelectDropdown from "../../../Forms/Formik/FormikSelectDropdown";
 import FormikTeamsDropdown from "../../../Forms/Formik/FormikTeamsDropdown";
@@ -72,26 +71,26 @@ export default function PlaybookParamsFieldsRenderer({
       );
     case "component":
       return (
-        <FormikComponentsDropdown
+        <FormikResourceSelectorDropdown
           name={`params.${fieldName}`}
           required={required}
-          filter={{
-            types: params.properties?.filter.type
-              ? [params.properties?.filter.type]
-              : []
-          }}
+          componentResourceSelector={params.properties?.filter}
         />
       );
     case "config":
       return (
-        <FormikConfigsDropdown
+        <FormikResourceSelectorDropdown
           name={`params.${fieldName}`}
           required={required}
-          filter={{
-            types: params.properties?.filter.type
-              ? [params.properties?.filter.type]
-              : []
-          }}
+          configResourceSelector={params.properties?.filter}
+        />
+      );
+    case "check":
+      return (
+        <FormikResourceSelectorDropdown
+          name={`params.${fieldName}`}
+          required={required}
+          checkResourceSelector={params.properties?.filter}
         />
       );
     case "text":

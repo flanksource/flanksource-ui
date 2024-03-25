@@ -51,7 +51,9 @@ export default function FormikResourceSelectorDropdown({
             value: resource.id,
             label: resource.name
           } satisfies StateOption)
-      )
+      ),
+    staleTime: 0,
+    cacheTime: 0
   });
 
   return (
