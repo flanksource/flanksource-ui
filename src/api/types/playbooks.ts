@@ -164,13 +164,10 @@ export type PlaybookParamCheckbox = PlaybookParamCommonFields & {
   // no properties, just a checkbox
 };
 
-export type PlaybookParamComponentConfig = PlaybookParamCommonFields & {
-  type: "component" | "config";
+export type PlaybookParamComponentConfigCheck = PlaybookParamCommonFields & {
+  type: "component" | "config" | "check";
   properties?: {
-    // filter by component type
-    filter: {
-      type: string;
-    };
+    filter: PlaybookResourceSelector[];
   };
 };
 
@@ -194,7 +191,7 @@ export type PlaybookParam =
   | PlaybookParamTextOptions
   | PlaybookParamCodeEditor
   | PlaybookParamCheckbox
-  | PlaybookParamComponentConfig
+  | PlaybookParamComponentConfigCheck
   | PlaybookParamPeople
   | PlaybookParamTeam;
 
