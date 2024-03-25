@@ -25,6 +25,7 @@ const columns: ColumnDef<ConfigChange>[] = [
     id: "config_id",
     accessorKey: "config_id",
     enableHiding: true,
+    enableSorting: false,
     cell: function ConfigLinkCell({ row, column }) {
       const config = {
         id: row.original.config_id,

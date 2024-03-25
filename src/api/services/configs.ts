@@ -62,7 +62,9 @@ export const getAllChanges = (
   pageIndex?: number,
   pageSize?: number,
   startsAt?: string,
-  endsAt?: string
+  endsAt?: string,
+  sortBy?: string,
+  sortOrder?: "asc" | "desc"
 ) => {
   const pagingParams =
     pageIndex || pageSize
@@ -94,9 +96,15 @@ export const getAllChanges = (
     queryString += `&and=(created_at.gte.${startsAt},created_at.lte.${endsAt})`;
   }
 
+  if (sortBy) {
+    queryString += `&order=${sortBy}.${sortOrder}`;
+  } else {
+    queryString += `&order=created_at.desc`;
+  }
+
   return resolve(
     ConfigDB.get<ConfigChange[]>(
-      `/config_changes_items?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
+      `/config_changes_items?${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -324,13 +324,17 @@ export function useGetAllConfigsChangesQuery(
     configType,
     changeType,
     startsAt,
-    endsAt
+    endsAt,
+    sortBy,
+    sortDirection
   }: {
     severity?: string;
     configType?: string;
     changeType?: string;
     startsAt?: string;
     endsAt?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   },
   pageIndex?: number,
   pageSize?: number,
@@ -347,7 +351,9 @@ export function useGetAllConfigsChangesQuery(
       pageIndex,
       pageSize,
       startsAt,
-      endsAt
+      endsAt,
+      sortBy,
+      sortDirection
     ],
     () =>
       getAllChanges(
@@ -355,7 +361,9 @@ export function useGetAllConfigsChangesQuery(
         pageIndex,
         pageSize,
         startsAt,
-        endsAt
+        endsAt,
+        sortBy,
+        sortDirection
       ),
     {
       keepPreviousData
