@@ -123,7 +123,7 @@ export default function PlaybookRunParams({
             <div
               className={clsx(
                 `flex gap-2`,
-                i.type === "checkbox" && i.label ? "flex-row" : "flex-col"
+                i.type !== "checkbox" && i.label ? "flex-row" : "flex-col"
               )}
               key={i.name}
             >
