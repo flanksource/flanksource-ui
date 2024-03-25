@@ -52,7 +52,7 @@ export default function IntegrationsPage() {
         loading={isLoading || isRefetching}
       >
         <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
-          <div className="max-w-screen-xl mx-auto flex flex-col">
+          <div className="mx-auto flex flex-col">
             <IntegrationsList
               data={integrations ?? []}
               onRowClick={(row) => {

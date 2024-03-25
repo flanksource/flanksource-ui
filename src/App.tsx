@@ -9,7 +9,10 @@ import { BsLink, BsToggles } from "react-icons/bs";
 import { FaBell, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
-import { MdOutlineSupportAgent } from "react-icons/md";
+import {
+  MdOutlineIntegrationInstructions,
+  MdOutlineSupportAgent
+} from "react-icons/md";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -211,14 +214,14 @@ const settingsNav: SettingsNavigationItems = {
       icon: MdOutlineSupportAgent,
       featureName: features.agents,
       resourceName: tables.database
+    },
+    {
+      name: "Integrations",
+      href: "/settings/integrations",
+      icon: MdOutlineIntegrationInstructions,
+      featureName: features["settings.integrations"],
+      resourceName: tables.database
     }
-    // {
-    //   name: "Integrations",
-    //   href: "/settings/integrations",
-    //   icon: MdOutlineIntegrationInstructions,
-    //   featureName: features["settings.integrations"],
-    //   resourceName: tables.database
-    // }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 

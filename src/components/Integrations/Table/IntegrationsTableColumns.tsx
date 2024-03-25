@@ -77,21 +77,14 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
       cell: IntegrationListNameCell
     },
     {
+      id: "namespace",
+      header: "Namespace",
+      accessorKey: "namespace"
+    },
+    {
       id: "source",
       header: "Source",
       accessorKey: "source"
-    },
-    {
-      id: "Created At",
-      header: "Created At",
-      accessorFn: (row) => row.created_at,
-      cell: DateCell
-    },
-    {
-      id: "Updated At",
-      header: "Updated At",
-      accessorFn: (row) => row.updated_at,
-      cell: DateCell
     },
     {
       id: "job_status",
@@ -130,6 +123,15 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
         return <Age from={startTime} suffix={true} />;
       }
     },
+    // {
+    //   id: "last_failed",
+    //   header: "Last Failed",
+    //   accessorKey: "job_last_failed",
+    //   cell: ({ row }) => {
+    //     const startTime = row.original.job_last_failed;
+    //     return <Age from={startTime} suffix={true} />;
+    //   }
+    // },
     {
       id: "created_by",
       header: "Created By",
@@ -138,5 +140,17 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
         const user = getValue<User>();
         return user ? <Avatar user={user} circular /> : null;
       }
+    },
+    {
+      id: "Created At",
+      header: "Created At",
+      accessorFn: (row) => row.created_at,
+      cell: DateCell
+    },
+    {
+      id: "Updated At",
+      header: "Updated At",
+      accessorFn: (row) => row.updated_at,
+      cell: DateCell
     }
   ];
