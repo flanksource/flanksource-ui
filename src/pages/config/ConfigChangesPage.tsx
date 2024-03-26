@@ -15,6 +15,7 @@ import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { SortingState } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -37,6 +38,16 @@ export function ConfigChangesPage() {
   const pageSize = +(params.get("pageSize") ?? itemsPerPage);
   const page = +(params.get("pageIndex") ?? 0);
 
+  const sortBy = params.get("sortBy") ?? "created_at";
+  const sortDirection = params.get("sortDirection") === "asc" ? "asc" : "desc";
+
+  const sortState: SortingState = [
+    {
+      id: sortBy,
+      desc: sortDirection === "desc"
+    }
+  ];
+
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery(
       {
@@ -44,7 +55,9 @@ export function ConfigChangesPage() {
         severity,
         startsAt: startsAt,
         endsAt: endsAt,
-        changeType: changeType
+        changeType: changeType,
+        sortBy: sortBy,
+        sortDirection: sortDirection
       },
       page,
       pageSize,
@@ -133,6 +146,21 @@ export function ConfigChangesPage() {
                 isLoading={isLoading}
                 linkConfig
                 pagination={pagination}
+                sortBy={sortState}
+                setSortBy={(sort) => {
+                  const sortBy = Array.isArray(sort) ? sort : sort(sortState);
+                  if (sortBy.length === 0) {
+                    params.delete("sortBy");
+                    params.delete("sortDirection");
+                  } else {
+                    params.set("sortBy", sortBy[0]?.id);
+                    params.set(
+                      "sortDirection",
+                      sortBy[0].desc ? "desc" : "asc"
+                    );
+                  }
+                  setParams(params);
+                }}
               />
             </>
           )}

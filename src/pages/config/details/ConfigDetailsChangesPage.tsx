@@ -87,7 +87,20 @@ export function ConfigDetailsChangesPage() {
         pageSize: pageSize
       }),
     enabled: !!id,
-    keepPreviousData: true
+    keepPreviousData: true,
+    select: (data) => {
+      return {
+        ...data,
+        changes: data?.changes.map((change) => ({
+          ...change,
+          config: {
+            id: change.config_id,
+            name: change.name!,
+            type: change.type
+          }
+        }))
+      };
+    }
   });
 
   const changes = data?.changes ?? [];

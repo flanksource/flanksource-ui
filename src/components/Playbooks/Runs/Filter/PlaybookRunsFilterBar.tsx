@@ -44,7 +44,7 @@ export default function PlaybookRunsFilterBar({
           <div className="flex-1" />
           <Button
             text="Edit Playbook"
-            className="btn-white"
+            className="btn-white text-nowrap"
             icon={<FaEdit />}
             disabled={isLoading}
             onClick={() => setIsEditPlaybookFormOpen(true)}
@@ -53,6 +53,7 @@ export default function PlaybookRunsFilterBar({
             <>
               <Button
                 disabled={isLoading}
+                className="text-nowrap btn-primary"
                 text="Run Playbook"
                 onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
               />

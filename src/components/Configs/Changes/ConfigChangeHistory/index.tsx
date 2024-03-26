@@ -25,13 +25,14 @@ const columns: ColumnDef<ConfigChange>[] = [
     id: "config_id",
     accessorKey: "config_id",
     enableHiding: true,
-    cell: function ConfigLinkCell({ row, column }) {
-      const config = {
-        id: row.original.config_id,
-        name: row.original.name!,
-        type: row.original.type
-      };
-      return <ConfigLink config={config} />;
+    enableSorting: false,
+    cell: function ConfigLinkCell({ row }) {
+      return (
+        <ConfigLink
+          config={row.original.config}
+          configId={row.original.config_id}
+        />
+      );
     },
     size: 84
   },
