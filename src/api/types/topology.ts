@@ -17,6 +17,7 @@ export type TopologyProperty = {
   unit?: string;
   color?: string;
   namespace?: string;
+  url?: string;
 };
 
 export interface Component extends Timestamped, Namespaced {
