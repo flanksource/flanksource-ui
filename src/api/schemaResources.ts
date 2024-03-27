@@ -175,7 +175,12 @@ export async function getIntegrationsWithJobStatus(
   const res = await resolve(
     CanaryCheckerDB.get<SchemaResourceWithJobStatus[] | null>(
       // todo: add back created_by
-      `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}`
+      `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
     )
   );
   return res;
