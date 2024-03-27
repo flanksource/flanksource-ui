@@ -9,7 +9,7 @@ export type SearchResourcesRequest = {
 
 type SelectedResources = {
   id: string;
-  icon: string;
+  icon: string; // custom icon or type of resource -> type/agent/labels/namespace
   name: string;
   type: "check" | "component" | "config";
 };
