@@ -20,7 +20,7 @@ export default function NotificationsForm({
   onDeleted = () => {}
 }: NotificationsFormProps) {
   return (
-    <div className="flex flex-col gap-2 h-auto overflow-y-auto">
+    <div className="flex flex-col gap-2 h-full overflow-y-auto">
       <Formik
         initialValues={{
           ...notification,
@@ -28,7 +28,8 @@ export default function NotificationsForm({
           team: undefined,
           created_by: notification?.created_by?.id,
           created_at: undefined,
-          updated_at: undefined
+          updated_at: undefined,
+          ...(!notification?.id && { source: "UI" })
         }}
         onSubmit={(values) => onSubmit(values as Partial<Notification>)}
         validateOnBlur
@@ -38,7 +39,7 @@ export default function NotificationsForm({
           <Form
             onReset={handleReset}
             onSubmit={(e) => handleSubmit(e)}
-            className="flex flex-col overflow-y-auto gap-4"
+            className="flex flex-col flex-1 overflow-y-auto gap-4"
           >
             <div className="flex flex-col overflow-y-auto gap-4 p-4">
               <FormikTextInput name="title" label="Title" />
@@ -70,11 +71,13 @@ export default function NotificationsForm({
                     onDeleted={onDeleted}
                   />
                 )}
-                <Button
-                  type="submit"
-                  text={!!notification ? "Update" : "Save"}
-                  className="btn-primary"
-                />
+                {(notification?.source === "UI" || !notification?.source) && (
+                  <Button
+                    type="submit"
+                    text={!!notification ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                )}
               </div>
             </div>
           </Form>

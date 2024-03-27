@@ -1,9 +1,12 @@
 import { Row, SortingState, Updater } from "@tanstack/react-table";
+import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
+import { Modal } from "..";
 import { DataTable } from "../DataTable";
 import EditNotification from "./EditNotification";
 import {
   Notification,
+  notificationMostCommonErrorAtom,
   notificationsTableColumns
 } from "./notificationsTableColumns";
 
@@ -33,6 +36,14 @@ export default function NotificationsTable({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNotificationId, setSelectedNotificationId] =
     useState<string>();
+  const [mostCommonErrorNotification, setMostCommonErrorNotification] = useAtom(
+    notificationMostCommonErrorAtom
+  );
+  const modalTitle =
+    mostCommonErrorNotification?.title ??
+    mostCommonErrorNotification?.person?.name ??
+    mostCommonErrorNotification?.team?.name;
+
   const tableSortByState = useMemo(() => {
     return [
       {
@@ -42,8 +53,6 @@ export default function NotificationsTable({
     ];
   }, [sortBy, sortOrder]);
 
-  const columns = useMemo(() => notificationsTableColumns, []);
-
   const onSelectNotification = useCallback((row: Row<Notification>) => {
     const id = row.original.id;
     setSelectedNotificationId(id);
@@ -52,9 +61,20 @@ export default function NotificationsTable({
 
   return (
     <>
+      {mostCommonErrorNotification && (
+        <Modal
+          open={mostCommonErrorNotification !== undefined}
+          onClose={() => setMostCommonErrorNotification(undefined)}
+          title={`${modalTitle ?? "Most Common Error"}`}
+        >
+          <div className="flex flex-col p-4">
+            {mostCommonErrorNotification.most_common_error}
+          </div>
+        </Modal>
+      )}
       <DataTable
         data={notifications}
-        columns={columns}
+        columns={notificationsTableColumns}
         isLoading={isLoading}
         handleRowClick={onSelectNotification}
         stickyHead

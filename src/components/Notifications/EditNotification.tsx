@@ -44,7 +44,6 @@ export default function EditNotification({
       open={isModalOpen}
       onClose={() => setIsModalOpen(false)}
       title="Edit Notification"
-      bodyClass="flex flex-col w-full flex-1 h-full"
     >
       <NotificationsForm
         onDeleted={() => {

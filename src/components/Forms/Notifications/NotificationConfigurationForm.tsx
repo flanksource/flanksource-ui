@@ -1,20 +1,24 @@
+import { Notification } from "@flanksource-ui/components/Notifications/notificationsTableColumns";
+import { useFormikContext } from "formik";
 import FormikConnectionField from "../Formik/FormikConnectionField";
-import FormikTextInput from "../Formik/FormikTextInput";
+import FormikTextArea from "../Formik/FormikTextArea";
 
 export default function NotificationConfigurationForm() {
+  const { values } = useFormikContext<Notification>();
   return (
     <div className="flex flex-col space-y-2">
-      <FormikTextInput
-        name={`custom_services.0.name`}
-        label="Name"
-        hint="A unique name to identify this notification configuration"
-        required
-      />
-
-      <FormikConnectionField
-        name={`custom_services.0.connection`}
-        label="Connection"
-      />
+      {values.source === "UI" ? (
+        <FormikConnectionField
+          name={`custom_services.0.connection`}
+          label="Connection"
+        />
+      ) : (
+        <FormikTextArea
+          name={`custom_services.0.connection`}
+          label="Connection"
+          disabled
+        />
+      )}
     </div>
   );
 }
