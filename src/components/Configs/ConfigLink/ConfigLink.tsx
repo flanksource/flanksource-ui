@@ -4,8 +4,8 @@ import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
 import { getConfigsByID } from "../../../api/services/configs";
 import { ConfigItem } from "../../../api/types/configs";
-import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
 import { ConfigIcon } from "../../Icon/ConfigIcon";
+import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
 
 type ConfigLinkProps = ConfigIconProps & {
   config?: Pick<ConfigItem, "type" | "name" | "id"> | undefined;

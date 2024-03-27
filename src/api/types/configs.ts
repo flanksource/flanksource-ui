@@ -43,6 +43,7 @@ export function isCostsEmpty(costs: Costs) {
 export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   id: string;
   name: string;
+  status?: string;
   external_id?: string;
   config_class?: string;
   type?: string;
@@ -51,8 +52,8 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   tags?: Record<string, any>;
   allTags?: Record<string, any>;
   config?: Record<string, any>;
-  status?: string;
   description?: string | null;
+  related_id?: string;
   agent?: {
     id: string;
     name: string;
@@ -67,6 +68,11 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     changes?: number;
     playbook_runs?: number;
   };
+}
+
+export interface ConfigRelationships extends ConfigItem {
+  direction: "incoming" | "outgoing";
+  relation_type: "incoming" | "outgoing";
 }
 
 export interface ConfigTypeRelationships extends Timestamped {

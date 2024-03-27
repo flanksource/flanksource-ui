@@ -45,7 +45,7 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <span className="flex flex-row items-center gap-1">
+    <div className="flex flex-row items-center gap-1 flex-1 overflow-hidden">
       <span className="flex flex-row items-center gap-1">
         {showPrimaryIcon && (
           <Icon
@@ -67,8 +67,8 @@ export default function ConfigsTypeIcon({
             />
           )}
       </span>
-      {showLabel && <span> {value}</span>}
-      {children && <span>{children}</span>}
-    </span>
+      {showLabel && <span className="flex-1 overflow-hidden"> {value}</span>}
+      {children && <span className="flex-1 overflow-hidden">{children}</span>}
+    </div>
   );
 }

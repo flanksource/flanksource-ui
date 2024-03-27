@@ -66,7 +66,7 @@ import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
 import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsInsightsPage";
 import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
-import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelionshipsPage";
+import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelationshipsPage";
 import { HealthPage } from "./pages/health";
 import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";

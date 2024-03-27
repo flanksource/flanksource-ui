@@ -32,7 +32,7 @@ export const CardWidth: Record<keyof typeof Size, string> = {
 export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
   [ComponentStatus.unhealthy]: "border-red-300",
   [ComponentStatus.warning]: "border-orange-300"
-};
+} as const;
 
 interface IProps {
   size?: Size | string;
