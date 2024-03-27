@@ -50,6 +50,7 @@ export interface SchemaResourceWithJobStatus extends SchemaResourceI {
   job_time_end?: string;
   job_time_start?: string;
   last_runtime?: string;
+  job_last_failed?: string;
 }
 
 const invalidEndpoint = (api: string): never => {
