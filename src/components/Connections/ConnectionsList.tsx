@@ -27,7 +27,7 @@ const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
 
   return (
     <div className="flex flex-row space-x-2 items-center">
-      <Icon name={icon} />
+      <Icon name={icon} className="w-6 h-auto" />
       <div>{getValue()}</div>
     </div>
   );

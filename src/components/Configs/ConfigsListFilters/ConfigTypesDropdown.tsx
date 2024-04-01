@@ -41,7 +41,7 @@ export function ConfigTypesDropdown({
             name: d.type,
             icon: (
               <ConfigsTypeIcon
-                className="max-h-4 max-w-[1.25rem]"
+                showPrimaryIcon={false}
                 config={{ type: d.type }}
               />
             )

@@ -64,8 +64,8 @@ const config = {
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
     ? {
-        output: "standalone"
-      }
+      output: "standalone"
+    }
     : {}),
   experimental: {
     // increase the default timeout for the proxy from 30s to 10m to allow for
@@ -73,7 +73,7 @@ const config = {
     proxyTimeout: 1000 * 60 * 10,
     esmExternals: "loose"
   },
-  transpilePackages: ["monaco-editor"]
+  transpilePackages: ["monaco-editor", "@flanksource/icons"]
 };
 
 module.exports = config;

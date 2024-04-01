@@ -1,9 +1,12 @@
-import { isEmpty, memoize } from "lodash";
-import { Icons } from "../../icons";
+import { isEmpty } from "lodash";
+import { IconMap as Icons } from "@flanksource/icons/mi";
 import React, { memo } from "react";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
+  aws_s3: "aws-s3",
+  generic_webhook: "webhook",
+  azure_devops: "azure-devops",
   acr: "azure-acr",
   "add-comment": "talk",
   "activemq-icon": "activemq",
@@ -743,7 +746,7 @@ export const Icon: React.FC<IconProps> = memo(
   ({
     name = "",
     secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
-    className = "w-5 h-auto",
+    className = "h-6 max-w-6",
     alt = "",
     icon,
     prefix,
@@ -766,30 +769,34 @@ export const Icon: React.FC<IconProps> = memo(
       return null;
     }
 
-    const src =
-      typeof (icon as unknown as { src: string })?.src === "string"
-        ? (icon as unknown as { src: string }).src
-        : (icon as string);
+    // const src =
+    //   typeof (icon as unknown as { src: string })?.src === "string"
+    //     ? (icon as unknown as { src: string }).src
+    //     : (icon as string);
 
-    if (src) {
-      return (
-        <>
-          {prefix}
-          <img
-            alt={alt}
-            src={src}
-            className={`inline-block object-center ${className}`}
-            {...props}
-          />
-        </>
-      );
-    }
+    // if (src) {
+    //   return (
+    //     <>
+    //       {prefix}
+    //       <img
+    //         alt={alt}
+    //         src={src}
+    //         className={`inline-block object-center ${className}`}
+    //         {...props}
+    //       />
+    //     </>
+    //   );
+    // }
 
     const Icon = icon as unknown as React.FC<React.SVGProps<SVGSVGElement>>;
 
     return icon ? (
       <>
-        {prefix} <Icon className={className} {...props} />
+        {prefix}{" "}
+        <Icon
+          className={`inline-block object-center ${className}`}
+          {...props}
+        />
       </>
     ) : null;
   }

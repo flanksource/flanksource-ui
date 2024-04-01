@@ -4,10 +4,10 @@ import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
 import { getConfigsByID } from "../../../api/services/configs";
 import { ConfigItem } from "../../../api/types/configs";
-import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
 import { ConfigIcon } from "../../Icon/ConfigIcon";
 
-type ConfigLinkProps = {
+type ConfigLinkProps = ConfigIconProps & {
   config?: ConfigItem;
   configId?: string;
   className?: string;
@@ -20,7 +20,10 @@ export default function ConfigLink({
   config,
   configId,
   variant = "link",
-  className = "text-zinc-600 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis"
+  className = "text-zinc-600 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis",
+  showLabel = false,
+  showPrimaryIcon = true,
+  showSecondaryIcon = true
 }: ConfigLinkProps) {
   const { data } = useQuery(["config", configId, config], () => {
     if (config) {
@@ -44,7 +47,12 @@ export default function ConfigLink({
         }}
         className={clsx("flex flex-row gap-2", className)}
       >
-        <ConfigsTypeIcon config={data}>
+        <ConfigsTypeIcon
+          config={data}
+          showLabel={showLabel}
+          showPrimaryIcon={showPrimaryIcon}
+          showSecondaryIcon={showSecondaryIcon}
+        >
           <span className="overflow-hidden text-ellipsis flex-1">
             {data.name}
           </span>
