@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { ConfigItem } from "../../api/types/configs";
 import { Icon } from "../Icon";
 
-type ConfigIconProps = {
+export type ConfigIconProps = {
   config: Pick<ConfigItem, "type">;
   className?: string;
   showPrimaryIcon?: boolean;
@@ -13,7 +13,7 @@ type ConfigIconProps = {
 
 export default function ConfigsTypeIcon({
   config,
-  className = "max-h-5 max-w-[1.25rem]",
+  className = "w-5 h-auto",
   showPrimaryIcon = true,
   showSecondaryIcon = true,
   showLabel = false,
