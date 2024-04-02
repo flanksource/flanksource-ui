@@ -18,6 +18,13 @@ import {
 export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
+export const getConfigsTags = async () => {
+  const res = await ConfigDB.get<{ key: string; value: string }[]>(
+    "/config_tags"
+  );
+  return res.data ?? [];
+};
+
 export const getAllConfigsMatchingQuery = (query: string) => {
   let url = `/configs?`;
   if (query) {
