@@ -5,7 +5,11 @@ import { Toggle } from "../../Toggle";
 
 export const areDeletedConfigsHidden = atomWithStorage<"yes" | "no">(
   "areDeletedConfigsHidden",
-  "yes"
+  "yes",
+  undefined,
+  {
+    getOnInit: true
+  }
 );
 
 export function ConfigListToggledDeletedItems() {

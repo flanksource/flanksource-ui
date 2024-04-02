@@ -75,14 +75,14 @@ export default function ConfigList({
       );
       const { id: field, desc } = sortStateWithoutDeleteAt[0] ?? {};
       const order = desc ? "desc" : "asc";
-      if (field && order) {
+      if (field && order && field !== "type" && order !== "asc") {
         queryParams.set("sortBy", field);
         queryParams.set("sortOrder", order);
       } else {
         queryParams.delete("sortBy");
         queryParams.delete("sortOrder");
       }
-      setSearchParams(queryParams, { replace: true });
+      setSearchParams(queryParams);
       const sortByValue =
         typeof newSortBy === "function" ? newSortBy(sortBy) : newSortBy;
       if (sortByValue.length > 0) {

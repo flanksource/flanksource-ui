@@ -7,24 +7,24 @@ import { MemoryRouter } from "react-router-dom";
 import ConfigGroupByDropdown from "../ConfigGroupByDropdown";
 
 const server = setupServer(
-  rest.get("/api/db/configs", (req, res, ctx) => {
+  rest.get("/api/db/config_tags", (req, res, ctx) => {
     return res(
       ctx.json([
         {
-          id: "1",
-          name: "Config 1",
-          tags: {
-            tag1: "value1",
-            tag2: "value2"
-          }
+          key: "tag1",
+          value: "value1"
         },
         {
-          id: "2",
-          name: "Config 2",
-          tags: {
-            tag3: "value3",
-            tag4: "value4"
-          }
+          key: "tag2",
+          value: "value2"
+        },
+        {
+          key: "tag3",
+          value: "value3"
+        },
+        {
+          key: "tag4",
+          value: "value4"
         }
       ])
     );
