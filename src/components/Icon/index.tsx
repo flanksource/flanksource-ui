@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import { IconMap as Icons } from "@flanksource/icons/mi";
 import React, { memo } from "react";
+import { IconType } from "@flanksource/icons";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
@@ -659,7 +660,7 @@ export var prefixes: IconMap = {
   wipe: "trash"
 };
 
-const find = function (name?: string) {
+const find = function (name?: string): IconType | undefined {
   if (isEmpty(name) || !name) {
     return undefined;
   }
@@ -690,7 +691,7 @@ const find = function (name?: string) {
   return undefined;
 };
 
-export const findByName = function (name?: string): string | undefined {
+export const findByName = function (name?: string): IconType | undefined {
   if (isEmpty(name) || !name) {
     return undefined;
   }
@@ -738,8 +739,9 @@ export type IconProps = {
   secondary?: string;
   className?: string;
   alt?: string;
-  icon?: string | { src: string };
+  icon?: string;
   prefix?: any;
+  size?: any;
 };
 
 export const Icon: React.FC<IconProps> = memo(
@@ -759,41 +761,25 @@ export const Icon: React.FC<IconProps> = memo(
     if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
       icon = name;
     }
-    icon = findByName(name!);
-    if (icon == null) {
-      icon = findByName(secondary);
+    let iconType = findByName(name!);
+    if (iconType == null) {
+      iconType = findByName(secondary);
     }
 
-    if (icon == null) {
+    if (iconType == null) {
       console.log("Icon not found: " + name);
       return null;
     }
 
-    // const src =
-    //   typeof (icon as unknown as { src: string })?.src === "string"
-    //     ? (icon as unknown as { src: string }).src
-    //     : (icon as string);
-
-    // if (src) {
-    //   return (
-    //     <>
-    //       {prefix}
-    //       <img
-    //         alt={alt}
-    //         src={src}
-    //         className={`inline-block object-center ${className}`}
-    //         {...props}
-    //       />
-    //     </>
-    //   );
-    // }
-
-    const Icon = icon as unknown as React.FC<React.SVGProps<SVGSVGElement>>;
+    const IconSVG = iconType as unknown as React.FC<
+      React.SVGProps<SVGSVGElement>
+    >;
 
     return icon ? (
       <>
         {prefix}{" "}
-        <Icon
+        <IconSVG
+          size="auto"
           className={`inline-block object-center ${className}`}
           {...props}
         />

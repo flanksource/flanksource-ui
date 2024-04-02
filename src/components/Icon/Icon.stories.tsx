@@ -159,7 +159,7 @@ export const Primary: Story = {
   render: () => (
     <div className="flex flex-row flex-wrap">
       {icons.map((icon) => (
-        <div>
+        <div key={icon}>
           {icon}: <Icon name={icon} /> &nbsp;
           <br />
         </div>
