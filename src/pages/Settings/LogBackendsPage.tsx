@@ -30,9 +30,12 @@ export function LogBackendsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/">Log Backends</BreadcrumbRoot>,
+              <BreadcrumbRoot link="/settings/" key="breadcrumb-1">
+                Log Backends
+              </BreadcrumbRoot>,
               <button
                 type="button"
+                key="breadcrumb-2"
                 className=""
                 onClick={() => setIsOpen(true)}
               >

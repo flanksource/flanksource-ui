@@ -85,11 +85,13 @@ export default function ConfigInsightsDetailsModal({
               <ConfigInsightsIcon analysis={configInsight} />
               <span>{configInsight.analyzer}</span>
             </div>,
-            <ConfigLink
-              className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
-              config={configInsight.config}
-              key={"config"}
-            />
+            configInsight.config != null ? (
+              <ConfigLink
+                className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+                config={configInsight.config}
+                key={"config"}
+              />
+            ) : null
           ]}
         />
       }

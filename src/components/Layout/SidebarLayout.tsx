@@ -15,8 +15,11 @@ import { useOuterClick } from "../../lib/useOuterClick";
 import { features } from "../../services/permissions/features";
 import { $ArrayElemType } from "../../types/utility";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
-import { Icon } from "../Icon";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
+import {
+  MissionControlLogoWhite,
+  MissionControlWhite
+} from "@flanksource/icons/mi";
 
 interface Props {
   navigation: NavigationItems;
@@ -49,8 +52,8 @@ function NavLabel({
       <Icon
         className={clsx(
           active
-            ? "text-gray-100 font-bold"
-            : "text-gray-200 group-hover:text-gray-100",
+            ? "fill-white font-bold"
+            : "fill-zinc-200 group-hover:fill-zinc-50",
           "flex-shrink-0",
           iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
         )}
@@ -319,16 +322,13 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
           >
             {collapseSidebar ? (
               <div className="flex border-b border-b-gray-500 h-16 shadow">
-                <Icon
-                  name="mission-control-white"
-                  className="w-10 h-auto m-auto fill-white stroke-white"
-                />
+                <MissionControlWhite className="w-auto h-auto" size="auto" />
               </div>
             ) : (
               <div className="p-3 pl-5 border-b border-b-gray-500 shadow">
-                <Icon
-                  name="mission-control-logo-white"
-                  className="h-10 stroke-white"
+                <MissionControlLogoWhite
+                  className="w-auto h-auto"
+                  size="auto"
                 />
               </div>
             )}

@@ -50,6 +50,7 @@ export function DetailsTable({
       <tbody>
         {data.map((item, index) => (
           <tr
+            key={index}
             className={clsx(
               index !== data.length - 1
                 ? "border-b border-dashed border-gray-200"

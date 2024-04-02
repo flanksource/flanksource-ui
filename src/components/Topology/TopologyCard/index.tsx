@@ -168,7 +168,7 @@ export function TopologyCard({
         <div className="flex flex-1 gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
           <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
             <h3 className="text-gray-color text-2xsi leading-1.21rel">
-              <Icon name={topology.icon} className="h-6" />
+              <Icon name={topology.icon} className="h-6 w-auto" />
             </h3>
           </div>
           <div className="flex flex-col flex-1 m-auto overflow-hidden">

@@ -96,6 +96,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
       return;
     }
     fetchTeamMembers(teamId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamId]);
 
   return (

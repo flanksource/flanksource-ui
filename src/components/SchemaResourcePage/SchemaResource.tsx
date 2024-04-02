@@ -39,9 +39,7 @@ export function SchemaResource({
   return (
     <>
       <Head
-        prefix={`Settings - ${name} ${
-          resource?.name ? ` - ${resource.name}` : ""
-        } `}
+        prefix={`${name} ${resource?.name ? ` - ${resource.name}` : ""} `}
       />
       <SearchLayout
         title={
@@ -67,7 +65,7 @@ export function SchemaResource({
           )}
           {!resource && !isLoading && !error && (
             <div className="flex w-full flex-1 items-center justify-center text-gray-500">
-              <EmptyState title="No resource found" />
+              <EmptyState title="No resources found" />
             </div>
           )}
         </div>

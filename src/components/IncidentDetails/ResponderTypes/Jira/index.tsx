@@ -53,7 +53,7 @@ export const Jira = ({
         setJiraProjectType(item);
       })
       .catch((err) => {});
-  }, []);
+  }, [setValue, teamId]);
 
   useEffect(() => {
     const obj = {
@@ -74,7 +74,7 @@ export const Jira = ({
         }
       });
     });
-  }, [defaultValues, values]);
+  }, [allValues, control, defaultValues, setValue, values]);
 
   return (
     <div className={clsx(className)} {...rest}>

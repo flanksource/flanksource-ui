@@ -14,9 +14,7 @@ import {
   formatDateToMonthDay,
   formatDateToMonthDayTime,
   formatDateToTime,
-  formatDateToYear,
-  formatISODate,
-  subtractDateFromNow
+  formatDateToYear
 } from "../../../utils/date";
 import { HealthCheck } from "../../../api/types/health";
 import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
@@ -53,15 +51,15 @@ function getUpdatedFormat(start: string) {
   return formatDateToTime;
 }
 
-const getStartValue = (start: string) => {
-  if (!start.includes("mo")) {
-    return start;
-  }
+// const getStartValue = (start: string) => {
+//   if (!start.includes("mo")) {
+//     return start;
+//   }
 
-  return formatISODate(
-    subtractDateFromNow(+(start.match(/\d/g)?.[0] ?? "1"), "month")
-  );
-};
+//   return formatISODate(
+//     subtractDateFromNow(+(start.match(/\d/g)?.[0] ?? "1"), "month")
+//   );
+// };
 
 type CanaryStatusChartProps = {
   check: Partial<HealthCheck>;

@@ -48,6 +48,7 @@ const Login: NextPage = () => {
         .getLoginFlow({ id })
         .then(({ data }) => setFlow(data))
         .catch(handleError),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

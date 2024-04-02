@@ -116,7 +116,7 @@ export function FeatureFlagsPage() {
 
   useEffect(() => {
     fetchAllProperties();
-  }, []);
+  });
 
   useEffect(() => {
     if (isOpen) {
@@ -132,10 +132,14 @@ export function FeatureFlagsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/feature-flags">
+              <BreadcrumbRoot
+                link="/settings/feature-flags"
+                key="feature-flags"
+              >
                 Feature Flags
               </BreadcrumbRoot>,
               <button
+                key="add"
                 type="button"
                 className=""
                 onClick={() => setIsOpen(true)}

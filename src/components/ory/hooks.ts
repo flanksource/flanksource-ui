@@ -1,7 +1,6 @@
 import { AxiosError } from "axios";
 import Router from "next/router";
 import { DependencyList, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import ory from "./sdk";
 
 export const HandleError = (
@@ -24,7 +23,7 @@ export const HandleError = (
 
     switch (error.response?.status) {
       case 400: {
-        if (responseData.error?.id == "session_already_available") {
+        if (responseData.error?.id === "session_already_available") {
           await Router.push("/");
           return Promise.resolve();
         }

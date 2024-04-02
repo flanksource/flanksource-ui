@@ -36,7 +36,6 @@ const Option: ComponentType<
       <div
         className="text-gray-900 cursor-pointer relative p-2 text-sm"
         id="listbox-option-0"
-        role="option"
       >
         <div className="flex flex-col">
           {data.name && (
@@ -133,6 +132,7 @@ export const ConfigItem = ({
         });
       return;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [type]
   );
 
@@ -155,6 +155,7 @@ export const ConfigItem = ({
         sentDependentOptions(selectedOption);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, options]);
 
   useEffect(() => {
@@ -177,10 +178,10 @@ export const ConfigItem = ({
         }) || [];
       setOptions(items);
     } catch (ex) {
-      console.warn("please revisit your json paths of items, name & value");
       console.error(ex);
       setOptions([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const getConfigDetails = async (id: string) => {
@@ -194,6 +195,7 @@ export const ConfigItem = ({
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedLoadOptions = useCallback(debounce(loadOptions, 500), [
     loadOptions
   ]);

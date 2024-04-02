@@ -213,7 +213,9 @@ export function IncidentDetailsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
+              <BreadcrumbRoot key="incidents" link="/incidents">
+                Incidents
+              </BreadcrumbRoot>,
               !isLoading && incident && (
                 <BreadcrumbChild>
                   <EditableIncidentTitleBreadcrumb

@@ -79,7 +79,7 @@ export const incidentListColumns: ColumnDef<IncidentSummary, any>[] = [
       return (
         <div className="flex flex-row gap-2">
           {responders?.slice(0, 5).map((responder) => {
-            return <Avatar user={responder} />;
+            return <Avatar user={responder} key={responder.id} />;
           })}
         </div>
       );

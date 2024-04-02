@@ -49,8 +49,10 @@ export function FormikCompactEnvVarSource({
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (field.value === getValue()) {
       return;
@@ -82,7 +84,7 @@ export function FormikCompactEnvVarSource({
       name: ""
     });
     setType("Static");
-  }, []);
+  });
 
   const getValue = () => {
     let value = "";

@@ -6,7 +6,6 @@ import { getIn, useFormikContext } from "formik";
 import { useEffect } from "react";
 import FormikScheduleField from "../Formik/FormikScheduleField";
 import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
-import FormikTextArea from "../Formik/FormikTextArea";
 
 type ExecHealthFormEditorProps = {
   fieldName: string;

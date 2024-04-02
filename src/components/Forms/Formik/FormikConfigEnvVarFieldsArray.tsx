@@ -32,7 +32,7 @@ export default function FormikConfigEnvVarFieldsArray({
             {fieldValue &&
               fieldValue.length > 0 &&
               fieldValue.map((_: any, index: number) => (
-                <div className={className}>
+                <div className={className} key={index}>
                   <div className="flex flex-col flex-1">
                     <FormikConfigEnvVarFields name={`${name}.${index}`} />
                   </div>

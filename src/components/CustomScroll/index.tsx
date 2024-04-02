@@ -23,6 +23,7 @@ export const CustomScroll = ({
 
   useEffect(() => {
     setShowMore(minChildCount < items.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
 
   const getCount = () => {

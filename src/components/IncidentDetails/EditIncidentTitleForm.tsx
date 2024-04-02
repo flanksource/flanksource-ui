@@ -19,7 +19,6 @@ export function EditIncidentTitleForm({
         title: incident.title
       }}
       onSubmit={(values) => {
-        console.log(values);
         setIsEditing(false);
         updateHandler(values);
       }}

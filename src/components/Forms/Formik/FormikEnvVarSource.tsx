@@ -55,6 +55,7 @@ export function FormikEnvVarSource({
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export function FormikEnvVarSource({
       name: ""
     });
     setType("Static");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getValue = () => {

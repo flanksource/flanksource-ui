@@ -65,6 +65,8 @@ export function SchemaResourceEdit({
   schedule,
   resourceInfo
 }: Props) {
+  //FIXME
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabled, setDisabled] = useState(false);
   const keyRef = useRef(v4());
   const labelsKeyRef = useRef(v4());

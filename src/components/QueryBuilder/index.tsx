@@ -121,6 +121,7 @@ const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
     if (query) {
       handleRunQuery(query);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (query: string) => {
