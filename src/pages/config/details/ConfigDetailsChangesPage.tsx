@@ -21,7 +21,7 @@ export function ConfigDetailsChangesPage() {
     downstream: "true",
     upstream: "false"
   });
-  const change_type = params.get("change_type") ?? undefined;
+  const change_type = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;

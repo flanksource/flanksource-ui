@@ -48,6 +48,23 @@ declare module "react-select/dist/declarations/src/Select" {
 
 /**
  *
+ * Takes a query param value that looks like this: key:1,key2:-1 and converts it
+ * to key,!key2 that can be used in a query string to filter the results.
+ *
+ */
+export function tristateOutputToQueryParamValue(param: string | undefined) {
+  return param
+    ?.split(",")
+    .map((type) => {
+      const [changeType, symbol] = type.split(":");
+      const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
+      return `${symbolFilter}${changeType}`;
+    })
+    .join(",");
+}
+
+/**
+ *
  * Takes a tristate output (key:1,key2:-1) and converts it to a query filter param
  * that looks like this: &key.filter=key,!key2 that can be used in a query
  * string to filter the results.
@@ -60,14 +77,7 @@ export function tristateOutputToQueryFilterParam(
   if (param === undefined) {
     return "";
   }
-  const paramValue = param
-    ?.split(",")
-    .map((type) => {
-      const [changeType, symbol] = type.split(":");
-      const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
-      return `${symbolFilter}${changeType}`;
-    })
-    .join(",");
+  const paramValue = tristateOutputToQueryParamValue(param);
   return `&${key}.filter=${paramValue}`;
 }
 
