@@ -1,4 +1,7 @@
-import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
+import {
+  tristateOutputToQueryFilterParam,
+  tristateOutputToQueryParamValue
+} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
 import { AnyMessageParams } from "yup/lib/types";
 import { Catalog, Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
@@ -195,8 +198,12 @@ export async function getConfigsRelatedChanges({
   if (configType && configType !== "all") {
     queryParams.set("config_type", configType);
   }
+  console.log("changeType", changeType);
   if (changeType && changeType !== "all") {
-    queryParams.set("type", changeType);
+    const value = tristateOutputToQueryParamValue(changeType);
+    if (value) {
+      queryParams.set("type", value);
+    }
   }
   if (from) {
     queryParams.set("from", from);
@@ -235,8 +242,6 @@ export async function getConfigsRelatedChanges({
     include_deleted_configs.toString()
   );
 
-  const queryString = queryParams.toString();
-  console.log(queryString);
   const res = await Catalog.get<CatalogChangesSearchResponse>(
     `/changes?${queryParams}`,
     {}
