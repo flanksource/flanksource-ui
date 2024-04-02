@@ -82,7 +82,10 @@ export function ConfigListPage() {
   });
 
   const isLoading = isLoadingConfigList || isLoadingSummary || isRefetching;
-  const refetch = refetchSummary || isRefetchingConfigList;
+
+  const refetch = showConfigSummaryList
+    ? refetchSummary
+    : isRefetchingConfigList;
 
   const configList = useMemo(() => {
     if (searchParams.get("query")) {
