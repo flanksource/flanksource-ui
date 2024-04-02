@@ -10,6 +10,7 @@ import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { formatConfigTags } from "./Utils/formatConfigTags";
+import { Status } from "../../Status";
 
 type Props = {
   configId: string;
@@ -26,7 +27,35 @@ export function ConfigDetails({ configId }: Props) {
     return formatConfigTags(configDetails);
   }, [configDetails]);
 
-  const namespace = configDetails?.tags?.["namespace"];
+  var types = [];
+  if (!isLoading && configDetails != null) {
+    types.push({
+      label: "Type",
+      value: (
+        <Link
+          to={{
+            pathname: "/catalog",
+            search: `type=${configDetails.type}`
+          }}
+        >
+          <ConfigsTypeIcon
+            config={configDetails}
+            showLabel
+            showPrimaryIcon
+            showSecondaryIcon
+          />
+        </Link>
+      )
+    });
+
+    if (!configDetails.type?.endsWith(configDetails.config_class || "")) {
+      types.push({
+        label: "Class",
+        value: configDetails?.config_class
+      });
+    }
+  }
+
   return (
     <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
       {isLoading ? (
@@ -37,26 +66,24 @@ export function ConfigDetails({ configId }: Props) {
             items={[
               {
                 label: "Name",
-                value: (
-                  <ConfigsTypeIcon config={configDetails}>
-                    {configDetails.name}
-                  </ConfigsTypeIcon>
-                )
+                value: configDetails.name
               }
             ]}
           />
-          {namespace && (
+          {configDetails.status && (
             <DisplayDetailsRow
               items={[
                 {
-                  label: "Namespace",
+                  label: "Status",
                   value: (
-                    <Link
-                      className="link"
-                      to={`/catalog?tag=namespace__%3A__${namespace}`}
-                    >
-                      {namespace}
-                    </Link>
+                    <>
+                      <Status status={configDetails.status} />
+                      {configDetails.description ? (
+                        <div className="ml-1 text-gray-600 text-sm">
+                          {configDetails.description}
+                        </div>
+                      ) : null}
+                    </>
                   )
                 }
               ]}
@@ -86,48 +113,30 @@ export function ConfigDetails({ configId }: Props) {
                     )}
                   </>
                 )
-              },
-              {
-                label: "Updated",
-                value: <Age from={configDetails.updated_at} />
-              },
-              ...(configDetails.deleted_at
-                ? [
-                    {
-                      label: "Deleted",
-                      value: <Age from={configDetails.deleted_at} />
-                    }
-                  ]
-                : [])
+              }
             ]}
           />
 
           <DisplayDetailsRow
             items={[
               {
-                label: "Type",
-                value: (
-                  <Link
-                    to={{
-                      pathname: "/catalog",
-                      search: `type=${configDetails.type}`
-                    }}
-                  >
-                    <ConfigsTypeIcon
-                      config={configDetails}
-                      showLabel
-                      showPrimaryIcon
-                      showSecondaryIcon
-                    />
-                  </Link>
-                )
+                label: "Updated",
+                value: <Age from={configDetails.updated_at} suffix={true} />
               },
-              {
-                label: "Class",
-                value: configDetails.config_class
-              }
+              ...(configDetails.deleted_at
+                ? [
+                    {
+                      label: "Deleted",
+                      value: (
+                        <Age from={configDetails.deleted_at} suffix={true} />
+                      )
+                    }
+                  ]
+                : [])
             ]}
           />
+
+          <DisplayDetailsRow items={types} />
 
           {!isCostsEmpty(configDetails) && (
             <DisplayDetailsRow
@@ -139,7 +148,6 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
-
           <DisplayGroupedProperties items={displayDetails} />
         </>
       ) : (
