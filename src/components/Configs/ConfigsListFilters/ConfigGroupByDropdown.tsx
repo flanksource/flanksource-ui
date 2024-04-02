@@ -1,7 +1,8 @@
+import { getConfigsTags } from "@flanksource-ui/api/services/configs";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { BiLabel } from "react-icons/bi";
 import { useSearchParams } from "react-router-dom";
-import { useAllConfigsQuery } from "../../../api/query-hooks";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type ConfigGroupByDropdownProps = {
@@ -56,39 +57,46 @@ export default function ConfigGroupByDropdown({
   const [params, setParams] = useSearchParams({
     [searchParamKey]: value ?? "type"
   });
+
   const groupType = decodeURIComponent(
     params.get("groupByProp") || params.get("groupBy") || "type"
   );
 
-  const { data: allConfigs, isLoading } = useAllConfigsQuery({}, {});
+  const { data: tags, isLoading } = useQuery({
+    queryKey: ["configs", "tags", "all"],
+    queryFn: getConfigsTags,
+    enabled: true
+  });
 
   const groupByOptions = useMemo(() => {
-    if (!allConfigs?.data) {
+    if (!tags || tags.length === 0) {
       return Object.values(items).sort((a, b) => {
         return a.name?.localeCompare(b.name);
       });
     }
-    const newItems = items;
-    allConfigs?.data?.forEach((d) => {
-      return Object.entries(d?.tags || {})
-        .filter(([key]) => {
-          return key !== "toString";
+    return (
+      tags
+        // ensure that the tags are unique
+        .filter(
+          (tag, index, self) =>
+            self.findIndex((t) => t.key === tag.key) === index
+        )
+        ?.map(
+          (tag) =>
+            ({
+              id: tag.key,
+              name: tag.key,
+              description: tag.key,
+              value: tag.key,
+              tag: true,
+              icon: <BiLabel />
+            } satisfies GroupOptionsType[number])
+        )
+        .sort((a, b) => {
+          return a.name?.localeCompare(b.name);
         })
-        .forEach(([key]) => {
-          newItems[`tag-${key}`] = {
-            id: key,
-            name: key,
-            icon: <BiLabel />,
-            description: key,
-            value: key,
-            tag: true
-          };
-        });
-    });
-    return Object.values({ ...newItems }).sort((a, b) => {
-      return a.name?.localeCompare(b.name);
-    });
-  }, [allConfigs?.data]);
+    );
+  }, [tags]);
 
   const groupByChange = (value: string | undefined) => {
     if (value === undefined || value === "no_grouping") {
