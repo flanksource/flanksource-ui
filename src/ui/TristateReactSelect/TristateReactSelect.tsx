@@ -64,7 +64,7 @@ export function tristateOutputToQueryFilterParam(
     ?.split(",")
     .map((type) => {
       const [changeType, symbol] = type.split(":");
-      const symbolFilter = symbol.toString() === "-1" ? "!" : "";
+      const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
       return `${symbolFilter}${changeType}`;
     })
     .join(",");
