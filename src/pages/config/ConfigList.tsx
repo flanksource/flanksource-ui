@@ -21,16 +21,27 @@ import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function ConfigListPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    sortBy: "type",
+    sortOrder: "asc",
+    groupBy: "no_grouping"
+  });
+
   const navigate = useNavigate();
 
-  const search = searchParams.get("search");
-  const tag = decodeURIComponent(searchParams.get("tag") || "");
-  const groupByProp = decodeURIComponent(searchParams.get("groupByProp") ?? "");
+  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
+
+  const hideDeletedConfigs = deletedConfigsHidden === "yes";
+
+  console.log(deletedConfigsHidden, hideDeletedConfigs);
+
+  const search = searchParams.get("search") ?? undefined;
+  const tag = searchParams.get("tag")
+    ? decodeURIComponent(searchParams.get("tag")!)
+    : undefined;
+  const groupByProp = searchParams.get("groupByProp") ?? "";
   const sortBy = searchParams.get("sortBy");
   const sortOrder = searchParams.get("sortOrder");
-  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
-  const hideDeletedConfigs = deletedConfigsHidden === "yes";
   const configType = searchParams.get("configType") ?? undefined;
   // we want to get type and redirect to configType
   const type = searchParams.get("type") ?? undefined;
@@ -48,8 +59,8 @@ export function ConfigListPage() {
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
-    () => !configType && !search && !tag && !groupByProp,
-    [configType, groupByProp, search, tag]
+    () => !configType && !search && !groupByProp,
+    [configType, groupByProp, search]
   );
 
   const {

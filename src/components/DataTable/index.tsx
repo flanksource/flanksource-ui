@@ -201,6 +201,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     enableSortingRemoval: true,
     enableHiding: true,
     onSortingChange: (sorting) => {
+      console.log("sorting", sorting);
       if (onTableSortByChanged) {
         onTableSortByChanged(sorting);
       } else {
