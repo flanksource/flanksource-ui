@@ -1,7 +1,6 @@
-import { Icons } from "../../icons";
 import { Icon } from "../Icon";
 import { Select } from "../Select";
-
+import { IconMap as Icons } from "@flanksource/icons/mi";
 const iconList = Object.entries(Icons).map(([name, _icon]) => ({
   value: name,
   label: (

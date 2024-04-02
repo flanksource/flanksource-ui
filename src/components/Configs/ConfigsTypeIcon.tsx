@@ -3,7 +3,7 @@ import { ConfigItem } from "../../api/types/configs";
 import { Icon } from "../Icon";
 
 export type ConfigIconProps = {
-  config: Pick<ConfigItem, "type">;
+  config?: Pick<ConfigItem, "type">;
   className?: string;
   showPrimaryIcon?: boolean;
   showSecondaryIcon?: boolean;
@@ -19,11 +19,11 @@ export default function ConfigsTypeIcon({
   showLabel = false,
   children
 }: ConfigIconProps) {
-  const { type: configType } = config;
+  const { type: configType } = config ? config : { type: null };
 
   const [primaryIcon, secondaryIcon] = useMemo(() => {
     if (configType?.split("::").length === 1) {
-      return [configType, undefined];
+      return [configType, null];
     }
     const primaryIcon = configType?.split("::")[0];
     let secondaryIcon = configType;
@@ -54,14 +54,18 @@ export default function ConfigsTypeIcon({
             className={className}
           />
         )}
-        {showSecondaryIcon && primaryIcon !== secondaryIcon && (
-          <Icon
-            name={secondaryIcon}
-            secondary={secondaryIcon}
-            className={className}
-            prefix={showPrimaryIcon ? <span className="1">/</span> : undefined}
-          />
-        )}
+        {showSecondaryIcon &&
+          secondaryIcon &&
+          primaryIcon !== secondaryIcon && (
+            <Icon
+              name={secondaryIcon}
+              secondary={secondaryIcon}
+              className={className}
+              prefix={
+                showPrimaryIcon ? <span className="1">/</span> : undefined
+              }
+            />
+          )}
       </span>
       {showLabel && <span> {value}</span>}
       {children && <span>{children}</span>}
