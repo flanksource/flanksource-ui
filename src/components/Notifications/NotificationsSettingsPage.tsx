@@ -51,10 +51,11 @@ export default function NotificationsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/jobs">
+              <BreadcrumbRoot key="notifications" link="/settings/jobs">
                 Notifications
               </BreadcrumbRoot>,
               <button
+                key="notifications-add"
                 type="button"
                 className=""
                 onClick={() => setIsOpen(true)}

@@ -84,7 +84,7 @@ export function IncidentWorkflow({
       data[key] = incidentStatusItems[key];
     });
     return data;
-  }, [value, incidentStatusItems]);
+  }, [value]);
 
   useEffect(() => {
     if (!incident) {

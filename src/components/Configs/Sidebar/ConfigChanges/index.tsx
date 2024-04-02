@@ -64,6 +64,7 @@ export function ConfigChangesDetails({ configID }: Props) {
       return;
     }
     setChanges([...changes, ...data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {

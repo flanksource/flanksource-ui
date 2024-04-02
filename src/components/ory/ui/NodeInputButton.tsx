@@ -20,6 +20,7 @@ export function NodeInputButton({
     if (attributes.onclick) {
       e.stopPropagation();
       e.preventDefault();
+      // eslint-disable-next-line no-new-func
       const run = new Function(attributes.onclick);
       run();
       return;

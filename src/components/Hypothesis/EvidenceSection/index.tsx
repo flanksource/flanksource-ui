@@ -131,9 +131,7 @@ const EvidenceAccordion: React.FC<{
             )}
           </div>
         </button>
-        <div>
-          <ConfigLink config={config} />
-        </div>
+        <div>{config && <ConfigLink config={config} />}</div>
       </div>
       {expanded && children}
     </div>

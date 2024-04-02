@@ -89,9 +89,12 @@ export function IncidentListPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/incidents">Incidents</BreadcrumbRoot>,
+              <BreadcrumbRoot link="/incidents" key="/incidents">
+                Incidents
+              </BreadcrumbRoot>,
               <button
                 type="button"
+                key="incidents-add"
                 className=""
                 onClick={() => setIncidentModalIsOpen(true)}
               >

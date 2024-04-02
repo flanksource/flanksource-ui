@@ -1,4 +1,6 @@
 import { Configuration, FrontendApi } from "@ory/client";
 import { edgeConfig } from "@ory/integrations/next";
 
-export default new FrontendApi(new Configuration(edgeConfig));
+const frontendApi = new FrontendApi(new Configuration(edgeConfig));
+
+export default frontendApi;

@@ -53,7 +53,7 @@ export const MicrosoftPlanner = ({
         setMsProjectType(item);
       })
       .catch((err) => {});
-  }, []);
+  }, [setValue, teamId]);
 
   useEffect(() => {
     const obj = {
@@ -74,6 +74,7 @@ export const MicrosoftPlanner = ({
         }
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues, values]);
 
   return (

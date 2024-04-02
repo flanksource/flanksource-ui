@@ -62,7 +62,12 @@ export default function NotificationsRecipientsTabs() {
       >
         {subjectTabs.map(({ label, value }) => {
           return (
-            <Tab label={label} value={value} className="flex flex-col p-2">
+            <Tab
+              label={label}
+              value={value}
+              key={label}
+              className="flex flex-col p-2"
+            >
               <div className={`flex flex-col gap-4`}>
                 {activeTab === "Person" ? (
                   <FormikPeopleDropdown name={"person_id"} />

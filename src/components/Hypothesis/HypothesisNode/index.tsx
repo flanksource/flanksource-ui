@@ -60,7 +60,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
       setShowComments(node.id === recentlyAddedHypothesisId);
       setRecentlyAddedHypothesisId(null);
     }
-  }, [recentlyAddedHypothesisId, node.id]);
+  }, [recentlyAddedHypothesisId, setRecentlyAddedHypothesisId, node.id]);
 
   const chldButLast = (node?.children || []).slice(0, -1);
   const chldLast = (node?.children || []).slice(-1)[0];

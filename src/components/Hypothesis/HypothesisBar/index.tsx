@@ -108,7 +108,12 @@ export function HypothesisBar({
       onToggleExpand(hypothesis.id === recentlyAddedHypothesisId);
       setRecentlyAddedHypothesisId(null);
     }
-  }, [recentlyAddedHypothesisId, hypothesis.id]);
+  }, [
+    recentlyAddedHypothesisId,
+    hypothesis.id,
+    onToggleExpand,
+    setRecentlyAddedHypothesisId
+  ]);
 
   useEffect(() => {
     const subscription = watch((value) => {

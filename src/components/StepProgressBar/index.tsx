@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 export type Step = {
   position: number;
   label: string;
@@ -116,10 +117,7 @@ export const StepProgressBar = ({ steps, ...rest }: StepProgressBarProps) => {
 
   return (
     <nav aria-label="Progress" {...rest}>
-      <ol
-        role="list"
-        className="border border-gray-300 rounded-md divide-y divide-gray-300 md:flex md:divide-y-0"
-      >
+      <ol className="border border-gray-300 rounded-md divide-y divide-gray-300 md:flex md:divide-y-0">
         {steps.map(fetchStepOption)}
       </ol>
     </nav>

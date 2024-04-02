@@ -46,6 +46,7 @@ export function DropdownWithActions<T extends IItem>({
     );
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getOptions = useCallback(
     debounce(
       (
@@ -94,6 +95,7 @@ export function DropdownWithActions<T extends IItem>({
 
   useEffect(() => {
     loadDefaultOptions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dependentValue]);
 
   return creatable ? (

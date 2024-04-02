@@ -74,7 +74,7 @@ export function CanaryTable({
     );
   }, [params, checks, groupBy, groupSingleItems]);
 
-  const { rows, meta } = useMemo(
+  const { rows } = useMemo(
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
     [hideNamespacePrefix, tableData, pivotBy, pivotLookup]
   );

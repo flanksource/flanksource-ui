@@ -13,7 +13,7 @@ const Template: ComponentStory<typeof CustomScroll> = (
 export const Variant1 = Template.bind({});
 Variant1.args = {
   children: new Array(50).fill(0).map((_, i) => {
-    return <div>option list item {i + 1}</div>;
+    return <div key={i}>option list item {i + 1}</div>;
   }),
   minChildCount: 4,
   maxHeight: "150px",

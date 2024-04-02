@@ -8,7 +8,7 @@ import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
 import { ConfigIcon } from "../../Icon/ConfigIcon";
 
 type ConfigLinkProps = ConfigIconProps & {
-  config?: ConfigItem;
+  config?: Pick<ConfigItem, "type" | "name" | "id"> | undefined;
   configId?: string;
   className?: string;
   configTypeSecondary?: string;

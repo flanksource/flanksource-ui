@@ -10,6 +10,7 @@ export function NodeInputDefault(props: NodeInputProps) {
     // and the functions are available on the global window level. Unfortunately, there
     // is currently no better way than executing eval / function here at this moment.
     if (attributes.onclick) {
+      // eslint-disable-next-line no-new-func
       const run = new Function(attributes.onclick);
       run();
     }

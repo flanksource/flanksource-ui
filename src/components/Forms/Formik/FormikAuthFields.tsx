@@ -68,8 +68,8 @@ export default function FormikAuthFields({
           defaultValue="None"
           value={selectedMethod}
           onChange={(v) => {
-            setSelectedMethod(v);
-            setAuthenticationMethodFormValue(v);
+            setSelectedMethod(v as string);
+            setAuthenticationMethodFormValue(v as string);
           }}
         />
       </div>

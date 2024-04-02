@@ -5,11 +5,11 @@ export const configSpecTypesIconMap = new Map<string, string>([
   ["kubernetes", "kubernetes"],
   ["azure", "azure"],
   ["kubernetesFile", "kubernetes"],
-  ["sql", "sql"],
+  ["sql", "database"],
   ["trivy", "trivy"],
   ["aws", "aws"],
   ["file", "folder"],
-  ["githubActions", "git"],
+  ["githubActions", "github"],
   ["http", "http"],
   ["azureDevops", "azure-devops"],
   ["custom", "cog"]
@@ -21,9 +21,13 @@ type Props = {
 
 export default function ConfigScrapperIcon({ spec }: Props) {
   const icon = useMemo(() => {
-    const keys = Object.keys(spec);
-    const specKeys = keys.find((key) => typeof spec[key] === "object");
-    return configSpecTypesIconMap.get(specKeys ?? "");
+    for (let key of Object.keys(spec)) {
+      let icon = configSpecTypesIconMap.get(key);
+      if (icon != null) {
+        return icon;
+      }
+    }
+    return null;
   }, [spec]);
 
   if (!icon) {

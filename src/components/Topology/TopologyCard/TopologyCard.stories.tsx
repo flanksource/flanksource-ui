@@ -245,7 +245,7 @@ const Template: ComponentStory<typeof TopologyCard> = (arg: any) => {
   return (
     <>
       {Object.keys(Size).map((size) => (
-        <TopologyCard {...arg} size={size} />
+        <TopologyCard key={size} {...arg} size={size} />
       ))}
     </>
   );
