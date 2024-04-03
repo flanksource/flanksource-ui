@@ -3,6 +3,8 @@ import {
   searchResources
 } from "@flanksource-ui/api/services/search";
 import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
+import { Icon } from "@flanksource-ui/components/Icon";
+import { ConfigIcon } from "@flanksource-ui/components/Icon/ConfigIcon";
 import { StateOption } from "@flanksource-ui/components/ReactSelectDropdown";
 import { useQuery } from "@tanstack/react-query";
 import FormikSelectDropdown from "./FormikSelectDropdown";
@@ -41,17 +43,56 @@ export default function FormikResourceSelectorDropdown({
       configResourceSelector !== undefined ||
       componentResourceSelector !== undefined ||
       checkResourceSelector !== undefined,
-    select: (data) =>
-      data.map(
-        (resource) =>
-          ({
-            id: resource.id,
-            icon: resource.icon,
-            description: resource.name,
-            value: resource.id,
-            label: resource.name
-          } satisfies StateOption)
-      ),
+    select: (data) => {
+      if (data?.checks) {
+        return data.checks.map(
+          (check) =>
+            ({
+              id: check.id,
+              icon: (
+                <Icon
+                  className="h-4 w-5"
+                  name={check.icon}
+                  secondary={check.name}
+                />
+              ),
+              description: check.name,
+              value: check.id,
+              label: check.name
+            } satisfies StateOption)
+        );
+      }
+      if (data?.components) {
+        return data.components.map(
+          (component) =>
+            ({
+              id: component.id,
+              icon: (
+                <Icon
+                  className="h-4 w-5"
+                  name={component.icon}
+                  secondary={component.name}
+                />
+              ),
+              description: component.name,
+              value: component.id,
+              label: component.name
+            } satisfies StateOption)
+        );
+      }
+      if (data?.configs) {
+        return data.configs.map(
+          (config) =>
+            ({
+              id: config.id,
+              icon: <ConfigIcon config={config} />,
+              description: config.name,
+              value: config.id,
+              label: config.name
+            } satisfies StateOption)
+        );
+      }
+    },
     staleTime: 0,
     cacheTime: 0
   });
