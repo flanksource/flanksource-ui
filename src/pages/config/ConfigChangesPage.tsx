@@ -1,4 +1,4 @@
-import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
+import { useGetConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -20,38 +20,45 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
-  const { timeRangeAbsoluteValue } = useTimeRangeParams(
-    configChangesDefaultDateFilter
-  );
+  const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
-  const itemsPerPage = 50;
 
   const [params, setParams] = useSearchParams();
   const configType = params.get("configType") ?? undefined;
   const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
-  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
-  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
-  const pageSize = +(params.get("pageSize") ?? itemsPerPage);
-  const page = +(params.get("pageIndex") ?? 0);
+  const from = timeRangeValue?.from ?? undefined;
+  const to = timeRangeValue?.to ?? undefined;
+  const page = params.get("page") ?? "1";
+  const pageSize = params.get("pageSize") ?? "200";
+  const sortBy = params.get("sortBy") ?? "created_at";
+  const sortDirection = params.get("sortDirection") ?? "desc";
 
   const { data, isLoading, error, isRefetching, refetch } =
-    useGetAllConfigsChangesQuery(
+    useGetConfigsChangesQuery(
       {
-        configType: configType,
+        include_deleted_configs: false,
+        changeType,
         severity,
-        startsAt: startsAt,
-        endsAt: endsAt,
-        changeType: changeType
+        from,
+        to,
+        configType,
+        sortBy,
+        sortOrder: sortDirection === "desc" ? "desc" : "asc",
+        page: page,
+        pageSize: pageSize
       },
-      page,
-      pageSize,
-      true
+      {
+        keepPreviousData: true
+      }
     );
-  const totalEntries = (data as any)?.totalEntries;
-  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
+
+  const changes = data?.changes ?? [];
+
+  const totalChanges = data?.total ?? 0;
+  const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   const pagination = useMemo(() => {
     const pagination: PaginationOptions = {
@@ -59,23 +66,23 @@ export function ConfigChangesPage() {
         const newParams =
           typeof updater === "function"
             ? updater({
-                pageIndex: page,
-                pageSize
+                pageIndex: parseInt(page) - 1,
+                pageSize: parseInt(pageSize)
               })
             : updater;
-        params.set("pageIndex", newParams.pageIndex.toString());
+        params.set("page", (newParams.pageIndex + 1).toString());
         params.set("pageSize", newParams.pageSize.toString());
         setParams(params);
       },
-      pageIndex: page,
-      pageSize,
-      pageCount,
+      pageIndex: parseInt(page) - 1,
+      pageSize: parseInt(pageSize),
+      pageCount: totalChangesPages,
       remote: true,
       enable: true,
-      loading: isLoading || isRefetching
+      loading: isLoading
     };
     return pagination;
-  }, [page, pageSize, pageCount, isLoading, isRefetching, params, setParams]);
+  }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
   const errorMessage =
     typeof error === "string"
@@ -119,7 +126,7 @@ export function ConfigChangesPage() {
           setRefreshButtonClickedTrigger((prev) => prev + 1);
           refetch();
         }}
-        loading={isLoading}
+        loading={isLoading || isRefetching}
         contentClass="p-0 h-full"
       >
         <ConfigPageTabs activeTab="Changes">
@@ -129,7 +136,7 @@ export function ConfigChangesPage() {
             <>
               <ConfigChangeFilters paramsToReset={["pageIndex", "pageSize"]} />
               <ConfigChangeHistory
-                data={data?.data ?? []}
+                data={changes}
                 isLoading={isLoading}
                 linkConfig
                 pagination={pagination}

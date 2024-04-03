@@ -158,14 +158,14 @@ export const getConfigChanges = (
   );
 };
 
-type CatalogChangesSearchResponse = {
+export type CatalogChangesSearchResponse = {
   summary: Record<string, number>;
   changes: ConfigChange[];
   total: number;
 };
 
-type GetConfigsRelatedChangesParams = {
-  id: string;
+export type GetConfigsRelatedChangesParams = {
+  id?: string;
   type_filter?: "all" | "upstream" | "downstream" | "none";
   include_deleted_configs: boolean;
   changeType?: string;
@@ -179,7 +179,7 @@ type GetConfigsRelatedChangesParams = {
   sortOrder?: "asc" | "desc";
 };
 
-export async function getConfigsRelatedChanges({
+export async function getConfigsChanges({
   id,
   type_filter,
   include_deleted_configs = false,
@@ -194,7 +194,9 @@ export async function getConfigsRelatedChanges({
   sortOrder
 }: GetConfigsRelatedChangesParams) {
   const queryParams = new URLSearchParams();
-  queryParams.set("id", id);
+  if (id) {
+    queryParams.set("id", id);
+  }
   if (configType && configType !== "all") {
     queryParams.set("config_type", configType);
   }
