@@ -7,17 +7,26 @@ export type SearchResourcesRequest = {
   configs?: PlaybookResourceSelector[];
 };
 
-type SelectedResources = {
+type SearchedResource = {
   id: string;
-  icon: string; // custom icon or type of resource -> type/agent/labels/namespace
   name: string;
-  type: "check" | "component" | "config";
+  type: string;
+  namespace: string;
+  agent: string;
+  labels: Record<string, string>;
+  icon?: string;
+};
+
+type SelectedResources = {
+  configs: SearchedResource[];
+  checks: SearchedResource[];
+  components: SearchedResource[];
 };
 
 export async function searchResources(input: SearchResourcesRequest) {
-  const res = await apiBase.post<SelectedResources[] | null>(
+  const res = await apiBase.post<SelectedResources | null>(
     "/resources/search",
     input
   );
-  return res.data ?? [];
+  return res.data ?? undefined;
 }
