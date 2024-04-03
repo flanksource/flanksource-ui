@@ -739,7 +739,6 @@ export type IconProps = {
   secondary?: string;
   className?: string;
   alt?: string;
-  icon?: string;
   prefix?: any;
   size?: any;
 };
@@ -750,7 +749,6 @@ export const Icon: React.FC<IconProps> = memo(
     secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
     className = "h-6 max-w-6",
     alt = "",
-    icon,
     prefix,
     ...props
   }) => {
@@ -759,8 +757,9 @@ export const Icon: React.FC<IconProps> = memo(
     }
 
     if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
-      icon = name;
+      return <img src={name} className={className} alt={alt} {...props} />;
     }
+
     let iconType = findByName(name!);
     if (iconType == null) {
       iconType = findByName(secondary);
@@ -775,16 +774,15 @@ export const Icon: React.FC<IconProps> = memo(
       React.SVGProps<SVGSVGElement>
     >;
 
-    return icon ? (
+    return (
       <>
         {prefix}{" "}
         <IconSVG
-          size="auto"
           className={`inline-block object-center ${className}`}
           {...props}
         />
       </>
-    ) : null;
+    );
   }
 );
 

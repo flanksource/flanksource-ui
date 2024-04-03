@@ -22,7 +22,7 @@ export default function PlaybookTeamDetails({
 
   return (
     <div className={clsx("flex flex-row gap-1")}>
-      <Icon icon={data?.icon} name={data?.name} />
+      <Icon name={data?.icon} secondary={data?.name} />
       <span className="overflow-hidden text-ellipsis text-sm">
         {data?.name}
       </span>

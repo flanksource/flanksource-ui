@@ -129,12 +129,8 @@ type TitleProps = {
 export function Title({ icon, title, isDeleted }: TitleProps) {
   return (
     <>
-      {icon && (
-        <span className="w-6 flex-shrink-0 mr-2">
-          <Icon name={icon} className="inline h-6" />
-        </span>
-      )}
-      <span className="text-sm">{title}</span> {isDeleted && <TbTrash />}
+      {icon && <Icon name={icon} className="h-6 w-auto" />}
+      <span className="pl-1 text-sm">{title}</span> {isDeleted && <TbTrash />}
     </>
   );
 }
