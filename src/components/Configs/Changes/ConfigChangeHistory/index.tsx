@@ -41,8 +41,8 @@ const columns: ColumnDef<ConfigChange>[] = [
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
       return (
-        <div className="text-ellipsis overflow-hidden">
-          <ChangeIcon change={row.original} className="w-5 pr-1" />
+        <div className="text-ellipsis overflow-hidden space-x-1">
+          <ChangeIcon change={row.original} />
           <span>{changeType}</span>
         </div>
       );

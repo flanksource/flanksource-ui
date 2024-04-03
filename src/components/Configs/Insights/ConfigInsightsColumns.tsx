@@ -20,12 +20,9 @@ export const ConfigInsightsColumns: ColumnDef<
       const config = cell.row.original.config;
 
       return (
-        <div className="flex max-w-full truncate">
-          <Link
-            className="space-x-2  items-center"
-            to={`/catalog/${config?.id}`}
-          >
-            <ConfigIcon config={config} className="w-4 h-4" />
+        <div className="flex max-w-full">
+          <Link className="items-center" to={`/catalog/${config?.id}`}>
+            <ConfigIcon config={config} />
             <span>{config?.name}</span>
           </Link>
         </div>

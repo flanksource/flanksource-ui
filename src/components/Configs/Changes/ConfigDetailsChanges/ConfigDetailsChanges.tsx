@@ -148,7 +148,7 @@ export function ConfigDetailsChanges({
             </>
           )}
 
-          <ChangeIcon change={changeDetails} className="w-5 h-auto pr-1" />
+          <ChangeIcon change={changeDetails} />
           {changeDetails?.change_type}
         </div>
       )}
@@ -180,9 +180,7 @@ export function ConfigDetailChangeModal({
                 key={"config-details"}
                 className="flex flex-row gap-1 flex-shrink items-center"
               >
-                <div className="block w-6 h-auto">
-                  <ChangeIcon change={changeDetails} />
-                </div>
+                <ChangeIcon change={changeDetails} />
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink

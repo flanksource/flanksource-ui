@@ -84,7 +84,8 @@ export function FormikCompactEnvVarSource({
       name: ""
     });
     setType("Static");
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getValue = () => {
     let value = "";

@@ -34,12 +34,7 @@ export function ChangesTypesDropdown({
               id: change_type,
               label: change_type,
               value: change_type,
-              icon: (
-                <ChangeIcon
-                  change={{ change_type: change_type }}
-                  className="w-5 pr-1"
-                />
-              )
+              icon: <ChangeIcon change={{ change_type: change_type }} />
             } satisfies TriStateOptions)
         );
       }, [])

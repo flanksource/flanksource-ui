@@ -20,7 +20,7 @@ export default function SelectTeamResponderDropdown({
       teams.map((team) => ({
         label: team.name,
         value: team.id,
-        icon: () => <Icon icon={team.icon} name={team.name} />
+        icon: () => <Icon name={team.icon} secondary={team.name} />
       })),
     [teams]
   );
