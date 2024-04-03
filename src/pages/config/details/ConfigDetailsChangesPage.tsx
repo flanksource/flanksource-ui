@@ -1,4 +1,4 @@
-import { getConfigsRelatedChanges } from "@flanksource-ui/api/services/configs";
+import { useGetConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { areDeletedConfigChangesHidden } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
@@ -7,7 +7,6 @@ import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDeta
 import { PaginationOptions } from "@flanksource-ui/components/DataTable";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
-import { useQuery } from "@tanstack/react-query";
 import { SortingState } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
@@ -51,44 +50,26 @@ export function ConfigDetailsChangesPage() {
     return undefined;
   }, [all, upstream, downstream]);
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: [
-      "config",
-      "changes",
-      id,
-      hideDeletedConfigChanges,
-      relationshipType,
+  const { data, isLoading, error, refetch } = useGetConfigsChangesQuery(
+    {
+      id: id!,
+      type_filter: relationshipType,
+      include_deleted_configs: hideDeletedConfigChanges !== "yes",
+      changeType: change_type,
       severity,
-      change_type,
       from,
       to,
       configType,
       sortBy,
-      sortDirection,
-      page,
-      pageSize,
-      upstream,
-      downstream,
-      all
-    ],
-    queryFn: () =>
-      getConfigsRelatedChanges({
-        id: id!,
-        type_filter: relationshipType,
-        include_deleted_configs: hideDeletedConfigChanges !== "yes",
-        changeType: change_type,
-        severity,
-        from,
-        to,
-        configType,
-        sortBy,
-        sortOrder: sortDirection === "desc" ? "desc" : "asc",
-        page: page,
-        pageSize: pageSize
-      }),
-    enabled: !!id,
-    keepPreviousData: true
-  });
+      sortOrder: sortDirection === "desc" ? "desc" : "asc",
+      page: page,
+      pageSize: pageSize
+    },
+    {
+      keepPreviousData: true,
+      enabled: !!id
+    }
+  );
 
   const changes = data?.changes ?? [];
 

@@ -3,7 +3,7 @@ import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
 import { getAllAgents } from "../services/agents";
 import {
-  getAllChanges,
+  CatalogChangesSearchResponse,
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
@@ -11,6 +11,8 @@ import {
   getConfigInsight,
   getConfigInsights,
   getConfigName,
+  getConfigsChanges,
+  GetConfigsRelatedChangesParams,
   getConfigsSummary,
   getConfigTagsList,
   getTopologyRelatedInsights
@@ -318,49 +320,18 @@ export const useGetHypothesisQuery = (
   );
 };
 
-export function useGetAllConfigsChangesQuery(
-  {
-    severity,
-    configType,
-    changeType,
-    startsAt,
-    endsAt
-  }: {
-    severity?: string;
-    configType?: string;
-    changeType?: string;
-    startsAt?: string;
-    endsAt?: string;
-  },
-  pageIndex?: number,
-  pageSize?: number,
-  keepPreviousData?: boolean
+export function useGetConfigsChangesQuery(
+  props: GetConfigsRelatedChangesParams,
+  queryOptions: UseQueryOptions<CatalogChangesSearchResponse> = {
+    enabled: true,
+    keepPreviousData: true
+  }
 ) {
-  return useQuery(
-    [
-      "configs",
-      "changes",
-      "all",
-      severity,
-      configType,
-      changeType,
-      pageIndex,
-      pageSize,
-      startsAt,
-      endsAt
-    ],
-    () =>
-      getAllChanges(
-        { changeType: changeType, severity, configType: configType },
-        pageIndex,
-        pageSize,
-        startsAt,
-        endsAt
-      ),
-    {
-      keepPreviousData
-    }
-  );
+  return useQuery({
+    queryKey: ["configs", "changes", props],
+    queryFn: () => getConfigsChanges(props),
+    ...queryOptions
+  });
 }
 
 export function useGetConfigChangesByConfigIdQuery(
