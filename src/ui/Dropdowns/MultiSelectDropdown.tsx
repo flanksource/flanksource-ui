@@ -39,8 +39,6 @@ export function MultiSelectDropdown({
     placement: "bottom-start"
   });
 
-  console.log("value", value);
-
   return (
     <Popover className="relative">
       {({ open }) => (

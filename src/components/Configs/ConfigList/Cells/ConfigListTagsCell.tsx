@@ -6,9 +6,11 @@ import { TagItem, TagList } from "../../../TagList/TagList";
 
 export default function ConfigListTagsCell({
   getValue,
-  hideGroupByView = false
+  hideGroupByView = false,
+  label = "Tags"
 }: CellContext<ConfigItem, any> & {
   hideGroupByView?: boolean;
+  label?: string;
 }): JSX.Element | null {
   const [params] = useSearchParams();
 
@@ -61,7 +63,7 @@ export default function ConfigListTagsCell({
           )}
         </div>
       }
-      title="Tags"
+      title={label}
       placement="left"
       menuClass="top-8"
     >

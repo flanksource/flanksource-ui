@@ -10,6 +10,7 @@ import {
   getConfigChanges,
   getConfigInsight,
   getConfigInsights,
+  getConfigLabelsList,
   getConfigName,
   getConfigsChanges,
   GetConfigsRelatedChangesParams,
@@ -153,7 +154,7 @@ export const useComponentNameQuery = (
 type ConfigListFilterQueryOptions = {
   search?: string | null;
   configType?: string | null;
-  tag?: string | null;
+  label?: string | null;
   hideDeletedConfigs?: boolean;
   sortBy?: string | null;
   sortOrder?: string | null;
@@ -163,7 +164,7 @@ type ConfigListFilterQueryOptions = {
 function prepareConfigListQuery({
   search,
   configType,
-  tag,
+  label,
   sortBy,
   sortOrder,
   hideDeletedConfigs,
@@ -181,8 +182,8 @@ function prepareConfigListQuery({
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
     const filterQueries = [];
-    if (tag && tag !== "All") {
-      const [k, v] = decodeURI(tag).split("__:__");
+    if (label && label !== "All") {
+      const [k, v] = decodeURI(label).split("__:__");
       filterQueries.push(`tags->>${k}=eq.${encodeURIComponent(v)}`);
     }
     if (filterQueries.length) {
@@ -202,7 +203,7 @@ function prepareConfigListQuery({
 export const useAllConfigsQuery = (
   {
     search,
-    tag,
+    label,
     configType,
     sortBy,
     sortOrder,
@@ -213,7 +214,7 @@ export const useAllConfigsQuery = (
 ) => {
   const query = prepareConfigListQuery({
     search,
-    tag,
+    label,
     configType,
     sortBy,
     sortOrder,
@@ -224,7 +225,7 @@ export const useAllConfigsQuery = (
     [
       "allConfigs",
       search,
-      tag,
+      label,
       configType,
       sortBy,
       sortOrder,
@@ -393,6 +394,16 @@ export function useGetConfigByIdQuery(id: string) {
 export function useGetConfigTagsListQuery() {
   return useQuery(["configs", "tags", "list"], async () => {
     const { error, data } = await getConfigTagsList();
+    if (error) {
+      throw error;
+    }
+    return data ?? [];
+  });
+}
+
+export function useGetConfigLabelsListQuery() {
+  return useQuery(["configs", "tags", "list"], async () => {
+    const { error, data } = await getConfigLabelsList();
     if (error) {
       throw error;
     }

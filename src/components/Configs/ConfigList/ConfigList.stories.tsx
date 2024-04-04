@@ -1,11 +1,11 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 import sampleConfigList from "../../../data/sampleConfigList";
-import ConfigList from "./index";
+import ConfigsTable from "./ConfigsTable";
 
 export default {
   title: "ConfigList",
-  component: ConfigList,
+  component: ConfigsTable,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -13,10 +13,10 @@ export default {
       </MemoryRouter>
     )
   ]
-} as ComponentMeta<typeof ConfigList>;
+} as ComponentMeta<typeof ConfigsTable>;
 
-const Template: ComponentStory<typeof ConfigList> = (args) => (
-  <ConfigList {...args} />
+const Template: ComponentStory<typeof ConfigsTable> = (args) => (
+  <ConfigsTable {...args} />
 );
 
 export const Default = Template.bind({});

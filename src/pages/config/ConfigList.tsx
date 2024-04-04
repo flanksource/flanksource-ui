@@ -7,7 +7,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/components/BreadcrumbNav";
-import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
+import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigSummaryList from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryList";
@@ -16,7 +16,6 @@ import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon"
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { useAtom } from "jotai";
-import objectHash from "object-hash";
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -33,13 +32,11 @@ export function ConfigListPage() {
 
   const hideDeletedConfigs = deletedConfigsHidden === "yes";
 
-  console.log(deletedConfigsHidden, hideDeletedConfigs);
-
   const search = searchParams.get("search") ?? undefined;
-  const tag = searchParams.get("tag")
-    ? decodeURIComponent(searchParams.get("tag")!)
+  const label = searchParams.get("label")
+    ? decodeURIComponent(searchParams.get("label")!)
     : undefined;
-  const groupByProp = searchParams.get("groupByProp") ?? "";
+  const groupByProp = searchParams.get("groupBy") ?? undefined;
   const sortBy = searchParams.get("sortBy");
   const sortOrder = searchParams.get("sortOrder");
   const configType = searchParams.get("configType") ?? undefined;
@@ -59,8 +56,8 @@ export function ConfigListPage() {
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
-    () => !configType && !search && !groupByProp,
-    [configType, groupByProp, search]
+    () => !configType && !search && !groupByProp && !label,
+    [configType, groupByProp, label, search]
   );
 
   const {
@@ -71,7 +68,7 @@ export function ConfigListPage() {
   } = useAllConfigsQuery(
     {
       search,
-      tag,
+      label,
       configType,
       sortBy,
       sortOrder,
@@ -97,26 +94,6 @@ export function ConfigListPage() {
   const refetch = showConfigSummaryList
     ? refetchSummary
     : isRefetchingConfigList;
-
-  const configList = useMemo(() => {
-    if (searchParams.get("query")) {
-      return [];
-    }
-    if (!allConfigs?.data) {
-      return [];
-    }
-    return allConfigs.data.map((item) => {
-      const tags = item.tags || {};
-      tags.toString = () => {
-        return objectHash(item.tags?.[groupByProp] || {});
-      };
-      return {
-        ...item,
-        tags,
-        allTags: { ...item.tags }
-      };
-    });
-  }, [searchParams, allConfigs, groupByProp]);
 
   const handleRowClick = (row?: { original?: { id: string } }) => {
     const id = row?.original?.id;
@@ -168,8 +145,8 @@ export function ConfigListPage() {
                 data={configSummary}
               />
             ) : (
-              <ConfigList
-                data={configList!}
+              <ConfigsTable
+                data={allConfigs?.data ?? []}
                 handleRowClick={handleRowClick}
                 isLoading={isLoading}
               />

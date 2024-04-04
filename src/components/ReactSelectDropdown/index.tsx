@@ -63,6 +63,7 @@ type ReactSelectDropdownProps = {
   isLoading?: boolean;
   isDisabled?: boolean;
   isCreatable?: boolean;
+  isMulti?: boolean;
 };
 
 export const ReactSelectDropdown = ({
@@ -80,7 +81,8 @@ export const ReactSelectDropdown = ({
   placeholder = "Search...",
   isLoading = false,
   isDisabled = false,
-  isCreatable = false
+  isCreatable = false,
+  isMulti = false
 }: ReactSelectDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<StateOption[]>([]);
@@ -192,6 +194,7 @@ export const ReactSelectDropdown = ({
             return (
               <SelectComponent
                 autoFocus
+                isMulti={isMulti}
                 backspaceRemovesValue={false}
                 components={{
                   DropdownIndicator,

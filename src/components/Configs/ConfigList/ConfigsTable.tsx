@@ -1,4 +1,4 @@
-import { Row, SortingState, Updater } from "@tanstack/react-table";
+import { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
@@ -14,7 +14,7 @@ export interface Props {
   expandAllRows?: boolean;
 }
 
-export default function ConfigList({
+export default function ConfigsTable({
   data,
   handleRowClick,
   isLoading,
@@ -25,10 +25,18 @@ export default function ConfigList({
   const [queryParams, setSearchParams] = useSearchParams({
     sortBy: "type",
     sortOrder: "asc",
-    groupBy: groupBy ?? "no_grouping"
+    groupBy: groupBy ?? ""
   });
 
-  const groupByField = queryParams.get("groupBy") ?? groupBy ?? "no_grouping";
+  const groupByUserInput = queryParams.get("groupBy") ?? undefined;
+
+  const groupByColumns = useMemo(() => {
+    if (!groupByUserInput) {
+      return groupBy ? [groupBy] : [];
+    }
+    return groupByUserInput.split(",");
+  }, [groupBy, groupByUserInput]);
+
   const sortField = queryParams.get("sortBy") ?? "type";
 
   const isSortOrderDesc =
@@ -96,17 +104,16 @@ export default function ConfigList({
   useEffect(() => {
     updateSortBy(sortBy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupByField]);
+  }, [groupByColumns]);
 
-  const hiddenColumns = useMemo(() => {
-    const alwaysHiddenColumns = ["deleted_at", ...columnsToHide];
-    if (groupByField !== "changed" && groupByField !== "tags") {
-      return [...alwaysHiddenColumns, "changed", "allTags"];
-    } else if (groupByField === "tags") {
-      return [...alwaysHiddenColumns, "changed"];
-    }
-    return [];
-  }, [groupByField, columnsToHide]);
+  const hiddenColumns = [
+    "deleted_at",
+    "changed",
+    // we want to hide the columns that are in the groupBy, we don't want to
+    // show, but the name column will contain the groupBy details
+    ...groupByColumns,
+    ...columnsToHide
+  ];
 
   const determineRowClassNames = useCallback((row: Row<ConfigItem>) => {
     if (row.getIsGrouped()) {
@@ -129,20 +136,60 @@ export default function ConfigList({
     return "";
   }, []);
 
+  const transformConfigList = useMemo(() => {
+    const tagsGroupBy = groupByColumns.filter((item) => item.endsWith("__tag"));
+    if (tagsGroupBy.length === 0) {
+      return data;
+    }
+    return data.map((config) => ({
+      ...config,
+      ...tagsGroupBy.reduce((acc, tag) => {
+        const tags = config.tags ?? {};
+        acc[tag.replace("__tag", "")] = tags[tag.replace("__tag", "")];
+        return acc;
+      }, {} as Record<string, string>)
+    }));
+  }, [data, groupByColumns]);
+
+  const configTableColumns = useMemo(() => {
+    const defaultColumns = configListColumns;
+    if (!groupByUserInput) {
+      return defaultColumns;
+    }
+    // we want to add tags that have been grouped by to the columns and also add
+    // the data in there
+    const groupByTags = groupByUserInput
+      .split(",")
+      .filter((item) => item.endsWith("__tag"));
+    // if there are no tags in the groupBy, we don't want to add the tags
+    if (groupByTags.length === 0) {
+      return defaultColumns;
+    }
+    // For each tag, we want to add a column to the table, and we want to add
+    // the data to the cell
+    const tagColumns = groupByTags.map(
+      (tag) =>
+        ({
+          header: `${tag.replace("__tag", "")}`,
+          accessorKey: tag.replace("__tag", ""),
+          id: tag,
+          size: 100,
+          enableGrouping: true
+        } satisfies ColumnDef<ConfigItem, any>)
+    );
+    return [...defaultColumns, ...tagColumns];
+  }, [groupByUserInput]);
+
   return (
     <DataTable
       stickyHead
       isVirtualized
-      columns={configListColumns}
-      data={data}
+      columns={configTableColumns}
+      data={transformConfigList}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      groupBy={
-        !groupByField || groupByField === "no_grouping"
-          ? undefined
-          : [groupByField]
-      }
+      groupBy={groupByColumns}
       hiddenColumns={hiddenColumns}
       className="max-w-full table-auto table-fixed"
       tableSortByState={sortBy}

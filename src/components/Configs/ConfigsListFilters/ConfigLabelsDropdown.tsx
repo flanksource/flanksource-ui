@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useGetConfigTagsListQuery } from "../../../api/query-hooks";
+import { useGetConfigLabelsListQuery } from "../../../api/query-hooks";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {
@@ -9,18 +9,18 @@ type Props = {
   value?: string;
 };
 
-export function ConfigTagsDropdown({
+export function ConfigLabelsDropdown({
   onChange = () => {},
-  searchParamKey = "tag",
+  searchParamKey = "label",
   value
 }: Props) {
   const [params, setParams] = useSearchParams({
     ...(value && { [searchParamKey]: value })
   });
 
-  const { data, isLoading } = useGetConfigTagsListQuery();
+  const { data, isLoading } = useGetConfigLabelsListQuery();
 
-  const configTagItems = useMemo(() => {
+  const labelItems = useMemo(() => {
     if (data) {
       const options = data.map((tag) => ({
         label: (
@@ -37,7 +37,7 @@ export function ConfigTagsDropdown({
 
   return (
     <ReactSelectDropdown
-      items={configTagItems}
+      items={labelItems}
       name="type"
       onChange={(value) => {
         if (!value || value === "All") {
@@ -53,7 +53,9 @@ export function ConfigTagsDropdown({
       dropDownClassNames="w-auto max-w-[38rem] left-0"
       hideControlBorder
       prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">Tag:</div>
+        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          Labels
+        </div>
       }
       isLoading={isLoading}
     />

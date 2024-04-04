@@ -130,6 +130,9 @@ export type ConfigsTagList = {
 export const getConfigTagsList = () =>
   resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_tags`));
 
+export const getConfigLabelsList = () =>
+  resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_labels`));
+
 export const getConfigName = (id: string) =>
   resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
 

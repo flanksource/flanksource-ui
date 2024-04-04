@@ -9,7 +9,12 @@ function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
   const configType = row.original.type;
 
   return (
-    <div className="flex flex-row space-x-2 items-center">
+    <div
+      className="flex flex-row space-x-2 items-center"
+      style={{
+        marginLeft: row.depth * 20
+      }}
+    >
       <ConfigsTypeIcon config={{ type: configType }} showPrimaryIcon={false}>
         <span>{getValue()}</span>
       </ConfigsTypeIcon>
