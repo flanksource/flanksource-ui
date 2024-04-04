@@ -1,3 +1,4 @@
+import { Status } from "@flanksource-ui/components/Status";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
@@ -42,6 +43,16 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     enableHiding: true,
     cell: ({ row }: CellContext<ConfigItem, any>) => {
       return <ConfigsTypeIcon config={row.original} showLabel />;
+    }
+  },
+  {
+    header: "Status",
+    accessorKey: "status",
+    size: 100,
+    enableSorting: true,
+    cell: ({ getValue }: CellContext<ConfigItem, any>) => {
+      const status = getValue<ConfigItem["status"]>();
+      return <Status status={status} />;
     }
   },
   {
