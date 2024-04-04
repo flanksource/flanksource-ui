@@ -1,7 +1,7 @@
 import { ConfigRelationshipToggles } from "./Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
 import { ConfigListToggledDeletedItems } from "./ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGraphTableToggle from "./ConfigsListFilters/ConfigGraphTableToggle";
-import { ConfigTagsDropdown } from "./ConfigsListFilters/ConfigTagsDropdown";
+import { ConfigLabelsDropdown } from "./ConfigsListFilters/ConfigLabelsDropdown";
 import { ConfigTypesDropdown } from "./ConfigsListFilters/ConfigTypesDropdown";
 import { ConfigTypesTriStateDropdown } from "./ConfigsListFilters/ConfigTypesTriStateDropdown";
 
@@ -19,7 +19,7 @@ export default function ConfigRelationshipFilterBar({
       ) : (
         <ConfigTypesDropdown />
       )}
-      <ConfigTagsDropdown />
+      <ConfigLabelsDropdown />
       <ConfigRelationshipToggles />
       <ConfigListToggledDeletedItems />
       <div className="flex-1" />

@@ -50,6 +50,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   changes?: Change[];
   analysis?: Analysis[];
   tags?: Record<string, any>;
+  labels?: Record<string, any>;
   allTags?: Record<string, any>;
   config?: Record<string, any>;
   description?: string | null;

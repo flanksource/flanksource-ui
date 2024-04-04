@@ -201,7 +201,6 @@ export function DataTable<TableColumns, Data extends TableColumns>({
     enableSortingRemoval: true,
     enableHiding: true,
     onSortingChange: (sorting) => {
-      console.log("sorting", sorting);
       if (onTableSortByChanged) {
         onTableSortByChanged(sorting);
       } else {
@@ -292,51 +291,47 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                 className="uppercase bg-column-background rounded-t-md items-center border border-gray-200"
                 key={headerGroup.id}
               >
-                {headerGroup.headers.map((header, colIndex) =>
+                {headerGroup.headers.map((header, colIndex) => (
                   // First column goes inside the grouping column
                   // Hence the label for that is not needed
-                  isGrouped &&
-                  !header.column.getIsGrouped() &&
-                  colIndex === 1 ? null : (
-                    <th
-                      key={header.id}
-                      className={`border-t border-b border-gray-200 ${theadHeaderClass}${
-                        header.column.getCanSort() ? " cursor-pointer" : ""
-                      }`}
-                      onClick={header.column.getToggleSortingHandler()}
-                      style={{
-                        width: header.column.getSize()
-                      }}
-                      colSpan={header.column?.columns?.length ?? 1}
-                    >
-                      {(header.headerGroup.depth === 0 ||
-                        (header.column.parent?.columns?.length ?? 0) > 0) && (
-                        <div
-                          className={clsx(
-                            "flex select-none",
-                            header.headerGroup.depth > 0 && "text-xs"
-                          )}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getIsSorted() ? (
-                            <span className="ml-2">
-                              {header.column.getIsSorted() === "asc" ? (
-                                <TiArrowSortedDown />
-                              ) : (
-                                <TiArrowSortedUp />
-                              )}
-                            </span>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      )}
-                    </th>
-                  )
-                )}
+                  <th
+                    key={header.id}
+                    className={`border-t border-b border-gray-200 ${theadHeaderClass}${
+                      header.column.getCanSort() ? " cursor-pointer" : ""
+                    }`}
+                    onClick={header.column.getToggleSortingHandler()}
+                    style={{
+                      width: header.column.getSize()
+                    }}
+                    colSpan={header.column?.columns?.length ?? 1}
+                  >
+                    {(header.headerGroup.depth === 0 ||
+                      (header.column.parent?.columns?.length ?? 0) > 0) && (
+                      <div
+                        className={clsx(
+                          "flex select-none",
+                          header.headerGroup.depth > 0 && "text-xs"
+                        )}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getIsSorted() ? (
+                          <span className="ml-2">
+                            {header.column.getIsSorted() === "asc" ? (
+                              <TiArrowSortedDown />
+                            ) : (
+                              <TiArrowSortedUp />
+                            )}
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    )}
+                  </th>
+                ))}
               </tr>
             ))}
           </thead>

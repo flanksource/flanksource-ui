@@ -1,5 +1,6 @@
 import { flexRender } from "@tanstack/react-table";
 import { Row, RowData } from "@tanstack/table-core";
+import { useCallback } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Badge } from "../../ui/Badge";
 
@@ -14,24 +15,25 @@ type DataTableRowProps<TableColumns extends RowData> = {
 export function DataTableRow<TableColumns extends RowData>({
   row,
   isGrouped,
-  onRowClick: handleRowClick,
+  onRowClick: handleRowClick = () => {},
   rowClassNames,
   cellClassNames
 }: DataTableRowProps<TableColumns>) {
-  return (
-    <tr
-      className={`${rowClassNames}`}
-      onClick={
-        row.getIsGrouped()
-          ? () => row.getToggleExpandedHandler()()
-          : handleRowClick
-          ? () => handleRowClick(row)
-          : () => {}
+  const onRowClick = useCallback(
+    (row: Row<TableColumns>) => {
+      if (row.getIsGrouped()) {
+        row.getToggleExpandedHandler()();
+      } else if (handleRowClick) {
+        handleRowClick(row);
       }
-    >
+    },
+    [handleRowClick]
+  );
+
+  return (
+    <tr className={`${rowClassNames}`} onClick={() => onRowClick(row)}>
       {row.getVisibleCells().map((cell, cellIndex) =>
-        cell.getIsPlaceholder() ? null : cell.getIsAggregated() &&
-          cellIndex === 1 ? null : (
+        cell.getIsPlaceholder() ? null : (
           <td
             key={cell.id}
             className={`${cellClassNames} ${

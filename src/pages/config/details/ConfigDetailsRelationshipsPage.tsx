@@ -2,7 +2,7 @@ import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { getAConfigRelationships } from "@flanksource-ui/api/services/configs";
 import { ConfigRelationships } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import ConfigList from "@flanksource-ui/components/Configs/ConfigList";
+import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
 import { configRelationshipGraphTableToggle } from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigGraphTableToggle";
@@ -145,7 +145,7 @@ export function ConfigDetailsRelationshipsPage() {
               )}
             </ReactFlowProvider>
           ) : (
-            <ConfigList
+            <ConfigsTable
               // show the type column
               columnsToHide={[]}
               data={configItems ?? []}

@@ -7,7 +7,7 @@ import { Switch } from "../../Switch";
 import { TextInputClearable } from "../../TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
-import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
+import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
@@ -52,7 +52,7 @@ function ConfigsListFilterControls() {
 
           <ConfigGroupByDropdown />
 
-          <ConfigTagsDropdown />
+          <ConfigLabelsDropdown />
 
           <TextInputClearable
             onChange={debounce((e) => {

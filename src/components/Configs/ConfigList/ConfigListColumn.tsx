@@ -1,6 +1,8 @@
 import { Status } from "@flanksource-ui/components/Status";
+import { Badge } from "@flanksource-ui/ui/Badge";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
+import { IoChevronDown, IoChevronForward } from "react-icons/io5";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
 import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
 import { TIME_BUCKETS, getTimeBucket } from "../../../utils/date";
@@ -33,7 +35,38 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     cell: ConfigListNameCell,
     size: 270,
     enableGrouping: true,
-    enableSorting: true
+    enableSorting: true,
+    enableHiding: false,
+    aggregatedCell: ({ row }: CellContext<ConfigItem, any>) => {
+      if (row.getCanExpand()) {
+        const groupingValue = row.getGroupingValue(
+          row.groupingColumnId!
+        ) as string;
+        const count = row.subRows.length;
+        return (
+          <div
+            className="flex flex-row items-center gap-1"
+            style={{
+              marginLeft: row.depth * 20
+            }}
+          >
+            {row.getIsExpanded() ? <IoChevronDown /> : <IoChevronForward />}
+            {row.groupingColumnId === "type" ? (
+              <ConfigsTypeIcon config={row.original} showLabel>
+                <Badge text={count} />
+              </ConfigsTypeIcon>
+            ) : (
+              <>
+                {groupingValue && (
+                  <span className="ml-2">{groupingValue} </span>
+                )}
+                <Badge text={count} />
+              </>
+            )}
+          </div>
+        );
+      }
+    }
   },
   {
     header: "Type",
@@ -97,7 +130,6 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     },
     size: 150
   },
-
   {
     header: () => <div>Cost</div>,
     accessorKey: "cost_total_1d",
@@ -125,15 +157,23 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     aggregatedCell: "",
     size: 240
   },
-  {
-    header: "All Tags",
-    accessorKey: "allTags",
-    cell: React.memo((props) => (
-      <ConfigListTagsCell {...props} hideGroupByView />
-    )),
-    aggregatedCell: "",
-    size: 240
-  },
+  // {
+  //   header: "Tags",
+  //   accessorKey: "tags",
+  //   cell: React.memo((props) => (
+  //     <ConfigListTagsCell {...props} hideGroupByView />
+  //   )),
+  //   aggregatedCell: "",
+  //   size: 240
+  // },
+  // {
+  //   header: "Labels",
+  //   accessorKey: "labels",
+  //   cell: React.memo((props) => (
+  //     <ConfigListTagsCell {...props} hideGroupByView label="Labels" />
+  //   )),
+  //   size: 240
+  // },
   {
     header: "Created",
     accessorKey: "created_at",
