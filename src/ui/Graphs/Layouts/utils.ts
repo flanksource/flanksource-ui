@@ -1,5 +1,5 @@
 import { Position } from "reactflow";
-import { Direction } from "./algorithms";
+import { Direction } from "./useAutoLayout";
 
 export function getSourceHandlePosition(direction: Direction) {
   switch (direction) {
