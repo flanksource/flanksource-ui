@@ -1,13 +1,7 @@
-import {
-  HierarchyNode,
-  HierarchyPointNode,
-  stratify,
-  tree
-} from "d3-hierarchy";
+import Dagre from "@dagrejs/dagre";
 import { useMemo } from "react";
 import { Edge, Node } from "reactflow";
-
-import { ExpandCollapseNode } from "./types";
+import { type NodeData } from "./types";
 
 export type UseExpandCollapseOptions = {
   layoutNodes?: boolean;
@@ -15,16 +9,29 @@ export type UseExpandCollapseOptions = {
   treeHeight?: number;
 };
 
-function isHierarchyPointNode(
-  pointNode:
-    | HierarchyNode<ExpandCollapseNode>
-    | HierarchyPointNode<ExpandCollapseNode>
-): pointNode is HierarchyPointNode<ExpandCollapseNode> {
-  return (
-    typeof (pointNode as HierarchyPointNode<ExpandCollapseNode>).x ===
-      "number" &&
-    typeof (pointNode as HierarchyPointNode<ExpandCollapseNode>).y === "number"
-  );
+function filterCollapsedChildren(
+  dagre: Dagre.graphlib.Graph,
+  node: Node<NodeData>
+) {
+  // 🚨 The current types for some of dagre's methods are incorrect. In future
+  // versions of dagre this should be fixed, but for now we need to cast the return
+  // value to keep TypeScript happy.
+  const children = dagre.successors(node.id) as unknown as string[] | undefined;
+
+  // Update this node's props so it knows if it has children and can be expanded
+  // or not.
+  node.data.expandable = !!children?.length;
+
+  // If the node is collpased (ie it is not expanded) then we want to remove all
+  // of its children from the graph *and* any of their children.
+  if (!node.data.expanded) {
+    while (children?.length) {
+      const child = children.pop()!;
+
+      children.push(...(dagre.successors(child) as unknown as string[]));
+      dagre.removeNode(child);
+    }
+  }
 }
 
 function useExpandCollapse(
@@ -37,37 +44,64 @@ function useExpandCollapse(
   }: UseExpandCollapseOptions = {}
 ): { nodes: Node[]; edges: Edge[] } {
   return useMemo(() => {
-    const hierarchy = stratify<ExpandCollapseNode>()
-      .id((d) => d.id)
-      .parentId(
-        (d: Node) => edges.find((e: Edge) => e.target === d.id)?.source
-      )(nodes);
+    if (!layoutNodes) return { nodes, edges };
 
-    hierarchy.descendants().forEach((d) => {
-      d.data.data.expandable = !!d.children?.length;
-      d.children = d.data.data.expanded ? d.children : undefined;
-    });
+    // 1. Create a new instance of `Dagre.graphlib.Graph` and set some default
+    // properties.
+    const dagre = new Dagre.graphlib.Graph()
+      .setDefaultEdgeLabel(() => ({}))
+      .setGraph({ rankdir: "TB" });
 
-    const layout = tree<ExpandCollapseNode>()
-      .nodeSize([treeWidth, treeHeight])
-      .separation(() => 1);
+    // 2. Add each node and edge to the dagre graph. Instead of using each node's
+    // intrinsic width and height, we tell dagre to use the `treeWidth` and
+    // `treeHeight` values. This lets you control the space between nodes.
+    for (const node of nodes) {
+      dagre.setNode(node.id, {
+        ...node,
+        width: treeWidth,
+        height: treeHeight,
+        data: node.data
+      });
+    }
 
-    const root = layoutNodes ? layout(hierarchy) : hierarchy;
+    for (const edge of edges) {
+      dagre.setEdge(edge.source, edge.target);
+    }
+
+    // 3. Iterate over the nodes *again* to determine which ones should be hidden
+    // based on expand/collapse state. Hidden nodes are removed from the dagre
+    // graph entirely.
+    for (const node of nodes) {
+      filterCollapsedChildren(dagre, node);
+    }
+
+    // 4. Run the dagre layouting algorithm.
+    Dagre.layout(dagre);
 
     return {
-      nodes: root.descendants().map((d) => ({
-        ...d.data,
-        // This bit is super important! We *mutated* the object in the `forEach`
-        // above so the reference is the same. React needs to see a new reference
-        // to trigger a re-render of the node.
-        data: { ...d.data.data },
-        position: isHierarchyPointNode(d) ? { x: d.x, y: d.y } : d.data.position
-      })),
-      edges: edges.filter(
-        (edge) =>
-          root.find((h) => h.id === edge.source) &&
-          root.find((h) => h.id === edge.target)
-      )
+      // 5. Return a new array of layouted nodes. This will not include any nodes
+      // that were removed from the dagre graph in step 3.
+      //
+      // 💡 `Array.flatMap` can act as a *filter map*. If we want to remove an
+      // element from the array, we can return an empty array in this iteration.
+      // Otherwise, we can map the element like normal and wrap it in a singleton
+      // array.
+      nodes: nodes.flatMap((node) => {
+        // This node might have been filtered out by `filterCollapsedChildren` if
+        // any of its ancestors were collpased.
+        if (!dagre.hasNode(node.id)) return [];
+
+        const { x, y } = dagre.node(node.id);
+
+        const type = "custom";
+        const position = { x, y };
+        // 🚨 `filterCollapsedChildren` *mutates* the data object of a node. React
+        // will not know the data has changed unless we create a new object here.
+        const data = { ...node.data };
+
+        return [{ ...node, position, type, data }];
+      }),
+      edges
     };
   }, [nodes, edges, layoutNodes, treeWidth, treeHeight]);
 }

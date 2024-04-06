@@ -6,13 +6,24 @@ import {
   type Edge,
   type Node
 } from "reactflow";
-
-import layoutAlgorithms, { type LayoutAlgorithmOptions } from "./algorithms";
+import dagre from "./algorithms/dagre";
 import { getSourceHandlePosition, getTargetHandlePosition } from "./utils";
 
-export type LayoutOptions = {
-  algorithm: keyof typeof layoutAlgorithms;
-} & LayoutAlgorithmOptions;
+// the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)
+export type Direction = "TB" | "LR" | "RL" | "BT";
+
+export type LayoutAlgorithmOptions = {
+  direction: Direction;
+  spacing: [number, number];
+};
+
+export type LayoutAlgorithm = (
+  nodes: Node[],
+  edges: Edge[],
+  options: LayoutAlgorithmOptions
+) => Promise<{ nodes: Node[]; edges: Edge[] }>;
+
+export type LayoutOptions = LayoutAlgorithmOptions;
 
 function useAutoLayout(options: LayoutOptions) {
   const { setNodes, setEdges } = useReactFlow();
@@ -45,11 +56,10 @@ function useAutoLayout(options: LayoutOptions) {
     // The callback passed to `useEffect` cannot be `async` itself, so instead we
     // create an async function here and call it immediately afterwards.
     const runLayout = async () => {
-      const layoutAlgorithm = layoutAlgorithms[options.algorithm];
       const nodes = [...elements.nodeMap.values()];
       const edges = [...elements.edgeMap.values()];
 
-      const { nodes: nextNodes, edges: nextEdges } = await layoutAlgorithm(
+      const { nodes: nextNodes, edges: nextEdges } = await dagre(
         nodes,
         edges,
         options

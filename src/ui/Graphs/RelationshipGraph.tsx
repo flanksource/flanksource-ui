@@ -24,7 +24,6 @@ const defaultEdgeOptions = {
 };
 
 const layoutOption = {
-  algorithm: "dagre",
   direction: "LR",
   spacing: [50, 50]
 } satisfies LayoutOptions;
