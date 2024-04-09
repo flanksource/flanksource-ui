@@ -67,8 +67,8 @@ export default function ConfigsTypeIcon({
             />
           )}
       </span>
-      {showLabel && <span className="flex-1 overflow-hidden"> {value}</span>}
-      {children && <span className="flex-1 overflow-hidden">{children}</span>}
+      {showLabel && <span> {value}</span>}
+      {children && <span>{children}</span>}
     </div>
   );
 }
