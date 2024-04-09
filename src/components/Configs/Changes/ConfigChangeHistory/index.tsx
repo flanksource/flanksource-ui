@@ -13,6 +13,8 @@ import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsCh
 const columns: ColumnDef<ConfigChange>[] = [
   {
     header: "Created",
+    id: "created_at",
+    enableSorting: true,
     accessorKey: "created_at",
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
@@ -25,13 +27,14 @@ const columns: ColumnDef<ConfigChange>[] = [
     id: "config_id",
     accessorKey: "config_id",
     enableHiding: true,
-    cell: function ConfigLinkCell({ row, column }) {
-      const config = {
-        id: row.original.config_id,
-        name: row.original.name!,
-        type: row.original.type
-      };
-      return <ConfigLink config={config} />;
+    enableSorting: false,
+    cell: function ConfigLinkCell({ row }) {
+      return (
+        <ConfigLink
+          config={row.original.config}
+          configId={row.original.config_id}
+        />
+      );
     },
     size: 84
   },
@@ -75,7 +78,7 @@ type ConfigChangeHistoryProps = {
   tableStyle?: React.CSSProperties;
   pagination?: PaginationOptions;
   sortBy?: SortingState;
-  setSortBy?: (sort: Updater<SortingState>) => void;
+  onTableSortByChanged?: (sort: Updater<SortingState>) => void;
 };
 
 export function ConfigChangeHistory({
@@ -86,7 +89,7 @@ export function ConfigChangeHistory({
   pagination,
   tableStyle,
   sortBy,
-  setSortBy = () => {}
+  onTableSortByChanged = () => {}
 }: ConfigChangeHistoryProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
@@ -117,7 +120,7 @@ export function ConfigChangeHistory({
         savePreferences={false}
         enableServerSideSorting
         tableSortByState={sortBy}
-        onTableSortByChanged={setSortBy}
+        onTableSortByChanged={onTableSortByChanged}
         handleRowClick={(row) => {
           setSelectedConfigChange(row.original);
           setModalIsOpen(true);

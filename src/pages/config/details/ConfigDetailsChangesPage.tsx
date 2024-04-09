@@ -18,13 +18,15 @@ export function ConfigDetailsChangesPage() {
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [params, setParams] = useSearchParams({
     downstream: "true",
-    upstream: "false"
+    upstream: "false",
+    sortBy: "created_at",
+    sortDirection: "desc"
   });
   const change_type = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;
-  const sortBy = params.get("sortBy") ?? "created_at";
+  const sortBy = params.get("sortBy") ?? undefined;
   const sortDirection = params.get("sortDirection") ?? "desc";
   const configType = params.get("configType") ?? "all";
   const page = params.get("page") ?? "1";
@@ -101,10 +103,14 @@ export function ConfigDetailsChangesPage() {
   }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
   const sortState: SortingState = [
-    {
-      id: sortBy,
-      desc: sortDirection === "desc"
-    }
+    ...(sortBy
+      ? [
+          {
+            id: sortBy,
+            desc: sortDirection === "desc"
+          }
+        ]
+      : [])
   ];
 
   if (error) {
@@ -132,7 +138,7 @@ export function ConfigDetailsChangesPage() {
               data={changes}
               isLoading={isLoading}
               sortBy={sortState}
-              setSortBy={(sort) => {
+              onTableSortByChanged={(sort) => {
                 const sortBy = Array.isArray(sort) ? sort : sort(sortState);
                 if (sortBy.length === 0) {
                   params.delete("sortBy");

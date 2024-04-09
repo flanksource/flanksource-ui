@@ -15,8 +15,9 @@ import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { SortingState, Updater } from "@tanstack/react-table";
 import { useAtom } from "jotai";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
@@ -24,8 +25,10 @@ export function ConfigChangesPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
-
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    sortBy: "created_at",
+    sortDirection: "desc"
+  });
   const configType = params.get("configType") ?? undefined;
   const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
@@ -33,8 +36,22 @@ export function ConfigChangesPage() {
   const to = timeRangeValue?.to ?? undefined;
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
-  const sortBy = params.get("sortBy") ?? "created_at";
-  const sortDirection = params.get("sortDirection") ?? "desc";
+  const sortBy = params.get("sortBy") ?? undefined;
+  const sortDirection = params.get("sortDirection") === "asc" ? "asc" : "desc";
+
+  const sortState: SortingState = useMemo(
+    () => [
+      ...(sortBy
+        ? [
+            {
+              id: sortBy,
+              desc: sortDirection === "desc"
+            }
+          ]
+        : [])
+    ],
+    [sortBy, sortDirection]
+  );
 
   const { data, isLoading, error, isRefetching, refetch } =
     useGetConfigsChangesQuery(
@@ -89,6 +106,23 @@ export function ConfigChangesPage() {
       ? error
       : (error as Record<string, string>)?.message ?? "Something went wrong";
 
+  const updateSortBy = useCallback(
+    (sort: Updater<SortingState>) => {
+      console.log(sort, sortState);
+      const sortBy = Array.isArray(sort) ? sort : sort(sortState);
+      console.log(sortBy);
+      if (sortBy.length === 0) {
+        params.delete("sortBy");
+        params.delete("sortDirection");
+      } else {
+        params.set("sortBy", sortBy[0]?.id);
+        params.set("sortDirection", sortBy[0].desc ? "desc" : "asc");
+      }
+      setParams(params);
+    },
+    [params, setParams, sortState]
+  );
+
   return (
     <>
       <Head prefix="Catalog Changes" />
@@ -140,6 +174,8 @@ export function ConfigChangesPage() {
                 isLoading={isLoading}
                 linkConfig
                 pagination={pagination}
+                sortBy={sortState}
+                onTableSortByChanged={updateSortBy}
               />
             </>
           )}
