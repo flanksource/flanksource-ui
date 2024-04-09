@@ -326,8 +326,8 @@ export const getAConfigRelationships = async ({
   const configTypeFilter = configType ? `&type=eq.${configType}` : "";
 
   const typeFilter = type_filter
-    ? `&type_filter=${type_filter}`
-    : `&max_depth=1`;
+    ? `&type_filter=${type_filter}&max_depth=10`
+    : `&max_depth=10`;
 
   const res = await ConfigDB.get<ConfigRelationships[]>(
     `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${hideDeleted}${typeFilter}${configTypeFilter}`

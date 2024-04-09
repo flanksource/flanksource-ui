@@ -8,6 +8,7 @@ type StatusProps = {
 export function Status({ status, good, mixed, className = "" }: StatusProps) {
   let color = "bg-green-400";
   status = status?.toLowerCase();
+  console.log("status", status);
   if (
     status === "degraded" ||
     status === "missing" ||
@@ -26,12 +27,12 @@ export function Status({ status, good, mixed, className = "" }: StatusProps) {
   }
 
   return (
-    <>
+    <div className="flex flex-row items-center">
       <span
         className={`flex-shrink-0 inline-block h-3 w-3 rounded-full shadow-md ${className} ${color}`}
         aria-hidden="true"
       />
       <span className="capitalize pl-1">{status}</span>
-    </>
+    </div>
   );
 }

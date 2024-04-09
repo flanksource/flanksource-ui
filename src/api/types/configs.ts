@@ -70,6 +70,13 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   };
 }
 
+export interface ConfigItemGraphData extends ConfigItem {
+  expanded?: boolean;
+  expandable?: boolean;
+  items?: Pick<ConfigItem, "type">[];
+  isIntermediaryNode?: boolean;
+}
+
 export interface ConfigRelationships extends ConfigItem {
   direction: "incoming" | "outgoing";
   relation_type: "incoming" | "outgoing";
