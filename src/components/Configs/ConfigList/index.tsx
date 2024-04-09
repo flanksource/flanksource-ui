@@ -146,6 +146,7 @@ export default function ConfigList({
       hiddenColumns={hiddenColumns}
       className="max-w-full table-auto table-fixed"
       tableSortByState={sortBy}
+      enableServerSideSorting
       onTableSortByChanged={updateSortBy}
       determineRowClassNamesCallback={determineRowClassNames}
       preferencesKey="config-list"
