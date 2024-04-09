@@ -1,6 +1,6 @@
 import Dagre from "@dagrejs/dagre";
 import { useMemo } from "react";
-import { Edge, Node } from "reactflow";
+import { Edge, Node, Position } from "reactflow";
 import { type NodeData } from "./types";
 
 export type UseExpandCollapseOptions = {
@@ -20,16 +20,19 @@ function filterCollapsedChildren(
 
   // Update this node's props so it knows if it has children and can be expanded
   // or not.
-  node.data.expandable = !!children?.length;
+  node.data.expandable = children && children?.length > 3 ? true : false;
 
   // If the node is collpased (ie it is not expanded) then we want to remove all
   // of its children from the graph *and* any of their children.
-  if (!node.data.expanded) {
-    while (children?.length) {
-      const child = children.pop()!;
-
-      children.push(...(dagre.successors(child) as unknown as string[]));
-      dagre.removeNode(child);
+  if (children && children?.length > 3) {
+    if (!node.data.expanded) {
+      while (children?.length) {
+        const child = children.pop()!;
+        if (dagre.successors(child)) {
+          children.push(...(dagre.successors(child) as unknown as string[]));
+          dagre.removeNode(child);
+        }
+      }
     }
   }
 }
@@ -39,7 +42,7 @@ function useExpandCollapse(
   edges: Edge[],
   {
     layoutNodes = true,
-    treeWidth = 220,
+    treeWidth = 320,
     treeHeight = 100
   }: UseExpandCollapseOptions = {}
 ): { nodes: Node[]; edges: Edge[] } {
@@ -50,7 +53,7 @@ function useExpandCollapse(
     // properties.
     const dagre = new Dagre.graphlib.Graph()
       .setDefaultEdgeLabel(() => ({}))
-      .setGraph({ rankdir: "TB" });
+      .setGraph({ rankdir: "LR", ranksep: 50, nodesep: 50 });
 
     // 2. Add each node and edge to the dagre graph. Instead of using each node's
     // intrinsic width and height, we tell dagre to use the `treeWidth` and
@@ -58,10 +61,8 @@ function useExpandCollapse(
     for (const node of nodes) {
       dagre.setNode(node.id, {
         ...node,
-        width: treeWidth,
-        height: treeHeight,
         data: node.data
-      });
+      } as any);
     }
 
     for (const edge of edges) {
@@ -93,17 +94,19 @@ function useExpandCollapse(
 
         const { x, y } = dagre.node(node.id);
 
-        const type = "custom";
         const position = { x, y };
         // 🚨 `filterCollapsedChildren` *mutates* the data object of a node. React
         // will not know the data has changed unless we create a new object here.
         const data = { ...node.data };
 
-        return [{ ...node, position, type, data }];
+        node.sourcePosition = Position.Right;
+        node.targetPosition = Position.Left;
+
+        return [{ ...node, position, data }];
       }),
       edges
     };
-  }, [nodes, edges, layoutNodes, treeWidth, treeHeight]);
+  }, [nodes, edges, layoutNodes]);
 }
 
 export default useExpandCollapse;

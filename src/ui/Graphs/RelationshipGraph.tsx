@@ -1,21 +1,25 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import ReactFlow, {
   ConnectionLineType,
   Controls,
   Edge,
   MarkerType,
   Node,
+  NodeMouseHandler,
   NodeTypes,
   useEdgesState,
-  useNodesState,
-  useReactFlow
+  useNodesState
 } from "reactflow";
 
+import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigIntermediaryNodeReactFlowNode";
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
 import "reactflow/dist/style.css";
-import useAutoLayout, { LayoutOptions } from "./Layouts/useAutoLayout";
+import useExpandCollapse from "./Expand/useExpandCollapse";
 
-const nodeTypes: NodeTypes = { configNode: ConfigItemReactFlowNode };
+const nodeTypes: NodeTypes = {
+  configNode: ConfigItemReactFlowNode,
+  intermediaryNode: ConfigIntermediaryNodeReactFlowNode
+};
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -23,22 +27,21 @@ const defaultEdgeOptions = {
   pathOptions: { offset: 5 }
 };
 
-const layoutOption = {
-  direction: "LR",
-  spacing: [50, 50]
-} satisfies LayoutOptions;
+export type GraphDataGenericConstraint = {
+  [key: string]: any;
+  expanded?: boolean;
+  expandable?: boolean;
+};
 
-type ConfigGraphProps<T> = {
+type ConfigGraphProps<T extends GraphDataGenericConstraint> = {
   nodes: Node<T>[];
   edges: Edge<T>[];
 };
 
-export function RelationshipGraph<T>({
+export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   nodes: propNodes,
   edges: propEdges
 }: ConfigGraphProps<T>) {
-  const { fitView } = useReactFlow();
-
   const [nodes, setNodes, onNodesChange] = useNodesState<T>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -47,19 +50,35 @@ export function RelationshipGraph<T>({
     setEdges(propEdges);
   }, [propNodes, propEdges, setNodes, setEdges]);
 
-  useAutoLayout(layoutOption);
+  const { nodes: expandNodes, edges: expandEdges } = useExpandCollapse(
+    nodes,
+    edges
+  );
 
-  // every time our nodes change, we want to center the graph again
-  useEffect(() => {
-    fitView();
-  }, [fitView, nodes]);
+  const onNodeClick: NodeMouseHandler = useCallback(
+    (_, node) => {
+      setNodes((nds) =>
+        nds.map((n) => {
+          if (n.id === node.id) {
+            return {
+              ...n,
+              data: { ...n.data, expanded: !n.data.expanded }
+            };
+          }
+          return n;
+        })
+      );
+    },
+    [setNodes]
+  );
 
   return (
     <div className="flex flex-col h-full w-full">
       <ReactFlow
         fitView
-        nodes={nodes}
-        edges={edges}
+        onNodeClick={onNodeClick}
+        nodes={expandNodes}
+        edges={expandEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         edgesUpdatable={false}
