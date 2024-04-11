@@ -208,7 +208,6 @@ export async function getConfigsChanges({
   if (configType && configType !== "all") {
     queryParams.set("config_type", configType);
   }
-  console.log("changeType", changeType);
   if (changeType && changeType !== "all") {
     const value = tristateOutputToQueryParamValue(changeType);
     if (value) {
