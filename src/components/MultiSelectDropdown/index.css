@@ -1,4 +1,0 @@
-/* remove input border when focused */
-[type='text']:focus {
-    box-shadow: none !important;
-}
