@@ -67,7 +67,10 @@ export function TopologyPage() {
 
   const [, setTriggerRefresh] = useAtom(refreshButtonClickedTrigger);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    sortBy: "status",
+    sortOrder: "desc"
+  });
 
   const [topologyCardSize, setTopologyCardSize] = useState(() =>
     getCardWidth()
@@ -78,8 +81,8 @@ export function TopologyPage() {
   const topologyType = searchParams.get("type") ?? "All";
   const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
-  const sortBy = searchParams.get("sortBy") ?? undefined;
-  const sortOrder = searchParams.get("sortOrder") ?? undefined;
+  const sortBy = searchParams.get("sortBy") ?? "status";
+  const sortOrder = searchParams.get("sortOrder") ?? "desc";
   const agentId = searchParams.get("agent_id") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
