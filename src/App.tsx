@@ -77,6 +77,8 @@ import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
 import { stringSortHelper } from "./utils/common";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 export type NavigationItems = {
   name: string;
   icon: React.ComponentType<any> | IconType;
@@ -585,7 +587,9 @@ export function App() {
                   <ConfigPageContextProvider>
                     <IncidentPageContextProvider>
                       <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                      <ReactQueryDevtools initialIsOpen={false} />
+                      {isDevelopment && (
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      )}
                     </IncidentPageContextProvider>
                   </ConfigPageContextProvider>
                 </HealthPageContextProvider>
