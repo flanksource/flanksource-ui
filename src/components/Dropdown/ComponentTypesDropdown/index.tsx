@@ -1,7 +1,10 @@
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
-type ComponentTypesDropdownProps = React.HTMLProps<HTMLDivElement> & {
-  onChange: (val: any) => void;
+type ComponentTypesDropdownProps = Omit<
+  React.HTMLProps<HTMLDivElement>,
+  "onChange"
+> & {
+  onChange: (val?: string) => void;
   value: string | StateOption | undefined;
   topologyTypes: StateOption[];
 };
