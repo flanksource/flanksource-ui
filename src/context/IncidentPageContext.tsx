@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export type IncidentState = {
   incidents: any[] | null;
@@ -23,7 +23,7 @@ const IncidentPageContext = createContext(initialState);
 export const IncidentPageContextProvider = ({
   children
 }: {
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }) => {
   const [incidentState, setIncidentState] = useState({
     ...initialState.incidentState

@@ -2,14 +2,14 @@ import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import {
-  getResponderTitleByValue,
-  getOrderedKeys,
+  ResponderOption,
   ResponderPropsKeyToLabelMap,
-  ResponderOption
+  getOrderedKeys,
+  getResponderTitleByValue
 } from "../AddResponders/AddResponder";
 
 type ResponderDetailsToolTipProps = {
-  element: React.ReactElement;
+  element: React.ReactNode;
   data?: Record<string, any>;
   responder: any;
 } & React.HTMLProps<HTMLDivElement>;

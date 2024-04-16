@@ -1,11 +1,9 @@
-import { ReactElement } from "react";
-
 export default function VerticalDescription({
   label,
   value
 }: {
   label: string;
-  value: ReactElement;
+  value: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-2 px-2 flex-1 xl:flex-none">

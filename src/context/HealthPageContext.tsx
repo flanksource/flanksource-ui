@@ -1,9 +1,9 @@
 import React, {
-  useState,
+  Dispatch,
+  SetStateAction,
   createContext,
   useContext,
-  Dispatch,
-  SetStateAction
+  useState
 } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 import { HealthCheck } from "../api/types/health";
@@ -43,7 +43,7 @@ const HealthPageContext = createContext(initialState);
 export const HealthPageContextProvider = ({
   children
 }: {
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }) => {
   const [healthState, setHealthState] = useState({
     ...initialState.healthState
