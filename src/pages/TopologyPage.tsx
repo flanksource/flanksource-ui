@@ -80,6 +80,7 @@ export function TopologyPage() {
   const refererId = searchParams.get("refererId") ?? undefined;
   const sortBy = searchParams.get("sortBy") ?? undefined;
   const sortOrder = searchParams.get("sortOrder") ?? undefined;
+  const agentId = searchParams.get("agent_id") ?? undefined;
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") ?? undefined;
 
@@ -95,7 +96,8 @@ export function TopologyPage() {
       topologyType,
       showHiddenComponents,
       sortBy,
-      sortOrder
+      sortOrder,
+      agentId
     ],
     () => {
       loadingBarRef.current?.continuousStart();
@@ -112,7 +114,8 @@ export function TopologyPage() {
           topologyType.toString().toLowerCase() !== "all" && {
             flatten: true
           }),
-        hidden: showHiddenComponents === "no" ? false : undefined
+        hidden: showHiddenComponents === "no" ? false : undefined,
+        agent_id: agentId
       };
       return getTopology(apiParams);
     },
