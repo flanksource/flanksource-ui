@@ -5,7 +5,7 @@ import { Oval } from "react-loading-icons";
 type Props = {
   className?: string;
   title?: string;
-  icon?: React.ReactElement;
+  icon?: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
   ovalProps?: React.SVGAttributes<SVGSVGElement>;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;

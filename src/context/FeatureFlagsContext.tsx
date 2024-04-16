@@ -1,9 +1,9 @@
-import React, { useState, createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { features } from "../services/permissions/features";
 import {
   Property,
   permissionService
 } from "../services/permissions/permissionsService";
-import { features } from "../services/permissions/features";
 
 export type FeatureFlagsState = {
   featureFlags: Property[];
@@ -24,7 +24,7 @@ const FeatureFlagsContext = createContext(initialState);
 export const FeatureFlagsContextProvider = ({
   children
 }: {
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }) => {
   const [featureFlags, setFeatureFlags] = useState(initialState.featureFlags);
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(

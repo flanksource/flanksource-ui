@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { ConfigItem } from "../api/types/configs";
 
 export type ConfigState = {
@@ -24,7 +24,7 @@ const ConfigPageContext = createContext(initialState);
 export const ConfigPageContextProvider = ({
   children
 }: {
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }) => {
   const [configState, setConfigState] = useState({
     ...initialState.configState

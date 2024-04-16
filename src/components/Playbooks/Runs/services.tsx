@@ -6,7 +6,7 @@ import { SubmitPlaybookRunFormValues } from "./Submit/SubmitPlaybookRunForm";
 
 export type ActionResource = {
   label: string;
-  link: React.ReactElement;
+  link: React.ReactNode;
   id: string;
 };
 

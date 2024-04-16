@@ -2,13 +2,13 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import { IoMdSend } from "react-icons/io";
 
-import { CommentInput } from "../../Comment";
 import { Comment } from "../../../api/types/incident";
+import { CommentInput } from "../../Comment";
 import { ResponseLine } from "../ResponseLine";
 
 interface Props {
   comments: Comment[];
-  titlePrepend?: React.ReactElement;
+  titlePrepend?: React.ReactNode;
   onComment?: (str: string) => Promise<void>;
 }
 

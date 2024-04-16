@@ -84,9 +84,9 @@ interface IProps extends Props<IOption, false, GroupBase<IOption>> {
   className?: string;
   control?: Control;
   name: string;
-  description?: string | React.ReactElement;
-  label?: string | React.ReactElement;
-  children?: React.ReactElement | React.ReactElement[];
+  description?: React.ReactNode;
+  label?: React.ReactNode;
+  children?: React.ReactNode;
   onSelect: (arg: any) => void;
   rules?: any;
 }

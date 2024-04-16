@@ -49,7 +49,7 @@ export const UserAccessStateContext = createContext(initialState);
 export const UserAccessStateContextProvider = ({
   children
 }: {
-  children: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }) => {
   const { user } = useUser();
   const [roles, setRoles] = useState<string[]>([]);
