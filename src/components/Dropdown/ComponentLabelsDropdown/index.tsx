@@ -4,8 +4,11 @@ import { useComponentLabelsQuery } from "../../../api/query-hooks";
 import { allOption } from "../../../pages/TopologyPage";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
-type ComponentLabelsDropdownProps = React.HTMLProps<HTMLDivElement> & {
-  onChange: (val: any) => void;
+type ComponentLabelsDropdownProps = Omit<
+  React.HTMLProps<HTMLDivElement>,
+  "onChange"
+> & {
+  onChange: (val?: string) => void;
   value: string | StateOption | undefined;
 };
 
@@ -55,7 +58,7 @@ export function ComponentLabelsDropdown({
         items={topologyLabels}
         className="inline-block p-3 w-auto max-w-[500px]"
         dropDownClassNames="w-auto max-w-[400px] left-0"
-        onChange={(val: any) => {
+        onChange={(val) => {
           onChange(val);
         }}
         prefix={

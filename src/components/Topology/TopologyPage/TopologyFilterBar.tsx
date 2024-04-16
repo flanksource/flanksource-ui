@@ -86,7 +86,10 @@ export default function TopologyFilterBar({
             items={healthStatuses}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val: any) => {
+            onChange={(val) => {
+              if (!val || val.toLowerCase() === "all") {
+                return;
+              }
               setSearchParams({
                 ...Object.fromEntries(searchParams),
                 status: val
@@ -105,7 +108,10 @@ export default function TopologyFilterBar({
           label=""
           topologyTypes={topologyTypes}
           value={topologyType}
-          onChange={(val: any) => {
+          onChange={(val) => {
+            if (!val || val.toLowerCase() === "all") {
+              return;
+            }
             setSearchParams({
               ...Object.fromEntries(searchParams),
               type: val
@@ -120,7 +126,10 @@ export default function TopologyFilterBar({
             items={teams}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val: any) => {
+            onChange={(val) => {
+              if (!val || val.toLowerCase() === "all") {
+                return;
+              }
               setSearchParams({
                 ...Object.fromEntries(searchParams),
                 team: val
@@ -138,7 +147,10 @@ export default function TopologyFilterBar({
           label=""
           className="flex w-auto max-w-[500px]"
           value={selectedLabel}
-          onChange={(val: any) => {
+          onChange={(val) => {
+            if (!val || val.toLowerCase() === "all") {
+              return;
+            }
             setSearchParams({
               ...Object.fromEntries(searchParams),
               labels: val
@@ -151,7 +163,10 @@ export default function TopologyFilterBar({
             value={agentId}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val: any) => {
+            onChange={(val) => {
+              if (!val || val.toLowerCase() === "all") {
+                return;
+              }
               setSearchParams({
                 ...Object.fromEntries(searchParams),
                 agent_id: val
