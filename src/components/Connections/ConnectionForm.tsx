@@ -70,8 +70,6 @@ export function ConnectionForm({
     }
   }, [connectionType.value, formValue]);
 
-  console.log(formInitialValue, "formInitialValue");
-
   const convertData = (data: Connection) => {
     if (connectionType?.preSubmitConverter) {
       const x = connectionType.preSubmitConverter(data as any) as Connection;
