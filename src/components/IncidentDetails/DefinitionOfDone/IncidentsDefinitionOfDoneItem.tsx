@@ -1,3 +1,8 @@
+import { useUpdateEvidenceMutation } from "@flanksource-ui/api/query-hooks/mutations/evidence";
+import { Evidence, EvidenceType } from "@flanksource-ui/api/types/evidence";
+import { Size } from "@flanksource-ui/types";
+import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
+import { Menu } from "@flanksource-ui/ui/Menu";
 import {
   CSSProperties,
   Dispatch,
@@ -10,11 +15,6 @@ import { AiFillCheckCircle } from "react-icons/ai";
 import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { MdRefresh } from "react-icons/md";
-import { useUpdateEvidenceMutation } from "../../../api/query-hooks/mutations/evidence";
-import { Evidence, EvidenceType } from "../../../api/types/evidence";
-import { Size } from "../../../types";
-import { Menu } from "../../../ui/Menu";
-import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import { IconButton } from "../../IconButton";
 import EditEvidenceDefinitionOfDoneComment from "./EditEvidenceDefinitionOfDoneComment";
 import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";

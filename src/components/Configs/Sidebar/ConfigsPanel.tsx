@@ -1,3 +1,6 @@
+import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
+import { Badge } from "@flanksource-ui/ui/Badge";
+import CollapsiblePanel from "@flanksource-ui/ui/CollapsiblePanel/CollapsiblePanel";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
@@ -6,9 +9,6 @@ import { VscJson } from "react-icons/vsc";
 import { Tooltip } from "react-tooltip";
 import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
-import { Badge } from "../../../ui/Badge";
-import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
-import { ConfirmationPromptDialog } from "../../Dialogs/ConfirmationPromptDialog";
 import EmptyState from "../../EmptyState";
 import { IconButton } from "../../IconButton";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
