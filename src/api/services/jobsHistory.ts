@@ -1,4 +1,4 @@
-import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
+import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { JobHistory } from "../../components/JobsHistory/JobsHistoryTable";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";

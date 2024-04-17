@@ -1,7 +1,7 @@
 import {
   tristateOutputToQueryFilterParam,
   tristateOutputToQueryParamValue
-} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AnyMessageParams } from "yup/lib/types";
 import { Catalog, Config, ConfigDB, IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
