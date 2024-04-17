@@ -67,7 +67,7 @@ export function Modal({
   title,
   titleClass,
   bodyClass = "flex flex-col flex-1 overflow-y-auto",
-  footerClassName,
+  footerClassName = "flex my-2 px-8 justify-end",
   actions,
   open,
   onClose = () => {},
@@ -172,12 +172,7 @@ export function Modal({
               <div className={bodyClass}>{children}</div>
 
               {Boolean(actions?.length) && (
-                <div
-                  className={clsx(
-                    "flex my-2 px-8 justify-end",
-                    footerClassName
-                  )}
-                >
+                <div className={clsx(footerClassName)}>
                   {actions?.length && actions}
                 </div>
               )}
