@@ -6,6 +6,7 @@ import { FaSpinner, FaTrash } from "react-icons/fa";
 import { Button } from "../../ui/Button";
 import { Connection } from "./ConnectionFormModal";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
+import { TestConnection } from "./TestConnection";
 import { ConnectionType, connectionTypes } from "./connectionTypes";
 
 interface ConnectionFormProps {
@@ -131,8 +132,8 @@ export function ConnectionForm({
               </div>
             </div>
           </div>
-          <div className="flex items-center py-4 px-5 rounded-lg bg-gray-100">
-            {Boolean(formValue?.id) && (
+          <div className="flex items-center py-4 px-5 gap-2 rounded-lg bg-gray-100">
+            {formValue?.id && (
               <Button
                 text="Delete"
                 icon={<FaTrash />}
@@ -140,7 +141,7 @@ export function ConnectionForm({
                 className="btn-danger"
               />
             )}
-            {connectionType && !Boolean(formValue?.id) && (
+            {connectionType && !formValue?.id && (
               <button
                 className={clsx("btn-secondary-base btn-secondary")}
                 type="button"
@@ -149,7 +150,8 @@ export function ConnectionForm({
                 Back
               </button>
             )}
-            <div className="flex flex-1 justify-end">
+            <div className="flex flex-1 gap-2 justify-end">
+              {formValue?.id && <TestConnection connectionId={formValue.id} />}
               <Button
                 type="submit"
                 icon={

@@ -27,7 +27,7 @@ export function AlertMessageDialog({
           onClick={() => onCloseDialog(false)}
         />
       ]}
-      size={"small"}
+      size={"medium"}
       title={title}
       open={showDialog}
       onClose={() => onCloseDialog(false)}
