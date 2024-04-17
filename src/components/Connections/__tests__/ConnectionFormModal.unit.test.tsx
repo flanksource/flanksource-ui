@@ -1,3 +1,5 @@
+import { QueryClient } from "@tanstack/query-core";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ConnectionFormModal from "../ConnectionFormModal";
 import { ConnectionValueType } from "../connectionTypes";
@@ -7,6 +9,8 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn()
 }));
+
+const client = new QueryClient();
 
 describe("ConnectionForm", () => {
   const formInitialValue = {
@@ -25,13 +29,15 @@ describe("ConnectionForm", () => {
 
   it("renders form when provided with initial value", async () => {
     render(
-      <ConnectionFormModal
-        formValue={formInitialValue}
-        isOpen={true}
-        setIsOpen={() => {}}
-        onConnectionDelete={async (data) => {}}
-        onConnectionSubmit={onConnectionSubmit}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionFormModal
+          formValue={formInitialValue}
+          isOpen={true}
+          setIsOpen={() => {}}
+          onConnectionDelete={async (data) => {}}
+          onConnectionSubmit={onConnectionSubmit}
+        />
+      </QueryClientProvider>
     );
 
     await waitFor(() => screen.findByRole("button", { name: /Save/i }));
@@ -63,13 +69,15 @@ describe("ConnectionForm", () => {
 
   it("renders list of connection types", async () => {
     render(
-      <ConnectionFormModal
-        formValue={undefined}
-        isOpen={true}
-        setIsOpen={() => {}}
-        onConnectionSubmit={async (data) => {}}
-        onConnectionDelete={async (data) => {}}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionFormModal
+          formValue={undefined}
+          isOpen={true}
+          setIsOpen={() => {}}
+          onConnectionSubmit={async (data) => {}}
+          onConnectionDelete={async (data) => {}}
+        />
+      </QueryClientProvider>
     );
 
     expect(await screen.findByText("Git")).toBeInTheDocument();
@@ -78,13 +86,15 @@ describe("ConnectionForm", () => {
 
   it("renders form when connection type is selected", async () => {
     render(
-      <ConnectionFormModal
-        formValue={undefined}
-        isOpen={true}
-        setIsOpen={() => {}}
-        onConnectionSubmit={async (data) => {}}
-        onConnectionDelete={async (data) => {}}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionFormModal
+          formValue={undefined}
+          isOpen={true}
+          setIsOpen={() => {}}
+          onConnectionSubmit={async (data) => {}}
+          onConnectionDelete={async (data) => {}}
+        />
+      </QueryClientProvider>
     );
 
     fireEvent.click(await screen.findByText("Git"));

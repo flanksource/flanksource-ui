@@ -1,11 +1,14 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ConnectionForm from "./../ConnectionForm";
+import { QueryClient } from "@tanstack/query-core";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import {
   ConnectionType,
   ConnectionValueType,
   connectionTypes
 } from "../connectionTypes";
+import ConnectionForm from "./../ConnectionForm";
+
+const client = new QueryClient();
 
 describe("ConnectionForm", () => {
   const connectionType: ConnectionType = connectionTypes.find(
@@ -37,11 +40,13 @@ describe("ConnectionForm", () => {
   it("calls onConnectionSubmit when the form is submitted", async () => {
     const onConnectionSubmit = jest.fn();
     render(
-      <ConnectionForm
-        connectionType={connectionType}
-        formValue={formInitialValue}
-        onConnectionSubmit={onConnectionSubmit}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionForm
+          connectionType={connectionType}
+          formValue={formInitialValue}
+          onConnectionSubmit={onConnectionSubmit}
+        />
+      </QueryClientProvider>
     );
     fireEvent.click(
       screen.getByRole("button", {
@@ -68,11 +73,13 @@ describe("ConnectionForm", () => {
   it("calls onConnectionDelete when the delete button is clicked", () => {
     const onConnectionDelete = jest.fn();
     render(
-      <ConnectionForm
-        connectionType={connectionType}
-        formValue={{ ...formInitialValue, id: "123" }}
-        onConnectionDelete={onConnectionDelete}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionForm
+          connectionType={connectionType}
+          formValue={{ ...formInitialValue, id: "123" }}
+          onConnectionDelete={onConnectionDelete}
+        />
+      </QueryClientProvider>
     );
     fireEvent.click(screen.getByText("Delete"));
     expect(onConnectionDelete).toHaveBeenCalledWith({
@@ -84,14 +91,34 @@ describe("ConnectionForm", () => {
     });
   });
 
+  it("should show connection test button", () => {
+    const onConnectionDelete = jest.fn();
+    render(
+      <QueryClientProvider client={client}>
+        <ConnectionForm
+          connectionType={connectionType}
+          formValue={{ ...formInitialValue, id: "123" }}
+          onConnectionDelete={onConnectionDelete}
+        />
+      </QueryClientProvider>
+    );
+    expect(
+      screen.getByRole("button", {
+        name: /Test Connection/i
+      })
+    ).toBeInTheDocument();
+  });
+
   it("calls handleBack when the back button is clicked", () => {
     const handleBack = jest.fn();
     render(
-      <ConnectionForm
-        connectionType={connectionType}
-        formValue={formInitialValue}
-        handleBack={handleBack}
-      />
+      <QueryClientProvider client={client}>
+        <ConnectionForm
+          connectionType={connectionType}
+          formValue={formInitialValue}
+          handleBack={handleBack}
+        />
+      </QueryClientProvider>
     );
     fireEvent.click(screen.getByText("Back"));
     expect(handleBack).toHaveBeenCalled();
