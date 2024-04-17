@@ -1,13 +1,13 @@
+import { useIncidentRespondersQuery } from "@flanksource-ui/api/query-hooks/useIncidentRespondersQuery";
+import { deleteResponder } from "@flanksource-ui/api/services/responder";
+import { Incident } from "@flanksource-ui/api/types/incident";
+import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
+import { ClickableSvg } from "@flanksource-ui/ui/ClickableSvg/ClickableSvg";
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { FaSpinner } from "react-icons/fa";
-import { useIncidentRespondersQuery } from "../../api/query-hooks/useIncidentRespondersQuery";
-import { deleteResponder } from "../../api/services/responder";
-import { Incident } from "../../api/types/incident";
-import { ClickableSvg } from "../../ui/ClickableSvg/ClickableSvg";
-import { ConfirmationPromptDialog } from "../Dialogs/ConfirmationPromptDialog";
 import { IconButton } from "../IconButton";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { AddResponder } from "./AddResponders/AddResponder";

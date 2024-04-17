@@ -11,7 +11,6 @@ import {
 import { Modal } from "../components";
 import { AccessCheck } from "../components/AccessCheck/AccessCheck";
 import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
-import { ConfirmationPromptDialog } from "../components/Dialogs/ConfirmationPromptDialog";
 import { Head } from "../components/Head/Head";
 import {
   InviteUserForm,
@@ -25,6 +24,7 @@ import {
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
+import { ConfirmationPromptDialog } from "../ui/AlertDialog/ConfirmationPromptDialog";
 
 export function UsersPage() {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] =
