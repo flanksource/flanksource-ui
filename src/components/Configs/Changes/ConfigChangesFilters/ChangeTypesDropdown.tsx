@@ -5,7 +5,7 @@ import {
 import { ChangeIcon } from "@flanksource-ui/components/Icon/ChangeIcon";
 import TristateReactSelect, {
   TriStateOptions
-} from "@flanksource-ui/ui/TristateReactSelect/TristateReactSelect";
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
