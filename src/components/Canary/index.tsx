@@ -665,7 +665,7 @@ function SidebarSticky({
         className ||
           "2xl:flex 2xl:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
         // for mobile, float the sidebar on top of the content
-        "fixed z-[99999] bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
+        "fixed z-[99] 2xl:z-0 bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
         // for mobile, hide the sidebar when the menu is closed
         isMenuItemOpen ? "flex" : "hidden",
         // move sidebar if mission control UI
