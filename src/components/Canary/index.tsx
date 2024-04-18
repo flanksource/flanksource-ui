@@ -5,6 +5,7 @@ import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext"
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { debounce } from "lodash";
 import React, {
   useCallback,
@@ -40,6 +41,15 @@ import {
 } from "./labels";
 import { decodeUrlSearchParams, useUpdateParams } from "./url";
 
+const healthSettingsAtom = atomWithStorage<Record<string, string>>(
+  HEALTH_SETTINGS,
+  {},
+  undefined,
+  {
+    getOnInit: true
+  }
+);
+
 const getPassingCount = (checks: any) => {
   let count = 0;
   checks.forEach((check: any) => {
@@ -64,6 +74,7 @@ export function Canary({
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
+  const [, setSettings] = useAtom(healthSettingsAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const timeRange = searchParams.get("timeRange");
   const hidePassing = searchParams.get("hidePassing");
@@ -205,18 +216,15 @@ export function Canary({
   }, []);
 
   useEffect(() => {
-    const settings = localStorage.getItem(HEALTH_SETTINGS);
-    const parsedSettings = JSON.parse(settings ?? "{}");
-
-    localStorage.setItem(
-      HEALTH_SETTINGS,
-      JSON.stringify({
-        groupBy: groupBy ?? parsedSettings?.groupBy,
-        tabBy: tabBy ?? parsedSettings?.tabBy,
-        hidePassing: hidePassing ?? parsedSettings?.hidePassing
-      })
-    );
-  }, [groupBy, tabBy, hidePassing]);
+    setSettings((prev) => {
+      return {
+        ...prev,
+        groupBy: groupBy ?? prev?.groupBy,
+        tabBy: tabBy ?? prev?.tabBy,
+        hidePassing: hidePassing ?? prev?.hidePassing
+      };
+    });
+  }, [groupBy, tabBy, hidePassing, setSettings]);
 
   const handleSearch = debounce((value) => {
     searchParams.set("query", value);
@@ -410,8 +418,8 @@ const DropdownWrapper = ({
   ...rest
 }: DropdownStandaloneWrapperProps) => {
   const updateParams = useUpdateParams();
-  const settings = localStorage.getItem(HEALTH_SETTINGS);
-  const value = JSON.parse(settings ?? "{}")[paramKey] ?? null;
+  const [settings] = useAtom(healthSettingsAtom);
+  const value = settings[paramKey] ?? defaultValue;
 
   useEffect(() => {
     if (value !== defaultValue && value !== null) {
@@ -431,8 +439,8 @@ const DropdownWrapper = ({
 };
 
 export const HidePassingToggle = ({ defaultValue = false }) => {
-  const settings: any = localStorage.getItem(HEALTH_SETTINGS);
-  const hidePassing = JSON.parse(settings ?? "{}")?.hidePassing ?? null;
+  const [settings] = useAtom(healthSettingsAtom);
+  const hidePassing = settings?.hidePassing ?? null;
   const paramsValue = hidePassing ? hidePassing === "true" : null;
 
   const [value, setValue] = useState(paramsValue ?? defaultValue);
