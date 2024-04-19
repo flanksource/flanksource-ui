@@ -119,7 +119,12 @@ export type ConfigSummary = {
   type: string;
   analysis?: Record<string, any>;
   changes?: string;
-  total_configs: number;
+  count: number;
+  health: {
+    healthy: number;
+    unknown: number;
+    [key: string]: number;
+  };
   cost_per_minute?: number;
   cost_total_1d?: number;
   cost_total_7d?: number;

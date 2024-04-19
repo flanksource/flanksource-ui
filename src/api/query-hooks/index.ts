@@ -4,6 +4,7 @@ import { toastError } from "../../components/Toast/toast";
 import { getAllAgents } from "../services/agents";
 import {
   CatalogChangesSearchResponse,
+  ConfigSummaryRequest,
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
@@ -32,6 +33,7 @@ import {
   getTopologyNameByID
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
+import { ConfigSummary } from "../types/configs";
 import { IncidentHistory } from "../types/incident";
 import { ComponentTeamItem } from "../types/topology";
 
@@ -159,6 +161,7 @@ type ConfigListFilterQueryOptions = {
   sortBy?: string | null;
   sortOrder?: string | null;
   includeAgents?: boolean;
+  tags?: string[];
 };
 
 function prepareConfigListQuery({
@@ -168,7 +171,8 @@ function prepareConfigListQuery({
   sortBy,
   sortOrder,
   hideDeletedConfigs,
-  includeAgents = false
+  includeAgents = false,
+  tags = []
 }: ConfigListFilterQueryOptions) {
   let query =
     "select=id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
@@ -181,10 +185,16 @@ function prepareConfigListQuery({
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
   } else {
-    const filterQueries = [];
+    const filterQueries: string[] = [];
     if (label && label !== "All") {
       const [k, v] = decodeURI(label).split("__:__");
-      filterQueries.push(`tags->>${k}=eq.${encodeURIComponent(v)}`);
+      filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
+    }
+    if (tags.length > 0) {
+      tags.forEach((tag) => {
+        const [k, v] = decodeURI(tag).split(":");
+        filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
+      });
     }
     if (filterQueries.length) {
       query = `${query}&${filterQueries.join("&")}`;
@@ -208,8 +218,10 @@ export const useAllConfigsQuery = (
     sortBy,
     sortOrder,
     hideDeletedConfigs,
-    includeAgents
+    includeAgents,
+    tags
   }: ConfigListFilterQueryOptions,
+
   { enabled = true, staleTime = defaultStaleTime, ...rest }
 ) => {
   const query = prepareConfigListQuery({
@@ -219,7 +231,8 @@ export const useAllConfigsQuery = (
     sortBy,
     sortOrder,
     hideDeletedConfigs,
-    includeAgents
+    includeAgents,
+    tags
   });
   return useQuery(
     [
@@ -230,7 +243,8 @@ export const useAllConfigsQuery = (
       sortBy,
       sortOrder,
       hideDeletedConfigs,
-      includeAgents
+      includeAgents,
+      tags
     ],
     () => {
       return getAllConfigsMatchingQuery(query);
@@ -243,8 +257,13 @@ export const useAllConfigsQuery = (
   );
 };
 
-export const useConfigSummaryQuery = ({ enabled = true }) => {
-  return useQuery(["configs", "configSummary"], getConfigsSummary, {
+export const useConfigSummaryQuery = (
+  req: ConfigSummaryRequest,
+  { enabled = true }: UseQueryOptions<ConfigSummary[]> = {}
+) => {
+  return useQuery({
+    queryKey: ["configs", "configSummary", req],
+    queryFn: () => getConfigsSummary(req),
     enabled
   });
 };

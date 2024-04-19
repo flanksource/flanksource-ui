@@ -50,7 +50,7 @@ function ConfigsListFilterControls() {
         <>
           <ConfigTypesDropdown />
 
-          <ConfigGroupByDropdown />
+          <ConfigGroupByDropdown paramsToReset={["tags"]} />
 
           <ConfigLabelsDropdown />
 

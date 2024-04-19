@@ -1,5 +1,5 @@
 import { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
 import { ConfigItem } from "../../../api/types/configs";
@@ -24,8 +24,7 @@ export default function ConfigsTable({
 }: Props) {
   const [queryParams, setSearchParams] = useSearchParams({
     sortBy: "type",
-    sortOrder: "asc",
-    groupBy: groupBy ?? ""
+    sortOrder: "asc"
   });
 
   const groupByUserInput = queryParams.get("groupBy") ?? undefined;
@@ -99,12 +98,6 @@ export default function ConfigsTable({
     },
     [determineSortColumnOrder, queryParams, setSearchParams, sortBy]
   );
-
-  // we want to update sort settings when groupBy changes
-  useEffect(() => {
-    updateSortBy(sortBy);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupByColumns]);
 
   const hiddenColumns = [
     "deleted_at",

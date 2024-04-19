@@ -4,8 +4,8 @@ import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Confi
 import { areDeletedConfigChangesHidden } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import { PaginationOptions } from "@flanksource-ui/components/DataTable";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { SortingState } from "@tanstack/react-table";
 import { useAtom } from "jotai";
