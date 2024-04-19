@@ -42,9 +42,28 @@ export const getAllConfigsForSearchPurpose = async () => {
   return res.data ?? [];
 };
 
-export const getConfigsSummary = async () => {
-  const res = await resolve<ConfigSummary[] | null>(
-    ConfigDB.get(`/config_summary`)
+type ConfigSummaryRequestChanges = {
+  since: string;
+};
+
+type ConfigSummaryRequestAnalysis = {
+  since: string;
+};
+
+export type ConfigSummaryRequest = {
+  changes?: ConfigSummaryRequestChanges;
+  analysis?: ConfigSummaryRequestAnalysis;
+  cost?: string;
+  deleted?: boolean;
+  filter?: Record<string, string>; // Filter by labels
+  groupBy?: string[];
+  tags?: string[];
+};
+
+export const getConfigsSummary = async (request: ConfigSummaryRequest) => {
+  const res = await Catalog.post<ConfigSummary[] | undefined>(
+    `/summary`,
+    request
   );
   return res.data ?? [];
 };

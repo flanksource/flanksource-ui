@@ -23,25 +23,31 @@ export function ConfigListPage() {
   const [searchParams, setSearchParams] = useSearchParams({
     sortBy: "type",
     sortOrder: "asc",
-    groupBy: "no_grouping"
+    groupBy: "type"
   });
 
   const navigate = useNavigate();
 
   const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
-
   const hideDeletedConfigs = deletedConfigsHidden === "yes";
-
   const search = searchParams.get("search") ?? undefined;
-  const label = searchParams.get("label")
-    ? decodeURIComponent(searchParams.get("label")!)
-    : undefined;
   const groupByProp = searchParams.get("groupBy") ?? undefined;
   const sortBy = searchParams.get("sortBy");
   const sortOrder = searchParams.get("sortOrder");
   const configType = searchParams.get("configType") ?? undefined;
   // we want to get type and redirect to configType
   const type = searchParams.get("type") ?? undefined;
+  const labels = searchParams.get("labels") ?? undefined;
+
+  const labelList = useMemo(() => {
+    if (labels) {
+      return labels.split(",").map((label) => {
+        const [key, value] = label.split("__:__");
+        return `${key}:${value}`;
+      });
+    }
+    return undefined;
+  }, [labels]);
 
   // Redirect to configType if type is provided, we are doing this to support
   // old links that used type instead of configType and we are using configType
@@ -56,8 +62,8 @@ export function ConfigListPage() {
 
   // Show summary if no search, tag or configType is provided
   const showConfigSummaryList = useMemo(
-    () => !configType && !search && !groupByProp && !label,
-    [configType, groupByProp, label, search]
+    () => !configType && !labels,
+    [configType, labels]
   );
 
   const {
@@ -68,12 +74,12 @@ export function ConfigListPage() {
   } = useAllConfigsQuery(
     {
       search,
-      label,
       configType,
       sortBy,
       sortOrder,
       hideDeletedConfigs,
-      includeAgents: true
+      includeAgents: true,
+      tags: labelList
     },
     {
       cacheTime: 0,
@@ -81,13 +87,42 @@ export function ConfigListPage() {
     }
   );
 
+  const groupBy = useMemo(() => {
+    if (groupByProp) {
+      return groupByProp.split(",").map((group) => group.replace("__tag", ""));
+    }
+    return undefined;
+  }, [groupByProp]);
+
+  const filterSummaryByLabel = useMemo(() => {
+    if (labels) {
+      return labels.split(",").reduce((acc, label) => {
+        const [key, value] = label.split("__:__");
+        return { ...acc, [key]: value };
+      }, {});
+    }
+    return undefined;
+  }, [labels]);
+
   const {
     isLoading: isLoadingSummary,
     data: configSummary = [],
     refetch: refetchSummary
-  } = useConfigSummaryQuery({
-    enabled: showConfigSummaryList
-  });
+  } = useConfigSummaryQuery(
+    {
+      groupBy,
+      deleted: !hideDeletedConfigs,
+      filter: filterSummaryByLabel,
+      changes: {
+        since: "30d"
+      },
+      analysis: {
+        since: "30d"
+      },
+      cost: "30d"
+    },
+    {}
+  );
 
   const isLoading = isLoadingConfigList || isLoadingSummary || isRefetching;
 
@@ -143,6 +178,15 @@ export function ConfigListPage() {
               <ConfigSummaryList
                 isLoading={isLoadingSummary}
                 data={configSummary}
+                groupBy={groupBy ?? ["type"]}
+                groupByTags={
+                  groupByProp
+                    ? groupByProp
+                        .split(",")
+                        .filter((group) => group.includes("__tag"))
+                        .map((group) => group.replace("__tag", ""))
+                    : []
+                }
               />
             ) : (
               <ConfigsTable

@@ -4,6 +4,7 @@ type StatusProps = {
   status?: string;
   className?: string;
   statusText?: string;
+  hideText?: boolean;
 };
 
 export function Status({
@@ -11,7 +12,8 @@ export function Status({
   statusText,
   good,
   mixed,
-  className = ""
+  className = "",
+  hideText = false
 }: StatusProps) {
   let color = "bg-green-400";
   status = status?.toLowerCase();
@@ -39,7 +41,9 @@ export function Status({
         className={`flex-shrink-0 inline-block h-3 w-3 rounded-full shadow-md ${className} ${color}`}
         aria-hidden="true"
       />
-      <span className="capitalize pl-1">{statusText ?? status}</span>
+      {!hideText && (
+        <span className="capitalize pl-1">{statusText ?? status}</span>
+      )}
     </div>
   );
 }

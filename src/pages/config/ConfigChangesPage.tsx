@@ -9,11 +9,11 @@ import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Confi
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
-import { PaginationOptions } from "@flanksource-ui/components/DataTable";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { SortingState, Updater } from "@tanstack/react-table";
 import { useAtom } from "jotai";

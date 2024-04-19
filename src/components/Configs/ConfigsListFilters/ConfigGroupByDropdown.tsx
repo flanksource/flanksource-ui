@@ -5,7 +5,8 @@ import {
 } from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
-import { BiLabel } from "react-icons/bi";
+import { BiLabel, BiStats } from "react-icons/bi";
+import { MdDifference } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import { MultiValue } from "react-select";
 
@@ -13,37 +14,45 @@ type ConfigGroupByDropdownProps = {
   onChange?: (value: string[] | undefined) => void;
   searchParamKey?: string;
   value?: string;
+  paramsToReset?: string[];
 };
 
 const items: GroupByOptions[] = [
   {
-    label: "Name",
-    value: "name"
+    label: "name",
+    value: "name",
+    icon: <BiLabel />
   },
   {
-    label: "Analysis",
-    value: "analysis"
+    label: "analysis",
+    value: "analysis",
+    icon: <BiStats />
   },
   {
-    label: "Changed",
-    value: "changed"
+    label: "changed",
+    value: "changed",
+    icon: <MdDifference />
   },
   {
-    label: "Type",
-    value: "type"
+    label: "type",
+    value: "type",
+    icon: <BiLabel />
   }
 ];
 
 export default function ConfigGroupByDropdown({
   searchParamKey = "groupBy",
-  onChange = () => {}
+  onChange = () => {},
+  paramsToReset = []
 }: ConfigGroupByDropdownProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams({
+    groupBy: "type"
+  });
 
   const groupType: string[] = useMemo(() => {
     const groupBy = params.get(searchParamKey);
     if (!groupBy) {
-      return [];
+      return ["type"];
     }
     return groupBy.split(",").map((v) => v.replace("__tag", "")) ?? [];
   }, [params, searchParamKey]);
@@ -65,7 +74,7 @@ export default function ConfigGroupByDropdown({
               ?.map(
                 (tag) =>
                   ({
-                    label: tag.key,
+                    label: tag.key.toLocaleLowerCase(),
                     value: tag.key,
                     isTag: true,
                     icon: <BiLabel />
@@ -86,10 +95,11 @@ export default function ConfigGroupByDropdown({
           .join(",");
         params.set(searchParamKey, values);
       }
+      paramsToReset.forEach((param) => params.delete(param));
       setParams(params);
       onChange(value?.map((v) => v.value));
     },
-    [onChange, params, searchParamKey, setParams]
+    [onChange, params, paramsToReset, searchParamKey, setParams]
   );
 
   const value = useMemo(

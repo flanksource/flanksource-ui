@@ -11,7 +11,7 @@ type Props = {
 
 export function ConfigLabelsDropdown({
   onChange = () => {},
-  searchParamKey = "label",
+  searchParamKey = "labels",
   value
 }: Props) {
   const [params, setParams] = useSearchParams({
@@ -52,6 +52,7 @@ export function ConfigLabelsDropdown({
       className="w-auto max-w-[38rem]"
       dropDownClassNames="w-auto max-w-[38rem] left-0"
       hideControlBorder
+      isMulti
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
           Labels

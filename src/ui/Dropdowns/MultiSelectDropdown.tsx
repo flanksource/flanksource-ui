@@ -16,11 +16,12 @@ export type GroupByOptions = {
 
 type ConfigGroupByDropdownProps = Omit<
   ComponentProps<typeof Select>,
-  "components"
+  "components" | "defaultValue"
 > & {
   label?: string;
   containerClassName?: string;
   dropDownClassNames?: string;
+  defaultValue?: string;
 };
 
 export function MultiSelectDropdown({
@@ -32,6 +33,7 @@ export function MultiSelectDropdown({
   containerClassName = "w-full",
   dropDownClassNames = "w-auto max-w-[300px]",
   value,
+  defaultValue,
   ...props
 }: ConfigGroupByDropdownProps) {
   const { refs, floatingStyles } = useFloating({
@@ -62,7 +64,9 @@ export function MultiSelectDropdown({
                   <div className="flex flex-row overflow-hidden text-ellipsis text-sm space-x-1 items-center">
                     {((isArray(value) && value.length === 0) ||
                       (typeof value === "string" && !value)) && (
-                      <span className="text-black">None</span>
+                      <span className="text-black">
+                        {defaultValue ? defaultValue : <>None</>}
+                      </span>
                     )}
                     {isMulti ? (
                       (value as GroupByOptions[]).map((v) => (
