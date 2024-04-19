@@ -52,7 +52,7 @@ export function generateTabs(tabBy: string, checks: HealthCheck[]) {
   }
   let tabs = defaultTabs;
   if (tabBy === "namespace") {
-    const namespaces = [...new Set(checks.map((o) => o.namespace))];
+    const namespaces = [...new Set(checks.map((o) => o.namespace || "none"))];
     tabs = {
       ...tabs,
       ...namespaces.reduce(
