@@ -1,9 +1,9 @@
-import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import { Modal } from "../ui/Modal";
+import { Badge } from "@flanksource-ui/ui/Badge";
+import { Button } from "@flanksource-ui/ui/Button";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import { Canary } from "./Canary";
 import { Card } from "./Card";
-import { DataTable } from "./DataTable";
 import { DescriptionCard } from "./DescriptionCard";
 import { Dropdown } from "./Dropdown";
 import { Feed } from "./Feed";

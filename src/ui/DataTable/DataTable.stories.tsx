@@ -1,11 +1,11 @@
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { DataTable } from "./index";
-import React from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DateCell } from "../../ui/table/DateCells";
-import { TagsCell } from "../../ui/table/TagCell";
+import { DateCell } from "../table/DateCells";
+import { TagsCell } from "../table/TagCell";
 
 const defaultTableColumns: ColumnDef<any>[] = [
   {

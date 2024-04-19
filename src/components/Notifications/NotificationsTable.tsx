@@ -1,8 +1,8 @@
+import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
-import { Modal } from "..";
-import { DataTable } from "../DataTable";
 import EditNotification from "./EditNotification";
 import {
   Notification,

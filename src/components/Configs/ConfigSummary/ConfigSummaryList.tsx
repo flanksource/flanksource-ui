@@ -1,10 +1,10 @@
+import { ConfigSummary } from "@flanksource-ui/api/types/configs";
+import { Badge } from "@flanksource-ui/ui/Badge";
+import { CountBadge } from "@flanksource-ui/ui/Badge/CountBadge";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ConfigSummary } from "../../../api/types/configs";
-import { Badge } from "../../../ui/Badge";
-import { CountBadge } from "../../../ui/Badge/CountBadge";
-import { DataTable } from "../../DataTable";
 import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
@@ -71,12 +71,6 @@ function ConfigSummaryAnalysisCell({
 
 const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
   {
-    header: "type",
-    accessorKey: "type",
-    cell: ConfigSummaryTypeCell,
-    maxSize: 200
-  },
-  {
     header: "changes",
     accessorKey: "changes",
     cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
@@ -119,34 +113,72 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
 type ConfigSummaryListProps = {
   data: ConfigSummary[];
   isLoading?: boolean;
+  groupBy?: string[];
 };
 
 export default function ConfigSummaryList({
   data,
-  isLoading = false
+  isLoading = false,
+  groupBy = ["type"]
 }: ConfigSummaryListProps) {
   const [params, setParams] = useSearchParams();
 
   const handleRowClick = useCallback(
     (row: Row<ConfigSummary>) => {
-      const { type } = row.original;
-      params.set("configType", type);
+      if (groupBy.includes("type")) {
+        const { type } = row.original;
+        params.set("configType", type);
+      } else {
+        const tags = groupBy
+          .map((column) => {
+            return `${column}__:__${
+              row.original[column as keyof ConfigSummary]
+            }`;
+          })
+          .join(",");
+        params.set("tags", tags);
+      }
+      params.delete("groupBy");
       setParams(params);
     },
-    [params, setParams]
+    [groupBy, params, setParams]
   );
+
+  const virtualColumns = useMemo(() => {
+    const newColumns = groupBy.map((column) => {
+      if (column === "type") {
+        return {
+          header: "Type",
+          accessorKey: "type",
+          cell: ConfigSummaryTypeCell
+        } satisfies ColumnDef<ConfigSummary, any>;
+      }
+      return {
+        header: column.toLocaleUpperCase(),
+        accessorKey: column,
+        cell: ({ getValue, row }: CellContext<ConfigSummary, any>) => {
+          const value = getValue();
+          return (
+            <div className="flex flex-1 flex-row gap-1 items-center">
+              <span>{value}</span>
+              <Badge text={row.original.total_configs} />
+            </div>
+          );
+        }
+      } satisfies ColumnDef<ConfigSummary, any>;
+    });
+    return [...newColumns, ...configSummaryColumns];
+  }, [groupBy]);
 
   return (
     <DataTable
       stickyHead
-      // isVirtualized
-      columns={configSummaryColumns}
+      columns={virtualColumns}
       data={data}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
       className="max-w-full overflow-x-auto table-fixed table-auto"
-      preferencesKey={""}
       savePreferences={false}
     />
   );

@@ -1,7 +1,7 @@
+import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { DataTable, PaginationOptions } from "../DataTable";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 

@@ -1,11 +1,14 @@
+import { useCheckStattiQuery } from "@flanksource-ui/api/query-hooks/useCheckStattiQuery";
+import {
+  HealthCheck,
+  HealthCheckStatus
+} from "@flanksource-ui/api/types/health";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { format } from "timeago.js";
-import { useCheckStattiQuery } from "../../../../api/query-hooks/useCheckStattiQuery";
-import { HealthCheck, HealthCheckStatus } from "../../../../api/types/health";
-import { DataTable } from "../../../DataTable";
 import { toastError } from "../../../Toast/toast";
 import { refreshCheckModalAtomTrigger } from "../../ChecksListing";
 import { CanaryStatus, Duration } from "../../renderers";

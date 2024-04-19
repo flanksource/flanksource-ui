@@ -1,9 +1,9 @@
 import { FeatureFlag } from "@flanksource-ui/services/permissions/permissionsService";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { DataTable } from "../DataTable";
 
 type FeatureFlagsListProps = {
   data: FeatureFlag[];

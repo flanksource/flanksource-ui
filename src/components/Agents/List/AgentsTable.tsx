@@ -1,9 +1,9 @@
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { SortingState, Updater } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { DataTable } from "../../DataTable";
+import AgentForm from "../Add/AddAgentForm";
 import { AgentSummary } from "../AgentPage";
 import { agentsTableColumns } from "./AgentsTableColumns";
-import AgentForm from "../Add/AddAgentForm";
 
 type AgentsTableProps = {
   agents: AgentSummary[];

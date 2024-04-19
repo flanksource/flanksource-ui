@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { UsePaginationInstanceProps, UsePaginationState } from "react-table";
-import { Loading } from "../../Loading";
+import { Loading } from "../../../components/Loading";
 
 export type PaginationType = "lean" | "complete" | "virtual";
 

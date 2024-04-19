@@ -1,12 +1,15 @@
+import {
+  PlaybookRun,
+  PlaybookRunStatus
+} from "@flanksource-ui/api/types/playbooks";
+import { User } from "@flanksource-ui/api/types/users";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
+import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PlaybookRun, PlaybookRunStatus } from "../../../api/types/playbooks";
-import { User } from "../../../api/types/users";
-import { Avatar } from "../../../ui/Avatar";
-import { DateCell } from "../../../ui/table";
-import { DataTable, PaginationOptions } from "../../DataTable";
 import { Icon } from "../../Icon";
 import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
