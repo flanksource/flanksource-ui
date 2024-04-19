@@ -1,8 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { getAgentByIDs } from "../../api/services/agents";
 import { HealthCheck } from "../../api/types/health";
 import { Tab, Tabs } from "../Tabs/Tabs";
-import { useQuery } from "@tanstack/react-query";
-import { getAgentByIDs } from "../../api/services/agents";
 
 const defaultTabs = {
   all: {
@@ -109,8 +109,7 @@ export function CanaryTabs({
   checks,
   tabBy,
   children,
-  setTabSelection,
-  ...rest
+  setTabSelection
 }: CanaryTabsProps) {
   const agentIDs = useMemo(() => {
     const uniqueIds = new Set(
@@ -157,22 +156,36 @@ export function CanaryTabs({
     }
   }, [tabs, selectedTab]);
 
-  // changes in selected tab will trigger setTabSelection callback
-  useEffect(() => {
-    setTabSelection(selectedTab);
-  }, [selectedTab, setTabSelection]);
+  const sortedTabs = useMemo(
+    () =>
+      Object.values(tabs).sort((v1, v2) => {
+        // all tab comes, first, followed by the rest in alphabetical order
+        if (v1.label.toLowerCase() === "all") {
+          return -1;
+        }
+        if (v2.label.toLowerCase() === "all") {
+          return 1;
+        }
+        return v1.label.localeCompare(v2.label);
+      }),
+    [tabs]
+  );
 
   return (
-    <Tabs activeTab={selectedTab} onSelectTab={(tab) => setSelectedTab(tab)}>
-      {Object.values(tabs)
-        .sort((v1, v2) => v1.label.localeCompare(v2.label))
-        .map((item) => {
-          return (
-            <Tab key={item.label} label={item.label} value={item.value}>
-              {children}
-            </Tab>
-          );
-        })}
+    <Tabs
+      activeTab={selectedTab}
+      onSelectTab={(tab) => {
+        setSelectedTab(tab);
+        setTabSelection(tab);
+      }}
+    >
+      {sortedTabs.map((item) => {
+        return (
+          <Tab key={item.label} label={item.label} value={item.value}>
+            {children}
+          </Tab>
+        );
+      })}
     </Tabs>
   );
 }
