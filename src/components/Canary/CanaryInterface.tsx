@@ -27,7 +27,7 @@ const CanaryInterfaceMinimalFC = ({
 
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
-  const [selectedTab, setSelectedTab] = useState<string>();
+  const [selectedTab, setSelectedTab] = useState<string>("all");
 
   const hidePassing = searchParams.get("hidePassing") === "true";
   const tabBy = searchParams.get("tabBy");
