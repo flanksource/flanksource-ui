@@ -2,7 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import { Row, RowData } from "@tanstack/table-core";
 import { useCallback } from "react";
 import { IoChevronForwardOutline } from "react-icons/io5";
-import { Badge } from "../../ui/Badge";
+import { Badge } from "../Badge";
 
 type DataTableRowProps<TableColumns extends RowData> = {
   row: Row<TableColumns>;

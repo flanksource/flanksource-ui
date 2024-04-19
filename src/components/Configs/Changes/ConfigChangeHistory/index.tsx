@@ -1,10 +1,10 @@
+import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { DateCell } from "@flanksource-ui/ui/table";
 import { SortingState, Updater } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
-import { ConfigChange } from "../../../../api/types/configs";
-import { DateCell } from "../../../../ui/table";
-import { PaginationOptions } from "../../../DataTable";
 import { ChangeIcon } from "../../../Icon/ChangeIcon";
 import { DataTable } from "../../../index";
 import ConfigLink from "../../ConfigLink/ConfigLink";

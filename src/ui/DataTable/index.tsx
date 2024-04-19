@@ -1,3 +1,5 @@
+import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import usePreferences from "@flanksource-ui/hooks/userPreferences";
 import {
   ColumnDef,
   ExpandedState,
@@ -19,9 +21,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import usePreferences from "../../hooks/userPreferences";
-import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
-import { InfoMessage } from "../InfoMessage";
+import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { DataTableRow } from "./DataTableRow";
 import { Pagination, PaginationType } from "./Pagination/Pagination";
 

@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { IncidentSummary } from "../../../api/types/incident";
+import { IncidentSummary } from "@flanksource-ui/api/types/incident";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { incidentListColumns } from "./IncidentListColumns";
-import { DataTable } from "../../DataTable";
 
 type Props = {
   incidents: IncidentSummary[];

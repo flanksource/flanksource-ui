@@ -1,9 +1,9 @@
+import { useConfigInsightsQuery } from "@flanksource-ui/api/query-hooks/useConfigAnalysisQuery";
+import { ConfigAnalysis } from "@flanksource-ui/api/types/configs";
+import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useConfigInsightsQuery } from "../../../api/query-hooks/useConfigAnalysisQuery";
-import { ConfigAnalysis } from "../../../api/types/configs";
-import { DataTable, PaginationOptions } from "../../DataTable";
 import { InfoMessage } from "../../InfoMessage";
 import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigInsightsColumns as configInsightsColumns } from "./ConfigInsightsColumns";

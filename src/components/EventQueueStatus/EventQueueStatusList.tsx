@@ -1,8 +1,8 @@
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { DataTable } from "../DataTable";
 import { EventQueueSummary } from "./eventQueue";
 
 const columns: ColumnDef<EventQueueSummary>[] = [

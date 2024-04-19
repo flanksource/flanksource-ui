@@ -1,9 +1,9 @@
+import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { Modal } from "@flanksource-ui/ui/Modal";
+import { DateCell } from "@flanksource-ui/ui/table";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { Avatar } from "../../ui/Avatar";
-import { Modal } from "../../ui/Modal";
-import { DateCell } from "../../ui/table";
-import { DataTable } from "../DataTable";
 import { LogBackends } from "./LogBackends";
 import LogBackendsForm from "./LogBackendsForm";
 

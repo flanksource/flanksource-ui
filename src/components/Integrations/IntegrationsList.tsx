@@ -1,7 +1,7 @@
 import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
+import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { PaginationState, Updater } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { DataTable, PaginationOptions } from "../DataTable";
 import { integrationsTableColumns } from "./Table/IntegrationsTableColumns";
 
 type IntegrationsListProps = {

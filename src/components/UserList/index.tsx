@@ -1,17 +1,17 @@
+import { User } from "@flanksource-ui/api/types/users";
+import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { Age } from "@flanksource-ui/ui/Age";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { Float } from "@headlessui-float/react";
+import { Menu } from "@headlessui/react";
+import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { CellContext } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { User } from "../../api/types/users";
-import { useUserAccessStateContext } from "../../context/UserAccessContext/UserAccessContext";
-import { tables } from "../../context/UserAccessContext/permissions";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
-import { DataTable } from "../DataTable";
 import { IconButton } from "../IconButton";
-import { Age } from "../../ui/Age";
-import { Menu } from "@headlessui/react";
-import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { Float } from "@headlessui-float/react";
 
 type UserListProps = {
   data: any[];

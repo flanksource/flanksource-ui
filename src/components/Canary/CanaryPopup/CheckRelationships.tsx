@@ -1,8 +1,8 @@
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { HealthCheck } from "../../../api/types/health";
-import { DataTable } from "../../DataTable";
 import { Icon } from "../../Icon";
 
 type CheckRelationshipsComponent = {
