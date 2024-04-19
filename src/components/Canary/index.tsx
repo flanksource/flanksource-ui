@@ -5,6 +5,7 @@ import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext"
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { debounce } from "lodash";
 import React, {
   useCallback,
@@ -40,6 +41,15 @@ import {
 } from "./labels";
 import { decodeUrlSearchParams, useUpdateParams } from "./url";
 
+const healthSettingsAtom = atomWithStorage<Record<string, string>>(
+  HEALTH_SETTINGS,
+  {},
+  undefined,
+  {
+    getOnInit: true
+  }
+);
+
 const getPassingCount = (checks: any) => {
   let count = 0;
   checks.forEach((check: any) => {
@@ -64,6 +74,7 @@ export function Canary({
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
+  const [, setSettings] = useAtom(healthSettingsAtom);
   const [searchParams, setSearchParams] = useSearchParams();
   const timeRange = searchParams.get("timeRange");
   const hidePassing = searchParams.get("hidePassing");
@@ -205,18 +216,15 @@ export function Canary({
   }, []);
 
   useEffect(() => {
-    const settings = localStorage.getItem(HEALTH_SETTINGS);
-    const parsedSettings = JSON.parse(settings ?? "{}");
-
-    localStorage.setItem(
-      HEALTH_SETTINGS,
-      JSON.stringify({
-        groupBy: groupBy ?? parsedSettings?.groupBy,
-        tabBy: tabBy ?? parsedSettings?.tabBy,
-        hidePassing: hidePassing ?? parsedSettings?.hidePassing
-      })
-    );
-  }, [groupBy, tabBy, hidePassing]);
+    setSettings((prev) => {
+      return {
+        ...prev,
+        groupBy: groupBy ?? prev?.groupBy,
+        tabBy: tabBy ?? prev?.tabBy,
+        hidePassing: hidePassing ?? prev?.hidePassing
+      };
+    });
+  }, [groupBy, tabBy, hidePassing, setSettings]);
 
   const handleSearch = debounce((value) => {
     searchParams.set("query", value);
@@ -410,8 +418,8 @@ const DropdownWrapper = ({
   ...rest
 }: DropdownStandaloneWrapperProps) => {
   const updateParams = useUpdateParams();
-  const settings = localStorage.getItem(HEALTH_SETTINGS);
-  const value = JSON.parse(settings ?? "{}")[paramKey] ?? null;
+  const [settings] = useAtom(healthSettingsAtom);
+  const value = settings[paramKey] ?? defaultValue;
 
   useEffect(() => {
     if (value !== defaultValue && value !== null) {
@@ -431,8 +439,8 @@ const DropdownWrapper = ({
 };
 
 export const HidePassingToggle = ({ defaultValue = false }) => {
-  const settings: any = localStorage.getItem(HEALTH_SETTINGS);
-  const hidePassing = JSON.parse(settings ?? "{}")?.hidePassing ?? null;
+  const [settings] = useAtom(healthSettingsAtom);
+  const hidePassing = settings?.hidePassing ?? null;
   const paramsValue = hidePassing ? hidePassing === "true" : null;
 
   const [value, setValue] = useState(paramsValue ?? defaultValue);
@@ -665,7 +673,7 @@ function SidebarSticky({
         className ||
           "2xl:flex 2xl:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
         // for mobile, float the sidebar on top of the content
-        "fixed z-[99999] bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
+        "fixed z-[99] 2xl:z-0 bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
         // for mobile, hide the sidebar when the menu is closed
         isMenuItemOpen ? "flex" : "hidden",
         // move sidebar if mission control UI

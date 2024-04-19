@@ -113,6 +113,7 @@
   },
   "scripts": {
     "dev": "rm -f middleware.ts && cross-env next dev",
+    "dev:canary": "rm -f middleware.ts && cross-env NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER next dev",
     "dev:clerk": "cp clerk.middleware.ts middleware.ts && cross-env next dev",
     "start": "cross-env next start",
     "build": "node -v && rm -f middleware.ts && cross-env NODE_ENV=production next build",

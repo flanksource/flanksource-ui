@@ -1,26 +1,23 @@
-import { useForm, Controller } from "react-hook-form";
-
-import React, { useEffect, useRef, useState } from "react";
-import { HiCheck } from "react-icons/hi";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
-import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
-import { TabByDropdown } from "../../Dropdown/TabByDropdown";
-import { PivotByDropdown } from "../../Dropdown/PivotByDropdown";
-import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
-import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
-import { components, Select } from "../../Select";
-import { TimeRange } from "../../Dropdown/TimeRange";
-import { Toggle } from "../../Toggle";
-import { initialiseFormState, updateFormState, getDefaultForm } from "../state";
-
-import { decodeUrlSearchParams, useUpdateParams } from "../url";
-
-import { TristateToggle } from "../../TristateToggle";
-import { DropdownMenu } from "../../DropdownMenu";
-import { separateLabelsByBooleanType } from "../labels";
-import { setDeepWithString } from "../CanaryPopup/utils";
+import React, { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { HiCheck } from "react-icons/hi";
 import { useSearchParams } from "react-router-dom";
+import { GroupByDropdown } from "../../Dropdown/GroupByDropdown";
+import { LayoutDropdown } from "../../Dropdown/LayoutDropdown";
+import { PivotByDropdown } from "../../Dropdown/PivotByDropdown";
+import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
+import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
+import { TabByDropdown } from "../../Dropdown/TabByDropdown";
+import { TimeRange } from "../../Dropdown/TimeRange";
+import { DropdownMenu } from "../../DropdownMenu";
+import { Select, components } from "../../Select";
+import { Toggle } from "../../Toggle";
+import { TristateToggle } from "../../TristateToggle";
+import { setDeepWithString } from "../CanaryPopup/utils";
+import { separateLabelsByBooleanType } from "../labels";
+import { getDefaultForm, initialiseFormState, updateFormState } from "../state";
+import { decodeUrlSearchParams, useUpdateParams } from "../url";
 
 export function FilterForm({
   labels,
