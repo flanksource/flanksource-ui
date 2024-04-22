@@ -5,8 +5,6 @@ import { type NodeData } from "./types";
 
 export type UseExpandCollapseOptions = {
   layoutNodes?: boolean;
-  treeWidth?: number;
-  treeHeight?: number;
 };
 
 function filterCollapsedChildren(
@@ -40,11 +38,7 @@ function filterCollapsedChildren(
 function useExpandCollapse(
   nodes: Node[],
   edges: Edge[],
-  {
-    layoutNodes = true,
-    treeWidth = 320,
-    treeHeight = 100
-  }: UseExpandCollapseOptions = {}
+  { layoutNodes = true }: UseExpandCollapseOptions = {}
 ): { nodes: Node[]; edges: Edge[] } {
   return useMemo(() => {
     if (!layoutNodes) return { nodes, edges };
