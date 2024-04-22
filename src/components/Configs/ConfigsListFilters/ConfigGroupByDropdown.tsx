@@ -27,6 +27,10 @@ const items: GroupByOptions[] = [
   {
     label: "Changed",
     value: "changed"
+  },
+  {
+    label: "Type",
+    value: "type"
   }
 ];
 
@@ -49,31 +53,26 @@ export default function ConfigGroupByDropdown({
     queryFn: getConfigsTags,
     enabled: true,
     select: (tags) => {
-      if (!tags || tags.length === 0) {
-        return Object.values(items).sort((a, b) => {
-          return a.label?.localeCompare(b.label);
-        });
-      }
-      return (
-        tags
-          // ensure that the tags are unique
-          .filter(
-            (tag, index, self) =>
-              self.findIndex((t) => t.key === tag.key) === index
-          )
-          ?.map(
-            (tag) =>
-              ({
-                label: tag.key,
-                value: tag.key,
-                isTag: true,
-                icon: <BiLabel />
-              } satisfies GroupByOptions)
-          )
-          .sort((a, b) => {
-            return a.label?.localeCompare(b.label);
-          })
-      );
+      return [
+        ...Object.values(items),
+        ...(tags && tags.length > 0
+          ? tags
+              // ensure that the tags are unique
+              .filter(
+                (tag, index, self) =>
+                  self.findIndex((t) => t.key === tag.key) === index
+              )
+              ?.map(
+                (tag) =>
+                  ({
+                    label: tag.key,
+                    value: tag.key,
+                    isTag: true,
+                    icon: <BiLabel />
+                  } satisfies GroupByOptions)
+              )
+          : [])
+      ].sort((a, b) => a.label.localeCompare(b.label));
     }
   });
 
