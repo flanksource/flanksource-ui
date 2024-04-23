@@ -35,6 +35,12 @@ function filterCollapsedChildren(
   }
 }
 
+// 1. Create a new instance of `Dagre.graphlib.Graph` and set some default
+// properties.
+const dagre = new Dagre.graphlib.Graph()
+  .setDefaultEdgeLabel(() => ({}))
+  .setGraph({ rankdir: "LR", ranksep: 50, nodesep: 50 });
+
 function useExpandCollapse(
   nodes: Node[],
   edges: Edge[],
@@ -42,12 +48,6 @@ function useExpandCollapse(
 ): { nodes: Node[]; edges: Edge[] } {
   return useMemo(() => {
     if (!layoutNodes) return { nodes, edges };
-
-    // 1. Create a new instance of `Dagre.graphlib.Graph` and set some default
-    // properties.
-    const dagre = new Dagre.graphlib.Graph()
-      .setDefaultEdgeLabel(() => ({}))
-      .setGraph({ rankdir: "LR", ranksep: 50, nodesep: 50 });
 
     // 2. Add each node and edge to the dagre graph. Instead of using each node's
     // intrinsic width and height, we tell dagre to use the `treeWidth` and
