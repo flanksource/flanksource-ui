@@ -1,33 +1,40 @@
+import { FeatureFlag } from "@flanksource-ui/services/permissions/permissionsService";
+import { Age } from "@flanksource-ui/ui/Age";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { User } from "../../api/types/users";
-import { Property } from "../../services/permissions/permissionsService";
-import { Age } from "../../ui/Age";
-import { Avatar } from "../../ui/Avatar";
 import { DataTable } from "../DataTable";
 
 type FeatureFlagsListProps = {
-  data: any[];
+  data: FeatureFlag[];
   isLoading?: boolean;
-  onRowClick?: (data: Property) => void;
+  onRowClick?: (data: FeatureFlag) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const DateCell = ({ getValue }: CellContext<User, any>) => (
+const DateCell = ({ getValue }: CellContext<FeatureFlag, any>) => (
   <Age from={getValue()} />
 );
 
-const AvatarCell = ({ getValue }: CellContext<User, any>) => {
+const AvatarCell = ({ getValue }: CellContext<FeatureFlag, any>) => {
   return <Avatar user={getValue()} circular />;
 };
 
-const columns: ColumnDef<User>[] = [
+const columns: ColumnDef<FeatureFlag>[] = [
   {
     header: "Name",
     accessorKey: "name"
   },
   {
+    header: "Description",
+    accessorKey: "description"
+  },
+  {
     header: "Value",
     accessorKey: "value"
+  },
+  {
+    header: "Source",
+    accessorKey: "source"
   },
   {
     header: "Created By",
@@ -67,7 +74,7 @@ export function FeatureFlagsList({
         preferencesKey="connections-list"
         savePreferences={false}
         handleRowClick={(row) => {
-          onRowClick?.(row.original as unknown as Property);
+          onRowClick?.(row.original);
         }}
       />
     </div>

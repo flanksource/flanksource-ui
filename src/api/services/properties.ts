@@ -1,26 +1,43 @@
-import { AVATAR_INFO } from "../../constants";
-import { Property } from "../../services/permissions/permissionsService";
-import { IncidentCommander } from "../axios";
+import { AVATAR_INFO } from "@flanksource-ui/constants";
+import {
+  FeatureFlag,
+  PropertyDBObject
+} from "../../services/permissions/permissionsService";
+import { IncidentCommander, apiBase } from "../axios";
 import { resolve } from "../resolve";
 
 export const fetchProperties = () => {
-  return resolve<Property[]>(
+  return resolve<PropertyDBObject[]>(
     IncidentCommander.get(`/properties?select=*,created_by(${AVATAR_INFO})`)
   );
 };
 
-export const saveProperty = (property: Partial<Property>) => {
-  return resolve<Property[]>(IncidentCommander.post("/properties", property));
+export const fetchProperty = (name: string, value: string) => {
+  return resolve<PropertyDBObject[]>(
+    IncidentCommander.get(
+      `/properties?select=*,created_by(${AVATAR_INFO})&name=eq.${name}&value=eq.${value}`
+    )
+  );
 };
 
-export const updateProperty = (property: Partial<Property>) => {
-  return resolve<Property[]>(
+export const fetchFeatureFlagsAPI = () => {
+  return resolve<FeatureFlag[]>(apiBase.get(`/properties`));
+};
+
+export const saveProperty = (property: Partial<PropertyDBObject>) => {
+  return resolve<PropertyDBObject[]>(
+    IncidentCommander.post("/properties", property)
+  );
+};
+
+export const updateProperty = (property: Partial<PropertyDBObject>) => {
+  return resolve<PropertyDBObject[]>(
     IncidentCommander.patch(`/properties?name=eq.${property.name}`, property)
   );
 };
 
-export const deleteProperty = (property: Partial<Property>) => {
-  return resolve<Property[]>(
+export const deleteProperty = (property: Partial<PropertyDBObject>) => {
+  return resolve<PropertyDBObject[]>(
     IncidentCommander.delete(`/properties?name=eq.${property.name}`)
   );
 };

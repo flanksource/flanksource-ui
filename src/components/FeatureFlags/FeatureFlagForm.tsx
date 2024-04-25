@@ -1,19 +1,20 @@
+import { featuresList } from "@flanksource-ui/services/permissions/features";
+import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
+import { Button } from "@flanksource-ui/ui/Button";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
-import { featuresList } from "../../services/permissions/features";
-import { Property } from "../../services/permissions/permissionsService";
-import { Button } from "../../ui/Button";
-import { Modal } from "../../ui/Modal";
 import FormikSelect from "../Forms/Formik/FormikSelect";
 import { toastError } from "../Toast/toast";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
-  onFeatureFlagSubmit: (data: Partial<Property>) => Promise<any>;
-  onFeatureFlagDelete: (data: Partial<Property>) => Promise<any>;
-  formValue?: Partial<Property>;
+  onFeatureFlagSubmit: (data: Partial<PropertyDBObject>) => void;
+  onFeatureFlagDelete: (data: Partial<PropertyDBObject>) => void;
+  formValue?: Partial<PropertyDBObject>;
+  source?: string;
 };
 
 export default function FeatureFlagForm({
@@ -23,6 +24,7 @@ export default function FeatureFlagForm({
   onFeatureFlagSubmit,
   onFeatureFlagDelete,
   formValue,
+  source,
   ...props
 }: FeatureFlagFormProps) {
   return (
@@ -104,11 +106,13 @@ export default function FeatureFlagForm({
               >
                 Cancel
               </button>
-              <Button
-                type="submit"
-                text={Boolean(formValue?.created_at) ? "Update" : "Save"}
-                className="btn-primary"
-              />
+              {source !== "local" && (
+                <Button
+                  type="submit"
+                  text={Boolean(formValue?.created_at) ? "Update" : "Save"}
+                  className="btn-primary"
+                />
+              )}
             </div>
           </div>
         </Form>

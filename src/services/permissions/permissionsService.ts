@@ -1,7 +1,15 @@
-import { fetchProperties } from "../../api/services/properties";
+import { fetchFeatureFlagsAPI } from "../../api/services/properties";
 import { featureToParentMap } from "./features";
 
-export type Property = {
+export type FeatureFlag = {
+  description: string;
+  name: string;
+  source: string;
+  type: string;
+  value: string;
+};
+
+export type PropertyDBObject = {
   name: string;
   value: string;
   created_by: string;
@@ -12,10 +20,10 @@ export type Property = {
 
 class PermissionService {
   async loadProperties() {
-    return await fetchProperties();
+    return await fetchFeatureFlagsAPI();
   }
 
-  isFeatureDisabled(featureName: string, properties: Property[]): boolean {
+  isFeatureDisabled(featureName: string, properties: FeatureFlag[]): boolean {
     const name = `${featureName}.disable`;
     const parentResource =
       featureToParentMap[featureName as keyof typeof featureToParentMap];
