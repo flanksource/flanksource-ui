@@ -1,6 +1,6 @@
 import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
 
-export interface ConfigChange extends CreatedAt, Avatar {
+export interface ConfigChange extends CreatedAt {
   id: string;
   config_id: string;
   external_change_id: string;
@@ -16,6 +16,7 @@ export interface ConfigChange extends CreatedAt, Avatar {
   config_class?: string;
   type?: string;
   name?: string;
+  created_by?: string;
 }
 
 export interface Change {
