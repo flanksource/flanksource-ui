@@ -56,7 +56,7 @@ export default function FeatureFlagForm({
             {...props}
           >
             <div className={clsx("flex flex-col px-2 mb-2")}>
-              <div className="flex flex-row overflow-y-auto px-2 py-12 justify-center">
+              <div className="flex flex-row overflow-y-auto px-2 py-6 gap-4 justify-center">
                 <div className="flex-1">
                   <FormikSelect name="name" label="Feature flag">
                     <>
@@ -71,7 +71,7 @@ export default function FeatureFlagForm({
                     </>
                   </FormikSelect>
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col">
                   <FormikSelect name="value" label="Value">
                     <>
                       <option value="">select value</option>
