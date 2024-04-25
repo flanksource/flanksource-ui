@@ -22,7 +22,7 @@ export function ConfigIntermediaryNodeReactFlowNode({
         }
       `}</style>
       {targetPosition && <Handle type="target" position={targetPosition} />}
-      <div className="flex flex-col h-[6.05rem] w-auto justify-center ">
+      <div className="flex flex-col h-[6.05rem] w-auto justify-center">
         <div
           className={clsx(
             "flex flex-col gap-2 w-96 justify-center cursor-pointer shadow-card card border-0 relative rounded-md"
