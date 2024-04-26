@@ -22,10 +22,10 @@ export function ConfigIntermediaryNodeReactFlowNode({
         }
       `}</style>
       {targetPosition && <Handle type="target" position={targetPosition} />}
-      <div className="flex flex-col h-[6.05rem] w-96 justify-center ">
+      <div className="flex flex-col h-[6.05rem] w-auto justify-center">
         <div
           className={clsx(
-            "flex flex-col gap-2 justify-center shadow-card card border-0 relative rounded-md"
+            "flex flex-col gap-2 w-96 justify-center cursor-pointer shadow-card card border-0 relative rounded-md"
           )}
         >
           <div className="flex flex-col gap-2 bg-white p-2">
@@ -47,7 +47,7 @@ export function ConfigIntermediaryNodeReactFlowNode({
                     }
                   />
                 </ConfigsTypeIcon>
-                <div className="flex flex-row flex-1 justify-end items-center gap-1.5 px-3 text-gray-500">
+                <div className="flex flex-row w-auto justify-end items-center gap-1.5 px-2 text-gray-500">
                   {data.expanded ? (
                     <HiOutlineMinusCircle />
                   ) : (
