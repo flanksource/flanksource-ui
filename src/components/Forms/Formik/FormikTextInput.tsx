@@ -39,16 +39,18 @@ export default function FormikTextInput({
           {label}
         </label>
       )}
-      {hint && hintPosition === "top" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
-      )}
-      <TextInput {...props} id={name} type={type} {...field} />
-      {hint && hintPosition === "bottom" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
-      )}
-      {meta.touched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
-      ) : null}
+      <div className="flex flex-col flex-1">
+        {hint && hintPosition === "top" && (
+          <p className="text-sm text-gray-500 py-1">{hint}</p>
+        )}
+        <TextInput {...props} id={name} type={type} {...field} />
+        {hint && hintPosition === "bottom" && (
+          <p className="text-sm text-gray-500 py-1">{hint}</p>
+        )}
+        {meta.touched && meta.error ? (
+          <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        ) : null}
+      </div>
     </div>
   );
 }
