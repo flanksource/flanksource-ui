@@ -1,45 +1,39 @@
-import {
-  ConfigChangesTypeItem,
-  getConfigsChangesTypesFilter
-} from "@flanksource-ui/api/services/configs";
 import { ChangeIcon } from "@flanksource-ui/components/Icon/ChangeIcon";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 type Props = {
   onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
   paramsToReset?: string[];
+  changeTypes?: Record<string, number>;
+  isLoading?: boolean;
 };
 
 export function ChangesTypesDropdown({
   onChange = () => {},
   searchParamKey = "changeType",
-  paramsToReset = []
+  changeTypes,
+  paramsToReset = [],
+  isLoading
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { isLoading, data: configTypeOptions } = useQuery(
-    ["db", "changes_types"],
-    getConfigsChangesTypesFilter,
-    {
-      select: useCallback((data: ConfigChangesTypeItem[] | null) => {
-        return data?.map(
-          ({ change_type }) =>
-            ({
-              id: change_type,
-              label: change_type,
-              value: change_type,
-              icon: <ChangeIcon change={{ change_type: change_type }} />
-            } satisfies TriStateOptions)
-        );
-      }, [])
-    }
-  );
+  const configTypeOptions = useMemo(() => {
+    return changeTypes
+      ? Object.entries(changeTypes).map(([change_type]) => {
+          return {
+            id: change_type,
+            label: change_type,
+            value: change_type,
+            icon: <ChangeIcon change={{ change_type: change_type }} />
+          } satisfies TriStateOptions;
+        })
+      : [];
+  }, [changeTypes]);
 
   const value = searchParams.get(searchParamKey) || undefined;
 

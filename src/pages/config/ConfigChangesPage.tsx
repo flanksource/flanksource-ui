@@ -160,7 +160,11 @@ export function ConfigChangesPage() {
             <InfoMessage message={errorMessage} />
           ) : (
             <>
-              <ConfigChangeFilters paramsToReset={["pageIndex", "pageSize"]} />
+              <ConfigChangeFilters
+                isLoading={isLoading}
+                changeTypes={data?.summary}
+                paramsToReset={["pageIndex", "pageSize"]}
+              />
               <ConfigChangeHistory
                 data={changes}
                 isLoading={isLoading}
