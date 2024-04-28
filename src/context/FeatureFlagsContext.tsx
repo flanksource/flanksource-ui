@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { features } from "../services/permissions/features";
 import {
-  Property,
+  FeatureFlag,
   permissionService
 } from "../services/permissions/permissionsService";
 
 export type FeatureFlagsState = {
-  featureFlags: Property[];
+  featureFlags: FeatureFlag[];
   featureFlagsLoaded: boolean;
   refreshFeatureFlags: () => void;
   isFeatureDisabled: (_: keyof typeof features) => boolean;

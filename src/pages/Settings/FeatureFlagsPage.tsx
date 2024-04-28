@@ -1,122 +1,65 @@
-import { useEffect, useState } from "react";
-import { AiFillPlusCircle } from "react-icons/ai";
 import {
-  deleteProperty,
-  fetchProperties,
-  saveProperty,
-  updateProperty
-} from "../../api/services/properties";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
-import FeatureFlagForm from "../../components/FeatureFlags/FeatureFlagForm";
-import { FeatureFlagsList } from "../../components/FeatureFlags/FeatureFlagList";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import { toastError, toastSuccess } from "../../components/Toast/toast";
-import { useUser } from "../../context";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { useLoader } from "../../hooks";
-
-import { Property } from "../../services/permissions/permissionsService";
+  useAddFeatureFlag,
+  useDeleteFeatureFlag,
+  useGetFeatureFlagsFromAPI,
+  useGetPropertyFromDB,
+  useUpdateFeatureFlag
+} from "@flanksource-ui/api/query-hooks/useFeatureFlags";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/components/BreadcrumbNav";
+import FeatureFlagAddButton from "@flanksource-ui/components/FeatureFlags/FeatureFlagAddButton";
+import FeatureFlagForm from "@flanksource-ui/components/FeatureFlags/FeatureFlagForm";
+import { FeatureFlagsList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagList";
+import { Head } from "@flanksource-ui/components/Head/Head";
+import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { toastError } from "@flanksource-ui/components/Toast/toast";
+import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
+import {
+  FeatureFlag,
+  PropertyDBObject
+} from "@flanksource-ui/services/permissions/permissionsService";
+import { useEffect, useState } from "react";
 
 export function FeatureFlagsPage() {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
-  const { loading, setLoading } = useLoader();
-  const [editedRow, setEditedRow] = useState<Property>();
+  const [editedRow, setEditedRow] = useState<FeatureFlag>();
   const { refreshFeatureFlags } = useFeatureFlagsContext();
 
-  async function fetchAllProperties() {
-    setLoading(true);
-    try {
-      const response = await fetchProperties();
-      if (response.data) {
-        setProperties(response.data as unknown as Property[]);
-        setLoading(false);
-        return;
-      }
-      toastError(response?.error?.message);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-    setLoading(false);
-  }
+  const {
+    data: featureFlags,
+    isLoading,
+    refetch
+  } = useGetFeatureFlagsFromAPI();
 
-  async function onSubmit(data: Partial<Property>) {
-    if (!data.created_at) {
-      return onSaveProperty(data);
-    } else {
-      return onUpdateProperty(data);
-    }
-  }
-
-  async function onSaveProperty(data: Partial<Property>) {
-    setLoading(true);
-    try {
-      const response = await saveProperty({
-        ...data,
-        created_by: user.user?.id
-      });
-      if (response?.data) {
-        fetchAllProperties();
-        setIsOpen(false);
-        setLoading(false);
-        toastSuccess("Property added successfully");
-        refreshFeatureFlags();
-        return;
-      }
-      toastError(response.error?.message);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-    setLoading(false);
-  }
-
-  async function onUpdateProperty(data: Partial<Property>) {
-    setLoading(true);
-    try {
-      const response = await updateProperty({
-        ...data,
-        created_by: user.user?.id
-      });
-      if (response?.data) {
-        fetchAllProperties();
-        setIsOpen(false);
-        setLoading(false);
-        toastSuccess("Property updated successfully");
-        refreshFeatureFlags();
-        return;
-      }
-      toastError(response.error?.message);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-    setLoading(false);
-  }
-
-  async function onDelete(data: Partial<Property>) {
-    setLoading(true);
-    try {
-      const response = await deleteProperty(data);
-      setEditedRow(undefined);
-      if (response?.data) {
-        fetchAllProperties();
-        setIsOpen(false);
-        setLoading(false);
-        toastSuccess("Property removed successfully");
-        refreshFeatureFlags();
-        return;
-      }
-      toastError(response?.error?.message);
-    } catch (ex) {
-      toastError((ex as Error).message);
-    }
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    fetchAllProperties();
+  const { mutate: saveFeatureFlag } = useAddFeatureFlag(() => {
+    refetch();
+    setIsOpen(false);
+    refreshFeatureFlags();
   });
+
+  const { mutate: updateFeatureFlag } = useUpdateFeatureFlag(() => {
+    refetch();
+    setIsOpen(false);
+    refreshFeatureFlags();
+  });
+
+  const { mutate: deleteFeatureFlag } = useDeleteFeatureFlag(() => {
+    refetch();
+    setIsOpen(false);
+    refreshFeatureFlags();
+  });
+
+  const { data: property } = useGetPropertyFromDB(editedRow);
+
+  async function onSubmit(data: Partial<PropertyDBObject>) {
+    if (!data.created_at) {
+      saveFeatureFlag(data);
+    } else {
+      updateFeatureFlag(data);
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -138,40 +81,42 @@ export function FeatureFlagsPage() {
               >
                 Feature Flags
               </BreadcrumbRoot>,
-              <button
-                key="add"
-                type="button"
-                className=""
-                onClick={() => setIsOpen(true)}
-              >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+              <FeatureFlagAddButton
+                key={"add-button"}
+                onSubmit={onSubmit}
+                onDelete={deleteFeatureFlag}
+              />
             ]}
           />
         }
-        onRefresh={() => {
-          fetchAllProperties();
-        }}
+        onRefresh={refetch}
         contentClass="p-0 h-full"
-        loading={loading}
+        loading={isLoading}
       >
         <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
           <FeatureFlagsList
             className="mt-6 overflow-y-hidden"
-            data={properties}
-            isLoading={loading}
+            data={featureFlags ?? []}
+            isLoading={isLoading}
             onRowClick={(val) => {
+              if (val.source === "local") {
+                toastError("Cannot edit local feature flags");
+                return;
+              }
               setIsOpen(true);
               setEditedRow(val);
             }}
           />
-          <FeatureFlagForm
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            onFeatureFlagSubmit={onSubmit}
-            onFeatureFlagDelete={onDelete}
-            formValue={editedRow}
-          />
+          {property && (
+            <FeatureFlagForm
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              onFeatureFlagSubmit={onSubmit}
+              onFeatureFlagDelete={deleteFeatureFlag}
+              formValue={property}
+              source={editedRow?.source}
+            />
+          )}
         </div>
       </SearchLayout>
     </>

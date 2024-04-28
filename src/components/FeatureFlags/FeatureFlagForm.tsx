@@ -1,19 +1,19 @@
+import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
+import { Button } from "@flanksource-ui/ui/Button";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
-import { featuresList } from "../../services/permissions/features";
-import { Property } from "../../services/permissions/permissionsService";
-import { Button } from "../../ui/Button";
-import { Modal } from "../../ui/Modal";
-import FormikSelect from "../Forms/Formik/FormikSelect";
+import FormikTextInput from "../Forms/Formik/FormikTextInput";
 import { toastError } from "../Toast/toast";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
-  onFeatureFlagSubmit: (data: Partial<Property>) => Promise<any>;
-  onFeatureFlagDelete: (data: Partial<Property>) => Promise<any>;
-  formValue?: Partial<Property>;
+  onFeatureFlagSubmit: (data: Partial<PropertyDBObject>) => void;
+  onFeatureFlagDelete: (data: Partial<PropertyDBObject>) => void;
+  formValue?: Partial<PropertyDBObject>;
+  source?: string;
 };
 
 export default function FeatureFlagForm({
@@ -23,6 +23,7 @@ export default function FeatureFlagForm({
   onFeatureFlagSubmit,
   onFeatureFlagDelete,
   formValue,
+  source,
   ...props
 }: FeatureFlagFormProps) {
   return (
@@ -56,29 +57,20 @@ export default function FeatureFlagForm({
             {...props}
           >
             <div className={clsx("flex flex-col px-2 mb-2")}>
-              <div className="flex flex-row overflow-y-auto px-2 py-12 justify-center">
+              <div className="flex flex-row overflow-y-auto px-2 py-6 gap-4 justify-center">
                 <div className="flex-1">
-                  <FormikSelect name="name" label="Feature flag">
-                    <>
-                      <option value="">select any</option>
-                      {featuresList.map((item) => {
-                        return (
-                          <option key={item} value={item}>
-                            {item}
-                          </option>
-                        );
-                      })}
-                    </>
-                  </FormikSelect>
+                  <FormikTextInput
+                    name="name"
+                    label="Feature flag"
+                    className="flex flex-row gap-2 items-center"
+                  />
                 </div>
-                <div className="flex-1">
-                  <FormikSelect name="value" label="Value">
-                    <>
-                      <option value="">select value</option>
-                      <option value="true">true</option>
-                      <option value="false">false</option>
-                    </>
-                  </FormikSelect>
+                <div className="flex-1 flex flex-col">
+                  <FormikTextInput
+                    name="value"
+                    label="Value"
+                    className="flex flex-row gap-2 items-center"
+                  />
                 </div>
               </div>
             </div>
@@ -104,11 +96,13 @@ export default function FeatureFlagForm({
               >
                 Cancel
               </button>
-              <Button
-                type="submit"
-                text={Boolean(formValue?.created_at) ? "Update" : "Save"}
-                className="btn-primary"
-              />
+              {source !== "local" && (
+                <Button
+                  type="submit"
+                  text={Boolean(formValue?.created_at) ? "Update" : "Save"}
+                  className="btn-primary"
+                />
+              )}
             </div>
           </div>
         </Form>
