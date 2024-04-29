@@ -47,7 +47,7 @@ function useExpandCollapse(
     // properties.
     const dagre = new Dagre.graphlib.Graph()
       .setDefaultEdgeLabel(() => ({}))
-      .setGraph({ rankdir: "LR", ranksep: 50, nodesep: 50 });
+      .setGraph({ rankdir: "LR" });
 
     // 2. Add each node and edge to the dagre graph. Instead of using each node's
     // intrinsic width and height, we tell dagre to use the `treeWidth` and

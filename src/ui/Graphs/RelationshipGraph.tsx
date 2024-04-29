@@ -9,7 +9,6 @@ import ReactFlow, {
   NodeTypes,
   getNodesBounds,
   useEdgesState,
-  useNodesInitialized,
   useNodesState,
   useReactFlow,
   useStoreApi
@@ -17,7 +16,9 @@ import ReactFlow, {
 
 import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigIntermediaryNodeReactFlowNode";
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
+import { Loading } from "@flanksource-ui/components/Loading";
 import "reactflow/dist/style.css";
+import useAnimatedNodes from "./Expand/useAnimatedNodes";
 import useExpandCollapse from "./Expand/useExpandCollapse";
 
 const nodeTypes: NodeTypes = {
@@ -46,15 +47,15 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   nodes: propNodes,
   edges: propEdges
 }: ConfigGraphProps<T>) {
-  const { setCenter, setViewport, getZoom } = useReactFlow();
-
-  const isNodeInitialized = useNodesInitialized();
+  const { setViewport, fitView } = useReactFlow();
 
   // During the initial layout setup, we want to align the nodes vertically
   // centered and horizontally aligned to the left. This is done only once and
   // once the user interacts with the graph, we disable this behavior.
   const [isInitialLayoutSetupDone, setIsInitialLayoutSetupDone] =
     useState(false);
+
+  const [showScreen, setShowScreen] = useState(false);
 
   const { getState } = useStoreApi();
 
@@ -71,6 +72,10 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
     edges
   );
 
+  const { nodes: nodesAnimated } = useAnimatedNodes(expandNodes, {
+    animationDuration: 300
+  });
+
   const centerNodeToViewport = useCallback(
     (node: Node<T>) => {
       // when the user interacts with the node, disable auto-aligning of the
@@ -78,17 +83,14 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
       setIsInitialLayoutSetupDone(true);
 
       if (node.data.expandable) {
-        const { x, y, width, height } = getNodesBounds([node]);
-
-        // Calculate the center of the node
-        const nodeCenterX = x + width / 2;
-        const nodeCenterY = y + height / 2;
-
-        // Move the viewport to the center of the node
-        setCenter(nodeCenterX, nodeCenterY, { duration: 800, zoom: getZoom() });
+        fitView({
+          nodes: [node],
+          duration: 200
+        });
       }
+      setTimeout(() => setShowScreen(false), 150);
     },
-    [getZoom, setCenter]
+    [fitView]
   );
 
   const sendNodesEdgePoint = useCallback(() => {
@@ -108,13 +110,17 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   }, [expandEdges, expandNodes, getState, setViewport]);
 
   useEffect(() => {
-    if (isNodeInitialized && !isInitialLayoutSetupDone) {
+    if (!isInitialLayoutSetupDone) {
       sendNodesEdgePoint();
     }
-  }, [isInitialLayoutSetupDone, isNodeInitialized, sendNodesEdgePoint]);
+  }, [isInitialLayoutSetupDone, sendNodesEdgePoint]);
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_, node) => {
+      if (!node.data.expandable) {
+        return;
+      }
+      setShowScreen(true);
       setNodes((nds) =>
         nds.map((n) => {
           if (n.id === node.id) {
@@ -126,17 +132,22 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
           return n;
         })
       );
-      centerNodeToViewport(node);
+      setTimeout(() => centerNodeToViewport(node), 350);
     },
     [centerNodeToViewport, setNodes]
   );
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full relative">
+      {showScreen && (
+        <div className="absolute inset-0 bg-white bg-opacity-95  top-0 bottom-0 left-0 right-0 z-[999] flex flex-col items-center justify-center">
+          <Loading />
+        </div>
+      )}
       <ReactFlow
         fitView
         onNodeClick={onNodeClick}
-        nodes={expandNodes}
+        nodes={nodesAnimated}
         edges={expandEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
