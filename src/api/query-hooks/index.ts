@@ -171,7 +171,7 @@ function prepareConfigListQuery({
   includeAgents = false
 }: ConfigListFilterQueryOptions) {
   let query =
-    "select=id,type,config_class,status,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
+    "select=id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
   if (includeAgents) {
     query = `${query},agent:agents(id,name)`;
   }

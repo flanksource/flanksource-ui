@@ -5,12 +5,12 @@ import { isCostsEmpty } from "../../../api/types/configs";
 import { Age } from "../../../ui/Age";
 import { InfoMessage } from "../../InfoMessage";
 import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
+import { Status } from "../../Status";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { formatConfigTags } from "./Utils/formatConfigTags";
-import { Status } from "../../Status";
 
 type Props = {
   configId: string;
@@ -77,7 +77,10 @@ export function ConfigDetails({ configId }: Props) {
                   label: "Status",
                   value: (
                     <>
-                      <Status status={configDetails.status} />
+                      <Status
+                        status={configDetails.health}
+                        statusText={configDetails.status}
+                      />
                       {configDetails.description ? (
                         <div className="ml-1 text-gray-600 text-sm">
                           {configDetails.description}
