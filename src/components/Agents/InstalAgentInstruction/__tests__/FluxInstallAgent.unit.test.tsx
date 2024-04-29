@@ -37,7 +37,14 @@ describe("InstallAgentModal", () => {
           backendUrl: "https://testurl.com"
         }}
       >
-        <FluxInstallAgent generatedAgent={generatedAgent} />
+        <FluxInstallAgent
+          agentFormValues={{
+            name: "testname",
+            kubernetes: {},
+            properties: {}
+          }}
+          generatedAgent={generatedAgent}
+        />
       </AuthContext.Provider>
     );
 
@@ -82,7 +89,25 @@ describe("InstallAgentModal", () => {
             createSecret: true
             host:  http://localhost
             username: token
+            agentName: testname
             password: testtoken
+      ---
+      apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      metadata:
+        name: mission-control-kubernetes
+        namespace: mission-control-agent
+      spec:
+        chart:
+          spec:
+            chart: mission-control-kubernetes
+            sourceRef:
+              kind: HelmRepository
+              name: flanksource
+              namespace: mission-control-agent
+        values:
+          clusterName: "testname"
+          interval: ""
         "
     `);
   });
@@ -149,7 +174,25 @@ describe("InstallAgentModal", () => {
             createSecret: true
             host:  http://localhost
             username: token
+            agentName: testname
             password: testtoken
+      ---
+      apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      metadata:
+        name: mission-control-kubernetes
+        namespace: mission-control-agent
+      spec:
+        chart:
+          spec:
+            chart: mission-control-kubernetes
+            sourceRef:
+              kind: HelmRepository
+              name: flanksource
+              namespace: mission-control-agent
+        values:
+          clusterName: "testname"
+          interval: ""
         "
     `);
   });

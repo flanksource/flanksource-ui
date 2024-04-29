@@ -37,6 +37,7 @@ spec:
       createSecret: true
       host:  {{baseUrl}}
       username: token
+      agentName: {{agentFormValues.name}}
       password: {{generatedAgent.access_token}}
 {{#if kubeOptions}}
 ---

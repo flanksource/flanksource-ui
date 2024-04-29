@@ -49,6 +49,7 @@ describe("InstallAgentModal", () => {
         --set upstream.host=http://localhost \\
         --set upstream.username=token \\
         --set upstream.password=testtoken \\
+        --set upstream.agentName= \\
         --create-namespace
 
       "
@@ -93,6 +94,7 @@ describe("InstallAgentModal", () => {
         --set upstream.host=http://localhost \\
         --set upstream.username=token \\
         --set upstream.password=testtoken \\
+        --set upstream.agentName=testname \\
         --create-namespace
 
       helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent"  \\
