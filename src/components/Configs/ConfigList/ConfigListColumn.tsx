@@ -80,12 +80,14 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   },
   {
     header: "Status",
-    accessorKey: "status",
+    accessorKey: "health",
     size: 100,
     enableSorting: true,
-    cell: ({ getValue }: CellContext<ConfigItem, any>) => {
-      const status = getValue<ConfigItem["status"]>();
-      return <Status status={status} />;
+    cell: ({ getValue, row }: CellContext<ConfigItem, any>) => {
+      const health = getValue<ConfigItem["health"]>();
+      const status = row.original.status;
+
+      return <Status status={health} statusText={status} />;
     }
   },
   {

@@ -3,9 +3,16 @@ type StatusProps = {
   mixed?: boolean;
   status?: string;
   className?: string;
+  statusText?: string;
 };
 
-export function Status({ status, good, mixed, className = "" }: StatusProps) {
+export function Status({
+  status,
+  statusText,
+  good,
+  mixed,
+  className = ""
+}: StatusProps) {
   let color = "bg-green-400";
   status = status?.toLowerCase();
   console.log("status", status);
@@ -32,7 +39,7 @@ export function Status({ status, good, mixed, className = "" }: StatusProps) {
         className={`flex-shrink-0 inline-block h-3 w-3 rounded-full shadow-md ${className} ${color}`}
         aria-hidden="true"
       />
-      <span className="capitalize pl-1">{status}</span>
+      <span className="capitalize pl-1">{statusText ?? status}</span>
     </div>
   );
 }
