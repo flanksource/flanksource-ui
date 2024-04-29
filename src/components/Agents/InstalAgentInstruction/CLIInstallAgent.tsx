@@ -15,6 +15,7 @@ helm install mc-agent flanksource/mission-control-agent -n "mission-control-agen
   --set upstream.host={{baseUrl}} \\
   --set upstream.username=token \\
   --set upstream.password={{generatedAgent.access_token}} \\
+  --set upstream.agentName={{agentFormValues.name}} \\
   --create-namespace
 
 {{#if kubeOptions}}
