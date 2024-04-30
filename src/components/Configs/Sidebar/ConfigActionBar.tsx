@@ -2,11 +2,11 @@ import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
 import { useGetConfigByIdQuery } from "../../../api/query-hooks";
+import { EvidenceType } from "../../../api/types/evidence";
 import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 import { ActionLink } from "../../ActionLink/ActionLink";
 import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
-import { EvidenceType } from "../../../api/types/evidence";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -51,7 +51,7 @@ export default function ConfigActionBar({
 
   return (
     <div
-      className={clsx("flex flex-row justify-between px-1", className)}
+      className={clsx("flex flex-row justify-between py-2", className)}
       {...props}
     >
       <AttachAsEvidenceButton
