@@ -1,15 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { FaEdit } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { useCanaryCheckItemQuery } from "../../../api/query-hooks";
-import { SchemaResourceI } from "../../../api/schemaResources";
+import { useCanaryCheckItemQuery } from "@flanksource-ui/api/query-hooks";
+import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
 import {
   getComponentTemplate,
   getTopology
-} from "../../../api/services/topology";
-import { HealthCheck } from "../../../api/types/health";
-import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { Icon } from "../../Icon";
+} from "@flanksource-ui/api/services/topology";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
+import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
+import { useQuery } from "@tanstack/react-query";
+import { FaEdit } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 type HealthCheckEditComponentProps = {
   check: Pick<SchemaResourceI, "source">;
@@ -77,12 +77,12 @@ export function HealthCheckEdit({ check }: HealthCheckEditProps) {
   if (canaryCheck.source) {
     if (canaryCheck.source.startsWith("kubernetes")) {
       return (
-        <div className="flex items-center px-4 space-x-2">
-          <Icon name="k8s" />
-          <span>
-            CRD linked to {canaryCheck.namespace}/{canaryCheck.name}
-          </span>
-        </div>
+        <CRDSource
+          id={canaryCheck.id}
+          name={canaryCheck.name}
+          namespace={canaryCheck.namespace}
+          source={canaryCheck.source}
+        />
       );
     }
 

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
 import { Age } from "../../ui/Age";
@@ -37,7 +37,7 @@ export function SchemaResourceList({
           <thead className={`rounded-md sticky top-0 z-01`}>
             <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
               <HCell colSpan={2}>Name</HCell>
-              <HCell>Source Config</HCell>
+              <HCell colSpan={2}>Source Config</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
               {table === "topologies" && <HCell>Agent</HCell>}
@@ -156,8 +156,26 @@ function SchemaResourceListItem({
           </div>
         </div>
       </Cell>
-      <Cell className="shrink-0">
-        {!!source && <a href={`${source}`}>Link</a>}
+      <Cell
+        colSpan={2}
+        className="shrink-0 text-nowrap text-ellipsis overflow-hidden"
+      >
+        {source && source === "KubernetesCRD" ? (
+          <Link
+            to={`/catalog/${id}`}
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <span className="text-gray-500">
+              {namespace ? <>{namespace}/</> : ""}
+              {name}
+            </span>
+          </Link>
+        ) : (
+          <a href={`${source}`}>Link</a>
+        )}
       </Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
       {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}

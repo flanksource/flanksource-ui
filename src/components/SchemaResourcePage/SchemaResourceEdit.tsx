@@ -8,10 +8,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import YAML from "yaml";
-import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
 import { Head } from "../Head/Head";
 import { Icon } from "../Icon";
 import { IconPicker } from "../IconPicker";
+import CRDSource from "../Settings/CRDSource";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
@@ -289,17 +289,6 @@ export function SchemaResourceEdit({
                                   )}
                                   <span>{name}</span>
                                 </h2>
-                                {!!source && table === "canaries" && id ? (
-                                  <HealthCheckEdit
-                                    check={{
-                                      canary_id: id
-                                    }}
-                                  />
-                                ) : (
-                                  <div className="px-2">
-                                    <a href={`${source}`}>Catalog source</a>
-                                  </div>
-                                )}
                               </div>
                             )}
                             {supportsField("namespace") && (
@@ -436,7 +425,7 @@ export function SchemaResourceEdit({
                             </div>
                           </div>
                         </div>
-                        {!source && (
+                        {!source ? (
                           <div
                             className={clsx(
                               "flex justify-end px-10 rounded-b py-4 space-x-2",
@@ -461,6 +450,15 @@ export function SchemaResourceEdit({
                               type="submit"
                               text={!!id ? "Update" : "Save"}
                               className="btn-primary"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex px-8 py-4">
+                            <CRDSource
+                              name={name!}
+                              source={source}
+                              namespace={namespace!}
+                              id={id!}
                             />
                           </div>
                         )}
