@@ -6,9 +6,9 @@ import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
+import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
 import BootIntercom from "../../Intercom/BootIntercom";
-import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 import InstanceCreationInProgress from "./InstanceCreationInProgress";
 
 const organizationIDAtom = atomWithStorage<string | undefined>(

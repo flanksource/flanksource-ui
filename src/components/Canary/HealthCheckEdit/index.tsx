@@ -8,8 +8,8 @@ import {
   getTopology
 } from "../../../api/services/topology";
 import { HealthCheck } from "../../../api/types/health";
+import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { Icon } from "../../Icon";
-import TextSkeletonLoader from "../../SkeletonLoader/TextSkeletonLoader";
 
 type HealthCheckEditComponentProps = {
   check: Pick<SchemaResourceI, "source">;

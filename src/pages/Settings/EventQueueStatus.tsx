@@ -8,7 +8,7 @@ import EventQueueStatusList from "@flanksource-ui/components/EventQueueStatus/Ev
 import { EventQueueSummary } from "@flanksource-ui/components/EventQueueStatus/eventQueue";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
-import TableSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/TableSkeletonLoader";
+import TableSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TableSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 
 export function EventQueueStatusPage() {

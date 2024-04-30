@@ -1,4 +1,5 @@
 import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
+import AutoCompleteDropdown from "@flanksource-ui/ui/AutoCompleteDropdown/AutoCompleteDropdown";
 import { Button } from "@flanksource-ui/ui/Button";
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
@@ -7,7 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import YAML from "yaml";
-import AutoCompleteDropdown from "../AutoCompleteDropdown/AutoCompleteDropdown";
 import { HealthCheckEdit } from "../Canary/HealthCheckEdit";
 import { Head } from "../Head/Head";
 import { Icon } from "../Icon";
@@ -25,7 +25,7 @@ import {
 import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
 
 const CodeEditor = dynamic(
-  () => import("../CodeEditor").then((m) => m.CodeEditor),
+  () => import("../../ui/CodeEditor").then((m) => m.CodeEditor),
   { ssr: false }
 );
 

@@ -5,7 +5,7 @@ import {
 } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
+import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 
 export const clerkUrls = {
   login: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/login",

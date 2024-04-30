@@ -5,7 +5,7 @@ import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
+import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import { toastError } from "../../Toast/toast";
 import { Flow, HandleError } from "../../ory";
 import { SetUriFlow } from "../../ory/helpers";

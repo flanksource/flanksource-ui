@@ -11,11 +11,11 @@ import {
   useSettingsUpdateResource
 } from "../../../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { Button } from "../../../../ui/Button";
+import FormSkeletonLoader from "../../../../ui/SkeletonLoader/FormSkeletonLoader";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
 import FormikKeyValueMapField from "../../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
 import DeleteResource from "../../../SchemaResourcePage/Delete/DeleteResource";
-import FormSkeletonLoader from "../../../SkeletonLoader/FormSkeletonLoader";
 import { createTopologyOptions } from "./AddTopologyOptionsList";
 
 const selectedOptionToSpecMap = new Map<

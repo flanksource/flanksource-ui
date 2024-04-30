@@ -5,10 +5,10 @@ import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
 import { Modal } from "../../../../ui/Modal";
 import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
+import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { formatISODate, isValidDate } from "../../../../utils/date";
 import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { DescriptionCard } from "../../../DescriptionCard";
-import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 

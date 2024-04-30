@@ -12,13 +12,13 @@ import { getCanaries } from "../../../../api/services/topology";
 import { Evidence, EvidenceType } from "../../../../api/types/evidence";
 import { Size, ViewType } from "../../../../types";
 import { Badge } from "../../../../ui/Badge";
+import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import {
   ConfigAnalysisEvidence,
   ConfigChangeEvidence
 } from "../../../Hypothesis/EvidenceSection";
 import { Icon } from "../../../Icon";
 import { ConfigIcon } from "../../../Icon/ConfigIcon";
-import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { StatusStyles } from "../../../Topology/TopologyCard";
 import { CardMetrics } from "../../../Topology/TopologyCard/CardMetrics";
 

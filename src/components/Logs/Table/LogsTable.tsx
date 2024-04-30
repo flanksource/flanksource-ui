@@ -13,10 +13,10 @@ import { useSearchParams } from "react-router-dom";
 import { EvidenceType } from "../../../api/types/evidence";
 import useDebouncedValue from "../../../hooks/useDebounce";
 import LogItem from "../../../types/Logs";
+import TableSkeletonLoader from "../../../ui/SkeletonLoader/TableSkeletonLoader";
 import { sanitizeHTMLContent } from "../../../utils/common";
 import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { InfoMessage } from "../../InfoMessage";
-import TableSkeletonLoader from "../../SkeletonLoader/TableSkeletonLoader";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 
 const convert = new Convert();
