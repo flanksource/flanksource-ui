@@ -11,6 +11,7 @@ import KubernetesFileConfigsFormEditor from "../Forms/Configs/KubernetesFileConf
 import SQLConfigsFormEditor from "../Forms/Configs/SQLConfigsFormEditor";
 import TrivyConfigsFormEditor from "../Forms/Configs/TrivyConfigsFormEditor";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import CRDSource from "../Settings/CRDSource";
 import SpecEditor, { SpecType } from "./SpecEditor";
 
 const resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name"> = {
@@ -229,18 +230,22 @@ export default function ConfigScrapperSpecEditor({
     : undefined;
 
   const configCantEditMessage = useMemo(() => {
-    if (resourceValue?.source === "KubernetesCRD") {
+    if (resourceValue?.source === "KubernetesCRD" && resourceValue?.id) {
       return (
-        <>
-          <span> CRD linked to</span>{" "}
-          <span>
-            {resourceValue?.namespace ? <>{resourceValue.namespace}/</> : ""}
-            {resourceValue?.name}.
-          </span>
-        </>
+        <CRDSource
+          id={resourceValue.id}
+          name={resourceValue.name}
+          namespace={resourceValue.namespace}
+          source={resourceValue.source}
+        />
       );
     }
-  }, [resourceValue?.name, resourceValue?.namespace, resourceValue?.source]);
+  }, [
+    resourceValue?.id,
+    resourceValue?.name,
+    resourceValue?.namespace,
+    resourceValue?.source
+  ]);
 
   const canEdit = resourceValue?.source !== "KubernetesCRD";
 

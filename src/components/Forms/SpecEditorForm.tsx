@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../../ui/Button";
-import { Icon } from "../Icon";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 import {
   SchemaResourceType,
@@ -220,7 +219,6 @@ export default function SpecEditorForm({
             <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
               {!!cantEditMessage && !canEdit && !!initialValues.id && (
                 <div className="flex items-center px-4 space-x-2 flex-1">
-                  <Icon name="k8s" />
                   <span>{cantEditMessage}</span>
                 </div>
               )}
