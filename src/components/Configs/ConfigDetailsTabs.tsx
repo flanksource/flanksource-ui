@@ -9,7 +9,6 @@ import { SearchLayout } from "../Layout";
 import { refreshButtonClickedTrigger } from "../SlidingSideBar";
 import TabbedLinks from "../Tabs/TabbedLinks";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
-import ConfigActionBar from "./Sidebar/ConfigActionBar";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
 
 type ConfigDetailsTabsProps = {
@@ -69,9 +68,6 @@ export function ConfigDetailsTabs({
       >
         <div className={`flex flex-row h-full`}>
           <div className="flex flex-col flex-1">
-            <div className="flex flex-col h-auto bg-gray-100 px-4">
-              <ConfigActionBar configId={id!} />
-            </div>
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
