@@ -4,7 +4,7 @@ import {
   PlaybookParamCodeEditor,
   PlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";
-import FormSkeletonLoader from "@flanksource-ui/components/SkeletonLoader/FormSkeletonLoader";
+import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useFormikContext } from "formik";

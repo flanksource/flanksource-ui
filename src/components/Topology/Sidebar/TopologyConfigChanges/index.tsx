@@ -8,11 +8,11 @@ import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfi
 import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../../ui/CollapsiblePanel/CollapsiblePanel";
+import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../../../EmptyState";
 import { Icon } from "../../../Icon";
 import { ConfigIcon } from "../../../Icon/ConfigIcon";
-import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../../SlidingSideBar";
 import Title from "../../../Title/title";
 

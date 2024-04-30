@@ -18,7 +18,7 @@ import {
 } from "@ory/integrations/ui";
 import { Component, FormEvent } from "react";
 
-import FormSkeletonLoader from "../../SkeletonLoader/FormSkeletonLoader";
+import FormSkeletonLoader from "../../../ui/SkeletonLoader/FormSkeletonLoader";
 import { Messages } from "./Messages";
 import { Node } from "./Node";
 

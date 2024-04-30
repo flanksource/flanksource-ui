@@ -6,11 +6,11 @@ import { tables } from "../../context/UserAccessContext/permissions";
 import { Age } from "../../ui/Age";
 import { Avatar } from "../../ui/Avatar";
 import Popover from "../../ui/Popover/Popover";
+import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
 import AgentName from "../Agents/AgentName";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { TagItem, TagList } from "../TagList/TagList";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
 

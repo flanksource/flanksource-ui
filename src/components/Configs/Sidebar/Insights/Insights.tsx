@@ -5,6 +5,7 @@ import {
   useGetTopologyRelatedInsightsQuery
 } from "../../../../api/query-hooks";
 import { ConfigAnalysis } from "../../../../api/types/configs";
+import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import {
   sanitizeHTMLContent,
   sanitizeHTMLContentToText,
@@ -12,7 +13,6 @@ import {
 } from "../../../../utils/common";
 import EmptyState from "../../../EmptyState";
 import { InfiniteTable } from "../../../InfiniteTable/InfiniteTable";
-import TextSkeletonLoader from "../../../SkeletonLoader/TextSkeletonLoader";
 import { toastError } from "../../../Toast/toast";
 import ConfigInsightAgeCell from "./cells/ConfigInsightAgeCell";
 import ConfigInsightNameCell from "./cells/ConfigInsightNameCell";

@@ -13,10 +13,10 @@ import { useLoader } from "../../hooks";
 import { Avatar } from "../../ui/Avatar";
 import { Menu } from "../../ui/Menu";
 import { Modal } from "../../ui/Modal";
+import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
 import EmptyState from "../EmptyState";
 import { IconButton } from "../IconButton";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 import { toastError, toastSuccess } from "../Toast/toast";
 
 type TeamMembersProps = {

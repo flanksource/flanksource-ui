@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
+import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
-import FullPageSkeletonLoader from "../../SkeletonLoader/FullPageSkeletonLoader";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 

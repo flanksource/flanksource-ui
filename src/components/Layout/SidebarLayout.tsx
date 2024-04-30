@@ -1,3 +1,7 @@
+import {
+  MissionControlLogoWhite,
+  MissionControlWhite
+} from "@flanksource/icons/mi";
 import { Float } from "@headlessui-float/react";
 import { Disclosure, Menu } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
@@ -14,12 +18,8 @@ import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
 import { features } from "../../services/permissions/features";
 import { $ArrayElemType } from "../../types/utility";
+import FullPageSkeletonLoader from "../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import { withAccessCheck } from "../AccessCheck/AccessCheck";
-import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
-import {
-  MissionControlLogoWhite,
-  MissionControlWhite
-} from "@flanksource/icons/mi";
 
 interface Props {
   navigation: NavigationItems;

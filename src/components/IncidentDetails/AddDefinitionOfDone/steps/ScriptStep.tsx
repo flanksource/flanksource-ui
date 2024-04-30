@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import { EvidenceType } from "../../../../api/types/evidence";
 
 const CodeEditor = dynamic(
-  () => import("../../../CodeEditor").then((m) => m.CodeEditor),
+  () => import("../../../../ui/CodeEditor").then((m) => m.CodeEditor),
   { ssr: false }
 );
 

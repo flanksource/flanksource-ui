@@ -1,8 +1,8 @@
 import { useSession } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import React from "react";
-import FullPageSkeletonLoader from "../src/components/SkeletonLoader/FullPageSkeletonLoader";
 import useDetermineAuthSystem from "../src/components/Authentication/useDetermineAuthSystem";
+import FullPageSkeletonLoader from "../src/ui/SkeletonLoader/FormSkeletonLoader";
 
 export function ClerkAuthStateChecker() {
   const { push, query } = useRouter();

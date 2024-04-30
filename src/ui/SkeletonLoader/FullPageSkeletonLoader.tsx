@@ -1,5 +1,5 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
+import useDetermineAuthSystem from "../../components/Authentication/useDetermineAuthSystem";
 
 export default function FullPageSkeletonLoader() {
   const authSystem = useDetermineAuthSystem();

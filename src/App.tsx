@@ -41,7 +41,6 @@ import {
   SchemaResourceType,
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
-import FullPageSkeletonLoader from "./components/SkeletonLoader/FullPageSkeletonLoader";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import {
   FeatureFlagsContextProvider,
@@ -75,6 +74,7 @@ import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
+import FullPageSkeletonLoader from "./ui/SkeletonLoader/FullPageSkeletonLoader";
 import { stringSortHelper } from "./utils/common";
 
 const isDevelopment = process.env.NODE_ENV === "development";

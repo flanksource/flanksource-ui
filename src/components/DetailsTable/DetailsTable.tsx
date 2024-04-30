@@ -1,6 +1,6 @@
 import clsx from "clsx";
+import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
 import EmptyState from "../EmptyState";
-import TableSkeletonLoader from "../SkeletonLoader/TableSkeletonLoader";
 
 type Column = {
   key: string;
