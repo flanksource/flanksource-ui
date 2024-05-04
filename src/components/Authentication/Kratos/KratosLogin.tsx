@@ -17,19 +17,22 @@ const Login: NextPage = () => {
 
   // when login is successful, we set this to true and then show an animation as
   // the user is redirected to the return_to URL.
-  const [loginSucccess, setLoginSuccess] = useState<boolean>(false);
+  const [loginSuccessful, setLoginSuccessful] = useState<boolean>(false);
 
   const { query, push, isReady } = useRouter();
 
-  const returnToFromQuery = (query.return_to as string) || "";
-  const flowId = String(query.flow || "");
+  const { username, password, return_to: returnToFromQuery, flowId } = query;
+
+  const [credentials, setCredentials] = useState<
+    { username: string; password: string } | undefined
+  >();
 
   // If we have a return_to query parameter, we want to redirect the user to
   // that URL after a successful login. if set, and return_to is empty, we don't
   // overwrite it. This is a workaround for using both nextjs and react-router.
   useEffect(() => {
     if (returnToFromQuery && !returnTo) {
-      setReturnTo(returnToFromQuery);
+      setReturnTo(String(returnToFromQuery));
     }
   }, [returnTo, returnToFromQuery]);
 
@@ -83,7 +86,7 @@ const Login: NextPage = () => {
     }
 
     if (flowId) {
-      getFlow(flowId).catch(() => {
+      getFlow(String(flowId)).catch(() => {
         createFlow(refresh, aal, returnTo ?? "/");
       });
       return;
@@ -94,24 +97,61 @@ const Login: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
-  const submitFlow = (values: UpdateLoginFlowBody) =>
-    ory
-      .updateLoginFlow({
-        flow: String(flow?.id),
-        updateLoginFlowBody: values
-      })
-      // We logged in successfully! Let's bring the user home.
-      .then(() => {
-        console.log("Login successful");
-        setLoginSuccess(true);
-        push(returnTo || "/");
-      })
-      .catch((error) => {
-        console.error(error);
-        toastError((error as AxiosError).message);
-      });
+  const submitFlow = useCallback(
+    (values: UpdateLoginFlowBody) =>
+      ory
+        .updateLoginFlow({
+          flow: String(flow?.id),
+          updateLoginFlowBody: values
+        })
+        // We logged in successfully! Let's bring the user home.
+        .then(() => {
+          console.log("Login successful");
+          setLoginSuccessful(true);
+          push(returnTo || "/");
+        })
+        .catch((error) => {
+          console.error(error);
+          toastError((error as AxiosError).message);
+        }),
+    [flow, push, returnTo]
+  );
 
-  if (loginSucccess) {
+  useEffect(() => {
+    if (username && password) {
+      setCredentials({
+        username: username as string,
+        password: password as string
+      });
+    }
+  }, [username, password]);
+
+  useEffect(() => {
+    if (credentials && flow) {
+      const node = flow.ui.nodes.find(
+        (n) =>
+          n.attributes.node_type === "input" &&
+          n.attributes.name === "csrf_token"
+      );
+      const csrf_token =
+        node?.attributes.node_type === "input"
+          ? node?.attributes.value
+          : undefined;
+      submitFlow({
+        csrf_token,
+        method: "password",
+        password: credentials.password,
+        identifier: credentials.username
+      });
+    }
+  }, [flow, submitFlow, credentials]);
+
+  if (loginSuccessful) {
+    return <FullPageSkeletonLoader />;
+  }
+
+  // If we have a username and password, we want to submit the login flow
+  if (credentials) {
     return <FullPageSkeletonLoader />;
   }
 
