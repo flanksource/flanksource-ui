@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useAtom } from "jotai";
 import { ReactNode } from "react";
 import { useParams } from "react-router-dom";
@@ -22,6 +23,7 @@ type ConfigDetailsTabsProps = {
     | "Insights"
     | "Relationships"
     | "Playbooks";
+  className?: string;
 };
 
 export function ConfigDetailsTabs({
@@ -29,7 +31,8 @@ export function ConfigDetailsTabs({
   children,
   isLoading = false,
   pageTitlePrefix,
-  activeTabName = "Catalog"
+  activeTabName = "Catalog",
+  className = "p-2"
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
 
@@ -71,7 +74,10 @@ export function ConfigDetailsTabs({
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
-              contentClassName="bg-white border border-t-0 border-gray-300 flex-1 p-2 overflow-y-auto"
+              contentClassName={clsx(
+                "bg-white border border-t-0 border-gray-300 flex-1 overflow-y-auto",
+                className
+              )}
             >
               <ErrorBoundary>{children}</ErrorBoundary>
             </TabbedLinks>

@@ -1,4 +1,4 @@
-import { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
+import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
@@ -144,40 +144,11 @@ export default function ConfigsTable({
     }));
   }, [data, groupByColumns]);
 
-  const configTableColumns = useMemo(() => {
-    const defaultColumns = configListColumns;
-    if (!groupByUserInput) {
-      return defaultColumns;
-    }
-    // we want to add tags that have been grouped by to the columns and also add
-    // the data in there
-    const groupByTags = groupByUserInput
-      .split(",")
-      .filter((item) => item.endsWith("__tag"));
-    // if there are no tags in the groupBy, we don't want to add the tags
-    if (groupByTags.length === 0) {
-      return defaultColumns;
-    }
-    // For each tag, we want to add a column to the table, and we want to add
-    // the data to the cell
-    const tagColumns = groupByTags.map(
-      (tag) =>
-        ({
-          header: `${tag.replace("__tag", "")}`,
-          accessorKey: tag.replace("__tag", ""),
-          id: tag,
-          size: 100,
-          enableGrouping: true
-        } satisfies ColumnDef<ConfigItem, any>)
-    );
-    return [...defaultColumns, ...tagColumns];
-  }, [groupByUserInput]);
-
   return (
     <DataTable
       stickyHead
       isVirtualized
-      columns={configTableColumns}
+      columns={configListColumns}
       data={transformConfigList}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}

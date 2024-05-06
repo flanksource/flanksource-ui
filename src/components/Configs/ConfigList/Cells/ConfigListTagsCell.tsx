@@ -1,3 +1,4 @@
+import { Tag } from "@flanksource-ui/components/Tag/Tag";
 import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
@@ -47,12 +48,9 @@ export default function ConfigListTagsCell({
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map((tag) => (
-        <div
-          className="flex flex-row p-[0.25rem] rounded-md bg-gray-200 text-gray-600 font-semibold text-xs whitespace-nowrap break-inside-avoid-column"
-          key={tag}
-        >
+        <Tag title={tag} key={tag} variant="gray">
           {tag}
-        </div>
+        </Tag>
       ))}
     </div>
   );
