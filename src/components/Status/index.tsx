@@ -1,3 +1,30 @@
+function getStatusColor(
+  status: string | undefined,
+  good: boolean | undefined,
+  mixed: boolean | undefined
+): string {
+  status = status?.toLowerCase();
+
+  if (
+    status === "degraded" ||
+    status === "missing" ||
+    status === "unhealthy" ||
+    (good !== undefined && !good)
+  ) {
+    return "bg-red-400";
+  }
+
+  if (status === "unknown" || status === "suspended") {
+    return "bg-gray-400";
+  }
+
+  if (mixed !== undefined && mixed) {
+    return "bg-light-orange";
+  }
+
+  return "bg-green-400";
+}
+
 type StatusProps = {
   good?: boolean;
   mixed?: boolean;
@@ -15,25 +42,11 @@ export function Status({
   className = "",
   hideText = false
 }: StatusProps) {
-  let color = "bg-green-400";
-  status = status?.toLowerCase();
-  console.log("status", status);
-  if (
-    status === "degraded" ||
-    status === "missing" ||
-    status === "unhealthy" ||
-    (good !== undefined && !good)
-  ) {
-    color = "bg-red-400";
+  if (!status) {
+    return null;
   }
 
-  if (status === "unknown" || status === "suspended") {
-    color = "bg-gray-400";
-  }
-
-  if (mixed !== undefined && mixed) {
-    color = "bg-light-orange";
-  }
+  const color = getStatusColor(status, good, mixed);
 
   return (
     <div className="flex flex-row items-center">
