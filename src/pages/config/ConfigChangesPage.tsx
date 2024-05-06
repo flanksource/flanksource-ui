@@ -8,7 +8,6 @@ import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
-import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
@@ -29,7 +28,7 @@ export function ConfigChangesPage() {
     sortBy: "created_at",
     sortDirection: "desc"
   });
-  const configType = params.get("configType") ?? undefined;
+  const configTypes = params.get("configTypes") ?? undefined;
   const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
@@ -61,7 +60,7 @@ export function ConfigChangesPage() {
         severity,
         from,
         to,
-        configType,
+        configTypes,
         sortBy,
         sortOrder: sortDirection === "desc" ? "desc" : "asc",
         page: page,
@@ -145,21 +144,7 @@ export function ConfigChangesPage() {
                 key="config-catalog-changes"
               >
                 Changes
-              </BreadcrumbChild>,
-              ...(configType
-                ? [
-                    <BreadcrumbChild
-                      link={`/catalog?configType=${configType}`}
-                      key={configType}
-                    >
-                      <ConfigsTypeIcon
-                        config={{ type: configType }}
-                        showSecondaryIcon
-                        showLabel
-                      />
-                    </BreadcrumbChild>
-                  ]
-                : [])
+              </BreadcrumbChild>
             ]}
           />
         }
