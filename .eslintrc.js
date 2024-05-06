@@ -11,7 +11,8 @@ module.exports = {
     "react-app",
     "react-app/jest",
     "plugin:storybook/recommended",
-    "plugin:jest-dom/recommended"
+    "plugin:jest-dom/recommended",
+    "plugin:@next/next/recommended"
   ],
   rules: {
     "react/function-component-definition": [
