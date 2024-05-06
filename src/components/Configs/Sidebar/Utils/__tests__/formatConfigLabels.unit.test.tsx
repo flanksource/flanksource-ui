@@ -1,29 +1,29 @@
-import { formatConfigTags } from "../formatConfigTags";
+import { formatConfigLabels } from "../formatConfigLabels";
 
 describe("formatConfigTags", () => {
   test("returns an empty array when config tags are undefined", () => {
-    const result = formatConfigTags();
+    const result = formatConfigLabels();
     expect(result).toEqual([]);
   });
 
   test("returns an empty array when config tags are empty", () => {
     const config = {
-      tags: {}
+      labels: {}
     };
-    const result = formatConfigTags(config);
+    const result = formatConfigLabels(config);
     expect(result).toEqual([]);
   });
 
   test("formats single properties correctly", () => {
     const config = {
-      tags: {
+      labels: {
         region: "us-west",
         vpc: "vpc-123",
         os: "linux",
         arch: "x86"
       }
     };
-    const result = formatConfigTags(config);
+    const result = formatConfigLabels(config);
     expect(result).toStrictEqual(
       expect.arrayContaining([
         {
@@ -69,13 +69,13 @@ describe("formatConfigTags", () => {
 
   test("formats grouped properties correctly", () => {
     const config = {
-      tags: {
+      labels: {
         "group1:property1": "value1",
         "group1:property2": "value2",
         "group2:property3": "value3"
       }
     };
-    const result = formatConfigTags(config);
+    const result = formatConfigLabels(config);
     expect(result).toEqual([
       {
         type: "GROUPED",
@@ -123,12 +123,12 @@ describe("formatConfigTags", () => {
 
   test("ignores 'name' tag", () => {
     const config = {
-      tags: {
+      labels: {
         name: "My Config",
         region: "us-west"
       }
     };
-    const result = formatConfigTags(config);
+    const result = formatConfigLabels(config);
     expect(result).toEqual([
       {
         type: "SINGLE",

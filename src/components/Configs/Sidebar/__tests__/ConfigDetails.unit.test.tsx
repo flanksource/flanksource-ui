@@ -1,10 +1,9 @@
-import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { ConfigDetails } from "./../ConfigDetails";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
+import { ConfigDetails } from "./../ConfigDetails";
 
 const server = setupServer(
   rest.get("/api/db/config_detail", (req, res, ctx) => {
@@ -19,7 +18,7 @@ const server = setupServer(
             id: "config_scraper_id",
             name: "Test Scraper"
           },
-          tags: {
+          labels: {
             "Tag 1": "Value 1",
             "Tag 2/Subtag 1": "Value 2",
             "Tag 2/Subtag 2": "Value 3"

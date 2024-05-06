@@ -1,8 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
-import Popover from "../../../../ui/Popover/Popover";
-import { TagItem, TagList } from "../../../TagList/TagList";
 
 export default function ConfigListTagsCell({
   getValue,
@@ -43,39 +41,19 @@ export default function ConfigListTagsCell({
   }
 
   const tags = tagKeys.map((key) => {
-    return {
-      key,
-      value: tagMap[key]
-    };
+    return tagMap[key];
   });
 
   return (
-    <Popover
-      toggle={
-        <div className="flex flex-row items-center">
-          <div className="flex-shrink overflow-x-hidden cursor-pointer">
-            <TagItem tag={tags[0]!} />
-          </div>
-          {tags.length > 1 && (
-            <div className="flex-shrink space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
-              +{tags.length - 1} more
-            </div>
-          )}
+    <div className="flex flex-wrap gap-1">
+      {tags.map((tag) => (
+        <div
+          className="flex flex-row p-[0.25rem] rounded-md bg-gray-200 text-gray-600 font-semibold text-xs whitespace-nowrap break-inside-avoid-column"
+          key={tag}
+        >
+          {tag}
         </div>
-      }
-      title={label}
-      placement="left"
-      menuClass="top-8"
-    >
-      <div className="flex flex-col p-3">
-        <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
-          <TagList
-            className="flex flex-col flex-1"
-            tags={tags}
-            minimumItemsToShow={tags.length}
-          />
-        </div>
-      </div>
-    </Popover>
+      ))}
+    </div>
   );
 }

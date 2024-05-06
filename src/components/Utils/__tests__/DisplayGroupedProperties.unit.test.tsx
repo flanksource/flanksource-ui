@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
+import { PropertyItem } from "../../Configs/Sidebar/Utils/formatConfigLabels";
 import { DisplayGroupedProperties } from "../DisplayGroupedProperties";
-import { PropertyItem } from "../../Configs/Sidebar/Utils/formatConfigTags";
 
 describe("DisplayGroupedProperties", () => {
   test("renders single properties correctly", () => {

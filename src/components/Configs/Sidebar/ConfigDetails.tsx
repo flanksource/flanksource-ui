@@ -10,7 +10,7 @@ import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
-import { formatConfigTags } from "./Utils/formatConfigTags";
+import { formatConfigLabels } from "./Utils/formatConfigLabels";
 
 type Props = {
   configId: string;
@@ -24,7 +24,7 @@ export function ConfigDetails({ configId }: Props) {
   } = useGetConfigByIdQuery(configId);
 
   const displayDetails = useMemo(() => {
-    return formatConfigTags(configDetails);
+    return formatConfigLabels(configDetails);
   }, [configDetails]);
 
   var types = [];
@@ -70,6 +70,27 @@ export function ConfigDetails({ configId }: Props) {
               }
             ]}
           />
+          {configDetails.tags && (
+            <DisplayDetailsRow
+              items={[
+                {
+                  label: "Tags",
+                  value: (
+                    <div className="flex flex-wrap gap-2 py-1">
+                      {Object.values(configDetails.tags).map((tag) => (
+                        <div
+                          className="flex flex-row p-[0.25rem] rounded-md bg-gray-200 text-gray-600 font-semibold text-xs whitespace-nowrap break-inside-avoid-column"
+                          key={tag}
+                        >
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                }
+              ]}
+            />
+          )}
           {configDetails.status && (
             <DisplayDetailsRow
               items={[
