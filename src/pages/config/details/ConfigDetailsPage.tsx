@@ -77,8 +77,9 @@ export function ConfigDetailsPage() {
       isLoading={isLoading}
       refetch={refetch}
       activeTabName="Catalog"
+      className=""
     >
-      <div className={`flex flex-col flex-1 p-6 pb-0 h-full relative`}>
+      <div className={`flex flex-col flex-1 pb-0 h-full relative`}>
         {!isLoading ? (
           <div className="flex flex-col w-full relative pt-2 border-gray-300 bg-white flex-1 overflow-x-auto overflow-y-auto">
             <JSONViewer

@@ -102,12 +102,13 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
       }
       return <CountBadge value={value} />;
     },
-    maxSize: 20
+    size: 40
   },
   {
     header: "Health",
     accessorKey: "health",
-    maxSize: 20,
+    minSize: 50,
+    maxSize: 100,
     cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
       const value = getValue<ConfigSummary["health"]>();
 
@@ -178,27 +179,28 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     header: "analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
-    maxSize: 60
+    minSize: 30,
+    maxSize: 100
   },
   {
     header: () => <div title="Cost">Cost (30d)</div>,
     accessorKey: "cost_total_30d",
     cell: ConfigListCostCell,
-    maxSize: 20
+    maxSize: 60
   },
   {
     header: "Created",
     accessorKey: "created_at",
     cell: ConfigListDateCell<ConfigSummary>,
     aggregatedCell: "",
-    maxSize: 30
+    maxSize: 40
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
     cell: ConfigListDateCell<ConfigSummary>,
     aggregatedCell: "",
-    maxSize: 30
+    maxSize: 40
   }
 ];
 
@@ -245,7 +247,8 @@ export default function ConfigSummaryList({
       return {
         header: column.toLocaleUpperCase(),
         accessorKey: column,
-        size: 40,
+        maxSize: 250,
+        minSize: 100,
         aggregatedCell: ({ row }) => {
           if (row.getCanExpand()) {
             const groupingValue = row.getGroupingValue(

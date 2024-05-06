@@ -1,13 +1,20 @@
 import clsx from "clsx";
 
-type TagProps = React.HTMLProps<HTMLDivElement>;
+type TagProps = React.HTMLProps<HTMLDivElement> & {
+  variant?: "gray";
+};
 
-export function Tag({ children, className, ...props }: TagProps) {
+export function Tag({
+  children,
+  className = "flex flex-row px-1 py-0.5 rounded-md text-xs whitespace-nowrap break-inside-avoid-column",
+  variant,
+  ...props
+}: TagProps) {
   return (
     <div
       className={clsx(
-        "text-center align-baseline min-w-8 text-2xs rounded-4px font-bold break-all",
-        className
+        className,
+        variant === "gray" && "bg-gray-100 text-gray-600"
       )}
       {...props}
     >

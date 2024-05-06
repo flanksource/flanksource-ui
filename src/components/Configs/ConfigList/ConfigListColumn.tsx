@@ -33,6 +33,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Name",
     accessorKey: "name",
     cell: ConfigListNameCell,
+    minSize: 200,
     size: 270,
     enableGrouping: true,
     enableSorting: true,
@@ -69,16 +70,9 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     }
   },
   {
-    header: "Tags",
-    accessorKey: "tags",
-    cell: React.memo(ConfigListTagsCell),
-    aggregatedCell: "",
-    size: 240
-  },
-  {
     header: "Type",
     accessorKey: "type",
-    size: 150,
+    size: 170,
     enableSorting: true,
     enableHiding: true,
     cell: ({ row }: CellContext<ConfigItem, any>) => {
@@ -88,7 +82,8 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Status",
     accessorKey: "health",
-    size: 100,
+    minSize: 100,
+    maxSize: 180,
     enableSorting: true,
     cell: ({ getValue, row }: CellContext<ConfigItem, any>) => {
       const health = getValue<ConfigItem["health"]>();
@@ -108,11 +103,19 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
       const value = getValue();
       return <CountBadge value={value} />;
     },
-    size: 75,
+    size: 70,
     meta: {
       cellClassName: "overflow-hidden"
     },
     enableSorting: false
+  },
+  {
+    header: "Tags",
+    accessorKey: "tags",
+    cell: React.memo(ConfigListTagsCell),
+    aggregatedCell: "",
+    maxSize: 300,
+    minSize: 100
   },
   {
     header: "Analysis",
@@ -137,7 +140,8 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
         </div>
       );
     },
-    size: 150
+    minSize: 50,
+    maxSize: 100
   },
   {
     header: () => <div>Cost</div>,
