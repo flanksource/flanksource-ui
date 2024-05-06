@@ -69,6 +69,13 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     }
   },
   {
+    header: "Tags",
+    accessorKey: "tags",
+    cell: React.memo(ConfigListTagsCell),
+    aggregatedCell: "",
+    size: 240
+  },
+  {
     header: "Type",
     accessorKey: "type",
     size: 150,
@@ -152,13 +159,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   //     return <span>{agent?.name}</span>;
   //   }
   // },
-  {
-    header: "Tags",
-    accessorKey: "tags",
-    cell: React.memo(ConfigListTagsCell),
-    aggregatedCell: "",
-    size: 240
-  },
+
   // {
   //   header: "Tags",
   //   accessorKey: "tags",

@@ -24,13 +24,13 @@ type SingleProperty = {
 
 export type PropertyItem = GroupedProperties | SingleProperty;
 
-export function formatConfigTags(config?: Pick<ConfigItem, "tags">) {
-  if (!config?.tags) {
+export function formatConfigLabels(config?: Pick<ConfigItem, "labels">) {
+  if (!config?.labels) {
     return [];
   }
 
   const items = new Map<string, PropertyItem>();
-  const tags = Object.assign({}, config.tags);
+  const tags = Object.assign({}, config.labels);
 
   delete tags["name"];
   delete tags["Name"];

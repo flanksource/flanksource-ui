@@ -7,7 +7,7 @@ import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import ConfigCostValue from "../../Configs/ConfigCosts/ConfigCostValue";
-import { formatConfigTags } from "../../Configs/Sidebar/Utils/formatConfigTags";
+import { formatConfigLabels } from "../../Configs/Sidebar/Utils/formatConfigLabels";
 import { Icon } from "../../Icon";
 import Title from "../../Title/title";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
@@ -103,8 +103,8 @@ export default function TopologyDetails({
   }, [topology]);
 
   const formattedLabels = useMemo(() => {
-    return formatConfigTags({
-      tags: topology?.labels ?? []
+    return formatConfigLabels({
+      labels: topology?.labels ?? []
     });
   }, [topology?.labels]);
 
