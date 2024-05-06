@@ -91,7 +91,7 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
-          {configDetails.status && (
+          {configDetails.health && (
             <DisplayDetailsRow
               items={[
                 {
