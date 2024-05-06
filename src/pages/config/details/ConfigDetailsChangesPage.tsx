@@ -28,7 +28,7 @@ export function ConfigDetailsChangesPage() {
   const to = timeRangeValue?.to ?? undefined;
   const sortBy = params.get("sortBy") ?? undefined;
   const sortDirection = params.get("sortDirection") ?? "desc";
-  const configType = params.get("configType") ?? "all";
+  const configTypes = params.get("configTypes") ?? "all";
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
 
@@ -61,7 +61,7 @@ export function ConfigDetailsChangesPage() {
       severity,
       from,
       to,
-      configType,
+      configTypes,
       sortBy,
       sortOrder: sortDirection === "desc" ? "desc" : "asc",
       page: page,
