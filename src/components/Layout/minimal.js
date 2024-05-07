@@ -1,4 +1,4 @@
-import { UserProfileDropdown } from "../UserProfile/UserProfile";
+import { UserProfileDropdown } from "../Users/UserProfile/UserProfile";
 
 export function MinimalLayout({ children, title }) {
   return (

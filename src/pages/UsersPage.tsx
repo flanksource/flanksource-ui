@@ -22,7 +22,7 @@ import {
   ManageUserRoles
 } from "../components/ManageUserRoles/ManageUserRoles";
 import { toastError, toastSuccess } from "../components/Toast/toast";
-import { UserList } from "../components/UserList";
+import { UserList } from "../components/Users/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
 import { ConfirmationPromptDialog } from "../ui/AlertDialog/ConfirmationPromptDialog";
 

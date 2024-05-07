@@ -1,6 +1,6 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
-import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
+import { KratosUserProfileDropdown } from "../../Authentication/Kratos/KratosUserProfileDropdown";
+import useDetermineAuthSystem from "../../Authentication/useDetermineAuthSystem";
 
 export function UserProfileDropdown() {
   const authSystem = useDetermineAuthSystem();

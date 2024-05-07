@@ -10,8 +10,8 @@ import { CellContext } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
-import { withAccessCheck } from "../AccessCheck/AccessCheck";
-import { IconButton } from "../IconButton";
+import { withAccessCheck } from "../../AccessCheck/AccessCheck";
+import { IconButton } from "../../IconButton";
 
 type UserListProps = {
   data: any[];
