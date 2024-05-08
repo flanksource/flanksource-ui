@@ -16,8 +16,8 @@ import ReactFlow, {
 
 import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigIntermediaryNodeReactFlowNode";
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
-import { Loading } from "@flanksource-ui/components/Loading";
 import "reactflow/dist/style.css";
+import { Loading } from "../Loading";
 import useAnimatedNodes from "./Expand/useAnimatedNodes";
 import useExpandCollapse from "./Expand/useExpandCollapse";
 
