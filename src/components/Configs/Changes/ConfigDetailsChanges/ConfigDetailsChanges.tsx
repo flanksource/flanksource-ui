@@ -2,20 +2,20 @@ import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetC
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import { EvidenceType } from "@flanksource-ui/api/types/evidence";
 import { User } from "@flanksource-ui/api/types/users";
+import AttachAsEvidenceButton from "@flanksource-ui/components/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import { Icon } from "@flanksource-ui/components/Icon";
+import { ChangeIcon } from "@flanksource-ui/components/Icon/ChangeIcon";
+import { ConfigIcon } from "@flanksource-ui/components/Icon/ConfigIcon";
+import { Loading } from "@flanksource-ui/components/Loading";
 import { ViewType } from "@flanksource-ui/types";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { DiffRenderer } from "@flanksource-ui/ui/DiffRenderer/DiffRenderer";
 import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import ModalTitleListItems from "@flanksource-ui/ui/Modal/ModalTitleListItems";
 import { Stat } from "@flanksource-ui/ui/stats/Stat";
 import { useMemo, useState } from "react";
-import AttachAsEvidenceButton from "../../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import { DiffRenderer } from "../../../DiffRenderer/DiffRenderer";
-import { Icon } from "../../../Icon";
-import { ChangeIcon } from "../../../Icon/ChangeIcon";
-import { ConfigIcon } from "../../../Icon/ConfigIcon";
-import { Loading } from "../../../Loading";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
 
