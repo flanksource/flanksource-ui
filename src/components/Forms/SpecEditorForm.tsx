@@ -121,11 +121,7 @@ export default function SpecEditorForm({
                 <FormikIconPicker name="icon" label="Icon" />
               )}
               {isFieldSupportedByResourceType("labels") && (
-                <FormikKeyValueMapField
-                  name="labels"
-                  label="Labels"
-                  outputJson
-                />
+                <FormikKeyValueMapField name="labels" label="Labels" />
               )}
               {isFieldSupportedByResourceType("source") && (
                 <FormikTextInput
