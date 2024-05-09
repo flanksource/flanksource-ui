@@ -7,6 +7,8 @@ import useRunTaskOnPropChange from "../../hooks/useRunTaskOnPropChange";
 type Props = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactNode;
   hideToggle?: boolean;
+  isSidebarOpen?: boolean;
+  onSidebarToggle?: (open: boolean) => void;
 };
 
 // when refresh button is clicked, we increment this to trigger refreshes in any
@@ -14,10 +16,12 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export const refreshButtonClickedTrigger = atom(0);
 const isSlidingSideBarOpenAtom = atom(false);
 
-export default function SlidingSideBar({
+export default function FloatableSlidingSideBar({
   children,
   className,
   hideToggle,
+  isSidebarOpen = false,
+  onSidebarToggle = () => {},
   ...rest
 }: Props) {
   const [open, setOpen] = useAtom(isSlidingSideBarOpenAtom);
@@ -86,6 +90,28 @@ export default function SlidingSideBar({
     configureChildrenHeights();
   }, [children, contentRef]);
 
+  useEffect(() => {
+    // close the sidebar if the user clicks outside the sidebar
+    function handleClickOutside(event: any) {
+      if (contentRef.current && !contentRef.current.contains(event.target)) {
+        onSidebarToggle(false);
+      }
+    }
+
+    function keyPress(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onSidebarToggle(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", keyPress);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", keyPress);
+    };
+  }, [onSidebarToggle, open]);
+
   useRunTaskOnPropChange(
     () => {
       if (!contentRef.current?.children) {
@@ -107,10 +133,13 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l border-gray-200 h-full px-4`,
-        open && !hideToggle ? "w-3" : "w-[35rem]",
+        `absolute z-[99909999999] right-0 top-16 lg:top-0 bottom-0 lg:static lg:flex flex-col bg-white border-l border-gray-200 h-full px-4`,
+        open && !hideToggle
+          ? "w-[15rem] md:w-[20rem] lg:w-3"
+          : "w-[15rem] md:w-[20rem] lg:w-[20rem] xl:w-[30rem]",
         className,
-        !hideToggle ? "transform origin-right duration-500" : ""
+        !hideToggle ? "transform origin-right duration-500" : "",
+        isSidebarOpen ? "" : "hidden"
       )}
       {...rest}
     >
@@ -120,7 +149,7 @@ export default function SlidingSideBar({
           type="button"
           aria-label={open ? "Open Side Panel" : "Close Side Panel"}
           title={open ? "Open Side Panel" : "Close Side Panel"}
-          className="absolute z-[99999999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
+          className="hidden lg:block absolute z-[99999999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
           onClick={() => setOpen(!open)}
         >
           {open ? <IoChevronForwardOutline /> : <IoChevronBackOutline />}
@@ -128,7 +157,7 @@ export default function SlidingSideBar({
       )}
       <div
         className={`flex flex-col h-full ${
-          open && !hideToggle ? "hidden" : ""
+          open && !hideToggle ? "lg:hidden" : ""
         }`}
         ref={contentRef}
       >

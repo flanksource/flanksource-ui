@@ -1,5 +1,7 @@
-import SlidingSideBar from "@flanksource-ui/ui/SlidingSideBar";
+import { Button } from "@flanksource-ui/ui/Button";
+import SlidingSideBar from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useCallback, useState } from "react";
+import { MdMenu } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { Topology } from "../../../api/types/topology";
 import ConfigsPanel from "../../Configs/Sidebar/ConfigsPanel";
@@ -38,6 +40,8 @@ export default function TopologySidebar({
     "TopologyDetails"
   );
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const { id } = useParams();
 
   const panelCollapsedStatusChange = useCallback(
@@ -56,70 +60,82 @@ export default function TopologySidebar({
   }
 
   return (
-    <SlidingSideBar hideToggle>
-      <TopologyActionBar topology={topology} onRefresh={onRefresh} />
-      <TopologyDetails
-        isCollapsed={openedPanel !== "TopologyDetails"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "TopologyDetails")
-        }
-        topology={topology}
-        refererId={refererId}
-      />
-      <ConfigsPanel
-        topologyId={id}
-        isCollapsed={openedPanel !== "Configs"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Configs")
-        }
-      />
-      <Incidents
-        topologyId={id}
-        isCollapsed={openedPanel !== "Incidents"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Incidents")
-        }
-      />
+    <>
+      <div className="fixed top-20 right-2 flex flex-col lg:hidden">
+        <Button
+          title="Show Sidebar"
+          className="btn-text"
+          icon={<MdMenu />}
+          onClick={() => {
+            setIsSidebarOpen(!isSidebarOpen);
+          }}
+        />
+      </div>
+      <SlidingSideBar hideToggle>
+        <TopologyActionBar topology={topology} onRefresh={onRefresh} />
+        <TopologyDetails
+          isCollapsed={openedPanel !== "TopologyDetails"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "TopologyDetails")
+          }
+          topology={topology}
+          refererId={refererId}
+        />
+        <ConfigsPanel
+          topologyId={id}
+          isCollapsed={openedPanel !== "Configs"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "Configs")
+          }
+        />
+        <Incidents
+          topologyId={id}
+          isCollapsed={openedPanel !== "Incidents"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "Incidents")
+          }
+        />
 
-      <TopologyConfigChanges
-        topologyID={id}
-        isCollapsed={openedPanel !== "ConfigChanges"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "ConfigChanges")
-        }
-      />
+        <TopologyConfigChanges
+          topologyID={id}
+          isCollapsed={openedPanel !== "ConfigChanges"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "ConfigChanges")
+          }
+        />
 
-      <ComponentChecks
-        componentId={id}
-        isCollapsed={openedPanel !== "ComponentChecks"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "ComponentChecks")
-        }
-      />
+        <ComponentChecks
+          componentId={id}
+          isCollapsed={openedPanel !== "ComponentChecks"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "ComponentChecks")
+          }
+        />
 
-      <PlaybookRunsSidePanel
-        panelType="topology"
-        componentId={id}
-        isCollapsed={openedPanel !== "PlaybookRuns"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "PlaybookRuns")
-        }
-      />
+        <PlaybookRunsSidePanel
+          panelType="topology"
+          componentId={id}
+          isCollapsed={openedPanel !== "PlaybookRuns"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "PlaybookRuns")
+          }
+        />
 
-      <ComponentTeams
-        componentId={id}
-        isCollapsed={openedPanel !== "Teams"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Teams")
-        }
-      />
-      <TopologyInsights
-        topologyId={id}
-        isCollapsed={openedPanel !== "Insights"}
-        onCollapsedStateChange={(status) =>
-          panelCollapsedStatusChange(status, "Insights")
-        }
-      />
-    </SlidingSideBar>
+        <ComponentTeams
+          componentId={id}
+          isCollapsed={openedPanel !== "Teams"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "Teams")
+          }
+        />
+        <TopologyInsights
+          topologyId={id}
+          isCollapsed={openedPanel !== "Insights"}
+          onCollapsedStateChange={(status) =>
+            panelCollapsedStatusChange(status, "Insights")
+          }
+        />
+      </SlidingSideBar>
+    </>
   );
 }

@@ -10,7 +10,7 @@ import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
 import { getCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
-import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

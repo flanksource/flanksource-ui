@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
-import { refreshButtonClickedTrigger } from "../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../ui/SlidingSideBar/SlidingSideBar";
 import { ConfigsDetailsBreadcrumbNav } from "../BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { Head } from "../Head/Head";

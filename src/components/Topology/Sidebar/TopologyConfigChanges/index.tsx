@@ -9,7 +9,7 @@ import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../../ui/CollapsiblePanel/CollapsiblePanel";
 import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../../../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../../../ui/SlidingSideBar/SlidingSideBar";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../../../EmptyState";
 import { Icon } from "../../../Icon";

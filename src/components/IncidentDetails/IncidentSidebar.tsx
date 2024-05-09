@@ -4,7 +4,7 @@ import {
   IncidentPriority,
   IncidentStatus
 } from "../../api/types/incident";
-import SlidingSideBar from "../../ui/SlidingSideBar";
+import SlidingSideBar from "../../ui/SlidingSideBar/SlidingSideBar";
 import { IncidentChangelog } from "../Changelog/IncidentChangelog";
 import { severityItems } from "../Incidents/data";
 import { IncidentsDefinitionOfDone } from "./DefinitionOfDone/IncidentsDefinitionOfDone";
