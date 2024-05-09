@@ -1,4 +1,6 @@
-import { parseDiff, Diff, Hunk } from "react-diff-view";
+import { Diff, Hunk, parseDiff } from "react-diff-view";
+
+import "react-diff-view/style/index.css";
 
 type DiffRendererProps = React.HTMLProps<HTMLDivElement> & {
   diffText: string;
