@@ -6,7 +6,7 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar/SlidingSideBar";
 import { CheckLink } from "../../Canary/HealthChecks/CheckLink";
 import EmptyState from "../../EmptyState";
 import Title from "../../Title/title";

@@ -10,7 +10,7 @@ import { AiOutlineTeam } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar/SlidingSideBar";
 import EmptyState from "../../EmptyState";
 import { PlaybookStatusIcon } from "../../Icon/PlaybookStatusIcon";
 import { InfiniteTable } from "../../InfiniteTable/InfiniteTable";

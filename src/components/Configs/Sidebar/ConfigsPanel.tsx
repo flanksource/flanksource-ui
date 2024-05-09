@@ -10,7 +10,7 @@ import { Tooltip } from "react-tooltip";
 import { useComponentConfigRelationshipQuery } from "../../../api/query-hooks/useComponentConfigRelationshipQuery";
 import { removeManualComponentConfigRelationship } from "../../../api/services/configs";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar/SlidingSideBar";
 import EmptyState from "../../EmptyState";
 import { IconButton } from "../../IconButton";
 import Title from "../../Title/title";

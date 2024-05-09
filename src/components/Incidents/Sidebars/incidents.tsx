@@ -4,7 +4,7 @@ import { features } from "@flanksource-ui/services/permissions/features";
 import { Age } from "@flanksource-ui/ui/Age";
 import PillBadge from "@flanksource-ui/ui/Badge/PillBadge";
 import CollapsiblePanel from "@flanksource-ui/ui/CollapsiblePanel/CollapsiblePanel";
-import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";

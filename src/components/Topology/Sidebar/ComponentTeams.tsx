@@ -5,7 +5,7 @@ import { useGetComponentsTeamQuery } from "../../../api/query-hooks";
 import PillBadge from "../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar/SlidingSideBar";
 import EmptyState from "../../EmptyState";
 import Title from "../../Title/title";
 import { ComponentTeamLink } from "./ComponentTeamLink";

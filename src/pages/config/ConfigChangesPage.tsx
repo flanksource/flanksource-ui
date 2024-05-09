@@ -12,7 +12,7 @@ import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { SortingState, Updater } from "@tanstack/react-table";
 import { useAtom } from "jotai";
