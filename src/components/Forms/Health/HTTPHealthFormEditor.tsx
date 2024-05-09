@@ -5,11 +5,11 @@ import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
 import FormikIconPicker from "../Formik/FormikIconPicker";
 import FormikMultiSelectListField from "../Formik/FormikMultiSelectListField";
+import FormikNumberInput from "../Formik/FormikNumberInput";
 import FormikScheduleField from "../Formik/FormikScheduleField";
 import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikTextInput from "../Formik/FormikTextInput";
 import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
-import FormikNumberInput from "../Formik/FormikNumberInput";
 
 type HTTPHealthFormEditorProps = {
   fieldName: string;
@@ -51,7 +51,7 @@ export function HTTPHealthFormEditor({
       <FormikScheduleField name={`${name}.schedule`} />
 
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
-      <FormikTextInput name={`${fieldName}.endpoint`} label="URL" required />
+      <FormikTextInput name={`${fieldName}.url`} label="URL" required />
       <HTTPMethodFieldsGroup
         bodyFieldName={`${fieldName}.body`}
         methodFieldName={`${fieldName}.method`}
