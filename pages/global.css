@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("../node_modules/react-diff-view/style/index.css");
 
 @layer base {
   html {
@@ -75,19 +74,19 @@
   }
 
   .btn-icon {
-    @apply text-gray-600 hover:text-gray-900 inline-flex items-center justify-center px-0 pl-0 border-none text-sm font-medium bg-white focus:outline-none ;
+    @apply text-gray-600 hover:text-gray-900 inline-flex items-center justify-center px-0 pl-0 border-none text-sm font-medium bg-white focus:outline-none;
   }
 
   .btn-icon > svg * {
-    @apply fill-gray-600
+    @apply fill-gray-600;
   }
 
   .btn-icon:hover > svg * {
-    @apply fill-gray-800
+    @apply fill-gray-800;
   }
 
   .link {
-    @apply text-blue-500 hover:text-blue-800 visited:text-blue-500 cursor-pointer
+    @apply text-blue-500 hover:text-blue-800 visited:text-blue-500 cursor-pointer;
   }
 
   .btn-white {
