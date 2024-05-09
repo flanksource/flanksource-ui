@@ -13,10 +13,10 @@ import { queryClient } from "../../../query-client";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { Modal } from "../../../ui/Modal";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
 import { delayedPromise, stringSortHelper } from "../../../utils/common";
 import ConfigLink from "../../Configs/ConfigLink/ConfigLink";
 import { DropdownWithActions } from "../../Dropdown/DropdownWithActions";
-import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
 type TopologyConfigLinkModalProps = {

@@ -9,7 +9,7 @@ import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/Conf
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
-import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
