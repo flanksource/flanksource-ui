@@ -1,7 +1,7 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
-import { refreshButtonClickedTrigger } from "@flanksource-ui/components/SlidingSideBar";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import { useParams } from "react-router-dom";

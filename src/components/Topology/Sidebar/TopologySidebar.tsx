@@ -1,16 +1,16 @@
+import SlidingSideBar from "@flanksource-ui/ui/SlidingSideBar";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePanel";
+import { Topology } from "../../../api/types/topology";
 import ConfigsPanel from "../../Configs/Sidebar/ConfigsPanel";
 import Incidents from "../../Incidents/Sidebars/incidents";
-import SlidingSideBar from "../../SlidingSideBar";
-import TopologyConfigChanges from "./TopologyConfigChanges";
-import TopologyDetails from "./TopologyDetails";
+import { PlaybookRunsSidePanel } from "../../Playbooks/Runs/PlaybookRunsSidePanel";
+import { ComponentChecks } from "./ComponentChecks";
 import { ComponentTeams } from "./ComponentTeams";
 import TopologyActionBar from "./TopologyActionBar";
+import TopologyConfigChanges from "./TopologyConfigChanges";
+import TopologyDetails from "./TopologyDetails";
 import TopologyInsights from "./TopologyInsights";
-import { ComponentChecks } from "./ComponentChecks";
-import { Topology } from "../../../api/types/topology";
 
 type Props = {
   topology?: Topology;

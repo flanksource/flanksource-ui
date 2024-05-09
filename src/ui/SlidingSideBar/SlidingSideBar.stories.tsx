@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import CollapsiblePanel from "../../ui/CollapsiblePanel/CollapsiblePanel";
+import CollapsiblePanel from "../CollapsiblePanel/CollapsiblePanel";
 import SlidingSideBar from "./index";
 
 const data = Array.from(Array(100).keys());

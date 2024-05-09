@@ -6,9 +6,9 @@ import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
 import { CheckLink } from "../../Canary/HealthChecks/CheckLink";
 import EmptyState from "../../EmptyState";
-import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import SlidingSideBar from "../../SlidingSideBar";
+import SlidingSideBar from "../../../ui/SlidingSideBar";
 import ConfigActionBar from "./ConfigActionBar";
 import { ConfigDetails } from "./ConfigDetails";
 

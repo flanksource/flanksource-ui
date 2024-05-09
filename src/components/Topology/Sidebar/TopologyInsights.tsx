@@ -4,8 +4,8 @@ import { MdOutlineInsights } from "react-icons/md";
 import { useGetTopologyRelatedInsightsQuery } from "../../../api/query-hooks";
 import PillBadge from "../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
+import { refreshButtonClickedTrigger } from "../../../ui/SlidingSideBar";
 import InsightsDetails from "../../Configs/Sidebar/Insights/Insights";
-import { refreshButtonClickedTrigger } from "../../SlidingSideBar";
 import Title from "../../Title/title";
 
 type Props = {
