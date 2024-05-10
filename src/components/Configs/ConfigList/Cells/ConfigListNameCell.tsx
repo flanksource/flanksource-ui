@@ -1,11 +1,9 @@
 import { CellContext } from "@tanstack/react-table";
 import React from "react";
 import { ConfigItem } from "../../../../api/types/configs";
-import { Badge } from "../../../../ui/Badge";
 import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 
 function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
-  const isDeleted = !!row.original.deleted_at;
   const configType = row.original.type;
 
   return (
@@ -18,9 +16,6 @@ function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
       <ConfigsTypeIcon config={{ type: configType }} showPrimaryIcon={false}>
         <span>{getValue()}</span>
       </ConfigsTypeIcon>
-      {isDeleted && (
-        <Badge text="deleted" colorClass="text-white bg-gray-400" />
-      )}
     </div>
   );
 }
