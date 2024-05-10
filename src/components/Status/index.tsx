@@ -42,7 +42,8 @@ export function Status({
   className = "",
   hideText = false
 }: StatusProps) {
-  if (!status) {
+
+  if (!status && good === undefined && mixed === undefined) {
     return null;
   }
 
