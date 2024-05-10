@@ -47,13 +47,15 @@ export function ConfigIntermediaryNodeReactFlowNode({
                     }
                   />
                 </ConfigsTypeIcon>
-                <div className="flex flex-row w-auto justify-end items-center gap-1.5 px-2 text-gray-500">
-                  {data.expanded ? (
-                    <HiOutlineMinusCircle />
-                  ) : (
-                    <HiOutlinePlusCircle />
-                  )}
-                </div>
+                {data.configs.length > 3 && (
+                  <div className="flex flex-row w-auto justify-end items-center gap-1.5 px-2 text-gray-500">
+                    {data.expanded ? (
+                      <HiOutlineMinusCircle />
+                    ) : (
+                      <HiOutlinePlusCircle />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
