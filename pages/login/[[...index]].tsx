@@ -1,4 +1,3 @@
-import React from "react";
 import ClerkLogin from "../../src/components/Authentication/Clerk/ClerkLogin";
 import KratosLogin from "../../src/components/Authentication/Kratos/KratosLogin";
 import useDetermineAuthSystem from "../../src/components/Authentication/useDetermineAuthSystem";

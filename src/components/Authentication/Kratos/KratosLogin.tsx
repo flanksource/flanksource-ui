@@ -1,40 +1,34 @@
+import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
 import { AxiosError } from "axios";
-import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import { toastError } from "../../Toast/toast";
 import { Flow, HandleError } from "../../ory";
-import { SetUriFlow } from "../../ory/helpers";
 import ory from "../../ory/sdk";
 
-const Login: NextPage = () => {
-  const [returnTo, setReturnTo] = useState<string | undefined>();
+const KratosLogin = () => {
   const [flow, setFlow] = useState<LoginFlow>();
 
   // when login is successful, we set this to true and then show an animation as
   // the user is redirected to the return_to URL.
   const [loginSuccessful, setLoginSuccessful] = useState<boolean>(false);
 
-  const { query, push, isReady } = useRouter();
+  const router = useRouter();
 
-  const { username, password, return_to: returnToFromQuery, flowId } = query;
+  const { query, isReady, replace, push } = router;
+
+  const { flow: flowId, return_to: returnTo, username, password } = query;
+
+  const searchParams = useSearchParams();
 
   const [credentials, setCredentials] = useState<
     { username: string; password: string } | undefined
   >();
-
-  // If we have a return_to query parameter, we want to redirect the user to
-  // that URL after a successful login. if set, and return_to is empty, we don't
-  // overwrite it. This is a workaround for using both nextjs and react-router.
-  useEffect(() => {
-    if (returnToFromQuery && !returnTo) {
-      setReturnTo(String(returnToFromQuery));
-    }
-  }, [returnTo, returnToFromQuery]);
 
   // Refresh means we want to refresh the session. This is needed, for example, when we want to update the password
   // of a user.
@@ -44,16 +38,15 @@ const Login: NextPage = () => {
   // to perform two-factor authentication/verification.
   const aal = String(query.aal || "");
 
-  const getFlow = useCallback(
-    (id: string) =>
-      // If ?flow=.. was in the URL, we fetch it
-      ory
-        .getLoginFlow({ id })
-        .then(({ data }) => setFlow(data))
-        .catch(handleError),
+  const getFlow = useCallback(async (id: string) => {
+    try {
+      const { data } = await ory.getLoginFlow({ id });
+      setFlow(data);
+    } catch (error) {
+      handleError(error as AxiosError);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
+  }, []);
 
   const handleError = useCallback(
     (error: AxiosError) => {
@@ -64,20 +57,26 @@ const Login: NextPage = () => {
   );
 
   const createFlow = useCallback(
-    (refresh: boolean, aal: string, returnTo: string) =>
-      ory
-        .createBrowserLoginFlow({
-          refresh: refresh,
+    async (refresh: boolean, aal: string, returnTo: string) => {
+      try {
+        const { data } = await ory.createBrowserLoginFlow({
+          refresh: false,
           // Check for two-factor authentication
           aal: aal,
           returnTo: returnTo
-        })
-        .then(({ data }) => {
-          setFlow(data);
-          SetUriFlow(Router, data.id, returnTo);
-        })
-        .catch(handleError),
-    [handleError]
+        });
+        setFlow(data);
+        if (flowId !== data.id) {
+          const params = new URLSearchParams(searchParams);
+          params.set("flow", data.id);
+          replace(`${router.pathname}?${params.toString()}`);
+        }
+      } catch (error) {
+        console.error(error);
+        handleError(error as AxiosError);
+      }
+    },
+    [flowId, handleError, replace, router.pathname, searchParams]
   );
 
   useEffect(() => {
@@ -87,33 +86,31 @@ const Login: NextPage = () => {
 
     if (flowId) {
       getFlow(String(flowId)).catch(() => {
-        createFlow(refresh, aal, returnTo ?? "/");
+        createFlow(refresh, aal, String(returnTo) ?? "/");
       });
       return;
     }
 
     // Otherwise we initialize it
-    createFlow(refresh, aal, returnTo ?? "/");
+    createFlow(refresh, aal, String(returnTo) ?? "/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
   const submitFlow = useCallback(
-    (values: UpdateLoginFlowBody) =>
-      ory
-        .updateLoginFlow({
+    async (values: UpdateLoginFlowBody) => {
+      try {
+        await ory.updateLoginFlow({
           flow: String(flow?.id),
           updateLoginFlowBody: values
-        })
-        // We logged in successfully! Let's bring the user home.
-        .then(() => {
-          console.log("Login successful");
-          setLoginSuccessful(true);
-          push(returnTo || "/");
-        })
-        .catch((error) => {
-          console.error(error);
-          toastError((error as AxiosError).message);
-        }),
+        });
+        setLoginSuccessful(true);
+        console.log("Login successful");
+        push(String(returnTo) || "/");
+      } catch (error) {
+        console.error(error);
+        toastError((error as AxiosError).message);
+      }
+    },
     [flow, push, returnTo]
   );
 
@@ -146,20 +143,13 @@ const Login: NextPage = () => {
     }
   }, [flow, submitFlow, credentials]);
 
-  if (loginSuccessful) {
-    return <FullPageSkeletonLoader />;
-  }
-
-  // If we have a username and password, we want to submit the login flow
-  if (credentials) {
-    return <FullPageSkeletonLoader />;
-  }
-
   return (
     <div className="w-96">
       <Toaster position="top-right" reverseOrder={false} />
       <div>
-        <img
+        <Image
+          height={288}
+          width={75}
           alt="Mission Control"
           src="/images/logo.svg"
           className="p-2 h-auto m-auto rounded-8px w-72"
@@ -175,7 +165,11 @@ const Login: NextPage = () => {
           })()}
         </h2>
         <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <Flow onSubmit={submitFlow} flow={flow} isLoginFlow />
+          {loginSuccessful || credentials ? (
+            <FormSkeletonLoader />
+          ) : (
+            <Flow onSubmit={submitFlow} flow={flow} isLoginFlow />
+          )}
         </div>
         <div className="mt-2">
           <Link href="/recovery" passHref>
@@ -187,4 +181,4 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default KratosLogin;
