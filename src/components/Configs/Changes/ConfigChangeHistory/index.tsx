@@ -1,5 +1,6 @@
 import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { DateCell } from "@flanksource-ui/ui/table";
 import { SortingState, Updater } from "@tanstack/react-table";
@@ -61,12 +62,26 @@ const columns: ColumnDef<ConfigChange>[] = [
     maxSize: 150
   },
   {
-    header: "Source",
-    accessorKey: "source",
-    meta: {
-      cellClassName: "text-ellipsis overflow-hidden"
-    },
-    size: 70
+    header: "Created By",
+    size: 50,
+    enableSorting: false,
+    cell: ({ row }) => {
+      const userID = row.original.created_by;
+      if (userID) {
+        return <GetUserAvatar userID={userID} />;
+      }
+      const externalCreatedBy = row.original.external_created_by;
+      if (externalCreatedBy) {
+        return <span>{externalCreatedBy}</span>;
+      }
+      const source = row.original.source;
+      if (source) {
+        return <span>{source}</span>;
+      }
+
+
+      return null;
+    }
   }
 ];
 
