@@ -216,8 +216,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     fields: [
       {
         name: "name",
-        default: undefined,
-        hidden: true
+        default: undefined
       },
       {
         name: "namespace",

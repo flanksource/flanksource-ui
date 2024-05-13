@@ -1,11 +1,10 @@
-import FormikTextInput from "../Formik/FormikTextInput";
-import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
-import FormikIconPicker from "../Formik/FormikIconPicker";
-import { getIn, useFormikContext } from "formik";
-import { useEffect } from "react";
-import FormikScheduleField from "../Formik/FormikScheduleField";
 import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
+import FormikIconPicker from "../Formik/FormikIconPicker";
+import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTemplateFields from "../Formik/FormikTemplateFields";
+import FormikTextInput from "../Formik/FormikTextInput";
+import { useUpdateCanaryNameToFirstCheckName } from "./HTTPHealthFormEditor";
 
 type ExecHealthFormEditorProps = {
   fieldName: string;
@@ -16,16 +15,9 @@ export function ExecHealthFormEditor({
   fieldName: name,
   specsMapField
 }: ExecHealthFormEditorProps) {
-  const { values, setFieldValue } = useFormikContext();
-
   const fieldName = `${name}.${specsMapField}`;
 
-  const nameValue = getIn(values, `${fieldName}.name`);
-
-  // when name changes, we want to update the name of the top level field
-  useEffect(() => {
-    setFieldValue("name", nameValue);
-  }, [nameValue, setFieldValue]);
+  useUpdateCanaryNameToFirstCheckName(fieldName);
 
   return (
     <>
