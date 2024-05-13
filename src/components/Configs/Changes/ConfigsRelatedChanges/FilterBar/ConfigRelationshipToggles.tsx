@@ -1,5 +1,7 @@
+import { Toggle } from "@flanksource-ui/components/Toggle";
 import { useSearchParams } from "react-router-dom";
-import { Toggle } from "../../../../Toggle";
+
+export const ConfigRelationKey = "relation";
 
 export function ConfigRelationshipToggles() {
   const [params, setParams] = useSearchParams({
@@ -9,6 +11,7 @@ export function ConfigRelationshipToggles() {
 
   const outgoing = params.get("outgoing") === "true";
   const incoming = params.get("incoming") === "true";
+  const relation = params.get(ConfigRelationKey) === "soft";
 
   return (
     <div className="flex flex-row gap-2 px-2">
@@ -25,6 +28,14 @@ export function ConfigRelationshipToggles() {
         value={incoming}
         onChange={(value) => {
           params.set("incoming", value ? "true" : "false");
+          setParams(params);
+        }}
+      />
+      <Toggle
+        label="Include Soft Relations"
+        value={relation}
+        onChange={(value) => {
+          params.set(ConfigRelationKey, value ? "soft" : "hard");
           setParams(params);
         }}
       />

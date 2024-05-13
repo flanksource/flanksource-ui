@@ -1,6 +1,7 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { getAConfigRelationships } from "@flanksource-ui/api/services/configs";
 import { ConfigRelationships } from "@flanksource-ui/api/types/configs";
+import { ConfigRelationKey } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
@@ -28,6 +29,8 @@ export function ConfigDetailsRelationshipsPage() {
 
   const incoming = searchParams.get("incoming") === "true";
   const outgoing = searchParams.get("outgoing") === "true";
+  const relation =
+    searchParams.get(ConfigRelationKey) === "both" ? "both" : "hard";
 
   const all = incoming && outgoing;
 
@@ -80,6 +83,7 @@ export function ConfigDetailsRelationshipsPage() {
       tag,
       configType,
       relationshipType,
+      relation,
       incoming,
       outgoing
     ],
@@ -88,7 +92,8 @@ export function ConfigDetailsRelationshipsPage() {
         configId: id!,
         type_filter: relationshipType,
         configType: configType,
-        hideDeleted: hideDeleted
+        hideDeleted: hideDeleted,
+        relation: relation
       }),
     enabled: id !== undefined,
     select: (data) => transformConfigRelationships(data ?? [])
