@@ -96,7 +96,6 @@ export default function SpecEditorForm({
     <Formik
       initialValues={initialValues}
       onSubmit={(values) => {
-        console.log("submit", values);
         updateSpec(values);
       }}
       validateOnBlur

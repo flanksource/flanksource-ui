@@ -1,8 +1,7 @@
-import FormikTextInput from "../Formik/FormikTextInput";
 import FormikIconPicker from "../Formik/FormikIconPicker";
-import { getIn, useFormikContext } from "formik";
-import { useEffect } from "react";
 import FormikScheduleField from "../Formik/FormikScheduleField";
+import FormikTextInput from "../Formik/FormikTextInput";
+import { useUpdateCanaryNameToFirstCheckName } from "./HTTPHealthFormEditor";
 
 type ICMPHealthFormEditorProps = {
   fieldName: string;
@@ -13,16 +12,9 @@ export function ICMPHealthFormEditor({
   fieldName: name,
   specsMapField
 }: ICMPHealthFormEditorProps) {
-  const { values, setFieldValue } = useFormikContext();
-
   const fieldName = `${name}.${specsMapField}`;
 
-  const nameValue = getIn(values, `${fieldName}.name`);
-
-  // when name changes, we want to update the name of the top level field
-  useEffect(() => {
-    setFieldValue("name", nameValue);
-  }, [nameValue, setFieldValue]);
+  useUpdateCanaryNameToFirstCheckName(fieldName);
 
   return (
     <>

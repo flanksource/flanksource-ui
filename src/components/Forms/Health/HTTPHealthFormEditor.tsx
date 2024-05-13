@@ -1,5 +1,5 @@
 import { getIn, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FormikAuthFields from "../Formik/FormikAuthFields";
 import FormikCheckboxFieldsGroup from "../Formik/FormikCheckboxFieldsGroup";
 import FormikConfigEnvVarFieldsArray from "../Formik/FormikConfigEnvVarFieldsArray";
@@ -11,6 +11,35 @@ import FormikTemplateFields from "../Formik/FormikTemplateFields";
 import FormikTextInput from "../Formik/FormikTextInput";
 import HTTPMethodFieldsGroup from "./HTTPMethodFieldsGroup";
 
+/**
+ *
+ * A hook to update the first canary name to the top level name, as long as the name of
+ * the check is the same as the canary name (i.e. the first check)
+ *
+ */
+export function useUpdateCanaryNameToFirstCheckName(fieldName: string) {
+  const [canaryName, setCanaryName] = useState<string | undefined>();
+  const { values, setFieldValue } = useFormikContext<Record<string, string>>();
+
+  useEffect(() => {
+    // if the field name ends with 0, it is the first check, and we want to
+    // update the name of that check only
+    if (fieldName.endsWith("0")) {
+      const nameValue = getIn(values, `${fieldName}.name`);
+      const updatedCanaryName = getIn(values, "name");
+
+      // if the name of the current check is not the canary name, we don't want to update it
+      if (nameValue !== canaryName) {
+        return;
+      }
+      setCanaryName(updatedCanaryName);
+      setFieldValue(`${fieldName}.name`, updatedCanaryName);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldName, setFieldValue, values]);
+}
+
 type HTTPHealthFormEditorProps = {
   fieldName: string;
   specsMapField: string;
@@ -20,16 +49,9 @@ export function HTTPHealthFormEditor({
   fieldName: name,
   specsMapField
 }: HTTPHealthFormEditorProps) {
-  const { values, setFieldValue } = useFormikContext();
-
   const fieldName = `${name}.${specsMapField}`;
 
-  const nameValue = getIn(values, `${fieldName}.name`);
-
-  // when name changes, we want to update the name of the top level field
-  useEffect(() => {
-    setFieldValue("name", nameValue);
-  }, [nameValue, setFieldValue]);
+  useUpdateCanaryNameToFirstCheckName(fieldName);
 
   return (
     <>
