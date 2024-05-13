@@ -70,6 +70,7 @@ const columns: ColumnDef<ConfigChange>[] = [
       if (userID) {
         return <GetUserAvatar userID={userID} />;
       }
+      const externalCreatedBy = row.original.external_created_by;
       if (externalCreatedBy) {
         return <span>{externalCreatedBy}</span>;
       }
@@ -77,7 +78,7 @@ const columns: ColumnDef<ConfigChange>[] = [
       if (source) {
         return <span>{source}</span>;
       }
-      const externalCreatedBy = row.original.external_created_by;
+
 
       return null;
     }
