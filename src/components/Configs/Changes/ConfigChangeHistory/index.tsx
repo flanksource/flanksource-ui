@@ -70,14 +70,15 @@ const columns: ColumnDef<ConfigChange>[] = [
       if (userID) {
         return <GetUserAvatar userID={userID} />;
       }
+      if (externalCreatedBy) {
+        return <span>{externalCreatedBy}</span>;
+      }
       const source = row.original.source;
       if (source) {
         return <span>{source}</span>;
       }
       const externalCreatedBy = row.original.external_created_by;
-      if (externalCreatedBy) {
-        return <span>{externalCreatedBy}</span>;
-      }
+
       return null;
     }
   }
