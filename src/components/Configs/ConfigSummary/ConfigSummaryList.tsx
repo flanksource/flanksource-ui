@@ -139,15 +139,18 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
       );
     },
     aggregatedCell: ({ row }: CellContext<ConfigSummary, any>) => {
-      const value = row.subRows.reduce((acc, row) => {
-        const health = row.original.health;
-        if (health) {
-          Object.entries(health).forEach(([key, value]) => {
-            acc[key] = (acc[key] || 0) + value;
-          });
-        }
-        return acc;
-      }, {} as Record<string, number>);
+      const value = row.subRows.reduce(
+        (acc, row) => {
+          const health = row.original.health;
+          if (health) {
+            Object.entries(health).forEach(([key, value]) => {
+              acc[key] = (acc[key] || 0) + value;
+            });
+          }
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const statusLines = useMemo(() => {
@@ -225,7 +228,10 @@ export default function ConfigSummaryList({
         const { type } = row.original;
         params.set("configType", type);
       }
-      const tags = groupBy.filter((column) => column !== "type");
+      const tags = groupBy.filter(
+        (column) =>
+          column !== "type" && column !== "health" && column !== "status"
+      );
       if (tags.length > 0) {
         const tagsParam = tags
           .map((column) => {

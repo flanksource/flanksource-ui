@@ -19,9 +19,8 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getConfigsTags = async () => {
-  const res = await ConfigDB.get<{ key: string; value: string }[]>(
-    "/config_tags"
-  );
+  const res =
+    await ConfigDB.get<{ key: string; value: string }[]>("/config_tags");
   return res.data ?? [];
 };
 
@@ -58,6 +57,8 @@ export type ConfigSummaryRequest = {
   filter?: Record<string, string>; // Filter by labels
   groupBy?: string[];
   tags?: string[];
+  status?: string;
+  health?: string;
 };
 
 export const getConfigsSummary = async (request: ConfigSummaryRequest) => {
@@ -466,6 +467,17 @@ export const getConfigsTypes = async () => {
     `/config_types`
   );
   return res.data;
+};
+
+export type ConfigStatusesItem = {
+  status: string;
+};
+
+export const getConfigsStatusesItems = async () => {
+  const res = await IncidentCommander.get<ConfigStatusesItem[] | null>(
+    `/config_statuses`
+  );
+  return res.data ?? [];
 };
 
 export type ConfigAnalysisTypeItem = {

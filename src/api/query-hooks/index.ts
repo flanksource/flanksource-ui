@@ -1,3 +1,4 @@
+import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
@@ -162,6 +163,8 @@ type ConfigListFilterQueryOptions = {
   sortOrder?: string | null;
   includeAgents?: boolean;
   tags?: string[];
+  health?: string;
+  status?: string;
 };
 
 function prepareConfigListQuery({
@@ -172,7 +175,9 @@ function prepareConfigListQuery({
   sortOrder,
   hideDeletedConfigs,
   includeAgents = false,
-  tags = []
+  tags = [],
+  health,
+  status
 }: ConfigListFilterQueryOptions) {
   let query =
     "select=id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
@@ -181,6 +186,14 @@ function prepareConfigListQuery({
   }
   if (configType && configType !== "All") {
     query = `${query}&type=eq.${configType}`;
+  }
+  if (status && status !== "All") {
+    const statusParam = tristateOutputToQueryFilterParam(status, "status");
+    query = `${query}${statusParam}`;
+  }
+  if (health) {
+    const healthParam = tristateOutputToQueryFilterParam(health, "health");
+    query = `${query}${healthParam}`;
   }
   if (search) {
     query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
@@ -219,7 +232,9 @@ export const useAllConfigsQuery = (
     sortOrder,
     hideDeletedConfigs,
     includeAgents,
-    tags
+    tags,
+    health,
+    status
   }: ConfigListFilterQueryOptions,
 
   { enabled = true, staleTime = defaultStaleTime, ...rest }
@@ -232,7 +247,9 @@ export const useAllConfigsQuery = (
     sortOrder,
     hideDeletedConfigs,
     includeAgents,
-    tags
+    tags,
+    health,
+    status
   });
   return useQuery(
     [
@@ -244,7 +261,9 @@ export const useAllConfigsQuery = (
       sortOrder,
       hideDeletedConfigs,
       includeAgents,
-      tags
+      tags,
+      health,
+      status
     ],
     () => {
       return getAllConfigsMatchingQuery(query);
