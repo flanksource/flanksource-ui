@@ -55,7 +55,7 @@ export function ConfigLabelsDropdown({
       isMulti
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
-          Labels
+          Labels:
         </div>
       }
       isLoading={isLoading}

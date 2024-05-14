@@ -7,7 +7,9 @@ import { TextInputClearable } from "../../TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { QueryBuilder } from "../QueryBuilder";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
+import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
+import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 const ConfigFilterViewTypes = {
@@ -53,6 +55,10 @@ function ConfigsListFilterControls() {
           <ConfigGroupByDropdown paramsToReset={["tags"]} />
 
           <ConfigLabelsDropdown />
+
+          <ConfigStatusDropdown />
+
+          <ConfigHealthyDropdown />
 
           <TextInputClearable
             onChange={debounce((e) => {

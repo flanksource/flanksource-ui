@@ -15,6 +15,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -38,6 +39,8 @@ export function ConfigListPage() {
   // we want to get type and redirect to configType
   const type = searchParams.get("type") ?? undefined;
   const labels = searchParams.get("labels") ?? undefined;
+  const status = searchParams.get("status") ?? undefined;
+  const health = searchParams.get("health") ?? undefined;
 
   const labelList = useMemo(() => {
     if (labels) {
@@ -79,7 +82,9 @@ export function ConfigListPage() {
       sortOrder,
       hideDeletedConfigs,
       includeAgents: true,
-      tags: labelList
+      tags: labelList,
+      status,
+      health
     },
     {
       cacheTime: 0,
@@ -113,6 +118,8 @@ export function ConfigListPage() {
       groupBy,
       deleted: hideDeletedConfigs,
       filter: filterSummaryByLabel,
+      health: health ? tristateOutputToQueryParamValue(health) : undefined,
+      status: status ? tristateOutputToQueryParamValue(status) : undefined,
       changes: {
         since: "30d"
       },
