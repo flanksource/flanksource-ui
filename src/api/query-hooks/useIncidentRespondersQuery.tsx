@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { template } from "lodash";
 import { Icon } from "../../components";
-import { ResponderPropsKeyToLabelMap } from "../../components/IncidentDetails/AddResponders/AddResponder";
+import { ResponderPropsKeyToLabelMap } from "../../components/Incidents/IncidentDetails/AddResponders/AddResponder";
 import { Avatar } from "../../ui/Avatar";
 import { getRespondersForTheIncident } from "../services/responder";
 

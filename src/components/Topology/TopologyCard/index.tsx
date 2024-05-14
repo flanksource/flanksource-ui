@@ -11,7 +11,7 @@ import { HealthChecksSummary } from "../../Canary/HealthChecksSummary";
 import { HealthSummary } from "../../Canary/HealthSummary";
 import { CustomScroll } from "../../CustomScroll";
 import { Icon } from "../../Icon";
-import IncidentCardSummary from "../../IncidentCardSummary";
+import IncidentCardSummary from "../../Incidents/IncidentCardSummary";
 import { CardMetrics } from "./CardMetrics";
 import { Property } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";

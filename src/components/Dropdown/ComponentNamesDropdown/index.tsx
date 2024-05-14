@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useComponentsQuery } from "../../../api/query-hooks";
-import { TopologyComponentItem } from "../../FilterIncidents/FilterIncidentsByComponents";
 import { Icon } from "../../Icon";
+import { TopologyComponentItem } from "../../Incidents/FilterIncidents/FilterIncidentsByComponents";
 import { defaultSelections } from "../../Incidents/data";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 

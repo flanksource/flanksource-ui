@@ -7,10 +7,10 @@ import {
 } from "../../../api/types/incident";
 import { Avatar } from "../../../ui/Avatar";
 import { DateCell } from "../../../ui/table";
-import { IncidentSeverityTag } from "../../IncidentSeverityTag";
-import { IncidentStatusTag } from "../../IncidentStatusTag";
-import { IncidentTypeTag } from "../../incidentTypeTag";
+import { IncidentSeverityTag } from "../IncidentSeverityTag";
+import { IncidentStatusTag } from "../IncidentStatusTag";
 import { typeItems } from "../data";
+import { IncidentTypeTag } from "../incidentTypeTag";
 
 export const incidentListColumns: ColumnDef<IncidentSummary, any>[] = [
   {
