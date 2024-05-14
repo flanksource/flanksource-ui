@@ -114,9 +114,7 @@ export function ConfigChangesPage() {
 
   const updateSortBy = useCallback(
     (sort: Updater<SortingState>) => {
-      console.log(sort, sortState);
       const sortBy = Array.isArray(sort) ? sort : sort(sortState);
-      console.log(sortBy);
       if (sortBy.length === 0) {
         params.delete("sortBy");
         params.delete("sortDirection");
