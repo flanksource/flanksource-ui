@@ -21,11 +21,11 @@ import {
 } from "../../components/BreadcrumbNav";
 import EmptyState from "../../components/EmptyState";
 import { Head } from "../../components/Head/Head";
-import { HypothesisActionPlanViewContainer } from "../../components/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
-import { HypothesisBuilder } from "../../components/Hypothesis/HypothesisBuilder";
-import { HypothesisCommentsViewContainer } from "../../components/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
-import EditableIncidentTitleBreadcrumb from "../../components/IncidentDetails/EditableIncidentTitleBreadcrumb";
-import { IncidentSidebar } from "../../components/IncidentDetails/IncidentSidebar";
+import { HypothesisActionPlanViewContainer } from "../../components/Incidents/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
+import { HypothesisBuilder } from "../../components/Incidents/Hypothesis/HypothesisBuilder";
+import { HypothesisCommentsViewContainer } from "../../components/Incidents/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
+import EditableIncidentTitleBreadcrumb from "../../components/Incidents/IncidentDetails/EditableIncidentTitleBreadcrumb";
+import { IncidentSidebar } from "../../components/Incidents/IncidentDetails/IncidentSidebar";
 import { SearchLayout } from "../../components/Layout";
 import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import { TopologyCard } from "../../components/Topology/TopologyCard";

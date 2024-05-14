@@ -11,11 +11,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
 import { Link } from "react-router-dom";
 import { DetailsTable } from "../../DetailsTable/DetailsTable";
-import { IncidentStatusTag } from "../../IncidentStatusTag";
-import IncidentsFilterBar, { IncidentFilter } from "../../IncidentsFilterBar";
 import Title from "../../Title/title";
-import { IncidentTypeIcon } from "../../incidentTypeTag";
+import { IncidentStatusTag } from "../IncidentStatusTag";
+import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";
 import { typeItems } from "../data";
+import { IncidentTypeIcon } from "../incidentTypeTag";
 
 type Props = {
   topologyId?: string;

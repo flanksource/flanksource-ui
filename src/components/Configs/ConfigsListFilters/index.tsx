@@ -2,10 +2,10 @@ import { useConfigPageContext } from "@flanksource-ui/context/ConfigPageContext"
 import { debounce } from "lodash";
 import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { QueryBuilder } from "../../QueryBuilder";
 import { Switch } from "../../Switch";
 import { TextInputClearable } from "../../TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { QueryBuilder } from "../QueryBuilder";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
 import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";

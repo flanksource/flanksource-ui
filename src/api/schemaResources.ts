@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { EventQueueSummary } from "../components/EventQueueStatus/eventQueue";
-import { TopologyComponentItem } from "../components/FilterIncidents/FilterIncidentsByComponents";
+import { TopologyComponentItem } from "../components/Incidents/FilterIncidents/FilterIncidentsByComponents";
 import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
 import { LogBackends } from "../components/LogBackends/LogBackends";
 import {
