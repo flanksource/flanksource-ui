@@ -10,12 +10,14 @@ type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {
 
 export function ConfigChangeFilters({
   className,
-  paramsToReset,
+  paramsToReset = [],
   ...props
 }: ConfigChangeFiltersProps) {
   return (
     <div className={clsx("flex flex-row gap-2", className)} {...props}>
-      <ConfigTypesTristateDropdown paramsToReset={paramsToReset} />
+      <ConfigTypesTristateDropdown
+        paramsToReset={[...paramsToReset, "configType"]}
+      />
       <ChangesTypesDropdown paramsToReset={paramsToReset} />
       <ConfigChangeSeverity paramsToReset={paramsToReset} />
       <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
