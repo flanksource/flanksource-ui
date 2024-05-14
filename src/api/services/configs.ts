@@ -203,6 +203,7 @@ export type GetConfigsRelatedChangesParams = {
   from?: string;
   to?: string;
   configTypes?: string;
+  configType?: string;
   page?: string;
   pageSize?: string;
   sortBy?: string;
@@ -218,6 +219,7 @@ export async function getConfigsChanges({
   from,
   to,
   configTypes,
+  configType,
   page,
   pageSize,
   sortBy,
@@ -235,6 +237,9 @@ export async function getConfigsChanges({
     if (value) {
       queryParams.set("config_type", value);
     }
+  } else if (configType) {
+    // if configTypes is not provided, use configType which is a single value
+    queryParams.set("config_type", configType);
   }
   if (changeType && changeType !== "all") {
     const value = tristateOutputToQueryParamValue(changeType);
