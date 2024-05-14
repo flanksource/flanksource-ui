@@ -111,7 +111,7 @@ export function ConfigListPage() {
   } = useConfigSummaryQuery(
     {
       groupBy,
-      deleted: !hideDeletedConfigs,
+      deleted: hideDeletedConfigs,
       filter: filterSummaryByLabel,
       changes: {
         since: "30d"
