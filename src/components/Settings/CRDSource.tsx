@@ -14,11 +14,7 @@ export default function CRDSource({
   namespace,
   source
 }: CRDSourceProps) {
-  if (
-    source !== "KubernetesCRD" &&
-    source !== "Topology" &&
-    !source.startsWith("kubernetes")
-  ) {
+  if (source === "UI") {
     return null;
   }
 
