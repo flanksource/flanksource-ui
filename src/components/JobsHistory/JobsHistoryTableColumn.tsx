@@ -17,14 +17,14 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Timestamp",
     id: "time_start",
     accessorKey: "time_start",
-    size: 150,
+    size: 50,
     cell: DateCell
   },
   {
     header: "Job Name",
     id: "name",
     accessorKey: "name",
-    size: 200,
+    size: 120,
     enableSorting: false,
     cell: ({ getValue }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -49,7 +49,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Status",
     id: "status",
     accessorKey: "status",
-    size: 100,
+    size: 70,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["status"]>();
       return (
@@ -63,7 +63,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Duration",
     id: "duration_millis",
     accessorKey: "duration_millis",
-    size: 100,
+    size: 50,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["duration_millis"]>();
       const readableTime = formatDuration(value);
@@ -73,12 +73,13 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
   {
     header: "Statistics",
     id: "statistics",
+    size: 75,
     columns: [
       {
         header: "Success",
         id: "success_count",
         accessorKey: "success_count",
-        size: 100,
+        size: 50,
         cell: ({ getValue }) => {
           const value = getValue<JobHistory["success_count"]>();
           if (value === 0) {
@@ -91,7 +92,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
         header: "Error",
         id: "error_count",
         accessorKey: "error_count",
-        size: 100,
+        size: 50,
         cell: ({ getValue }) => {
           const value = getValue<JobHistory["error_count"]>();
           if (value === 0) {
@@ -106,13 +107,14 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Resource Type",
     id: "resource_type",
     accessorKey: "resource_type",
-    size: 100
+    size: 75
   },
   {
     header: "Resource ID",
     id: "resource_id",
     accessorKey: "resource_id",
-    size: 150,
+    minSize: 150,
+    maxSize: 400,
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["resource_id"]>();
 
