@@ -1,4 +1,4 @@
-import { Loading } from "@flanksource-ui/components/Loading";
+import { Loading } from "@flanksource-ui/ui/Loading";
 import { useQuery } from "@tanstack/react-query";
 import { getPlaybookRunActionById } from "../../../../api/services/playbooks";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";

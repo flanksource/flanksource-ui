@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { getLogsBackends } from "../../api/schemaResources";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ErrorPage from "../../components/Errors/ErrorPage";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
 import { LogBackends } from "../../components/LogBackends/LogBackends";
 import LogBackendsForm from "../../components/LogBackends/LogBackendsForm";
 import LogBackendsList from "../../components/LogBackends/LogBackendsList";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Modal } from "../../ui/Modal";
 
 export function LogBackendsPage() {

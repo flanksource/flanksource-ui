@@ -1,23 +1,23 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ScatterChart,
-  Scatter,
-  Tooltip,
+  CartesianGrid,
   Cell,
   ResponsiveContainer,
-  CartesianGrid,
+  Scatter,
+  ScatterChart,
+  Tooltip,
   XAxis,
   YAxis
 } from "recharts";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Loading } from "../../Loading";
+import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
+import { HealthCheck } from "../../../api/types/health";
+import { Loading } from "../../../ui/Loading";
 import {
   formatDateToMonthDay,
   formatDateToMonthDayTime,
   formatDateToTime,
   formatDateToYear
 } from "../../../utils/date";
-import { HealthCheck } from "../../../api/types/health";
-import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;

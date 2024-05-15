@@ -9,22 +9,22 @@ import {
   updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
-import { AccessCheck } from "../components/AccessCheck/AccessCheck";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
+import { AccessCheck } from "../components/Authentication/AccessCheck/AccessCheck";
 import { Head } from "../components/Head/Head";
 import {
   InviteUserForm,
   InviteUserFormValue
 } from "../components/InviteUserForm/InviteUserForm";
 import { SearchLayout } from "../components/Layout";
+import { toastError, toastSuccess } from "../components/Toast/toast";
 import {
   ManageUserRoleValue,
   ManageUserRoles
-} from "../components/ManageUserRoles/ManageUserRoles";
-import { toastError, toastSuccess } from "../components/Toast/toast";
+} from "../components/Users/ManageUserRoles";
 import { UserList } from "../components/Users/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
 import { ConfirmationPromptDialog } from "../ui/AlertDialog/ConfirmationPromptDialog";
+import { BreadcrumbNav, BreadcrumbRoot } from "../ui/BreadcrumbNav";
 
 export function UsersPage() {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] =

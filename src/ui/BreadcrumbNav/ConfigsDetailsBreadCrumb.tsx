@@ -1,7 +1,7 @@
 import { BreadcrumbChild, BreadcrumbNav, BreadcrumbRoot } from ".";
 import { ConfigItem } from "../../api/types/configs";
-import TextSkeletonLoader from "../../ui/SkeletonLoader/TextSkeletonLoader";
-import ConfigsTypeIcon from "../Configs/ConfigsTypeIcon";
+import ConfigsTypeIcon from "../../components/Configs/ConfigsTypeIcon";
+import TextSkeletonLoader from "../SkeletonLoader/TextSkeletonLoader";
 
 type Props = {
   isLoading?: boolean;

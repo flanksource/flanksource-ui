@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { MdOutlineError } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { useComponentsWithLogsQuery } from "../../api/query-hooks";
-import { Icon } from "../Icon";
-import { ReactSelectDropdown, StateOption } from "../ReactSelectDropdown";
+import { useComponentsWithLogsQuery } from "../../../api/query-hooks";
+import { Icon } from "../../Icon";
+import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";
 
 export const defaultSelections = {
   none: {

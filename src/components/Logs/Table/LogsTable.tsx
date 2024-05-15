@@ -15,7 +15,7 @@ import useDebouncedValue from "../../../hooks/useDebounce";
 import LogItem from "../../../types/Logs";
 import TableSkeletonLoader from "../../../ui/SkeletonLoader/TableSkeletonLoader";
 import { sanitizeHTMLContent } from "../../../utils/common";
-import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import AttachAsEvidenceButton from "../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { InfoMessage } from "../../InfoMessage";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";
 

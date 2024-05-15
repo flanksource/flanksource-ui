@@ -5,30 +5,30 @@ import * as yup from "yup";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { createIncidentQueryKey } from "../../api/query-hooks";
-import { createEvidence } from "../../api/services/evidence";
+import { createIncidentQueryKey } from "../../../api/query-hooks";
+import { createEvidence } from "../../../api/services/evidence";
 import {
   createHypothesis,
   searchHypothesis
-} from "../../api/services/hypothesis";
-import { createIncident, searchIncident } from "../../api/services/incident";
+} from "../../../api/services/hypothesis";
+import { createIncident, searchIncident } from "../../../api/services/incident";
 import {
   Hypothesis,
   HypothesisStatus,
   NewHypothesis
-} from "../../api/types/hypothesis";
-import { IncidentSeverity, IncidentStatus } from "../../api/types/incident";
-import { useUser } from "../../context";
-import { Events, sendAnalyticEvent } from "../../services/analytics";
-import { IItem } from "../../types/IItem";
-import { Modal } from "../../ui/Modal";
-import { DropdownWithActions } from "../Dropdown/DropdownWithActions";
-import SelectDropdown from "../Dropdown/SelectDropdown";
-import { IncidentSeverityTag } from "../Incidents/IncidentSeverityTag";
-import { IncidentStatusTag } from "../Incidents/IncidentStatusTag";
-import { severityItems, typeItems } from "../Incidents/data";
-import { TextInput } from "../TextInput";
-import { toastSuccess } from "../Toast/toast";
+} from "../../../api/types/hypothesis";
+import { IncidentSeverity, IncidentStatus } from "../../../api/types/incident";
+import { useUser } from "../../../context";
+import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { IItem } from "../../../types/IItem";
+import { Modal } from "../../../ui/Modal";
+import { DropdownWithActions } from "../../Dropdown/DropdownWithActions";
+import SelectDropdown from "../../Dropdown/SelectDropdown";
+import { TextInput } from "../../TextInput";
+import { toastSuccess } from "../../Toast/toast";
+import { IncidentSeverityTag } from "../IncidentSeverityTag";
+import { IncidentStatusTag } from "../IncidentStatusTag";
+import { severityItems, typeItems } from "../data";
 
 interface Props {
   title?: string;

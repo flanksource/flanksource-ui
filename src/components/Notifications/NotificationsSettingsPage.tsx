@@ -5,8 +5,8 @@ import {
   useCreateNotification,
   useNotificationsSummaryQuery
 } from "../../api/query-hooks/useNotificationsQuery";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Modal } from "../../ui/Modal";
-import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import NotificationsForm from "./NotificationsForm";

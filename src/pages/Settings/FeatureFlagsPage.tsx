@@ -5,10 +5,6 @@ import {
   useGetPropertyFromDB,
   useUpdateFeatureFlag
 } from "@flanksource-ui/api/query-hooks/useFeatureFlags";
-import {
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "@flanksource-ui/components/BreadcrumbNav";
 import FeatureFlagAddButton from "@flanksource-ui/components/FeatureFlags/FeatureFlagAddButton";
 import FeatureFlagForm from "@flanksource-ui/components/FeatureFlags/FeatureFlagForm";
 import { FeatureFlagsList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagList";
@@ -20,6 +16,10 @@ import {
   FeatureFlag,
   PropertyDBObject
 } from "@flanksource-ui/services/permissions/permissionsService";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/ui/BreadcrumbNav";
 import { useEffect, useState } from "react";
 
 export function FeatureFlagsPage() {

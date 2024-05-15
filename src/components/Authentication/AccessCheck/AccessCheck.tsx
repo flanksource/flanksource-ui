@@ -2,7 +2,7 @@ import { ReactElement, useCallback, useEffect, useState } from "react";
 import {
   ActionType,
   useUserAccessStateContext
-} from "../../context/UserAccessContext/UserAccessContext";
+} from "../../../context/UserAccessContext/UserAccessContext";
 
 type AccessCheckProps = {
   resource: string | string[];

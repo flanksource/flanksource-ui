@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getConfigName } from "../../../api/services/configs";
-import { BreadcrumbNav } from "../../BreadcrumbNav";
+import { BreadcrumbNav } from "../../../ui/BreadcrumbNav";
 import { ConfigIcon } from "../../Icon/ConfigIcon";
 
 type ConfigBreadcrumbProps = {

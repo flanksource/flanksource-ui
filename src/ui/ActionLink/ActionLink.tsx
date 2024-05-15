@@ -1,4 +1,4 @@
-import { Button } from "../../ui/Button";
+import { Button } from "../Button";
 
 type ActionLinkProps = {
   onClick?: () => void;

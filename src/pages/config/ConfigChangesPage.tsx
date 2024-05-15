@@ -1,9 +1,4 @@
 import { useGetConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
-import {
-  BreadcrumbChild,
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "@flanksource-ui/components/BreadcrumbNav";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
@@ -11,6 +6,11 @@ import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/ui/BreadcrumbNav";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";

@@ -1,5 +1,5 @@
 import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import ErrorPage from "../Errors/ErrorPage";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";

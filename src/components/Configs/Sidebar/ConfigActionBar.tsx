@@ -4,8 +4,8 @@ import { MdAlarmAdd } from "react-icons/md";
 import { useGetConfigByIdQuery } from "../../../api/query-hooks";
 import { EvidenceType } from "../../../api/types/evidence";
 import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
-import { ActionLink } from "../../ActionLink/ActionLink";
-import AttachAsEvidenceButton from "../../AttachEvidenceDialog/AttachAsEvidenceDialogButton";
+import { ActionLink } from "../../../ui/ActionLink/ActionLink";
+import AttachAsEvidenceButton from "../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 
 type ConfigActionBarProps = {

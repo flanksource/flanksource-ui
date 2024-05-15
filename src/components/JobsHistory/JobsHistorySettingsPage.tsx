@@ -1,7 +1,7 @@
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useSearchParams } from "react-router-dom";
 import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
-import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import JobHistoryFilters, {
