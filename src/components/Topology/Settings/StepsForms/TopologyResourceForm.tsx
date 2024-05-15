@@ -61,6 +61,7 @@ type TopologyResourceFormProps = {
    */
   selectedOption?: TupleToUnion<typeof createTopologyOptions>;
   onBack?: () => void;
+  onCancel?: () => void;
   footerClassName?: string;
   onSuccess?: () => void;
   isModal?: boolean;
@@ -72,6 +73,7 @@ export default function TopologyResourceForm({
   selectedOption,
   footerClassName = "bg-gray-100 p-4",
   onSuccess = () => {},
+  onCancel = () => {},
   isModal = false
 }: TopologyResourceFormProps) {
   const navigate = useNavigate();
@@ -189,13 +191,21 @@ export default function TopologyResourceForm({
                   </div>
                 )}
                 {!!topology?.id && (
-                  <DeleteResource
-                    resourceId={topology?.id}
-                    resourceInfo={resourceInfo}
-                    onDeleted={() => {
-                      navigate(`/settings/integrations`);
-                    }}
-                  />
+                  <>
+                    <Button
+                      onClick={onCancel}
+                      text="Cancel"
+                      className="btn-secondary"
+                    />
+                    <div className="flex-1" />
+                    <DeleteResource
+                      resourceId={topology?.id}
+                      resourceInfo={resourceInfo}
+                      onDeleted={() => {
+                        navigate(`/settings/integrations`);
+                      }}
+                    />
+                  </>
                 )}
 
                 <Button

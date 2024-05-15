@@ -3,13 +3,15 @@ import TopologyResourceForm, {
 } from "./StepsForms/TopologyResourceForm";
 
 type EditTopologyResourceProps = {
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  onCancel?: () => void;
   topologyResource: TopologyResource;
   isModal?: boolean;
 };
 
 export default function EditTopologyResource({
-  onSuccess,
+  onSuccess = () => {},
+  onCancel = () => {},
   topologyResource,
   isModal = false
 }: EditTopologyResourceProps) {
@@ -17,6 +19,7 @@ export default function EditTopologyResource({
     <div className="flex flex-col flex-1 p-2 overflow-y-clip">
       <TopologyResourceForm
         isModal={isModal}
+        onCancel={onCancel}
         onSuccess={onSuccess}
         topology={topologyResource}
         footerClassName="p-4"

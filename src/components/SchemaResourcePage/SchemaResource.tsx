@@ -59,6 +59,7 @@ export function SchemaResource({
             <SchemaResourceEdit
               id={id}
               {...resource}
+              onCancel={() => navigate(`/settings/${resourceInfo.table}`)}
               onSubmit={updateResource}
               resourceInfo={resourceInfo}
             />

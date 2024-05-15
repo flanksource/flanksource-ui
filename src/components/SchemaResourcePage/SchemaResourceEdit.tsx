@@ -17,6 +17,8 @@ import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import { TextInput } from "../TextInput";
+import EditTopologyResource from "../Topology/Settings/EditTopologyResource";
+import { TopologyResource } from "../Topology/Settings/StepsForms/TopologyResourceForm";
 import DeleteResource from "./Delete/DeleteResource";
 import {
   SchemaResourceJobsTab,
@@ -236,6 +238,14 @@ export function SchemaResourceEdit({
                               onCancel();
                             }
                           }}
+                        />
+                      </div>
+                    ) : table === "topologies" ? (
+                      <div className="flex-col flex flex-1 overflow-y-auto">
+                        <EditTopologyResource
+                          topologyResource={defaultValues as TopologyResource}
+                          onSuccess={() => onCancel?.()}
+                          onCancel={onCancel}
                         />
                       </div>
                     ) : (
