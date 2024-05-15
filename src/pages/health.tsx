@@ -1,7 +1,6 @@
 import CanaryStatsCards from "@flanksource-ui/components/Canary/CanaryStatsCard";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import { useState } from "react";
-import { BreadcrumbNav, BreadcrumbRoot } from "../components/BreadcrumbNav";
 import { Canary } from "../components/Canary";
 import { Head } from "../components/Head/Head";
 import { SearchLayout } from "../components/Layout";
@@ -11,6 +10,7 @@ import RefreshDropdown, {
 import { HealthRefreshDropdownRateContext } from "../components/RefreshDropdown/RefreshRateContext";
 import AddSchemaResourceModal from "../components/SchemaResourcePage/AddSchemaResourceModal";
 import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTypes";
+import { BreadcrumbNav, BreadcrumbRoot } from "../ui/BreadcrumbNav";
 
 type Props = {
   url: string;

@@ -4,7 +4,7 @@ import { Topology } from "../../../api/types/topology";
 import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
 import { features } from "../../../services/permissions/features";
 import { Menu } from "../../../ui/Menu";
-import { AttachEvidenceDialog } from "../../AttachEvidenceDialog";
+import { AttachEvidenceDialog } from "../../Incidents/AttachEvidenceDialog";
 import { topologyActionItems } from "../Sidebar/TopologyActionBar";
 import { TopologyConfigLinkModal } from "../TopologyConfigLinkModal/TopologyConfigLinkModal";
 import TopologySnapshotModal from "./TopologySnapshotModal";
@@ -127,10 +127,10 @@ export const TopologyDropdownMenu = ({
                       label === "Snapshot"
                         ? () => setIsDownloadComponentSnapshotModalOpen(true)
                         : label === "Link to Incident"
-                        ? () => setAttachAsAsset(true)
-                        : label === "Link to catalog"
-                        ? () => setLinkToConfig(true)
-                        : undefined
+                          ? () => setAttachAsAsset(true)
+                          : label === "Link to catalog"
+                            ? () => setLinkToConfig(true)
+                            : undefined
                     }
                   />
                 );

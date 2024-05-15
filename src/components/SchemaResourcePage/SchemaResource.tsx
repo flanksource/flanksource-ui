@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
+import { BreadcrumbNav } from "../../ui/BreadcrumbNav";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
-import { BreadcrumbNav } from "../BreadcrumbNav";
 import EmptyState from "../EmptyState";
 import ErrorPage from "../Errors/ErrorPage";
 import { Head } from "../Head/Head";

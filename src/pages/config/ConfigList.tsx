@@ -2,11 +2,6 @@ import {
   useAllConfigsQuery,
   useConfigSummaryQuery
 } from "@flanksource-ui/api/query-hooks";
-import {
-  BreadcrumbChild,
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "@flanksource-ui/components/BreadcrumbNav";
 import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
 import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
@@ -15,6 +10,11 @@ import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFi
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { Head } from "@flanksource-ui/components/Head/Head";
 import { SearchLayout } from "@flanksource-ui/components/Layout";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/ui/BreadcrumbNav";
 import { useAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";

@@ -4,19 +4,19 @@ import {
   useComponentGetLogsQuery,
   useComponentNameQuery
 } from "../api/query-hooks";
+import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
+import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
+import { Head } from "../components/Head/Head";
+import { SearchLayout } from "../components/Layout";
+import LogsFilterBar from "../components/Logs/FilterLogs/LogsFilterBar";
+import { LogsTable } from "../components/Logs/Table/LogsTable";
+import { TopologyLink } from "../components/Topology/TopologyLink";
+import useDebouncedValue from "../hooks/useDebounce";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
-} from "../components/BreadcrumbNav";
-import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
-import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
-import LogsFilterBar from "../components/FilterLogs/LogsFilterBar";
-import { Head } from "../components/Head/Head";
-import { SearchLayout } from "../components/Layout";
-import { LogsTable } from "../components/Logs/Table/LogsTable";
-import { TopologyLink } from "../components/Topology/TopologyLink";
-import useDebouncedValue from "../hooks/useDebounce";
+} from "../ui/BreadcrumbNav";
 
 export const logTypes = [
   {

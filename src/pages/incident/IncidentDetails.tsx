@@ -14,11 +14,6 @@ import { updateIncident } from "../../api/services/incident";
 import { EvidenceType } from "../../api/types/evidence";
 import { Hypothesis } from "../../api/types/hypothesis";
 import { Incident, IncidentStatus } from "../../api/types/incident";
-import {
-  BreadcrumbChild,
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "../../components/BreadcrumbNav";
 import EmptyState from "../../components/EmptyState";
 import { Head } from "../../components/Head/Head";
 import { HypothesisActionPlanViewContainer } from "../../components/Incidents/Hypothesis/HypothesisActionPlanViewContainer/HypothesisActionPlanViewContainer";
@@ -31,6 +26,11 @@ import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import { TopologyCard } from "../../components/Topology/TopologyCard";
 import { useIncidentState } from "../../store/incident.state";
 import { Size } from "../../types";
+import {
+  BreadcrumbChild,
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "../../ui/BreadcrumbNav";
 import IncidentDetailsPageSkeletonLoader from "../../ui/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
 
 export enum IncidentDetailsViewTypes {

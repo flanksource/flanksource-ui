@@ -1,5 +1,5 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import { Loading } from "../../Loading";
+import { Loading } from "../../../ui/Loading";
 import { HelpDropdown } from "../../../ui/MenuBar/HelpDropdown";
 import { clerkUrls } from "./ClerkAuthSessionChecker";
 

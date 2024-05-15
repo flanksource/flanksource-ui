@@ -2,7 +2,7 @@ import { getIntegrationsWithJobStatus } from "@flanksource-ui/api/schemaResource
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import AddIntegrationModal from "./Add/AddIntegrationModal";

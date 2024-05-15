@@ -17,10 +17,10 @@ import {
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { Button } from "../../../ui/Button";
-import { severityOptions, typeOptions } from "../../AttachEvidenceDialog";
 import SelectDropdown from "../../Dropdown/SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
+import { severityOptions, typeOptions } from "../AttachEvidenceDialog";
 import { incidentStatusItems, severityItems } from "../data";
 
 const incidentStatusOptions = Object.entries(incidentStatusItems).map(

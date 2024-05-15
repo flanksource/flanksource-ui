@@ -7,10 +7,10 @@ import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
-} from "../BreadcrumbNav";
+} from "../../ui/BreadcrumbNav";
+import { Loading } from "../../ui/Loading";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import { Loading } from "../Loading";
 import LogBackendsForm from "../LogBackends/LogBackendsForm";
 import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJobsTab";
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";

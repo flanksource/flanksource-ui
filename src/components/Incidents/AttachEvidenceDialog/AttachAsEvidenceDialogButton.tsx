@@ -1,8 +1,8 @@
 import React, { ComponentProps, useMemo, useState } from "react";
 import { AttachEvidenceDialog } from ".";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
-import { features } from "../../services/permissions/features";
-import { Button } from "../../ui/Button";
+import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
+import { features } from "../../../services/permissions/features";
+import { Button } from "../../../ui/Button";
 
 type AttachAsEvidenceButtonProps = Omit<
   ComponentProps<typeof AttachEvidenceDialog>,

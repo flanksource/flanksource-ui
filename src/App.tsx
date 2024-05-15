@@ -22,8 +22,8 @@ import {
   useLocation
 } from "react-router-dom";
 import { Canary } from "./components";
-import { withAccessCheck } from "./components/AccessCheck/AccessCheck";
 import AgentsPage from "./components/Agents/AgentPage";
+import { withAccessCheck } from "./components/Authentication/AccessCheck/AccessCheck";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Head } from "./components/Head/Head";

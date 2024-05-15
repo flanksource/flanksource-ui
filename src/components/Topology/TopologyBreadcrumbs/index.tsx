@@ -1,12 +1,12 @@
-import { Icon } from "../../Icon";
-import { useComponentNameQuery } from "../../../api/query-hooks";
 import { useMemo } from "react";
-import { Head } from "../../Head/Head";
+import { useComponentNameQuery } from "../../../api/query-hooks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
-} from "../../BreadcrumbNav";
+} from "../../../ui/BreadcrumbNav";
+import { Head } from "../../Head/Head";
+import { Icon } from "../../Icon";
 
 type TopologyBreadcrumbsProps = {
   topologyId?: string;

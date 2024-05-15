@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ErrorPage from "../../components/Errors/ErrorPage";
 import { Head } from "../../components/Head/Head";
 import { SearchLayout } from "../../components/Layout";
@@ -9,6 +8,7 @@ import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRu
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
 import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
 import TabbedLinks from "../../components/Tabs/TabbedLinks";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 
 export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);

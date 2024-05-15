@@ -7,7 +7,6 @@ import {
   getAll,
   updateResource
 } from "../../api/schemaResources";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../components/BreadcrumbNav";
 import ConnectionFormModal, {
   Connection
 } from "../../components/Connections/ConnectionFormModal";
@@ -17,6 +16,7 @@ import { SearchLayout } from "../../components/Layout";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 
 const connectionsSchemaConnection: SchemaApi = {
   table: "connections",

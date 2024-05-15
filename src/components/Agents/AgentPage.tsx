@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAgentsListQuery } from "../../api/query-hooks/useAgentsQuery";
 import { User } from "../../api/types/users";
-import { BreadcrumbNav, BreadcrumbRoot } from "../BreadcrumbNav";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import AddAgent from "./Add/AddAgent";

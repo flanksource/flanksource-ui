@@ -19,7 +19,7 @@ import { useOuterClick } from "../../lib/useOuterClick";
 import { features } from "../../services/permissions/features";
 import { $ArrayElemType } from "../../types/utility";
 import FullPageSkeletonLoader from "../../ui/SkeletonLoader/FullPageSkeletonLoader";
-import { withAccessCheck } from "../AccessCheck/AccessCheck";
+import { withAccessCheck } from "../Authentication/AccessCheck/AccessCheck";
 
 interface Props {
   navigation: NavigationItems;
