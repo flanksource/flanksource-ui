@@ -2,10 +2,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { GoCopy } from "react-icons/go";
 import { useSearchParams } from "react-router-dom";
 import { DateCell } from "../../ui/table";
 import { formatJobName } from "../../utils/common";
 import { formatDuration } from "../../utils/date";
+import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
 import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
 import { JobHistory } from "./JobsHistoryTable";
 
@@ -118,11 +120,22 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     cell: ({ getValue }) => {
       const value = getValue<JobHistory["resource_id"]>();
 
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const copy = useCopyToClipboard();
+
       return (
         <div
-          className={`w-full max-w-full overflow-x-hidden overflow-ellipsis`}
+          onClick={async (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            await copy(value);
+          }}
+          className={`w-full group flex flex-row gap-1 items-center`}
         >
-          {value}
+          <span className="text-ellipsis overflow-x-hidden">{value}</span>
+          <span className="hidden group-hover:inline ">
+            <GoCopy className="h-4 w-5" />
+          </span>
         </div>
       );
     }
