@@ -1,5 +1,5 @@
+import TopologyResourceForm from "@flanksource-ui/components/Integrations/Topology/TopologyResourceForm";
 import LogBackendsForm from "@flanksource-ui/components/LogBackends/LogBackendsForm";
-import TopologyResourceForm from "@flanksource-ui/components/Topology/Settings/StepsForms/TopologyResourceForm";
 import { CreateIntegrationOption } from "./steps/AddIntegrationOptionsList";
 import CatalogFormOption from "./steps/CatalogFormOption";
 import MissionControlRegistryOptions from "./steps/MissionControlRegistryOptions";
@@ -31,12 +31,7 @@ export default function AddIntegrationForm({
       );
     case "Custom Topology":
       return (
-        <TopologyResourceForm
-          selectedOption={"Custom"}
-          onBack={onBack}
-          isModal
-          onSuccess={onSuccess}
-        />
+        <TopologyResourceForm onBack={onBack} isModal onSuccess={onSuccess} />
       );
     case "Log Backends":
       return <LogBackendsForm onUpdated={onSuccess} />;

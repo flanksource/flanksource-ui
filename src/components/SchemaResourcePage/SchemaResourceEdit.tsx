@@ -11,14 +11,14 @@ import YAML from "yaml";
 import { Head } from "../Head/Head";
 import { Icon } from "../Icon";
 import { IconPicker } from "../IconPicker";
+import EditTopologyResource from "../Integrations/Topology/EditTopologyResource";
+import { TopologyResource } from "../Integrations/Topology/TopologyResourceForm";
 import CRDSource from "../Settings/CRDSource";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import { TextInput } from "../TextInput";
-import EditTopologyResource from "../Topology/Settings/EditTopologyResource";
-import { TopologyResource } from "../Topology/Settings/StepsForms/TopologyResourceForm";
 import DeleteResource from "./Delete/DeleteResource";
 import {
   SchemaResourceJobsTab,

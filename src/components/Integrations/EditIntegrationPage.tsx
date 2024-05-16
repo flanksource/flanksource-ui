@@ -16,7 +16,7 @@ import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJ
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
-import EditTopologyResource from "../Topology/Settings/EditTopologyResource";
+import EditTopologyResource from "./Topology/EditTopologyResource";
 
 type IntegrationType = "logging_backends" | "topologies" | "scrapers";
 
