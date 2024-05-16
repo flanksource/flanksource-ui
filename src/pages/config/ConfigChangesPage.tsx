@@ -38,6 +38,31 @@ export function ConfigChangesPage() {
   const pageSize = params.get("pageSize") ?? "200";
   const sortBy = params.get("sortBy") ?? undefined;
   const sortDirection = params.get("sortDirection") === "asc" ? "asc" : "desc";
+  const configId = params.get("id") ?? undefined;
+  const changeSummary = params.get("summary") ?? undefined;
+  const source = params.get("source") ?? undefined;
+  const createdBy = params.get("created_by") ?? undefined;
+  const externalCreatedBy = params.get("external_created_by") ?? undefined;
+
+  const arbitraryFilter = useMemo(() => {
+    const filter = new Map<string, string>();
+    if (configId) {
+      filter.set("id", configId);
+    }
+    if (changeSummary) {
+      filter.set("summary", changeSummary);
+    }
+    if (source) {
+      filter.set("source", source);
+    }
+    if (createdBy) {
+      filter.set("created_by", createdBy);
+    }
+    if (externalCreatedBy) {
+      filter.set("created_by", externalCreatedBy);
+    }
+    return Object.fromEntries(filter);
+  }, [changeSummary, configId, createdBy, externalCreatedBy, source]);
 
   const sortState: SortingState = useMemo(
     () => [
@@ -66,7 +91,8 @@ export function ConfigChangesPage() {
         sortBy,
         sortOrder: sortDirection === "desc" ? "desc" : "asc",
         page: page,
-        pageSize: pageSize
+        pageSize: pageSize,
+        arbitraryFilter
       },
       {
         keepPreviousData: true
@@ -160,7 +186,10 @@ export function ConfigChangesPage() {
             <InfoMessage message={errorMessage} />
           ) : (
             <>
-              <ConfigChangeFilters paramsToReset={["pageIndex", "pageSize"]} />
+              <ConfigChangeFilters
+                paramsToReset={["pageIndex", "pageSize"]}
+                arbitraryFilters={arbitraryFilter}
+              />
               <ConfigChangeHistory
                 data={changes}
                 isLoading={isLoading}

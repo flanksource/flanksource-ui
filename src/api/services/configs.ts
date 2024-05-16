@@ -19,8 +19,9 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getConfigsTags = async () => {
-  const res =
-    await ConfigDB.get<{ key: string; value: string }[]>("/config_tags");
+  const res = await ConfigDB.get<{ key: string; value: string }[]>(
+    "/config_tags"
+  );
   return res.data ?? [];
 };
 
@@ -209,6 +210,7 @@ export type GetConfigsRelatedChangesParams = {
   pageSize?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  arbitraryFilter?: Record<string, string>;
 };
 
 export async function getConfigsChanges({
@@ -224,7 +226,8 @@ export async function getConfigsChanges({
   page,
   pageSize,
   sortBy,
-  sortOrder
+  sortOrder,
+  arbitraryFilter
 }: GetConfigsRelatedChangesParams) {
   const queryParams = new URLSearchParams();
   if (id) {
@@ -247,6 +250,14 @@ export async function getConfigsChanges({
     if (value) {
       queryParams.set("type", value);
     }
+  }
+  if (arbitraryFilter) {
+    Object.entries(arbitraryFilter).forEach(([key, value]) => {
+      const filterExpression = tristateOutputToQueryParamValue(value);
+      if (filterExpression) {
+        queryParams.set(key, filterExpression);
+      }
+    });
   }
   if (from) {
     queryParams.set("from", from);
