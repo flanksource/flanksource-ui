@@ -349,13 +349,15 @@ type GetAConfigRelationshipsParams = {
   hideDeleted?: boolean;
   configType?: string;
   type_filter?: "all" | "incoming" | "outgoing";
+  relation?: "both" | "hard";
 };
 
 export const getAConfigRelationships = async ({
   configId,
   hideDeleted,
   configType,
-  type_filter
+  type_filter,
+  relation
 }: GetAConfigRelationshipsParams) => {
   const configTypeFilter = configType ? `&type=eq.${configType}` : "";
 
@@ -363,8 +365,18 @@ export const getAConfigRelationships = async ({
     ? `&type_filter=${type_filter}&max_depth=10`
     : `&max_depth=10`;
 
+  const kindFilterIncoming =
+    type_filter === "incoming" || type_filter === "all"
+      ? `&incoming_relation=${relation}`
+      : "";
+
+  const kindFilterOutgoing =
+    type_filter === "outgoing" || type_filter === "all"
+      ? `&outgoing_relation=${relation}`
+      : "";
+
   const res = await ConfigDB.get<ConfigRelationships[]>(
-    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${!hideDeleted}${typeFilter}${configTypeFilter}`
+    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${hideDeleted}${typeFilter}${configTypeFilter}${kindFilterIncoming}${kindFilterOutgoing}`
   );
 
   return res.data ?? [];

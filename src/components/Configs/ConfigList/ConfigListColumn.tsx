@@ -2,6 +2,7 @@ import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
+import { FaTrash } from "react-icons/fa";
 import { IoChevronDown, IoChevronForward } from "react-icons/io5";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
 import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
@@ -88,6 +89,15 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     cell: ({ getValue, row }: CellContext<ConfigItem, any>) => {
       const health = getValue<ConfigItem["health"]>();
       const status = row.original.status;
+
+      if (row.original.deleted_at) {
+        return (
+          <span className="flex flex-row gap-1 items-center">
+            <FaTrash className="text-red-500" />
+            <span className="text-red-500">{status}</span>
+          </span>
+        );
+      }
 
       return <Status status={health} statusText={status} />;
     }

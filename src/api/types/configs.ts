@@ -82,7 +82,9 @@ export interface ConfigItemGraphData extends ConfigItem {
 
 export interface ConfigRelationships extends ConfigItem {
   direction: "incoming" | "outgoing";
-  relation_type: "incoming" | "outgoing";
+  relation_type?: string;
+  depth?: number;
+  ready?: boolean;
 }
 
 export interface ConfigTypeRelationships extends Timestamped {
