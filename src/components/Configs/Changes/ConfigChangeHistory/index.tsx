@@ -2,6 +2,7 @@ import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetC
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { DateCell } from "@flanksource-ui/ui/table";
 import { SortingState, Updater } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
@@ -10,6 +11,10 @@ import { ChangeIcon } from "../../../Icon/ChangeIcon";
 import { DataTable } from "../../../index";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
+
+export const paramsToReset = {
+  configChanges: ["pageIndex", "pageSize"]
+};
 
 const columns: ColumnDef<ConfigChange>[] = [
   {
@@ -30,11 +35,18 @@ const columns: ColumnDef<ConfigChange>[] = [
     enableHiding: true,
     enableSorting: false,
     cell: function ConfigLinkCell({ row }) {
+      const configId = row.original.config_id;
       return (
-        <ConfigLink
-          config={row.original.config}
-          configId={row.original.config_id}
-        />
+        <FilterByCellValue
+          filterValue={configId}
+          paramKey="id"
+          paramsToReset={paramsToReset.configChanges}
+        >
+          <ConfigLink
+            config={row.original.config}
+            configId={row.original.config_id}
+          />
+        </FilterByCellValue>
       );
     },
     size: 84
@@ -45,10 +57,16 @@ const columns: ColumnDef<ConfigChange>[] = [
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
       return (
-        <div className="text-ellipsis overflow-hidden space-x-1">
-          <ChangeIcon change={row.original} />
-          <span>{changeType}</span>
-        </div>
+        <FilterByCellValue
+          filterValue={changeType}
+          paramKey="changeType"
+          paramsToReset={paramsToReset.configChanges}
+        >
+          <div className="text-ellipsis overflow-hidden space-x-1">
+            <ChangeIcon change={row.original} />
+            <span>{changeType}</span>
+          </div>
+        </FilterByCellValue>
       );
     },
     maxSize: 70
@@ -59,7 +77,20 @@ const columns: ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 150
+    maxSize: 150,
+    cell: ({ getValue }) => {
+      const summary = getValue<string>();
+
+      return (
+        <FilterByCellValue
+          filterValue={summary}
+          paramKey="summary"
+          paramsToReset={paramsToReset.configChanges}
+        >
+          {summary}
+        </FilterByCellValue>
+      );
+    }
   },
   {
     header: "Created By",
@@ -68,17 +99,42 @@ const columns: ColumnDef<ConfigChange>[] = [
     cell: ({ row }) => {
       const userID = row.original.created_by;
       if (userID) {
-        return <GetUserAvatar userID={userID} />;
-      }
-      const externalCreatedBy = row.original.external_created_by;
-      if (externalCreatedBy) {
-        return <span>{externalCreatedBy}</span>;
-      }
-      const source = row.original.source;
-      if (source) {
-        return <span>{source}</span>;
+        return (
+          <FilterByCellValue
+            filterValue={userID}
+            paramKey="created_by"
+            paramsToReset={paramsToReset.configChanges}
+          >
+            <GetUserAvatar userID={userID} />
+          </FilterByCellValue>
+        );
       }
 
+      const externalCreatedBy = row.original.external_created_by;
+      if (externalCreatedBy) {
+        return (
+          <FilterByCellValue
+            filterValue={externalCreatedBy}
+            paramKey="external_created_by"
+            paramsToReset={paramsToReset.configChanges}
+          >
+            <span>{externalCreatedBy}</span>
+          </FilterByCellValue>
+        );
+      }
+
+      const source = row.original.source;
+      if (source) {
+        return (
+          <FilterByCellValue
+            filterValue={source}
+            paramKey="source"
+            paramsToReset={paramsToReset.configChanges}
+          >
+            <span>{source}</span>
+          </FilterByCellValue>
+        );
+      }
 
       return null;
     }

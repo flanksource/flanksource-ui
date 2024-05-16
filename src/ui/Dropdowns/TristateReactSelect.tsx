@@ -52,13 +52,18 @@ declare module "react-select/dist/declarations/src/Select" {
  * to key,!key2 that can be used in a query string to filter the results.
  *
  */
-export function tristateOutputToQueryParamValue(param: string | undefined) {
+export function tristateOutputToQueryParamValue(
+  param: string | undefined,
+  encodeValue: boolean = false
+) {
   return param
     ?.split(",")
     .map((type) => {
       const [changeType, symbol] = type.split(":");
       const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
-      return `${symbolFilter}${changeType}`;
+      return `${symbolFilter}${
+        encodeValue ? encodeURIComponent(changeType) : changeType
+      }`;
     })
     .join(",");
 }
@@ -277,6 +282,22 @@ export default function TristateReactSelect({
       return {};
     }
   );
+
+  useEffect(() => {
+    if (value) {
+      setToggleState(
+        value.split(",").reduce((acc, item) => {
+          const [key, value] = item.split(":");
+          return {
+            ...acc,
+            [key]: parseInt(value, 10)
+          };
+        }, {})
+      );
+    } else {
+      setToggleState({});
+    }
+  }, [value]);
 
   // When the toggle state changes, update the value, which is a string of comma-separated key:value pairs
   useEffect(() => {
