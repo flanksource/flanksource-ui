@@ -71,7 +71,7 @@ export function MultiSelectDropdown({
                     {isMulti ? (
                       (value as GroupByOptions[]).map((v) => (
                         <div
-                          className="flex flex-row bg-gray-200 items-center px-1 rounded-md"
+                          className="flex flex-row bg-gray-200 items-center px-1 gap-1 rounded-md"
                           key={v.value}
                         >
                           {v?.icon && <div>{v.icon}</div>}
