@@ -1,17 +1,17 @@
+import {
+  useSettingsCreateResource,
+  useSettingsUpdateResource
+} from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
+import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
+import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
+import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
+import DeleteResource from "@flanksource-ui/components/SchemaResourcePage/Delete/DeleteResource";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {
-  useSettingsCreateResource,
-  useSettingsUpdateResource
-} from "../../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Button } from "../../../ui/Buttons/Button";
-import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
-import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
-import FormikTextInput from "../../Forms/Formik/FormikTextInput";
-import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 
 const resourceInfo = {
   name: "Topology",

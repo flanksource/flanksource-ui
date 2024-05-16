@@ -1,6 +1,4 @@
-import TopologyResourceForm, {
-  TopologyResource
-} from "./StepsForms/TopologyResourceForm";
+import TopologyResourceForm, { TopologyResource } from "./TopologyResourceForm";
 
 type EditTopologyResourceProps = {
   onSuccess?: () => void;
