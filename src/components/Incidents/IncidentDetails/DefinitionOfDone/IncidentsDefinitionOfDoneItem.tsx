@@ -15,7 +15,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 import { BsHourglassSplit, BsTrash } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { MdRefresh } from "react-icons/md";
-import { IconButton } from "../../../IconButton";
+import { IconButton } from "../../../../ui/Buttons/IconButton";
 import EditEvidenceDefinitionOfDoneComment from "./EditEvidenceDefinitionOfDoneComment";
 import EditEvidenceDefinitionOfDoneScript from "./EditEvidenceDefinitionOfDoneScript";
 import { EvidenceView } from "./EvidenceView";

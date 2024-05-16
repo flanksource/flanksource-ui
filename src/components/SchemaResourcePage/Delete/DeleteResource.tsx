@@ -1,6 +1,6 @@
 import { useSettingsDeleteResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useCallback, useState } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { toastSuccess } from "../../Toast/toast";

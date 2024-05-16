@@ -1,5 +1,5 @@
 import { PlaybookRunWithActions } from "@flanksource-ui/api/types/playbooks";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMemo, useState } from "react";
 import ViewPlaybookParamsModal from "./ViewPlaybookParamsModal";
 

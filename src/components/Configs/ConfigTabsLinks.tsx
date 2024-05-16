@@ -1,4 +1,4 @@
-import { Badge } from "@flanksource-ui/ui/Badge";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useParams } from "react-router-dom";
 import { ConfigItem } from "../../api/types/configs";
 

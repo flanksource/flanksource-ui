@@ -1,8 +1,8 @@
+import { getAgentByID, Local } from "@flanksource-ui/api/services/agents";
+import { AgentItem } from "@flanksource-ui/api/types/common";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useQuery } from "@tanstack/react-query";
 import { ComponentProps } from "react";
-import { getAgentByID, Local } from "../../api/services/agents";
-import { AgentItem } from "../../api/types/common";
-import { Badge } from "../../ui/Badge";
 
 type TopologyCardAgentProps = {
   agent?: AgentItem;

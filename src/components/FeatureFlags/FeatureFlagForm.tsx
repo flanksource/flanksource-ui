@@ -1,5 +1,5 @@
 import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import clsx from "clsx";
 import { Form, Formik } from "formik";

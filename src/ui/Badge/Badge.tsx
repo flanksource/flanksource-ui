@@ -12,7 +12,7 @@ type BadgeProps = {
   roundedClass?: string;
 };
 
-export const Badge = React.memo(function ({
+export function Badge({
   text,
   value,
   size = "sm",
@@ -52,4 +52,4 @@ export const Badge = React.memo(function ({
       {value != null && `: ${value}`}
     </>
   );
-});
+}

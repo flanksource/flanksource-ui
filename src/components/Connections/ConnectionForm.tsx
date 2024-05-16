@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { mapValues, method } from "lodash";
 import { useMemo } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Buttons/Button";
 import { Connection } from "./ConnectionFormModal";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { TestConnection } from "./TestConnection";

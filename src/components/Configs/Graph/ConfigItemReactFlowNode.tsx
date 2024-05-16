@@ -1,5 +1,5 @@
 import { Status } from "@flanksource-ui/components/Status";
-import { Badge } from "@flanksource-ui/ui/Badge";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import { FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";

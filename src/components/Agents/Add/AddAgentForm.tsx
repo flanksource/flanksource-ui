@@ -8,7 +8,7 @@ import {
   useUpdateAgentMutations
 } from "../../../api/query-hooks/mutations/useUpsertAgentMutations";
 import { GenerateAgent, GeneratedAgent } from "../../../api/services/agents";
-import { Button } from "../../../ui/Button";
+import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
 import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";

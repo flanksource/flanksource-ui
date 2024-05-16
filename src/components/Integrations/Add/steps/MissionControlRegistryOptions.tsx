@@ -1,5 +1,5 @@
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";

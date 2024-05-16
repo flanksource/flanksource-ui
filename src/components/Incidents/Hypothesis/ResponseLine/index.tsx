@@ -8,10 +8,10 @@ import { Comment } from "../../../../api/types/incident";
 import { UserWithTeam } from "../../../../api/types/users";
 import { Age } from "../../../../ui/Age";
 import { Avatar } from "../../../../ui/Avatar";
+import { IconButton } from "../../../../ui/Buttons/IconButton";
 import { Menu } from "../../../../ui/Menu";
 import { CommentText } from "../../../Comment";
 import { Icon } from "../../../Icon";
-import { IconButton } from "../../../IconButton";
 import { EvidenceItem } from "../EvidenceSection";
 
 interface IProps {

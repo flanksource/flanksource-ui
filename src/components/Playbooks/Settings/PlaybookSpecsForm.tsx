@@ -13,7 +13,7 @@ import {
   UpdatePlaybookSpec
 } from "../../../api/types/playbooks";
 import { useUser } from "../../../context";
-import { Button } from "../../../ui/Button";
+import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";

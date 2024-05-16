@@ -1,5 +1,5 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useState } from "react";

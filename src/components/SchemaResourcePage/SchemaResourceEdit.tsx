@@ -1,6 +1,6 @@
 import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
 import AutoCompleteDropdown from "@flanksource-ui/ui/AutoCompleteDropdown/AutoCompleteDropdown";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
 import { identity, pickBy } from "lodash";
 import dynamic from "next/dynamic";

@@ -1,6 +1,6 @@
+import { RefreshButton } from "../../ui/Buttons/RefreshButton";
 import { HelpDropdown } from "../../ui/MenuBar/HelpDropdown";
 import DashboardErrorBoundary from "../Errors/DashboardErrorBoundary";
-import { RefreshButton } from "../RefreshButton";
 import { UserProfileDropdown } from "../Users/UserProfile/UserProfile";
 
 interface IProps {

@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { BsTrash } from "react-icons/bs";
-import { IconButton } from "./index";
+import { IconButton } from "./IconButton";
 
 export default {
   title: "IconButton",

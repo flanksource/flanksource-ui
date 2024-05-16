@@ -4,7 +4,7 @@ import {
 } from "@flanksource-ui/api/services/topology";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMutation } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import { VscDebugRerun } from "react-icons/vsc";

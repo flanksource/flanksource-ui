@@ -3,7 +3,7 @@ import {
   StatusInfo,
   StatusLine
 } from "@flanksource-ui/components/StatusLine/StatusLine";
-import { Badge } from "@flanksource-ui/ui/Badge";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { CountBadge } from "@flanksource-ui/ui/Badge/CountBadge";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";

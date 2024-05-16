@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { Badge } from "./index";
+import { Badge } from "./Badge";
 
 export default {
   title: "Badge",

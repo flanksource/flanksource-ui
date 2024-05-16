@@ -1,18 +1,18 @@
+import {
+  useComponentNameQuery,
+  useConfigNameQuery,
+  useTopologyQuery
+} from "@flanksource-ui/api/query-hooks";
+import { getCanaries } from "@flanksource-ui/api/services/topology";
+import { Evidence, EvidenceType } from "@flanksource-ui/api/types/evidence";
+import { Size, ViewType } from "@flanksource-ui/types";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import {
-  useComponentNameQuery,
-  useConfigNameQuery,
-  useTopologyQuery
-} from "../../../../../api/query-hooks";
-import { getCanaries } from "../../../../../api/services/topology";
-import { Evidence, EvidenceType } from "../../../../../api/types/evidence";
-import { Size, ViewType } from "../../../../../types";
-import { Badge } from "../../../../../ui/Badge";
-import TextSkeletonLoader from "../../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { Icon } from "../../../../Icon";
 import { ConfigIcon } from "../../../../Icon/ConfigIcon";
 import { StatusStyles } from "../../../../Topology/TopologyCard";

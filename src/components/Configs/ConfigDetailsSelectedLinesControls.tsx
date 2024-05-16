@@ -1,4 +1,4 @@
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Buttons/Button";
 
 type Props = {
   selectedCount: number;
