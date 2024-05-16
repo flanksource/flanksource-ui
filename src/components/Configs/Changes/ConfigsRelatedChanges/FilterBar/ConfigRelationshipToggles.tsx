@@ -32,7 +32,7 @@ export function ConfigRelationshipToggles() {
         }}
       />
       <Toggle
-        label="Include Soft Relations"
+        label="Soft"
         value={relation}
         onChange={(value) => {
           params.set(ConfigRelationKey, value ? "soft" : "hard");
