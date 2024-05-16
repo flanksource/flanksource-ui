@@ -3,7 +3,7 @@ import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { useCopyToClipboard } from "../../components/Hooks/useCopyToClipboard";
-import { Button } from "../Button";
+import { Button } from "../Buttons/Button";
 import theme from "./theme";
 
 type RenderProps = Parameters<

@@ -1,6 +1,6 @@
 import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal, ModalSize } from "@flanksource-ui/ui/Modal";
 import { AxiosError } from "axios";
 import { Form, Formik } from "formik";

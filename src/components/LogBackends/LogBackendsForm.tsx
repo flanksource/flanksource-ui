@@ -4,7 +4,7 @@ import {
   useSettingsCreateResource,
   useSettingsUpdateResource
 } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Buttons/Button";
 import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
 import FormikKeyValueMapField from "../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../Forms/Formik/FormikTextInput";

@@ -1,4 +1,4 @@
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import FloatableSlidingSideBar from "@flanksource-ui/ui/SlidingSideBar/FloatableSlidingSideBar";
 import { useState } from "react";
 import { MdMenu } from "react-icons/md";

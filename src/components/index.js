@@ -1,5 +1,5 @@
-import { Badge } from "@flanksource-ui/ui/Badge";
-import { Button } from "@flanksource-ui/ui/Button";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { Canary } from "./Canary";

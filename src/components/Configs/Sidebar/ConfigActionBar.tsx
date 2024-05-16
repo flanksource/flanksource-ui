@@ -1,10 +1,10 @@
+import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
+import { EvidenceType } from "@flanksource-ui/api/types/evidence";
+import { usePartialUpdateSearchParams } from "@flanksource-ui/hooks/usePartialUpdateSearchParams";
+import { ActionLink } from "@flanksource-ui/ui/Buttons/ActionLink";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
-import { useGetConfigByIdQuery } from "../../../api/query-hooks";
-import { EvidenceType } from "../../../api/types/evidence";
-import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
-import { ActionLink } from "../../../ui/ActionLink/ActionLink";
 import AttachAsEvidenceButton from "../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 

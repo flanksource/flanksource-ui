@@ -16,7 +16,7 @@ import {
 } from "../../../api/types/incident";
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
-import { Button } from "../../../ui/Button";
+import { Button } from "../../../ui/Buttons/Button";
 import SelectDropdown from "../../Dropdown/SelectDropdown";
 import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";

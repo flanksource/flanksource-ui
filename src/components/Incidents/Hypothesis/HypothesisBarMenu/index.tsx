@@ -5,8 +5,8 @@ import { BsTrash } from "react-icons/bs";
 import { createIncidentQueryKey } from "../../../../api/query-hooks";
 import { deleteHypothesis } from "../../../../api/services/hypothesis";
 import { Hypothesis } from "../../../../api/types/hypothesis";
+import { IconButton } from "../../../../ui/Buttons/IconButton";
 import { Menu } from "../../../../ui/Menu";
-import { IconButton } from "../../../IconButton";
 import { HypothesisDeleteDialog } from "../HypothesisDeleteDialog";
 
 interface IProps {

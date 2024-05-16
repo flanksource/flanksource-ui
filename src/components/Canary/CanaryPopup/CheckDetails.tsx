@@ -1,18 +1,18 @@
+import { useCanaryGraphQuery } from "@flanksource-ui/api/query-hooks/health";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { isCanaryUI } from "@flanksource-ui/context/Environment";
+import { Age } from "@flanksource-ui/ui/Age";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { Stat } from "@flanksource-ui/ui/stats";
+import {
+  capitalizeFirstLetter,
+  toFixedIfNecessary
+} from "@flanksource-ui/utils/common";
+import mixins from "@flanksource-ui/utils/mixins.module.css";
 import { useAtom } from "jotai";
 import React, { Suspense, useEffect, useMemo, useRef } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useSearchParams } from "react-router-dom";
-import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
-import { HealthCheck } from "../../../api/types/health";
-import { isCanaryUI } from "../../../context/Environment";
-import { Age } from "../../../ui/Age";
-import { Badge } from "../../../ui/Badge";
-import { Stat } from "../../../ui/stats";
-import {
-  capitalizeFirstLetter,
-  toFixedIfNecessary
-} from "../../../utils/common";
-import mixins from "../../../utils/mixins.module.css";
 import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { Head } from "../../Head/Head";

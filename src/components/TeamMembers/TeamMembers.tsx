@@ -11,11 +11,11 @@ import { getPersons } from "../../api/services/users";
 import { User } from "../../api/types/users";
 import { useLoader } from "../../hooks";
 import { Avatar } from "../../ui/Avatar";
+import { IconButton } from "../../ui/Buttons/IconButton";
 import { Menu } from "../../ui/Menu";
 import { Modal } from "../../ui/Modal";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
 import EmptyState from "../EmptyState";
-import { IconButton } from "../IconButton";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
 import { toastError, toastSuccess } from "../Toast/toast";
 

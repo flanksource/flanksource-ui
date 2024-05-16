@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { FaSpinner } from "react-icons/fa";
-import { IconButton } from "../../IconButton";
+import { IconButton } from "../../../ui/Buttons/IconButton";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import { AddResponder } from "./AddResponders/AddResponder";
 import { IncidentDetailsRow } from "./IncidentDetailsRow";

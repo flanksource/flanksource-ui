@@ -1,40 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { TupleToUnion } from "type-fest";
-import { parse } from "yaml";
 import {
   useSettingsCreateResource,
   useSettingsUpdateResource
-} from "../../../../api/query-hooks/mutations/useSettingsResourcesMutations";
-import { Button } from "../../../../ui/Buttons/Button";
-import FormSkeletonLoader from "../../../../ui/SkeletonLoader/FormSkeletonLoader";
-import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
-import FormikKeyValueMapField from "../../../Forms/Formik/FormikKeyValueMapField";
-import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
-import DeleteResource from "../../../SchemaResourcePage/Delete/DeleteResource";
-import { createTopologyOptions } from "./AddTopologyOptionsList";
-
-const selectedOptionToSpecMap = new Map<
-  TupleToUnion<typeof createTopologyOptions>,
-  string
->([
-  [
-    "Flux",
-    "https://raw.githubusercontent.com/flanksource/mission-control-registry/main/topologies/flux/flux.yaml"
-  ],
-  [
-    "Kubernetes",
-    "https://raw.githubusercontent.com/flanksource/mission-control-registry/main/topologies/kubernetes/kubernetes.yaml"
-  ],
-  [
-    "Prometheus",
-    "https://raw.githubusercontent.com/flanksource/mission-control-registry/main/topologies/prometheus/prometheus.yaml"
-  ]
-]);
+} from "../../../api/query-hooks/mutations/useSettingsResourcesMutations";
+import { Button } from "../../../ui/Buttons/Button";
+import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
+import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
+import FormikTextInput from "../../Forms/Formik/FormikTextInput";
+import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 
 const resourceInfo = {
   name: "Topology",
@@ -47,20 +24,14 @@ export type TopologyResource = {
   name: string;
   namespace: string;
   labels: Record<string, string>;
+  source: string;
   spec: Record<string, any>;
 };
 
 type TopologyResourceFormProps = {
   topology?: TopologyResource;
-  /**
-   * The selected option from the create topology options list,
-   * this is used to determine the initial values for the spec field
-   * and is only used when creating a new topology. When updating a topology
-   * the spec field is populated with the current topology's spec and this
-   * prop is ignored.
-   */
-  selectedOption?: TupleToUnion<typeof createTopologyOptions>;
   onBack?: () => void;
+  onCancel?: () => void;
   footerClassName?: string;
   onSuccess?: () => void;
   isModal?: boolean;
@@ -69,23 +40,12 @@ type TopologyResourceFormProps = {
 export default function TopologyResourceForm({
   topology,
   onBack,
-  selectedOption,
   footerClassName = "bg-gray-100 p-4",
   onSuccess = () => {},
+  onCancel = () => {},
   isModal = false
 }: TopologyResourceFormProps) {
   const navigate = useNavigate();
-
-  const { data: spec, isLoading: isLoadingSpec } = useQuery({
-    queryKey: ["Github", "mission-control-registry", selectedOption],
-    queryFn: async () => {
-      const url = selectedOptionToSpecMap.get(selectedOption!);
-      const response = await fetch(url!);
-      const data = await response.text();
-      return parse(data);
-    },
-    enabled: !!selectedOption && selectedOption !== "Custom"
-  });
 
   const { mutate: createResource, isLoading: isCreatingResource } =
     useSettingsCreateResource(resourceInfo, onSuccess);
@@ -99,26 +59,21 @@ export default function TopologyResourceForm({
 
   const isLoading = isCreatingResource || isUpdatingResource;
 
-  const initialValues: Omit<TopologyResource, "id"> & {
+  const initialValues: Omit<Partial<TopologyResource>, "id"> & {
     id?: string;
   } = useMemo(() => {
     if (topology) {
       return topology;
     }
-    // the spec here is determined by the selected option
-    // todo: pull the specs for each option from the backend and use that to
-    // determine the initial values for the spec field
     return {
-      name: "",
       namespace: "default",
-      labels: {},
-      spec: spec ?? {}
+      source: "UI"
     };
-  }, [spec, topology]);
+  }, [topology]);
 
   const handleSubmit = useCallback(
     (
-      values: Omit<TopologyResource, "id"> & {
+      values: Omit<Partial<TopologyResource>, "id"> & {
         id?: string;
       }
     ) => {
@@ -137,14 +92,6 @@ export default function TopologyResourceForm({
     }
     return isLoading ? "Saving" : "Save";
   }, [isLoading, topology]);
-
-  if (selectedOption && selectedOption !== "Custom" && isLoadingSpec) {
-    return (
-      <div className="flex flex-col gap-2 p-4 overflow-y-auto h-full">
-        <FormSkeletonLoader />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-2 overflow-y-auto h-full">
@@ -189,13 +136,21 @@ export default function TopologyResourceForm({
                   </div>
                 )}
                 {!!topology?.id && (
-                  <DeleteResource
-                    resourceId={topology?.id}
-                    resourceInfo={resourceInfo}
-                    onDeleted={() => {
-                      navigate(`/settings/integrations`);
-                    }}
-                  />
+                  <>
+                    <Button
+                      onClick={onCancel}
+                      text="Cancel"
+                      className="btn-secondary"
+                    />
+                    <div className="flex-1" />
+                    <DeleteResource
+                      resourceId={topology?.id}
+                      resourceInfo={resourceInfo}
+                      onDeleted={() => {
+                        navigate(`/settings/integrations`);
+                      }}
+                    />
+                  </>
                 )}
 
                 <Button

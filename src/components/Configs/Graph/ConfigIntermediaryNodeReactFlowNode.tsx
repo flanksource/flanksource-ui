@@ -1,4 +1,4 @@
-import { Badge } from "@flanksource-ui/ui/Badge";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import { HiOutlineMinusCircle, HiOutlinePlusCircle } from "react-icons/hi";
 import { Handle, NodeProps } from "reactflow";

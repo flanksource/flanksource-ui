@@ -1,4 +1,4 @@
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import SlidingSideBar from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useCallback, useState } from "react";
 import { MdMenu } from "react-icons/md";

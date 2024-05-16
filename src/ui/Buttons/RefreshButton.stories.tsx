@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { RefreshButton } from "./index";
+import { RefreshButton } from "./RefreshButton";
 
 export default {
   title: "RefreshButton",

@@ -1,12 +1,12 @@
-import { FaComment } from "react-icons/fa";
 import {
   IncidentHistory,
   IncidentHistoryType,
   IncidentStatus
-} from "../../../api/types/incident";
-import { hypothesisStatusIconMap } from "../../../constants/hypothesisStatusOptions";
-import { Avatar } from "../../../ui/Avatar";
-import { Badge } from "../../../ui/Badge";
+} from "@flanksource-ui/api/types/incident";
+import { hypothesisStatusIconMap } from "@flanksource-ui/constants/hypothesisStatusOptions";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { FaComment } from "react-icons/fa";
 import { incidentStatusItems } from "../data";
 import EvidenceChangelogContent from "./EvidenceChangelogContent";
 

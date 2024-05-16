@@ -2,7 +2,7 @@ import { FieldArray, useFormikContext } from "formik";
 import { get } from "lodash";
 import { useMemo } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { Button } from "../../../ui/Button";
+import { Button } from "../../../ui/Buttons/Button";
 import FormikConfigEnvVarFields from "./FormikConfigEnvVarFields";
 
 type ConfigFormFieldProps = {

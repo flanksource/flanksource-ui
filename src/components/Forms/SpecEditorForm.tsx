@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Buttons/Button";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 import {
   SchemaResourceType,

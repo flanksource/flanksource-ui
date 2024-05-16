@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { useDeleteAgentMutations } from "../../api/query-hooks/mutations/useUpsertAgentMutations";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Buttons/Button";
 import { toastError, toastSuccess } from "../Toast/toast";
 
 type DeleteAgentButtonProps = {

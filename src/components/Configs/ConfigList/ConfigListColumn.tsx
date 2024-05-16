@@ -1,5 +1,5 @@
 import { Status } from "@flanksource-ui/components/Status";
-import { Badge } from "@flanksource-ui/ui/Badge";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { FaTrash } from "react-icons/fa";

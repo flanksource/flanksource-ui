@@ -3,7 +3,7 @@ import { Menu } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BsTrash } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
-import { IconButton } from "../../IconButton";
+import { IconButton } from "../../../ui/Buttons/IconButton";
 
 type PlaybookCardMenuDropdownProps = {
   onDeletePlaybook?: () => void;

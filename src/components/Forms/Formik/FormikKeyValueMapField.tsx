@@ -1,4 +1,4 @@
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useFormikContext } from "formik";
 import { get, set } from "lodash";
 import { useCallback, useEffect, useState } from "react";

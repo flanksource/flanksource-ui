@@ -1,4 +1,4 @@
-import { Button } from "@flanksource-ui/ui/Button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { modalHelpLinkAtom } from "@flanksource-ui/ui/Modal";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";

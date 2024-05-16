@@ -1,7 +1,7 @@
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import React from "react";
-import { HealthCheck } from "../../../api/types/health";
-import { Badge } from "../../../ui/Badge";
 import AgentName from "../../Agents/AgentName";
 import { Icon } from "../../Icon";
 
