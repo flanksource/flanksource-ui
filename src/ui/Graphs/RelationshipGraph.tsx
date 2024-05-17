@@ -47,7 +47,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   nodes: propNodes,
   edges: propEdges
 }: ConfigGraphProps<T>) {
-  const { setViewport, fitView } = useReactFlow();
+  const { setViewport, fitView, getZoom } = useReactFlow();
 
   // During the initial layout setup, we want to align the nodes vertically
   // centered and horizontally aligned to the left. This is done only once and
@@ -83,14 +83,19 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
       setIsInitialLayoutSetupDone(true);
 
       if (node.data.expandable) {
+        // Set center is not working as expected, fitView with maxZoom and
+        // minZoom set is a workaround to center the node without messing up the
+        // zoom level
         fitView({
           nodes: [node],
-          duration: 200
+          duration: 200,
+          maxZoom: getZoom(),
+          minZoom: getZoom()
         });
       }
       setTimeout(() => setShowScreen(false), 150);
     },
-    [fitView]
+    [fitView, getZoom]
   );
 
   const sendNodesEdgePoint = useCallback(() => {
