@@ -126,11 +126,14 @@ jobs:
         run: |
           cd canary-checker
           yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
-      - name: Push changes to chart repo
-        uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4.16.0
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: "chore: update flanksource-ui chart dependency to ${{ needs.semantic-release.outputs.release-version }}"
-          repository: ./canary-checker
+          commit-message: "chore: update flanksource-ui to ${{ needs.semantic-release.outputs.release-version }}"
+          token: ${{ secrets.FLANKBOT }}
+          title: "chore: update flanksource-ui to ${{ needs.semantic-release.outputs.release-version }}"
+          branch: "update-flanksource-ui"
+          path: ./canary-checker
 
   update-incident-commander:
     runs-on: ubuntu-latest
