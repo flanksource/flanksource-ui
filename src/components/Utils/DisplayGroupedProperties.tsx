@@ -1,4 +1,5 @@
-import { PropertyItem } from "../Topology/Sidebar/Utils/formatTopologyProperties";
+import { Icon } from "../Icon";
+import { PropertyItem } from "../Topology/Sidebar/Utils/formatProperties";
 import DisplayDetailsRow from "./DisplayDetailsRow";
 
 type Props = {
@@ -25,6 +26,9 @@ export function DisplayGroupedProperties({ items }: Props) {
           >
             <div className="text-sm text-gray-700 ">
               <span className="border-b border-dashed border-gray-500">
+                {property.icon && (
+                  <Icon name={property.icon} className="mr-1 w-4" />
+                )}
                 {property.label}
               </span>
             </div>

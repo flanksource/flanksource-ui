@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import { TopologyProperty } from "../../../api/types/topology";
+import { FiExternalLink } from "react-icons/fi";
+import { Property as PropertyD } from "../../../api/types/topology";
 import { NodePodPropToLabelMap } from "../../../constants";
 import { Age } from "../../../ui/Age";
 import { isEmpty } from "../../Canary/utils";
@@ -12,7 +13,7 @@ import {
 } from "./Utils/FormatProperties";
 
 type FormatPropertyProps = {
-  property: TopologyProperty;
+  property: PropertyD;
   short?: boolean;
   isSidebar?: boolean;
 };
@@ -25,6 +26,7 @@ export function FormatProperty({
   if (property == null) {
     return null;
   }
+
   let { text } = property;
 
   if (property.name === "created" && typeof text === "string") {
@@ -49,18 +51,41 @@ export function FormatProperty({
     );
   }
 
+  if (
+    (property.type === "text" || !property.type) &&
+    !property.value &&
+    property.links
+  ) {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {property.links?.map((link) => (
+          <a
+            key={link.url}
+            href={link.url}
+            className="link"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {link.label}
+            <FiExternalLink className="inline ml-1" size={12} />
+          </a>
+        ))}
+      </div>
+    );
+  }
+
   return <FormatPropertyDefault property={property} short={short} />;
 }
 
-type PropertyProps = {
-  property: TopologyProperty;
+type PropertyDisplayProps = {
+  property: PropertyD;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "property">;
 
-export const Property = ({
+export function PropertyDisplay({
   property,
   className = "",
   ...props
-}: PropertyProps) => {
+}: PropertyDisplayProps) {
   const { name, icon, color } = property;
   const label =
     NodePodPropToLabelMap[name as keyof typeof NodePodPropToLabelMap] || name;
@@ -97,4 +122,4 @@ export const Property = ({
       </span>
     </div>
   );
-};
+}

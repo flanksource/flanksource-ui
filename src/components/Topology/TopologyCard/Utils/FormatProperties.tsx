@@ -3,12 +3,12 @@ import { isEmpty } from "lodash";
 import React, { useMemo, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { Tooltip } from "react-tooltip";
-import { TopologyProperty } from "../../../../api/types/topology";
+import { Property } from "../../../../api/types/topology";
 import ProgressBar from "../../../../ui/stats/ProgressBar";
 import { formatBytes } from "../../../../utils/common";
 
 type FormatPropertyProps = {
-  property?: TopologyProperty;
+  property?: Property;
   short?: boolean;
   isSidebar?: boolean;
 };

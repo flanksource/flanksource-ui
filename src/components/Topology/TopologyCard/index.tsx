@@ -13,7 +13,7 @@ import { CustomScroll } from "../../CustomScroll";
 import { Icon } from "../../Icon";
 import IncidentCardSummary from "../../Incidents/IncidentCardSummary";
 import { CardMetrics } from "./CardMetrics";
-import { Property } from "./Property";
+import { PropertyDisplay } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
@@ -236,7 +236,7 @@ export function TopologyCard({
                 minChildCount={6}
               >
                 {properties.map((property, index) => (
-                  <Property
+                  <PropertyDisplay
                     key={index}
                     property={property}
                     className={

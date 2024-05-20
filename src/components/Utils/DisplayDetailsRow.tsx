@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 type DisplayDetailsRowProps = {
   items: {
-    label: string;
+    label: ReactNode;
     value: ReactNode;
   }[];
   className?: string;
@@ -15,7 +15,11 @@ export default function DisplayDetailsRow({
   return (
     <div className="flex flex-row gap-2 w-full">
       {items.map(({ label, value }) => (
-        <div className={className} key={label} data-testid="display-item-row">
+        <div
+          className={className}
+          key={label?.toString()}
+          data-testid="display-item-row"
+        >
           <label className="text-sm overflow-hidden truncate text-gray-600 ">
             <span className="border-b border-dashed border-gray-500">
               {label}
