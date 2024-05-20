@@ -1,8 +1,8 @@
-import { formatTopologyProperties } from "./../formatTopologyProperties";
+import { formatProperties } from "../formatProperties";
 
 describe("formatTopologyProperties", () => {
   test("returns an empty array when topology is null", () => {
-    const result = formatTopologyProperties();
+    const result = formatProperties();
     expect(result).toEqual([]);
   });
 
@@ -16,7 +16,7 @@ describe("formatTopologyProperties", () => {
       ]
     };
 
-    const result = formatTopologyProperties(mockTopology);
+    const result = formatProperties(mockTopology);
 
     expect(result).toStrictEqual(
       expect.arrayContaining([
@@ -68,7 +68,7 @@ describe("formatTopologyProperties", () => {
       ]
     };
 
-    const result = formatTopologyProperties(mockTopology);
+    const result = formatProperties(mockTopology);
 
     expect(result).toMatchInlineSnapshot(`
       [
@@ -146,7 +146,7 @@ describe("formatTopologyProperties", () => {
       ]
     };
 
-    const result = formatTopologyProperties(topology);
+    const result = formatProperties(topology);
 
     expect(result).toEqual([
       {

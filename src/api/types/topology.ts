@@ -4,7 +4,7 @@ import { HealthCheckSummary } from "./health";
 import { IncidentType } from "./incident";
 import { User } from "./users";
 
-export type TopologyProperty = {
+export type Property = {
   name: string;
   icon?: string;
   label?: string;
@@ -18,6 +18,10 @@ export type TopologyProperty = {
   color?: string;
   namespace?: string;
   url?: string;
+  links?: {
+    label: string;
+    url: string;
+  }[];
 };
 
 export interface Component extends Timestamped, Namespaced {
@@ -33,7 +37,7 @@ export interface Component extends Timestamped, Namespaced {
 
 export interface Topology extends Component, CostsData, Agent {
   title?: string;
-  properties?: TopologyProperty[];
+  properties?: Property[];
   components?: Topology[];
   labels?: Record<string, string>;
   path?: string;

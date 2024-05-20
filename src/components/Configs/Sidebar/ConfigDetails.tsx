@@ -1,5 +1,6 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
+import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import { useMemo } from "react";
@@ -58,6 +59,11 @@ export function ConfigDetails({ configId }: Props) {
     }
     return types;
   }, [isLoading, configDetails]);
+
+  const properties = useMemo(
+    () => formatProperties(configDetails),
+    [configDetails]
+  );
 
   return (
     <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
@@ -164,6 +170,8 @@ export function ConfigDetails({ configId }: Props) {
           />
 
           <DisplayDetailsRow items={types} />
+
+          <DisplayGroupedProperties items={properties} />
 
           {!isCostsEmpty(configDetails) && (
             <DisplayDetailsRow

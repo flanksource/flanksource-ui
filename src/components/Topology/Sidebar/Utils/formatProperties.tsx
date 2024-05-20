@@ -4,6 +4,7 @@ import { FormatProperty } from "../../TopologyCard/Property";
 type GroupedProperties = {
   type: "GROUPED";
   label: string;
+  icon?: string;
   groupName: string;
   properties: {
     rowKey: string;
@@ -19,6 +20,7 @@ type SingleProperty = {
   label: string;
   rowKey: string;
   properties: {
+    icon?: string;
     label: string;
     value: React.ReactNode;
   }[];
@@ -26,9 +28,7 @@ type SingleProperty = {
 
 export type PropertyItem = GroupedProperties | SingleProperty;
 
-export function formatTopologyProperties(
-  topology?: Pick<Topology, "properties">
-) {
+export function formatProperties(topology?: Pick<Topology, "properties">) {
   if (topology == null) {
     return [];
   }

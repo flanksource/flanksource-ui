@@ -14,7 +14,7 @@ import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import { CardMetrics } from "../TopologyCard/CardMetrics";
 import { TopologyLink } from "../TopologyLink";
-import { formatTopologyProperties } from "./Utils/formatTopologyProperties";
+import { formatProperties } from "./Utils/formatProperties";
 
 type Props = {
   topology?: Topology;
@@ -99,7 +99,7 @@ export default function TopologyDetails({
   }, [refererId, topology]);
 
   const formattedProperties = useMemo(() => {
-    return formatTopologyProperties(topology);
+    return formatProperties(topology);
   }, [topology]);
 
   const formattedLabels = useMemo(() => {

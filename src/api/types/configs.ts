@@ -71,6 +71,14 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     changes?: number;
     playbook_runs?: number;
   };
+  properties?: {
+    icon: string;
+    name: string;
+    links: {
+      label: string;
+      url: string;
+    }[];
+  }[];
 }
 
 export interface ConfigItemGraphData extends ConfigItem {
