@@ -1,9 +1,9 @@
+import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
+import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
+import { Age } from "@flanksource-ui/ui/Age";
+import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useGetConfigByIdQuery } from "../../../api/query-hooks";
-import { isCostsEmpty } from "../../../api/types/configs";
-import { Age } from "../../../ui/Age";
-import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { InfoMessage } from "../../InfoMessage";
 import { Status } from "../../Status";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
@@ -27,34 +27,37 @@ export function ConfigDetails({ configId }: Props) {
     return formatConfigLabels(configDetails);
   }, [configDetails]);
 
-  var types = [];
-  if (!isLoading && configDetails != null) {
-    types.push({
-      label: "Type",
-      value: (
-        <Link
-          to={{
-            pathname: "/catalog",
-            search: `type=${configDetails.type}`
-          }}
-        >
-          <ConfigsTypeIcon
-            config={configDetails}
-            showLabel
-            showPrimaryIcon
-            showSecondaryIcon
-          />
-        </Link>
-      )
-    });
-
-    if (!configDetails.type?.endsWith(configDetails.config_class || "")) {
+  const types = useMemo(() => {
+    const types = [];
+    if (!isLoading && configDetails != null) {
       types.push({
-        label: "Class",
-        value: configDetails?.config_class
+        label: "Type",
+        value: (
+          <Link
+            to={{
+              pathname: "/catalog",
+              search: `type=${configDetails.type}`
+            }}
+          >
+            <ConfigsTypeIcon
+              config={configDetails}
+              showLabel
+              showPrimaryIcon
+              showSecondaryIcon
+            />
+          </Link>
+        )
       });
+
+      if (!configDetails.type?.endsWith(configDetails.config_class || "")) {
+        types.push({
+          label: "Class",
+          value: configDetails?.config_class
+        });
+      }
     }
-  }
+    return types;
+  }, [isLoading, configDetails]);
 
   return (
     <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
