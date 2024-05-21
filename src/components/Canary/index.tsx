@@ -17,6 +17,7 @@ import React, {
 import { FaFilter } from "react-icons/fa";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Badge } from "..";
+import { Toggle } from "../../ui/FormControls/Toggle";
 import HealthPageSkeletonLoader from "../../ui/SkeletonLoader/HealthPageSkeletonLoader";
 import { GroupByDropdown } from "../Dropdown/GroupByDropdown";
 import {
@@ -28,7 +29,6 @@ import { TimeRange, timeRanges } from "../Dropdown/TimeRange";
 import { defaultTabSelections } from "../Dropdown/lib/lists";
 import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
 import { isSidebarCollapsedAtom } from "../Layout/SidebarLayout";
-import { Toggle } from "../Toggle";
 import { TristateToggle } from "../TristateToggle";
 import { CanaryInterfaceMinimal } from "./CanaryInterface";
 import { CanarySearchBar } from "./CanarySearchBar";

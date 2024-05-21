@@ -1,7 +1,7 @@
 import { useFormikContext } from "formik";
 import { get } from "lodash";
 import { useEffect, useState } from "react";
-import { Switch } from "../../Switch";
+import { Switch } from "../../../ui/FormControls/Switch";
 import FormikTextInput from "./FormikTextInput";
 
 type FormikConfigEnvVarFieldsProps = {

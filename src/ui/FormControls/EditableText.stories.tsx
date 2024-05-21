@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { EditableText } from "./index";
+import { EditableText } from "./EditableText";
 
 export default {
   title: "EditableText",

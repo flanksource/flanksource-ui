@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import React, { useCallback, useMemo } from "react";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../ui/FormControls/TextInput";
 import TextInputWithSuffix from "./utils/TextInputWithSuffix";
 
 type FormikTextInputProps = {

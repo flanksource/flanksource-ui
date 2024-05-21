@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { Switch } from "../../Switch";
 import { useFormikContext } from "formik";
+import { get } from "lodash";
+import { useCallback, useEffect, useState } from "react";
+import { Switch } from "../../../ui/FormControls/Switch";
 import FormikCheckboxFieldsGroup from "./FormikCheckboxFieldsGroup";
 import FormikEnvVarConfigsFields from "./FormikConfigEnvVarFields";
-import { get } from "lodash";
 
 type FormikAuthFieldsGroupProps = {
   name: string;

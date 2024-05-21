@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { TextInputClearable } from "../../TextInputClearable";
+import { TextInputClearable } from "../../../ui/FormControls/TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
 import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";

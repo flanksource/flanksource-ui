@@ -1,6 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 
+import SelectDropdown from "@flanksource-ui/ui/Dropdowns/SelectDropdown";
+import { TextInput } from "@flanksource-ui/ui/FormControls/TextInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
@@ -17,8 +19,6 @@ import {
 import { useUser } from "../../../context";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
 import { Button } from "../../../ui/Buttons/Button";
-import SelectDropdown from "../../Dropdown/SelectDropdown";
-import { TextInput } from "../../TextInput";
 import { toastError } from "../../Toast/toast";
 import { severityOptions, typeOptions } from "../AttachEvidenceDialog";
 import { incidentStatusItems, severityItems } from "../data";

@@ -1,4 +1,4 @@
-import { Toggle } from "@flanksource-ui/components/Toggle";
+import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigRelatedChangesToggles() {

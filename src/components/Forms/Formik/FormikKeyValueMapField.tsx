@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 import { get, set } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../ui/FormControls/TextInput";
 
 type LocalStateValue = {
   key: string;

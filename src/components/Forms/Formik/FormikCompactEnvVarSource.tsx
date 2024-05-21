@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import { useEffect, useState } from "react";
-import { Switch } from "../../Switch";
+import { Switch } from "../../../ui/FormControls/Switch";
 import {
   EnvVarSourceType,
   FormikEnvVarSourceProps,

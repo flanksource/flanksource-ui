@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { TextWithDivider } from "./index";
+import { TextWithDivider } from "./TextWithDivider";
 
 export default {
   title: "TextWithDivider",

@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { Incident } from "../../../api/types/incident";
-import { EditableText } from "../../EditableText";
+import { EditableText } from "../../../ui/FormControls/EditableText";
 
 type EditIncidentTitleFormProps = {
   incident: Pick<Incident, "title">;

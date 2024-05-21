@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import React from "react";
-import { TextArea } from "../../TextArea/TextArea";
+import { TextArea } from "../../../ui/FormControls/TextArea";
 
 type FormikTextAreaProps = {
   name: string;

@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Controller, useForm } from "react-hook-form";
-import { severityItems } from "../Incidents/data";
-import { TextInput } from "../TextInput";
-import { DropdownWithActions } from "./DropdownWithActions";
 import { IncidentSeverity } from "../../api/types/incident";
+import { TextInput } from "../../ui/FormControls/TextInput";
+import { severityItems } from "../Incidents/data";
+import { DropdownWithActions } from "./DropdownWithActions";
 
 export default {
   title: "Dropdown/DropdownWithActions",

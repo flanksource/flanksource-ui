@@ -1,7 +1,7 @@
 import { useFormikContext } from "formik";
 import { get } from "lodash";
 import { useState } from "react";
-import { Switch } from "../Switch";
+import { Switch } from "../../ui/FormControls/Switch";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { ConnectionFormFields } from "./connectionTypes";
 

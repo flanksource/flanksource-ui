@@ -4,10 +4,10 @@ import { FaDownload } from "react-icons/fa";
 import { Oval } from "react-loading-icons";
 import { Topology } from "../../../api/types/topology";
 import { Events, sendAnalyticEvent } from "../../../services/analytics";
+import { Toggle } from "../../../ui/FormControls/Toggle";
 import { Modal } from "../../../ui/Modal";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { toastError } from "../../Toast/toast";
-import { Toggle } from "../../Toggle";
 import { useDownloadTopologySnapshot } from "./useDownloadTopologySnapshot";
 
 type Props = {

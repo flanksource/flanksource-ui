@@ -5,7 +5,7 @@ import {
   FieldErrorsImpl,
   UseFormSetValue
 } from "react-hook-form";
-import { TextInput } from "../../../../TextInput";
+import { TextInput } from "../../../../../ui/FormControls/TextInput";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type ServiceNowProps = {
