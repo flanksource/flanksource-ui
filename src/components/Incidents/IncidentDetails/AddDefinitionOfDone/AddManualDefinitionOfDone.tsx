@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Evidence } from "../../../../api/types/evidence";
-import { TextInput } from "../../../TextInput";
+import { TextInput } from "../../../../ui/FormControls/TextInput";
 import useAddCommentAsDoD from "./useAddCommentAsDoD";
 
 type ManualDoDInputProps = {

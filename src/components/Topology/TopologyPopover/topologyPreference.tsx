@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
 import { Size } from "../../../types";
 import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
-import { Toggle } from "../../Toggle";
+import { Toggle } from "../../../ui/FormControls/Toggle";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");

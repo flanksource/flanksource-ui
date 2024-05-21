@@ -7,8 +7,8 @@ import {
   UseFormSetValue
 } from "react-hook-form";
 import { searchConfigs } from "../../../../../api/services/configs";
+import { TextInput } from "../../../../../ui/FormControls/TextInput";
 import { ConfigItem } from "../../../../Configs/ConfigItem";
-import { TextInput } from "../../../../TextInput";
 import { AddResponderFormValues } from "../../AddResponders/AddResponder";
 
 type JiraProps = {

@@ -1,10 +1,10 @@
 import { useFormikContext } from "formik";
-import { Switch } from "../../Switch";
+import { useCallback, useState } from "react";
+import { Switch } from "../../../ui/FormControls/Switch";
 import { AWSConnectionFormEditor } from "./AWSConnectionFormEditor";
 import { GCPConnectionFormEditor } from "./GCPConnectionFormEditor";
 import { SFTPConnectionFormEditor } from "./SFTPConnectionFormEditor";
 import { SMBConnectionFormEditor } from "./SMBConnectionFormEditor";
-import { useCallback, useState } from "react";
 
 const Connections = {
   AWS: {
@@ -47,7 +47,7 @@ const ConnectionFormEdit = ({
     "None" | ConnectionTypes
   >("None");
   const [FormFields, setFormFields] =
-    useState<typeof Connections[ConnectionTypes]>();
+    useState<(typeof Connections)[ConnectionTypes]>();
 
   const setConnectionFormFieldValues = useCallback(
     (connectionType: "None" | ConnectionTypes) => {

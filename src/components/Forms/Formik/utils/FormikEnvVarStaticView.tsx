@@ -1,6 +1,6 @@
 import React from "react";
-import { TextArea } from "../../../TextArea/TextArea";
-import { TextInput } from "../../../TextInput";
+import { TextArea } from "../../../../ui/FormControls/TextArea";
+import { TextInput } from "../../../../ui/FormControls/TextInput";
 
 interface Props {
   name: string;

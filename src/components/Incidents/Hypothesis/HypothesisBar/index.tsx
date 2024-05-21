@@ -16,7 +16,7 @@ import { Hypothesis } from "../../../../api/types/hypothesis";
 import { HypothesisAPIs } from "../../../../pages/incident/IncidentDetails";
 import { recentlyAddedHypothesisIdAtom } from "../../../../store/hypothesis.state";
 import { AvatarGroup } from "../../../../ui/AvatarGroup";
-import { EditableText } from "../../../EditableText";
+import { EditableText } from "../../../../ui/FormControls/EditableText";
 import { HypothesisBarMenu } from "../HypothesisBarMenu";
 import { StatusDropdownContainer } from "../StatusDropdownContainer";
 

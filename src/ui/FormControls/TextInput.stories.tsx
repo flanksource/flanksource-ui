@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { TextInput } from "./index";
+import { TextInput } from "./TextInput";
 
 export default {
   title: "TextInput",

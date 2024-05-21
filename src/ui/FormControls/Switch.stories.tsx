@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { Switch } from ".";
+import { Switch } from "./Switch";
 
 export default {
   title: "Switch",

@@ -1,6 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import { useSearchParams } from "react-router-dom";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../ui/FormControls/TextInput";
 
 type Props = {
   refetch: () => void;

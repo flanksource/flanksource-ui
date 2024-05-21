@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Switch } from "../../Switch";
-import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
 import { useField, useFormikContext } from "formik";
+import { useState } from "react";
+import { Switch } from "../../../ui/FormControls/Switch";
+import { FormikCodeEditor } from "../Formik/FormikCodeEditor";
 
 const MethodOptions = ["GET", "POST", "PUT", "DELETE"] as const;
 
 type HTTPBodyProps = {
-  method: typeof MethodOptions[number];
+  method: (typeof MethodOptions)[number];
   name: string;
 };
 
@@ -50,7 +50,7 @@ export default function HTTPMethodFieldsGroup({
   const [field] = useField(methodFieldName);
 
   const [selectedMethod, setSelectedMethod] = useState<
-    typeof MethodOptions[number]
+    (typeof MethodOptions)[number]
   >(field.value ?? "GET");
 
   const { setFieldValue } = useFormikContext<Record<string, any>>();

@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
-import { Switch } from "../../Switch";
-import { FormikCodeEditor } from "./FormikCodeEditor";
 import { useField, useFormikContext } from "formik";
+import { useMemo, useState } from "react";
+import { Switch } from "../../../ui/FormControls/Switch";
+import { FormikCodeEditor } from "./FormikCodeEditor";
 
 const LanguageOptionsForTemplate = {
   None: "none",

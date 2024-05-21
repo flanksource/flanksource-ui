@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import React from "react";
-import { TextInput } from "../../TextInput";
+import { TextInput } from "../../../ui/FormControls/TextInput";
 
 type FormikNumberInputProps = {
   name: string;

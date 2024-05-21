@@ -1,4 +1,4 @@
-import { Toggle } from "@flanksource-ui/components/Toggle";
+import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import Popover from "@flanksource-ui/ui/Popover/Popover";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";

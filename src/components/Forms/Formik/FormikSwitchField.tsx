@@ -1,5 +1,5 @@
 import { useField } from "formik";
-import { Switch } from "../../Switch";
+import { Switch } from "../../../ui/FormControls/Switch";
 
 type Props<OptionsValueType = string> = {
   name: string;

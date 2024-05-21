@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { TextInputClearable } from "./index";
+import { TextInputClearable } from "./TextInputClearable";
 
 export default {
   title: "TextInputClearable",

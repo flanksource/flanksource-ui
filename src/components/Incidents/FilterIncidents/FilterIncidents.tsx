@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { useIncidentPageContext } from "../../../context/IncidentPageContext";
-import { TextInputClearable } from "../../TextInputClearable";
+import { TextInputClearable } from "../../../ui/FormControls/TextInputClearable";
 import IncidentSeverityDropdown from "../IncidentSeverityDropdown";
 import IncidentStatusDropdown from "../IncidentStatusDropdown";
 import IncidentTypeDropdown from "../IncidentTypeDropdown";

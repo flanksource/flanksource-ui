@@ -1,4 +1,4 @@
-import { Switch } from "@flanksource-ui/components/Switch";
+import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 

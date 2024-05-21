@@ -1,3 +1,14 @@
+import {
+  createSavedQuery,
+  deleteSavedQuery,
+  getAllSavedQueries,
+  getConfigsByQuery,
+  updateSavedQuery
+} from "@flanksource-ui/api/services/configs";
+import { ClickableSvg } from "@flanksource-ui/ui/ClickableSvg/ClickableSvg";
+import { TextInputClearable } from "@flanksource-ui/ui/FormControls/TextInputClearable";
+import { TextWithDivider } from "@flanksource-ui/ui/FormControls/TextWithDivider";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import React, {
@@ -11,18 +22,7 @@ import React, {
 } from "react";
 import { FaCog } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import {
-  createSavedQuery,
-  deleteSavedQuery,
-  getAllSavedQueries,
-  getConfigsByQuery,
-  updateSavedQuery
-} from "../../../api/services/configs";
 import { useLoader } from "../../../hooks";
-import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
-import { Modal } from "../../../ui/Modal";
-import { TextInputClearable } from "../../TextInputClearable";
-import { TextWithDivider } from "../../TextWithDivider";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
 type QueryBuilderProps = {
