@@ -174,6 +174,7 @@ export default function SpecEditorForm({
                   <label className="form-label">Specs</label>
                   <FormikCodeEditor
                     format={specFormat}
+                    className="flex flex-col h-[min(600px,calc(90vh))]"
                     fieldName={
                       selectedSpec.type === "code"
                         ? `spec.${selectedSpec.specsMapField}`
