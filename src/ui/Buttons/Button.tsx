@@ -2,7 +2,17 @@ import clsx from "clsx";
 import React from "react";
 
 type Props = {
+  /**
+   * @deprecated
+   *
+   * use children instead
+   */
   text?: React.ReactNode;
+  /**
+   * @deprecated
+   *
+   * use children instead
+   */
   icon?: React.ReactNode;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "none";
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
@@ -16,6 +26,7 @@ export function Button({
   size = "sm",
   onClick = () => {},
   type = "button",
+  children,
   ...props
 }: Props) {
   switch (size) {
@@ -53,8 +64,12 @@ export function Button({
       )}
       {...props}
     >
-      {icon}
-      {text && <span>{text}</span>}
+      {children || (
+        <>
+          {icon}
+          {text && <span>{text}</span>}
+        </>
+      )}
     </button>
   );
 }
