@@ -12,7 +12,7 @@ describe("JobsHistoryTable", () => {
   const data: JobHistory[] = [
     {
       id: "1",
-      name: "JobName",
+      name: "JobName1",
       status: "SUCCESS",
       duration_millis: 123456,
       created_at: "2022-01-01T00:00:00Z",
@@ -22,11 +22,12 @@ describe("JobsHistoryTable", () => {
       resource_id: "resource_id",
       resource_type: "topology",
       time_start: "2022-01-01T00:00:00Z",
-      time_end: "2022-01-01T00:02:03Z"
+      time_end: "2022-01-01T00:02:03Z",
+      resource_name: "resource_name_1"
     },
     {
       id: "2",
-      name: "JobName",
+      name: "JobName2",
       status: "FAILED",
       duration_millis: 654321,
       created_at: "2022-01-02T00:00:00Z",
@@ -36,7 +37,8 @@ describe("JobsHistoryTable", () => {
       resource_id: "resource_id_2",
       resource_type: "canary",
       time_start: "2022-01-01T00:00:00Z",
-      time_end: "2022-01-01T00:02:03Z"
+      time_end: "2022-01-01T00:02:03Z",
+      resource_name: "resource_name_2"
     }
   ];
 
@@ -54,11 +56,9 @@ describe("JobsHistoryTable", () => {
       </MemoryRouter>
     );
     expect(
-      screen.getByRole("columnheader", { name: "Resource Type" })
+      screen.getByRole("columnheader", { name: "Resource" })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("columnheader", { name: "Resource ID" })
-    ).toBeInTheDocument();
+
     expect(
       screen.getByRole("columnheader", { name: "Timestamp" })
     ).toBeInTheDocument();
@@ -87,21 +87,22 @@ describe("JobsHistoryTable", () => {
       </MemoryRouter>
     );
 
-    // expect(
-    //   screen.getByRole("cell", {
-    //     name: /Job Name/i
-    //   })
-    // ).toBeInTheDocument();
+    expect(
+      screen.getByRole("cell", {
+        name: /Job Name1/i
+      })
+    ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "2m3s" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: "resource_id" })
+      screen.getByRole("cell", { name: /resource_name_1/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole("cell", { name: "topology" })).toBeInTheDocument();
-    //expect(screen.getByRole("cell", { name: "Job Name" })).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("cell", { name: /Job Name2/i })
+    ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "10m54s" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: "resource_id_2" })
+      screen.getByRole("cell", { name: /resource_name_2/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole("cell", { name: "canary" })).toBeInTheDocument();
   });
 });

@@ -43,7 +43,7 @@ export const getJobsHistory = async (
 
   return resolve(
     IncidentCommander.get<JobHistory[] | null>(
-      `/job_history?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}${durationParam}`,
+      `/job_histories?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}${durationParam}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -38,6 +38,7 @@ export type JobHistory = {
   time_start: string;
   time_end: string;
   created_at: string;
+  resource_name: string;
 };
 
 type JobsHistoryTableProps = {
