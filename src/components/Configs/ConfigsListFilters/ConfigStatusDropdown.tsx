@@ -6,22 +6,21 @@ import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
+import { useField } from "formik";
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 
 type ConfigTypesDropdownProps = {
   label?: string;
-  paramsToReset?: string[];
   paramsKey?: string;
 };
 
 export function ConfigStatusDropdown({
   label = "Status",
-  paramsKey = "status",
-  paramsToReset = []
+  paramsKey = "status"
 }: ConfigTypesDropdownProps) {
-  const [params, setParams] = useSearchParams();
-  const type = params.get(paramsKey) ?? undefined;
+  const [field] = useField({
+    name: paramsKey
+  });
 
   const { isLoading, data: configStatusesOptions } = useQuery(
     ["db", "config_statues"],
@@ -58,15 +57,17 @@ export function ConfigStatusDropdown({
       isLoading={isLoading}
       options={configItemsOptionsItems}
       onChange={(value) => {
-        if (value === "All" || !value) {
-          params.delete(paramsKey);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name: paramsKey, value: value }
+          });
         } else {
-          params.set(paramsKey, value);
+          field.onChange({
+            target: { name: paramsKey, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
-      value={type}
+      value={field.value}
       className="w-auto max-w-[400px]"
       label={label}
     />

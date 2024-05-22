@@ -1,3 +1,4 @@
+import { useField } from "formik";
 import {
   HiInformationCircle,
   HiOutlineChevronDoubleDown,
@@ -5,14 +6,10 @@ import {
   HiOutlineChevronDown,
   HiOutlineMinus
 } from "react-icons/hi";
-import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 
 type Props = {
-  onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
-  paramsToReset?: string[];
-  value?: string;
 };
 
 export const configChangeSeverity = {
@@ -59,14 +56,9 @@ export const configChangeSeverity = {
   }
 } as const;
 
-export function ConfigChangeSeverity({
-  onChange = () => {},
-  searchParamKey = "severity",
-  paramsToReset = [],
-  value
-}: Props) {
-  const [params, setParams] = useSearchParams({
-    ...(value && { [searchParamKey]: value })
+export function ConfigChangeSeverity({ searchParamKey = "severity" }: Props) {
+  const [field] = useField({
+    name: searchParamKey
   });
 
   return (
@@ -74,16 +66,15 @@ export function ConfigChangeSeverity({
       items={configChangeSeverity}
       name="severity"
       onChange={(value) => {
-        if (value === "All" || !value) {
-          params.delete(searchParamKey);
+        if (value && value !== "All") {
+          field.onChange({ target: { name: searchParamKey, value: value } });
         } else {
-          params.set(searchParamKey, value);
+          field.onChange({
+            target: { name: searchParamKey, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
-        onChange(value);
       }}
-      value={params.get(searchParamKey) ?? "All"}
+      value={field.value ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

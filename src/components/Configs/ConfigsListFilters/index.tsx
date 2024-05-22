@@ -1,3 +1,4 @@
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import { debounce } from "lodash";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
@@ -13,30 +14,42 @@ function ConfigsListFilterControls() {
   const [params, setParams] = useSearchParams();
 
   return (
-    <div className="flex flex-row items-center gap-2 mr-4">
-      <ConfigTypesDropdown />
+    <FormikFilterForm
+      paramsToReset={["tags"]}
+      filterFields={[
+        "search",
+        "configType",
+        "labels",
+        "status",
+        "healthy",
+        "groupBy"
+      ]}
+    >
+      <div className="flex flex-row items-center gap-2 mr-4">
+        <ConfigTypesDropdown />
 
-      <ConfigGroupByDropdown paramsToReset={["tags"]} />
+        <ConfigGroupByDropdown paramsToReset={["tags"]} />
 
-      <ConfigLabelsDropdown />
+        <ConfigLabelsDropdown />
 
-      <ConfigStatusDropdown />
+        <ConfigStatusDropdown />
 
-      <ConfigHealthyDropdown />
+        <ConfigHealthyDropdown />
 
-      <TextInputClearable
-        onChange={debounce((e) => {
-          const query = e.target.value || "";
-          params.set("search", query);
-          setParams(params);
-        }, 200)}
-        className="w-80"
-        placeholder="Search for configs"
-        defaultValue={params.get("search") ?? undefined}
-      />
+        <TextInputClearable
+          onChange={debounce((e) => {
+            const query = e.target.value || "";
+            params.set("search", query);
+            setParams(params);
+          }, 200)}
+          className="w-80"
+          placeholder="Search for configs"
+          defaultValue={params.get("search") ?? undefined}
+        />
 
-      <ConfigListToggledDeletedItems />
-    </div>
+        <ConfigListToggledDeletedItems />
+      </div>
+    </FormikFilterForm>
   );
 }
 

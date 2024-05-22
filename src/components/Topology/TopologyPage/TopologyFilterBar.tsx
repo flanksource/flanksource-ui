@@ -1,14 +1,12 @@
 import { GetTopologyApiResponse } from "@flanksource-ui/api/services/topology";
 import { AgentNamesDropdown } from "@flanksource-ui/components/Agents/AgentNamesDropdown";
-import { ComponentLabelsDropdown } from "@flanksource-ui/components/Dropdown/ComponentLabelsDropdown";
-import { ComponentTypesDropdown } from "@flanksource-ui/components/Dropdown/ComponentTypesDropdown";
-import {
-  ReactSelectDropdown,
-  StateOption
-} from "@flanksource-ui/components/ReactSelectDropdown";
+import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import { StateOption } from "@flanksource-ui/components/ReactSelectDropdown";
+import { ComponentLabelsDropdown } from "@flanksource-ui/components/Topology/Dropdowns/ComponentLabelsDropdown";
+import { ComponentTypesDropdown } from "@flanksource-ui/components/Topology/Dropdowns/ComponentTypesDropdown";
 import { allOption } from "@flanksource-ui/pages/TopologyPage";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import TopologyPopOver from "../TopologyPopover";
 import { TopologySort } from "../TopologyPopover/topologySort";
 
@@ -30,14 +28,6 @@ export default function TopologyFilterBar({
   setTopologyCardSize,
   sortLabels
 }: TopologyFilterBarProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const selectedLabel = searchParams.get("labels") ?? "All";
-  const team = searchParams.get("team") ?? "All";
-  const agentId = searchParams.get("agent_id") ?? "All";
-  const topologyType = searchParams.get("type") ?? "All";
-  const healthStatus = searchParams.get("status") ?? "All";
-
   // todo: add team and inspect the shape of the data
   const teams = useMemo(() => {
     const teamOptions =
@@ -76,111 +66,75 @@ export default function TopologyFilterBar({
   }, [data?.healthStatuses]);
 
   return (
-    <div className="flex px-6">
-      <div className="flex gap-2 py-3 flex-wrap">
-        <div className="flex">
-          <ReactSelectDropdown
-            name="health"
-            label=""
-            value={healthStatus}
+    <FormikFilterForm
+      filterFields={[
+        "labels",
+        "team",
+        "type",
+        "status",
+        "showHiddenComponents",
+        "sortBy",
+        "sortOrder",
+        "agent_id"
+      ]}
+      paramsToReset={[]}
+    >
+      <div className="flex px-6">
+        <div className="flex gap-2 py-3 flex-wrap">
+          <FormikFilterSelectDropdown
+            name="status"
+            defaultValue="All"
             items={healthStatuses}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val) => {
-              if (!val || val.toLowerCase() === "all") {
-                return;
-              }
-              setSearchParams({
-                ...Object.fromEntries(searchParams),
-                status: val
-              });
-            }}
             prefix={
               <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
                 Health:
               </div>
             }
           />
-        </div>
-        <ComponentTypesDropdown
-          className="flex"
-          name="Types"
-          label=""
-          topologyTypes={topologyTypes}
-          value={topologyType}
-          onChange={(val) => {
-            if (!val || val.toLowerCase() === "all") {
-              return;
-            }
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              type: val
-            });
-          }}
-        />
-        <div className="flex">
-          <ReactSelectDropdown
+
+          <ComponentTypesDropdown
+            className="flex"
+            name="type"
+            topologyTypes={topologyTypes}
+          />
+
+          <FormikFilterSelectDropdown
             name="team"
-            label=""
-            value={team}
+            defaultValue={"All"}
             items={teams}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val) => {
-              if (!val || val.toLowerCase() === "all") {
-                return;
-              }
-              setSearchParams({
-                ...Object.fromEntries(searchParams),
-                team: val
-              });
-            }}
             prefix={
               <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
                 Team:
               </div>
             }
           />
-        </div>
-        <ComponentLabelsDropdown
-          name="Labels"
-          label=""
-          className="flex w-auto max-w-[500px]"
-          value={selectedLabel}
-          onChange={(val) => {
-            if (!val || val.toLowerCase() === "all") {
-              return;
-            }
-            setSearchParams({
-              ...Object.fromEntries(searchParams),
-              labels: val
-            });
-          }}
-        />
-        <div className="flex">
+
+          <ComponentLabelsDropdown
+            name="labels"
+            label=""
+            className="flex w-auto max-w-[500px]"
+          />
+
           <AgentNamesDropdown
             name="agent_id"
-            value={agentId}
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
-            onChange={(val) => {
-              if (!val || val.toLowerCase() === "all") {
-                return;
-              }
-              setSearchParams({
-                ...Object.fromEntries(searchParams),
-                agent_id: val
-              });
-            }}
           />
+
+          <div className="flex">
+            <TopologySort sortLabels={sortLabels} />
+          </div>
         </div>
 
-        <div className="flex">
-          <TopologySort sortLabels={sortLabels} />
-        </div>
+        <TopologyPopOver
+          size={topologyCardSize}
+          setSize={setTopologyCardSize}
+        />
       </div>
-
-      <TopologyPopOver size={topologyCardSize} setSize={setTopologyCardSize} />
-    </div>
+    </FormikFilterForm>
   );
 }

@@ -4,21 +4,20 @@ import {
 } from "@flanksource-ui/api/services/configs";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
 import { useQuery } from "@tanstack/react-query";
+import { useField } from "formik";
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
 type ConfigTypesDropdownProps = {
   label?: string;
-  paramsToReset?: string[];
 };
 
 export function ConfigTypesDropdown({
-  label = "Type:",
-  paramsToReset = []
+  label = "Type:"
 }: ConfigTypesDropdownProps) {
-  const [params, setParams] = useSearchParams();
-  const type = params.get("configType") ?? undefined;
+  const [field] = useField({
+    name: "configType"
+  });
 
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "config_types"],
@@ -81,15 +80,17 @@ export function ConfigTypesDropdown({
       items={configItemsOptionsItems}
       name="configType"
       onChange={(value) => {
-        if (value === "All" || !value) {
-          params.delete("configType");
+        if (value && value !== "All") {
+          field.onChange({
+            target: { name: "configType", value: value }
+          });
         } else {
-          params.set("configType", value);
+          field.onChange({
+            target: { name: "configType", value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
-      value={type ?? "All"}
+      value={field.value ?? "All"}
       className="w-auto max-w-[400px]"
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder

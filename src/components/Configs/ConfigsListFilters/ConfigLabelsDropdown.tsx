@@ -1,21 +1,15 @@
+import { useGetConfigLabelsListQuery } from "@flanksource-ui/api/query-hooks";
+import { useField } from "formik";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useGetConfigLabelsListQuery } from "../../../api/query-hooks";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {
-  onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
-  value?: string;
 };
 
-export function ConfigLabelsDropdown({
-  onChange = () => {},
-  searchParamKey = "labels",
-  value
-}: Props) {
-  const [params, setParams] = useSearchParams({
-    ...(value && { [searchParamKey]: value })
+export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
+  const [field] = useField({
+    name: searchParamKey
   });
 
   const { data, isLoading } = useGetConfigLabelsListQuery();
@@ -40,15 +34,17 @@ export function ConfigLabelsDropdown({
       items={labelItems}
       name="type"
       onChange={(value) => {
-        if (!value || value === "All") {
-          params.delete(searchParamKey);
+        if (value && value !== "All") {
+          field.onChange({
+            target: { name: searchParamKey, value: value }
+          });
         } else {
-          params.set(searchParamKey, value);
+          field.onChange({
+            target: { name: searchParamKey, value: undefined }
+          });
         }
-        setParams(params);
-        onChange(value);
       }}
-      value={params.get(searchParamKey) ?? "All"}
+      value={field.value ?? "All"}
       className="w-auto max-w-[38rem]"
       dropDownClassNames="w-auto max-w-[38rem] left-0"
       hideControlBorder

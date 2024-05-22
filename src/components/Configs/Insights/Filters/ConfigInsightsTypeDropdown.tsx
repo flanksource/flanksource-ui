@@ -1,5 +1,5 @@
+import { useField } from "formik";
 import React from "react";
-import { useSearchParams } from "react-router-dom";
 import { defaultSelections } from "../../../Incidents/data";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
@@ -132,7 +132,6 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   showAllOption?: boolean;
-  paramsToReset?: string[];
 };
 
 export default function ConfigInsightsTypeDropdown({
@@ -141,25 +140,24 @@ export default function ConfigInsightsTypeDropdown({
   className,
   showAllOption,
   dropDownClassNames,
-  hideControlBorder,
-  paramsToReset = []
+  hideControlBorder
 }: Props) {
-  const [params, setParams] = useSearchParams({
-    [name]: "all"
+  const [field] = useField({
+    name
   });
-
-  const value = params.get(name) || "all";
 
   return (
     <ReactSelectDropdown
       onChange={(value) => {
-        if (value?.toLocaleLowerCase() === "all" || !value) {
-          params.delete(name);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name, value }
+          });
         } else {
-          params.set(name, value);
+          field.onChange({
+            target: { name, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
       prefix={
         <div className="text-xs text-gray-500 whitespace-nowrap">{prefix}</div>
@@ -167,7 +165,7 @@ export default function ConfigInsightsTypeDropdown({
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}
-      value={value}
+      value={field.value ?? "all"}
       items={{
         ...(showAllOption ? defaultSelections : {}),
         ...Object.values(configAnalysisTypeItems).sort((a, b) =>

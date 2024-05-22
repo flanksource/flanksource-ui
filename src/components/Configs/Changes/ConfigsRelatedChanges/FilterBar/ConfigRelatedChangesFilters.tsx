@@ -1,3 +1,4 @@
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import clsx from "clsx";
 import { ChangesTypesDropdown } from "../../ConfigChangesFilters/ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "../../ConfigChangesFilters/ConfigChangeSeverity";
@@ -16,13 +17,18 @@ export function ConfigRelatedChangesFilters({
   paramsToReset = []
 }: ConfigChangeFiltersProps) {
   return (
-    <div className={clsx("flex flex-row gap-2", className)}>
-      <ConfigTypesTristateDropdown paramsToReset={paramsToReset} />
-      <ChangesTypesDropdown paramsToReset={paramsToReset} />
-      <ConfigChangeSeverity paramsToReset={paramsToReset} />
-      <ConfigRelatedChangesToggles />
-      <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
-      <ConfigChangesToggledDeletedItems />
-    </div>
+    <FormikFilterForm
+      paramsToReset={paramsToReset}
+      filterFields={["configTypes", "changeType", "severity"]}
+    >
+      <div className={clsx("flex flex-row gap-2 items-center", className)}>
+        <ConfigTypesTristateDropdown />
+        <ChangesTypesDropdown />
+        <ConfigChangeSeverity />
+        <ConfigRelatedChangesToggles />
+        <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
+        <ConfigChangesToggledDeletedItems />
+      </div>
+    </FormikFilterForm>
   );
 }

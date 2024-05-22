@@ -1,20 +1,25 @@
+import { useGetPlaybookNames } from "@flanksource-ui/api/query-hooks/playbooks";
+import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useGetPlaybookNames } from "../../../../api/query-hooks/playbooks";
 import { Icon } from "../../../Icon";
-import { ReactSelectDropdown, StateOption } from "../../../ReactSelectDropdown";
+import { StateOption } from "../../../ReactSelectDropdown";
 
 type PlaybookSpecsDropdownProps = {
   label?: string;
 };
 
+/**
+ *
+ * PlaybookSpecsDropdown
+ *
+ * A formik dropdown component for selecting playbooks, needs to be used inside a
+ * formik form and [FormikFilterFilter](@flanksource-ui/components/Forms/FormikFilterForm.tsx) component, to sync the value with url
+ * params and formik state.
+ *
+ */
 export default function PlaybookSpecsDropdown({
   label = "Playbook"
 }: PlaybookSpecsDropdownProps) {
-  const [params, setParams] = useSearchParams();
-
-  const playbook = params.get("playbook") ?? "all";
-
   const { data: playbooks, isLoading } = useGetPlaybookNames();
 
   const options: StateOption[] = useMemo(() => {
@@ -33,16 +38,8 @@ export default function PlaybookSpecsDropdown({
 
   return (
     <div className="flex flex-col">
-      <ReactSelectDropdown
-        value={playbook}
-        onChange={(value) => {
-          if (value === "all" || value === "" || value === undefined) {
-            params.delete("playbook");
-          } else {
-            params.set("playbook", value);
-          }
-          setParams(params);
-        }}
+      <FormikFilterSelectDropdown
+        defaultValue="all"
         isDisabled={isLoading}
         items={[{ label: "All Playbooks", value: "all" }, ...options]}
         isLoading={isLoading}

@@ -1,3 +1,4 @@
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import ClosableBadge from "@flanksource-ui/ui/Badge/ClosableBadge";
 import clsx from "clsx";
 import { useCallback } from "react";
@@ -69,16 +70,29 @@ export function ConfigChangeFilters({
   arbitraryFilters,
   ...props
 }: ConfigChangeFiltersProps) {
+  const [params] = useSearchParams();
+
+  const configType = params.get("configTypes") ?? undefined;
+  const defaultConfigType = configType
+    ? `${configType?.replaceAll("::", "__")}:1`
+    : undefined;
+
   return (
     <div className="flex flex-col gap-2">
-      <div className={clsx("flex flex-row gap-1", className)} {...props}>
-        <ConfigTypesTristateDropdown
-          paramsToReset={[...paramsToReset, "configType"]}
-        />
-        <ChangesTypesDropdown paramsToReset={paramsToReset} />
-        <ConfigChangeSeverity paramsToReset={paramsToReset} />
-        <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
-      </div>
+      <FormikFilterForm
+        paramsToReset={paramsToReset}
+        filterFields={["configTypes", "changeType", "severity"]}
+        defaultFieldValues={{
+          ...(configType && { configTypes: defaultConfigType })
+        }}
+      >
+        <div className={clsx("flex flex-row gap-1", className)} {...props}>
+          <ConfigTypesTristateDropdown />
+          <ChangesTypesDropdown />
+          <ConfigChangeSeverity />
+          <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
+        </div>
+      </FormikFilterForm>
       <div className="flex flex-wrap gap-2">
         {Object.entries(arbitraryFilters ?? {}).map(([key, value]) => (
           <FilterBadge filters={value} key={value} paramKey={key} />

@@ -4,8 +4,8 @@ import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHist
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
+import { durationOptions } from "./Filters/JobHistoryDurationDropdown";
 import JobHistoryFilters, {
-  durationOptions,
   jobHistoryDefaultDateFilter
 } from "./Filters/JobsHistoryFilters";
 import JobsHistoryTable from "./JobsHistoryTable";

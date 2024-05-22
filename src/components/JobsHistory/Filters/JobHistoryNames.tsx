@@ -3,19 +3,13 @@ import TristateReactSelect, {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { formatJobName } from "@flanksource-ui/utils/common";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useField } from "formik";
 import { getJobsHistoryNames } from "../../../api/services/jobsHistory";
 
-type JobHistoryNamesDropdownProps = {
-  paramsToReset?: string[];
-};
-
-export default function JobHistoryNamesDropdown({
-  paramsToReset = ["pageIndex", "pageSize"]
-}: JobHistoryNamesDropdownProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const name = searchParams.get("name") ?? "";
+export default function JobHistoryNamesDropdown() {
+  const [field] = useField({
+    name: "name"
+  });
 
   const { data: jobNames = [], isLoading } = useQuery(
     ["jobHistoryNames"],
@@ -37,17 +31,15 @@ export default function JobHistoryNamesDropdown({
   return (
     <div className="flex flex-col">
       <TristateReactSelect
-        value={name}
+        value={field.value}
         isLoading={isLoading}
         options={jobNames}
         onChange={(val) => {
           if (val && val !== "All") {
-            searchParams.set("name", val);
+            field.onChange({ target: { value: val, name: field.name } });
           } else {
-            searchParams.delete("name");
+            field.onChange({ target: { value: undefined, name: field.name } });
           }
-          paramsToReset.forEach((param) => searchParams.delete(param));
-          setSearchParams(searchParams);
         }}
         label="Job Name"
       />

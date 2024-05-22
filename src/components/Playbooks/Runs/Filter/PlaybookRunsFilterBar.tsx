@@ -1,4 +1,5 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
@@ -29,16 +30,23 @@ export default function PlaybookRunsFilterBar({
 
   return (
     <div className="flex flex-row gap-2 w-full">
-      <PlaybookSpecsDropdown />
-      <PlaybookStatusDropdown />
-      <TimeRangePicker
-        onChange={(timeRange) => {
-          console.log("timeRange", timeRange);
-          setTimeRangeParams(timeRange);
-        }}
-        className="w-[35rem]"
-        value={range}
-      />
+      <FormikFilterForm
+        filterFields={["playbook", "status"]}
+        paramsToReset={[]}
+      >
+        <div className="flex flex-row gap-2">
+          <PlaybookSpecsDropdown />
+          <PlaybookStatusDropdown />
+          <TimeRangePicker
+            onChange={(timeRange) => {
+              console.log("timeRange", timeRange);
+              setTimeRangeParams(timeRange);
+            }}
+            className="w-[35rem]"
+            value={range}
+          />
+        </div>
+      </FormikFilterForm>
       {playbookId && (
         <>
           <div className="flex-1" />
