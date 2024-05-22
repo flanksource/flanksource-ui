@@ -1,6 +1,6 @@
 import { testConnection } from "@flanksource-ui/api/services/connections";
 import { AlertMessageDialog } from "@flanksource-ui/ui/AlertDialog/AlertMessageDialog";
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";

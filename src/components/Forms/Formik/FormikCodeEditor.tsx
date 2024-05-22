@@ -6,7 +6,7 @@ import YAML from "yaml";
 import useDebounce from "../../../hooks/useDebounce";
 
 const CodeEditor = dynamic(
-  () => import("../../../ui/CodeEditor").then((m) => m.CodeEditor),
+  () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
   {
     ssr: false
   }

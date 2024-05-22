@@ -1,8 +1,8 @@
+import { EvidenceType } from "@flanksource-ui/api/types/evidence";
 import dynamic from "next/dynamic";
-import { EvidenceType } from "../../../../../api/types/evidence";
 
 const CodeEditor = dynamic(
-  () => import("../../../../../ui/CodeEditor").then((m) => m.CodeEditor),
+  () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
   { ssr: false }
 );
 

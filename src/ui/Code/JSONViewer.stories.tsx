@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { JSONViewer } from "./index";
 import { ComponentStory } from "@storybook/react";
+import { JSONViewer } from "./JSONViewer";
 
 export default {
   title: "JSONViewer",

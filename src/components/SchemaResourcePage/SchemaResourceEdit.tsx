@@ -26,7 +26,7 @@ import {
 import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
 
 const CodeEditor = dynamic(
-  () => import("../../ui/CodeEditor").then((m) => m.CodeEditor),
+  () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
   { ssr: false }
 );
 

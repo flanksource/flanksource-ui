@@ -4,7 +4,7 @@ import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { useCopyToClipboard } from "../../components/Hooks/useCopyToClipboard";
 import { Button } from "../Buttons/Button";
-import theme from "./theme";
+import theme from "./JSONViewerTheme";
 
 type RenderProps = Parameters<
   ComponentProps<typeof Highlight>["children"]

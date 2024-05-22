@@ -1,5 +1,5 @@
 import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
 import { AgentFormValues } from "../Add/AddAgentForm";

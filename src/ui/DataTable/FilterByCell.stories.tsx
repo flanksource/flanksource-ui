@@ -2,7 +2,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
 import { MemoryRouter, useSearchParams } from "react-router-dom";
 
-import { JSONViewer } from "../JSONViewer";
+import { JSONViewer } from "../Code/JSONViewer";
 import FilterByCellValue from "./FilterByCellValue";
 
 export default {

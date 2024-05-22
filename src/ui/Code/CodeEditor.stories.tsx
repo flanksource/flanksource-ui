@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { CodeEditor } from "./index";
+import { CodeEditor } from "./CodeEditor";
 
 export default {
   title: "CodeEditor ",
