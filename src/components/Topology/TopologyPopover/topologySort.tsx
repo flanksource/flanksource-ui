@@ -1,7 +1,7 @@
 import clsx from "clsx";
+import { useFormikContext } from "formik";
 import { LegacyRef } from "react";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
-import { useSearchParams } from "react-router-dom";
 import { ValueType } from "../../../api/types/common";
 import { Topology } from "../../../api/types/topology";
 import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
@@ -108,10 +108,7 @@ export const TopologySort = ({
   title?: string;
   sortLabels: SortLabel;
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams({
-    sortBy: "status",
-    sortOrder: "desc"
-  });
+  const { setFieldValue, values } = useFormikContext<Record<string, string>>();
 
   const {
     ref: popoverRef,
@@ -124,23 +121,20 @@ export const TopologySort = ({
     newSortByType = newSortByType ?? "desc";
 
     if (currentSortBy === "status" && newSortByType === "desc") {
-      searchParams.delete("sortBy");
-      searchParams.delete("sortOrder");
+      setFieldValue("sortBy", undefined);
+      setFieldValue("sortOrder", undefined);
     } else {
-      searchParams.set("sortBy", currentSortBy);
-      searchParams.set("sortOrder", newSortByType);
+      setFieldValue("sortBy", currentSortBy);
+      setFieldValue("sortOrder", newSortByType);
     }
-    setSearchParams(searchParams, {
-      replace: true
-    });
 
     saveSortBy(currentSortBy, sortLabels);
     saveSortOrder(newSortByType);
     setIsPopoverActive(false);
   }
 
-  const sortBy = searchParams.get("sortBy") ?? "status";
-  const sortByDirection = searchParams.get("sortOrder") ?? "desc";
+  const sortBy = values.sortBy ?? "status";
+  const sortByDirection = values.sortOrder ?? "desc";
 
   return (
     <>

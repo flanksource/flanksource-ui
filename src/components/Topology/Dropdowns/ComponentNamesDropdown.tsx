@@ -1,5 +1,5 @@
+import { useField } from "formik";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useComponentsQuery } from "../../../api/query-hooks";
 import { Icon } from "../../Icon";
 import { TopologyComponentItem } from "../../Incidents/FilterIncidents/FilterIncidentsByComponents";
@@ -11,23 +11,28 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   dropDownClassNames?: string;
   hideControlBorder?: boolean;
   showAllOption?: boolean;
-  paramsToReset?: string[];
 };
 
+/**
+ *
+ * ComponentNamesDropdown
+ *
+ * A formik dropdown component for selecting component names, needs to be used inside a
+ * formik form and [FormikFilterFilter](@flanksource-ui/components/Forms/FormikFilterForm.tsx) component, to sync the value with url
+ * params and formik state.
+ *
+ */
 export function ComponentNamesDropdown({
-  prefix = "Component:",
+  prefix = "Component",
   name = "component",
   className,
   showAllOption,
   dropDownClassNames,
-  hideControlBorder,
-  paramsToReset = []
+  hideControlBorder
 }: Props) {
-  const [params, setParams] = useSearchParams({
-    [name]: "all"
+  const [field] = useField({
+    name
   });
-
-  const value = params.get(name) || "all";
 
   const { data: components, isLoading } = useComponentsQuery({});
 
@@ -58,19 +63,21 @@ export function ComponentNamesDropdown({
   return (
     <ReactSelectDropdown
       onChange={(value) => {
-        if (value?.toLowerCase() === "all" || !value) {
-          params.delete(name);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name, value }
+          });
         } else {
-          params.set(name, value);
+          field.onChange({
+            target: { name, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
-      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
+      prefix={<span className="text-gray-500 text-xs">{prefix}:</span>}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}
-      value={value}
+      value={field.value ?? "all"}
       isLoading={isLoading}
       items={[...(showAllOption ? [defaultSelections.all] : []), ...options]}
       hideControlBorder={hideControlBorder}

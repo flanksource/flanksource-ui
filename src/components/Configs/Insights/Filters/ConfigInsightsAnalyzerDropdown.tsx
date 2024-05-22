@@ -1,7 +1,7 @@
+import { getConfigsAnalysisAnalyzers } from "@flanksource-ui/api/services/configs";
 import { useQuery } from "@tanstack/react-query";
+import { useField } from "formik";
 import React from "react";
-import { useSearchParams } from "react-router-dom";
-import { getConfigsAnalysisAnalyzers } from "../../../../api/services/configs";
 import { defaultSelections } from "../../../Incidents/data";
 import { ReactSelectDropdown, StateOption } from "../../../ReactSelectDropdown";
 
@@ -22,11 +22,9 @@ export default function ConfigInsightsAnalyzerDropdown({
   hideControlBorder,
   paramsToReset = []
 }: Props) {
-  const [params, setParams] = useSearchParams({
-    [name]: "all"
+  const [field] = useField({
+    name
   });
-
-  const value = params.get(name) || "all";
 
   const { data: analyzers, isLoading } = useQuery(
     ["config_analysis_analyzers"],
@@ -51,19 +49,21 @@ export default function ConfigInsightsAnalyzerDropdown({
   return (
     <ReactSelectDropdown
       onChange={(value) => {
-        if (value?.toLowerCase() === "all" || !value) {
-          params.delete(name);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name, value }
+          });
         } else {
-          params.set(name, value);
+          field.onChange({
+            target: { name, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
       prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}
-      value={value}
+      value={field.value ?? "all"}
       isLoading={isLoading}
       items={{
         ...(showAllOption ? defaultSelections : {}),

@@ -1,6 +1,6 @@
-import { useSearchParams } from "react-router-dom";
+import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
 import { statusIconMap } from "../../../Icon/PlaybookStatusIcon";
-import { ReactSelectDropdown, StateOption } from "../../../ReactSelectDropdown";
+import { StateOption } from "../../../ReactSelectDropdown";
 
 const options: StateOption[] = [
   {
@@ -39,25 +39,22 @@ type PlaybookStatusDropdownProps = {
   label?: string;
 };
 
+/**
+ *
+ * ComponentLabelsDropdown
+ *
+ * A formik dropdown component for selecting playbook statuses, needs to be used inside a
+ * formik form and [FormikFilterFilter](@flanksource-ui/components/Forms/FormikFilterForm.tsx) component, to sync the value with url
+ * params and formik state.
+ *
+ */
 export default function PlaybookStatusDropdown({
   label = "Status"
 }: PlaybookStatusDropdownProps) {
-  const [params, setParams] = useSearchParams();
-
-  const status = params.get("status") ?? "all";
-
   return (
     <div className="flex flex-col">
-      <ReactSelectDropdown
-        value={status}
-        onChange={(value) => {
-          if (value === "all" || value === "" || value === undefined) {
-            params.delete("status");
-          } else {
-            params.set("status", value);
-          }
-          setParams(params);
-        }}
+      <FormikFilterSelectDropdown
+        defaultValue="all"
         items={[
           {
             label: "All",

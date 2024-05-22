@@ -1,6 +1,6 @@
 import React from "react";
 import { Control } from "react-hook-form";
-import { ComponentNamesDropdown } from "../../Dropdown/ComponentNamesDropdown";
+import { ComponentNamesDropdown } from "../../Topology/Dropdowns/ComponentNamesDropdown";
 
 export type TopologyComponentItem = {
   created_at?: string;

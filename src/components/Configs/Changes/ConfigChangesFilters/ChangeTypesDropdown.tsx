@@ -7,21 +7,17 @@ import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
+import { useField } from "formik";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 
 type Props = {
-  onChange?: (value: string | undefined) => void;
   searchParamKey?: string;
-  paramsToReset?: string[];
 };
 
-export function ChangesTypesDropdown({
-  onChange = () => {},
-  searchParamKey = "changeType",
-  paramsToReset = []
-}: Props) {
-  const [searchParams, setSearchParams] = useSearchParams();
+export function ChangesTypesDropdown({ searchParamKey = "changeType" }: Props) {
+  const [field] = useField({
+    name: searchParamKey
+  });
 
   const { isLoading, data: configTypeOptions } = useQuery(
     ["db", "changes_types"],
@@ -41,24 +37,23 @@ export function ChangesTypesDropdown({
     }
   );
 
-  const value = searchParams.get(searchParamKey) || undefined;
-
   const configItemsOptionsItems = configTypeOptions || [];
 
   return (
     <TristateReactSelect
       options={configItemsOptionsItems}
       isLoading={isLoading}
-      value={value}
+      value={field.value}
       onChange={(value) => {
-        if (value) {
-          searchParams.set(searchParamKey, value);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name: searchParamKey, value: value }
+          });
         } else {
-          searchParams.delete(searchParamKey);
+          field.onChange({
+            target: { name: searchParamKey, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => searchParams.delete(param));
-        setSearchParams(searchParams);
-        onChange(value);
       }}
       label="Change Type"
     />

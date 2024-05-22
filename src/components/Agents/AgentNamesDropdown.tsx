@@ -1,20 +1,14 @@
 import { useMemo } from "react";
-import { ReactSelectDropdown } from "../ReactSelectDropdown";
 import { useAllAgentNamesQuery } from "../../api/query-hooks";
+import FormikFilterSelectDropdown from "../Forms/Formik/FormikFilterSelectDropdown";
 
 type AgentNamesDropdownProps = {
-  onChange?: (value: string | undefined) => void;
-  searchParamKey?: string;
-  paramsToReset?: Record<string, string>;
-  value?: string;
   dropDownClassNames?: string;
   className?: string;
   name: string;
 };
 
 export function AgentNamesDropdown({
-  onChange = () => {},
-  value,
   name = "agent_id",
   dropDownClassNames = "w-auto max-w-[400px] left-0",
   className = "w-auto max-w-[400px]"
@@ -42,17 +36,14 @@ export function AgentNamesDropdown({
   );
 
   return (
-    <ReactSelectDropdown
+    <FormikFilterSelectDropdown
       isLoading={isLoading}
       items={agentOptionsItems}
       name={name}
-      onChange={(value) => {
-        onChange(value);
-      }}
-      value={value}
       className={className}
       dropDownClassNames={dropDownClassNames}
       hideControlBorder
+      defaultValue="All"
       prefix={
         <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
           Agent:

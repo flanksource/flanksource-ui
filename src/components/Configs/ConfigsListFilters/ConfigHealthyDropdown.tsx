@@ -1,7 +1,7 @@
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useSearchParams } from "react-router-dom";
+import { useField } from "formik";
 
 const options: TriStateOptions[] = [
   {
@@ -28,32 +28,32 @@ const options: TriStateOptions[] = [
 
 type ConfigTypesDropdownProps = {
   label?: string;
-  paramsToReset?: string[];
   paramsKey?: string;
 };
 
 export function ConfigHealthyDropdown({
   label = "Health",
-  paramsKey = "health",
-  paramsToReset = []
+  paramsKey = "health"
 }: ConfigTypesDropdownProps) {
-  const [params, setParams] = useSearchParams();
-
-  const type = params.get(paramsKey) ?? undefined;
+  const [field] = useField({
+    name: "configType"
+  });
 
   return (
     <TristateReactSelect
       options={options}
       onChange={(value) => {
-        if (value === "All" || !value) {
-          params.delete(paramsKey);
+        if (value && value !== "all") {
+          field.onChange({
+            target: { name: paramsKey, value: value }
+          });
         } else {
-          params.set(paramsKey, value);
+          field.onChange({
+            target: { name: paramsKey, value: undefined }
+          });
         }
-        paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
       }}
-      value={type}
+      value={field.value}
       className="w-auto max-w-[400px]"
       label={label}
     />
