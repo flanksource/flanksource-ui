@@ -1,7 +1,7 @@
 import { useConfigInsightsQuery } from "@flanksource-ui/api/query-hooks/useConfigAnalysisQuery";
 import { ConfigAnalysis } from "@flanksource-ui/api/types/configs";
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { SortingState } from "@tanstack/react-table";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
@@ -35,19 +35,6 @@ export default function ConfigInsightsList({
   const component = params.get("component") ?? undefined;
   const pageSize = +(params.get("pageSize") ?? 50);
   const pageIndex = +(params.get("pageIndex") ?? 0);
-
-  const sortState: SortingState = useMemo(() => {
-    return [
-      ...(params.get("sortBy")
-        ? [
-            {
-              id: params.get("sortBy")!,
-              desc: params.get("sortOrder") === "desc"
-            }
-          ]
-        : [])
-    ];
-  }, [params]);
 
   const { data, isLoading, refetch, isRefetching, error } =
     useConfigInsightsQuery(
@@ -86,6 +73,8 @@ export default function ConfigInsightsList({
 
   const totalEntries = (data as any)?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
+
+  const [sortBy, updateSortBy] = useReactTableSortState();
 
   const pagination = useMemo(() => {
     const pagination: PaginationOptions = {
@@ -131,24 +120,14 @@ export default function ConfigInsightsList({
           isLoading={isLoading}
           stickyHead
           pagination={pagination}
-          tableSortByState={sortState}
           hiddenColumns={columnsToHide}
           handleRowClick={(row) => {
             setClickedInsightItem(row.original);
             setIsInsightDetailsModalOpen(true);
           }}
           enableServerSideSorting
-          onTableSortByChanged={(state) => {
-            const getSortBy = Array.isArray(state) ? state : state(sortState);
-            if (getSortBy.length > 0) {
-              params.set("sortBy", getSortBy[0].id);
-              params.set("sortOrder", getSortBy[0].desc ? "desc" : "asc");
-            } else {
-              params.delete("sortBy");
-              params.delete("sortOrder");
-            }
-            setParams(params);
-          }}
+          tableSortByState={sortBy}
+          onTableSortByChanged={updateSortBy}
         />
       )}
 

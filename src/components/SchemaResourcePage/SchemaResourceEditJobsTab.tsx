@@ -21,7 +21,7 @@ export function SchemaResourceJobsTab({
   resourceId,
   tableName
 }: SchemaResourceJobsTabProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
@@ -55,19 +55,6 @@ export function SchemaResourceJobsTab({
           pageIndex={pageIndex}
           pageSize={pageSize}
           hiddenColumns={["resource_id", "resource_type"]}
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortByChanged={(sortBy) => {
-            const sort = typeof sortBy === "function" ? sortBy([]) : sortBy;
-            if (sort.length === 0) {
-              searchParams.delete("sortBy");
-              searchParams.delete("sortOrder");
-            } else {
-              searchParams.set("sortBy", sort[0]?.id);
-              searchParams.set("sortOrder", sort[0].desc ? "desc" : "asc");
-            }
-            setSearchParams(searchParams);
-          }}
         />
       )}
     </div>

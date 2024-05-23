@@ -15,7 +15,7 @@ export default function JobsHistorySettingsPage() {
     jobHistoryDefaultDateFilter
   );
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
@@ -81,19 +81,6 @@ export default function JobsHistorySettingsPage() {
             pageCount={pageCount}
             pageIndex={pageIndex}
             pageSize={pageSize}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSortByChanged={(sortBy) => {
-              const sort = typeof sortBy === "function" ? sortBy([]) : sortBy;
-              if (sort.length === 0) {
-                searchParams.delete("sortBy");
-                searchParams.delete("sortOrder");
-              } else {
-                searchParams.set("sortBy", sort[0]?.id);
-                searchParams.set("sortOrder", sort[0].desc ? "desc" : "asc");
-              }
-              setSearchParams(searchParams);
-            }}
           />
         </div>
       </SearchLayout>

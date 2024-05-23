@@ -7,7 +7,6 @@ import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDeta
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
-import { SortingState } from "@tanstack/react-table";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -102,17 +101,6 @@ export function ConfigDetailsChangesPage() {
     return pagination;
   }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
-  const sortState: SortingState = [
-    ...(sortBy
-      ? [
-          {
-            id: sortBy,
-            desc: sortDirection === "desc"
-          }
-        ]
-      : [])
-  ];
-
   if (error) {
     const errorMessage =
       typeof error === "symbol"
@@ -137,18 +125,6 @@ export function ConfigDetailsChangesPage() {
               linkConfig={!hideConfigColumn}
               data={changes}
               isLoading={isLoading}
-              sortBy={sortState}
-              onTableSortByChanged={(sort) => {
-                const sortBy = Array.isArray(sort) ? sort : sort(sortState);
-                if (sortBy.length === 0) {
-                  params.delete("sortBy");
-                  params.delete("sortDirection");
-                } else {
-                  params.set("sortBy", sortBy[0]?.id);
-                  params.set("sortDirection", sortBy[0].desc ? "desc" : "asc");
-                }
-                setParams(params);
-              }}
               pagination={pagination}
             />
           </div>
