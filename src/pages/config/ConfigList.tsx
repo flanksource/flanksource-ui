@@ -1,4 +1,4 @@
-import { useAllConfigsQuery } from "@flanksource-ui/api/query-hooks";
+import { useAllConfigsQuery } from "@flanksource-ui/api/query-hooks/useAllConfigsQuery";
 import { useConfigSummaryQuery } from "@flanksource-ui/api/query-hooks/useConfigSummaryQuery";
 import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";

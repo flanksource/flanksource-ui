@@ -4,14 +4,14 @@ import { ConfigRelationships } from "@flanksource-ui/api/types/configs";
 import { ConfigRelationKey } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
-import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
 import { configRelationshipGraphTableToggle } from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigGraphTableToggle";
 import { ConfigRelationshipGraph } from "@flanksource-ui/components/Configs/Graph/ConfigRelationshipGraph";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useCallback, useMemo } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { ReactFlowProvider } from "reactflow";
 
 export function ConfigDetailsRelationshipsPage() {
@@ -19,9 +19,7 @@ export function ConfigDetailsRelationshipsPage() {
   const [searchParams] = useSearchParams();
   const [view] = useAtom(configRelationshipGraphTableToggle);
 
-  const [hideDeletedConfigs] = useAtom(areDeletedConfigsHidden);
-
-  const hideDeleted = hideDeletedConfigs === "yes" ? true : false;
+  const hideDeleted = useHideDeletedConfigs();
 
   const configType = searchParams.get("configType") ?? undefined;
   const configTypes = searchParams.get("configTypes") ?? undefined;
@@ -128,8 +126,6 @@ export function ConfigDetailsRelationshipsPage() {
     );
   }, [configItems, configTypes]);
 
-  const navigate = useNavigate();
-
   return (
     <ConfigDetailsTabs
       pageTitlePrefix={"Config Relationships"}
@@ -156,9 +152,6 @@ export function ConfigDetailsRelationshipsPage() {
               data={configItems ?? []}
               isLoading={isLoading}
               groupBy="type"
-              handleRowClick={(row) => {
-                navigate(`/catalog/${row.original.id}`);
-              }}
               expandAllRows
             />
           )}

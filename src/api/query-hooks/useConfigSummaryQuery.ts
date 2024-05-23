@@ -1,8 +1,7 @@
-import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import useGroupBySearchParam from "@flanksource-ui/components/Configs/ConfigSummary/utils/useGroupBySearchParam";
 import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigSummaryRequest, getConfigsSummary } from "../services/configs";
@@ -16,9 +15,7 @@ export function useConfigSummaryQuery({
     sortOrder: "asc",
     groupBy: "type"
   });
-
-  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
-  const hideDeletedConfigs = deletedConfigsHidden === "yes" ? true : false;
+  const hideDeletedConfigs = useHideDeletedConfigs();
   const labels = searchParams.get("labels") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
   const health = searchParams.get("health") ?? undefined;
