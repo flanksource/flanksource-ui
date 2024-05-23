@@ -1,13 +1,12 @@
 import { Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
 import { ConfigItem } from "../../../api/types/configs";
 import { configListColumns } from "./ConfigListColumn";
 
 export interface Props {
   data: ConfigItem[];
-  handleRowClick: (row: Row<ConfigItem>) => void;
   isLoading: boolean;
   columnsToHide?: string[];
   groupBy?: string;
@@ -16,7 +15,6 @@ export interface Props {
 
 export default function ConfigsTable({
   data,
-  handleRowClick,
   isLoading,
   columnsToHide = ["type"],
   groupBy,
@@ -26,6 +24,8 @@ export default function ConfigsTable({
     sortBy: "type",
     sortOrder: "asc"
   });
+
+  const navigate = useNavigate();
 
   const groupByUserInput = queryParams.get("groupBy") ?? undefined;
 
@@ -143,6 +143,16 @@ export default function ConfigsTable({
       }, {} as Record<string, string>)
     }));
   }, [data, groupByColumns]);
+
+  const handleRowClick = useCallback(
+    (row?: { original?: { id: string } }) => {
+      const id = row?.original?.id;
+      if (id) {
+        navigate(`/catalog/${id}`);
+      }
+    },
+    [navigate]
+  );
 
   return (
     <DataTable

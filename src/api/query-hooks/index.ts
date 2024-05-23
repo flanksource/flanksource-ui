@@ -1,11 +1,16 @@
+import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { UseQueryOptions, useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
+import { getIncidentHistory } from "../services/IncidentsHistory";
 import { getAllAgents } from "../services/agents";
 import {
   CatalogChangesSearchResponse,
-  ConfigSummaryRequest,
+  GetConfigsRelatedChangesParams,
   getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
@@ -14,16 +19,13 @@ import {
   getConfigInsights,
   getConfigLabelsList,
   getConfigName,
-  getConfigsChanges,
-  GetConfigsRelatedChangesParams,
-  getConfigsSummary,
   getConfigTagsList,
+  getConfigsChanges,
   getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
-import { getIncidentHistory } from "../services/IncidentsHistory";
-import { LogsResponse, searchLogs, SearchLogsPayload } from "../services/logs";
+import { LogsResponse, SearchLogsPayload, searchLogs } from "../services/logs";
 import {
   getComponentTeams,
   getHealthCheckItem,
@@ -34,7 +36,6 @@ import {
   getTopologyNameByID
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
-import { ConfigSummary } from "../types/configs";
 import { IncidentHistory } from "../types/incident";
 import { ComponentTeamItem } from "../types/topology";
 
@@ -162,7 +163,7 @@ type ConfigListFilterQueryOptions = {
   sortBy?: string | null;
   sortOrder?: string | null;
   includeAgents?: boolean;
-  tags?: string[];
+  labels?: string;
   health?: string;
   status?: string;
 };
@@ -175,7 +176,7 @@ function prepareConfigListQuery({
   sortOrder,
   hideDeletedConfigs,
   includeAgents = false,
-  tags = [],
+  labels,
   health,
   status
 }: ConfigListFilterQueryOptions) {
@@ -203,11 +204,17 @@ function prepareConfigListQuery({
       const [k, v] = decodeURI(label).split("__:__");
       filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
     }
-    if (tags.length > 0) {
-      tags.forEach((tag) => {
-        const [k, v] = decodeURI(tag).split(":");
-        filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
-      });
+    if (labels) {
+      labels
+        .split(",")
+        .map((label) => {
+          const [key, value] = label.split("__:__");
+          return `${key}:${value}`;
+        })
+        .forEach((tag) => {
+          const [k, v] = decodeURI(tag).split(":");
+          filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
+        });
     }
     if (filterQueries.length) {
       query = `${query}&${filterQueries.join("&")}`;
@@ -223,45 +230,62 @@ function prepareConfigListQuery({
   return query;
 }
 
-export const useAllConfigsQuery = (
-  {
-    search,
-    label,
-    configType,
-    sortBy,
-    sortOrder,
-    hideDeletedConfigs,
-    includeAgents,
-    tags,
-    health,
-    status
-  }: ConfigListFilterQueryOptions,
-
-  { enabled = true, staleTime = defaultStaleTime, ...rest }
-) => {
-  const query = prepareConfigListQuery({
-    search,
-    label,
-    configType,
-    sortBy,
-    sortOrder,
-    hideDeletedConfigs,
-    includeAgents,
-    tags,
-    health,
-    status
+export const useAllConfigsQuery = ({
+  enabled = true,
+  staleTime = defaultStaleTime,
+  ...rest
+}) => {
+  const [searchParams] = useSearchParams({
+    sortBy: "type",
+    sortOrder: "asc",
+    groupBy: "type"
   });
-  return useQuery(
+
+  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
+  const hideDeletedConfigs = deletedConfigsHidden === "yes" ? true : false;
+  const search = searchParams.get("search") ?? undefined;
+  const sortBy = searchParams.get("sortBy");
+  const sortOrder = searchParams.get("sortOrder");
+  const configType = searchParams.get("configType") ?? undefined;
+  const labels = searchParams.get("labels") ?? undefined;
+  const status = searchParams.get("status") ?? undefined;
+  const health = searchParams.get("health") ?? undefined;
+
+  const query = useMemo(
+    () =>
+      prepareConfigListQuery({
+        search,
+        configType,
+        sortBy,
+        sortOrder,
+        hideDeletedConfigs,
+        includeAgents: true,
+        labels: labels,
+        health,
+        status
+      }),
     [
-      "allConfigs",
       search,
-      label,
       configType,
       sortBy,
       sortOrder,
       hideDeletedConfigs,
-      includeAgents,
-      tags,
+      labels,
+      health,
+      status
+    ]
+  );
+
+  return useQuery(
+    [
+      "allConfigs",
+      search,
+      configType,
+      sortBy,
+      sortOrder,
+      hideDeletedConfigs,
+      true,
+      labels,
       health,
       status
     ],
@@ -274,17 +298,6 @@ export const useAllConfigsQuery = (
       ...rest
     }
   );
-};
-
-export const useConfigSummaryQuery = (
-  req: ConfigSummaryRequest,
-  { enabled = true }: UseQueryOptions<ConfigSummary[]> = {}
-) => {
-  return useQuery({
-    queryKey: ["configs", "configSummary", req],
-    queryFn: () => getConfigsSummary(req),
-    enabled
-  });
 };
 
 export const useConfigNameQuery = (

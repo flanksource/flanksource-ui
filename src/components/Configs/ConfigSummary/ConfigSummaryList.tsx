@@ -210,16 +210,25 @@ type ConfigSummaryListProps = {
   data: ConfigSummary[];
   isLoading?: boolean;
   groupBy?: string[];
-  groupByTags?: string[];
 };
 
 export default function ConfigSummaryList({
   data,
   isLoading = false,
-  groupBy = ["type"],
-  groupByTags = []
+  groupBy = ["type"]
 }: ConfigSummaryListProps) {
   const [params, setParams] = useSearchParams();
+
+  const groupByTags = useMemo(() => {
+    const groupByProp = params.get("groupBy") ?? undefined;
+    if (!groupByProp) {
+      return [];
+    }
+    return groupByProp
+      .split(",")
+      .filter((group) => group.includes("__tag"))
+      .map((group) => group.replace("__tag", ""));
+  }, [params]);
 
   const handleRowClick = useCallback(
     (row: Row<ConfigSummary>) => {
