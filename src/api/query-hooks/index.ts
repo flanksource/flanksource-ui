@@ -1,9 +1,5 @@
-import { areDeletedConfigsHidden } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
-import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
 import { getIncidentHistory } from "../services/IncidentsHistory";
@@ -11,7 +7,6 @@ import { getAllAgents } from "../services/agents";
 import {
   CatalogChangesSearchResponse,
   GetConfigsRelatedChangesParams,
-  getAllConfigsMatchingQuery,
   getConfig,
   getConfigAnalysis,
   getConfigChanges,
@@ -39,7 +34,7 @@ import { getPersons, getVersionInfo } from "../services/users";
 import { IncidentHistory } from "../types/incident";
 import { ComponentTeamItem } from "../types/topology";
 
-const defaultStaleTime = 1000 * 60 * 5;
+export const defaultStaleTime = 1000 * 60 * 5;
 
 export const createIncidentQueryKey = (id: string) => ["getIncident", id];
 
@@ -168,7 +163,7 @@ type ConfigListFilterQueryOptions = {
   status?: string;
 };
 
-function prepareConfigListQuery({
+export function prepareConfigListQuery({
   search,
   configType,
   label,
@@ -229,76 +224,6 @@ function prepareConfigListQuery({
   }
   return query;
 }
-
-export const useAllConfigsQuery = ({
-  enabled = true,
-  staleTime = defaultStaleTime,
-  ...rest
-}) => {
-  const [searchParams] = useSearchParams({
-    sortBy: "type",
-    sortOrder: "asc",
-    groupBy: "type"
-  });
-
-  const [deletedConfigsHidden] = useAtom(areDeletedConfigsHidden);
-  const hideDeletedConfigs = deletedConfigsHidden === "yes" ? true : false;
-  const search = searchParams.get("search") ?? undefined;
-  const sortBy = searchParams.get("sortBy");
-  const sortOrder = searchParams.get("sortOrder");
-  const configType = searchParams.get("configType") ?? undefined;
-  const labels = searchParams.get("labels") ?? undefined;
-  const status = searchParams.get("status") ?? undefined;
-  const health = searchParams.get("health") ?? undefined;
-
-  const query = useMemo(
-    () =>
-      prepareConfigListQuery({
-        search,
-        configType,
-        sortBy,
-        sortOrder,
-        hideDeletedConfigs,
-        includeAgents: true,
-        labels: labels,
-        health,
-        status
-      }),
-    [
-      search,
-      configType,
-      sortBy,
-      sortOrder,
-      hideDeletedConfigs,
-      labels,
-      health,
-      status
-    ]
-  );
-
-  return useQuery(
-    [
-      "allConfigs",
-      search,
-      configType,
-      sortBy,
-      sortOrder,
-      hideDeletedConfigs,
-      true,
-      labels,
-      health,
-      status
-    ],
-    () => {
-      return getAllConfigsMatchingQuery(query);
-    },
-    {
-      staleTime,
-      enabled,
-      ...rest
-    }
-  );
-};
 
 export const useConfigNameQuery = (
   configId = "",

@@ -12,6 +12,11 @@ export const areDeletedConfigsHidden = atomWithStorage<"yes" | "no">(
   }
 );
 
+export function useHideDeletedConfigs() {
+  const [hideDeletedConfigs] = useAtom(areDeletedConfigsHidden);
+  return hideDeletedConfigs === "yes" ? true : false;
+}
+
 export function ConfigListToggledDeletedItems() {
   const [hideDeletedConfigs, setHideDeletedConfigs] = useAtom(
     areDeletedConfigsHidden
