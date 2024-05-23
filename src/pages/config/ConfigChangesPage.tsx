@@ -14,9 +14,8 @@ import {
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
-import { SortingState, Updater } from "@tanstack/react-table";
 import { useAtom } from "jotai";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
@@ -63,20 +62,6 @@ export function ConfigChangesPage() {
     }
     return Object.fromEntries(filter);
   }, [changeSummary, configId, createdBy, externalCreatedBy, source]);
-
-  const sortState: SortingState = useMemo(
-    () => [
-      ...(sortBy
-        ? [
-            {
-              id: sortBy,
-              desc: sortDirection === "desc"
-            }
-          ]
-        : [])
-    ],
-    [sortBy, sortDirection]
-  );
 
   const { data, isLoading, error, isRefetching, refetch } =
     useGetConfigsChangesQuery(
@@ -140,21 +125,6 @@ export function ConfigChangesPage() {
       ? error
       : (error as Record<string, string>)?.message ?? "Something went wrong";
 
-  const updateSortBy = useCallback(
-    (sort: Updater<SortingState>) => {
-      const sortBy = Array.isArray(sort) ? sort : sort(sortState);
-      if (sortBy.length === 0) {
-        params.delete("sortBy");
-        params.delete("sortDirection");
-      } else {
-        params.set("sortBy", sortBy[0]?.id);
-        params.set("sortDirection", sortBy[0].desc ? "desc" : "asc");
-      }
-      setParams(params);
-    },
-    [params, setParams, sortState]
-  );
-
   return (
     <>
       <Head prefix="Catalog Changes" />
@@ -195,8 +165,6 @@ export function ConfigChangesPage() {
                 isLoading={isLoading}
                 linkConfig
                 pagination={pagination}
-                sortBy={sortState}
-                onTableSortByChanged={updateSortBy}
               />
             </>
           )}

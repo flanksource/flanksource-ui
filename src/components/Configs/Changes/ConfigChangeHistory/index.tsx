@@ -3,8 +3,8 @@ import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { DateCell } from "@flanksource-ui/ui/table";
-import { SortingState, Updater } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
 import { ChangeIcon } from "../../../Icon/ChangeIcon";
@@ -148,8 +148,6 @@ type ConfigChangeHistoryProps = {
   className?: string;
   tableStyle?: React.CSSProperties;
   pagination?: PaginationOptions;
-  sortBy?: SortingState;
-  onTableSortByChanged?: (sort: Updater<SortingState>) => void;
 };
 
 export function ConfigChangeHistory({
@@ -158,9 +156,7 @@ export function ConfigChangeHistory({
   linkConfig,
   className = "table-auto table-fixed",
   pagination,
-  tableStyle,
-  sortBy,
-  onTableSortByChanged = () => {}
+  tableStyle
 }: ConfigChangeHistoryProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
@@ -174,6 +170,8 @@ export function ConfigChangeHistory({
         enabled: !!selectedConfigChange
       }
     );
+
+  const [sortBy, onTableSortByChanged] = useReactTableSortState();
 
   return (
     <>

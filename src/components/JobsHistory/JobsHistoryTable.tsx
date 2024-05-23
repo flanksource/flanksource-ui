@@ -1,5 +1,6 @@
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { Row, SortingState, Updater } from "@tanstack/react-table";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
+import { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
@@ -47,10 +48,7 @@ type JobsHistoryTableProps = {
   pageCount: number;
   pageIndex: number;
   pageSize: number;
-  sortBy: string;
-  sortOrder: string;
   hiddenColumns?: string[];
-  onSortByChanged?: (sortByState: Updater<SortingState>) => void;
 };
 
 export default function JobsHistoryTable({
@@ -59,22 +57,13 @@ export default function JobsHistoryTable({
   pageCount,
   pageIndex,
   pageSize,
-  hiddenColumns = [],
-  sortBy,
-  sortOrder,
-  onSortByChanged = () => {}
+  hiddenColumns = []
 }: JobsHistoryTableProps) {
   const [params, setParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
-  const tableSortByState = useMemo(() => {
-    return [
-      {
-        id: sortBy,
-        desc: sortOrder === "desc"
-      }
-    ];
-  }, [sortBy, sortOrder]);
+
+  const [tableSortByState, onSortByChanged] = useReactTableSortState();
 
   const pagination: PaginationOptions = useMemo(() => {
     return {
