@@ -34,7 +34,7 @@ export function useConfigSummaryQuery({
 
   const req: ConfigSummaryRequest = {
     groupBy,
-    deleted: hideDeletedConfigs,
+    deleted: !hideDeletedConfigs,
     filter: filterSummaryByLabel,
     health: health ? tristateOutputToQueryParamValue(health) : undefined,
     status: status ? tristateOutputToQueryParamValue(status) : undefined,

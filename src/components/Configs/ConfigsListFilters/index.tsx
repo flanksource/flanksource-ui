@@ -10,10 +10,7 @@ import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 function ConfigsListFilterControls() {
-  const [params, setParams] = useSearchParams({
-    type: "All",
-    tag: "All"
-  });
+  const [params, setParams] = useSearchParams();
 
   return (
     <div className="flex flex-row items-center gap-2 mr-4">
