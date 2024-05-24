@@ -103,7 +103,7 @@ export function ConfigListPage() {
               <ConfigsTable
                 data={allConfigs?.data ?? []}
                 isLoading={isLoading}
-                groupBy={groupBy?.[0] ?? "type"}
+                groupBy={groupBy?.[0] === "type" ? undefined : groupBy?.[0]}
               />
             )}
           </div>

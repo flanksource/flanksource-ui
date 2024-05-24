@@ -45,17 +45,20 @@ export default function ConfigGroupByDropdown({
   onChange = () => {},
   paramsToReset = []
 }: ConfigGroupByDropdownProps) {
-  const [params, setParams] = useSearchParams({
-    groupBy: "type"
-  });
+  const [params, setParams] = useSearchParams();
+
+  const configType = params.get("configType") ?? undefined;
 
   const groupType: string[] = useMemo(() => {
     const groupBy = params.get(searchParamKey);
     if (!groupBy) {
+      if (configType) {
+        return [];
+      }
       return ["type"];
     }
     return groupBy.split(",").map((v) => v.replace("__tag", "")) ?? [];
-  }, [params, searchParamKey]);
+  }, [configType, params, searchParamKey]);
 
   const { data: options = [], isLoading } = useQuery({
     queryKey: ["configs", "tags", "all"],
@@ -63,7 +66,9 @@ export default function ConfigGroupByDropdown({
     enabled: true,
     select: (tags) => {
       return [
-        ...Object.values(items),
+        ...Object.values(items).filter(
+          (item) => !configType || item.value !== "type"
+        ),
         ...(tags && tags.length > 0
           ? tags
               // ensure that the tags are unique
@@ -104,20 +109,27 @@ export default function ConfigGroupByDropdown({
 
   const value = useMemo(
     () =>
-      groupType.map((v) => {
-        // @ts-ignore not sure why this is not working
-        const item = options.find((option) => option.value === v);
-        if (item) {
-          return item;
-        }
-        return {
-          label: v,
-          value: v,
-          isTag: true,
-          icon: <BiLabel />
-        } as GroupByOptions;
-      }),
-    [groupType, options]
+      groupType
+        .map((v) => {
+          // @ts-ignore not sure why this is not working
+          const item = options.find((option) => option.value === v);
+          if (item) {
+            return item;
+          }
+          return {
+            label: v,
+            value: v,
+            isTag: true,
+            icon: <BiLabel />
+          } as GroupByOptions;
+        })
+        .filter((v) => {
+          if (configType) {
+            return v.value !== "type";
+          }
+          return true;
+        }),
+    [configType, groupType, options]
   );
 
   return (
