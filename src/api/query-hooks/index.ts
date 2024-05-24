@@ -1,5 +1,6 @@
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
+import { isNull } from "lodash";
 import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
 import { getIncidentHistory } from "../services/IncidentsHistory";
@@ -200,16 +201,14 @@ export function prepareConfigListQuery({
       filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
     }
     if (labels) {
-      labels
-        .split(",")
-        .map((label) => {
-          const [key, value] = label.split("__:__");
-          return `${key}:${value}`;
-        })
-        .forEach((tag) => {
-          const [k, v] = decodeURI(tag).split(":");
+      labels.split(",").forEach((label) => {
+        const [k, v] = label.split("__:__");
+        if (!isNull(v)) {
           filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
-        });
+        } else {
+          filterQueries.push(`labels->>${k}=is.null`);
+        }
+      });
     }
     if (filterQueries.length) {
       query = `${query}&${filterQueries.join("&")}`;
