@@ -11,7 +11,6 @@ import KubernetesFileConfigsFormEditor from "../Forms/Configs/KubernetesFileConf
 import SQLConfigsFormEditor from "../Forms/Configs/SQLConfigsFormEditor";
 import TrivyConfigsFormEditor from "../Forms/Configs/TrivyConfigsFormEditor";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
-import CRDSource from "../Settings/CRDSource";
 import SpecEditor, { SpecType } from "./SpecEditor";
 
 const resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name"> = {
@@ -229,34 +228,12 @@ export default function ConfigScrapperSpecEditor({
       )[0] ?? "custom"
     : undefined;
 
-  const configCantEditMessage = useMemo(() => {
-    if (resourceValue?.source === "KubernetesCRD" && resourceValue?.id) {
-      return (
-        <CRDSource
-          id={resourceValue.id}
-          name={resourceValue.name}
-          namespace={resourceValue.namespace}
-          source={resourceValue.source}
-        />
-      );
-    }
-  }, [
-    resourceValue?.id,
-    resourceValue?.name,
-    resourceValue?.namespace,
-    resourceValue?.source
-  ]);
-
-  const canEdit = resourceValue?.source !== "KubernetesCRD";
-
   return (
     <SpecEditor
       types={configTypes}
       format="yaml"
       resourceInfo={resourceInfo}
       selectedSpec={selectedSpec}
-      canEdit={canEdit}
-      cantEditMessage={configCantEditMessage}
       onBack={onBack}
       onDeleted={onDeleted}
     />

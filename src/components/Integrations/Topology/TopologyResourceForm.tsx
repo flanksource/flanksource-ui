@@ -2,10 +2,12 @@ import {
   useSettingsCreateResource,
   useSettingsUpdateResource
 } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
+import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
 import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import DeleteResource from "@flanksource-ui/components/SchemaResourcePage/Delete/DeleteResource";
+import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
@@ -26,10 +28,15 @@ export type TopologyResource = {
   labels: Record<string, string>;
   source: string;
   spec: Record<string, any>;
+  agent_id?: string;
+  agent_details: {
+    id: string;
+    name: string;
+  };
 };
 
 type TopologyResourceFormProps = {
-  topology?: TopologyResource;
+  topology?: SchemaResourceI;
   onBack?: () => void;
   onCancel?: () => void;
   footerClassName?: string;
@@ -125,45 +132,54 @@ export default function TopologyResourceForm({
             </div>
             <div className={`flex flex-col ${footerClassName}`}>
               <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
-                {!topology?.id && (
-                  <div className="flex flex-1 flex-row">
-                    <Button
-                      type="button"
-                      text="Back"
-                      className="btn-default btn-btn-secondary-base btn-secondary"
-                      onClick={onBack}
-                    />
-                  </div>
-                )}
-                {!!topology?.id && (
-                  <>
-                    <Button
-                      onClick={onCancel}
-                      text="Cancel"
-                      className="btn-secondary"
-                    />
-                    <div className="flex-1" />
-                    <DeleteResource
-                      resourceId={topology?.id}
-                      resourceInfo={resourceInfo}
-                      onDeleted={() => {
-                        navigate(`/settings/integrations`);
-                      }}
-                    />
-                  </>
-                )}
+                <CanEditResource
+                  id={topology?.id!}
+                  namespace={topology?.namespace!}
+                  source={topology?.source}
+                  name={topology?.name!}
+                  agentId={topology?.agent_details?.id}
+                  agentName={topology?.agent_details?.name}
+                >
+                  {!topology?.id && (
+                    <div className="flex flex-1 flex-row">
+                      <Button
+                        type="button"
+                        text="Back"
+                        className="btn-default btn-btn-secondary-base btn-secondary"
+                        onClick={onBack}
+                      />
+                    </div>
+                  )}
+                  {!!topology?.id && (
+                    <>
+                      <Button
+                        onClick={onCancel}
+                        text="Cancel"
+                        className="btn-secondary"
+                      />
+                      <div className="flex-1" />
+                      <DeleteResource
+                        resourceId={topology?.id}
+                        resourceInfo={resourceInfo}
+                        onDeleted={() => {
+                          navigate(`/settings/integrations`);
+                        }}
+                      />
+                    </>
+                  )}
 
-                <Button
-                  disabled={!isValid}
-                  type="submit"
-                  icon={
-                    isLoading ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  text={saveButtonText}
-                  className={clsx("btn-primary")}
-                />
+                  <Button
+                    disabled={!isValid}
+                    type="submit"
+                    icon={
+                      isLoading ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    text={saveButtonText}
+                    className={clsx("btn-primary")}
+                  />
+                </CanEditResource>
               </div>
             </div>
           </Form>

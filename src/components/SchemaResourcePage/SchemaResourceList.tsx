@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Badge } from "..";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
 import { Age } from "../../ui/Age";
@@ -123,7 +124,8 @@ function SchemaResourceListItem({
   job_name,
   last_runtime,
   job_last_failed,
-  labels
+  labels,
+  agent_details
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -154,6 +156,7 @@ function SchemaResourceListItem({
           )}
           <div data-tip={name} className="block truncate">
             {name}
+            {agent_details && <Badge text={agent_details.name} />}
           </div>
         </div>
       </Cell>

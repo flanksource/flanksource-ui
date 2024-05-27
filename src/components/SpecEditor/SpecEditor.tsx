@@ -54,8 +54,6 @@ type SpecEditorProps = {
   format?: "json" | "yaml";
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
   selectedSpec?: string;
-  canEdit?: boolean;
-  cantEditMessage?: React.ReactNode;
   onBack?: () => void;
   onDeleted?: () => void;
 };
@@ -65,8 +63,6 @@ export default function SpecEditor({
   format = "yaml",
   resourceInfo,
   selectedSpec,
-  canEdit = false,
-  cantEditMessage,
   onBack,
   onDeleted = () => {}
 }: SpecEditorProps) {
@@ -112,8 +108,6 @@ export default function SpecEditor({
             loadSpec={selectedSpecItem.loadSpec}
             specFormat={format}
             resourceInfo={resourceInfo}
-            canEdit={canEdit}
-            cantEditMessage={cantEditMessage}
             onDeleted={onDeleted}
           />
         </div>

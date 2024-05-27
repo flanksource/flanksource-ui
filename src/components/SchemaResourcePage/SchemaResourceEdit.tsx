@@ -12,8 +12,7 @@ import { Head } from "../Head/Head";
 import { Icon } from "../Icon";
 import { IconPicker } from "../IconPicker";
 import EditTopologyResource from "../Integrations/Topology/EditTopologyResource";
-import { TopologyResource } from "../Integrations/Topology/TopologyResourceForm";
-import CRDSource from "../Settings/CRDSource";
+import CanEditResource from "../Settings/CanEditResource";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
@@ -42,6 +41,8 @@ type FormFields = Partial<
     | "namespace"
     | "labels"
     | "schedule"
+    | "agent_id"
+    | "agent_details"
   >
 >;
 
@@ -65,6 +66,8 @@ export function SchemaResourceEdit({
   onCancel,
   isModal = false,
   schedule,
+  agent_id: agentId,
+  agent_details,
   resourceInfo
 }: Props) {
   //FIXME
@@ -243,7 +246,9 @@ export function SchemaResourceEdit({
                     ) : table === "topologies" ? (
                       <div className="flex-col flex flex-1 overflow-y-auto">
                         <EditTopologyResource
-                          topologyResource={defaultValues as TopologyResource}
+                          topologyResource={
+                            defaultValues as unknown as SchemaResourceI
+                          }
                           onSuccess={() => onCancel?.()}
                           onCancel={onCancel}
                         />
@@ -435,7 +440,14 @@ export function SchemaResourceEdit({
                             </div>
                           </div>
                         </div>
-                        {!source ? (
+                        <CanEditResource
+                          agentName={agent_details?.name}
+                          name={name!}
+                          source={source}
+                          namespace={namespace!}
+                          id={id!}
+                          agentId={agentId}
+                        >
                           <div
                             className={clsx(
                               "flex justify-end px-10 rounded-b py-4 space-x-2",
@@ -462,16 +474,7 @@ export function SchemaResourceEdit({
                               className="btn-primary"
                             />
                           </div>
-                        ) : (
-                          <div className="flex px-8 py-4">
-                            <CRDSource
-                              name={name!}
-                              source={source}
-                              namespace={namespace!}
-                              id={id!}
-                            />
-                          </div>
-                        )}
+                        </CanEditResource>
                       </form>
                     ))}
                   {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
