@@ -496,10 +496,6 @@ export default function HealthSpecEditor({
       ? Object.keys(resourceValue?.spec).filter((key) => key !== "schedule")[0]
       : undefined) ?? undefined;
 
-  const canEdit = !!!resourceValue?.source;
-
-  console.log("resourceValue", resourceValue);
-
   return (
     <SpecEditor
       onDeleted={onDeleted}
@@ -507,7 +503,6 @@ export default function HealthSpecEditor({
       format="yaml"
       selectedSpec={resourceValue?.id ? selectedSpec ?? "custom" : undefined}
       resourceInfo={resourceInfo}
-      canEdit={canEdit}
     />
   );
 }

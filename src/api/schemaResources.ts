@@ -35,6 +35,10 @@ export interface SchemaResourceI {
     name: string;
   };
   integration_type: "scrapers" | "topologies" | "logging_backends";
+  agent_details?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface SchemaResourceWithJobStatus extends SchemaResourceI {

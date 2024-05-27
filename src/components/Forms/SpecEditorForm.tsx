@@ -7,6 +7,7 @@ import {
   SchemaResourceType,
   schemaResourceTypes
 } from "../SchemaResourcePage/resourceTypes";
+import CanEditResource from "../Settings/CanEditResource";
 import { SpecType } from "../SpecEditor/SpecEditor";
 import { Tab, Tabs } from "../Tabs/Tabs";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
@@ -22,8 +23,6 @@ type SpecEditorFormProps = {
   specFormat: "yaml" | "json";
   selectedSpec: SpecType;
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
-  canEdit?: boolean;
-  cantEditMessage?: React.ReactNode;
   onDeleted: () => void;
 };
 
@@ -34,8 +33,6 @@ export default function SpecEditorForm({
   onBack = () => {},
   specFormat = "yaml",
   selectedSpec,
-  canEdit = false,
-  cantEditMessage,
   onDeleted = () => {}
 }: SpecEditorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -212,38 +209,38 @@ export default function SpecEditorForm({
           </div>
           <div className="flex flex-row  bg-gray-100 p-4">
             <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
-              {!!cantEditMessage && !canEdit && !!initialValues.id && (
-                <div className="flex items-center px-4 space-x-2 flex-1">
-                  <span>{cantEditMessage}</span>
-                </div>
-              )}
-              {!initialValues.id && (
-                <div className="flex flex-1 flex-row">
-                  <Button
-                    type="button"
-                    text="Back"
-                    className="btn-default btn-btn-secondary-base btn-secondary"
-                    onClick={onBack}
-                  />{" "}
-                </div>
-              )}
-              {canEdit && !!initialValues.id && (
-                <DeleteResource
-                  resourceId={initialValues.id}
-                  resourceInfo={resourceInfo}
-                  onDeleted={onDeleted}
-                />
-              )}
+              <CanEditResource
+                id={initialValues.id}
+                namespace={initialValues.namespace}
+                name={initialValues.name}
+                agentId={initialValues.agent_details?.id}
+                agentName={initialValues.agent_details?.name}
+                source={initialValues.source}
+              >
+                {!initialValues.id && (
+                  <div className="flex flex-1 flex-row">
+                    <Button
+                      type="button"
+                      text="Back"
+                      className="btn-default btn-btn-secondary-base btn-secondary"
+                      onClick={onBack}
+                    />{" "}
+                  </div>
+                )}
+                {!!initialValues.id && (
+                  <DeleteResource
+                    resourceId={initialValues.id}
+                    resourceInfo={resourceInfo}
+                    onDeleted={onDeleted}
+                  />
+                )}
 
-              {canEdit && (
                 <Button
                   type="submit"
                   text={!!initialValues.id ? "Update" : "Save"}
-                  className={clsx(
-                    canEdit ? "btn-primary" : "btn-disabled cursor-no-drop"
-                  )}
+                  className={clsx("btn-primary")}
                 />
-              )}
+              </CanEditResource>
             </div>
           </div>
         </Form>

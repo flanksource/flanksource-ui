@@ -1,9 +1,10 @@
-import TopologyResourceForm, { TopologyResource } from "./TopologyResourceForm";
+import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
+import TopologyResourceForm from "./TopologyResourceForm";
 
 type EditTopologyResourceProps = {
   onSuccess?: () => void;
   onCancel?: () => void;
-  topologyResource: TopologyResource;
+  topologyResource: SchemaResourceI;
   isModal?: boolean;
 };
 

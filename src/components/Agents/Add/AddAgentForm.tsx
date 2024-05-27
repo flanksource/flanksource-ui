@@ -24,7 +24,7 @@ export type AgentFormValues = GenerateAgent & {
 };
 
 type Props = {
-  id: string;
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: (agent: GeneratedAgent, formValues: AgentFormValues) => void;
@@ -40,7 +40,7 @@ export default function AgentForm({
 }: Props) {
   const [formValues, setFormValues] = useState<AgentFormValues>();
 
-  const { data, isLoading: isLoadingAgent } = useAgentQuery(id, {
+  const { data, isLoading: isLoadingAgent } = useAgentQuery(id!, {
     enabled: !!id
   });
 
