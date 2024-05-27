@@ -1,6 +1,7 @@
 import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { SortingState, Updater } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import AgentForm from "../Add/AddAgentForm";
 import { AgentSummary } from "../AgentPage";
 import { agentsTableColumns } from "./AgentsTableColumns";
@@ -28,8 +29,9 @@ export default function AgentsTable({
   onSortByChanged = () => {},
   refresh = () => {}
 }: AgentsTableProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState<AgentSummary>();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const agentId = searchParams.get("id") ?? undefined;
 
   const tableSortByState = useMemo(() => {
     return [
@@ -49,8 +51,8 @@ export default function AgentsTable({
         columns={columns}
         isLoading={isLoading}
         handleRowClick={(agent) => {
-          setSelectedAgent(agent.original);
-          setIsModalOpen(true);
+          searchParams.set("id", agent.original.id!);
+          setSearchParams(searchParams);
         }}
         stickyHead
         hiddenColumns={hiddenColumns}
@@ -59,21 +61,18 @@ export default function AgentsTable({
         enableServerSideSorting
       />
 
-      {selectedAgent && (
+      {agentId && (
         <AgentForm
-          isOpen={isModalOpen}
-          agent={{
-            id: selectedAgent?.id!,
-            name: selectedAgent?.name,
-            properties: selectedAgent?.properties!
-          }}
+          isOpen={!!agentId}
+          id={agentId}
           onClose={() => {
             refresh();
-            setIsModalOpen(false);
-            setSelectedAgent(undefined);
+            searchParams.delete("id");
+            setSearchParams(searchParams);
           }}
           onUpdated={(agent) => {
-            setIsModalOpen(false);
+            searchParams.delete("id");
+            setSearchParams(searchParams);
             refresh();
           }}
         />

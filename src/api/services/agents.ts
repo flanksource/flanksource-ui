@@ -35,6 +35,13 @@ export const getAgentsList = async (
   );
 };
 
+export const getAgentsSummaryByID = async (id: string) => {
+  const res = await IncidentCommander.get<AgentSummary[] | null>(
+    `/agents_summary?select=*&id=eq.${id}`
+  );
+  return res.data?.[0] ?? undefined;
+};
+
 export type GenerateAgent = {
   name: string;
   properties: Record<string, string>;

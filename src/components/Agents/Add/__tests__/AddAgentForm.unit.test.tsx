@@ -1,9 +1,9 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import AgentForm from "./../AddAgentForm";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const server = setupServer(
   rest.post("/api/agent/generate", (req, res, ctx) => {
@@ -13,6 +13,18 @@ const server = setupServer(
   rest.patch("/api/db/agents", (req, res, ctx) => {
     // @ts-ignore
     return res(ctx.status(200), ctx.json({ ...req.body }));
+  }),
+  rest.get("/api/db/agents_summary", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "123",
+          name: "Test Agent",
+          properties: {}
+        }
+      ])
+    );
   })
 );
 
@@ -42,7 +54,6 @@ describe("AgentForm", () => {
           onClose={onClose}
           onSuccess={onSuccess}
           onUpdated={onUpdated}
-          agent={undefined}
         />
       </QueryClientProvider>
     );
@@ -56,11 +67,11 @@ describe("AgentForm", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <AgentForm
+          id="123"
           isOpen={true}
           onClose={onClose}
           onSuccess={onSuccess}
           onUpdated={onUpdated}
-          agent={agent}
         />
       </QueryClientProvider>
     );
@@ -79,7 +90,6 @@ describe("AgentForm", () => {
           onClose={onClose}
           onSuccess={onSuccess}
           onUpdated={onUpdated}
-          agent={undefined}
         />
       </QueryClientProvider>
     );
@@ -104,18 +114,19 @@ describe("AgentForm", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <AgentForm
+          id="123"
           isOpen={true}
           onClose={onClose}
           onSuccess={onSuccess}
           onUpdated={onUpdated}
-          agent={{
-            id: "123",
-            name: "Test Agent",
-            properties: {}
-          }}
         />
       </QueryClientProvider>
     );
+
+    await waitFor(() => {
+      expect(screen.getByText(/test agent/i)).toBeInTheDocument();
+    });
+
     const nameInput = await screen.findByLabelText("Name");
     const saveButton = await screen.findByRole("button", {
       name: /save/i
