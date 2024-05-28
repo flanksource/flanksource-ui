@@ -1,22 +1,12 @@
 import { useOrganization } from "@clerk/nextjs";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import { useEffect } from "react";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
 import BootIntercom from "../../Intercom/BootIntercom";
 import InstanceCreationInProgress from "./InstanceCreationInProgress";
-
-const organizationIDAtom = atomWithStorage<string | undefined>(
-  "clerkOrganizationID",
-  undefined,
-  undefined,
-  { getOnInit: true }
-);
 
 type AuthProviderWrapperProps = {
   children: React.ReactNode;
@@ -25,14 +15,10 @@ type AuthProviderWrapperProps = {
 export default function ClerkAuthContextProvider({
   children
 }: AuthProviderWrapperProps) {
-  const [orgID, setOrgID] = useAtom(organizationIDAtom);
-
   // when organization is switched, we need to re-fetch the user and the UI
   const { organization } = useOrganization();
 
   const backendURL = organization?.publicMetadata.backend_url;
-
-  const client = useQueryClient();
 
   const {
     data: payload,
@@ -46,17 +32,6 @@ export default function ClerkAuthContextProvider({
     refetchInterval: 0,
     refetchOnReconnect: false
   });
-
-  // when the organization is switched, we need to remove the previous queries
-  useEffect(() => {
-    if (organization && orgID) {
-      if (organization.id !== orgID) {
-        console.log(`Clearing cache... ${orgID} -> ${organization.id}`);
-        client.removeQueries();
-        setOrgID(organization.id);
-      }
-    }
-  }, [client, orgID, organization, setOrgID]);
 
   // if the organization backend is not yet created, we need to wait for it to
   // be created before showing the UI

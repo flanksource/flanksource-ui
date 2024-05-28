@@ -1,8 +1,8 @@
+import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Head } from "../../Head/Head";
 import ErrorPage from "../../Errors/ErrorPage";
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import { Head } from "../../Head/Head";
 
 export default function ClerkAuthErrors() {
   const { query } = useRouter();
@@ -18,7 +18,8 @@ export default function ClerkAuthErrors() {
           <OrganizationSwitcher
             hidePersonal
             createOrganizationMode="modal"
-            afterSwitchOrganizationUrl="/"
+            afterSelectOrganizationUrl={`/organizations/orgs-switched`}
+            afterCreateOrganizationUrl={`/organizations/orgs-switched`}
           />
           <UserButton />
         </div>

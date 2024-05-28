@@ -29,7 +29,8 @@ export default function FullPageSkeletonLoader() {
               <OrganizationSwitcher
                 hidePersonal
                 createOrganizationMode="modal"
-                afterSwitchOrganizationUrl="/"
+                afterSelectOrganizationUrl={`/organizations/orgs-switched`}
+                afterCreateOrganizationUrl={`/organizations/orgs-switched`}
               />
               <UserButton />
             </div>
