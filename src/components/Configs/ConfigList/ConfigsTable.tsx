@@ -1,4 +1,4 @@
-import { Row, SortingState, Updater } from "@tanstack/react-table";
+import { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DataTable } from "../..";
@@ -154,11 +154,22 @@ export default function ConfigsTable({
     [navigate]
   );
 
+  const virtualColumns = useMemo(() => {
+    const virtualColumn = groupByColumns.map((column) => {
+      return {
+        header: column.toLocaleUpperCase(),
+        accessorKey: column,
+        enableHiding: true
+      } satisfies ColumnDef<ConfigItem, any>;
+    });
+    return [...virtualColumn, ...configListColumns];
+  }, [groupByColumns]);
+
   return (
     <DataTable
       stickyHead
       isVirtualized
-      columns={configListColumns}
+      columns={virtualColumns}
       data={transformConfigList}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}

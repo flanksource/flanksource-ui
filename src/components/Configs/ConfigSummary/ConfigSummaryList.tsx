@@ -322,7 +322,7 @@ export default function ConfigSummaryList({
                   </div>
                 );
               }
-      } satisfies ColumnDef<ConfigSummary, any>;
+      } satisfies ColumnDef<ConfigSummary>;
     });
     return [...newColumns, ...configSummaryColumns];
   }, [groupBy, groupByTags]);
