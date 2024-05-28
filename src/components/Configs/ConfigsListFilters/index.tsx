@@ -15,7 +15,7 @@ function ConfigsListFilterControls() {
 
   return (
     <FormikFilterForm
-      paramsToReset={["tags"]}
+      paramsToReset={["tags", "group_by"]}
       filterFields={[
         "search",
         "configType",
@@ -28,7 +28,7 @@ function ConfigsListFilterControls() {
       <div className="flex flex-row items-center gap-2 mr-4">
         <ConfigTypesDropdown />
 
-        <ConfigGroupByDropdown paramsToReset={["tags"]} />
+        <ConfigGroupByDropdown />
 
         <ConfigLabelsDropdown />
 
