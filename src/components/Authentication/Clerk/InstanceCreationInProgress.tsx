@@ -24,8 +24,8 @@ export default function InstanceCreationInProgress() {
             <OrganizationSwitcher
               hidePersonal
               createOrganizationMode="modal"
-              afterSelectOrganizationUrl="/"
-              afterCreateOrganizationUrl="/"
+              afterSelectOrganizationUrl="/organizations/orgs-switched"
+              afterCreateOrganizationUrl="/organizations/orgs-switched"
             />
             <UserButton
               afterSignOutUrl={clerkUrls.login}

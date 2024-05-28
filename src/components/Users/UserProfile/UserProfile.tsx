@@ -10,7 +10,8 @@ export function UserProfileDropdown() {
       <OrganizationSwitcher
         hidePersonal
         createOrganizationMode="modal"
-        afterSelectOrganizationUrl="/"
+        afterSelectOrganizationUrl={`/organizations/orgs-switched`}
+        afterCreateOrganizationUrl={`/organizations/orgs-switched`}
       />
       <UserButton afterSignOutUrl="/login" />
     </div>

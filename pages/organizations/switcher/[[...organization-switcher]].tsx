@@ -1,15 +1,10 @@
 import { OrganizationSwitcher } from "@clerk/nextjs";
-import { useRouter } from "next/router";
-import React from "react";
 import { clerkUrls } from "../../../src/components/Authentication/Clerk/ClerkAuthSessionChecker";
 import useDetermineAuthSystem from "../../../src/components/Authentication/useDetermineAuthSystem";
 import { Head } from "../../../src/components/Head/Head";
 
 export default function ClerkOrganizationSwitcher() {
   const authSystem = useDetermineAuthSystem();
-  const { query } = useRouter();
-
-  const redirectUrl = query.redirectUrl ? (query.return_to as string) : "/";
 
   if (authSystem === "kratos") {
     return null;
@@ -23,10 +18,10 @@ export default function ClerkOrganizationSwitcher() {
           <div className="w-full px-3 text-center flex flex-col">
             <div className="flex flex-col mb-12">
               <OrganizationSwitcher
-                afterCreateOrganizationUrl={redirectUrl}
+                afterCreateOrganizationUrl={`/organizations/orgs-switched`}
                 createOrganizationUrl={clerkUrls.createOrganization}
                 createOrganizationMode="navigation"
-                afterSelectOrganizationUrl={redirectUrl}
+                afterSelectOrganizationUrl={`/organizations/orgs-switched`}
                 hidePersonal
               />
             </div>

@@ -28,6 +28,6 @@
       "@flanksource-ui/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "pages"],
   "exclude": ["node_modules"]
 }
