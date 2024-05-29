@@ -70,7 +70,7 @@ import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsI
 import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
 import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelationshipsPage";
 import { HealthPage } from "./pages/health";
-import PlaybookRunsPage from "./pages/playbooks/PlaybookRuns";
+import PlaybookRunsPage from "./pages/playbooks/PlaybookRunsPage";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
 import { features } from "./services/permissions/features";
