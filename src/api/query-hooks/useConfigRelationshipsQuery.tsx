@@ -14,7 +14,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
   const incoming = searchParams.get("incoming") === "true";
   const outgoing = searchParams.get("outgoing") === "true";
   const relation =
-    searchParams.get(ConfigRelationKey) === "both" ? "both" : "hard";
+    searchParams.get(ConfigRelationKey) === "soft" ? "both" : "hard";
 
   const relationshipType = useMemo(() => {
     const all = incoming && outgoing;
