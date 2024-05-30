@@ -73,6 +73,7 @@ export default function FormikEnvVarConfigsFields({
               <FormikTextInput
                 name={`${name}.value`}
                 className="flex flex-col gap-0"
+                type="password"
               />
             </div>
           )}

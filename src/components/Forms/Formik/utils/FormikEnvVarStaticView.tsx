@@ -52,6 +52,7 @@ export default function FormikEnvVarStaticView({
         onChange={handleChange}
         disabled={disabled}
         readOnly={readOnly}
+        type="password"
       />
     );
   }
@@ -66,6 +67,7 @@ export default function FormikEnvVarStaticView({
       onChange={handleChange}
       disabled={disabled}
       readOnly={readOnly}
+      type="password"
     />
   );
 }
