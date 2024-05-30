@@ -10,7 +10,6 @@ import {
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { resolve } from "./resolve";
-import { AgentItem } from "./types/common";
 import { ConfigItem } from "./types/configs";
 
 export interface SchemaResourceI {
@@ -28,14 +27,13 @@ export interface SchemaResourceI {
   created_at: string;
   updated_at: string;
   agent_id?: string;
-  agent?: Pick<AgentItem, "id" | "name" | "description">;
   created_by?: {
     id: string;
     avatar: string;
     name: string;
   };
   integration_type: "scrapers" | "topologies" | "logging_backends";
-  agent_details?: {
+  agent?: {
     id: string;
     name: string;
   };

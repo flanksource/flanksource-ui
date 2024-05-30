@@ -1,5 +1,6 @@
 import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { User } from "@flanksource-ui/api/types/users";
+import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
 import { LogsIcon } from "@flanksource-ui/components/Icons/LogsIcon";
 import { SearchInListIcon } from "@flanksource-ui/components/Icons/SearchInListIcon";
 import { TopologyIcon } from "@flanksource-ui/components/Icons/TopologyIcon";
@@ -28,10 +29,13 @@ function IntegrationListNameCell({
     return <LogsIcon className={"h-5 w-5"} />;
   }, [row.original.integration_type]);
 
+  const agent = row.original.agent;
+
   return (
     <div className="flex items-center gap-2">
       {icon}
       <span className="truncate">{name}</span>
+      <AgentBadge agent={agent} />
     </div>
   );
 }

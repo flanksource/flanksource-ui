@@ -1,14 +1,13 @@
 import clsx from "clsx";
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Badge } from "..";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
 import { Age } from "../../ui/Age";
 import { Avatar } from "../../ui/Avatar";
 import Popover from "../../ui/Popover/Popover";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
-import AgentName from "../Agents/AgentName";
+import AgentBadge from "../Agents/AgentBadge";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
@@ -39,9 +38,9 @@ export function SchemaResourceList({
             <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
               <HCell colSpan={2}>Name</HCell>
               <HCell colSpan={2}>Source Config</HCell>
+              <HCell>Agent</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
-              {table === "topologies" && <HCell>Agent</HCell>}
               <HCell>Job Status</HCell>
               <HCell>Last Run</HCell>
               <HCell>Last Failed</HCell>
@@ -116,7 +115,6 @@ function SchemaResourceListItem({
   table,
   schedule,
   job_status,
-  job_time_start,
   namespace,
   agent,
   spec,
@@ -124,8 +122,7 @@ function SchemaResourceListItem({
   job_name,
   last_runtime,
   job_last_failed,
-  labels,
-  agent_details
+  labels
 }: SchemaResourceWithJobStatus & {
   baseUrl: string;
   table: string;
@@ -155,8 +152,8 @@ function SchemaResourceListItem({
             <ConfigScrapperIcon spec={spec} />
           )}
           <div data-tip={name} className="block truncate">
-            {name}
-            {agent_details && <Badge text={agent_details.name} />}
+            <span className="mr-1"> {name}</span>
+            <AgentBadge agent={agent} />
           </div>
         </div>
       </Cell>
@@ -181,13 +178,9 @@ function SchemaResourceListItem({
           <a href={`${source}`}>Link</a>
         )}
       </Cell>
+      <Cell>{agent?.name}</Cell>
       {table === "canaries" && <Cell>{schedule}</Cell>}
       {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}
-      {table === "topologies" && (
-        <Cell>
-          <AgentName agent={agent} />
-        </Cell>
-      )}
 
       <Cell className="text-gray-500 lowercase space-x-2">
         <JobHistoryStatusColumn

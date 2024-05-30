@@ -137,8 +137,8 @@ export default function TopologyResourceForm({
                   namespace={topology?.namespace!}
                   source={topology?.source}
                   name={topology?.name!}
-                  agentId={topology?.agent_details?.id}
-                  agentName={topology?.agent_details?.name}
+                  agentId={topology?.agent?.id}
+                  agentName={topology?.agent?.name}
                 >
                   {!topology?.id && (
                     <div className="flex flex-1 flex-row">
