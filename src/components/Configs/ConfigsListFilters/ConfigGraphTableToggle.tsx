@@ -8,6 +8,11 @@ export const configRelationshipGraphTableToggle = atomWithStorage<
   getOnInit: true
 });
 
+export function useConfigGraphTableToggleViewValue() {
+  const [hideDeletedConfigs] = useAtom(configRelationshipGraphTableToggle);
+  return hideDeletedConfigs;
+}
+
 export default function ConfigGraphTableToggle() {
   const [toggleValue, setToggleValue] = useAtom(
     configRelationshipGraphTableToggle
