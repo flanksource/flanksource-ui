@@ -42,7 +42,7 @@ type FormFields = Partial<
     | "labels"
     | "schedule"
     | "agent_id"
-    | "agent_details"
+    | "agent"
   >
 >;
 
@@ -67,7 +67,7 @@ export function SchemaResourceEdit({
   isModal = false,
   schedule,
   agent_id: agentId,
-  agent_details,
+  agent,
   resourceInfo
 }: Props) {
   //FIXME
@@ -441,7 +441,7 @@ export function SchemaResourceEdit({
                           </div>
                         </div>
                         <CanEditResource
-                          agentName={agent_details?.name}
+                          agentName={agent?.name}
                           name={name!}
                           source={source}
                           namespace={namespace!}
