@@ -24,7 +24,7 @@ import { getIncident } from "../services/incident";
 import { LogsResponse, SearchLogsPayload, searchLogs } from "../services/logs";
 import {
   getComponentTeams,
-  getHealthCheckItem,
+  getHealthCheckSpecByID,
   getTopologyByID,
   getTopologyComponentLabels,
   getTopologyComponentsByTypes,
@@ -267,14 +267,14 @@ export const useGetPeopleQuery = ({
   );
 };
 
-export const useCanaryCheckItemQuery = (
+export const useHealthCheckSpecQuery = (
   canaryID: string,
   /* todo: think of a better way to formulate types for the query options */
   { enabled = true, ...rest }
 ) => {
   return useQuery(
-    ["db", "canaries", canaryID],
-    () => getHealthCheckItem(canaryID),
+    ["db", "resource", "canaries", canaryID],
+    () => getHealthCheckSpecByID(canaryID),
     {
       enabled,
       ...rest

@@ -19,11 +19,11 @@ import { Head } from "../../Head/Head";
 import { refreshCheckModalAtomTrigger } from "../ChecksListing";
 import { Duration } from "../renderers";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
+import { CheckDetailsTabs } from "./CheckDetailsTabs";
 import CheckLabels from "./CheckLabels";
 import CheckRelationships from "./CheckRelationships";
 import { StatusHistory } from "./StatusHistory/StatusHistory";
 import { calculateDefaultTimeRangeValue } from "./Utils/calculateDefaultTimeRangeValue";
-import { PopupTabs } from "./tabs";
 import { getUptimePercentage } from "./utils";
 
 const Tall = ({ children }: { children: JSX.Element }) => {
@@ -222,7 +222,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
           </Tall>
         </div>
 
-        <PopupTabs
+        <CheckDetailsTabs
           shareHeight={false}
           style={{
             flexDirection: "column",
