@@ -40,7 +40,7 @@ const buttonStyles = {
   }
 } as const;
 
-export function PopupTabs({
+export function CheckDetailsTabs({
   tabs,
   contentStyle,
   shareHeight = false, // all tab content height would be determined by the tab with the tallest content
