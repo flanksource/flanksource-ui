@@ -236,10 +236,12 @@ export default function ConfigSummaryList({
         const { type } = row.original;
         params.set("configType", type);
       }
-      const tags = groupBy.filter(
-        (column) =>
-          column !== "type" && column !== "health" && column !== "status"
-      );
+      const tags = groupBy
+        .filter(
+          (column) =>
+            column !== "type" && column !== "health" && column !== "status"
+        )
+        .filter((column) => row.original[column as keyof ConfigSummary]);
       if (tags.length > 0) {
         const tagsParam = tags
           .map((column) => {
