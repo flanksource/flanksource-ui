@@ -1,4 +1,4 @@
-import { useCanaryCheckItemQuery } from "@flanksource-ui/api/query-hooks";
+import { useHealthCheckSpecQuery } from "@flanksource-ui/api/query-hooks";
 import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
 import {
   getComponentTemplate,
@@ -63,7 +63,7 @@ type HealthCheckEditProps = {
 };
 
 export function HealthCheckEdit({ check }: HealthCheckEditProps) {
-  const { isLoading, data: canaryCheck } = useCanaryCheckItemQuery(
+  const { isLoading, data: canaryCheck } = useHealthCheckSpecQuery(
     check.canary_id!,
     {
       enabled: check.canary_id !== undefined

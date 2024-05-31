@@ -1,18 +1,31 @@
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
+import { useHealthCheckSpecQuery } from "@flanksource-ui/api/query-hooks";
+import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { useMemo } from "react";
 
 type CanaryCheckDetailsProps = {
-  check: Pick<Partial<HealthCheck>, "canary_id" | "spec">;
+  check: Pick<Partial<HealthCheck>, "canary_id">;
 };
 
 export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {
+  const { isLoading, data: canaryCheck } = useHealthCheckSpecQuery(
+    check.canary_id!,
+    {
+      enabled: check.canary_id !== undefined
+    }
+  );
+
   const code = useMemo(() => {
-    if (!check?.spec) {
+    if (!canaryCheck?.spec) {
       return null;
     }
-    return JSON.stringify(check.spec, null, 2);
-  }, [check?.spec]);
+    return JSON.stringify(canaryCheck.spec, null, 2);
+  }, [canaryCheck?.spec]);
+
+  if (isLoading) {
+    return <FormSkeletonLoader />;
+  }
 
   return (
     <div key="specs">

@@ -252,10 +252,11 @@ export const getHealthCheckDetails = async (id: string) => {
   return res.data?.[0];
 };
 
-export const getHealthCheckItem = async (id: string) => {
-  const res = await IncidentCommander.get<SchemaResourceI[] | null>(
-    `/canaries?id=eq.${id}`
-  );
+export const getHealthCheckSpecByID = async (id: string) => {
+  const res = await IncidentCommander.get<
+    | Pick<SchemaResourceI, "id" | "source" | "spec" | "name" | "namespace">[]
+    | null
+  >(`/canaries?id=eq.${id}&select=id,source,spec,name,namespace`);
   return res.data?.[0];
 };
 
