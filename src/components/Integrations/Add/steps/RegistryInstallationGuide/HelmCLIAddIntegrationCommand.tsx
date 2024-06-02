@@ -1,4 +1,4 @@
-import CodeBlock from "@flanksource-ui/ui/CodeBlock/CodeBlock";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import Handlebars from "handlebars";
 import { HelmChartValues } from "./RegistryInstallationInstructions";
 

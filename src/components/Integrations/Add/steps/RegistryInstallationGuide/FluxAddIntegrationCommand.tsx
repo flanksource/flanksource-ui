@@ -1,4 +1,4 @@
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
 import { stringify } from "yaml";

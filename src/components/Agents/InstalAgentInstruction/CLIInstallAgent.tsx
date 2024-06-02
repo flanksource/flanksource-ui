@@ -1,9 +1,9 @@
+import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
 import useDetermineAuthSystem from "@flanksource-ui/components/Authentication/useDetermineAuthSystem";
 import { useUser } from "@flanksource-ui/context";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
-import { GeneratedAgent } from "../../../api/services/agents";
-import CodeBlock from "../../../ui/CodeBlock/CodeBlock";
 import { AgentFormValues } from "../Add/AddAgentForm";
 
 const helmCommand = `helm repo add flanksource https://flanksource.github.io/charts

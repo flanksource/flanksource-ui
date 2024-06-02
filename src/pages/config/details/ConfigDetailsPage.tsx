@@ -1,7 +1,7 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { usePartialUpdateSearchParams } from "@flanksource-ui/hooks/usePartialUpdateSearchParams";
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";

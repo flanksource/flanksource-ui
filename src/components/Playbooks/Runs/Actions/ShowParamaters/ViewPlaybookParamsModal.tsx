@@ -4,7 +4,7 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import PlaybookPeopleDetails from "./PlaybookPeopleLink";
 import PlaybookTeamDetails from "./PlaybookTeamLink";

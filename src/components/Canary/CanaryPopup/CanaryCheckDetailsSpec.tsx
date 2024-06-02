@@ -1,8 +1,8 @@
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { useHealthCheckSpecQuery } from "@flanksource-ui/api/query-hooks";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { useMemo } from "react";
-import { HealthCheck } from "../../../api/types/health";
-import { JSONViewer } from "../../../ui/JSONViewer";
 
 type CanaryCheckDetailsProps = {
   check: Pick<Partial<HealthCheck>, "canary_id">;

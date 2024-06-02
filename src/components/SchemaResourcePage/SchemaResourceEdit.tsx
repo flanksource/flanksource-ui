@@ -26,7 +26,7 @@ import {
 import { SchemaResourceType, schemaResourceTypes } from "./resourceTypes";
 
 const CodeEditor = dynamic(
-  () => import("../../ui/CodeEditor").then((m) => m.CodeEditor),
+  () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
   { ssr: false }
 );
 
@@ -425,7 +425,7 @@ export function SchemaResourceEdit({
                             <label htmlFor="icon-picker" className="form-label">
                               Spec
                             </label>
-                            <div className="flex flex-col h-[min(850px,calc(100vh-500px))]">
+                            <div className="flex flex-col h-[min(500px,calc(100vh-500px))]">
                               <CodeEditor
                                 key={keyRef.current}
                                 readOnly={!!source || disabled}

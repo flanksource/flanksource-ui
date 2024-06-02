@@ -9,8 +9,8 @@ import AttachAsEvidenceButton from "@flanksource-ui/components/Incidents/AttachE
 import { ViewType } from "@flanksource-ui/types";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { DiffRenderer } from "@flanksource-ui/ui/DiffRenderer/DiffRenderer";
-import { JSONViewer } from "@flanksource-ui/ui/JSONViewer";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import ModalTitleListItems from "@flanksource-ui/ui/Modal/ModalTitleListItems";

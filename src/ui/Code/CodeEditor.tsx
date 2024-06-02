@@ -2,7 +2,9 @@ import Editor, { loader, useMonaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
 import { configureMonacoYaml } from "monaco-yaml";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import YAML from "yaml";
+import { Button } from "../Buttons/Button";
 
 loader.config({ monaco });
 
@@ -88,26 +90,87 @@ export function CodeEditor({
     };
   }, [jsonSchemaUrl, language, monaco, schemaUrl]);
 
+  const inlineSpec = useMemo(() => {
+    if (!value) {
+      return false;
+    }
+    if (language === "json") {
+      try {
+        const parsed = JSON.parse(value);
+        return !!parsed.spec;
+      } catch (e) {
+        return false;
+      }
+    }
+    if (language === "yaml") {
+      try {
+        const parsed = YAML.parse(value);
+        return !!parsed.spec;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }, [language, value]);
+
+  const unWrapSpec = useCallback(() => {
+    if (!value) {
+      return;
+    }
+    if (language === "json") {
+      try {
+        const parsed = JSON.parse(value);
+        onChange(JSON.stringify(parsed.spec, null, 2), {});
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (language === "yaml") {
+      try {
+        const parsed = YAML.parse(value);
+        onChange(YAML.stringify(parsed.spec, { indent: 2 }), {});
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [language, onChange, value]);
+
   return (
-    <Editor
-      className="border shadow py-2"
-      defaultLanguage={language}
-      language={language}
-      value={value}
-      onChange={onChange}
-      width="100%"
-      options={{
-        renderLineHighlight: "none",
-        readOnly,
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false
-      }}
-      {...{
-        // high contrast theme for yaml and json
-        ...((language === "yaml" || language === "json") && {
-          theme: "githubLight"
-        })
-      }}
-    />
+    <>
+      {inlineSpec && (
+        <div className="flex flex-row gap-2 my-1 pb-1 relative" role="alert">
+          <div className="text-red-600">
+            Wrapping spec field detected, do you want to unwrap it?
+          </div>
+          <Button
+            className="bg-white border border-gray-500 px-1.5 rounded"
+            size="none"
+            onClick={unWrapSpec}
+          >
+            Yes
+          </Button>
+        </div>
+      )}
+      <Editor
+        className="border shadow py-2"
+        defaultLanguage={language}
+        language={language}
+        value={value}
+        onChange={onChange}
+        width="100%"
+        options={{
+          renderLineHighlight: "none",
+          readOnly,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false
+        }}
+        {...{
+          // high contrast theme for yaml and json
+          ...((language === "yaml" || language === "json") && {
+            theme: "githubLight"
+          })
+        }}
+      />
+    </>
   );
 }
