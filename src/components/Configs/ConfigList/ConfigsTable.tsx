@@ -1,8 +1,8 @@
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
+import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DataTable } from "../..";
-import { ConfigItem } from "../../../api/types/configs";
 import { configListColumns } from "./ConfigListColumn";
 
 export interface Props {
@@ -33,7 +33,9 @@ export default function ConfigsTable({
     if (!groupByUserInput) {
       return groupBy ? [groupBy] : [];
     }
-    return groupByUserInput.split(",");
+    return groupByUserInput
+      .split(",")
+      .map((item) => item.replace("__tag", "").trim());
   }, [groupBy, groupByUserInput]);
 
   const sortField = queryParams.get("sortBy") ?? "type";
@@ -129,8 +131,10 @@ export default function ConfigsTable({
     return "";
   }, []);
 
-  const transformConfigList = useMemo(() => {
-    const tagsGroupBy = groupByColumns.filter((item) => item.endsWith("__tag"));
+  const configListWithTagsIncluded = useMemo(() => {
+    const tagsGroupBy = groupByColumns.filter(
+      (item) => !item.endsWith("__tag")
+    );
     if (tagsGroupBy.length === 0) {
       return data;
     }
@@ -156,10 +160,17 @@ export default function ConfigsTable({
 
   const virtualColumns = useMemo(() => {
     const virtualColumn = groupByColumns.map((column) => {
+      const columnKey = column.replace("__tag", "");
       return {
-        header: column.toLocaleUpperCase(),
-        accessorKey: column,
-        enableHiding: true
+        header: columnKey.toLocaleUpperCase(),
+        id: columnKey,
+        enableHiding: true,
+        getGroupingValue: (row) => {
+          return row.tags?.[columnKey];
+        },
+        cell: ({ row }) => {
+          return row.original.tags?.[columnKey];
+        }
       } satisfies ColumnDef<ConfigItem, any>;
     });
     return [...virtualColumn, ...configListColumns];
@@ -170,7 +181,7 @@ export default function ConfigsTable({
       stickyHead
       isVirtualized
       columns={virtualColumns}
-      data={transformConfigList}
+      data={configListWithTagsIncluded}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
