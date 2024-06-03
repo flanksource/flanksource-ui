@@ -5,8 +5,17 @@ import { atomWithStorage } from "jotai/utils";
 
 export const areDeletedConfigChangesHidden = atomWithStorage<"yes" | "no">(
   "areDeletedConfigChangesHidden",
-  "yes"
+  "yes",
+  undefined,
+  {
+    getOnInit: true
+  }
 );
+
+export function useHideDeletedConfigChanges() {
+  const [hideDeletedConfigChanges] = useAtom(areDeletedConfigChangesHidden);
+  return hideDeletedConfigChanges === "yes" ? true : false;
+}
 
 export function ConfigChangesToggledDeletedItems() {
   const [hideDeletedConfigChanges, setHideDeletedConfigsChanges] = useAtom(
