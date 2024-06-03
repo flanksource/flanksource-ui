@@ -5,7 +5,7 @@ type CRDSourceProps = {
   id: string;
   namespace: string;
   name: string;
-  source: string;
+  source?: string;
 };
 
 export default function CRDSource({
@@ -14,7 +14,7 @@ export default function CRDSource({
   namespace,
   source
 }: CRDSourceProps) {
-  if (source === "UI") {
+  if (!source || source === "UI") {
     return null;
   }
 
