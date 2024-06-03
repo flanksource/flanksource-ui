@@ -15,7 +15,7 @@ import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import CheckRunNow from "./CanaryPopup/CheckRunNow";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
 import { HealthCheckEdit } from "./HealthCheckEdit";
-import { CanaryTable } from "./table";
+import { CanaryTable } from "./CanaryTable";
 
 export const refreshCheckModalAtomTrigger = atom(0);
 

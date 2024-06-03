@@ -39,7 +39,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     enableGrouping: true,
     enableSorting: true,
     enableHiding: false,
-    aggregatedCell: ({ row }: CellContext<ConfigItem, any>) => {
+    aggregatedCell: ({ row, column }: CellContext<ConfigItem, any>) => {
       if (row.getCanExpand()) {
         const groupingValue = row.getGroupingValue(
           row.groupingColumnId!

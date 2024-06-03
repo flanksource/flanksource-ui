@@ -72,7 +72,7 @@ export function DataTableRow<TableColumns extends RowData>({
                 // First column should be displaced if the table
                 // is grouped
                 className={`w-full overflow-hidden text-ellipsis ${
-                  isGrouped && !row?.subRows.length && cellIndex === 1
+                  isGrouped && row?.subRows.length > 1 && cellIndex === 1
                     ? "pl-12"
                     : ""
                 }`}
