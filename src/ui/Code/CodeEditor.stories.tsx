@@ -1,13 +1,13 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { CodeEditor } from "./CodeEditor";
 
 export default {
   title: "CodeEditor ",
   component: CodeEditor,
   parameters: { actions: { argTypesRegex: "^on.*" } }
-} as ComponentMeta<typeof CodeEditor>;
+} as Meta<typeof CodeEditor>;
 
-const Template: ComponentStory<typeof CodeEditor> = (arg: any) => (
+const Template: StoryFn<typeof CodeEditor> = (arg: any) => (
   <CodeEditor {...arg} />
 );
 

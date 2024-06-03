@@ -1,16 +1,13 @@
+import { Meta, StoryFn } from "@storybook/react";
 import { useState } from "react";
-
-import { ComponentStory } from "@storybook/react";
 import { JSONViewer } from "./JSONViewer";
 
 export default {
   title: "JSONViewer",
   component: JSONViewer
-};
+} satisfies Meta<typeof JSONViewer>;
 
-const Template: ComponentStory<typeof JSONViewer> = (arg) => (
-  <JSONViewer {...arg} />
-);
+const Template: StoryFn<typeof JSONViewer> = (arg) => <JSONViewer {...arg} />;
 
 export const Default = Template.bind({});
 
@@ -55,7 +52,7 @@ const JSONViewerSelectable = ({
   return <JSONViewer {...args} selections={selections} onClick={onClick} />;
 };
 
-export const Selectable: ComponentStory<typeof JSONViewerSelectable> =
+export const Selectable: StoryFn<typeof JSONViewerSelectable> =
   JSONViewerSelectable.bind({});
 
 Selectable.args = {
