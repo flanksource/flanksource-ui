@@ -148,8 +148,9 @@ export type ConfigsTagList = {
   value: any;
 };
 
-export const getConfigTagsList = () =>
-  resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_tags`));
+export const getConfigTagsList = () => {
+  return ConfigDB.get<ConfigsTagList[] | null>(`/config_tags`);
+};
 
 export const getConfigLabelsList = () =>
   resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_labels`));
@@ -211,6 +212,11 @@ export type GetConfigsRelatedChangesParams = {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   arbitraryFilter?: Record<string, string>;
+  tags?: {
+    key: string;
+    value: string;
+    exclude?: boolean;
+  }[];
 };
 
 export async function getConfigsChanges({
@@ -227,7 +233,8 @@ export async function getConfigsChanges({
   pageSize,
   sortBy,
   sortOrder,
-  arbitraryFilter
+  arbitraryFilter,
+  tags
 }: GetConfigsRelatedChangesParams) {
   const queryParams = new URLSearchParams();
   if (id) {
@@ -253,7 +260,7 @@ export async function getConfigsChanges({
   }
   if (arbitraryFilter) {
     Object.entries(arbitraryFilter).forEach(([key, value]) => {
-      const filterExpression = tristateOutputToQueryParamValue(value);
+      const filterExpression = tristateOutputToQueryParamValue(value, false);
       if (filterExpression) {
         queryParams.set(key, filterExpression);
       }
@@ -276,7 +283,13 @@ export async function getConfigsChanges({
     // for descending order, we need to add a "-" before the sortBy field
     queryParams.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
-
+  if (tags) {
+    const tagList = tags.map(({ key, value, exclude }) => {
+      const equalSign = exclude ? "!" : "";
+      return `${key}${equalSign}=${value}`;
+    });
+    queryParams.set("tags", tagList.join(","));
+  }
   if (type_filter) {
     queryParams.set(
       "recursive",

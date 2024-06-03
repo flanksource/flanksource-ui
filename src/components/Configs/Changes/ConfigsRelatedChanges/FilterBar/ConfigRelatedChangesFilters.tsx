@@ -4,6 +4,7 @@ import { ChangesTypesDropdown } from "../../ConfigChangesFilters/ChangeTypesDrop
 import { ConfigChangeSeverity } from "../../ConfigChangesFilters/ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigRelatedChangesToggles } from "../../ConfigChangesFilters/ConfigRelatedChangesToggles";
+import { ConfigTagsDropdown } from "../../ConfigChangesFilters/ConfigTagsDropdown";
 import ConfigTypesTristateDropdown from "../../ConfigChangesFilters/ConfigTypesTristateDropdown";
 import { ConfigChangesToggledDeletedItems } from "./ConfigChangesToggledDeletedItems";
 
@@ -25,6 +26,7 @@ export function ConfigRelatedChangesFilters({
         <ConfigTypesTristateDropdown />
         <ChangesTypesDropdown />
         <ConfigChangeSeverity />
+        <ConfigTagsDropdown />
         <ConfigRelatedChangesToggles />
         <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
         <ConfigChangesToggledDeletedItems />
