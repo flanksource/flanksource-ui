@@ -1,3 +1,12 @@
+import { useCanaryGraphQuery } from "@flanksource-ui/api/query-hooks/health";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { Loading } from "@flanksource-ui/ui/Loading";
+import {
+  formatDateToMonthDay,
+  formatDateToMonthDayTime,
+  formatDateToTime,
+  formatDateToYear
+} from "@flanksource-ui/utils/date";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -9,15 +18,6 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { useCanaryGraphQuery } from "../../../api/query-hooks/health";
-import { HealthCheck } from "../../../api/types/health";
-import { Loading } from "../../../ui/Loading";
-import {
-  formatDateToMonthDay,
-  formatDateToMonthDayTime,
-  formatDateToTime,
-  formatDateToYear
-} from "../../../utils/date";
 
 // @TODO: duration should be formatted properly, not just by ms
 const formatDuration = (duration: number) => `${duration}ms`;

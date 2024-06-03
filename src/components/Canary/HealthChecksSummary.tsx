@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { AiFillHeart } from "react-icons/ai";
-import { StatusLine, StatusLineProps } from "../../StatusLine/StatusLine";
+import { StatusLine, StatusLineProps } from "../StatusLine/StatusLine";
 
 type HealthChecksSummaryProps = React.HTMLProps<HTMLDivElement> & {
   target?: string;
