@@ -1,6 +1,5 @@
-import { useGetConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
+import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/useGetConfigsChangesQuery";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
-import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { Head } from "@flanksource-ui/components/Head/Head";
@@ -13,13 +12,11 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
-  const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
@@ -27,16 +24,9 @@ export function ConfigChangesPage() {
     sortBy: "created_at",
     sortDirection: "desc"
   });
-  const configTypes = params.get("configTypes") ?? undefined;
-  const configType = params.get("configType") ?? undefined;
-  const changeType = params.get("changeType") ?? undefined;
-  const severity = params.get("severity") ?? undefined;
-  const from = timeRangeValue?.from ?? undefined;
-  const to = timeRangeValue?.to ?? undefined;
+
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
-  const sortBy = params.get("sortBy") ?? undefined;
-  const sortDirection = params.get("sortDirection") === "asc" ? "asc" : "desc";
   const configId = params.get("id") ?? undefined;
   const changeSummary = params.get("summary") ?? undefined;
   const source = params.get("source") ?? undefined;
@@ -64,25 +54,9 @@ export function ConfigChangesPage() {
   }, [changeSummary, configId, createdBy, externalCreatedBy, source]);
 
   const { data, isLoading, error, isRefetching, refetch } =
-    useGetConfigsChangesQuery(
-      {
-        include_deleted_configs: false,
-        changeType,
-        severity,
-        from,
-        to,
-        configTypes,
-        configType,
-        sortBy,
-        sortOrder: sortDirection === "desc" ? "desc" : "asc",
-        page: page,
-        pageSize: pageSize,
-        arbitraryFilter
-      },
-      {
-        keepPreviousData: true
-      }
-    );
+    useGetAllConfigsChangesQuery({
+      keepPreviousData: true
+    });
 
   const changes = (data?.changes ?? []).map((changes) => ({
     ...changes,

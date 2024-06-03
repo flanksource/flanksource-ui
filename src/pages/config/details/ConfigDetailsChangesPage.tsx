@@ -1,76 +1,28 @@
-import { useGetConfigsChangesQuery } from "@flanksource-ui/api/query-hooks";
+import { useGetConfigChangesByIDQuery } from "@flanksource-ui/api/query-hooks/useGetConfigsChangesQuery";
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
-import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
-import { areDeletedConfigChangesHidden } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
-import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
-  const [hideDeletedConfigChanges] = useAtom(areDeletedConfigChangesHidden);
-  const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [params, setParams] = useSearchParams({
-    downstream: "true",
-    upstream: "false",
     sortBy: "created_at",
     sortDirection: "desc"
   });
-  const change_type = params.get("changeType") ?? undefined;
-  const severity = params.get("severity") ?? undefined;
-  const from = timeRangeValue?.from ?? undefined;
-  const to = timeRangeValue?.to ?? undefined;
-  const sortBy = params.get("sortBy") ?? undefined;
-  const sortDirection = params.get("sortDirection") ?? "desc";
-  const configTypes = params.get("configTypes") ?? "all";
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
-
   const upstream = params.get("upstream") === "true";
   const downstream = params.get("downstream") === "true";
-
-  const all = upstream && downstream;
-
   const hideConfigColumn = !downstream && !upstream;
 
-  const relationshipType = useMemo(() => {
-    if (all) {
-      return "all";
-    }
-    if (upstream) {
-      return "upstream";
-    }
-    if (downstream) {
-      return "downstream";
-    }
-    return undefined;
-  }, [all, upstream, downstream]);
-
-  const { data, isLoading, error, refetch } = useGetConfigsChangesQuery(
-    {
-      id: id!,
-      type_filter: relationshipType,
-      include_deleted_configs: hideDeletedConfigChanges !== "yes",
-      changeType: change_type,
-      severity,
-      from,
-      to,
-      configTypes,
-      sortBy,
-      sortOrder: sortDirection === "desc" ? "desc" : "asc",
-      page: page,
-      pageSize: pageSize
-    },
-    {
-      keepPreviousData: true,
-      enabled: !!id
-    }
-  );
+  const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
+    keepPreviousData: true,
+    enabled: !!id
+  });
 
   const changes = data?.changes ?? [];
 
