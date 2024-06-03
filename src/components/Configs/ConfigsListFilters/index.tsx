@@ -21,7 +21,7 @@ function ConfigsListFilterControls() {
         "configType",
         "labels",
         "status",
-        "healthy",
+        "health",
         "groupBy"
       ]}
     >
