@@ -1,6 +1,6 @@
+import { Meta, StoryFn } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import { HealthSummary } from "./index";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { HealthSummary } from "./HealthSummary";
 
 export default {
   title: "HealthSummary",
@@ -12,7 +12,7 @@ export default {
       </MemoryRouter>
     )
   ]
-} as ComponentMeta<typeof HealthSummary>;
+} as Meta<typeof HealthSummary>;
 
 const component = {
   name: "ip-10-0-6-82.eu-west-2.compute.internal",
@@ -84,7 +84,7 @@ const component = {
   external_id: "eu-west-2c/ip-10-0-6-82.eu-west-2.compute.internal"
 };
 
-const Template: ComponentStory<typeof HealthSummary> = (arg) => (
+const Template: StoryFn<typeof HealthSummary> = (arg) => (
   <HealthSummary {...arg} />
 );
 

@@ -4,7 +4,7 @@ import {
   StatusInfo,
   StatusLine,
   StatusLineProps
-} from "../../StatusLine/StatusLine";
+} from "../StatusLine/StatusLine";
 
 type HealthSummaryProps = {
   component: Topology;
@@ -48,12 +48,12 @@ function getStatuses(summary?: Topology["summary"], url?: string) {
   return statuses;
 }
 
-export const HealthSummary = ({
+export function HealthSummary({
   component,
   iconSize = "sm",
   viewType = "individual_level",
   ...rest
-}: HealthSummaryProps) => {
+}: HealthSummaryProps) {
   const statusLineInfo = useMemo(() => {
     const data: StatusLineProps = {
       icon: "",
@@ -92,4 +92,4 @@ export const HealthSummary = ({
   }, [viewType, component]);
 
   return <StatusLine {...statusLineInfo} {...rest} />;
-};
+}
