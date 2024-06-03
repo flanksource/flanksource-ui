@@ -212,6 +212,7 @@ export default function SpecEditorForm({
           <div className="flex flex-row  bg-gray-100 p-4">
             <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
               <CanEditResource
+                resourceType={resourceInfo.table}
                 id={initialValues.id}
                 namespace={initialValues.namespace}
                 name={initialValues.name}

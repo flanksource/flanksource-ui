@@ -133,6 +133,7 @@ export default function TopologyResourceForm({
             <div className={`flex flex-col ${footerClassName}`}>
               <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
                 <CanEditResource
+                  resourceType="topologies"
                   id={topology?.id!}
                   namespace={topology?.namespace!}
                   source={topology?.source}

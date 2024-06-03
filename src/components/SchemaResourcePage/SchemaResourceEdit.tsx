@@ -441,6 +441,7 @@ export function SchemaResourceEdit({
                           </div>
                         </div>
                         <CanEditResource
+                          resourceType={table as keyof typeof resourceTypeMap}
                           agentName={agent?.name}
                           name={name!}
                           source={source}

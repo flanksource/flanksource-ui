@@ -1,62 +1,10 @@
 import { useHealthCheckSpecQuery } from "@flanksource-ui/api/query-hooks";
-import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
-import {
-  getComponentTemplate,
-  getTopology
-} from "@flanksource-ui/api/services/topology";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
-import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
-import { useQuery } from "@tanstack/react-query";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
-type HealthCheckEditComponentProps = {
-  check: Pick<SchemaResourceI, "source">;
-};
-
-function HealthCheckEditComponent({ check }: HealthCheckEditComponentProps) {
-  const componentID = check.source?.split("/")[1] || "";
-
-  const { data: template, isLoading } = useQuery(
-    ["topology", "component", componentID],
-    async () => {
-      const res = await getTopology({
-        id: componentID
-      });
-      if (res.components?.[0].topology_id) {
-        const system_template_id = res.components?.[0]?.topology_id;
-        const template = await getComponentTemplate(system_template_id);
-        return template;
-      }
-      return undefined;
-    },
-    {
-      enabled: componentID !== ""
-    }
-  );
-
-  if (isLoading) {
-    return <TextSkeletonLoader />;
-  }
-
-  if (!template) {
-    return null;
-  }
-
-  return (
-    <div className="flex items-center">
-      <Link
-        to={{
-          pathname: `/settings/topologies/${template.id}`
-        }}
-      >
-        {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a className="block "> Created by {template.name}</a>
-      </Link>
-    </div>
-  );
-}
+import { CatalogResourceSource } from "../Settings/CatalogResourceSource";
+import ComponentResourceSource from "../Settings/ComponentResourceSource";
 
 type HealthCheckEditProps = {
   check: Pick<HealthCheck, "canary_id">;
@@ -87,7 +35,11 @@ export function HealthCheckEdit({ check }: HealthCheckEditProps) {
     }
 
     if (canaryCheck.source.startsWith("component")) {
-      return <HealthCheckEditComponent check={canaryCheck} />;
+      return <ComponentResourceSource source={canaryCheck.source} />;
+    }
+
+    if (canaryCheck.source.startsWith("kubernetes")) {
+      return <CatalogResourceSource source={canaryCheck.source} />;
     }
   }
 
