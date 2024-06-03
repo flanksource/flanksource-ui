@@ -150,6 +150,7 @@ export default function PlaybookSpecsForm({
                     className="flex flex-col flex-1"
                     jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
                     required
+                    enableSpecUnwrap
                   />
                 </div>
               </div>

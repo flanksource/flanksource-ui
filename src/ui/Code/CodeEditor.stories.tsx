@@ -13,3 +13,9 @@ const Template: StoryFn<typeof CodeEditor> = (arg: any) => (
 
 export const Base = Template.bind({});
 Base.args = {};
+
+export const WithSpecUnwrapEnabled = Template.bind({});
+
+WithSpecUnwrapEnabled.args = {
+  enableSpecUnwrap: true
+};

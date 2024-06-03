@@ -36,7 +36,7 @@ interface Props {
   schemaFileName?: string;
   jsonSchemaUrl?: string;
   language?: string;
-  extractYamlSpecFieldOnPaste?: boolean;
+  enableSpecUnwrap?: boolean;
 }
 
 export function CodeEditor({
@@ -45,7 +45,8 @@ export function CodeEditor({
   readOnly = false,
   schemaFileName,
   jsonSchemaUrl,
-  language
+  language,
+  enableSpecUnwrap = false
 }: Props) {
   const monaco = useMonaco();
 
@@ -137,7 +138,7 @@ export function CodeEditor({
 
   return (
     <>
-      {inlineSpec && (
+      {enableSpecUnwrap && inlineSpec && (
         <div className="flex flex-row gap-2 my-1 pb-1 relative" role="alert">
           <div className="text-red-600">
             Wrapping spec field detected, do you want to unwrap it?

@@ -182,6 +182,7 @@ export default function SpecEditorForm({
                           `spec`
                     }
                     schemaFileName={selectedSpec.schemaFileName}
+                    enableSpecUnwrap
                   />
                 </>
               ) : (
