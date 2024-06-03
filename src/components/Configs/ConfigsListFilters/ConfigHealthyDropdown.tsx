@@ -36,7 +36,7 @@ export function ConfigHealthyDropdown({
   paramsKey = "health"
 }: ConfigTypesDropdownProps) {
   const [field] = useField({
-    name: "configType"
+    name: paramsKey
   });
 
   return (
