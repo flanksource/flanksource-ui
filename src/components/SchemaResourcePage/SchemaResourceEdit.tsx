@@ -435,7 +435,7 @@ export function SchemaResourceEdit({
                                 }}
                                 language="yaml"
                                 schemaFileName={jsonSchemaFilePrefix}
-                                extractYamlSpecFieldOnPaste
+                                enableSpecUnwrap
                               />
                             </div>
                           </div>

@@ -35,6 +35,7 @@ type FormikCodeEditorProps = {
    * json before updating the formik field value
    */
   saveAsString?: boolean;
+  enableSpecUnwrap?: boolean;
 };
 
 export function FormikCodeEditor({
@@ -47,7 +48,8 @@ export function FormikCodeEditor({
   disabled,
   className = "flex flex-col h-[min(1000px,calc(90vh))]",
   required = false,
-  saveAsString = false
+  saveAsString = false,
+  enableSpecUnwrap = false
 }: FormikCodeEditorProps) {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -138,6 +140,7 @@ export function FormikCodeEditor({
         schemaFileName={schemaFileName}
         jsonSchemaUrl={jsonSchemaUrl}
         readOnly={disabled}
+        enableSpecUnwrap={enableSpecUnwrap}
       />
     </div>
   );
