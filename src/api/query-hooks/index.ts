@@ -356,10 +356,7 @@ export function useGetConfigTagsListQuery(
   return useQuery({
     queryKey: ["configs", "tags", "list"],
     queryFn: async () => {
-      const { error, data } = await getConfigTagsList();
-      if (error) {
-        throw error;
-      }
+      const { data } = await getConfigTagsList();
       return data ?? [];
     },
     ...options

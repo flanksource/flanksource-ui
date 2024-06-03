@@ -10,6 +10,28 @@ import {
   getConfigsChanges
 } from "../services/configs";
 
+function useConfigChangesTagsFilter() {
+  const [params] = useSearchParams();
+
+  const tags = useMemo(() => {
+    const allTags = params.get("tags");
+    if (allTags) {
+      return allTags.split(",").map((tag) => {
+        const exclude = tag.split(":")[1] === "-1" ? true : false; // expected: `key____value:-1`
+        const key = `${tag.split("____")[0]}`; // expected: `key____value:-1`
+        const value = tag.split("____")[1].split(":")[0]; // expected: `key____value:-1`
+        return {
+          key,
+          value,
+          exclude
+        } satisfies Required<GetConfigsRelatedChangesParams>["tags"][number];
+      });
+    }
+  }, [params]);
+
+  return tags;
+}
+
 export function useGetAllConfigsChangesQuery(
   queryOptions: UseQueryOptions<CatalogChangesSearchResponse> = {
     enabled: true,
@@ -37,6 +59,8 @@ export function useGetAllConfigsChangesQuery(
   const source = params.get("source") ?? undefined;
   const createdBy = params.get("created_by") ?? undefined;
   const externalCreatedBy = params.get("external_created_by") ?? undefined;
+
+  const tags = useConfigChangesTagsFilter();
 
   const arbitraryFilter = useMemo(() => {
     const filter = new Map<string, string>();
@@ -70,7 +94,8 @@ export function useGetAllConfigsChangesQuery(
     sortOrder: sortDirection === "desc" ? "desc" : "asc",
     page: page,
     pageSize: pageSize,
-    arbitraryFilter
+    arbitraryFilter,
+    tags
   } satisfies GetConfigsRelatedChangesParams;
 
   return useQuery({
@@ -108,6 +133,8 @@ export function useGetConfigChangesByIDQuery(
   const downstream = params.get("downstream") === "true";
   const all = upstream && downstream;
 
+  const tags = useConfigChangesTagsFilter();
+
   const relationshipType = useMemo(() => {
     if (all) {
       return "all";
@@ -133,7 +160,8 @@ export function useGetConfigChangesByIDQuery(
     sortBy,
     sortOrder: sortDirection === "desc" ? "desc" : "asc",
     page: page,
-    pageSize: pageSize
+    pageSize: pageSize,
+    tags
   } satisfies GetConfigsRelatedChangesParams;
 
   return useQuery({

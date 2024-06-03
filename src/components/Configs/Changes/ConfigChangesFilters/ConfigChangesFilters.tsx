@@ -8,6 +8,7 @@ import { paramsToReset } from "../ConfigChangeHistory";
 import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
+import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
 import ConfigTypesTristateDropdown from "./ConfigTypesTristateDropdown";
 
 type FilterBadgeProps = {
@@ -82,7 +83,7 @@ export function ConfigChangeFilters({
     <div className="flex flex-col gap-2">
       <FormikFilterForm
         paramsToReset={paramsToReset}
-        filterFields={["configTypes", "changeType", "severity"]}
+        filterFields={["configTypes", "changeType", "severity", "tags"]}
         defaultFieldValues={{
           ...(configType && { configTypes: defaultConfigType })
         }}
@@ -91,6 +92,7 @@ export function ConfigChangeFilters({
           <ConfigTypesTristateDropdown />
           <ChangesTypesDropdown />
           <ConfigChangeSeverity />
+          <ConfigTagsDropdown />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
         </div>
       </FormikFilterForm>

@@ -25,7 +25,7 @@ import { Tooltip } from "react-tooltip";
 
 export type TriStateOptions = {
   id: string;
-  label: string;
+  label: React.ReactNode;
   icon?: any;
   value: string;
 };
@@ -200,7 +200,7 @@ function ReactSelectTriStateSingleValue({
                 data-tooltip-content={`${
                   +value === 1 ? "Include" : "Exclude"
                 } ${v.label}`}
-                key={v.label}
+                key={v.id}
                 className={clsx(
                   "w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-200"
                 )}
