@@ -6,8 +6,7 @@ import { toastError } from "../../components/Toast/toast";
 import { getIncidentHistory } from "../services/IncidentsHistory";
 import { getAllAgents } from "../services/agents";
 import {
-  CatalogChangesSearchResponse,
-  GetConfigsRelatedChangesParams,
+  ConfigsTagList,
   getConfig,
   getConfigAnalysis,
   getConfigChanges,
@@ -16,7 +15,6 @@ import {
   getConfigLabelsList,
   getConfigName,
   getConfigTagsList,
-  getConfigsChanges,
   getTopologyRelatedInsights
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
@@ -296,20 +294,6 @@ export const useGetHypothesisQuery = (
   );
 };
 
-export function useGetConfigsChangesQuery(
-  props: GetConfigsRelatedChangesParams,
-  queryOptions: UseQueryOptions<CatalogChangesSearchResponse> = {
-    enabled: true,
-    keepPreviousData: true
-  }
-) {
-  return useQuery({
-    queryKey: ["configs", "changes", props],
-    queryFn: () => getConfigsChanges(props),
-    ...queryOptions
-  });
-}
-
 export function useGetConfigChangesByConfigIdQuery(
   id: string,
   pageIndex?: number,
@@ -366,23 +350,32 @@ export function useGetConfigByIdQuery(id: string) {
   );
 }
 
-export function useGetConfigTagsListQuery() {
-  return useQuery(["configs", "tags", "list"], async () => {
-    const { error, data } = await getConfigTagsList();
-    if (error) {
-      throw error;
-    }
-    return data ?? [];
+export function useGetConfigTagsListQuery(
+  options?: UseQueryOptions<ConfigsTagList[]>
+) {
+  return useQuery({
+    queryKey: ["configs", "tags", "list"],
+    queryFn: async () => {
+      const { error, data } = await getConfigTagsList();
+      if (error) {
+        throw error;
+      }
+      return data ?? [];
+    },
+    ...options
   });
 }
 
 export function useGetConfigLabelsListQuery() {
-  return useQuery(["configs", "tags", "list"], async () => {
-    const { error, data } = await getConfigLabelsList();
-    if (error) {
-      throw error;
+  return useQuery({
+    queryKey: ["configs", "tags", "list"],
+    queryFn: async () => {
+      const { error, data } = await getConfigLabelsList();
+      if (error) {
+        throw error;
+      }
+      return data ?? [];
     }
-    return data ?? [];
   });
 }
 
