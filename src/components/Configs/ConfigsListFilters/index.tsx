@@ -1,6 +1,5 @@
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import { debounce } from "lodash";
-import React from "react";
 import { useSearchParams } from "react-router-dom";
 import { TextInputClearable } from "../../../ui/FormControls/TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
@@ -10,7 +9,7 @@ import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
 import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
-function ConfigsListFilterControls() {
+export default function ConfigsListFilters() {
   const [params, setParams] = useSearchParams();
 
   return (
@@ -52,6 +51,3 @@ function ConfigsListFilterControls() {
     </FormikFilterForm>
   );
 }
-
-const ConfigsListFilters = React.memo(ConfigsListFilterControls);
-export default ConfigsListFilters;
