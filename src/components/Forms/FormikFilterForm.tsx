@@ -31,23 +31,17 @@ function FormikChangesListener({
     paramsToReset.forEach((param) => searchParams.delete(param));
     setSearchParams(searchParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values]);
+  }, [values, setFieldValue]);
 
   // reset form values, if the query params change
   useEffect(() => {
     filterFields.forEach((field) => {
       const value = searchParams.get(field);
       const defaultValue = defaultFieldValues?.[field] ?? undefined;
-      if (!value) {
-        if (defaultValue) {
-          setFieldValue(field, defaultValue);
-        } else {
-          setFieldValue(field, undefined);
-        }
-      }
+      setFieldValue(field, value ?? defaultValue);
     }, []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [defaultFieldValues, filterFields, searchParams]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
