@@ -1,8 +1,4 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
-import {
-  StatusInfo,
-  StatusLine
-} from "@flanksource-ui/components/StatusLine/StatusLine";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { CountBadge } from "@flanksource-ui/ui/Badge/CountBadge";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
@@ -15,6 +11,10 @@ import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
+import {
+  ConfigSummaryHealthAggregateCell,
+  ConfigSummaryHealthCell
+} from "./Cells/ConfigSummaryHealthCells";
 
 export function getConfigStatusColor(health?: ConfigSummary["health"]) {
   if (!health) {
@@ -111,71 +111,8 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     accessorKey: "health",
     minSize: 50,
     maxSize: 100,
-    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
-      const value = getValue<ConfigSummary["health"]>();
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const statusLines = useMemo(() => {
-        const data: StatusInfo[] = Object.entries(value ?? {}).map(
-          ([key, value]) => {
-            return {
-              label: value,
-              // @ts-ignore
-              color: getConfigStatusColor({
-                [key]: value
-              })
-            };
-          }
-        );
-        return data;
-      }, [value]);
-
-      if (!value) {
-        return null;
-      }
-
-      return (
-        <div className="flex flex-row gap-1">
-          <StatusLine label="" statuses={statusLines} />
-        </div>
-      );
-    },
-    aggregatedCell: ({ row }: CellContext<ConfigSummary, any>) => {
-      const value = row.subRows.reduce((acc, row) => {
-        const health = row.original.health;
-        if (health) {
-          Object.entries(health).forEach(([key, value]) => {
-            acc[key] = (acc[key] || 0) + value;
-          });
-        }
-        return acc;
-      }, {} as Record<string, number>);
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const statusLines = useMemo(() => {
-        const data: StatusInfo[] = Object.entries(value ?? {}).map(
-          ([key, value]) => {
-            return {
-              label: value.toString(),
-              // @ts-ignore
-              color: getConfigStatusColor({
-                [key]: value
-              })
-            };
-          }
-        );
-        return data;
-      }, [value]);
-
-      if (!value) {
-        return null;
-      }
-      return (
-        <div className="flex flex-row gap-1">
-          <StatusLine label="" statuses={statusLines} />
-        </div>
-      );
-    }
+    cell: ConfigSummaryHealthCell,
+    aggregatedCell: ConfigSummaryHealthAggregateCell
   },
   {
     header: "analysis",
