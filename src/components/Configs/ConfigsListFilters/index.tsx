@@ -1,7 +1,5 @@
+import FormikSearchInputClearable from "@flanksource-ui/components/Forms/Formik/FormikSearchInputClearable";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
-import { debounce } from "lodash";
-import { useSearchParams } from "react-router-dom";
-import { TextInputClearable } from "../../../ui/FormControls/TextInputClearable";
 import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
 import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";
@@ -10,8 +8,6 @@ import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
 
 export default function ConfigsListFilters() {
-  const [params, setParams] = useSearchParams();
-
   return (
     <FormikFilterForm
       paramsToReset={["tags", "group_by"]}
@@ -35,15 +31,9 @@ export default function ConfigsListFilters() {
 
         <ConfigHealthyDropdown />
 
-        <TextInputClearable
-          onChange={debounce((e) => {
-            const query = e.target.value || "";
-            params.set("search", query);
-            setParams(params);
-          }, 200)}
-          className="w-80"
+        <FormikSearchInputClearable
+          name="search"
           placeholder="Search for configs"
-          defaultValue={params.get("search") ?? undefined}
         />
 
         <ConfigListToggledDeletedItems />
