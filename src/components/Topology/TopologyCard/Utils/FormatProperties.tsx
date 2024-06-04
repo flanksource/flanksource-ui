@@ -161,7 +161,8 @@ export function FormatPropertyDefault({
     if (property == null) {
       return null;
     }
-    let derivedValue: React.ReactNode = property.text;
+    let derivedValue: React.ReactNode =
+      property.text || property.value?.toString();
     if (property.value != null) {
       if (property.max != null) {
         const percent = ((Number(property.value) / property.max) * 100).toFixed(
