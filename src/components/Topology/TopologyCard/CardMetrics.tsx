@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Icon } from "../../Icon";
-import { FormatProperty } from "./Property";
+import { FormatProperty } from "./FormatProperty";
 
 interface IProps {
   items: {

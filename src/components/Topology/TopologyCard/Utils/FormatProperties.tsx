@@ -151,6 +151,17 @@ export function FormatPropertyCPUMemory({
   );
 }
 
+export function FormatPropertyPercent({ property }: FormatPropertyProps) {
+  if (!property || !property.value) {
+    return null;
+  }
+  if (property.unit !== "percent") {
+    return null;
+  }
+  const percentValue = parseFloat(property.value.toString()) * 100;
+  return <span>{percentValue}%</span>;
+}
+
 export function FormatPropertyDefault({
   property,
   short

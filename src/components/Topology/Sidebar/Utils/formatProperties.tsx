@@ -1,5 +1,5 @@
 import { Topology } from "../../../../api/types/topology";
-import { FormatProperty } from "../../TopologyCard/Property";
+import { FormatProperty } from "../../TopologyCard/FormatProperty";
 
 type GroupedProperties = {
   type: "GROUPED";
