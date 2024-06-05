@@ -3,6 +3,7 @@ import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
 import { AgentFormValues } from "../Add/AddAgentForm";
+import { useAgentsBaseURL } from "./useAgentsBaseURL";
 
 const fluxTemplate = `apiVersion: v1
 kind: Namespace
@@ -71,9 +72,9 @@ export default function FluxInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const baseUrl = window.location.origin;
-
   const kubeOptions = agentFormValues?.kubernetes;
+
+  const baseUrl = useAgentsBaseURL();
 
   const yaml = useMemo(() => {
     return template(

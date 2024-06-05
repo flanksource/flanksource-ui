@@ -1,10 +1,9 @@
 import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
-import useDetermineAuthSystem from "@flanksource-ui/components/Authentication/useDetermineAuthSystem";
-import { useUser } from "@flanksource-ui/context";
 import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
 import { AgentFormValues } from "../Add/AddAgentForm";
+import { useAgentsBaseURL } from "./useAgentsBaseURL";
 
 const helmCommand = `helm repo add flanksource https://flanksource.github.io/charts
 
@@ -36,14 +35,9 @@ export default function CLIInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const { backendUrl } = useUser();
-  const authSystem = useDetermineAuthSystem();
-
-  // if we are on the SaaS platform, we need to use the backend URL from the user
-  // profile, not the current URL
-  const baseUrl = authSystem === "clerk" ? backendUrl : window.location.origin;
-
   const kubeOptions = agentFormValues?.kubernetes;
+
+  const baseUrl = useAgentsBaseURL();
 
   const helmCommandTemplate = useMemo(() => {
     return template(
