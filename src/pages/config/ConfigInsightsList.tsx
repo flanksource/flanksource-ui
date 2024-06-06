@@ -59,7 +59,7 @@ export function ConfigInsightsPage() {
       >
         <ConfigPageTabs activeTab="Insights">
           <div className="flex flex-row items-center">
-            <ConfigInsightsFilters paramsToReset={["pageIndex", "pageSize"]} />
+            <ConfigInsightsFilters paramsToReset={["pageIndex"]} />
           </div>
           <div className="flex flex-col h-full overflow-y-hidden">
             <ConfigInsightsList
