@@ -1,7 +1,7 @@
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import ClosableBadge from "@flanksource-ui/ui/Badge/ClosableBadge";
 import clsx from "clsx";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { FaBan } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { paramsToReset } from "../ConfigChangeHistory";
@@ -73,9 +73,10 @@ export function ConfigChangeFilters({
   const [params] = useSearchParams();
 
   const configType = params.get("configTypes") ?? undefined;
-  const defaultConfigType = configType
-    ? `${configType?.replaceAll("::", "__")}:1`
-    : undefined;
+
+  const defaultConfigType = useMemo(() => {
+    return configType ? `${configType?.replaceAll("::", "__")}:1` : undefined;
+  }, [configType]);
 
   return (
     <div className="flex flex-col gap-2">
