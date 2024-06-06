@@ -131,7 +131,7 @@ export function ConfigDetailsChangesPage() {
     >
       <div className={`flex flex-col flex-1 h-full overflow-y-auto`}>
         <div className="flex flex-col flex-1 items-start gap-2 overflow-y-auto">
-          <ConfigRelatedChangesFilters />
+          <ConfigRelatedChangesFilters paramsToReset={["page"]} />
           <div className="flex flex-col flex-1 overflow-y-auto">
             <ConfigChangeHistory
               linkConfig={!hideConfigColumn}

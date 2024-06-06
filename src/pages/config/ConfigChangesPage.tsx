@@ -187,7 +187,7 @@ export function ConfigChangesPage() {
           ) : (
             <>
               <ConfigChangeFilters
-                paramsToReset={["pageIndex", "pageSize"]}
+                paramsToReset={["page"]}
                 arbitraryFilters={arbitraryFilter}
               />
               <ConfigChangeHistory
