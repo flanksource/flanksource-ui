@@ -2,7 +2,7 @@ import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import useConfigRelationshipsQuery from "@flanksource-ui/api/query-hooks/useConfigRelationshipsQuery";
 import { ConfigRelationships } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsTable";
+import ConfigsRelationshipsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsRelationshipsTable";
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
 import { useConfigGraphTableToggleViewValue } from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigGraphTableToggle";
 import { ConfigRelationshipGraph } from "@flanksource-ui/components/Configs/Graph/ConfigRelationshipGraph";
@@ -80,12 +80,11 @@ export function ConfigDetailsRelationshipsPage() {
               )}
             </ReactFlowProvider>
           ) : (
-            <ConfigsTable
-              // show the type column
-              columnsToHide={[]}
+            <ConfigsRelationshipsTable
+              columnsToHide={["type"]}
               data={configItems ?? []}
               isLoading={isLoading}
-              groupBy="type"
+              groupBy={["type"]}
               expandAllRows
             />
           )}
