@@ -7,7 +7,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    related_ids: ["b59c1752-1be4-4a51-9f84-8225ebe7c136"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -39,7 +39,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    related_ids: ["b59c1752-1be4-4a51-9f84-8225ebe7c136"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -71,7 +71,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    related_ids: ["b59c1752-1be4-4a51-9f84-8225ebe7c136"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -103,7 +103,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::Namespace",
     relation_type: "incoming",
     direction: "incoming",
-    related_id: "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    related_ids: ["b59c1752-1be4-4a51-9f84-8225ebe7c136"],
     depth: 1,
     tags: {
       cluster: "aws"
@@ -122,7 +122,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    related_ids: ["b59c1752-1be4-4a51-9f84-8225ebe7c136"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -149,7 +149,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::Pod",
     relation_type: "hard",
     direction: "outgoing",
-    related_id: "301902be-86af-4791-95fe-3f432c190276",
+    related_ids: ["301902be-86af-4791-95fe-3f432c190276"],
     depth: 2,
     tags: {
       cluster: "aws",
@@ -186,7 +186,7 @@ export const argoArgocdNotificationsController = [
     type: "Kubernetes::Cluster",
     relation_type: "hard",
     direction: "incoming",
-    related_id: "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    related_ids: ["f5c71026-fcab-4709-ae00-2edcc7e3086a"],
     depth: 2,
     tags: {
       cluster: "aws"

@@ -13,7 +13,7 @@ export type ConfigGraphNodes =
       config: Pick<
         ConfigRelationships,
         | "id"
-        | "related_id"
+        | "related_ids"
         | "direction"
         | "type"
         | "name"
@@ -33,7 +33,7 @@ export type ConfigGraphNodes =
       configs: Pick<
         ConfigRelationships,
         | "id"
-        | "related_id"
+        | "related_ids"
         | "direction"
         | "type"
         | "name"
@@ -61,31 +61,34 @@ export function ConfigRelationshipGraph({
   );
 
   const edges: Edge<ConfigGraphNodes>[] = useMemo(() => {
-    return configsForGraph.map((config) => {
+    const e: Edge<ConfigGraphNodes>[] = [];
+    configsForGraph.forEach((config) => {
       if (config.nodeType === "config") {
-        return {
-          id: `${config.config.id}-related-to-${config.config.related_id}`,
+        config.config.related_ids?.forEach((related_id) => {
+          e.push({
+            id: `${config.config.id}-related-to-${related_id}`,
+            source:
+              config.config.direction === "incoming"
+                ? config.config.id
+                : related_id,
+            target:
+              config.config.direction === "incoming"
+                ? related_id
+                : config.config.id
+          } satisfies Edge);
+        });
+      } else {
+        e.push({
+          id: `${config.id}-related-to-${config.related_id}`,
           source:
-            config.config.direction === "incoming"
-              ? config.config.id
-              : config.config.related_id!,
+            config.direction === "incoming" ? config.id : config.related_id!,
           target:
-            config.config.direction === "incoming"
-              ? config.config.related_id!
-              : config.config.id
-        } satisfies Edge;
+            config.direction === "incoming" ? config.related_id! : config.id
+        } satisfies Edge);
       }
-
-      return {
-        id: `${config.id}-related-to-${config.related_id}`,
-        source:
-          config.direction === "incoming" ? config.id : config.related_id!,
-        target: config.direction === "incoming" ? config.related_id! : config.id
-      } satisfies Edge;
     });
+    return e;
   }, [configsForGraph]);
-
-  console.log("configsForGraph", JSON.stringify(configsForGraph, null, 2));
 
   const nodes: Node<ConfigGraphNodes>[] = useMemo(() => {
     // break this down by config types

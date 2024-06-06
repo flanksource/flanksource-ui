@@ -15,32 +15,32 @@ import {
 // Test data for ConfigRelationships
 const configs: Pick<
   ConfigRelationships,
-  "id" | "related_id" | "direction" | "type"
+  "id" | "related_ids" | "direction" | "type"
 >[] = [
   {
     id: "1",
-    related_id: "2",
+    related_ids: ["2"],
     direction: "outgoing",
     type: "type1"
   },
   {
     id: "2",
-    related_id: "3",
+    related_ids: ["3"],
     direction: "incoming",
     type: "type2"
   },
   {
     id: "3",
-    related_id: "1",
+    related_ids: ["1"],
     direction: "outgoing",
     type: "type3"
   }
 ];
 
 // Test data for ConfigItem
-const currentConfig: Pick<ConfigItem, "id" | "related_id" | "type"> = {
+const currentConfig: Pick<ConfigItem, "id" | "related_ids" | "type"> = {
   id: "4",
-  related_id: "1",
+  related_ids: ["1"],
   type: "type4"
 };
 
@@ -52,7 +52,9 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         "config": {
           "direction": "outgoing",
           "id": "1",
-          "related_id": "2",
+          "related_ids": [
+            "2",
+          ],
           "type": "type1",
         },
         "nodeType": "config",
@@ -61,7 +63,9 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         "config": {
           "direction": "incoming",
           "id": "2",
-          "related_id": "3",
+          "related_ids": [
+            "3",
+          ],
           "type": "type2",
         },
         "nodeType": "config",
@@ -70,7 +74,9 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         "config": {
           "direction": "outgoing",
           "id": "3",
-          "related_id": "1",
+          "related_ids": [
+            "1",
+          ],
           "type": "type3",
         },
         "nodeType": "config",
@@ -78,7 +84,9 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
       {
         "config": {
           "id": "4",
-          "related_id": "1",
+          "related_ids": [
+            "1",
+          ],
           "type": "type4",
         },
         "nodeType": "config",
