@@ -7,36 +7,40 @@ import { ConfigGraphNodes } from "./ConfigRelationshipGraph";
 export function checkIfConfigHasMoreThan3Siblings(
   configList: Pick<
     ConfigRelationships,
-    "id" | "related_id" | "direction" | "type"
+    "id" | "related_ids" | "direction" | "type"
   >[],
   configItem: Pick<
     ConfigRelationships,
-    "id" | "related_id" | "direction" | "type"
+    "id" | "related_ids" | "direction" | "type"
   >
 ) {
   return (
-    configList.filter(
-      (config) =>
-        config.related_id === configItem.related_id &&
-        config.direction === configItem.direction
-    ).length > 3
+    configList.filter((config) => {
+      let relatedIdExistsInBoth = false;
+      config.related_ids?.forEach((relatedId) => {
+        relatedIdExistsInBoth =
+          configItem.related_ids?.includes(relatedId) ?? false;
+      });
+      return relatedIdExistsInBoth && config.direction === configItem.direction;
+    }).length > 3
   );
 }
 
 export function shouldCreateRootIntermediaryNode(
   configList: Pick<
     ConfigRelationships,
-    "id" | "related_id" | "direction" | "type"
+    "id" | "related_ids" | "direction" | "type"
   >[],
   configItem: Pick<
     ConfigRelationships,
-    "id" | "related_id" | "direction" | "type"
+    "id" | "related_ids" | "direction" | "type"
   >
 ) {
   const types = configList
     .filter(
       (config) =>
-        config.related_id === configItem.id && config.direction === "outgoing"
+        config.related_ids?.includes(configItem.id) &&
+        config.direction === "outgoing"
     )
     .reduce((acc, config) => {
       acc.add(config.type);
@@ -49,9 +53,9 @@ export function shouldCreateRootIntermediaryNode(
 export function prepareConfigsForGraph(
   configs: Pick<
     ConfigRelationships,
-    "id" | "related_id" | "direction" | "type"
+    "id" | "related_ids" | "direction" | "type"
   >[],
-  currentConfig: Pick<ConfigItem, "id" | "related_id" | "type">
+  currentConfig: Pick<ConfigItem, "id" | "related_ids" | "type">
 ) {
   const transformedConfigs: ConfigGraphNodes[] = [];
 
@@ -78,7 +82,7 @@ export function prepareConfigsForGraph(
     // intermediary node id
     const childrenConfigs = allConfigs.filter(
       (configItem) =>
-        configItem.related_id === config.id &&
+        configItem.related_ids?.includes(config.id) &&
         configItem.direction === "outgoing"
     );
 
@@ -124,7 +128,7 @@ export function prepareConfigsForGraph(
         // determine the number of children the config has, based on the type
         const siblingsConfigByType = allConfigs.filter(
           (configItem) =>
-            configItem.related_id === config.id &&
+            configItem.related_ids?.includes(config.id) &&
             configItem.direction === "outgoing" &&
             configItem.type === child.type
         );
@@ -162,7 +166,7 @@ export function prepareConfigsForGraph(
             nodeType: "config",
             config: {
               ...(child as ConfigRelationships),
-              related_id: intermediaryNodeID
+              related_ids: [intermediaryNodeID]
             }
           });
         } else {
@@ -172,7 +176,7 @@ export function prepareConfigsForGraph(
             nodeType: "config",
             config: {
               ...(child as ConfigRelationships),
-              related_id: rootConfigIntermediaryNodeID ?? config.id
+              related_ids: [rootConfigIntermediaryNodeID ?? config.id]
             }
           } satisfies ConfigGraphNodes);
         }

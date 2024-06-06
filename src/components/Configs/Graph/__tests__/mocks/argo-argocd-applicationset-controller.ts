@@ -7,7 +7,7 @@ export const applicationSetController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "9580a93f-7b74-437b-836f-9a419252f3dd",
+    related_ids: ["9580a93f-7b74-437b-836f-9a419252f3dd"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -38,7 +38,7 @@ export const applicationSetController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "9580a93f-7b74-437b-836f-9a419252f3dd",
+    related_ids: ["9580a93f-7b74-437b-836f-9a419252f3dd"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -70,7 +70,7 @@ export const applicationSetController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "9580a93f-7b74-437b-836f-9a419252f3dd",
+    related_ids: ["9580a93f-7b74-437b-836f-9a419252f3dd"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -90,7 +90,7 @@ export const applicationSetController = [
     type: "Kubernetes::Namespace",
     relation_type: "incoming",
     direction: "incoming",
-    related_id: "9580a93f-7b74-437b-836f-9a419252f3dd",
+    related_ids: ["9580a93f-7b74-437b-836f-9a419252f3dd"],
     depth: 1,
     tags: {
       cluster: "aws"
@@ -109,7 +109,7 @@ export const applicationSetController = [
     type: "Kubernetes::ReplicaSet",
     relation_type: "outgoing",
     direction: "outgoing",
-    related_id: "9580a93f-7b74-437b-836f-9a419252f3dd",
+    related_ids: ["9580a93f-7b74-437b-836f-9a419252f3dd"],
     depth: 1,
     tags: {
       cluster: "aws",
@@ -141,7 +141,7 @@ export const applicationSetController = [
     type: "Kubernetes::Cluster",
     relation_type: "hard",
     direction: "incoming",
-    related_id: "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    related_ids: ["f5c71026-fcab-4709-ae00-2edcc7e3086a"],
     depth: 2,
     tags: {
       cluster: "aws"
@@ -159,7 +159,7 @@ export const applicationSetController = [
     type: "Kubernetes::Pod",
     relation_type: "hard",
     direction: "outgoing",
-    related_id: "532fb54a-5325-431a-a618-0617020b1ab2",
+    related_ids: ["532fb54a-5325-431a-a618-0617020b1ab2"],
     depth: 2,
     tags: {
       cluster: "aws",

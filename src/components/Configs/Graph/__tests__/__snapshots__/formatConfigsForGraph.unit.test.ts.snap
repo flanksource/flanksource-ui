@@ -12,7 +12,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
       "name": "argo",
       "ready": true,
-      "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+      "related_ids": [
+        "9580a93f-7b74-437b-836f-9a419252f3dd",
+      ],
       "relation_type": "incoming",
       "status": "Healthy",
       "tags": {
@@ -32,7 +34,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "33616137-3536-6531-6236-633631376130",
       "name": "aws",
       "ready": false,
-      "related_id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+      "related_ids": [
+        "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+      ],
       "relation_type": "hard",
       "tags": {
         "cluster": "aws",
@@ -64,7 +68,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "b9317816-adbb-462e-9fde-0578b6b8d10f",
       "name": "argo-argocd-applicationset-controller-d6667d499-86bck",
       "ready": true,
-      "related_id": "532fb54a-5325-431a-a618-0617020b1ab2",
+      "related_ids": [
+        "532fb54a-5325-431a-a618-0617020b1ab2",
+      ],
       "relation_type": "hard",
       "status": "Running",
       "tags": {
@@ -100,7 +106,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
         "id": "51a1fccc-8117-4919-b249-3fb7cd8b6057",
         "name": "argo-argocd-applicationset-controller-764547bfd6",
         "ready": true,
-        "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+        "related_ids": [
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -131,7 +139,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
         "id": "492dd2e3-aee3-45aa-91b1-a12661a6d4a8",
         "name": "argo-argocd-applicationset-controller-5cdc847b88",
         "ready": true,
-        "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+        "related_ids": [
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -150,7 +160,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
         "id": "532fb54a-5325-431a-a618-0617020b1ab2",
         "name": "argo-argocd-applicationset-controller-d6667d499",
         "ready": true,
-        "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+        "related_ids": [
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
         "relation_type": "outgoing",
         "status": "Running",
         "tags": {
@@ -181,7 +193,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
         "id": "00f3ddcd-2f2a-4b3b-af4a-ba5091bd4501",
         "name": "argo-argocd-applicationset-controller-864b6c68",
         "ready": true,
-        "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+        "related_ids": [
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -219,7 +233,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "51a1fccc-8117-4919-b249-3fb7cd8b6057",
       "name": "argo-argocd-applicationset-controller-764547bfd6",
       "ready": true,
-      "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -253,7 +269,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "492dd2e3-aee3-45aa-91b1-a12661a6d4a8",
       "name": "argo-argocd-applicationset-controller-5cdc847b88",
       "ready": true,
-      "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -275,7 +293,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "532fb54a-5325-431a-a618-0617020b1ab2",
       "name": "argo-argocd-applicationset-controller-d6667d499",
       "ready": true,
-      "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Running",
       "tags": {
@@ -309,7 +329,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "id": "00f3ddcd-2f2a-4b3b-af4a-ba5091bd4501",
       "name": "argo-argocd-applicationset-controller-864b6c68",
       "ready": true,
-      "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -391,7 +413,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
       "name": "argo",
       "ready": true,
-      "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+      "related_ids": [
+        "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+      ],
       "relation_type": "incoming",
       "status": "Healthy",
       "tags": {
@@ -429,7 +453,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "8cc44af9-61f5-452f-94c9-ab33d8cb470c",
       "name": "argo-argocd-notifications-controller-54747746f8-k966m",
       "ready": true,
-      "related_id": "301902be-86af-4791-95fe-3f432c190276",
+      "related_ids": [
+        "301902be-86af-4791-95fe-3f432c190276",
+      ],
       "relation_type": "hard",
       "status": "Running",
       "tags": {
@@ -450,7 +476,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "33616137-3536-6531-6236-633631376130",
       "name": "aws",
       "ready": false,
-      "related_id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+      "related_ids": [
+        "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+      ],
       "relation_type": "hard",
       "tags": {
         "cluster": "aws",
@@ -484,7 +512,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
         "id": "26a39243-80b7-4b82-941b-1ce15758b292",
         "name": "argo-argocd-notifications-controller-5b445ddccf",
         "ready": true,
-        "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        "related_ids": [
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -515,7 +545,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
         "id": "92c4c176-6570-4a5d-bdcd-b2dbc7c9a26c",
         "name": "argo-argocd-notifications-controller-777f7984cd",
         "ready": true,
-        "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        "related_ids": [
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -546,7 +578,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
         "id": "a15f91b1-dbee-4884-89af-9cd5370c2644",
         "name": "argo-argocd-notifications-controller-5f47765dfd",
         "ready": true,
-        "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        "related_ids": [
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
         "relation_type": "outgoing",
         "status": "Scaled to Zero",
         "tags": {
@@ -572,7 +606,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
         "id": "301902be-86af-4791-95fe-3f432c190276",
         "name": "argo-argocd-notifications-controller-54747746f8",
         "ready": true,
-        "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        "related_ids": [
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
         "relation_type": "outgoing",
         "status": "Running",
         "tags": {
@@ -610,7 +646,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "26a39243-80b7-4b82-941b-1ce15758b292",
       "name": "argo-argocd-notifications-controller-5b445ddccf",
       "ready": true,
-      "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -644,7 +682,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "92c4c176-6570-4a5d-bdcd-b2dbc7c9a26c",
       "name": "argo-argocd-notifications-controller-777f7984cd",
       "ready": true,
-      "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -678,7 +718,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "a15f91b1-dbee-4884-89af-9cd5370c2644",
       "name": "argo-argocd-notifications-controller-5f47765dfd",
       "ready": true,
-      "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Scaled to Zero",
       "tags": {
@@ -707,7 +749,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "id": "301902be-86af-4791-95fe-3f432c190276",
       "name": "argo-argocd-notifications-controller-54747746f8",
       "ready": true,
-      "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      "related_ids": [
+        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
+      ],
       "relation_type": "outgoing",
       "status": "Running",
       "tags": {
