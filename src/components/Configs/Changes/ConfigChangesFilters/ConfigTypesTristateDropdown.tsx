@@ -46,8 +46,6 @@ export default function ConfigTypesTristateDropdown({
 
   const configItemsOptionsItems = configTypeOptions || [];
 
-  console.log(field.value, configItemsOptionsItems, isLoading);
-
   return (
     <TristateReactSelect
       options={configItemsOptionsItems}
