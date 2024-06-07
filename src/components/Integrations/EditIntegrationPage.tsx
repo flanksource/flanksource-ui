@@ -8,11 +8,11 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import { Loading } from "../../ui/Loading";
 import { Tab, Tabs } from "../../ui/Tabs/Tabs";
-import { Head } from "../Head/Head";
-import { SearchLayout } from "../Layout";
-import LogBackendsForm from "../LogBackends/LogBackendsForm";
+import LogBackendsForm from "../Logs/LogBackends/LogBackendsForm";
 import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJobsTab";
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";

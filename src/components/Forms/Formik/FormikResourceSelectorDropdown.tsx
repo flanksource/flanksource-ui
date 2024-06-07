@@ -3,9 +3,9 @@ import {
   searchResources
 } from "@flanksource-ui/api/services/search";
 import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
-import { Icon } from "@flanksource-ui/components/Icon";
-import { ConfigIcon } from "@flanksource-ui/components/Icon/ConfigIcon";
 import { StateOption } from "@flanksource-ui/components/ReactSelectDropdown";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 

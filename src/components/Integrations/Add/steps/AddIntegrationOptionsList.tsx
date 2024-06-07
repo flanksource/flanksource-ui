@@ -1,9 +1,9 @@
-import { Icon } from "@flanksource-ui/components/Icon";
-import { LogsIcon } from "@flanksource-ui/components/Icons/LogsIcon";
-import { SearchInListIcon } from "@flanksource-ui/components/Icons/SearchInListIcon";
-import { TopologyIcon } from "@flanksource-ui/components/Icons/TopologyIcon";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
 import { features } from "@flanksource-ui/services/permissions/features";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { LogsIcon } from "@flanksource-ui/ui/Icons/LogsIcon";
+import { SearchInListIcon } from "@flanksource-ui/ui/Icons/SearchInListIcon";
+import { TopologyIcon } from "@flanksource-ui/ui/Icons/TopologyIcon";
 import { useMemo } from "react";
 import { TupleToUnion } from "type-fest";
 

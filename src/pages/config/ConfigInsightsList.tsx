@@ -2,13 +2,13 @@ import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import ConfigInsightsList from "@flanksource-ui/components/Configs/Insights/ConfigInsightsList";
 import { ConfigInsightsFilters } from "@flanksource-ui/components/Configs/Insights/Filters/ConfigInsightsFilters";
-import { Head } from "@flanksource-ui/components/Head/Head";
-import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useState } from "react";

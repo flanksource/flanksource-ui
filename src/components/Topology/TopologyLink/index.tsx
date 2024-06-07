@@ -1,7 +1,7 @@
 import { useComponentNameQuery } from "@flanksource-ui/api/query-hooks";
 import { Component, Topology } from "@flanksource-ui/api/types/topology";
 import { Link } from "react-router-dom";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 
 export function TopologyLink({
   topology,

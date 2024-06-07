@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { useConfigComponentsRelationshipQuery } from "../../../api/query-hooks/useConfigComponentsRelationshipQuery";
 import { CountBadge } from "../../../ui/Badge/CountBadge";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
+import { Icon } from "../../../ui/Icons/Icon";
+import { TopologyIcon } from "../../../ui/Icons/TopologyIcon";
 import TextSkeletonLoader from "../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { Icon } from "../../Icon";
-import { TopologyIcon } from "../../Icons/TopologyIcon";
 
 export type ConfigsComponents = {
   id: string;

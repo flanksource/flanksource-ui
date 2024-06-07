@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useGetAllTeams } from "../../../../api/query-hooks/responders";
 import { Team } from "../../../../api/types/users";
-import { Icon } from "../../../Icon";
+import { Icon } from "../../../../ui/Icons/Icon";
 import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 
 type SelectTeamResponderDropdownProps = {

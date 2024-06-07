@@ -2,7 +2,7 @@ import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { isSidebarCollapsedAtom } from "../../Layout/SidebarLayout";
+import { isSidebarCollapsedAtom } from "../../../ui/Layout/SidebarLayout";
 
 export type SidebarStickyProps = {
   className?: string;

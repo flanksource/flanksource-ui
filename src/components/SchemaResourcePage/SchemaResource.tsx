@@ -2,11 +2,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSettingsUpdateResource } from "../../api/query-hooks/mutations/useSettingsResourcesMutations";
 import { useGetSettingsResourceDetails } from "../../api/query-hooks/settingsResourcesHooks";
 import { BreadcrumbNav } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
 import EmptyState from "../EmptyState";
 import ErrorPage from "../Errors/ErrorPage";
-import { Head } from "../Head/Head";
-import { SearchLayout } from "../Layout";
 import { SchemaResourceEdit } from "./SchemaResourceEdit";
 import { SchemaResourceType } from "./resourceTypes";
 

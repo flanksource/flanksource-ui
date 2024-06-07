@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { IoMdSend } from "react-icons/io";
 
 import { Comment } from "../../../../api/types/incident";
-import { CommentInput } from "../../../Comment";
+import { CommentInput } from "../../../../ui/Comment";
 import { ResponseLine } from "../ResponseLine";
 
 interface Props {

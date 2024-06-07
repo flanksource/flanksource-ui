@@ -1,7 +1,7 @@
-import { RefreshButton } from "../../ui/Buttons/RefreshButton";
-import { HelpDropdown } from "../../ui/MenuBar/HelpDropdown";
-import DashboardErrorBoundary from "../Errors/DashboardErrorBoundary";
-import { UserProfileDropdown } from "../Users/UserProfile/UserProfile";
+import { RefreshButton } from "@flanksource-ui/ui/Buttons/RefreshButton";
+import { HelpDropdown } from "@flanksource-ui/ui/MenuBar/HelpDropdown";
+import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
+import { UserProfileDropdown } from "../../components/Users/UserProfile";
 
 interface IProps {
   children: React.ReactNode;

@@ -1,8 +1,8 @@
 import { useGetSettingsAllQuery } from "../../api/query-hooks/settingsResourcesHooks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import ErrorPage from "../Errors/ErrorPage";
-import { Head } from "../Head/Head";
-import { SearchLayout } from "../Layout";
 import AddSchemaResourceModal from "./AddSchemaResourceModal";
 import { SchemaResourceList } from "./SchemaResourceList";
 import { SchemaResourceType } from "./resourceTypes";

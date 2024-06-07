@@ -5,7 +5,7 @@ import {
   ConfigAnalysisTypeItem,
   getConfigsAnalysisTypesFilter
 } from "../../../api/services/configs";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {

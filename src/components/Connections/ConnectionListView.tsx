@@ -1,4 +1,4 @@
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 import { ConnectionType, connectionTypes } from "./connectionTypes";
 
 type Props = {

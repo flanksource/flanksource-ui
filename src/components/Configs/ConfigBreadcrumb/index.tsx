@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getConfigName } from "../../../api/services/configs";
 import { BreadcrumbNav } from "../../../ui/BreadcrumbNav";
-import { ConfigIcon } from "../../Icon/ConfigIcon";
+import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 
 type ConfigBreadcrumbProps = {
   setTitle: (child: React.ReactNode) => void;

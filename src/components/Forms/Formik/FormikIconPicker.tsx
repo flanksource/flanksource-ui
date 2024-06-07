@@ -1,7 +1,7 @@
 import { useField } from "formik";
 import React from "react";
 import { TextInput } from "../../../ui/FormControls/TextInput";
-import { IconPicker } from "../../IconPicker";
+import { IconPicker } from "../../../ui/Icons/IconPicker";
 
 type FormikIconPickerProps = {
   name: string;

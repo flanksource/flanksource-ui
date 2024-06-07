@@ -1,15 +1,15 @@
 import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { User } from "@flanksource-ui/api/types/users";
 import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
-import { LogsIcon } from "@flanksource-ui/components/Icons/LogsIcon";
-import { SearchInListIcon } from "@flanksource-ui/components/Icons/SearchInListIcon";
-import { TopologyIcon } from "@flanksource-ui/components/Icons/TopologyIcon";
 import JobHistoryStatusColumn from "@flanksource-ui/components/JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "@flanksource-ui/components/JobsHistory/JobsHistoryDetails";
 import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
+import { LogsIcon } from "@flanksource-ui/ui/Icons/LogsIcon";
+import { SearchInListIcon } from "@flanksource-ui/ui/Icons/SearchInListIcon";
+import { TopologyIcon } from "@flanksource-ui/ui/Icons/TopologyIcon";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 

@@ -1,3 +1,8 @@
+import {
+  InviteUserForm,
+  InviteUserFormValue
+} from "@flanksource-ui/components/Users/InviteUserForm";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
@@ -10,12 +15,6 @@ import {
 } from "../api/services/users";
 import { Modal } from "../components";
 import { AccessCheck } from "../components/Authentication/AccessCheck/AccessCheck";
-import { Head } from "../components/Head/Head";
-import {
-  InviteUserForm,
-  InviteUserFormValue
-} from "../components/InviteUserForm/InviteUserForm";
-import { SearchLayout } from "../components/Layout";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import {
   ManageUserRoleValue,
@@ -25,6 +24,7 @@ import { UserList } from "../components/Users/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
 import { ConfirmationPromptDialog } from "../ui/AlertDialog/ConfirmationPromptDialog";
 import { BreadcrumbNav, BreadcrumbRoot } from "../ui/BreadcrumbNav";
+import { Head } from "../ui/Head";
 
 export function UsersPage() {
   const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] =

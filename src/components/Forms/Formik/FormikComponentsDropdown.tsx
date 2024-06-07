@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useComponentsQuery } from "../../../api/query-hooks";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 
 type FormikComponentsDropdownProps = {

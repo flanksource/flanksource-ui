@@ -2,10 +2,10 @@ import {
   ConfigChangesTypeItem,
   getConfigsChangesTypesFilter
 } from "@flanksource-ui/api/services/configs";
-import { ChangeIcon } from "@flanksource-ui/components/Icon/ChangeIcon";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
 import { useCallback } from "react";

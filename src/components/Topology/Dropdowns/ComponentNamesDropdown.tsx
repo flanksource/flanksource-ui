@@ -1,7 +1,7 @@
 import { useField } from "formik";
 import { useMemo } from "react";
 import { useComponentsQuery } from "../../../api/query-hooks";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import { TopologyComponentItem } from "../../Incidents/FilterIncidents/FilterIncidentsByComponents";
 import { defaultSelections } from "../../Incidents/data";
 import { ReactSelectDropdown, StateOption } from "../../ReactSelectDropdown";

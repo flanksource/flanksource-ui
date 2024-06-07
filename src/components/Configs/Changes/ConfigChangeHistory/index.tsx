@@ -7,7 +7,7 @@ import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { ChangeIcon } from "../../../Icon/ChangeIcon";
+import { ChangeIcon } from "../../../../ui/Icons/ChangeIcon";
 import { DataTable } from "../../../index";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";

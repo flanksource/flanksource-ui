@@ -1,8 +1,8 @@
+import { TbTrash } from "react-icons/tb";
 import { HealthCheck, HealthCheckStatus } from "../../api/types/health";
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 import { Status } from "../Status";
 import { isEmpty } from "./utils";
-import { TbTrash } from "react-icons/tb";
 
 export const empty = (
   <span className="text-gray-500 text-light text-xs">-</span>

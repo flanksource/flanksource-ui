@@ -6,9 +6,9 @@ import {
   useNotificationsSummaryQuery
 } from "../../api/query-hooks/useNotificationsQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import { Modal } from "../../ui/Modal";
-import { Head } from "../Head/Head";
-import { SearchLayout } from "../Layout";
 import NotificationsForm from "./NotificationsForm";
 import NotificationsTable from "./NotificationsTable";
 import { Notification } from "./notificationsTableColumns";

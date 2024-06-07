@@ -6,8 +6,6 @@ import {
 } from "../api/query-hooks";
 import { DropdownStandaloneWrapper } from "../components/Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../components/Dropdown/TimeRange";
-import { Head } from "../components/Head/Head";
-import { SearchLayout } from "../components/Layout";
 import LogsFilterBar from "../components/Logs/FilterLogs/LogsFilterBar";
 import { LogsTable } from "../components/Logs/Table/LogsTable";
 import { TopologyLink } from "../components/Topology/TopologyLink";
@@ -17,6 +15,8 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../ui/BreadcrumbNav";
+import { Head } from "../ui/Head";
+import { SearchLayout } from "../ui/Layout/SearchLayout";
 
 export const logTypes = [
   {

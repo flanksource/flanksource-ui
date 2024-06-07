@@ -2,7 +2,7 @@ import { ConfigAnalysis, ConfigItem } from "@flanksource-ui/api/types/configs";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
-import { ConfigIcon } from "../../Icon/ConfigIcon";
+import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 import ConfigInsightsIcon from "./ConfigInsightsIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 

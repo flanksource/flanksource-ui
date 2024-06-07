@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Icon } from "../../ui/Icons/Icon";
 import { Chip } from "../../ui/Tags/Chip";
-import { Icon } from "../Icon";
 
 export type StatusInfo = {
   label: string | number;

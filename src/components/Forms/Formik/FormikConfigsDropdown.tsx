@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import useConfigAllList from "../../../api/query-hooks/useConfigAllList";
-import { ConfigIcon } from "../../Icon/ConfigIcon";
+import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 
 type FormikConfigsDropdownProps = {

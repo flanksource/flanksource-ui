@@ -7,7 +7,7 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { atom, useAtom } from "jotai";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";

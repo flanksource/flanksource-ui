@@ -3,7 +3,7 @@ import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 
 type CheckRelationshipsComponent = {
   relationship: "component";

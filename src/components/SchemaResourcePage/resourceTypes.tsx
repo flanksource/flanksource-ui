@@ -3,10 +3,10 @@ import React from "react";
 import { IconType } from "react-icons";
 import { tables } from "../../context/UserAccessContext/permissions";
 import { features } from "../../services/permissions/features";
-import { AlarmIcon } from "../Icons/AlarmIcon";
-import { HealthIcon } from "../Icons/HealthIcon";
-import { SearchInListIcon } from "../Icons/SearchInListIcon";
-import { TopologyIcon } from "../Icons/TopologyIcon";
+import { AlarmIcon } from "../../ui/Icons/AlarmIcon";
+import { HealthIcon } from "../../ui/Icons/HealthIcon";
+import { SearchInListIcon } from "../../ui/Icons/SearchInListIcon";
+import { TopologyIcon } from "../../ui/Icons/TopologyIcon";
 
 export type SchemaResourceType = {
   name:

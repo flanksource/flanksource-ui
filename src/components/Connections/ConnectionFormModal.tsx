@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Icon } from "../../ui/Icons/Icon";
 import { Modal } from "../../ui/Modal";
-import { Icon } from "../Icon";
 import ConnectionForm from "./ConnectionForm";
 import ConnectionListView from "./ConnectionListView";
 import {

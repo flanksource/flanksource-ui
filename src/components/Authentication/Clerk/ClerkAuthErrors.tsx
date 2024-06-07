@@ -1,8 +1,8 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Head } from "../../../ui/Head";
 import ErrorPage from "../../Errors/ErrorPage";
-import { Head } from "../../Head/Head";
 
 export default function ClerkAuthErrors() {
   const { query } = useRouter();

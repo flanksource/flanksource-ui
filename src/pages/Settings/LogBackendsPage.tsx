@@ -1,14 +1,14 @@
+import { LogBackends } from "@flanksource-ui/components/Logs/LogBackends/LogBackends";
+import LogBackendsForm from "@flanksource-ui/components/Logs/LogBackends/LogBackendsForm";
+import LogBackendsList from "@flanksource-ui/components/Logs/LogBackends/LogBackendsList";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { getLogsBackends } from "../../api/schemaResources";
 import ErrorPage from "../../components/Errors/ErrorPage";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
-import { LogBackends } from "../../components/LogBackends/LogBackends";
-import LogBackendsForm from "../../components/LogBackends/LogBackendsForm";
-import LogBackendsList from "../../components/LogBackends/LogBackendsList";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import { Modal } from "../../ui/Modal";
 
 export function LogBackendsPage() {

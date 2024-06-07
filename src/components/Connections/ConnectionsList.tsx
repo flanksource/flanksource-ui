@@ -4,7 +4,7 @@ import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useMemo } from "react";
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 import { Connection } from "./ConnectionFormModal";
 import { ConnectionValueType } from "./connectionTypes";
 

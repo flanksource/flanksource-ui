@@ -13,8 +13,8 @@ import clsx from "clsx";
 import { useMemo } from "react";
 import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { Icon } from "../../../../Icon";
-import { ConfigIcon } from "../../../../Icon/ConfigIcon";
+import { ConfigIcon } from "../../../../../ui/Icons/ConfigIcon";
+import { Icon } from "../../../../../ui/Icons/Icon";
 import { StatusStyles } from "../../../../Topology/TopologyCard";
 import { CardMetrics } from "../../../../Topology/TopologyCard/CardMetrics";
 import {

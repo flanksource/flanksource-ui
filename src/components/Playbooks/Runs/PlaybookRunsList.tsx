@@ -10,7 +10,7 @@ import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
 

@@ -1,7 +1,7 @@
 import {
   PlaybookRunsStatusProps,
   PlaybookStatusIcon
-} from "../../Icon/PlaybookStatusIcon";
+} from "../../../ui/Icons/PlaybookStatusIcon";
 
 export function PlaybookStatusDescription({ status }: PlaybookRunsStatusProps) {
   return (

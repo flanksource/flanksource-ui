@@ -2,8 +2,8 @@ import {
   EvidenceType,
   EvidenceWithEvidenceItems
 } from "../../../api/types/evidence";
+import { Icon } from "../../../ui/Icons/Icon";
 import ConfigInsightsIcon from "../../Configs/Insights/ConfigInsightsIcon";
-import { Icon } from "../../Icon";
 
 type ChangelogEvidenceContentProps = {
   evidence: EvidenceWithEvidenceItems;

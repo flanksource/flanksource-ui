@@ -5,7 +5,7 @@ import { GrVmware } from "react-icons/gr";
 import { MdEmail } from "react-icons/md";
 import { SiJira } from "react-icons/si";
 import { Incident } from "../../../../api/types/incident";
-import { Icon } from "../../../Icon";
+import { Icon } from "../../../../ui/Icons/Icon";
 import AddResponderModal from "./AddResponderModal";
 
 export type AddResponderAction = {

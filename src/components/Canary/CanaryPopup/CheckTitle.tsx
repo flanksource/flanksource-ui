@@ -2,8 +2,8 @@ import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import React from "react";
+import { Icon } from "../../../ui/Icons/Icon";
 import AgentName from "../../Agents/AgentName";
-import { Icon } from "../../Icon";
 
 type CheckTitleProps = Omit<React.HTMLProps<HTMLDivElement>, "size"> & {
   check?: Partial<HealthCheck>;

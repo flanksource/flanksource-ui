@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import { FormatProperty } from "./FormatProperty";
 
 interface IProps {

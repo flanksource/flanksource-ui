@@ -3,12 +3,12 @@ import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsSummary } from "../../api/services/incident";
-import { Head } from "../../components/Head/Head";
 import FilterIncidents from "../../components/Incidents/FilterIncidents/FilterIncidents";
 import { IncidentCreate } from "../../components/Incidents/IncidentCreate";
 import { IncidentList } from "../../components/Incidents/IncidentList";
-import { SearchLayout } from "../../components/Layout";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import { Modal } from "../../ui/Modal";
 import IncidentListSkeletonLoader from "../../ui/SkeletonLoader/IncidentListSkeletonLoader";
 

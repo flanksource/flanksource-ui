@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 
 export const configSpecTypesIconMap = new Map<string, string>([
   ["kubernetes", "kubernetes"],

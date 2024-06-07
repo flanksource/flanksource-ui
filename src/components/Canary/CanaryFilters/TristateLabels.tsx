@@ -1,5 +1,5 @@
+import { TristateToggle } from "@flanksource-ui/ui/FormControls/TristateToggle";
 import { useEffect, useState } from "react";
-import { TristateToggle } from "../../TristateToggle";
 import { getConciseLabelState } from "../labels";
 import { decodeUrlSearchParams, useUpdateParams } from "../url";
 

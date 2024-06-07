@@ -1,7 +1,7 @@
 import { useGetPlaybookNames } from "@flanksource-ui/api/query-hooks/playbooks";
 import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
 import { useMemo } from "react";
-import { Icon } from "../../../Icon";
+import { Icon } from "../../../../ui/Icons/Icon";
 import { StateOption } from "../../../ReactSelectDropdown";
 
 type PlaybookSpecsDropdownProps = {

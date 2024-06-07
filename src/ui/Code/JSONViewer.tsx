@@ -2,7 +2,7 @@ import Highlight, { Language, defaultProps } from "prism-react-renderer";
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
-import { useCopyToClipboard } from "../../components/Hooks/useCopyToClipboard";
+import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { Button } from "../Buttons/Button";
 import theme from "./JSONViewerTheme";
 

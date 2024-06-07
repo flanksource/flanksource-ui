@@ -1,5 +1,5 @@
 import TopologyResourceForm from "@flanksource-ui/components/Integrations/Topology/TopologyResourceForm";
-import LogBackendsForm from "@flanksource-ui/components/LogBackends/LogBackendsForm";
+import LogBackendsForm from "@flanksource-ui/components/Logs/LogBackends/LogBackendsForm";
 import { CreateIntegrationOption } from "./steps/AddIntegrationOptionsList";
 import CatalogFormOption from "./steps/CatalogFormOption";
 import MissionControlRegistryOptions from "./steps/MissionControlRegistryOptions";

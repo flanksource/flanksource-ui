@@ -1,3 +1,4 @@
+import { TristateToggle } from "@flanksource-ui/ui/FormControls/TristateToggle";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -13,7 +14,6 @@ import { TabByDropdown } from "../../Dropdown/TabByDropdown";
 import { TimeRange } from "../../Dropdown/TimeRange";
 import { DropdownMenu } from "../../DropdownMenu";
 import { Select, components } from "../../Select";
-import { TristateToggle } from "../../TristateToggle";
 import { setDeepWithString } from "../CanaryPopup/utils";
 import { separateLabelsByBooleanType } from "../labels";
 import { getDefaultForm, initialiseFormState, updateFormState } from "../state";

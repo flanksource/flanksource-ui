@@ -1,7 +1,7 @@
 import { OrganizationSwitcher } from "@clerk/nextjs";
 import { clerkUrls } from "../../../src/components/Authentication/Clerk/ClerkAuthSessionChecker";
 import useDetermineAuthSystem from "../../../src/components/Authentication/useDetermineAuthSystem";
-import { Head } from "../../../src/components/Head/Head";
+import { Head } from "../../../src/ui/Head";
 
 export default function ClerkOrganizationSwitcher() {
   const authSystem = useDetermineAuthSystem();

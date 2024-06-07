@@ -1,5 +1,5 @@
 import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
-import { statusIconMap } from "../../../Icon/PlaybookStatusIcon";
+import { statusIconMap } from "../../../../ui/Icons/PlaybookStatusIcon";
 import { StateOption } from "../../../ReactSelectDropdown";
 
 const options: StateOption[] = [

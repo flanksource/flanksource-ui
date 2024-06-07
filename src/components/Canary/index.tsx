@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { Badge } from "..";
-import useRefreshRateFromLocalStorage from "../Hooks/useRefreshRateFromLocalStorage";
+import useRefreshRateFromLocalStorage from "../../hooks/useRefreshRateFromLocalStorage";
 import CanaryFiltersBar from "./CanaryFilters/TopBar/CanaryFiltersBar";
 import { CanaryInterfaceMinimal } from "./CanaryInterface";
 import CanarySidebar from "./Sidebar/CanarySidebar";

@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { Property as PropertyD } from "../../../api/types/topology";
 import { NodePodPropToLabelMap } from "../../../constants";
+import { Icon } from "../../../ui/Icons/Icon";
 import { isEmpty } from "../../Canary/utils";
-import { Icon } from "../../Icon";
 import { FormatProperty } from "./FormatProperty";
 
 type PropertyDisplayProps = {

@@ -1,5 +1,5 @@
 import { PlaybookSpec } from "../../api/types/playbooks";
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 
 type PlaybookSpecModalTitleProps = {
   playbookSpec?: PlaybookSpec;
