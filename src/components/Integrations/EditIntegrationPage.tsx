@@ -1,17 +1,17 @@
 import { useSettingsUpdateResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
 import { getResource } from "@flanksource-ui/api/schemaResources";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
-} from "../../ui/BreadcrumbNav";
-import { Head } from "../../ui/Head";
-import { SearchLayout } from "../../ui/Layout/SearchLayout";
-import { Loading } from "../../ui/Loading";
-import { Tab, Tabs } from "../../ui/Tabs/Tabs";
+} from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { Loading } from "@flanksource-ui/ui/Loading";
+import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import LogBackendsForm from "../Logs/LogBackends/LogBackendsForm";
 import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJobsTab";
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";
