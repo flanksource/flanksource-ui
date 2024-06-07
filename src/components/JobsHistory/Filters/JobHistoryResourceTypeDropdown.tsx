@@ -38,7 +38,7 @@ export default function JobHistoryResourceTypeDropdown() {
             field.onChange({ target: { value: undefined, name: field.name } });
           }
         }}
-        label="Job Name"
+        label="Resource Type"
       />
     </div>
   );

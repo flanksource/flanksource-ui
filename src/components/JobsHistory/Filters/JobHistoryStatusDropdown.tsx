@@ -49,7 +49,7 @@ export default function JobHistoryStatusDropdown() {
             field.onChange({ target: { value: undefined, name: field.name } });
           }
         }}
-        label="Job Name"
+        label="Status"
       />
     </div>
   );
