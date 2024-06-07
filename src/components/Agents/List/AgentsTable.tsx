@@ -1,5 +1,5 @@
 import { DataTable } from "@flanksource-ui/ui/DataTable";
-import { SortingState, Updater } from "@tanstack/react-table";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import AgentForm from "../Add/AddAgentForm";
@@ -12,11 +12,8 @@ type AgentsTableProps = {
   pageCount: number;
   pageIndex: number;
   pageSize: number;
-  sortBy: string;
-  sortOrder: string;
   setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
   hiddenColumns?: string[];
-  onSortByChanged?: (sortByState: Updater<SortingState>) => void;
   refresh?: () => void;
 };
 
@@ -24,23 +21,13 @@ export default function AgentsTable({
   agents,
   isLoading,
   hiddenColumns = [],
-  sortBy,
-  sortOrder,
-  onSortByChanged = () => {},
   refresh = () => {}
 }: AgentsTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const agentId = searchParams.get("id") ?? undefined;
 
-  const tableSortByState = useMemo(() => {
-    return [
-      {
-        id: sortBy,
-        desc: sortOrder === "desc"
-      }
-    ];
-  }, [sortBy, sortOrder]);
+  const [sortState, onSortByChanged] = useReactTableSortState();
 
   const columns = useMemo(() => agentsTableColumns, []);
 
@@ -56,7 +43,7 @@ export default function AgentsTable({
         }}
         stickyHead
         hiddenColumns={hiddenColumns}
-        tableSortByState={tableSortByState}
+        tableSortByState={sortState}
         onTableSortByChanged={onSortByChanged}
         enableServerSideSorting
       />
@@ -70,7 +57,7 @@ export default function AgentsTable({
             searchParams.delete("id");
             setSearchParams(searchParams);
           }}
-          onUpdated={(agent) => {
+          onUpdated={() => {
             searchParams.delete("id");
             setSearchParams(searchParams);
             refresh();
