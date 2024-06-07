@@ -1,6 +1,5 @@
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useAgentsListQuery } from "../../api/query-hooks/useAgentsQuery";
 import { User } from "../../api/types/users";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
@@ -40,16 +39,7 @@ export default function AgentsPage() {
     pageSize: 150
   });
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const sortBy = searchParams.get("sortBy") ?? "";
-  const sortOrder = searchParams.get("sortOrder") ?? "desc";
-
   const { data, isLoading, refetch, isRefetching } = useAgentsListQuery(
-    {
-      sortBy,
-      sortOrder
-    },
     {
       pageIndex,
       pageSize
@@ -89,19 +79,6 @@ export default function AgentsPage() {
             pageIndex={pageIndex}
             pageSize={pageSize}
             setPageState={setPageState}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSortByChanged={(sortBy) => {
-              const sort = typeof sortBy === "function" ? sortBy([]) : sortBy;
-              if (sort.length === 0) {
-                searchParams.delete("sortBy");
-                searchParams.delete("sortOrder");
-              } else {
-                searchParams.set("sortBy", sort[0]?.id);
-                searchParams.set("sortOrder", sort[0].desc ? "desc" : "asc");
-              }
-              setSearchParams(searchParams);
-            }}
             refresh={refetch}
           />
         </div>
