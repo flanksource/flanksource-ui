@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import ErrorPage from "../Errors/ErrorPage";
@@ -26,16 +25,12 @@ export function SchemaResourceJobsTab({
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
 
-  const sortBy = searchParams.get("sortBy") ?? "";
-  const sortOrder = searchParams.get("sortOrder") ?? "desc";
-
-  const resourceType = useMemo(() => resourceTypeMap[tableName], [tableName]);
-
   const { isLoading, data, error } = useJobsHistoryForSettingQuery(
-    { pageIndex, pageSize, resourceId, resourceType, sortBy, sortOrder },
     {
       keepPreviousData: true
-    }
+    },
+    resourceId,
+    tableName
   );
 
   const jobs = data?.data;

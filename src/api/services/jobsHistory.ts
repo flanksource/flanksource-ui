@@ -3,19 +3,33 @@ import { JobHistory } from "../../components/JobsHistory/JobsHistoryTable";
 import { IncidentCommander } from "../axios";
 import { resolve } from "../resolve";
 
-export const getJobsHistory = async (
-  pageIndex: number,
-  pageSize: number,
-  resourceType?: string,
-  resourceId?: string,
-  name?: string,
-  status?: string,
-  sortBy?: string,
-  sortOrder?: string,
-  startsAt?: string,
-  endsAt?: string,
-  duration?: number
-) => {
+export type GetJobsHistoryParams = {
+  pageIndex: number;
+  pageSize: number;
+  resourceType?: string;
+  resourceId?: string;
+  name?: string;
+  status?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  startsAt?: string;
+  endsAt?: string;
+  duration?: number;
+};
+
+export const getJobsHistory = async ({
+  pageIndex,
+  pageSize,
+  resourceType,
+  resourceId,
+  name,
+  status,
+  sortBy,
+  sortOrder,
+  startsAt,
+  endsAt,
+  duration
+}: GetJobsHistoryParams) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   const resourceTypeParam = resourceType

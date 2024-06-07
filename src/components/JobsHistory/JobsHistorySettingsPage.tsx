@@ -1,55 +1,21 @@
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useSearchParams } from "react-router-dom";
 import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import { durationOptions } from "./Filters/JobHistoryDurationDropdown";
-import JobHistoryFilters, {
-  jobHistoryDefaultDateFilter
-} from "./Filters/JobsHistoryFilters";
+import JobHistoryFilters from "./Filters/JobsHistoryFilters";
 import JobsHistoryTable from "./JobsHistoryTable";
 
 export default function JobsHistorySettingsPage() {
-  const { timeRangeAbsoluteValue } = useTimeRangeParams(
-    jobHistoryDefaultDateFilter
-  );
-
   const [searchParams] = useSearchParams();
 
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
 
-  const name = searchParams.get("name") ?? "";
-  const resourceType = searchParams.get("resource_type") ?? "";
-  const sortBy = searchParams.get("sortBy") ?? "";
-  const sortOrder = searchParams.get("sortOrder") ?? "desc";
-  const status = searchParams.get("status") ?? "";
-  const duration = searchParams.get("runDuration") ?? undefined;
-  const durationMillis = duration
-    ? durationOptions[duration].valueInMillis
-    : undefined;
-  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
-  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
-
   const { data, isLoading, refetch, isRefetching } =
-    useJobsHistoryForSettingQuery(
-      {
-        pageIndex,
-        pageSize,
-        resourceType,
-        name,
-        status,
-        sortBy,
-        sortOrder,
-        startsAt,
-        endsAt,
-        duration: durationMillis
-      },
-      {
-        keepPreviousData: true
-      }
-    );
+    useJobsHistoryForSettingQuery({
+      keepPreviousData: true
+    });
 
   const jobs = data?.data;
   const totalEntries = data?.totalEntries;
