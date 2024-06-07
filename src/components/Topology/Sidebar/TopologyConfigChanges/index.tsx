@@ -8,12 +8,12 @@ import { useGetConfigChangesById } from "../../../../api/query-hooks/useGetConfi
 import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../../ui/CollapsiblePanel/CollapsiblePanel";
+import { ConfigIcon } from "../../../../ui/Icons/ConfigIcon";
+import { Icon } from "../../../../ui/Icons/Icon";
 import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { refreshButtonClickedTrigger } from "../../../../ui/SlidingSideBar/SlidingSideBar";
 import { ConfigDetailChangeModal } from "../../../Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import EmptyState from "../../../EmptyState";
-import { Icon } from "../../../Icon";
-import { ConfigIcon } from "../../../Icon/ConfigIcon";
 import Title from "../../../Title/title";
 
 type Props = {

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { deletePlaybookSpec } from "../../../api/services/playbooks";
 import { PlaybookNames } from "../../../api/types/playbooks";
 import { Button } from "../../../ui/Buttons/Button";
-import { Icon } from "../../Icon";
+import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
 import PlaybookCardMenu from "./PlaybookCardMenu";

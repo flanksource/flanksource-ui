@@ -1,8 +1,7 @@
-import React from "react";
+import ClerkUserProfile from "../../src/components/Authentication/Clerk/ClerkUserProfile";
 import KratosProfileSettings from "../../src/components/Authentication/Kratos/KratosProfileSettings";
 import useDetermineAuthSystem from "../../src/components/Authentication/useDetermineAuthSystem";
-import ClerkUserProfile from "../../src/components/Authentication/Clerk/ClerkUserProfile";
-import { Head } from "../../src/components/Head/Head";
+import { Head } from "../../src/ui/Head";
 
 export default function ProfileSettings() {
   const authSystem = useDetermineAuthSystem();

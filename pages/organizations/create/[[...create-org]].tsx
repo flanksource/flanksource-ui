@@ -1,8 +1,7 @@
 import { CreateOrganization } from "@clerk/nextjs";
-import React from "react";
 import SignUpLayout from "../../../src/components/Authentication/Clerk/SignUpLayout";
 import useDetermineAuthSystem from "../../../src/components/Authentication/useDetermineAuthSystem";
-import { Head } from "../../../src/components/Head/Head";
+import { Head } from "../../../src/ui/Head";
 
 export default function CreateOrg() {
   const authSystem = useDetermineAuthSystem();

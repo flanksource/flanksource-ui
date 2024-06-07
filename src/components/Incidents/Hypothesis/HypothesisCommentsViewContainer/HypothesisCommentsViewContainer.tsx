@@ -13,10 +13,10 @@ import {
 import { useIncidentState } from "../../../../store/incident.state";
 import { Age } from "../../../../ui/Age";
 import { Avatar } from "../../../../ui/Avatar";
+import { CommentInput, CommentText } from "../../../../ui/Comment";
+import { Icon } from "../../../../ui/Icons/Icon";
 import { Tag } from "../../../../ui/Tags/Tag";
 import { dateSortHelper } from "../../../../utils/date";
-import { CommentInput, CommentText } from "../../../Comment";
-import { Icon } from "../../../Icon";
 import { OptionItem, SearchSelect } from "../../../SearchSelect";
 import { toastError } from "../../../Toast/toast";
 import { EvidenceItem } from "../EvidenceSection";

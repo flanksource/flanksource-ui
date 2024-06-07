@@ -3,7 +3,7 @@ import { relativeDateTime } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
 import { Tooltip } from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
-import { PlaybookStatusIcon } from "../../../Icon/PlaybookStatusIcon";
+import { PlaybookStatusIcon } from "../../../../ui/Icons/PlaybookStatusIcon";
 
 type PlaybookRunsActionItemProps = {
   action: Pick<

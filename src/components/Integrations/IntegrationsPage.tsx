@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
-import { Head } from "../Head/Head";
-import { SearchLayout } from "../Layout";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import AddIntegrationModal from "./Add/AddIntegrationModal";
 import IntegrationsList from "./IntegrationsList";
 

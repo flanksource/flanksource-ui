@@ -5,7 +5,7 @@ import {
   HiOutlineClock,
   HiOutlineRefresh
 } from "react-icons/hi";
-import useTimeRangeToDisableRefreshDropdownOptions from "../Hooks/useTimeRangeToDisableRefreshDropdownOptions";
+import useTimeRangeToDisableRefreshDropdownOptions from "../../hooks/useTimeRangeToDisableRefreshDropdownOptions";
 import { HealthRefreshDropdownRateContext } from "./RefreshRateContext";
 
 export const HEALTH_PAGE_REFRESH_RATE_KEY = "healthPageRefreshRate";

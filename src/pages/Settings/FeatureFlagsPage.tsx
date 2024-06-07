@@ -8,8 +8,7 @@ import {
 import FeatureFlagAddButton from "@flanksource-ui/components/FeatureFlags/FeatureFlagAddButton";
 import FeatureFlagForm from "@flanksource-ui/components/FeatureFlags/FeatureFlagForm";
 import { FeatureFlagsList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagList";
-import { Head } from "@flanksource-ui/components/Head/Head";
-import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
 import {
@@ -20,6 +19,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
 import { useEffect, useState } from "react";
 
 export function FeatureFlagsPage() {

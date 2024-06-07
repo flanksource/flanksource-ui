@@ -1,3 +1,8 @@
+import { EvidenceType } from "@flanksource-ui/api/types/evidence";
+import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
+import LogItem from "@flanksource-ui/types/Logs";
+import TableSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TableSkeletonLoader";
+import { sanitizeHTMLContent } from "@flanksource-ui/utils/common";
 import {
   ColumnDef,
   ColumnSizingState,
@@ -10,11 +15,6 @@ import Convert from "ansi-to-html";
 import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EvidenceType } from "../../../api/types/evidence";
-import useDebouncedValue from "../../../hooks/useDebounce";
-import LogItem from "../../../types/Logs";
-import TableSkeletonLoader from "../../../ui/SkeletonLoader/TableSkeletonLoader";
-import { sanitizeHTMLContent } from "../../../utils/common";
 import AttachAsEvidenceButton from "../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import { InfoMessage } from "../../InfoMessage";
 import { LogsTableLabelsCell, LogsTableTimestampCell } from "./LogsTableCells";

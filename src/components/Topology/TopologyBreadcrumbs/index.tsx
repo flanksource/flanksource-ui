@@ -5,8 +5,8 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "../../../ui/BreadcrumbNav";
-import { Head } from "../../Head/Head";
-import { Icon } from "../../Icon";
+import { Head } from "../../../ui/Head";
+import { Icon } from "../../../ui/Icons/Icon";
 
 type TopologyBreadcrumbsProps = {
   topologyId?: string;

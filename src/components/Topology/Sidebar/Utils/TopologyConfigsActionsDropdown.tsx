@@ -1,7 +1,7 @@
 import { Float } from "@headlessui-float/react";
 import { Menu } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { Icon } from "../../../Icon";
+import { Icon } from "../../../../ui/Icons/Icon";
 
 type Props = {
   onUnlinkUser: () => void;

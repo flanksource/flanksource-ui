@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "../../../api/schemaResources";
+import { Icon } from "../../../ui/Icons/Icon";
 import { Connection } from "../../Connections/ConnectionFormModal";
-import { Icon } from "../../Icon";
 import { toastError } from "../../Toast/toast";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 

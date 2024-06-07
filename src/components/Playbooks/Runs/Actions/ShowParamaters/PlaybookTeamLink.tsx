@@ -1,5 +1,5 @@
 import { getTeam } from "@flanksource-ui/api/services/teams";
-import { Icon } from "@flanksource-ui/components/Icon";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 

@@ -5,9 +5,9 @@ import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { GoCopy, GoLinkExternal } from "react-icons/go";
 import { Link, useSearchParams } from "react-router-dom";
+import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { formatJobName } from "../../utils/common";
 import { formatDuration } from "../../utils/date";
-import { useCopyToClipboard } from "../Hooks/useCopyToClipboard";
 import JobHistoryStatusColumn from "./JobHistoryStatusColumn";
 import { JobHistory } from "./JobsHistoryTable";
 

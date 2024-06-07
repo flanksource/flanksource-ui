@@ -2,12 +2,12 @@ import { getEventQueueStatus } from "@flanksource-ui/api/schemaResources";
 import ErrorPage from "@flanksource-ui/components/Errors/ErrorPage";
 import EventQueueStatusList from "@flanksource-ui/components/EventQueueStatus/EventQueueStatusList";
 import { EventQueueSummary } from "@flanksource-ui/components/EventQueueStatus/eventQueue";
-import { Head } from "@flanksource-ui/components/Head/Head";
-import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
 import TableSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TableSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 

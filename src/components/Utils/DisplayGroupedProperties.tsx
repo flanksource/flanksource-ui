@@ -1,4 +1,4 @@
-import { Icon } from "../Icon";
+import { Icon } from "../../ui/Icons/Icon";
 import { PropertyItem } from "../Topology/Sidebar/Utils/formatProperties";
 import DisplayDetailsRow from "./DisplayDetailsRow";
 

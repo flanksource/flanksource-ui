@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ViewType } from "../../../../types";
-import ConfigInsightsIcon from "../ConfigInsightsIcon";
-import { DescriptionCard } from "../../../DescriptionCard";
-import { ConfigIcon } from "../../../Icon/ConfigIcon";
-import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
 import { ConfigAnalysis } from "../../../../api/types/configs";
+import { ViewType } from "../../../../types";
+import { ConfigIcon } from "../../../../ui/Icons/ConfigIcon";
+import { DescriptionCard } from "../../../DescriptionCard";
+import ConfigInsightsIcon from "../ConfigInsightsIcon";
+import ConfigInsightsDetailsModal from "./ConfigInsightsDetailsModal";
 
 type Props = {
   configAnalysis: Pick<

@@ -1,9 +1,9 @@
+import LogItem from "@flanksource-ui/types/Logs";
+import { IndeterminateCheckbox } from "@flanksource-ui/ui/FormControls/IndeterminateCheckbox";
+import Popover from "@flanksource-ui/ui/Popover/Popover";
+import { TagItem, TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { Cell } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import LogItem from "../../../types/Logs";
-import Popover from "../../../ui/Popover/Popover";
-import { TagItem, TagList } from "../../../ui/Tags/TagList";
-import { IndeterminateCheckbox } from "../../IndeterminateCheckbox/IndeterminateCheckbox";
 
 export type LogsTableTimestampCellProps = React.HTMLProps<HTMLDivElement> & {
   cell: Cell<LogItem, unknown>;

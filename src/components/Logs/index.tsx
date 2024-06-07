@@ -1,4 +1,4 @@
-import LogItem from "../../types/Logs";
+import LogItem from "@flanksource-ui/types/Logs";
 import { LogsTable } from "./Table/LogsTable";
 
 type LogsProps = {

@@ -2,8 +2,8 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { modalHelpLinkAtom } from "@flanksource-ui/ui/Modal";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
+import { Icon } from "../../ui/Icons/Icon";
 import SpecEditorForm from "../Forms/SpecEditorForm";
-import { Icon } from "../Icon";
 import { integrationsModalSubTitle } from "../Integrations/Add/AddIntegrationModal";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 

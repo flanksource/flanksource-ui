@@ -1,6 +1,5 @@
 import { getPlaybookRuns } from "@flanksource-ui/api/services/playbooks";
-import { Head } from "@flanksource-ui/components/Head/Head";
-import { SearchLayout } from "@flanksource-ui/components/Layout";
+import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import PlaybookRunsFilterBar from "@flanksource-ui/components/Playbooks/Runs/Filter/PlaybookRunsFilterBar";
 import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsList";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
@@ -11,6 +10,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useQuery } from "@tanstack/react-query";

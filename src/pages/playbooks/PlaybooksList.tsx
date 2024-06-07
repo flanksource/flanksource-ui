@@ -2,12 +2,12 @@ import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
 import ErrorPage from "../../components/Errors/ErrorPage";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
 import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {

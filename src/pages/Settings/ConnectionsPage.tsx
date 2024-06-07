@@ -11,12 +11,12 @@ import ConnectionFormModal, {
   Connection
 } from "../../components/Connections/ConnectionFormModal";
 import { ConnectionList } from "../../components/Connections/ConnectionsList";
-import { Head } from "../../components/Head/Head";
-import { SearchLayout } from "../../components/Layout";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import { Head } from "../../ui/Head";
+import { SearchLayout } from "../../ui/Layout/SearchLayout";
 
 const connectionsSchemaConnection: SchemaApi = {
   table: "connections",

@@ -1,4 +1,3 @@
-import { TristateToggle } from "@flanksource-ui/components/TristateToggle";
 import clsx from "clsx";
 import React, {
   Dispatch,
@@ -22,6 +21,7 @@ import Select, {
 } from "react-select";
 import { DropdownIndicatorProps } from "react-select/dist/declarations/src/components/indicators";
 import { Tooltip } from "react-tooltip";
+import { TristateToggle } from "../FormControls/TristateToggle";
 
 export type TriStateOptions = {
   id: string;

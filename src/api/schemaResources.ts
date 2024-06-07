@@ -1,12 +1,12 @@
-import { AxiosResponse } from "axios";
-import { EventQueueSummary } from "../components/EventQueueStatus/eventQueue";
-import { TopologyComponentItem } from "../components/Incidents/FilterIncidents/FilterIncidentsByComponents";
-import { JobHistoryStatus } from "../components/JobsHistory/JobsHistoryTable";
-import { LogBackends } from "../components/LogBackends/LogBackends";
+import { EventQueueSummary } from "@flanksource-ui/components/EventQueueStatus/eventQueue";
+import { TopologyComponentItem } from "@flanksource-ui/components/Incidents/FilterIncidents/FilterIncidentsByComponents";
+import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
+import { LogBackends } from "@flanksource-ui/components/Logs/LogBackends/LogBackends";
 import {
   SchemaApi,
   SchemaBackends
-} from "../components/SchemaResourcePage/resourceTypes";
+} from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
+import { AxiosResponse } from "axios";
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { resolve } from "./resolve";

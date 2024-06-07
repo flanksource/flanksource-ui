@@ -2,15 +2,15 @@ import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/us
 import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
-import { Head } from "@flanksource-ui/components/Head/Head";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { SearchLayout } from "@flanksource-ui/components/Layout";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
