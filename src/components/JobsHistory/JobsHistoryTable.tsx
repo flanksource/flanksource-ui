@@ -4,7 +4,7 @@ import { Row } from "@tanstack/react-table";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
-import { JobsHistoryTableColumn } from "./JobsHistoryTableColumn";
+import { JobsHistoryTableColumn as jobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 
 export type JobHistoryStatus =
   | "FINISHED"
@@ -88,8 +88,6 @@ export default function JobsHistoryTable({
     };
   }, [pageIndex, pageSize, pageCount, isLoading, params, setParams]);
 
-  const columns = useMemo(() => JobsHistoryTableColumn, []);
-
   const onSelectJob = useCallback(
     (row: Row<JobHistory>) => {
       const jobId = row.original.id;
@@ -106,7 +104,7 @@ export default function JobsHistoryTable({
     <>
       <DataTable
         data={jobs}
-        columns={columns}
+        columns={jobsHistoryTableColumn}
         isLoading={isLoading}
         handleRowClick={onSelectJob}
         pagination={pagination}
