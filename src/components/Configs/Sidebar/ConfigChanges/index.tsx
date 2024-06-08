@@ -4,8 +4,8 @@ import { useGetConfigChangesByConfigIdQuery } from "../../../../api/query-hooks"
 import { ConfigChange } from "../../../../api/types/configs";
 import PillBadge from "../../../../ui/Badge/PillBadge";
 import CollapsiblePanel from "../../../../ui/CollapsiblePanel/CollapsiblePanel";
+import { CreatedAtCell } from "../../../../ui/DataTable/Cells/DateCells";
 import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
-import { CreatedAtCell } from "../../../../ui/table/DateCells";
 import EmptyState from "../../../EmptyState";
 import { Icon } from "../../../Icon";
 import { InfiniteTable } from "../../../InfiniteTable/InfiniteTable";

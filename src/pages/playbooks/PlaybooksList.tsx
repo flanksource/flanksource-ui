@@ -7,8 +7,8 @@ import { SearchLayout } from "../../components/Layout";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
 import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
-import TabbedLinks from "../../components/Tabs/TabbedLinks";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
+import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);

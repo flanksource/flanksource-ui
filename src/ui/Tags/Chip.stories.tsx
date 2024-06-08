@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import { Chip } from "./chip";
+import { Chip } from "./Chip";
 
 export default {
   title: "Chip",

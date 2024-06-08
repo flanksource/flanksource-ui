@@ -4,8 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import { DataTable } from "./index";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DateCell } from "../table/DateCells";
-import { TagsCell } from "../table/TagCell";
+import { DateCell } from "./Cells/DateCells";
+import { TagsCell } from "./Cells/TagCell";
 
 const defaultTableColumns: ColumnDef<any>[] = [
   {

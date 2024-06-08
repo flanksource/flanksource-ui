@@ -5,8 +5,8 @@ import {
 import { User } from "@flanksource-ui/api/types/users";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
-import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";

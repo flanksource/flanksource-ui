@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo, useState } from "react";
 import { HealthCheck } from "../../../api/types/health";
 import Popover from "../../../ui/Popover/Popover";
-import { TagItem, TagList } from "../../TagList/TagList";
+import { TagItem, TagList } from "../../../ui/Tags/TagList";
 
 type Props = {
   check: Partial<Pick<HealthCheck, "labels">>;

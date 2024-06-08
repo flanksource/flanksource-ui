@@ -10,7 +10,7 @@ import { useAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { ImLifebuoy } from "react-icons/im";
 import { Link } from "react-router-dom";
-import { DetailsTable } from "../../DetailsTable/DetailsTable";
+import { DetailsTable } from "../../../ui/DetailsTable/DetailsTable";
 import Title from "../../Title/title";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import IncidentsFilterBar, { IncidentFilter } from "../IncidentsFilterBar";

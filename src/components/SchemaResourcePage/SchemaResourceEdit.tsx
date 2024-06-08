@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { v4 } from "uuid";
 import YAML from "yaml";
 import { TextInput } from "../../ui/FormControls/TextInput";
+import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 import { Head } from "../Head/Head";
 import { Icon } from "../Icon";
 import { IconPicker } from "../IconPicker";
@@ -16,7 +17,6 @@ import EditTopologyResource from "../Integrations/Topology/EditTopologyResource"
 import CanEditResource from "../Settings/CanEditResource";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
-import { Tab, Tabs } from "../Tabs/Tabs";
 import { TeamMembers } from "../TeamMembers/TeamMembers";
 import DeleteResource from "./Delete/DeleteResource";
 import {

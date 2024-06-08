@@ -1,6 +1,6 @@
 import { CellContext } from "@tanstack/react-table";
-import { Age } from "../Age";
-import { CreatedAt, UpdatedAt, Deletable } from "../../api/traits";
+import { CreatedAt, Deletable, UpdatedAt } from "../../../api/traits";
+import { Age } from "../../Age";
 
 export function CreatedAtCell<T extends CreatedAt>({
   row,

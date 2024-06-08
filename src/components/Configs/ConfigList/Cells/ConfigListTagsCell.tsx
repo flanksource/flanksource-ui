@@ -1,4 +1,4 @@
-import { Tag } from "@flanksource-ui/components/Tag/Tag";
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";

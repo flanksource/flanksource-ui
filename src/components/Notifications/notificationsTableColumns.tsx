@@ -1,7 +1,7 @@
 import { Team, User } from "@flanksource-ui/api/types/users";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { DateCell } from "@flanksource-ui/ui/table";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { formatDuration } from "@flanksource-ui/utils/date";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { atom, useAtom } from "jotai";

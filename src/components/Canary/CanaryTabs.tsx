@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { getAgentByIDs } from "../../api/services/agents";
 import { HealthCheck } from "../../api/types/health";
-import { Tab, Tabs } from "../Tabs/Tabs";
+import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 
 const defaultTabs = {
   all: {

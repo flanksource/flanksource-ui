@@ -22,7 +22,6 @@ import { HypothesisCommentsViewContainer } from "../../components/Incidents/Hypo
 import EditableIncidentTitleBreadcrumb from "../../components/Incidents/IncidentDetails/EditableIncidentTitleBreadcrumb";
 import { IncidentSidebar } from "../../components/Incidents/IncidentDetails/IncidentSidebar";
 import { SearchLayout } from "../../components/Layout";
-import { Tab, Tabs } from "../../components/Tabs/Tabs";
 import { TopologyCard } from "../../components/Topology/TopologyCard";
 import { useIncidentState } from "../../store/incident.state";
 import { Size } from "../../types";
@@ -32,6 +31,7 @@ import {
   BreadcrumbRoot
 } from "../../ui/BreadcrumbNav";
 import IncidentDetailsPageSkeletonLoader from "../../ui/SkeletonLoader/IncidentDetailsPageSkeletonLoader";
+import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 
 export enum IncidentDetailsViewTypes {
   comments = "Comments",

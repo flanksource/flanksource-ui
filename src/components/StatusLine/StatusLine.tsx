@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Chip } from "../../ui/Chip/chip";
+import { Chip } from "../../ui/Tags/Chip";
 import { Icon } from "../Icon";
 
 export type StatusInfo = {

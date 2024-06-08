@@ -9,13 +9,13 @@ import {
   BreadcrumbRoot
 } from "../../ui/BreadcrumbNav";
 import { Loading } from "../../ui/Loading";
+import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
 import LogBackendsForm from "../LogBackends/LogBackendsForm";
 import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJobsTab";
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
-import { Tab, Tabs } from "../Tabs/Tabs";
 import EditTopologyResource from "./Topology/EditTopologyResource";
 
 type IntegrationType = "logging_backends" | "topologies" | "scrapers";

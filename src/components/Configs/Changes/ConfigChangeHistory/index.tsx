@@ -2,9 +2,9 @@ import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetC
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
-import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
 import { ChangeIcon } from "../../../Icon/ChangeIcon";
