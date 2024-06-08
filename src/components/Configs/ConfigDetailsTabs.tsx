@@ -5,10 +5,10 @@ import { useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../ui/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { refreshButtonClickedTrigger } from "../../ui/SlidingSideBar/SlidingSideBar";
+import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { Head } from "../Head/Head";
 import { SearchLayout } from "../Layout";
-import TabbedLinks from "../Tabs/TabbedLinks";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
 

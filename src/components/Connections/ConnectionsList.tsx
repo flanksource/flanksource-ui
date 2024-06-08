@@ -1,6 +1,6 @@
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
-import { DateCell } from "@flanksource-ui/ui/table";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useMemo } from "react";

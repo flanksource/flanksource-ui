@@ -9,7 +9,7 @@ import { JobsHistoryDetails } from "@flanksource-ui/components/JobsHistory/JobsH
 import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { DateCell } from "@flanksource-ui/ui/table";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 

@@ -1,5 +1,5 @@
-import { Tab, Tabs } from "@flanksource-ui/components/Tabs/Tabs";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
+import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import YAML from "yaml";

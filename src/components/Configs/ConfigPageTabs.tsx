@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import TabbedLinks from "../Tabs/TabbedLinks";
+import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 type ConfigPageTabsProps = {
   activeTab: string;

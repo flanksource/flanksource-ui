@@ -1,3 +1,4 @@
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import {
   IncidentSeverity,
@@ -6,7 +7,6 @@ import {
   Responder
 } from "../../../api/types/incident";
 import { Avatar } from "../../../ui/Avatar";
-import { DateCell } from "../../../ui/table";
 import { IncidentSeverityTag } from "../IncidentSeverityTag";
 import { IncidentStatusTag } from "../IncidentStatusTag";
 import { typeItems } from "../data";

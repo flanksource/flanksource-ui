@@ -1,6 +1,6 @@
 import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { DateCell } from "@flanksource-ui/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { EventQueueSummary } from "./eventQueue";

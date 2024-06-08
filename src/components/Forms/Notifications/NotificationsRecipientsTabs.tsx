@@ -1,7 +1,7 @@
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
+import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { Notification } from "../../Notifications/notificationsTableColumns";
-import { Tab, Tabs } from "../../Tabs/Tabs";
 import FormikPeopleDropdown from "../Formik/FormikPeopleDropdown";
 import FormikTeamsDropdown from "../Formik/FormikTeamsDropdown";
 import NotificationConfigurationForm from "./NotificationConfigurationForm";

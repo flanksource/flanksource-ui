@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../../ui/Buttons/Button";
+import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
 import {
   SchemaResourceType,
@@ -9,7 +10,6 @@ import {
 } from "../SchemaResourcePage/resourceTypes";
 import CanEditResource from "../Settings/CanEditResource";
 import { SpecType } from "../SpecEditor/SpecEditor";
-import { Tab, Tabs } from "../Tabs/Tabs";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
 import FormikIconPicker from "./Formik/FormikIconPicker";

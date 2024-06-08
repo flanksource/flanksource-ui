@@ -6,12 +6,12 @@ import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/Playboo
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
 import PlaybookSpecsForm from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecsForm";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";

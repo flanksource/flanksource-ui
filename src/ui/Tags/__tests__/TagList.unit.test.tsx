@@ -1,10 +1,9 @@
-import { sortTags } from "./../TagList";
+import { sortTags } from "../TagList";
 
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import { TagItem } from "./../TagList";
+import { TagItem } from "../TagList";
 
-import { TagList } from "./../TagList";
+import { TagList } from "../TagList";
 
 describe("sortTags", () => {
   it("sorts tags by key", () => {

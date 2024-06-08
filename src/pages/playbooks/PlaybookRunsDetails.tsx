@@ -4,13 +4,13 @@ import { SearchLayout } from "@flanksource-ui/components/Layout";
 import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
-import TabbedLinks from "@flanksource-ui/components/Tabs/TabbedLinks";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
+import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { relativeDateTime } from "@flanksource-ui/utils/date";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";

@@ -13,11 +13,11 @@ import {
 import { useIncidentState } from "../../../../store/incident.state";
 import { Age } from "../../../../ui/Age";
 import { Avatar } from "../../../../ui/Avatar";
+import { Tag } from "../../../../ui/Tags/Tag";
 import { dateSortHelper } from "../../../../utils/date";
 import { CommentInput, CommentText } from "../../../Comment";
 import { Icon } from "../../../Icon";
 import { OptionItem, SearchSelect } from "../../../SearchSelect";
-import { Tag } from "../../../Tag/Tag";
 import { toastError } from "../../../Toast/toast";
 import { EvidenceItem } from "../EvidenceSection";
 

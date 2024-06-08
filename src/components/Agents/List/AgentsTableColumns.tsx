@@ -1,10 +1,10 @@
+import { User } from "@flanksource-ui/api/types/users";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { FaDotCircle } from "react-icons/fa";
-import { User } from "../../../api/types/users";
-import { Avatar } from "../../../ui/Avatar";
-import { DateCell } from "../../../ui/table";
 import { AgentSummary } from "../AgentPage";
 
 export const agentsTableColumns: ColumnDef<AgentSummary>[] = [

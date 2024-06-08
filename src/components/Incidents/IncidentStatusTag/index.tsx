@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { capitalize } from "lodash";
 import { IncidentStatus } from "../../../api/types/incident";
-import { Tag } from "../../Tag/Tag";
+import { Tag } from "../../../ui/Tags/Tag";
 
 interface IProps {
   status: IncidentStatus;

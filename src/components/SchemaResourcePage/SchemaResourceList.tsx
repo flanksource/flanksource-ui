@@ -7,11 +7,11 @@ import { Age } from "../../ui/Age";
 import { Avatar } from "../../ui/Avatar";
 import Popover from "../../ui/Popover/Popover";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
+import { TagItem, TagList } from "../../ui/Tags/TagList";
 import AgentBadge from "../Agents/AgentBadge";
 import { InfoMessage } from "../InfoMessage";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
-import { TagItem, TagList } from "../TagList/TagList";
 import ConfigScrapperIcon from "./ConfigScrapperIcon";
 
 interface Props {
