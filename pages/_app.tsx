@@ -1,11 +1,9 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
-import React from "react";
 import useDetermineAuthSystem, {
   isClerkSatellite
 } from "../src/components/Authentication/useDetermineAuthSystem";
-import SetupIntercom from "../src/components/Intercom/SetupIntercom";
 import { queryClient } from "../src/query-client";
 import "./global.css";
 
@@ -16,27 +14,25 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SetupIntercom>
-        <div
-          id="root"
-          className="flex flex-col w-screen h-screen overflow-auto"
-          suppressHydrationWarning
-        >
-          {authProvider === "clerk" ? (
-            <ClerkProvider
-              // change the domain based on whether the app is a satellite, or not
-              domain={isClerkSatellite ? "flanksource.io" : "flanksource.com"}
-              isSatellite={isClerkSatellite}
-              {...(isClerkSatellite ? { signInUrl } : {})}
-              {...pageProps}
-            >
-              <Component {...pageProps} />
-            </ClerkProvider>
-          ) : (
+      <div
+        id="root"
+        className="flex flex-col w-screen h-screen overflow-auto"
+        suppressHydrationWarning
+      >
+        {authProvider === "clerk" ? (
+          <ClerkProvider
+            // change the domain based on whether the app is a satellite, or not
+            domain={isClerkSatellite ? "flanksource.io" : "flanksource.com"}
+            isSatellite={isClerkSatellite}
+            {...(isClerkSatellite ? { signInUrl } : {})}
+            {...pageProps}
+          >
             <Component {...pageProps} />
-          )}
-        </div>
-      </SetupIntercom>
+          </ClerkProvider>
+        ) : (
+          <Component {...pageProps} />
+        )}
+      </div>
     </QueryClientProvider>
   );
 }

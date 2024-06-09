@@ -28,7 +28,6 @@ import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import EditIntegrationPage from "./components/Integrations/EditIntegrationPage";
 import IntegrationsPage from "./components/Integrations/IntegrationsPage";
-import BootIntercom from "./components/Intercom/BootIntercom";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
@@ -580,22 +579,20 @@ export function App() {
       <Provider>
         <Toaster position="top-right" reverseOrder={false} />
         <AuthProviderWrapper>
-          <BootIntercom>
-            <UserAccessStateContextProvider>
-              <FeatureFlagsContextProvider>
-                <HealthPageContextProvider>
-                  <ConfigPageContextProvider>
-                    <IncidentPageContextProvider>
-                      <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                      {isDevelopment && (
-                        <ReactQueryDevtools initialIsOpen={false} />
-                      )}
-                    </IncidentPageContextProvider>
-                  </ConfigPageContextProvider>
-                </HealthPageContextProvider>
-              </FeatureFlagsContextProvider>
-            </UserAccessStateContextProvider>
-          </BootIntercom>
+          <UserAccessStateContextProvider>
+            <FeatureFlagsContextProvider>
+              <HealthPageContextProvider>
+                <ConfigPageContextProvider>
+                  <IncidentPageContextProvider>
+                    <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                    {isDevelopment && (
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    )}
+                  </IncidentPageContextProvider>
+                </ConfigPageContextProvider>
+              </HealthPageContextProvider>
+            </FeatureFlagsContextProvider>
+          </UserAccessStateContextProvider>
         </AuthProviderWrapper>
       </Provider>
     </BrowserRouter>
