@@ -5,7 +5,6 @@ import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext } from "../../../context";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
-import BootIntercom from "../../Intercom/BootIntercom";
 import InstanceCreationInProgress from "./InstanceCreationInProgress";
 
 type AuthProviderWrapperProps = {
@@ -36,11 +35,7 @@ export default function ClerkAuthContextProvider({
   // if the organization backend is not yet created, we need to wait for it to
   // be created before showing the UI
   if (!backendURL) {
-    return (
-      <BootIntercom>
-        <InstanceCreationInProgress />
-      </BootIntercom>
-    );
+    return <InstanceCreationInProgress />;
   }
 
   // if the organization backend returns a 404 or a 5xx error, we need to wait
@@ -50,11 +45,7 @@ export default function ClerkAuthContextProvider({
     (error.response?.status?.toString().startsWith("5") ||
       error?.response?.status === 404)
   ) {
-    return (
-      <BootIntercom>
-        <InstanceCreationInProgress />
-      </BootIntercom>
-    );
+    return <InstanceCreationInProgress />;
   }
 
   if (isLoading && !payload) {
