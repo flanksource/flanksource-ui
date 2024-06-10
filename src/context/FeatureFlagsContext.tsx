@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from "react";
 import { features } from "../services/permissions/features";
 import {
   FeatureFlag,
@@ -31,11 +37,11 @@ export const FeatureFlagsContextProvider = ({
     initialState.featureFlagsLoaded
   );
 
-  const refreshFeatureFlags = async () => {
+  const refreshFeatureFlags = useCallback(async () => {
     const { data = [] } = await permissionService.loadProperties();
     setFeatureFlags(data!);
     setFeatureFlagsLoaded(true);
-  };
+  }, []);
 
   const isFeatureDisabled = (featureName: string) => {
     return permissionService.isFeatureDisabled(featureName, featureFlags);

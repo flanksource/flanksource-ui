@@ -1,4 +1,5 @@
 import { useOrganization } from "@clerk/nextjs";
+import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
@@ -31,6 +32,8 @@ export default function ClerkAuthContextProvider({
     refetchInterval: 0,
     refetchOnReconnect: false
   });
+
+  useFlanksourceUISnippet(payload?.user, organization ?? undefined);
 
   // if the organization backend is not yet created, we need to wait for it to
   // be created before showing the UI
