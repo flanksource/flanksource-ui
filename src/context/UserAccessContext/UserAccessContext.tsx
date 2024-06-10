@@ -1,13 +1,7 @@
+import { usePeopleRoles } from "@flanksource-ui/hooks/ReactQuery/roles";
 import { Authorizer } from "casbin.js";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { useUser } from "..";
-import { fetchPeopleRoles } from "../../api/services/users";
 import { permDefs } from "./permissions";
 
 export type ActionType = "write" | "read";
@@ -23,7 +17,7 @@ export const Roles = {
 export const casbinAuthorizer = new Authorizer("manual");
 
 export type UserAccessState = {
-  refresh: () => Promise<void>;
+  refresh: () => Promise<unknown>;
   isAdmin: boolean;
   roles: string[];
   hasResourceAccess: (
@@ -52,12 +46,8 @@ export const UserAccessStateContextProvider = ({
   children: React.ReactNode;
 }) => {
   const { user } = useUser();
-  const [roles, setRoles] = useState<string[]>([]);
-  const isAdmin = useMemo(() => {
-    return roles.includes("admin");
-  }, [roles]);
 
-  const defineRulesFor = (roles: string[]) => {
+  const defineRulesFor = useCallback((roles: string[]) => {
     const builtPerms: Record<string, any> = {};
     roles.forEach((role) => {
       const permissions = permDefs[role as keyof typeof permDefs] ?? {};
@@ -66,7 +56,13 @@ export const UserAccessStateContextProvider = ({
       });
     });
     casbinAuthorizer.setPermission(builtPerms);
-  };
+  }, []);
+
+  const { data: roles = [], refetch } = usePeopleRoles(user?.id);
+
+  const isAdmin = useMemo(() => {
+    return roles?.includes("admin");
+  }, [roles]);
 
   const hasResourceAccess = (resourceName: string, action: ActionType) => {
     defineRulesFor(roles);
@@ -81,26 +77,10 @@ export const UserAccessStateContextProvider = ({
     return casbinAuthorizer.canAny(action, resourceNames);
   };
 
-  const fetchUserRoleInfo = async (userId: string) => {
-    const { data = [] } = await fetchPeopleRoles([userId]);
-    let roles = (data ?? []).find((item) => item.id === userId)?.roles || [];
-    if (!roles.length) {
-      roles = [Roles.viewer];
-    }
-    setRoles(roles);
-  };
-
-  useEffect(() => {
-    if (!user?.id) {
-      return;
-    }
-    fetchUserRoleInfo(user.id);
-  }, [user?.id]);
-
   return (
     <UserAccessStateContext.Provider
       value={{
-        refresh: () => fetchUserRoleInfo(user!.id),
+        refresh: async () => refetch(),
         hasResourceAccess,
         hasAnyResourceAccess,
         isAdmin,
