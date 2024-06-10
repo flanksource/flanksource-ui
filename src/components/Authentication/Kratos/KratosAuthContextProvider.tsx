@@ -1,8 +1,9 @@
+import { WhoamiResponse, whoami } from "@flanksource-ui/api/services/users";
+import { AuthContext } from "@flanksource-ui/context";
+import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
+import FullPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FullPageSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { WhoamiResponse, whoami } from "../../../api/services/users";
-import { AuthContext } from "../../../context";
-import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -25,6 +26,10 @@ export default function KratosAuthContextProvider({ children }: Props) {
       refetchOnReconnect: false
     }
   );
+
+  useFlanksourceUISnippet(payload?.user, {
+    backendURL: backendURL
+  });
 
   if (isLoading && !payload) {
     return <FullPageSkeletonLoader />;

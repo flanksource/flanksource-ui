@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import useDetermineAuthSystem, {
@@ -19,19 +20,21 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         className="flex flex-col w-screen h-screen overflow-auto"
         suppressHydrationWarning
       >
-        {authProvider === "clerk" ? (
-          <ClerkProvider
-            // change the domain based on whether the app is a satellite, or not
-            domain={isClerkSatellite ? "flanksource.io" : "flanksource.com"}
-            isSatellite={isClerkSatellite}
-            {...(isClerkSatellite ? { signInUrl } : {})}
-            {...pageProps}
-          >
+        <FeatureFlagsContextProvider>
+          {authProvider === "clerk" ? (
+            <ClerkProvider
+              // change the domain based on whether the app is a satellite, or not
+              domain={isClerkSatellite ? "flanksource.io" : "flanksource.com"}
+              isSatellite={isClerkSatellite}
+              {...(isClerkSatellite ? { signInUrl } : {})}
+              {...pageProps}
+            >
+              <Component {...pageProps} />
+            </ClerkProvider>
+          ) : (
             <Component {...pageProps} />
-          </ClerkProvider>
-        ) : (
-          <Component {...pageProps} />
-        )}
+          )}
+        </FeatureFlagsContextProvider>
       </div>
     </QueryClientProvider>
   );

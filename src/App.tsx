@@ -37,10 +37,7 @@ import {
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
-import {
-  FeatureFlagsContextProvider,
-  useFeatureFlagsContext
-} from "./context/FeatureFlagsContext";
+import { useFeatureFlagsContext } from "./context/FeatureFlagsContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
@@ -533,12 +530,10 @@ export function CanaryCheckerApp() {
       <BrowserRouter>
         <Toaster position="top-right" reverseOrder={false} />
         <Provider>
-          <FeatureFlagsContextProvider>
-            <HealthPageContextProvider>
-              <Canary url="/api/canary/api/summary" />
-              <ReactQueryDevtools initialIsOpen={false} />
-            </HealthPageContextProvider>
-          </FeatureFlagsContextProvider>
+          <HealthPageContextProvider>
+            <Canary url="/api/canary/api/summary" />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </HealthPageContextProvider>
         </Provider>
       </BrowserRouter>
     </>
@@ -580,18 +575,16 @@ export function App() {
         <Toaster position="top-right" reverseOrder={false} />
         <AuthProviderWrapper>
           <UserAccessStateContextProvider>
-            <FeatureFlagsContextProvider>
-              <HealthPageContextProvider>
-                <ConfigPageContextProvider>
-                  <IncidentPageContextProvider>
-                    <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
-                    {isDevelopment && (
-                      <ReactQueryDevtools initialIsOpen={false} />
-                    )}
-                  </IncidentPageContextProvider>
-                </ConfigPageContextProvider>
-              </HealthPageContextProvider>
-            </FeatureFlagsContextProvider>
+            <HealthPageContextProvider>
+              <ConfigPageContextProvider>
+                <IncidentPageContextProvider>
+                  <IncidentManagerRoutes sidebar={<SidebarWrapper />} />
+                  {isDevelopment && (
+                    <ReactQueryDevtools initialIsOpen={false} />
+                  )}
+                </IncidentPageContextProvider>
+              </ConfigPageContextProvider>
+            </HealthPageContextProvider>
           </UserAccessStateContextProvider>
         </AuthProviderWrapper>
       </Provider>
