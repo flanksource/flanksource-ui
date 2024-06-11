@@ -13,11 +13,13 @@ function FormikChangesListener({
   children,
   filterFields,
   paramsToReset = [],
-  defaultFieldValues
+  defaultFieldValues = {}
 }: FormikChangesListenerProps) {
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams({
+    ...defaultFieldValues
+  });
 
   useEffect(() => {
     filterFields.forEach((field) => {
@@ -37,11 +39,9 @@ function FormikChangesListener({
   useEffect(() => {
     filterFields.forEach((field) => {
       const value = searchParams.get(field);
-      const defaultValue = defaultFieldValues?.[field] ?? undefined;
-      setFieldValue(field, value ?? defaultValue);
+      setFieldValue(field, value);
     }, []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultFieldValues, filterFields, searchParams]);
+  }, [filterFields, searchParams]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
