@@ -1,5 +1,5 @@
 import { useGetConfigChangesByIDQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
-import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
@@ -73,7 +73,7 @@ export function ConfigDetailsChangesPage() {
         <div className="flex flex-col flex-1 items-start gap-2 overflow-y-auto">
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
           <div className="flex flex-col flex-1 overflow-y-auto">
-            <ConfigChangeHistory
+            <ConfigChangeTable
               linkConfig={!hideConfigColumn}
               data={changes}
               isLoading={isLoading}

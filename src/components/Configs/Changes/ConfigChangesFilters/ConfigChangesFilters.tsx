@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { useCallback, useMemo } from "react";
 import { FaBan } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import { paramsToReset } from "../ConfigChangeHistory";
+import { paramsToReset } from "../ConfigChangeTable";
 import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";

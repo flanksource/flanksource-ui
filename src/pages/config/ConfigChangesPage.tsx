@@ -1,5 +1,5 @@
 import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
-import { ConfigChangeHistory } from "@flanksource-ui/components/Configs/Changes/ConfigChangeHistory";
+import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
@@ -134,7 +134,7 @@ export function ConfigChangesPage() {
                 paramsToReset={["page"]}
                 arbitraryFilters={arbitraryFilter}
               />
-              <ConfigChangeHistory
+              <ConfigChangeTable
                 data={changes}
                 isLoading={isLoading}
                 linkConfig
