@@ -1,22 +1,21 @@
 import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
-import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
+import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { ColumnDef } from "@tanstack/table-core";
 import { useState } from "react";
-import { ChangeIcon } from "../../../../ui/Icons/ChangeIcon";
-import { DataTable } from "../../../index";
-import ConfigLink from "../../ConfigLink/ConfigLink";
-import { ConfigDetailChangeModal } from "../ConfigDetailsChanges/ConfigDetailsChanges";
+import ConfigLink from "../ConfigLink/ConfigLink";
+import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
 export const paramsToReset = {
   configChanges: ["pageIndex", "pageSize"]
 };
 
-const columns: ColumnDef<ConfigChange>[] = [
+const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Created",
     id: "created_at",
@@ -141,7 +140,7 @@ const columns: ColumnDef<ConfigChange>[] = [
   }
 ];
 
-type ConfigChangeHistoryProps = {
+type ConfigChangeTableProps = {
   data: ConfigChange[];
   isLoading?: boolean;
   linkConfig?: boolean;
@@ -150,14 +149,14 @@ type ConfigChangeHistoryProps = {
   pagination?: PaginationOptions;
 };
 
-export function ConfigChangeHistory({
+export function ConfigChangeTable({
   data,
   isLoading,
   linkConfig,
   className = "table-auto table-fixed",
   pagination,
   tableStyle
-}: ConfigChangeHistoryProps) {
+}: ConfigChangeTableProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -177,7 +176,7 @@ export function ConfigChangeHistory({
     <>
       <DataTable
         className={className}
-        columns={columns}
+        columns={configChangesColumn}
         hiddenColumns={linkConfig ? [] : ["config_id"]}
         data={data}
         isLoading={isLoading}

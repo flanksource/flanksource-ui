@@ -1,12 +1,12 @@
-import { MemoryRouter } from "react-router-dom";
+import { Meta, StoryFn } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConfigChangeHistory } from "./index";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { ConfigChange } from "../../../../api/types/configs";
+import { MemoryRouter } from "react-router-dom";
+import { ConfigChange } from "../../../api/types/configs";
+import { ConfigChangeTable } from "./ConfigChangeTable";
 
 export default {
   title: "ConfigChangeHistory",
-  component: ConfigChangeHistory,
+  component: ConfigChangeTable,
   decorators: [
     (Story) => {
       const queryClient = new QueryClient();
@@ -19,10 +19,10 @@ export default {
       );
     }
   ]
-} as ComponentMeta<typeof ConfigChangeHistory>;
+} satisfies Meta<typeof ConfigChangeTable>;
 
-const Template: ComponentStory<typeof ConfigChangeHistory> = (args) => (
-  <ConfigChangeHistory {...args} />
+const Template: StoryFn<typeof ConfigChangeTable> = (args) => (
+  <ConfigChangeTable {...args} />
 );
 
 export const Default = Template.bind({});
