@@ -1,7 +1,7 @@
 import { TextInputClearable } from "@flanksource-ui/ui/FormControls/TextInputClearable";
 import { useField } from "formik";
 import { debounce } from "lodash";
-import { ComponentProps } from "react";
+import React, { ComponentProps } from "react";
 
 type FormikSearchInputClearableProps = {
   name: string;
@@ -26,16 +26,20 @@ export default function FormikSearchInputClearable({
     }
   });
 
-  const onChange = debounce((value) => {
+  const onChange = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
     field.onChange({
       target: {
-        value,
+        value: e.target.value,
         name
       }
     });
   }, 400);
 
   return (
-    <TextInputClearable {...props} value={field.value} onChange={onChange} />
+    <TextInputClearable
+      {...props}
+      defaultValue={field.value}
+      onChange={onChange}
+    />
   );
 }
