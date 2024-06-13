@@ -17,42 +17,48 @@ export const configChangeSeverity = {
     id: "All",
     name: "All",
     description: "All",
-    value: "All"
+    value: "All",
+    colorClass: "text-gray-500 fill-gray-500"
   },
   Critical: {
     id: "dropdown-severity-critical",
     icon: <HiOutlineChevronDoubleUp color="red" />,
     name: "Critical",
     description: "Critical",
-    value: "critical"
+    value: "critical",
+    colorClass: "text-red-500 fill-red-500"
   },
   High: {
     id: "dropdown-severity-high",
-    icon: <HiOutlineMinus color="orange" />,
+    icon: <HiOutlineMinus color="red" />,
     name: "High",
     description: "High",
-    value: "high"
+    value: "high",
+    colorClass: "text-red-500 fill-red-500"
   },
   Medium: {
     id: "dropdown-severity-medium",
-    icon: <HiOutlineChevronDown color="green" />,
+    icon: <HiOutlineChevronDown color="orange" />,
     name: "Medium",
     description: "Medium",
-    value: "medium"
+    value: "medium",
+    colorClass: "text-orange-500 fill-orange-500"
   },
   Low: {
     id: "dropdown-severity-low",
-    icon: <HiOutlineChevronDoubleDown color="green" />,
+    icon: <HiOutlineChevronDoubleDown color="orange" />,
     name: "Low",
     description: "Low",
-    value: "low"
+    value: "low",
+    colorClass: "fill-orange-500 text-orange-500"
   },
   Info: {
     id: "dropdown-severity-info",
     icon: <HiInformationCircle className="text-gray-500" />,
     name: "Info",
     description: "Info",
-    value: "Info"
+    value: "Info",
+    colorClass: "text-gray-500 fill-gray-500"
   }
 } as const;
 

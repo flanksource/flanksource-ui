@@ -3,11 +3,12 @@ import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
-export default function ConfigListTagsCell({
+export default function ConfigListTagsCell<
+  T extends { tags: Record<string, any> }
+>({
   getValue,
-  hideGroupByView = false,
-  label = "Tags"
-}: CellContext<ConfigItem, any> & {
+  hideGroupByView = false
+}: Pick<CellContext<Pick<T, "tags">, any>, "getValue"> & {
   hideGroupByView?: boolean;
   label?: string;
 }): JSX.Element | null {
