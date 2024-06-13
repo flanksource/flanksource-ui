@@ -284,9 +284,21 @@ export async function getConfigsChanges({
     queryParams.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
   if (tags) {
-    const tagList = tags.map(({ key, value, exclude }) => {
+    // we want to convert the tags array to a string of key=[1,2,3]
+    const exclude = tags[0].exclude; // We can only exclude or include all tags, not a mix of both
+    const tagList = Object.entries(
+      tags.reduce((acc, tag) => {
+        acc[tag.key] = acc[tag.key] || [];
+        acc[tag.key].push(tag.value);
+        return acc;
+      }, {} as Record<string, string[]>)
+    ).map(([key, values]) => {
+      if (values.length > 1) {
+        const equalSign = exclude ? "notin" : "in";
+        return `${key} ${equalSign} (${values.join(",")})`;
+      }
       const equalSign = exclude ? "!" : "";
-      return `${key}${equalSign}=${value}`;
+      return `${key}${equalSign}=${values[0]}`;
     });
     queryParams.set("tags", tagList.join(","));
   }
