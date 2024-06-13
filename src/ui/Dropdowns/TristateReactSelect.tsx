@@ -418,10 +418,10 @@ export function TristateReactSelectComponent({
         // toggle state changes from other options or parent components, which
         // is not ideal, but it works for now.
         Option: React.memo(ReactSelectTriStateOptions),
-        SingleValue: React.memo(ReactSelectTriStateSingleValue),
-        DropdownIndicator: React.memo(TriStateCustomDropdownIndicator),
+        SingleValue: ReactSelectTriStateSingleValue,
+        DropdownIndicator: TriStateCustomDropdownIndicator,
         IndicatorSeparator: () => null,
-        Control: React.memo(TriStateCustomControlContainer),
+        Control: TriStateCustomControlContainer,
         Placeholder: () => <>None</>
       }}
       // Pass the toggle state and the setter to the custom Option component
