@@ -1,6 +1,6 @@
 import {
   Flow,
-  HandleError
+  handleGetFlowError as HandleError
 } from "@flanksource-ui/components/Authentication/Kratos/ory";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
@@ -54,10 +54,10 @@ const KratosLogin = () => {
 
   const handleError = useCallback(
     (error: AxiosError) => {
-      const handle = HandleError(getFlow, setFlow, "/login", true);
+      const handle = HandleError(router, "login", setFlow);
       return handle(error);
     },
-    [getFlow]
+    [router]
   );
 
   const createFlow = useCallback(

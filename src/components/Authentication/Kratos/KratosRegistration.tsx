@@ -88,6 +88,7 @@ export default function KratosRegistration() {
     <div className="w-96">
       <div className="mt-6">
         <div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="Mission Control"
             src="/images/logo.svg"
