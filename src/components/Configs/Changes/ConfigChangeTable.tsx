@@ -7,8 +7,9 @@ import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { ColumnDef } from "@tanstack/table-core";
-import { useState } from "react";
+import React, { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
+import ConfigListTagsCell from "../ConfigList/Cells/ConfigListTagsCell";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
 export const paramsToReset = {
@@ -48,7 +49,8 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
         </FilterByCellValue>
       );
     },
-    size: 84
+    minSize: 50,
+    maxSize: 250
   },
   {
     header: "Type",
@@ -68,7 +70,8 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
         </FilterByCellValue>
       );
     },
-    maxSize: 70
+    minSize: 50,
+    maxSize: 100
   },
   {
     header: "Summary",
@@ -76,7 +79,8 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 150,
+    maxSize: 500,
+    minSize: 250,
     cell: ({ getValue }) => {
       const summary = getValue<string>();
 
@@ -92,8 +96,15 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     }
   },
   {
+    header: "Tags",
+    accessorKey: "tags",
+    cell: React.memo(ConfigListTagsCell),
+    aggregatedCell: "",
+    size: 100
+  },
+  {
     header: "Created By",
-    size: 50,
+    size: 100,
     enableSorting: false,
     cell: ({ row }) => {
       const userID = row.original.created_by;

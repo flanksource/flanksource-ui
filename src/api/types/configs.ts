@@ -5,7 +5,7 @@ export interface ConfigChange extends CreatedAt {
   config_id: string;
   external_change_id: string;
   change_type: string;
-  severity: string;
+  severity?: string;
   source: string;
   summary: string;
   patches?: string;
@@ -17,6 +17,7 @@ export interface ConfigChange extends CreatedAt {
   type?: string;
   name?: string;
   created_by?: string;
+  tags?: Record<string, any>;
 }
 
 export interface Change {
