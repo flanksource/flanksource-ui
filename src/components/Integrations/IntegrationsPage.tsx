@@ -32,7 +32,7 @@ export default function IntegrationsPage() {
 
   return (
     <>
-      <Head prefix="Settings - Integrations" />
+      <Head prefix="Integrations" />
       <SearchLayout
         title={
           <BreadcrumbNav

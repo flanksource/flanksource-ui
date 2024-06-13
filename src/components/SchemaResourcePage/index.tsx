@@ -23,7 +23,7 @@ export function SchemaResourcePage({
 
   return (
     <>
-      <Head prefix={resourceInfo ? `Settings - ${resourceInfo.name}` : ""} />
+      <Head prefix={resourceInfo ? `${resourceInfo.name}` : "Settings"} />
       <SearchLayout
         loading={isLoading}
         onRefresh={refetch}
