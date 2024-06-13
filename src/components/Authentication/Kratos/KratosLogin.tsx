@@ -1,5 +1,11 @@
+import {
+  Flow,
+  HandleError
+} from "@flanksource-ui/components/Authentication/Kratos/ory";
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
+import {} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,8 +14,6 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { toastError } from "../../Toast/toast";
-import { Flow, HandleError } from "../../ory";
-import ory from "../../ory/sdk";
 
 const KratosLogin = () => {
   const [flow, setFlow] = useState<LoginFlow>();

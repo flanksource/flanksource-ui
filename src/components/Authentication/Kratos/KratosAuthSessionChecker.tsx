@@ -1,9 +1,9 @@
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { Session } from "@ory/client";
 import { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { isAuthEnabled } from "../../../context/Environment";
-import ory from "../../ory/sdk";
 
 type KratosAuthSessionCheckerProps = {
   children: React.ReactNode;

@@ -1,11 +1,11 @@
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { UpdateVerificationFlowBody, VerificationFlow } from "@ory/client";
 import { AxiosError } from "axios";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Flow } from "../../ory";
-import ory from "../../ory/sdk";
 
 function KratosVerification() {
   const [flow, setFlow] = useState<VerificationFlow>();

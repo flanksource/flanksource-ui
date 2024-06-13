@@ -1,12 +1,12 @@
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { RecoveryFlow, UpdateRecoveryFlowBody } from "@ory/client";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Head } from "../../../ui/Head";
-import { Flow } from "../../ory";
-import { handleFlowError } from "../../ory/errors";
-import ory from "../../ory/sdk";
 
 function KratosRecovery() {
   const [flow, setFlow] = useState<RecoveryFlow>();

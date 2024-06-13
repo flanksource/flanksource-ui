@@ -4,9 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useState } from "react";
 
-import { Flow, Messages, Methods } from "../../ory";
-import { handleFlowError } from "../../ory/errors";
-import ory from "../../ory/sdk";
+import {
+  Flow,
+  Messages,
+  Methods
+} from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 
 interface Props {
   flow?: SettingsFlow;

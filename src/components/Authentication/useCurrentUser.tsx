@@ -1,7 +1,7 @@
 import { useUser } from "@clerk/nextjs";
 import { Identity } from "@ory/client";
 import { useEffect, useState } from "react";
-import ory from "../ory/sdk";
+import ory from "./Kratos/ory/sdk";
 import useDetermineAuthSystem from "./useDetermineAuthSystem";
 
 export default function useCurrentUserID() {
