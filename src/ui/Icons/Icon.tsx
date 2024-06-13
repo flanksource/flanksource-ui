@@ -1,7 +1,7 @@
-import { isEmpty } from "lodash";
-import { IconMap as Icons } from "@flanksource/icons/mi";
-import React, { memo } from "react";
 import { IconType } from "@flanksource/icons";
+import { IconMap as Icons } from "@flanksource/icons/mi";
+import { isEmpty } from "lodash";
+import React, { useMemo } from "react";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
@@ -743,48 +743,50 @@ export type IconProps = {
   size?: any;
 };
 
-export const Icon: React.FC<IconProps> = memo(
-  ({
-    name = "",
-    secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
-    className = "h-6 max-w-6",
-    alt = "",
-    prefix,
-    ...props
-  }) => {
-    if (isEmpty(name) && isEmpty(secondary)) {
-      return null;
+export function Icon({
+  name = "",
+  secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
+  className = "h-6 max-w-6",
+  alt = "",
+  prefix,
+  ...props
+}: IconProps) {
+  const IconSVG = useMemo(() => {
+    if (!name && !secondary) {
+      return undefined;
     }
 
     if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
-      return <img src={name} className={className} alt={alt} {...props} />;
+      return undefined;
     }
 
-    let iconType = findByName(name!);
-    if (iconType == null) {
-      iconType = findByName(secondary);
+    const iconType = findByName(name!);
+    if (iconType) {
+      return iconType;
     }
+    const secondaryIcon = findByName(secondary);
+    return secondaryIcon;
+  }, [name, secondary]);
 
-    if (iconType == null) {
-      console.log("Icon not found: " + name);
-      return null;
-    }
-
-    const IconSVG = iconType as unknown as React.FC<
-      React.SVGProps<SVGSVGElement>
-    >;
-
-    return (
-      <>
-        {prefix}{" "}
-        <IconSVG
-          className={`inline-block object-center ${className}`}
-          {...props}
-        />
-      </>
-    );
+  if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={name} className={className} alt={alt} {...props} />;
   }
-);
+
+  if (!IconSVG) {
+    return null;
+  }
+
+  return (
+    <>
+      {prefix}{" "}
+      <IconSVG
+        className={`inline-block object-center fill-current text-red-50 ${className}`}
+        {...props}
+      />
+    </>
+  );
+}
 
 type AvatarProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   url: string;
@@ -793,6 +795,7 @@ type AvatarProps = React.ImgHTMLAttributes<HTMLImageElement> & {
 
 export function Avatar({ url, alt = "", ...props }: AvatarProps) {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
       src={url}
