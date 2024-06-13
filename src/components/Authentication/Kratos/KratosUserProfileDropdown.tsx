@@ -16,6 +16,7 @@ export function KratosUserProfileDropdown() {
       <div>
         <Menu.Button className="flex items-center text-sm rounded-full">
           {user?.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               className="h-8 w-8 rounded-full"
               src={user.avatar}

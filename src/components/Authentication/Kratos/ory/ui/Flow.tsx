@@ -1,3 +1,4 @@
+import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import {
   LoginFlow as SelfServiceLoginFlow,
   RecoveryFlow as SelfServiceRecoveryFlow,
@@ -17,8 +18,6 @@ import {
   isUiNodeInputAttributes
 } from "@ory/integrations/ui";
 import { Component, FormEvent } from "react";
-
-import FormSkeletonLoader from "../../../ui/SkeletonLoader/FormSkeletonLoader";
 import { Messages } from "./Messages";
 import { Node } from "./Node";
 

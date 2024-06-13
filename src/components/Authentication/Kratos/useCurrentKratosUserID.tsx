@@ -1,6 +1,6 @@
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { Identity } from "@ory/client";
 import { useEffect, useState } from "react";
-import ory from "../../ory/sdk";
 import useDetermineAuthSystem from "../useDetermineAuthSystem";
 
 export default function useCurrentKratosUser() {

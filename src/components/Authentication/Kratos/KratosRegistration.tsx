@@ -5,10 +5,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 // Import render helpers
-import { handleFlowError } from "../../ory/errors";
+import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
 // Import the SDK
-import { Flow } from "../../ory";
-import ory from "../../ory/sdk";
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 
 // Renders the registration page
 export default function KratosRegistration() {

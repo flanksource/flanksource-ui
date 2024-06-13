@@ -1,9 +1,9 @@
+import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { FlowError } from "@ory/client";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import ory from "../../ory/sdk";
 
 export default function KratosErrorPage() {
   const [error, setError] = useState<FlowError | string>();
