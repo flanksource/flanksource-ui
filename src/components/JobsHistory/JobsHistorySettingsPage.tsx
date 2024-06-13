@@ -23,7 +23,7 @@ export default function JobsHistorySettingsPage() {
 
   return (
     <>
-      <Head prefix="Settings - Job History" />
+      <Head prefix="Job History" />
       <SearchLayout
         title={
           <BreadcrumbNav

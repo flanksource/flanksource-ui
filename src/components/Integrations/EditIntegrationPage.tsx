@@ -77,9 +77,7 @@ export default function EditIntegrationPage() {
   return (
     <>
       <Head
-        prefix={`Settings - Integrations ${
-          resource?.name ? ` - ${resource.name}` : ""
-        }`}
+        prefix={`Integrations ${resource?.name ? ` - ${resource.name}` : ""}`}
       />
       <SearchLayout
         title={

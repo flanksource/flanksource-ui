@@ -210,7 +210,7 @@ export function SchemaResourceEdit({
 
   return (
     <>
-      <Head prefix={`Settings ${resourceName} - ${name}`} />
+      <Head prefix={`${name} - ${resourceName}`} />
       <div className="flex flex-col flex-1 overflow-y-auto">
         <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
           {subNav.map((nav) => {
