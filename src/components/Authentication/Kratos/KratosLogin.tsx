@@ -15,6 +15,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { toastError } from "../../Toast/toast";
 
+type LoginCredentials = {
+  username: string;
+  password: string;
+};
+
 const KratosLogin = () => {
   const [flow, setFlow] = useState<LoginFlow>();
 
@@ -26,12 +31,15 @@ const KratosLogin = () => {
 
   const { query, isReady, replace, push } = router;
 
-  const { flow: flowId, return_to: returnTo, username, password } = query;
-
   const searchParams = useSearchParams();
 
+  const flowId = searchParams.get("flow") || undefined;
+  const returnTo = searchParams.get("return_to") || "/";
+  const username = searchParams.get("username");
+  const password = searchParams.get("password");
+
   const [credentials, setCredentials] = useState<
-    { username: string; password: string } | undefined
+    LoginCredentials | undefined
   >();
 
   // Refresh means we want to refresh the session. This is needed, for example, when we want to update the password
@@ -61,10 +69,10 @@ const KratosLogin = () => {
   );
 
   const createFlow = useCallback(
-    async (refresh: boolean, aal: string, returnTo: string) => {
+    async (refresh: boolean, aal: string, returnTo: string = "/") => {
       try {
         const { data } = await ory.createBrowserLoginFlow({
-          refresh: false,
+          refresh: refresh,
           // Check for two-factor authentication
           aal: aal,
           returnTo: returnTo
@@ -89,14 +97,14 @@ const KratosLogin = () => {
     }
 
     if (flowId) {
-      getFlow(String(flowId)).catch(() => {
-        createFlow(refresh, aal, String(returnTo) ?? "/");
+      getFlow(flowId).catch(() => {
+        createFlow(refresh, aal, String(returnTo ?? "/"));
       });
       return;
     }
 
     // Otherwise we initialize it
-    createFlow(refresh, aal, String(returnTo) ?? "/");
+    createFlow(refresh, aal, returnTo ?? "/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
@@ -109,7 +117,7 @@ const KratosLogin = () => {
         });
         setLoginSuccessful(true);
         console.log("Login successful");
-        push(String(returnTo) || "/");
+        push(String(returnTo || "/"));
       } catch (error) {
         console.error(error);
         toastError((error as AxiosError).message);
@@ -121,8 +129,8 @@ const KratosLogin = () => {
   useEffect(() => {
     if (username && password) {
       setCredentials({
-        username: username as string,
-        password: password as string
+        username: username,
+        password: password
       });
     }
   }, [username, password]);
