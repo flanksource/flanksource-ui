@@ -61,9 +61,13 @@ export function tristateOutputToQueryParamValue(
     .map((type) => {
       const [changeType, symbol] = type.split(":");
       const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
-      return `${symbolFilter}${
-        encodeValue ? encodeURIComponent(changeType) : changeType
-      }`;
+      const filterValue = changeType
+        .replaceAll("____", ":")
+        .replaceAll("||||", ",");
+      if (encodeValue) {
+        return encodeURIComponent(`${symbolFilter}${filterValue}`);
+      }
+      return `${symbolFilter}${filterValue}`;
     })
     .join(",");
 }

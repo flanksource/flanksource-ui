@@ -35,7 +35,9 @@ export default function FilterByCellValue({
       // append the new value
       const updateValue = newValues
         .concat(
-          `${encodeURIComponent(filterValue)}:${action === "include" ? 1 : -1}`
+          `${filterValue.replaceAll(",", "||||").replaceAll(":", "____")}:${
+            action === "include" ? 1 : -1
+          }`
         )
         // remove duplicates
         .filter((value, index, self) => self.indexOf(value) === index)
