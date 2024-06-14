@@ -377,13 +377,17 @@ export function TristateReactSelectComponent({
     if (options.length > 0 && sortOptionsSelectedFirst.length === 0) {
       setSortOptionsSelectedFirst(() => sortOptionsFunction(options));
     }
-  }, [options, sortOptionsFunction, sortOptionsSelectedFirst.length]);
+  }, [options, sortOptionsFunction, sortOptionsSelectedFirst.length, value]);
 
   return (
     <Select
       placeholder={label}
       hideSelectedOptions
       className={className}
+      // Sort the options so that the selected items are first
+      onMenuOpen={() =>
+        setSortOptionsSelectedFirst(() => sortOptionsFunction(options))
+      }
       menuPortalTarget={document.body}
       menuPosition={"fixed"}
       menuShouldBlockScroll={true}
