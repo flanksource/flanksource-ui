@@ -236,9 +236,9 @@ export async function getConfigsChanges({
   arbitraryFilter,
   tags
 }: GetConfigsRelatedChangesParams) {
-  const queryParams = new URLSearchParams();
+  const requestData = new Map<string, any>();
   if (id) {
-    queryParams.set("id", id);
+    requestData.set("id", id);
   }
   if (configTypes && configTypes !== "all") {
     const value = tristateOutputToQueryParamValue(configTypes)
@@ -246,42 +246,45 @@ export async function getConfigsChanges({
       .map((v) => v.replaceAll("__", "::"))
       .join(",");
     if (value) {
-      queryParams.set("config_type", value);
+      requestData.set("config_type", value);
     }
   } else if (configType) {
     // if configTypes is not provided, use configType which is a single value
-    queryParams.set("config_type", configType);
+    requestData.set("config_type", configType);
   }
   if (changeType && changeType !== "all") {
-    const value = tristateOutputToQueryParamValue(changeType);
+    const value = tristateOutputToQueryParamValue(changeType, false);
     if (value) {
-      queryParams.set("type", value);
+      requestData.set("type", value);
     }
   }
   if (arbitraryFilter) {
     Object.entries(arbitraryFilter).forEach(([key, value]) => {
-      const filterExpression = tristateOutputToQueryParamValue(value, false);
+      const filterExpression = tristateOutputToQueryParamValue(
+        value,
+        key === "summary" || key === "source"
+      );
       if (filterExpression) {
-        queryParams.set(key, filterExpression);
+        requestData.set(key, filterExpression);
       }
     });
   }
   if (from) {
-    queryParams.set("from", from);
+    requestData.set("from", from);
   }
   if (to) {
-    queryParams.set("to", to);
+    requestData.set("to", to);
   }
   if (severity) {
-    queryParams.set("severity", severity);
+    requestData.set("severity", severity);
   }
   if (page && pageSize) {
-    queryParams.set("page", page);
-    queryParams.set("page_size", pageSize);
+    requestData.set("page", parseInt(page));
+    requestData.set("page_size", parseInt(pageSize));
   }
   if (sortBy) {
     // for descending order, we need to add a "-" before the sortBy field
-    queryParams.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
+    requestData.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
   if (tags) {
     // we want to convert the tags array to a string of key=[1,2,3]
@@ -300,30 +303,26 @@ export async function getConfigsChanges({
       const equalSign = exclude ? "!" : "";
       return `${key}${equalSign}=${values[0]}`;
     });
-    queryParams.set("tags", tagList.join(","));
+    requestData.set("tags", tagList.join(","));
   }
   if (type_filter) {
-    queryParams.set(
+    requestData.set(
       "recursive",
       type_filter === "all" || type_filter === "none" ? "all" : type_filter
     );
   } else {
     // default to all
-    queryParams.set("recursive", "all");
-    queryParams.set("depth", "1");
+    requestData.set("recursive", "all");
+    requestData.set("depth", 1);
   }
 
   if (severity) {
-    queryParams.set("severity", severity);
+    requestData.set("severity", severity);
   }
-  queryParams.set(
-    "include_deleted_configs",
-    include_deleted_configs.toString()
-  );
-
-  const res = await Catalog.get<CatalogChangesSearchResponse>(
-    `/changes?${queryParams}`,
-    {}
+  requestData.set("include_deleted_configs", include_deleted_configs);
+  const res = await Catalog.post<CatalogChangesSearchResponse>(
+    `/changes`,
+    Object.fromEntries(requestData)
   );
   return res.data ?? [];
 }

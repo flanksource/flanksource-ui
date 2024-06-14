@@ -23,9 +23,7 @@ function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
     (key: string, value: string) => {
       const currentValue = params.get(key);
       const arrayValue = currentValue?.split(",") || [];
-      const newValues = arrayValue.filter(
-        (v) => decodeURIComponent(v) !== decodeURIComponent(value)
-      );
+      const newValues = arrayValue.filter((v) => v !== value);
       if (newValues.length === 0) {
         params.delete(key);
       } else {
@@ -53,7 +51,10 @@ function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
             {paramKey === "external_created_by" ? "created_by" : paramKey}:
           </span>
           <span className="text-gray-500">
-            {decodeURIComponent(filter.split(":")[0])}
+            {filter
+              .split(":")[0]
+              .replaceAll("____", ":")
+              .replaceAll("||||", ",")}
           </span>
           <span>{filter.split(":")[1] === "-1" && <FaBan />}</span>
         </ClosableBadge>
