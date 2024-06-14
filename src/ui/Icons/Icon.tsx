@@ -781,7 +781,7 @@ export function Icon({
     <>
       {prefix}{" "}
       <IconSVG
-        className={`inline-block object-center fill-current text-red-50 ${className}`}
+        className={`inline-block object-center fill-current ${className}`}
         {...props}
       />
     </>

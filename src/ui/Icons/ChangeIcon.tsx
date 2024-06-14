@@ -25,7 +25,7 @@ export function ChangeIcon({
   return (
     <Icon
       name={change?.change_type || name}
-      className={clsx("opacity-50", className, colorClass)}
+      className={clsx(className, colorClass)}
     />
   );
 }
