@@ -263,3 +263,24 @@
     @apply block w-full py-2 px-4  text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 divide-gray-300 text-left;
   }
 }
+
+
+.admonition {
+    border-radius: 0.4rem;
+    box-shadow: 0 1px 2px 0 #0000001a;
+    padding: 0.7rem 0.7rem
+}
+
+.admonition.info  {
+  background-color: #eef9fd;
+  border: 0px solid #4cb3d4;
+  border-left-width: 5px;
+}
+
+.admonition.warning {
+  border: 0px solid #e6a700;
+  background-color:  #fff8e6;
+  border-left-width: 5px;
+
+ }
+
