@@ -1,13 +1,16 @@
 import { FieldArray, useFormikContext } from "formik";
 import { get } from "lodash";
 import React, { useMemo } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { Button } from "../../../ui/Buttons/Button";
+import { BsPlusCircleFill } from "react-icons/bs";
+import clsx from "clsx";
 
 type ConfigFormFieldProps = {
   label: string;
   containerClassName?: string;
   className?: string;
+  hint?: string;
   name: string;
   /**
    *
@@ -34,7 +37,8 @@ export default function FormikConfigFormFieldsArray({
   fields,
   label,
   containerClassName = "flex flex-col space-y-2",
-  className = "flex flex-row w-full space-x-2"
+  className = "flex flex-row w-full space-x-2",
+  hint = ""
 }: ConfigFormFieldProps) {
   const { values } = useFormikContext<Record<string, any>>();
 
@@ -42,39 +46,39 @@ export default function FormikConfigFormFieldsArray({
 
   return (
     <div className={containerClassName}>
-      <label className="text-sm font-semibold">{label}</label>
+      <label className="text-sm font-semibold">{label} </label>
+      {hint && <p className="text-sm text-gray-500 py-1 p-1">{hint}</p>}
+
       <FieldArray
         name={name}
         render={(arrayHelpers) => (
-          <div className={`flex flex-col space-y-2 p-4`}>
+          <div className={`flex flex-col space-y-1 `}>
             {fieldValue &&
               fieldValue.length > 0 &&
               fieldValue.map((_: any, index: number) => (
                 <div className={className} key={index}>
                   {fields.length > 0 &&
-                    fields.map(
-                      ({
-                        name: fieldName,
-                        label: fieldLabel,
-                        fieldComponent: Field,
-                        className
-                      }) => (
-                        <Field
-                          key={fieldName}
-                          name={
-                            fields.length > 1
-                              ? `${name}.${index}.${fieldName}`
-                              : `${name}.${index}`
-                          }
-                          label={fields.length > 1 ? fieldLabel : undefined}
-                          className={className}
-                        />
-                      )
-                    )}
+                    fields.map((field) => (
+                      <field.fieldComponent
+                        key={field.name}
+                        name={
+                          fields.length > 1
+                            ? `${name}.${index}.${field.name}`
+                            : `${name}.${index}`
+                        }
+                        label={fields.length > 1 ? field.label : undefined}
+                        className={clsx(
+                          "text-xs",
+                          "sm:text-xs",
+                          field.className
+                        )}
+                        hint={field.hint}
+                      />
+                    ))}
                   <Button
                     onClick={() => arrayHelpers.remove(index)}
                     icon={<FaTrash />}
-                    className="btn-white w-auto"
+                    className="btn-icon pl-0"
                   />
                 </div>
               ))}
@@ -82,8 +86,8 @@ export default function FormikConfigFormFieldsArray({
               <Button
                 onClick={() => arrayHelpers.push(fields.length === 1 ? "" : {})}
                 text={`Add`}
-                icon={<FaPlus />}
-                className="btn-white"
+                icon={<BsPlusCircleFill />}
+                className="btn-icon  pl-1"
               />
             </div>
           </div>
