@@ -49,7 +49,7 @@ export type SpecTypeCustom = SpecTypeCommonFields & {
 
 export type SpecType = SpecTypeInputForm | SpecTypeCode | SpecTypeCustom;
 
-type SpecEditorProps = {
+export type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;

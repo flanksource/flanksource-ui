@@ -2,7 +2,9 @@ import { atom, useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import AddIntegrationForm from "./AddIntegrationForm";
-import AddIntegrationOptionsList, { IntegrationOption } from "./steps/AddIntegrationOptionsList";
+import AddIntegrationOptionsList, {
+  IntegrationOption
+} from "./steps/AddIntegrationOptionsList";
 import clsx from "clsx";
 import { Modal } from "@flanksource-ui/components";
 
@@ -22,7 +24,6 @@ export default function AddIntegrationModal({ refresh }: Props) {
       setSelectedOption(undefined);
     }
   }, [isOpen]);
-
 
   const onSelectOption = useCallback(
     (option: IntegrationOption) => {
@@ -56,19 +57,17 @@ export default function AddIntegrationModal({ refresh }: Props) {
         onClose={() => {
           setIsOpen(false);
         }}
-        onBack={() =>
-          setSelectedOption(undefined)
-        }
-        onSave={(values) => {
-          console.log(values)
-          setIsOpen(false)
-        }}
         childClassName={clsx(
           selectedOption && {
             "w-full": true,
-            "h-full": selectedOption.name !== "Catalog Scraper" && selectedOption.category !== "Scraper" && selectedOption.name !== "Custom Topology"
-          }, !selectedOption && "w-full")}
-      // bodyClass="flex flex-col flex-1 overflow-y-auto"
+            "h-full":
+              selectedOption.name !== "Catalog Scraper" &&
+              selectedOption.category !== "Scraper" &&
+              selectedOption.name !== "Custom Topology"
+          },
+          !selectedOption && "w-full"
+        )}
+        // bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
         {selectedOption ? (
           <AddIntegrationForm
@@ -84,7 +83,7 @@ export default function AddIntegrationModal({ refresh }: Props) {
         ) : (
           <AddIntegrationOptionsList onSelectOption={onSelectOption} />
         )}
-      </Modal >
+      </Modal>
     </>
   );
 }
