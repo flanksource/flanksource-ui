@@ -19,7 +19,7 @@ export default function ConnectionListView({ setConnectionType }: Props) {
               }}
             >
               {typeof item.icon === "string" ? (
-                <Icon name={item.icon} />
+                <Icon name={item.icon} className="w-6 h-auto" />
               ) : (
                 item.icon
               )}
