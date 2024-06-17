@@ -101,7 +101,6 @@ export default function SubmitPlaybookRunForm({
         onClose();
         setModalSize(undefined);
       }}
-      enforceSizeInHeight
       size={modalSize?.width ?? "medium"}
     >
       <Formik

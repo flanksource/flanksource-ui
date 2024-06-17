@@ -183,6 +183,7 @@ export default function scraperTypes(
     },
     {
       name: "custom",
+      type: "code",
       label: "Custom",
       updateSpec: (value: Record<string, any>) => {
         onSubmit(value);
@@ -191,12 +192,10 @@ export default function scraperTypes(
         return resourceValue ?? {};
       },
       icon: FaCog,
-      configForm: null,
       specsMapField: "spec",
-      rawSpecInput: true,
       schemaFileName: "scrape_config.schema.json"
     }
   ];
-  types.sort((a, b) => a.label.localeCompare(b.label));
+  types.sort((a, b) => a?.label?.localeCompare(b?.label || "") || 0);
   return types;
 }
