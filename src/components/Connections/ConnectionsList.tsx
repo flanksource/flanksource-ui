@@ -3,10 +3,8 @@ import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { CellContext, ColumnDef } from "@tanstack/table-core";
 import clsx from "clsx";
-import { useMemo } from "react";
 import { Icon } from "../../ui/Icons/Icon";
 import { Connection } from "./ConnectionFormModal";
-import { ConnectionValueType } from "./connectionTypes";
 
 type ConnectionListProps = {
   data: Connection[];
@@ -15,19 +13,9 @@ type ConnectionListProps = {
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
 const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
-  const icon = useMemo(() => {
-    if (row.original.type === ConnectionValueType.AWS_S3) {
-      return "aws-s3";
-    }
-    if (row.original.type === ConnectionValueType.GCP) {
-      return "gcp";
-    }
-    return row.original.type;
-  }, [row.original.type]);
-
   return (
     <div className="flex flex-row space-x-2 items-center">
-      <Icon name={icon} className="w-6 h-auto" />
+      <Icon name={row.original.type} className="w-6 h-auto" />
       <div>{getValue()}</div>
     </div>
   );
@@ -41,32 +29,41 @@ const columns: ColumnDef<Connection>[] = [
   {
     header: "Name",
     accessorKey: "name",
-    cell: NameCell
+    cell: NameCell,
+    minSize: 150,
+    enableResizing: true
   },
   {
     header: "Namespace",
-    accessorKey: "namespace"
+    accessorKey: "namespace",
+    maxSize: 75,
+    enableResizing: true
   },
+
   {
     header: "Type",
-    accessorKey: "type"
+    accessorKey: "type",
+    maxSize: 75
   },
   {
     header: "Created By",
     accessorKey: "created_by",
-    cell: AvatarCell
+    cell: AvatarCell,
+    maxSize: 50
   },
   {
-    header: "Created At",
+    header: "Created",
     accessorKey: "created_at",
     cell: DateCell,
-    sortingFn: "datetime"
+    sortingFn: "datetime",
+    maxSize: 50
   },
   {
-    header: "Updated At",
+    header: "Updated",
     accessorKey: "updated_at",
     cell: DateCell,
-    sortingFn: "datetime"
+    sortingFn: "datetime",
+    maxSize: 50
   }
 ];
 
