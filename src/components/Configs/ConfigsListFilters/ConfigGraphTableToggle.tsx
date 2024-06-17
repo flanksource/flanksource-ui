@@ -2,9 +2,8 @@ import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-export const configRelationshipGraphTableToggle = atomWithStorage<
-  "Table" | "Graph"
->("relationshipGraphTableToggle", "Table", undefined, {
+export type GraphType = "Table" | "Graph"
+export const configRelationshipGraphTableToggle = atomWithStorage<GraphType>("relationshipGraphTableToggle", "Table", undefined, {
   getOnInit: true
 });
 
@@ -23,7 +22,7 @@ export default function ConfigGraphTableToggle() {
       <Switch
         options={["Table", "Graph"]}
         onChange={(v) => {
-          setToggleValue(v);
+          setToggleValue(v as GraphType);
         }}
         value={toggleValue}
       />
