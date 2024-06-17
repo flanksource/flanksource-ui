@@ -3,10 +3,14 @@ import { get } from "lodash";
 import { useEffect, useState } from "react";
 import { Switch } from "../../../ui/FormControls/Switch";
 import FormikTextInput from "./FormikTextInput";
+import FormikTextArea from "./FormikTextArea";
+import HelpLink from "@flanksource-ui/ui/Buttons/HelpLink";
 
 type FormikConfigEnvVarFieldsProps = {
   name: string;
   className?: string;
+  type?: string;
+  hint?: string;
   label?: string;
 };
 
@@ -22,6 +26,8 @@ type FormikConfigEnvVarFieldsProps = {
 export default function FormikEnvVarConfigsFields({
   name,
   className = "flex flex-col space-y-2 w-full",
+  hint,
+  type = "password",
   label
 }: FormikConfigEnvVarFieldsProps) {
   const [selectedMethod, setSelectedMethod] = useState<
@@ -63,18 +69,27 @@ export default function FormikEnvVarConfigsFields({
     <div className={className}>
       <div className="flex flex-row gap-4 w-full items-center">
         {label && (
-          <label className="font-semibold text-sm flex-shrink">{label}:</label>
+          <label className="font-semibold text-sm flex-shrink">{label}</label>
         )}
       </div>
-      <div className="flex flex-col px-2 py-2 gap-2 ">
+      <div className="flex flex-col py-2 gap-2 ">
         <div className="flex flex-row gap-2 items-center">
           {selectedMethod === "Static" && (
             <div className="flex flex-1 flex-col">
-              <FormikTextInput
-                name={`${name}.value`}
-                className="flex flex-col gap-0"
-                type="password"
-              />
+              {type === "textarea" && (
+                <FormikTextArea
+                  name={`${name}.value`}
+                  className="flex flex-col gap-0"
+                  type={type}
+                />
+              )}
+              {type !== "textarea" && (
+                <FormikTextInput
+                  name={`${name}.value`}
+                  className="flex flex-col gap-0"
+                  type={type}
+                />
+              )}
             </div>
           )}
 
@@ -82,7 +97,7 @@ export default function FormikEnvVarConfigsFields({
             <div className="flex flex-1 flex-row gap-2">
               <div className="flex flex-row gap-2 flex-1 items-center">
                 <label className="font-semibold text-sm flex-shrink">
-                  Name:
+                  ConfigMap Name:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.configMapKeyRef.name`}
@@ -91,7 +106,7 @@ export default function FormikEnvVarConfigsFields({
               </div>
               <div className="flex flex-row gap-2 flex-1 items-center">
                 <label className="font-semibold text-sm flex-shrink">
-                  Key:
+                  ConfigMap Key:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.configMapKeyRef.key`}
@@ -105,7 +120,7 @@ export default function FormikEnvVarConfigsFields({
             <div className="flex flex-row gap-2 flex-1">
               <div className="flex flex-row gap-2 flex-1 items-center">
                 <label className="font-semibold text-sm flex-shrink">
-                  Name:
+                  Secret Name:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.secretKeyRef.name`}
@@ -114,7 +129,7 @@ export default function FormikEnvVarConfigsFields({
               </div>
               <div className="flex flex-row gap-2 flex-1 items-center">
                 <label className="font-semibold text-sm flex-shrink">
-                  Key:
+                  Secret Key:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.secretKeyRef.key`}
@@ -123,17 +138,19 @@ export default function FormikEnvVarConfigsFields({
               </div>
             </div>
           )}
-          <div className="flex flex-col flex-shrink-0">
+          <div className="flex flex-col-2 flex-shrink-0 mb-auto">
             <Switch
               className="w-full"
               value={selectedMethod}
               options={["Static", "Config Map", "Secret"]}
               onChange={(v) => {
-                onChangeMethod(v);
+                onChangeMethod(v as "Static" | "Config Map" | "Secret");
               }}
             />
+            <HelpLink link="reference/env-var" />
           </div>
         </div>
+        {hint && <p className="text-sm text-gray-500">{hint}</p>}
       </div>
     </div>
   );

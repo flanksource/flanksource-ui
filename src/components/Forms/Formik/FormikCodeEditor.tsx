@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import YAML from "yaml";
 import useDebounce from "../../../hooks/useDebounce";
+import Hint, { HintPosition } from "@flanksource-ui/ui/FormControls/Hint";
 
 const CodeEditor = dynamic(
   () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
@@ -14,8 +15,12 @@ const CodeEditor = dynamic(
 
 type FormikCodeEditorProps = {
   format?: string;
+  hint?: string;
+  hintPosition?: HintPosition;
   fieldName: string;
   className?: string;
+  lines?: number;
+  height?: string;
   /**
    * @deprecated use jsonSchemaUrl instead
    */
@@ -41,8 +46,12 @@ type FormikCodeEditorProps = {
 export function FormikCodeEditor({
   format = "yaml",
   fieldName,
+  hint,
+  hintPosition,
   schemaFileName,
   jsonSchemaUrl,
+  height,
+  lines,
   label,
   labelClassName,
   disabled,
@@ -123,7 +132,19 @@ export function FormikCodeEditor({
   return (
     <div className={className}>
       {label && (
-        <label className={`form-label ${labelClassName}`}>{label}</label>
+        <div className="flex flex-col">
+          <label
+            className={`form-label flex flex-row items-center space-x-2 ${labelClassName}`}
+          >
+            {label}
+            {hint && hintPosition === "tooltip" && (
+              <Hint id={fieldName} hint={hint} type={hintPosition} />
+            )}
+          </label>
+          {hint && hintPosition !== "tooltip" && (
+            <Hint id={fieldName} hint={hint} type={hintPosition} />
+          )}
+        </div>
       )}
       <CodeEditor
         onChange={(v) => {
@@ -136,6 +157,8 @@ export function FormikCodeEditor({
           }
         }}
         value={codeEditorValue}
+        lines={lines}
+        height={height}
         language={format}
         schemaFileName={schemaFileName}
         jsonSchemaUrl={jsonSchemaUrl}
