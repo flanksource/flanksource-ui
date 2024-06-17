@@ -1,12 +1,12 @@
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
-import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import clsx from "clsx";
 import { Form, Formik } from "formik";
 import FormikTextInput from "../../../Forms/Formik/FormikTextInput";
-import { CreateIntegrationOption } from "./AddIntegrationOptionsList";
-import RegistryInstallationInstructions, {
-  selectedOptionChartsDetails
-} from "./RegistryInstallationGuide/RegistryInstallationInstructions";
+import { IntegrationOption } from "./AddIntegrationOptionsList";
+import RegistryInstallationInstructions from "./RegistryInstallationGuide/RegistryInstallationInstructions";
+import Admonition from "@flanksource-ui/ui/BannerMessage/Admonition";
+import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
+import { useWindowSize } from "react-use-size";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 
 export type TopologyResource = {
   id: string;
@@ -24,7 +24,7 @@ type TopologyResourceFormProps = {
    * the spec field is populated with the current topology's spec and this
    * prop is ignored.
    */
-  selectedOption?: CreateIntegrationOption;
+  selectedOption: IntegrationOption;
   onBack?: () => void;
   footerClassName?: string;
   onSuccess?: () => void;
@@ -34,12 +34,16 @@ export default function MissionControlRegistryOptions({
   onBack,
   selectedOption,
   footerClassName = "bg-gray-100 p-4",
-  onSuccess = () => {}
+  onSuccess = () => { }
 }: TopologyResourceFormProps) {
-  const chartDetails = selectedOptionChartsDetails.get(selectedOption!);
+  const { height } = useWindowSize();
+  var lines = 6;
+  if (height && height > 1024) {
+    lines = 8;
+  }
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto h-full">
+    <div className="flex flex-col gap-2  h-full justify-between ">
       <Formik
         initialValues={{
           id: "",
@@ -55,9 +59,16 @@ export default function MissionControlRegistryOptions({
         {({ isValid, handleSubmit, values }) => (
           <Form
             onSubmit={handleSubmit}
-            className="flex flex-col flex-1 overflow-y-auto"
+            className="flex flex-col flex-1 h-full justify-between"
           >
-            <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
+
+            <div className="flex flex-col gap-4 p-4 overflow-y-auto mb-auto h-full flex-1">
+              {selectedOption.dependencies &&
+                selectedOption.dependencies.length > 0 && (
+                  <Admonition
+                    text={selectedOption.dependencies[0]}
+                  />
+                )}
               <FormikTextInput
                 label="Namespace"
                 name="namespace"
@@ -65,11 +76,28 @@ export default function MissionControlRegistryOptions({
                 defaultValue="default"
               />
 
+              <FormikCheckbox
+                label="Create Namespace"
+                hintPosition="tooltip"
+                hint="Create a new namespace if it doesn't exist"
+                name="createNamespace"
+              />
+              <FormikCheckbox
+                label="Create Helm Repository"
+                hintPosition="tooltip"
+                hint="Install the Helm Repository (can skip if other integrations previously installed it)"
+                name="createRepository"
+              />
+
+
               <FormikCodeEditor
                 fieldName="chartValues"
                 label="Values"
-                jsonSchemaUrl={chartDetails?.schemaURL}
-                className="flex flex-col h-[20rem]"
+                hint="The Helm Chart values to pass through"
+                hintPosition="tooltip"
+                lines={lines}
+                jsonSchemaUrl={selectedOption?.schemaURL}
+                className="flex flex-col"
               />
 
               <RegistryInstallationInstructions
@@ -77,6 +105,7 @@ export default function MissionControlRegistryOptions({
                 formValues={values}
               />
             </div>
+
             <div className={`flex flex-col ${footerClassName}`}>
               <div className="flex flex-1 flex-row items-center space-x-4 justify-between">
                 <Button
@@ -90,7 +119,7 @@ export default function MissionControlRegistryOptions({
                   disabled={!isValid}
                   type="submit"
                   text="Close"
-                  className={clsx("btn-primary")}
+                  className="btn-primary"
                 />
               </div>
             </div>
