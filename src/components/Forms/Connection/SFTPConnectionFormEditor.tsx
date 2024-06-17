@@ -19,7 +19,7 @@ export const SFTPConnectionFormEditor = ({ name }: { name: string }) => {
         types={[
           {
             value: { basic: true },
-            label: "Basic"
+            label: "Password"
           }
         ]}
         name={`${name}`}

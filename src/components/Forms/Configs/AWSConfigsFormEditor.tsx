@@ -71,14 +71,6 @@ export default function AWSConfigsFormEditor({
         />
       </div>
 
-      <FormikCheckbox name={`${fieldName}.patch_states`} label="Patch States" />
-      <FormikCheckbox
-        name={`${fieldName}.patch_details`}
-        label="Patch Details"
-      />
-      <FormikCheckbox name={`${fieldName}.inventory`} label="Inventory" />
-      <FormikCheckbox name={`${fieldName}.compliance`} label="Compliance" />
-
       <div className="flex flex-col space-y-2">
         <label className="font-semibold text-sm">Cloudtrail</label>
         <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
@@ -125,27 +117,29 @@ export default function AWSConfigsFormEditor({
         ]}
       />
 
-      <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">Cost Reporting</label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
-          <FormikTextInput
-            name={`${fieldName}.cost_reporting.s3_bucket_path`}
-            label="S3 Bucket Path"
-          />
-          <FormikTextInput
-            name={`${fieldName}.cost_reporting.table`}
-            label="Table"
-          />
-          <FormikTextInput
-            name={`${fieldName}.cost_reporting.database`}
-            label="Database"
-          />
-          <FormikTextInput
-            name={`${fieldName}.cost_reporting.region`}
-            label="Region"
-          />
+      <FormikCheckboxFieldsGroup name="costReporting" label="Cost Report">
+        <div className="flex flex-col space-y-2">
+          <label className="font-semibold text-sm">Cost Reporting</label>
+          <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+            <FormikTextInput
+              name={`${fieldName}.cost_reporting.s3_bucket_path`}
+              label="S3 Bucket Path"
+            />
+            <FormikTextInput
+              name={`${fieldName}.cost_reporting.table`}
+              label="Table"
+            />
+            <FormikTextInput
+              name={`${fieldName}.cost_reporting.database`}
+              label="Database"
+            />
+            <FormikTextInput
+              name={`${fieldName}.cost_reporting.region`}
+              label="Region"
+            />
+          </div>
         </div>
-      </div>
+      </FormikCheckboxFieldsGroup>
 
       <ConfigRetentionSpec fieldName={`${name}.retention`} />
     </>
