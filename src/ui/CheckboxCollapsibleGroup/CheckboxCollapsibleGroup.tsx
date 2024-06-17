@@ -12,7 +12,7 @@ export default function CheckboxCollapsibleGroup({
   label,
   children,
   isChecked = false,
-  className = "flex-1 flex flex-col  px-2 py-2 transform origin-top duration-1000 overflow-y-auto",
+  className = "flex-1 flex flex-col transform origin-top duration-1000 overflow-y-auto border-l-gray-200 border-l-2 pl-2 py-1 border-dotted ",
   labelClassName = "flex-1 font-semibold",
   onChange = () => {},
   ...props
@@ -22,10 +22,10 @@ export default function CheckboxCollapsibleGroup({
   return (
     <div className={`flex flex-col`}>
       <div
-        className={`flex flex-row items-center space-x-2 py-2 px-2 cursor-pointer`}
+        className={`flex flex-row items-center space-x-2 py-2  cursor-pointer`}
       >
         <input
-          className="text-blue-600 bg-gray-100 border-gray-900 rounded focus:ring-blue-500 focus:ring-2"
+          className="text-blue-600"
           type="checkbox"
           id={`hideFieldGroups-${label}`}
           checked={isOpen}

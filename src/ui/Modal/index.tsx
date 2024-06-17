@@ -2,11 +2,28 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
-import React, { Fragment, useState } from "react";
-import HelpLink from "../Buttons/HelpLink";
+import React, {
+  Fragment,
+  createContext,
+  useContext,
+  useMemo,
+  useState
+} from "react";
 import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
 import { useWindowSize } from "react-use-size";
 import DialogButton from "../Buttons/DialogButton";
+import HelpLink from "../Buttons/HelpLink";
+
+export type ModalContextProps = {
+  props: IModalProps;
+  setProps: (props: IModalProps) => void;
+};
+
+export function useModal() {
+  return useContext(ModalContext);
+}
+
+export const ModalContext = createContext<ModalContextProps>(undefined!);
 
 /**
  *
@@ -16,9 +33,9 @@ import DialogButton from "../Buttons/DialogButton";
  *
  */
 export const modalHelpLinkAtom = atom<string | undefined>(undefined);
-export type ModalSize = "very-small" | "small" | "medium" | "large" | "full";
 
-const HEADER_HEIGHT = 60;
+export type ModalSize = "small" | "medium" | "large" | "full";
+
 export interface IModalProps {
   title?: React.ReactNode;
   showExpand?: boolean;
@@ -38,82 +55,39 @@ export interface IModalProps {
   dialogClassName?: string;
 }
 
-export function useDialogSize(size?: string): {
-  windowHeight: number;
-  windowWidth: number;
-  height: string;
-  width: string;
-  classNames: string;
-} {
+export function useDialogSize(size?: string) {
   const { height, width } = useWindowSize();
-  let ret = {
-    classNames: "",
-    windowHeight: height,
-    windowWidth: width,
-    height: "",
-    width: ""
-  };
-
-  if (size === "very-small" || size === "small") {
-    ret.height = " h-full";
-  } else {
-    ret.classNames += " mx-auto my-auto";
-  }
-
-  if (size === "small") {
-    ret.classNames += " max-w-[800px] max-h-[50vh]";
-  }
-
-  if (size === "full") {
-    if (width >= 1600) {
-      ret.width = " w-[1500px]";
-    } else if (width >= 1280) {
-      ret.width = " w-[1200px]";
-    } else if (width >= 1024) {
-      ret.width = " w-[1000px]";
-    } else if (width >= 768) {
-      ret.width = " w-[90vw]";
-    } else if (width < 768) {
-      ret.width = " w-[95vw]";
-    }
-    ret.height = " h-[90vh]";
-  }
-
-  if (size === "medium" || size === undefined) {
-    if (width >= 1280) {
-      ret.width = " w-[1000px]";
-    } else if (width >= 1024) {
-      ret.width = " w-[850px]";
-    } else if (width >= 768) {
-      ret.width = " w-[500vw]";
-    } else if (width < 768) {
-      ret.width = " w-[95vw]";
-    }
-    if (height < 1000) {
-      ret.height = ` max-h-[${height - HEADER_HEIGHT * 2}px]`;
-    } else if (height > 1000) {
-      ret.height = " max-h-[80vh]";
-    }
-  }
-
-  if (size === "large") {
-    if (width >= 1280) {
-      ret.width = " w-[1240px]";
-    } else if (width >= 1024) {
-      ret.width = " w-[1000px]";
-    } else if (width >= 768) {
-      ret.width = " w-[600px]";
-    } else if (width < 768) {
-      ret.width = " w-[95vw]";
-    }
-    if (height < 1000) {
-      ret.height = ` max-h-[${height - HEADER_HEIGHT * 2}px]`;
-    } else if (height > 1000) {
-      ret.height = " max-h-[90vh]";
-    }
-  }
-
-  return ret;
+  return useMemo(
+    () =>
+      clsx(
+        size === "full" && {
+          "min-w-[1240px] w-[1240px]": width >= 1280,
+          "w-[1000px]": width < 1280 && width >= 1024,
+          "w-[90vw]": width < 1024 && width >= 768,
+          "w-[95vw]": width < 768,
+          "h-[90vh]": height < 1000,
+          "h-[1000px]": height > 1000
+        },
+        size === "small" && "max-w-[800px] max-h-[50vh]",
+        size === "medium" && {
+          "w-[1000px]": width >= 1280,
+          "w-[850px]": width < 1280 && width >= 1024,
+          "w-[500vw]": width < 1024 && width >= 768,
+          "w-[95vw]": width < 768,
+          "h-[70vh]": height < 1000,
+          "h-[800px]": height > 1000
+        },
+        size === "large" && {
+          "min-w-[1240px] w-[1240px]": width >= 1280,
+          "w-[1000px]": width < 1280 && width >= 1024,
+          "w-[600px]": width < 1024 && width >= 768,
+          "w-[95vw]": width < 768,
+          "h-[80vh]": height < 1000,
+          "h-[1000px]": height > 1000
+        }
+      ),
+    [height, width, size]
+  );
 }
 
 export function Modal({
@@ -125,10 +99,10 @@ export function Modal({
   actions,
   open,
   onClose = () => {},
-  childClassName = "w-full",
+  childClassName = "w-full h-full",
   allowBackgroundClose = true,
   hideCloseButton,
-  size = "medium",
+  size,
   children,
   containerClassName = "overflow-auto max-h-full",
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
@@ -137,10 +111,8 @@ export function Modal({
   const [helpLink] = useAtom(modalHelpLinkAtom);
   const [_size, setSize] = useState(size);
   const sizeClass = useDialogSize(_size);
-  const isSmall = _size === "very-small" || _size === "small";
 
   return (
-    /* @ts-ignore */
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
@@ -151,9 +123,8 @@ export function Modal({
       >
         <div
           className={clsx(
-            "flex items-center justify-center",
-            sizeClass.classNames,
-            sizeClass.width
+            "flex items-center justify-center mx-auto my-auto",
+            sizeClass
           )}
         >
           {/* @ts-ignore */}
@@ -180,11 +151,8 @@ export function Modal({
           >
             <div
               className={clsx(
-                !isSmall && "justify-between overflow-auto mt-10 mb-10",
-                !isSmall && childClassName,
-                "bg-white rounded-lg text-left shadow-xl transform transition-all flex flex-col",
-                isSmall && "w-full max-w-prose my-0 mx-4",
-                sizeClass.height
+                _size !== "small" && childClassName,
+                "mt-20 mb-10 justify-between overflow-auto  bg-white rounded-lg text-left shadow-xl transform transition-all  flex flex-col"
               )}
             >
               <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
@@ -201,35 +169,27 @@ export function Modal({
                 corner of the modal that links to the documentation for the modal.
                 */}
                 {helpLink && <HelpLink link={helpLink} />}
-                {showExpand && _size !== "full" && !isSmall && (
+                {showExpand && _size !== "full" && size !== "small" && (
                   <DialogButton
                     icon={BsArrowsFullscreen}
-                    onClick={() => {
-                      setSize("full");
-                    }}
+                    onClick={() => setSize("full")}
                   />
                 )}
 
                 {showExpand && _size === "full" && (
                   <DialogButton
                     icon={BsFullscreenExit}
-                    onClick={() => setSize(size)}
+                    onClick={() => setSize("medium")}
                   />
                 )}
 
                 {/* top-right close button */}
                 {!hideCloseButton && (
-                  <DialogButton icon={XIcon} onClick={onClose} name="close" />
+                  <DialogButton icon={XIcon} onClick={onClose} />
                 )}
               </div>
 
-              <div
-                className={clsx(
-                  !isSmall && "flex flex-col flex-1 mb-auto ",
-                  bodyClass,
-                  `max-h-[${sizeClass.windowHeight - 50}px]`
-                )}
-              >
+              <div className={clsx("flex flex-col flex-1 mb-auto ", bodyClass)}>
                 {children}
               </div>
 
