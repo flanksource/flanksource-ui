@@ -34,7 +34,7 @@ export default function MissionControlRegistryOptions({
   onBack,
   selectedOption,
   footerClassName = "bg-gray-100 p-4",
-  onSuccess = () => { }
+  onSuccess = () => {}
 }: TopologyResourceFormProps) {
   const { height } = useWindowSize();
   var lines = 6;
@@ -47,8 +47,11 @@ export default function MissionControlRegistryOptions({
       <Formik
         initialValues={{
           id: "",
-          name: selectedOption,
+          name: selectedOption.name,
           namespace: "mission-control",
+          createNamespace: true,
+          createRepository: true,
+
           interval: "30m",
           labels: {}
         }}
@@ -61,13 +64,10 @@ export default function MissionControlRegistryOptions({
             onSubmit={handleSubmit}
             className="flex flex-col flex-1 h-full justify-between"
           >
-
             <div className="flex flex-col gap-4 p-4 overflow-y-auto mb-auto h-full flex-1">
               {selectedOption.dependencies &&
                 selectedOption.dependencies.length > 0 && (
-                  <Admonition
-                    text={selectedOption.dependencies[0]}
-                  />
+                  <Admonition text={selectedOption.dependencies[0]} />
                 )}
               <FormikTextInput
                 label="Namespace"
@@ -88,7 +88,6 @@ export default function MissionControlRegistryOptions({
                 hint="Install the Helm Repository (can skip if other integrations previously installed it)"
                 name="createRepository"
               />
-
 
               <FormikCodeEditor
                 fieldName="chartValues"
