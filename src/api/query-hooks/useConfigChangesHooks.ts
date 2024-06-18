@@ -1,5 +1,6 @@
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { useHideDeletedConfigChanges } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
+import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -54,33 +55,10 @@ export function useGetAllConfigsChangesQuery(
   const configTypes = params.get("configTypes") ?? "all";
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
-  const configId = params.get("id") ?? undefined;
-  const changeSummary = params.get("summary") ?? undefined;
-  const source = params.get("source") ?? undefined;
-  const createdBy = params.get("created_by") ?? undefined;
-  const externalCreatedBy = params.get("external_created_by") ?? undefined;
 
   const tags = useConfigChangesTagsFilter();
 
-  const arbitraryFilter = useMemo(() => {
-    const filter = new Map<string, string>();
-    if (configId) {
-      filter.set("id", configId);
-    }
-    if (changeSummary) {
-      filter.set("summary", changeSummary);
-    }
-    if (source) {
-      filter.set("source", source);
-    }
-    if (createdBy) {
-      filter.set("created_by", createdBy);
-    }
-    if (externalCreatedBy) {
-      filter.set("created_by", externalCreatedBy);
-    }
-    return Object.fromEntries(filter);
-  }, [changeSummary, configId, createdBy, externalCreatedBy, source]);
+  const arbitraryFilter = useConfigChangesArbitraryFilters();
 
   const props = {
     include_deleted_configs: !hideDeletedConfigChanges,
@@ -133,6 +111,8 @@ export function useGetConfigChangesByIDQuery(
   const downstream = params.get("downstream") === "true";
   const all = upstream && downstream;
 
+  const arbitraryFilter = useConfigChangesArbitraryFilters();
+
   const tags = useConfigChangesTagsFilter();
 
   const relationshipType = useMemo(() => {
@@ -161,7 +141,8 @@ export function useGetConfigChangesByIDQuery(
     sortOrder: sortDirection === "desc" ? "desc" : "asc",
     page: page,
     pageSize: pageSize,
-    tags
+    tags,
+    arbitraryFilter
   } satisfies GetConfigsRelatedChangesParams;
 
   return useQuery({
