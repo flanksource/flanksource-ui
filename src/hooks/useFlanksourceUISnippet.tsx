@@ -14,13 +14,8 @@ export function useFlanksourceUISnippet(
       return;
     }
     const snippets = featureFlags?.find((flag) => {
-      return flag.name === "flanksource.ui.snippets";
+      return flag.name === "flanksource.ui.snippets" && flag.name === "local";
     });
-
-    if (snippets?.source !== "local") {
-      console.warn("UI snippets can only be set at start time.");
-      return;
-    }
 
     if (snippets && user) {
       try {
@@ -36,8 +31,9 @@ export function useFlanksourceUISnippet(
       } catch (error) {
         console.error("Error executing snippet", error);
       }
+    } else {
+        setIsSnippetExecuted(true);
     }
   }, [featureFlags, user, organization, isSnippetExecuted]);
-
   return null;
 }
