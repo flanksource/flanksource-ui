@@ -25,15 +25,16 @@ export function yamlObjectToCliFlags(
   return flags.flat();
 }
 
-const helmInstallationCommandTemplate = `helm repo add flanksource https://flanksource.github.io/charts
+const helmInstallationCommandTemplate = `
+{{#if createRepository }}helm repo add flanksource https://flanksource.github.io/charts
+helm repo update{{/if}}
 
-helm repo update
-
-helm install flanksource/{{ chartName }} -n "{{namespace}}" \\
+helm install mission-control-{{name}} flanksource/{{ chartName }}  \\
+  -n "{{namespace}}" \\
 {{#each flags}}
   --set {{key}}="{{value}}" \\
 {{/each}}
-  --create-namespace
+{{#if createNamespace}}  --create-namespace{{/if}}
 `;
 
 const template = Handlebars.compile(helmInstallationCommandTemplate);
@@ -49,16 +50,16 @@ export default function HelmCLIAddIntegrationCommand({
 }: Props) {
   const flags = yamlObjectToCliFlags(formValues.chartValues);
 
-  console.log(chartValues);
-
   const helmInstallationCommand = template({
-    name: formValues.name,
+    name: formValues.name.toLowerCase(),
+    createNamespace: formValues.createNamespace,
+    createRepository: formValues.createRepository,
     namespace: formValues.namespace,
     interval: formValues.interval,
     chartName: chartValues.name,
     version: chartValues?.version,
     flags
-  });
+  }).trim();
 
   return (
     <CodeBlock

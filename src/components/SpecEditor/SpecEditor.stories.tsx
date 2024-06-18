@@ -7,6 +7,7 @@ import SpecEditor, { SpecType } from "./SpecEditor";
 const specTypes: SpecType[] = [
   {
     type: "form",
+    label: "kubernetes",
     name: "kubernetes",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);
@@ -19,6 +20,7 @@ const specTypes: SpecType[] = [
   },
   {
     type: "form",
+    label: "kubernetes",
     name: "aws",
     updateSpec: (value: Record<string, any>) => {
       console.log(value);

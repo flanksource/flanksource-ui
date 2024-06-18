@@ -1,5 +1,5 @@
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { modalHelpLinkAtom } from "@flanksource-ui/ui/Modal";
+import { modalHelpLinkAtom, useModal } from "@flanksource-ui/ui/Modal";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import { Icon } from "../../ui/Icons/Icon";
@@ -15,7 +15,7 @@ export type SpecTypeCommonFields = {
   loadSpec: () => Record<string, any>;
   updateSpec: (spec: Record<string, any>) => void;
   schemaFileName: string | undefined;
-  docsLink?: string;
+  help?: string;
 };
 
 export type SpecTypeInputForm = SpecTypeCommonFields & {
@@ -49,25 +49,29 @@ export type SpecTypeCustom = SpecTypeCommonFields & {
 
 export type SpecType = SpecTypeInputForm | SpecTypeCode | SpecTypeCustom;
 
-type SpecEditorProps = {
+export type SpecEditorProps = {
   types: SpecType[];
+  footer?: boolean;
   format?: "json" | "yaml";
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
   selectedSpec?: string;
   onBack?: () => void;
   onDeleted?: () => void;
+  onTypeSelected?: (type?: SpecType) => void;
 };
 
 export default function SpecEditor({
   types,
   format = "yaml",
+  footer = true,
   resourceInfo,
   selectedSpec,
   onBack,
-  onDeleted = () => {}
+  onTypeSelected,
+  onDeleted = () => { }
 }: SpecEditorProps) {
-  const [, setModalHelpLink] = useAtom(modalHelpLinkAtom);
-  const [, setIntegrationsModalSubTitle] = useAtom(integrationsModalSubTitle);
+
+  const { props, setProps } = useModal();
 
   const [selectedSpecItem, setSelectedSpecItem] = useState<
     SpecType | undefined
@@ -101,6 +105,7 @@ export default function SpecEditor({
         <div className="flex flex-col space-y-2 flex-1 overflow-y-auto">
           <SpecEditorForm
             selectedSpec={selectedSpecItem}
+            footer={footer}
             updateSpec={selectedSpecItem.updateSpec}
             onBack={() => {
               setSelectedSpecItem(undefined);
@@ -119,15 +124,19 @@ export default function SpecEditor({
                 <div
                   onClick={() => {
                     setSelectedSpecItem(type);
-                    setModalHelpLink(type.docsLink);
-                    setIntegrationsModalSubTitle(type.label ?? type.name);
+                    setProps({
+                      ...props,
+                      helpLink: type.help,
+                      title: `Add ${type.label}`,
+
+                    })
                   }}
                   role={"button"}
                   className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
                   key={type.name}
                 >
                   {typeof type.icon === "string" ? (
-                    <Icon name={type.icon} className="w-5 h-5" />
+                    <Icon name={type.icon} className="h-6 w-auto" />
                   ) : (
                     <type.icon />
                   )}
@@ -136,16 +145,7 @@ export default function SpecEditor({
               </div>
             ))}
           </div>
-          {onBack && (
-            <div className={`flex flex-row  bg-gray-100 p-4`}>
-              <Button
-                type="button"
-                text="Back"
-                className="btn-default btn-btn-secondary-base btn-secondary"
-                onClick={onBack}
-              />
-            </div>
-          )}
+
         </div>
       )}
     </div>
