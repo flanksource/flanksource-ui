@@ -26,7 +26,7 @@ function TopologyBreadcrumbItem({
 
   return (
     <>
-      <Head prefix={component ? `Topology - ${component.name}` : "Topology"} />
+      <Head prefix={component ? `${component.name}` : "Topology"} />
       <BreadcrumbChild link={`/topology/${component.id}`}>
         <span>
           <Icon name={component.icon} className="h-5 mr-1" />

@@ -34,7 +34,7 @@ export default function ConfigRetentionSpec({
     <FormikCheckboxFieldsGroup
       name={fieldName}
       label="Retention"
-      className="flex flex-col p-2 gap-4 border border-gray-200 rounded-md"
+      className="flex flex-col gap-4"
     >
       <div className="flex flex-col gap-2">
         <FieldArray

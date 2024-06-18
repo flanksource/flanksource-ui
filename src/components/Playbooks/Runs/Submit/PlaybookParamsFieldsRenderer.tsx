@@ -16,7 +16,7 @@ const sizeToClassName = new Map<ModalSize, string>([
   ["medium", "h-[min(36rem,calc(90vh))]"],
   ["large", "h-[min(54rem,calc(90vh))]"],
   ["full", "h-[calc(90vh)]"],
-  ["slightly-small", "h-64"]
+  ["small", "h-64"]
 ]);
 
 type PlaybookParamsFieldsRendererProps = {

@@ -49,7 +49,7 @@ export type SpecTypeCustom = SpecTypeCommonFields & {
 
 export type SpecType = SpecTypeInputForm | SpecTypeCode | SpecTypeCustom;
 
-type SpecEditorProps = {
+export type SpecEditorProps = {
   types: SpecType[];
   format?: "json" | "yaml";
   resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name">;
@@ -127,7 +127,7 @@ export default function SpecEditor({
                   key={type.name}
                 >
                   {typeof type.icon === "string" ? (
-                    <Icon name={type.icon} className="w-5 h-5" />
+                    <Icon name={type.icon} className="h-6 w-auto" />
                   ) : (
                     <type.icon />
                   )}

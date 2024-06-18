@@ -27,29 +27,34 @@ export default function KubernetesConfigsFormEditor({
 
   return (
     <>
-      <FormikTextInput name={`${fieldName}.clusterName`} label="Cluster Name" />
-      <FormikTextInput name={`${fieldName}.namespace`} label="Namespace" />
+      <FormikTextInput
+        name={`${fieldName}.clusterName`}
+        label="Cluster Name"
+        required
+      />
 
-      {/* this a top level schema field, not nested under http */}
-      <FormikScheduleField name={`${name}.schedule`} />
+      <FormikScheduleField
+        type="medium"
+        value="@every 30m"
+        name={`${name}.schedule`}
+        hint="Schedule at which to perform a full import, if Watch is enabled can be set to a longer window"
+      />
 
-      <FormikCheckbox name={`${fieldName}.useCache`} label="Use Cache" />
+      <FormikEnvVarConfigsFields
+        name={`${fieldName}.kubeconfig`}
+        type="textarea"
+        label="Kubeconfig"
+        hint="A kubeconfig file to use to connect to the cluster, if unset scrapes using config-db's service account"
+      />
+
       <FormikCheckbox
-        name={`${fieldName}.allowIncomplete`}
-        label="Allow Incomplete"
+        name={`${name}.watch`}
+        label="Watch"
+        hint="Watch for new events and changes"
       />
-      <FormikTextInput name={`${fieldName}.scope`} label="Scope" />
-      <FormikTextInput name={`${fieldName}.since`} label="Since" />
-      <FormikTextInput name={`${fieldName}.selector`} label="Selector" />
-      <FormikTextInput
-        name={`${fieldName}.fieldSelector`}
-        label="Field Selector"
-      />
-      <FormikTextInput
-        name={`${fieldName}.maxInFlight`}
-        label="Max In Flight"
-      />
+
       <FormikConfigFormFieldsArray
+        hint="A list of resource names to exclude from import"
         name={`${fieldName}.exclusions`}
         label={"Exclusions"}
         fields={[
@@ -59,11 +64,41 @@ export default function KubernetesConfigsFormEditor({
           }
         ]}
       />
+
       <FormikCheckboxFieldsGroup
-        name={`${fieldName}.kubeconfig`}
-        label="Allow Kubeconfig"
+        name={`${fieldName}.advanced`}
+        label="Advanced"
       >
-        <FormikEnvVarConfigsFields name={`${fieldName}.kubeconfig`} />
+        <FormikTextInput
+          name={`${fieldName}.namespace`}
+          label="Namespace"
+          hint="Only scrape resources from this namespace"
+        />
+        <FormikTextInput
+          name={`${fieldName}.scope`}
+          label="Scope"
+          hint="Options are namespace,cluster or blank for both"
+        />
+        <FormikTextInput
+          name={`${fieldName}.since`}
+          label="Since"
+          hint="A duration of how far back to look for events"
+        />
+        <FormikTextInput
+          name={`${fieldName}.selector`}
+          label="Selector"
+          hint="Kubernetes Label selector for resources to include"
+        />
+        <FormikTextInput
+          name={`${fieldName}.fieldSelector`}
+          label="Field Selector"
+          hint="Kubernetes field selector for resources to include"
+        />
+        <FormikTextInput
+          name={`${fieldName}.maxInFlight`}
+          label="Max In Flight"
+          hint="Max number of in-flight requests, defaults to 64"
+        />
       </FormikCheckboxFieldsGroup>
 
       <ConfigRetentionSpec fieldName={`${name}.retention`} />

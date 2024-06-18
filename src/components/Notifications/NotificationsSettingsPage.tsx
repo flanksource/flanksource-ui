@@ -46,7 +46,7 @@ export default function NotificationsPage() {
 
   return (
     <>
-      <Head prefix="Settings - Notifications" />
+      <Head prefix="Notifications" />
       <SearchLayout
         title={
           <BreadcrumbNav

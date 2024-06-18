@@ -6,6 +6,7 @@ import React, { useMemo } from "react";
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
   aws_s3: "aws-s3",
+  kubernetes_resource: "k8s",
   generic_webhook: "webhook",
   azure_devops: "azure-devops",
   acr: "azure-acr",
@@ -72,7 +73,22 @@ export const aliases: IconMap = {
   bash: "console",
   "cert-manager.io": "cert-manager",
   cmd: "console",
+  deletingnode: "trash",
+  invaliddiskcapacity: "warning",
+  resourceupdated: "edit",
+  preempted: "stop",
+  networknotready: "broken-heart",
+  removingnode: "trash",
+  runinstances: "start",
+  synced: "check",
   "ec2-subnet": "network",
+  recreatingterminatedpod: "reload",
+  invalidiskcapacity: "warning",
+  sawcompletedjob: "check",
+  upgradefailed: "error",
+  snapshotcreated: "check",
+  creatingsnapshot: "plus",
+  snapshotready: "heart",
   "elasticloadbalancing-loadbalancer": "aws-elb",
   fluentbit: "fluentd",
   "google chat": "google-chat",
@@ -103,6 +119,7 @@ export const aliases: IconMap = {
   "k8s-servicemonitor": "prometheus",
   "k8s-tigerastatus": "calico",
   "k8s-topology": "mission-control",
+  gcs: "gcsbucket",
   kubernetes: "k8s",
   "mssql-database": "sqlserver",
   mssql: "sqlserver",
@@ -155,6 +172,9 @@ export const aliases: IconMap = {
   authorizesecuritygroupingress: "add-firewall",
   azuredevops: "azure-devops",
   backoff: "snail",
+
+  backofflimitexceeded: "snail",
+  podcrashlooping: "error",
   bindgithubaccounttokentoapplication: "git",
   build: "console",
   buildsuggesters: "console",
@@ -396,7 +416,7 @@ export const aliases: IconMap = {
   provisioningsucceeded: "ok",
   publish: "upload",
   pulled: "check-docker",
-  pulling: "dockerPull",
+  pulling: "docker",
   purchase: "add-cost",
   push: "upload",
   put: "upload",
@@ -781,7 +801,7 @@ export function Icon({
     <>
       {prefix}{" "}
       <IconSVG
-        className={`inline-block object-center fill-current text-red-50 ${className}`}
+        className={`inline-block object-center fill-current text-gray-700 ${className}`}
         {...props}
       />
     </>

@@ -28,8 +28,7 @@ const playbook: RunnablePlaybook & {
     icon: "playbook.svg",
     components: [
       {
-        type: "kubernetes",
-        tags: ["kubernetes"]
+        types: ["kubernetes"]
       }
     ]
   }
@@ -103,7 +102,7 @@ describe("SubmitPlaybookRunForm", () => {
 
     expect(screen.getByRole("button", { name: /Run/i })).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole("button", { name: /close/i }));
+    userEvent.click(screen.getByTestId("close-button-dialog"));
 
     await waitFor(() => {
       expect(closeFn).toHaveBeenCalled();
