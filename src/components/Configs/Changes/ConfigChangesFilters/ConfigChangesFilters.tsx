@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useCallback, useMemo } from "react";
 import { FaBan } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import { useConfigChangesArbitraryFilters } from "../../../../hooks/useConfigChangesArbitraryFilters";
 import { paramsToReset } from "../ConfigChangeTable";
 import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
@@ -16,7 +17,7 @@ type FilterBadgeProps = {
   paramKey: string;
 };
 
-function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
+export function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
   const [params, setParams] = useSearchParams();
 
   const onRemove = useCallback(
@@ -65,16 +66,16 @@ function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
 
 type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {
   paramsToReset?: string[];
-  arbitraryFilters?: Record<string, string>;
 };
 
 export function ConfigChangeFilters({
   className,
   paramsToReset = [],
-  arbitraryFilters,
   ...props
 }: ConfigChangeFiltersProps) {
   const [params] = useSearchParams();
+
+  const arbitraryFilters = useConfigChangesArbitraryFilters();
 
   const configType = params.get("configTypes") ?? undefined;
 

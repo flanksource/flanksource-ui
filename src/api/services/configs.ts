@@ -265,7 +265,9 @@ export async function getConfigsChanges({
         key === "summary" || key === "source"
       );
       if (filterExpression) {
-        requestData.set(key, filterExpression);
+        // external_created_by is a special case, we need to convert it to created_by
+        const modifyKey = key === "external_created_by" ? "created_by" : key;
+        requestData.set(modifyKey, filterExpression);
       }
     });
   }
