@@ -48,7 +48,7 @@ export default function HealthSpecEditor({
             configForm: HTTPHealthFormEditor,
             specsMapField: "http.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/http"
+            help: "canary-checker/reference/http"
           },
           {
             type: "custom",
@@ -62,7 +62,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/aws-config-rule"
+            help: "canary-checker/reference/aws-config-rule"
           },
           {
             type: "custom",
@@ -76,7 +76,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws-config",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/aws-config"
+            help: "canary-checker/reference/aws-config"
           },
           {
             type: "custom",
@@ -103,7 +103,7 @@ export default function HealthSpecEditor({
             },
             icon: "ldap",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/ldap"
+            help: "canary-checker/reference/ldap"
           },
 
           {
@@ -120,7 +120,7 @@ export default function HealthSpecEditor({
             configForm: ExecHealthFormEditor,
             specsMapField: "exec.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/exec"
+            help: "canary-checker/reference/exec"
           },
           {
             type: "form",
@@ -136,7 +136,7 @@ export default function HealthSpecEditor({
             configForm: AlertmanagerHealthFormEditor,
             specsMapField: "alertManager.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/alert-manager"
+            help: "canary-checker/reference/alert-manager"
           },
           {
             type: "custom",
@@ -150,7 +150,7 @@ export default function HealthSpecEditor({
             },
             icon: "cloudwatch",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/cloudwatch"
+            help: "canary-checker/reference/cloudwatch"
           },
           {
             type: "form",
@@ -166,7 +166,7 @@ export default function HealthSpecEditor({
             configForm: ElasticsearchHealthFormEditor,
             specsMapField: "elasticsearch.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/elasticsearch"
+            help: "canary-checker/reference/elasticsearch"
           },
           {
             type: "form",
@@ -182,7 +182,7 @@ export default function HealthSpecEditor({
             configForm: RedisHealthFormEditor,
             specsMapField: "redis.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/redis"
+            help: "canary-checker/reference/redis"
           },
           {
             type: "form",
@@ -198,7 +198,7 @@ export default function HealthSpecEditor({
             configForm: MongoHealthFormEditor,
             specsMapField: "mongo.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/mongo"
+            help: "canary-checker/reference/mongo"
           },
           {
             type: "custom",
@@ -212,7 +212,7 @@ export default function HealthSpecEditor({
             },
             icon: "dns",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/dns"
+            help: "canary-checker/reference/dns"
           },
           {
             type: "form",
@@ -228,7 +228,7 @@ export default function HealthSpecEditor({
             configForm: ICMPHealthFormEditor,
             specsMapField: "icmp.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/icmp"
+            help: "canary-checker/reference/icmp"
           },
           {
             type: "custom",
@@ -242,7 +242,7 @@ export default function HealthSpecEditor({
             },
             icon: "gcp",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/gcs-bucket"
+            help: "canary-checker/reference/gcs-bucket"
           },
           {
             type: "custom",
@@ -256,7 +256,7 @@ export default function HealthSpecEditor({
             },
             icon: "aws-s3-bucket",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/s3-bucket"
+            help: "canary-checker/reference/s3-bucket"
           },
           {
             type: "custom",
@@ -270,7 +270,7 @@ export default function HealthSpecEditor({
             },
             icon: "smb",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/smb"
+            help: "canary-checker/reference/smb"
           },
           {
             type: "custom",
@@ -284,7 +284,7 @@ export default function HealthSpecEditor({
             },
             icon: "sftp",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/sftp"
+            help: "canary-checker/reference/sftp"
           },
           {
             type: "form",
@@ -300,7 +300,7 @@ export default function HealthSpecEditor({
             configForm: FolderHealthFormEditor,
             specsMapField: "folder.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/folder"
+            help: "canary-checker/reference/folder"
           },
           {
             type: "custom",
@@ -314,7 +314,7 @@ export default function HealthSpecEditor({
             },
             icon: "prometheus",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/prometheus"
+            help: "canary-checker/reference/prometheus"
           },
           {
             type: "custom",
@@ -328,7 +328,7 @@ export default function HealthSpecEditor({
             },
             icon: "kubernetes",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/kubernetes"
+            help: "canary-checker/reference/kubernetes"
           },
 
           {
@@ -343,7 +343,7 @@ export default function HealthSpecEditor({
             },
             icon: "kubernetes",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/kubernetesResource"
+            help: "canary-checker/reference/kubernetesResource"
           },
           {
             type: "custom",
@@ -357,7 +357,7 @@ export default function HealthSpecEditor({
             },
             icon: "postgres",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/postgres"
+            help: "canary-checker/reference/postgres"
           },
           {
             type: "custom",
@@ -371,7 +371,7 @@ export default function HealthSpecEditor({
             },
             icon: "config",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/catalog"
+            help: "canary-checker/reference/catalog"
           },
           {
             type: "custom",
@@ -385,7 +385,7 @@ export default function HealthSpecEditor({
             },
             icon: "azure-devops",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/azure-devops"
+            help: "canary-checker/reference/azure-devops"
           },
           {
             type: "custom",
@@ -399,7 +399,7 @@ export default function HealthSpecEditor({
             },
             icon: "jmeter",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/jmeter"
+            help: "canary-checker/reference/jmeter"
           },
           {
             type: "custom",
@@ -413,7 +413,7 @@ export default function HealthSpecEditor({
             },
             icon: "junit",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/junit"
+            help: "canary-checker/reference/junit"
           },
           {
             type: "custom",
@@ -442,7 +442,7 @@ export default function HealthSpecEditor({
             configForm: TCPHealthFormEditor,
             specsMapField: "tcp.0",
             schemaFileName: "canary.spec.schema.json",
-            docsLink: "canary-checker/reference/tcp"
+            help: "canary-checker/reference/tcp"
           },
           {
             type: "custom",

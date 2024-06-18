@@ -34,7 +34,7 @@ export const ModalContext = createContext<ModalContextProps>(undefined!);
  */
 export const modalHelpLinkAtom = atom<string | undefined>(undefined);
 
-export type ModalSize = "small" | "medium" | "large" | "full";
+export type ModalSize = "very-small" | "small" | "medium" | "large" | "full";
 
 export interface IModalProps {
   title?: React.ReactNode;
@@ -113,6 +113,7 @@ export function Modal({
   const sizeClass = useDialogSize(_size);
 
   return (
+    // @ts-ignore
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
@@ -140,6 +141,7 @@ export function Modal({
             <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
+          {/* @ts-ignore */}
           <Transition.Child
             as={Fragment as any}
             enter="ease-out duration-300"

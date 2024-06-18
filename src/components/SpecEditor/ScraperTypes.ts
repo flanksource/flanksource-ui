@@ -31,7 +31,7 @@ export default function scraperTypes(
       configForm: AWSConfigsFormEditor,
       specsMapField: "aws.0",
       schemaFileName: "config_aws.schema.json",
-      docsLink: "config-db/scrapers/aws"
+      help: "config-db/scrapers/aws"
     },
     {
       type: "form",
@@ -49,7 +49,7 @@ export default function scraperTypes(
       configForm: KubernetesConfigsFormEditor,
       specsMapField: "kubernetes.0",
       schemaFileName: "config_kubernetes.schema.json",
-      docsLink: "config-db/scrapers/kubernetes"
+      help: "config-db/scrapers/kubernetes"
     },
     {
       type: "form",
@@ -65,7 +65,7 @@ export default function scraperTypes(
       configForm: AzureConfigsFormEditor,
       specsMapField: "azure.0",
       schemaFileName: "config_azure.schema.json",
-      docsLink: "config-db/scrapers/azure"
+      help: "config-db/scrapers/azure"
     },
     {
       type: "form",
@@ -81,7 +81,7 @@ export default function scraperTypes(
       configForm: KubernetesFileConfigsFormEditor,
       specsMapField: "kubernetesFile.0",
       schemaFileName: "config_kubernetesfile.schema.json",
-      docsLink: "config-db/scrapers/kubernetes-file"
+      help: "config-db/scrapers/kubernetes-file"
     },
     {
       type: "form",
@@ -97,7 +97,7 @@ export default function scraperTypes(
       configForm: SQLConfigsFormEditor,
       specsMapField: "sql.0",
       schemaFileName: "config_sql.schema.json",
-      docsLink: "config-db/scrapers/sql"
+      help: "config-db/scrapers/sql"
     },
     {
       type: "form",
@@ -113,7 +113,7 @@ export default function scraperTypes(
       configForm: TrivyConfigsFormEditor,
       specsMapField: "trivy.0",
       schemaFileName: "config_trivy.schema.json",
-      docsLink: "config-db/scrapers/trivy"
+      help: "config-db/scrapers/trivy"
     },
 
     {
@@ -130,7 +130,7 @@ export default function scraperTypes(
       configForm: FileConfigsFormEditor,
       specsMapField: "file.0",
       schemaFileName: "config_file.schema.json",
-      docsLink: "config-db/scrapers/file"
+      help: "config-db/scrapers/file"
     },
 
     {
@@ -163,9 +163,8 @@ export default function scraperTypes(
       configForm: AzureDevopsConfigsFormEditor,
       specsMapField: "azureDevops.0",
       schemaFileName: "config_azuredevops.schema.json",
-      docsLink: "config-db/scrapers/azure-devops"
+      help: "config-db/scrapers/azure-devops"
     },
-
     {
       type: "form",
       name: "githubActions",
