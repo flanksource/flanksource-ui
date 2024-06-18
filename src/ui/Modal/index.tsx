@@ -9,10 +9,10 @@ import React, {
   useMemo,
   useState
 } from "react";
-import HelpLink from "../Buttons/HelpLink";
 import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
 import { useWindowSize } from "react-use-size";
 import DialogButton from "../Buttons/DialogButton";
+import HelpLink from "../Buttons/HelpLink";
 
 export type ModalContextProps = {
   props: IModalProps;
@@ -112,6 +112,7 @@ export function Modal({
   const sizeClass = useDialogSize(_size);
 
   return (
+    // @ts-ignore
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"

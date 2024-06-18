@@ -1,18 +1,6 @@
-import { useMemo } from "react";
-import { FaCog } from "react-icons/fa";
-import AWSConfigsFormEditor from "../Forms/Configs/AWSConfigsFormEditor";
-import AzureConfigsFormEditor from "../Forms/Configs/AzureConfigsFormEditor";
-import AzureDevopsConfigsFormEditor from "../Forms/Configs/AzureDevopsConfigsFormEditor";
-import FileConfigsFormEditor from "../Forms/Configs/FileConfigsFormEditor";
-import GithubActionsConfigsFormEditor from "../Forms/Configs/GithubActionsConfigsFormEditor";
-import HttpConfigsFormEditor from "../Forms/Configs/HttpConfigsFormEditor";
-import KubernetesConfigsFormEditor from "../Forms/Configs/KubernetesConfigsFormEditor";
-import KubernetesFileConfigsFormEditor from "../Forms/Configs/KubernetesFileConfigsFormEditor";
-import SQLConfigsFormEditor from "../Forms/Configs/SQLConfigsFormEditor";
-import TrivyConfigsFormEditor from "../Forms/Configs/TrivyConfigsFormEditor";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
-import SpecEditor from "./SpecEditor";
 import scraperTypes from "./ScraperTypes";
+import SpecEditor from "./SpecEditor";
 
 const resourceInfo: Pick<SchemaResourceType, "api" | "table" | "name"> = {
   name: "Catalog Scraper",
