@@ -14,7 +14,7 @@ export function useFlanksourceUISnippet(
       return;
     }
     const snippets = featureFlags?.find((flag) => {
-      return flag.name === "flanksource.ui.snippets" && flag.name === "local";
+      return flag.name === "flanksource.ui.snippets" && flag.source === "local";
     });
 
     if (snippets && user) {
@@ -31,7 +31,7 @@ export function useFlanksourceUISnippet(
       } catch (error) {
         console.error("Error executing snippet", error);
       }
-    } else {
+    } else if (user) {
         setIsSnippetExecuted(true);
     }
   }, [featureFlags, user, organization, isSnippetExecuted]);
