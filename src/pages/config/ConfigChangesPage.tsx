@@ -48,7 +48,7 @@ export function ConfigChangesPage() {
       filter.set("created_by", createdBy);
     }
     if (externalCreatedBy) {
-      filter.set("created_by", externalCreatedBy);
+      filter.set("external_created_by", externalCreatedBy);
     }
     return Object.fromEntries(filter);
   }, [changeSummary, configId, createdBy, externalCreatedBy, source]);
