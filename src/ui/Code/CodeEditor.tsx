@@ -28,6 +28,8 @@ window.MonacoEnvironment = {
 
 interface Props {
   value?: string;
+  lines?: number;
+  height?: string;
   readOnly?: boolean;
   onChange: (value: string | undefined, viewUpdate: unknown) => void;
   /**
@@ -41,6 +43,8 @@ interface Props {
 
 export function CodeEditor({
   value,
+  lines,
+  height,
   onChange,
   readOnly = false,
   schemaFileName,
@@ -136,6 +140,11 @@ export function CodeEditor({
     }
   }, [language, onChange, value]);
 
+  const lineHeight = 15;
+  if (lines) {
+    height = `${lines * lineHeight + 20}px`;
+  }
+
   return (
     <>
       {enableSpecUnwrap && inlineSpec && (
@@ -158,11 +167,13 @@ export function CodeEditor({
         language={language}
         value={value}
         onChange={onChange}
+        height={height}
         width="100%"
         options={{
           renderLineHighlight: "none",
           readOnly,
           minimap: { enabled: false },
+          lineHeight: lineHeight,
           scrollBeyondLastLine: false
         }}
         {...{
