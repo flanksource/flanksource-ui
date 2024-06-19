@@ -18,11 +18,11 @@ function filterCollapsedChildren(
 
   // Update this node's props so it knows if it has children and can be expanded
   // or not.
-  node.data.expandable = children && children?.length > 3 ? true : false;
+  node.data.expandable = children && children?.length > 1 ? true : false;
 
   // If the node is collpased (ie it is not expanded) then we want to remove all
   // of its children from the graph *and* any of their children.
-  if (children && children?.length > 3) {
+  if (children && children?.length > 30) {
     if (!node.data.expanded) {
       while (children?.length) {
         const child = children.pop()!;
@@ -47,7 +47,11 @@ function useExpandCollapse(
     // properties.
     const dagre = new Dagre.graphlib.Graph()
       .setDefaultEdgeLabel(() => ({}))
-      .setGraph({ rankdir: "LR" });
+      .setGraph({
+        rankdir: "LR",
+        width: 400,
+        height: 100
+      });
 
     // 2. Add each node and edge to the dagre graph. Instead of using each node's
     // intrinsic width and height, we tell dagre to use the `treeWidth` and
