@@ -89,13 +89,6 @@ export interface ConfigItemGraphData extends ConfigItem {
   isIntermediaryNode?: boolean;
 }
 
-export interface ConfigRelationships extends ConfigItem {
-  direction: "incoming" | "outgoing";
-  relation_type?: string;
-  depth?: number;
-  ready?: boolean;
-}
-
 export interface ConfigTypeRelationships extends Timestamped {
   config_id: string;
   related_id: string;

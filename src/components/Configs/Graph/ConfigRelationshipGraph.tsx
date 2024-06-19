@@ -1,7 +1,4 @@
-import {
-  ConfigItem,
-  ConfigRelationships
-} from "@flanksource-ui/api/types/configs";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { RelationshipGraph } from "@flanksource-ui/ui/Graphs/RelationshipGraph";
 import { useMemo } from "react";
 import { Edge, Node } from "reactflow";
@@ -11,10 +8,9 @@ export type ConfigGraphNodes =
   | {
       nodeType: "config";
       config: Pick<
-        ConfigRelationships,
+        ConfigItem,
         | "id"
         | "related_ids"
-        | "direction"
         | "type"
         | "name"
         | "status"
@@ -25,16 +21,14 @@ export type ConfigGraphNodes =
       expanded?: boolean;
     }
   | {
-      direction: ConfigRelationships["direction"];
       id: string;
       related_id: string;
       configType: string;
       nodeType: "intermediary";
       configs: Pick<
-        ConfigRelationships,
+        ConfigItem,
         | "id"
         | "related_ids"
-        | "direction"
         | "type"
         | "name"
         | "status"
@@ -46,7 +40,7 @@ export type ConfigGraphNodes =
     };
 
 type ConfigGraphProps = {
-  configs: ConfigRelationships[];
+  configs: ConfigItem[];
   currentConfig: ConfigItem;
 };
 
@@ -56,8 +50,8 @@ export function ConfigRelationshipGraph({
 }: ConfigGraphProps) {
   // Extract this to an outside function and write tests for it
   const configsForGraph = useMemo(
-    () => prepareConfigsForGraph(configs, currentConfig),
-    [configs, currentConfig]
+    () => prepareConfigsForGraph(configs),
+    [configs]
   );
 
   const edges: Edge<ConfigGraphNodes>[] = useMemo(() => {
@@ -67,23 +61,15 @@ export function ConfigRelationshipGraph({
         config.config.related_ids?.forEach((related_id) => {
           e.push({
             id: `${config.config.id}-related-to-${related_id}`,
-            source:
-              config.config.direction === "incoming"
-                ? config.config.id
-                : related_id,
-            target:
-              config.config.direction === "incoming"
-                ? related_id
-                : config.config.id
+            source: config.config.id,
+            target: related_id
           } satisfies Edge);
         });
       } else {
         e.push({
           id: `${config.id}-related-to-${config.related_id}`,
-          source:
-            config.direction === "incoming" ? config.id : config.related_id!,
-          target:
-            config.direction === "incoming" ? config.related_id! : config.id
+          source: config.id,
+          target: config.related_id
         } satisfies Edge);
       }
     });
