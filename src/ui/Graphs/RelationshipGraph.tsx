@@ -163,7 +163,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         draggable={false}
         nodesConnectable={false}
         nodesDraggable={false}
-        edgesFocusable={false}
+        edgesFocusable={true}
       >
         <Controls position="top-right" />
       </ReactFlow>
