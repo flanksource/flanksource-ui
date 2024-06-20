@@ -2,7 +2,7 @@ import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import { FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Handle, NodeProps } from "reactflow";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { ConfigGraphNodes } from "./ConfigRelationshipGraph";
@@ -22,6 +22,10 @@ export function ConfigItemReactFlowNode({
   sourcePosition,
   targetPosition
 }: NodeProps<ConfigGraphNodes>) {
+  const [searchParams] = useSearchParams({
+    outgoing: "true"
+  });
+
   if (data.data.type === "intermediary") {
     return null;
   }
@@ -51,7 +55,8 @@ export function ConfigItemReactFlowNode({
           >
             <Link
               to={{
-                pathname: `/catalog/${config.id}/relationships`
+                pathname: `/catalog/${config.id}/relationships`,
+                search: searchParams.toString()
               }}
               className={clsx("flex flex-row gap-2")}
             >
