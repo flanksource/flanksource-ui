@@ -1,11 +1,8 @@
 import { HealthChecksResponse } from "@flanksource-ui/api/types/health";
-import { HEALTH_SETTINGS } from "@flanksource-ui/constants";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import HealthPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/HealthPageSkeletonLoader";
 import clsx from "clsx";
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
@@ -16,15 +13,7 @@ import { CanaryInterfaceMinimal } from "./CanaryInterface";
 import CanarySidebar from "./Sidebar/CanarySidebar";
 import { isHealthy } from "./filter";
 import { decodeUrlSearchParams } from "./url";
-
-export const healthSettingsAtom = atomWithStorage<Record<string, string>>(
-  HEALTH_SETTINGS,
-  {},
-  undefined,
-  {
-    getOnInit: true
-  }
-);
+import { useHealthUserSettings } from "./useHealthUserSettings";
 
 const getPassingCount = (checks: any) => {
   let count = 0;
@@ -50,12 +39,10 @@ export function Canary({
   triggerRefresh,
   onLoading = (_loading) => {}
 }: CanaryProps) {
-  const [, setSettings] = useAtom(healthSettingsAtom);
   const [searchParams] = useSearchParams();
   const timeRange = searchParams.get("timeRange");
-  const hidePassing = searchParams.get("hidePassing");
-  const tabBy = searchParams.get("tabBy");
-  const groupBy = searchParams.get("groupBy");
+  const { hidePassing } = useHealthUserSettings();
+
   const refreshInterval = useRefreshRateFromLocalStorage();
   const [isMenuItemOpen, setIsMenuItemOpen] = useState(false);
 
@@ -65,7 +52,7 @@ export function Canary({
         string,
         "1" | "0" | "-1"
       >) || {};
-    const initialCount = hidePassing === "true" ? 1 : 0;
+    const initialCount = hidePassing ? 1 : 0;
     const totalLabelsApplied = Object.entries(labels).reduce(
       (acc, [key, value]) => {
         if (value.toString() === "1" || value.toString() === "-1") {
@@ -190,17 +177,6 @@ export function Canary({
       abortController.current?.abort();
     };
   }, []);
-
-  useEffect(() => {
-    setSettings((prev) => {
-      return {
-        ...prev,
-        groupBy: groupBy ?? prev?.groupBy,
-        tabBy: tabBy ?? prev?.tabBy,
-        hidePassing: hidePassing ?? prev?.hidePassing
-      };
-    });
-  }, [groupBy, tabBy, hidePassing, setSettings]);
 
   if (isLoading && !checks?.length) {
     return <HealthPageSkeletonLoader showSidebar />;

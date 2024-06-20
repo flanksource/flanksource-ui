@@ -14,8 +14,9 @@ import { CanaryCards } from "./CanaryCards";
 import { CheckDetails } from "./CanaryPopup/CheckDetails";
 import CheckRunNow from "./CanaryPopup/CheckRunNow";
 import { CheckTitle } from "./CanaryPopup/CheckTitle";
-import { HealthCheckEdit } from "./HealthCheckEdit";
 import { CanaryTable } from "./CanaryTable";
+import { HealthCheckEdit } from "./HealthCheckEdit";
+import { useHealthUserSettings } from "./useHealthUserSettings";
 
 export const refreshCheckModalAtomTrigger = atom(0);
 
@@ -37,7 +38,8 @@ export function ChecksListing({
     layout: "table"
   });
 
-  const tabBy = searchParams.get("tabBy");
+  const { tabBy } = useHealthUserSettings();
+
   const layout = searchParams.get("layout");
   const timeRange = searchParams.get("timeRange") ?? timeRanges[1].value;
   const checkId = searchParams.get("checkId") ?? undefined;

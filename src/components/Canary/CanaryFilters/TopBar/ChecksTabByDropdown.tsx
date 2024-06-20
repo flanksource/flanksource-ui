@@ -3,10 +3,11 @@ import {
   defaultTabSelections,
   getTabSelections
 } from "@flanksource-ui/components/Dropdown/lib/lists";
-import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
+import { useAtom } from "jotai";
 import { ComponentProps } from "react";
 import { AiFillContainer } from "react-icons/ai";
+import { healthSettingsAtom } from "../../useHealthUserSettings";
 
 export function ChecksTabByDropdown({
   checks,
@@ -15,6 +16,8 @@ export function ChecksTabByDropdown({
   checks?: HealthCheck[];
   defaultValue?: string;
 }) {
+  const [settings, setSettings] = useAtom(healthSettingsAtom);
+
   const items = {
     ...getTabSelections(checks, defaultTabSelections),
     agent: {
@@ -28,5 +31,17 @@ export function ChecksTabByDropdown({
     }
   };
 
-  return <FormikFilterSelectDropdown {...rest} items={items} />;
+  return (
+    <ReactSelectDropdown
+      {...rest}
+      items={items}
+      value={settings.tabBy}
+      onChange={(v) => {
+        setSettings((prev) => ({
+          ...prev,
+          tabBy: v
+        }));
+      }}
+    />
+  );
 }
