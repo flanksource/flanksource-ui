@@ -12,10 +12,7 @@ type CanaryFiltersBarProps = {
 export default function CanaryFiltersBar({ checks }: CanaryFiltersBarProps) {
   return (
     <div className="flex flex-col w-full gap-2">
-      <FormikFilterForm
-        filterFields={["query", "groupBy", "tabBy"]}
-        paramsToReset={[]}
-      >
+      <FormikFilterForm filterFields={["query"]} paramsToReset={[]}>
         <div className="flex flex-row w-full gap-2 items-center">
           <div className="flex flex-col flex-1">
             <CanarySearchField

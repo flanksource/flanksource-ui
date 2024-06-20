@@ -16,6 +16,7 @@ import { getCanaryTableColumns } from "./CanaryTableColumns";
 import { prepareRows } from "./Rows/lib";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { getGroupedChecks } from "./grouping";
+import { useHealthUserSettings } from "./useHealthUserSettings";
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
@@ -53,7 +54,8 @@ export function CanaryTable({
 }: CanaryChecksProps) {
   const [params] = useSearchParams();
 
-  const groupBy = params.get("groupBy") || "canary_name";
+  const { groupBy = "canary_name" } = useHealthUserSettings();
+
   const pivotCellType = params.get("pivotCellType");
   const pivotLookup = params.get("pivotLabel");
   const pivotBy = params.get("pivotBy");

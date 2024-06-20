@@ -7,6 +7,7 @@ import { ChecksListing } from "./ChecksListing";
 import { CanarySorter } from "./data";
 import { filterChecks, filterChecksByText } from "./filter";
 import { filterChecksByLabels, getLabelFilters, getLabels } from "./labels";
+import { useHealthUserSettings } from "./useHealthUserSettings";
 
 type Props = {
   checks?: HealthCheck[];
@@ -19,18 +20,14 @@ const CanaryInterfaceMinimalFC = ({
   onFilterCallback,
   onLabelFiltersCallback
 }: Props) => {
-  const [searchParams] = useSearchParams({
-    tabBy: "namespace",
-    groupBy: "canary_name",
-    hidePassing: "true"
-  });
+  const [searchParams] = useSearchParams();
 
   const [filteredChecks, setFilteredChecks] = useState(checks);
   const [checksForTabGeneration, setChecksForTabGeneration] = useState(checks);
   const [selectedTab, setSelectedTab] = useState<string>("all");
 
-  const hidePassing = searchParams.get("hidePassing") === "true";
-  const tabBy = searchParams.get("tabBy");
+  const { hidePassing, tabBy = "namespace" } = useHealthUserSettings();
+
   const labels = searchParams.get("labels");
   const query = searchParams.get("query");
 
@@ -48,7 +45,7 @@ const CanaryInterfaceMinimalFC = ({
   // check filtering on checks/tab/params change.
   useEffect(() => {
     if (checks?.length > 0) {
-      let filtered = filterChecks(checks, hidePassing, []); // first filter for pass/fail
+      let filtered = filterChecks(checks, hidePassing === "true", []); // first filter for pass/fail
       filtered = filterChecksByText(filtered, query || ""); // filter by name, description, endpoint
       if (onLabelFiltersCallback) {
         onLabelFiltersCallback(getLabels(filtered));
@@ -80,7 +77,7 @@ const CanaryInterfaceMinimalFC = ({
     <CanaryTabs
       // style={tabsStyle}
       checks={checksForTabGeneration}
-      tabBy={searchParams.get("tabBy")!}
+      tabBy={tabBy}
       setTabSelection={setSelectedTab}
     >
       <ChecksListing

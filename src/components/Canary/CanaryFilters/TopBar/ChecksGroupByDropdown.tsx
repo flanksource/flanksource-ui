@@ -1,12 +1,13 @@
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { getLabelSelections } from "@flanksource-ui/components/Dropdown/lib/lists";
-import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
+import { useAtom } from "jotai";
 import { ComponentProps } from "react";
 import { ImUngroup } from "react-icons/im";
 import { PiTextTBold } from "react-icons/pi";
 import { TbBox } from "react-icons/tb";
 import { TiSortAlphabeticallyOutline } from "react-icons/ti";
+import { healthSettingsAtom } from "../../useHealthUserSettings";
 
 const defaultGroupSelections = {
   "no-group": {
@@ -62,6 +63,19 @@ type Props = {
 } & ComponentProps<typeof ReactSelectDropdown>;
 
 export function ChecksGroupByDropdown({ checks, ...rest }: Props) {
+  const [value, setValue] = useAtom(healthSettingsAtom);
   const items = getLabelSelections(checks, defaultGroupSelections);
-  return <FormikFilterSelectDropdown {...rest} items={items} />;
+  return (
+    <ReactSelectDropdown
+      {...rest}
+      items={items}
+      value={value.groupBy}
+      onChange={(v) =>
+        setValue((prev) => ({
+          ...prev,
+          groupBy: v
+        }))
+      }
+    />
+  );
 }

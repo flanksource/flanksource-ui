@@ -1,28 +1,23 @@
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { healthSettingsAtom } from "..";
-import { useUpdateParams } from "../url";
+import { healthSettingsAtom } from "../useHealthUserSettings";
 
-export function HidePassingToggle({ defaultValue = false }) {
-  const [settings] = useAtom(healthSettingsAtom);
+export function HidePassingToggle() {
+  const [settings, setSettings] = useAtom(healthSettingsAtom);
+
   const hidePassing = settings?.hidePassing ?? null;
-  const paramsValue = hidePassing ? hidePassing === "true" : null;
+  const paramsValue = hidePassing ? hidePassing.toString() === "true" : true;
 
-  const [value, setValue] = useState(paramsValue ?? defaultValue);
-  const updateParams = useUpdateParams();
-
-  useEffect(() => {
-    updateParams({ hidePassing: value });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const value = !hidePassing ? true : paramsValue;
 
   return (
     <Toggle
       value={value}
-      onChange={(val: boolean) => {
-        setValue(val);
-        updateParams({ hidePassing: val });
+      onChange={(val) => {
+        setSettings((prev) => ({
+          ...prev,
+          hidePassing: val.toString()
+        }));
       }}
     />
   );

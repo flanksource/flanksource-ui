@@ -1,11 +1,11 @@
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { healthSettingsAtom } from "..";
 import {
   DropdownStandaloneWrapper,
   DropdownStandaloneWrapperProps
 } from "../../Dropdown/StandaloneWrapper";
 import { useUpdateParams } from "../url";
+import { healthSettingsAtom } from "../useHealthUserSettings";
 
 export function DropdownWrapper({
   defaultValue,
