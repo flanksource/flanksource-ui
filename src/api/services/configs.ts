@@ -10,7 +10,6 @@ import {
   ConfigAnalysis,
   ConfigChange,
   ConfigItem,
-  ConfigRelationships,
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
@@ -412,7 +411,7 @@ export const getAConfigRelationships = async ({
       ? `&outgoing_relation=${relation}`
       : "";
 
-  const res = await ConfigDB.get<ConfigRelationships[]>(
+  const res = await ConfigDB.get<ConfigItem[]>(
     `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${!hideDeleted}${typeFilter}${configTypeFilter}${kindFilterIncoming}${kindFilterOutgoing}`
   );
 

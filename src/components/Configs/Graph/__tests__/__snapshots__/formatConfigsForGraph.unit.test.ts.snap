@@ -3,400 +3,326 @@
 exports[`prepareConfigsForGraph should return formatted config for argo-argocd-applicationset-controller-764547bfd6 1`] = `
 [
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "created_at": "2023-10-19T13:43:09+00:00",
-      "depth": 1,
-      "direction": "incoming",
-      "health": "unknown",
-      "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      "name": "argo",
-      "ready": true,
-      "related_ids": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd",
-      ],
-      "relation_type": "incoming",
-      "status": "Healthy",
-      "tags": {
-        "cluster": "aws",
+    "data": {
+      "config": {
+        "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+        "name": "aws-demo-bootstrap",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "8aa17279-ead2-4923-9205-e365c0372cf5",
+          "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::Kustomization",
       },
-      "type": "Kubernetes::Namespace",
-      "updated_at": "2024-03-18T14:38:00.361031+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
-  },
-  {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "created_at": "0001-01-01T00:00:00+00:00",
-      "depth": 2,
-      "direction": "incoming",
-      "id": "33616137-3536-6531-6236-633631376130",
-      "name": "aws",
-      "ready": false,
-      "related_ids": [
-        "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      ],
-      "relation_type": "hard",
-      "tags": {
-        "cluster": "aws",
-      },
-      "type": "Kubernetes::Cluster",
-      "updated_at": "2024-05-03T12:51:34.940468+00:00",
-    },
-    "nodeType": "config",
-  },
-  {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "Started",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "Scheduled",
-          "severity": "",
-          "total": 1,
-        },
-      ],
-      "created_at": "2024-05-14T15:19:57+00:00",
-      "depth": 2,
-      "direction": "outgoing",
-      "health": "healthy",
-      "id": "b9317816-adbb-462e-9fde-0578b6b8d10f",
-      "name": "argo-argocd-applicationset-controller-d6667d499-86bck",
-      "ready": true,
-      "related_ids": [
-        "532fb54a-5325-431a-a618-0617020b1ab2",
-      ],
-      "relation_type": "hard",
-      "status": "Running",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
-      },
-      "type": "Kubernetes::Pod",
-      "updated_at": "2024-05-14T15:20:00.574682+00:00",
-    },
-    "nodeType": "config",
-  },
-  {
-    "configType": "Kubernetes::ReplicaSet",
-    "configs": [
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 4,
-          },
-        ],
-        "created_at": "2024-05-10T08:34:05+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "51a1fccc-8117-4919-b249-3fb7cd8b6057",
-        "name": "argo-argocd-applicationset-controller-764547bfd6",
-        "ready": true,
-        "related_ids": [
-          "9580a93f-7b74-437b-836f-9a419252f3dd",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-13T04:33:47.931132+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 3,
-          },
-        ],
-        "created_at": "2024-05-13T04:33:34+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "492dd2e3-aee3-45aa-91b1-a12661a6d4a8",
-        "name": "argo-argocd-applicationset-controller-5cdc847b88",
-        "ready": true,
-        "related_ids": [
-          "9580a93f-7b74-437b-836f-9a419252f3dd",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-13T23:03:02.640177+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "created_at": "2024-05-14T15:19:57+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "healthy",
-        "id": "532fb54a-5325-431a-a618-0617020b1ab2",
-        "name": "argo-argocd-applicationset-controller-d6667d499",
-        "ready": true,
-        "related_ids": [
-          "9580a93f-7b74-437b-836f-9a419252f3dd",
-        ],
-        "relation_type": "outgoing",
-        "status": "Running",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-14T15:20:00.574682+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 1,
-          },
-        ],
-        "created_at": "2024-05-13T23:01:17+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "00f3ddcd-2f2a-4b3b-af4a-ba5091bd4501",
-        "name": "argo-argocd-applicationset-controller-864b6c68",
-        "ready": true,
-        "related_ids": [
-          "9580a93f-7b74-437b-836f-9a419252f3dd",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-14T15:20:00.763095+00:00",
-      },
+    "expanded": false,
+    "nodeId": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "8aa17279-ead2-4923-9205-e365c0372cf5",
+      "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
     ],
-    "direction": undefined,
-    "id": "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
-    "nodeType": "intermediary",
-    "related_id": "9580a93f-7b74-437b-836f-9a419252f3dd",
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 4,
-        },
-      ],
-      "created_at": "2024-05-10T08:34:05+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "51a1fccc-8117-4919-b249-3fb7cd8b6057",
-      "name": "argo-argocd-applicationset-controller-764547bfd6",
-      "ready": true,
-      "related_ids": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "60023763-40ea-498d-ad95-6cf4c8c31e31",
+        "name": "argo",
+        "related_ids": [
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
+        "type": "Kubernetes::HelmRelease",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-13T04:33:47.931132+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "60023763-40ea-498d-ad95-6cf4c8c31e31",
+    "related_ids": [
+      "9580a93f-7b74-437b-836f-9a419252f3dd",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 3,
-        },
-      ],
-      "created_at": "2024-05-13T04:33:34+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "492dd2e3-aee3-45aa-91b1-a12661a6d4a8",
-      "name": "argo-argocd-applicationset-controller-5cdc847b88",
-      "ready": true,
-      "related_ids": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "c58dba11-b0ef-4b59-a6ea-0b9853db0b3d",
+        "name": "argo-argocd-applicationset-controller-8576646f48",
+        "related_ids": [
+          "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
+        ],
+        "type": "Kubernetes::ReplicaSet",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-13T23:03:02.640177+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "c58dba11-b0ef-4b59-a6ea-0b9853db0b3d",
+    "related_ids": [
+      "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "created_at": "2024-05-14T15:19:57+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "healthy",
-      "id": "532fb54a-5325-431a-a618-0617020b1ab2",
-      "name": "argo-argocd-applicationset-controller-d6667d499",
-      "ready": true,
-      "related_ids": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Running",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        "name": "argo",
+        "related_ids": [
+          "60023763-40ea-498d-ad95-6cf4c8c31e31",
+          "9580a93f-7b74-437b-836f-9a419252f3dd",
+        ],
+        "type": "Kubernetes::Namespace",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-14T15:20:00.574682+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    "related_ids": [
+      "60023763-40ea-498d-ad95-6cf4c8c31e31",
+      "9580a93f-7b74-437b-836f-9a419252f3dd",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 1,
-        },
-      ],
-      "created_at": "2024-05-13T23:01:17+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "00f3ddcd-2f2a-4b3b-af4a-ba5091bd4501",
-      "name": "argo-argocd-applicationset-controller-864b6c68",
-      "ready": true,
-      "related_ids": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "e678b215-6421-4038-9e4c-c20ebb843a59",
+        "name": "argo-argocd-applicationset-controller-77b7b4f55b-ljd86",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-14T15:20:00.763095+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "e678b215-6421-4038-9e4c-c20ebb843a59",
+    "related_ids": null,
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "config_class": "Deployment",
-      "config_scrapers": {
-        "id": "b8e78065-c9e4-40c8-bcf0-de3a39423092",
-        "name": "mission-control/kubernetes",
+    "data": {
+      "config": {
+        "id": "33616137-3536-6531-6236-633631376130",
+        "name": "aws",
+        "related_ids": [
+          "8aa17279-ead2-4923-9205-e365c0372cf5",
+          "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        ],
+        "type": "Kubernetes::Cluster",
       },
-      "created_at": "2023-10-19T13:44:28+00:00",
-      "delete_reason": "",
-      "description": "1 pods ready",
-      "external_id": [
-        "9580a93f-7b74-437b-836f-9a419252f3dd",
-        "Kubernetes/Deployment/argo/argo-argocd-applicationset-controller",
-      ],
-      "health": "healthy",
-      "id": "9580a93f-7b74-437b-836f-9a419252f3dd",
-      "is_pushed": true,
-      "labels": {
-        "apiVersion": "apps/v1",
-        "app.kubernetes.io/component": "applicationset-controller",
-        "app.kubernetes.io/instance": "argo",
-        "app.kubernetes.io/managed-by": "Helm",
-        "app.kubernetes.io/name": "argocd-applicationset-controller",
-        "app.kubernetes.io/part-of": "argocd",
-        "app.kubernetes.io/version": "v2.11.0",
-        "cluster": "aws",
-        "helm.sh/chart": "argo-cd-6.9.2",
-        "helm.toolkit.fluxcd.io/name": "argo",
-        "helm.toolkit.fluxcd.io/namespace": "argo",
-        "namespace": "argo",
-      },
-      "last_scraped_time": "2024-05-15T07:55:27.208541+00:00",
-      "name": "argo-argocd-applicationset-controller",
-      "parent_id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      "path": "33616137-3536-6531-6236-633631376130.f5c71026-fcab-4709-ae00-2edcc7e3086a.9580a93f-7b74-437b-836f-9a419252f3dd",
-      "ready": true,
-      "scraper_id": "b8e78065-c9e4-40c8-bcf0-de3a39423092",
-      "source": "",
-      "status": "Running",
-      "summary": {
-        "analysis": 0,
-        "changes": 0,
-        "playbook_runs": 0,
-        "relationships": 18,
-      },
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
-      },
-      "type": "Kubernetes::Deployment",
-      "updated_at": "2024-05-14T15:20:00.752425+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "33616137-3536-6531-6236-633631376130",
+    "related_ids": [
+      "8aa17279-ead2-4923-9205-e365c0372cf5",
+      "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "c72404ed-7d4c-49c1-9981-0c506c23c086",
+        "name": "argo-argocd-applicationset-controller-765b69c7c",
+        "related_ids": [
+          "94f25b55-3a91-40a0-abd3-df91a705dfaa",
+        ],
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "c72404ed-7d4c-49c1-9981-0c506c23c086",
+    "related_ids": [
+      "94f25b55-3a91-40a0-abd3-df91a705dfaa",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "94f25b55-3a91-40a0-abd3-df91a705dfaa",
+        "name": "argo-argocd-applicationset-controller-765b69c7c-vg222",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "94f25b55-3a91-40a0-abd3-df91a705dfaa",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
+        "name": "argo-argocd-applicationset-controller-7df54f78cc",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "32fbaf98-9257-4668-92b6-b389fff1d42d",
+        "name": "argo-argocd-applicationset-controller-6896bc667f",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "32fbaf98-9257-4668-92b6-b389fff1d42d",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "9580a93f-7b74-437b-836f-9a419252f3dd",
+        "name": "argo-argocd-applicationset-controller",
+        "related_ids": [
+          "120f8da8-4e2a-42cc-ab76-2451b8fee3f8",
+          "32fbaf98-9257-4668-92b6-b389fff1d42d",
+          "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
+          "c58dba11-b0ef-4b59-a6ea-0b9853db0b3d",
+          "c72404ed-7d4c-49c1-9981-0c506c23c086",
+          "f9762c76-52d7-475c-9e0c-5d72466b734e",
+        ],
+        "type": "Kubernetes::Deployment",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "9580a93f-7b74-437b-836f-9a419252f3dd",
+    "related_ids": [
+      "9580a93f-7b74-437b-836f-9a419252f3dd-Kubernetes::ReplicaSet-intermediary",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
+        "name": "argo-argocd-applicationset-controller-8576646f48-s7jpf",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+        "name": "aws-sandbox",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::GitRepository",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "120f8da8-4e2a-42cc-ab76-2451b8fee3f8",
+        "name": "argo-argocd-applicationset-controller-77b7b4f55b",
+        "related_ids": [
+          "e678b215-6421-4038-9e4c-c20ebb843a59",
+        ],
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "120f8da8-4e2a-42cc-ab76-2451b8fee3f8",
+    "related_ids": [
+      "e678b215-6421-4038-9e4c-c20ebb843a59",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "f9762c76-52d7-475c-9e0c-5d72466b734e",
+        "name": "argo-argocd-applicationset-controller-c49d78678",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "f9762c76-52d7-475c-9e0c-5d72466b734e",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "8aa17279-ead2-4923-9205-e365c0372cf5",
+        "name": "flux-system",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::Namespace",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "8aa17279-ead2-4923-9205-e365c0372cf5",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        "name": "aws-demo-infra",
+        "related_ids": [
+          "60023763-40ea-498d-ad95-6cf4c8c31e31",
+          "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        ],
+        "type": "Kubernetes::Kustomization",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    "related_ids": [
+      "60023763-40ea-498d-ad95-6cf4c8c31e31",
+      "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    ],
+  },
+  {
+    "data": {
+      "configType": "Kubernetes::ReplicaSet",
+      "numberOfConfigs": 6,
+      "type": "intermediary",
+    },
+    "expanded": false,
+    "nodeId": "9580a93f-7b74-437b-836f-9a419252f3dd-Kubernetes::ReplicaSet-intermediary",
+    "related_ids": [
+      "c58dba11-b0ef-4b59-a6ea-0b9853db0b3d",
+      "c72404ed-7d4c-49c1-9981-0c506c23c086",
+      "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
+      "32fbaf98-9257-4668-92b6-b389fff1d42d",
+      "120f8da8-4e2a-42cc-ab76-2451b8fee3f8",
+      "f9762c76-52d7-475c-9e0c-5d72466b734e",
+    ],
   },
 ]
 `;
@@ -404,419 +330,326 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
 exports[`prepareConfigsForGraph should return formatted config for argo-argocd-notifications-controller 1`] = `
 [
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "created_at": "2023-10-19T13:43:09+00:00",
-      "depth": 1,
-      "direction": "incoming",
-      "health": "unknown",
-      "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      "name": "argo",
-      "ready": true,
-      "related_ids": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-      ],
-      "relation_type": "incoming",
-      "status": "Healthy",
-      "tags": {
-        "cluster": "aws",
+    "data": {
+      "config": {
+        "id": "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
+        "name": "argo-argocd-notifications-controller-5b67c7675b-4gqpm",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
       },
-      "type": "Kubernetes::Namespace",
-      "updated_at": "2024-03-18T14:38:00.361031+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
+    "related_ids": null,
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "Started",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "Scheduled",
-          "severity": "",
-          "total": 1,
-        },
-      ],
-      "created_at": "2024-05-14T15:19:58+00:00",
-      "depth": 2,
-      "direction": "outgoing",
-      "health": "healthy",
-      "id": "8cc44af9-61f5-452f-94c9-ab33d8cb470c",
-      "name": "argo-argocd-notifications-controller-54747746f8-k966m",
-      "ready": true,
-      "related_ids": [
-        "301902be-86af-4791-95fe-3f432c190276",
-      ],
-      "relation_type": "hard",
-      "status": "Running",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+        "name": "aws-demo-bootstrap",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "8aa17279-ead2-4923-9205-e365c0372cf5",
+          "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::Kustomization",
       },
-      "type": "Kubernetes::Pod",
-      "updated_at": "2024-05-14T15:20:15.371623+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
-  },
-  {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "created_at": "0001-01-01T00:00:00+00:00",
-      "depth": 2,
-      "direction": "incoming",
-      "id": "33616137-3536-6531-6236-633631376130",
-      "name": "aws",
-      "ready": false,
-      "related_ids": [
-        "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      ],
-      "relation_type": "hard",
-      "tags": {
-        "cluster": "aws",
-      },
-      "type": "Kubernetes::Cluster",
-      "updated_at": "2024-05-03T12:51:34.940468+00:00",
-    },
-    "nodeType": "config",
-  },
-  {
-    "configType": "Kubernetes::ReplicaSet",
-    "configs": [
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 1,
-          },
-        ],
-        "created_at": "2024-05-13T23:01:18+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "26a39243-80b7-4b82-941b-1ce15758b292",
-        "name": "argo-argocd-notifications-controller-5b445ddccf",
-        "ready": true,
-        "related_ids": [
-          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-14T15:20:00.887554+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 3,
-          },
-        ],
-        "created_at": "2024-05-13T04:33:35+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "92c4c176-6570-4a5d-bdcd-b2dbc7c9a26c",
-        "name": "argo-argocd-notifications-controller-777f7984cd",
-        "ready": true,
-        "related_ids": [
-          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-13T23:03:02.661845+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "SuccessfulDelete",
-            "severity": "",
-            "total": 1,
-          },
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 4,
-          },
-        ],
-        "created_at": "2024-05-10T08:34:06+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "unknown",
-        "id": "a15f91b1-dbee-4884-89af-9cd5370c2644",
-        "name": "argo-argocd-notifications-controller-5f47765dfd",
-        "ready": true,
-        "related_ids": [
-          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-        ],
-        "relation_type": "outgoing",
-        "status": "Scaled to Zero",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-13T04:33:46.653767+00:00",
-      },
-      {
-        "agent_id": "00000000-0000-0000-0000-000000000000",
-        "changes": [
-          {
-            "change_type": "diff",
-            "severity": "",
-            "total": 1,
-          },
-        ],
-        "created_at": "2024-05-14T15:19:58+00:00",
-        "depth": 1,
-        "direction": "outgoing",
-        "health": "healthy",
-        "id": "301902be-86af-4791-95fe-3f432c190276",
-        "name": "argo-argocd-notifications-controller-54747746f8",
-        "ready": true,
-        "related_ids": [
-          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-        ],
-        "relation_type": "outgoing",
-        "status": "Running",
-        "tags": {
-          "cluster": "aws",
-          "namespace": "argo",
-        },
-        "type": "Kubernetes::ReplicaSet",
-        "updated_at": "2024-05-14T15:20:15.358938+00:00",
-      },
+    "expanded": false,
+    "nodeId": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "8aa17279-ead2-4923-9205-e365c0372cf5",
+      "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
     ],
-    "direction": undefined,
-    "id": "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
-    "nodeType": "intermediary",
-    "related_id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 1,
-        },
-      ],
-      "created_at": "2024-05-13T23:01:18+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "26a39243-80b7-4b82-941b-1ce15758b292",
-      "name": "argo-argocd-notifications-controller-5b445ddccf",
-      "ready": true,
-      "related_ids": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "60023763-40ea-498d-ad95-6cf4c8c31e31",
+        "name": "argo",
+        "related_ids": [
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
+        "type": "Kubernetes::HelmRelease",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-14T15:20:00.887554+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "60023763-40ea-498d-ad95-6cf4c8c31e31",
+    "related_ids": [
+      "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 3,
-        },
-      ],
-      "created_at": "2024-05-13T04:33:35+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "92c4c176-6570-4a5d-bdcd-b2dbc7c9a26c",
-      "name": "argo-argocd-notifications-controller-777f7984cd",
-      "ready": true,
-      "related_ids": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "fe2430b0-bc23-477b-ac02-c252f8ca05e8",
+        "name": "argo-argocd-notifications-controller-6fcf69f85d",
+        "related_ids": [
+          "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
+        ],
+        "type": "Kubernetes::ReplicaSet",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-13T23:03:02.661845+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "fe2430b0-bc23-477b-ac02-c252f8ca05e8",
+    "related_ids": [
+      "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "SuccessfulDelete",
-          "severity": "",
-          "total": 1,
-        },
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 4,
-        },
-      ],
-      "created_at": "2024-05-10T08:34:06+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "unknown",
-      "id": "a15f91b1-dbee-4884-89af-9cd5370c2644",
-      "name": "argo-argocd-notifications-controller-5f47765dfd",
-      "ready": true,
-      "related_ids": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Scaled to Zero",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        "name": "argo",
+        "related_ids": [
+          "60023763-40ea-498d-ad95-6cf4c8c31e31",
+          "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        ],
+        "type": "Kubernetes::Namespace",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-13T04:33:46.653767+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    "related_ids": [
+      "60023763-40ea-498d-ad95-6cf4c8c31e31",
+      "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "changes": [
-        {
-          "change_type": "diff",
-          "severity": "",
-          "total": 1,
-        },
-      ],
-      "created_at": "2024-05-14T15:19:58+00:00",
-      "depth": 1,
-      "direction": "outgoing",
-      "health": "healthy",
-      "id": "301902be-86af-4791-95fe-3f432c190276",
-      "name": "argo-argocd-notifications-controller-54747746f8",
-      "ready": true,
-      "related_ids": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136-root-Kubernetes::ReplicaSet",
-      ],
-      "relation_type": "outgoing",
-      "status": "Running",
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
+    "data": {
+      "config": {
+        "id": "33616137-3536-6531-6236-633631376130",
+        "name": "aws",
+        "related_ids": [
+          "8aa17279-ead2-4923-9205-e365c0372cf5",
+          "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        ],
+        "type": "Kubernetes::Cluster",
       },
-      "type": "Kubernetes::ReplicaSet",
-      "updated_at": "2024-05-14T15:20:15.358938+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "33616137-3536-6531-6236-633631376130",
+    "related_ids": [
+      "8aa17279-ead2-4923-9205-e365c0372cf5",
+      "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    ],
   },
   {
-    "config": {
-      "agent_id": "00000000-0000-0000-0000-000000000000",
-      "config_class": "Deployment",
-      "config_scrapers": {
-        "id": "b8e78065-c9e4-40c8-bcf0-de3a39423092",
-        "name": "mission-control/kubernetes",
+    "data": {
+      "config": {
+        "id": "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
+        "name": "argo-argocd-notifications-controller-b9d985cdc",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
       },
-      "created_at": "2023-10-19T13:44:28+00:00",
-      "delete_reason": "",
-      "description": "1 pods ready",
-      "external_id": [
-        "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-        "Kubernetes/Deployment/argo/argo-argocd-notifications-controller",
-      ],
-      "health": "healthy",
-      "id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
-      "is_pushed": true,
-      "labels": {
-        "apiVersion": "apps/v1",
-        "app.kubernetes.io/component": "notifications-controller",
-        "app.kubernetes.io/instance": "argo",
-        "app.kubernetes.io/managed-by": "Helm",
-        "app.kubernetes.io/name": "argocd-notifications-controller",
-        "app.kubernetes.io/part-of": "argocd",
-        "app.kubernetes.io/version": "v2.11.0",
-        "cluster": "aws",
-        "helm.sh/chart": "argo-cd-6.9.2",
-        "helm.toolkit.fluxcd.io/name": "argo",
-        "helm.toolkit.fluxcd.io/namespace": "argo",
-        "namespace": "argo",
-      },
-      "last_scraped_time": "2024-05-15T07:55:27.229128+00:00",
-      "name": "argo-argocd-notifications-controller",
-      "parent_id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
-      "path": "33616137-3536-6531-6236-633631376130.f5c71026-fcab-4709-ae00-2edcc7e3086a.b59c1752-1be4-4a51-9f84-8225ebe7c136",
-      "ready": true,
-      "scraper_id": "b8e78065-c9e4-40c8-bcf0-de3a39423092",
-      "source": "",
-      "status": "Running",
-      "summary": {
-        "analysis": 0,
-        "changes": 0,
-        "playbook_runs": 0,
-        "relationships": 18,
-      },
-      "tags": {
-        "cluster": "aws",
-        "namespace": "argo",
-      },
-      "type": "Kubernetes::Deployment",
-      "updated_at": "2024-05-14T15:20:15.364451+00:00",
+      "type": "config",
     },
-    "nodeType": "config",
+    "expanded": false,
+    "nodeId": "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "dd6637c8-7484-4619-a587-4549bed3352f",
+        "name": "argo-argocd-notifications-controller-5b67c7675b",
+        "related_ids": [
+          "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
+        ],
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "dd6637c8-7484-4619-a587-4549bed3352f",
+    "related_ids": [
+      "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "6c25a469-5230-402d-8902-f678175aa610",
+        "name": "argo-argocd-notifications-controller-7946d59c87-wd7g5",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "6c25a469-5230-402d-8902-f678175aa610",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+        "name": "argo-argocd-notifications-controller",
+        "related_ids": [
+          "0d274172-fd9a-42b6-88df-9497219dbd32",
+          "3ffded9e-7d31-4597-9d54-ad91347a741c",
+          "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
+          "dd6637c8-7484-4619-a587-4549bed3352f",
+          "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
+          "fe2430b0-bc23-477b-ac02-c252f8ca05e8",
+        ],
+        "type": "Kubernetes::Deployment",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
+    "related_ids": [
+      "b59c1752-1be4-4a51-9f84-8225ebe7c136-Kubernetes::ReplicaSet-intermediary",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "3ffded9e-7d31-4597-9d54-ad91347a741c",
+        "name": "argo-argocd-notifications-controller-7946d59c87",
+        "related_ids": [
+          "6c25a469-5230-402d-8902-f678175aa610",
+        ],
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "3ffded9e-7d31-4597-9d54-ad91347a741c",
+    "related_ids": [
+      "6c25a469-5230-402d-8902-f678175aa610",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+        "name": "aws-sandbox",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::GitRepository",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
+        "name": "argo-argocd-notifications-controller-6fcf69f85d-fncrg",
+        "related_ids": null,
+        "type": "Kubernetes::Pod",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
+        "name": "argo-argocd-notifications-controller-7d6c5f86b9",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "8aa17279-ead2-4923-9205-e365c0372cf5",
+        "name": "flux-system",
+        "related_ids": [
+          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+          "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+          "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        ],
+        "type": "Kubernetes::Namespace",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "8aa17279-ead2-4923-9205-e365c0372cf5",
+    "related_ids": [
+      "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
+      "962f999c-a9bd-40a4-80bf-47c84b1ad750",
+      "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    ],
+  },
+  {
+    "data": {
+      "config": {
+        "id": "0d274172-fd9a-42b6-88df-9497219dbd32",
+        "name": "argo-argocd-notifications-controller-56f854cd6d",
+        "related_ids": null,
+        "type": "Kubernetes::ReplicaSet",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "0d274172-fd9a-42b6-88df-9497219dbd32",
+    "related_ids": null,
+  },
+  {
+    "data": {
+      "config": {
+        "id": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+        "name": "aws-demo-infra",
+        "related_ids": [
+          "60023763-40ea-498d-ad95-6cf4c8c31e31",
+          "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+        ],
+        "type": "Kubernetes::Kustomization",
+      },
+      "type": "config",
+    },
+    "expanded": false,
+    "nodeId": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
+    "related_ids": [
+      "60023763-40ea-498d-ad95-6cf4c8c31e31",
+      "f5c71026-fcab-4709-ae00-2edcc7e3086a",
+    ],
+  },
+  {
+    "data": {
+      "configType": "Kubernetes::ReplicaSet",
+      "numberOfConfigs": 6,
+      "type": "intermediary",
+    },
+    "expanded": false,
+    "nodeId": "b59c1752-1be4-4a51-9f84-8225ebe7c136-Kubernetes::ReplicaSet-intermediary",
+    "related_ids": [
+      "fe2430b0-bc23-477b-ac02-c252f8ca05e8",
+      "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
+      "dd6637c8-7484-4619-a587-4549bed3352f",
+      "3ffded9e-7d31-4597-9d54-ad91347a741c",
+      "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
+      "0d274172-fd9a-42b6-88df-9497219dbd32",
+    ],
   },
 ]
 `;

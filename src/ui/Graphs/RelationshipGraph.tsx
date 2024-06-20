@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   ConnectionLineType,
   Controls,
+  DefaultEdgeOptions,
   Edge,
   MarkerType,
   Node,
@@ -29,9 +30,8 @@ const nodeTypes: NodeTypes = {
 
 const defaultEdgeOptions = {
   type: "smoothstep",
-  markerEnd: { type: MarkerType.ArrowClosed },
-  pathOptions: { offset: 5 }
-};
+  markerEnd: { type: MarkerType.ArrowClosed }
+} satisfies DefaultEdgeOptions;
 
 export type GraphDataGenericConstraint = {
   [key: string]: any;
@@ -181,7 +181,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         draggable={false}
         nodesConnectable={false}
         nodesDraggable={false}
-        edgesFocusable={true}
+        edgesFocusable={false}
       >
         <Controls position="top-right">
           <ConfigGraphDirectionToggle />

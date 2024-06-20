@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getAConfigRelationships } from "../services/configs";
-import { ConfigRelationships } from "../types/configs";
+import { ConfigItem } from "../types/configs";
 
 export default function useConfigRelationshipsQuery(id: string | undefined) {
   const [searchParams] = useSearchParams();
@@ -31,7 +31,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
   }, [incoming, outgoing]);
 
   const transformConfigRelationships = useCallback(
-    (configs: ConfigRelationships[]) =>
+    (configs: ConfigItem[]) =>
       configs.filter((item) => {
         if (
           tag &&

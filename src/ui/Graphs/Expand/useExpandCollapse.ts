@@ -19,11 +19,11 @@ function filterCollapsedChildren(
 
   // Update this node's props so it knows if it has children and can be expanded
   // or not.
-  node.data.expandable = children && children?.length > 1 ? true : false;
+  node.data.expandable = children && children?.length > 3 ? true : false;
 
   // If the node is collpased (ie it is not expanded) then we want to remove all
   // of its children from the graph *and* any of their children.
-  if (children && children?.length > 30) {
+  if (children && children?.length > 3) {
     if (!node.data.expanded) {
       while (children?.length) {
         const child = children.pop()!;

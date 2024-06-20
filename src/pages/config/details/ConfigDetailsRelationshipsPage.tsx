@@ -1,6 +1,6 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import useConfigRelationshipsQuery from "@flanksource-ui/api/query-hooks/useConfigRelationshipsQuery";
-import { ConfigRelationships } from "@flanksource-ui/api/types/configs";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigsRelationshipsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsRelationshipsTable";
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
@@ -11,7 +11,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { ReactFlowProvider } from "reactflow";
 
 function filterConfigRelationshipsByType(
-  configItems: ConfigRelationships[] | undefined,
+  configItems: ConfigItem[] | undefined,
   configTypes: string | undefined
 ) {
   if (!configItems) {
@@ -73,10 +73,7 @@ export function ConfigDetailsRelationshipsPage() {
           {view === "Graph" ? (
             <ReactFlowProvider>
               {configItems && configItem && (
-                <ConfigRelationshipGraph
-                  currentConfig={configItem}
-                  configs={configItemsFiltered}
-                />
+                <ConfigRelationshipGraph configs={configItemsFiltered} />
               )}
             </ReactFlowProvider>
           ) : (
