@@ -1,6 +1,8 @@
 import { getPlaybookRuns } from "@flanksource-ui/api/services/playbooks";
 import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
-import PlaybookRunsFilterBar from "@flanksource-ui/components/Playbooks/Runs/Filter/PlaybookRunsFilterBar";
+import PlaybookRunsFilterBar, {
+  playbookRunsDefaultDateFilter
+} from "@flanksource-ui/components/Playbooks/Runs/Filter/PlaybookRunsFilterBar";
 import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsList";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
@@ -25,7 +27,9 @@ export default function PlaybookRunsPage() {
   const playbookId = searchParams.get("playbook") ?? undefined;
   const playbookStatus = searchParams.get("status") ?? undefined;
 
-  const { timeRangeAbsoluteValue: timeRange } = useTimeRangeParams();
+  const { timeRangeAbsoluteValue: timeRange } = useTimeRangeParams(
+    playbookRunsDefaultDateFilter
+  );
 
   const [{ pageIndex, pageSize }, setPageState] = useState({
     pageIndex: 0,
