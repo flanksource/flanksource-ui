@@ -18,7 +18,7 @@ export default function ConfigRelationshipFilterBar({
       paramsToReset={[]}
       filterFields={["configTypes", "labels", "relationship"]}
     >
-      <div className="flex flex-row items-center gap-2">
+      <div className="flex flex-row items-center gap-1">
         {isGraphView ? (
           <ConfigTypesTristateDropdown />
         ) : (

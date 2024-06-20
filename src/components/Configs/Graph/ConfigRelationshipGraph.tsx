@@ -2,6 +2,7 @@ import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { RelationshipGraph } from "@flanksource-ui/ui/Graphs/RelationshipGraph";
 import { useMemo } from "react";
 import { Edge, Node } from "reactflow";
+import { useConfigGraphDirectionToggleValue } from "../ConfigsListFilters/ConfigGraphDirectionToggle";
 import { prepareConfigsForGraph } from "./formatConfigsForGraph";
 
 export type ConfigGraphNodes =
@@ -54,6 +55,8 @@ export function ConfigRelationshipGraph({
     [configs]
   );
 
+  const direction = useConfigGraphDirectionToggleValue();
+
   const edges: Edge<ConfigGraphNodes>[] = useMemo(() => {
     const e: Edge<ConfigGraphNodes>[] = [];
     configsForGraph.forEach((config) => {
@@ -100,5 +103,7 @@ export function ConfigRelationshipGraph({
     return null;
   }
 
-  return <RelationshipGraph nodes={nodes} edges={edges} />;
+  return (
+    <RelationshipGraph nodes={nodes} edges={edges} direction={direction} />
+  );
 }

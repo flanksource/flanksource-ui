@@ -14,6 +14,7 @@ import ReactFlow, {
   useStoreApi
 } from "reactflow";
 
+import ConfigGraphDirectionToggle from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigGraphDirectionToggle";
 import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigIntermediaryNodeReactFlowNode";
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
 import "reactflow/dist/style.css";
@@ -41,11 +42,13 @@ export type GraphDataGenericConstraint = {
 type ConfigGraphProps<T extends GraphDataGenericConstraint> = {
   nodes: Node<T>[];
   edges: Edge<T>[];
+  direction?: "LR" | "TB";
 };
 
 export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   nodes: propNodes,
-  edges: propEdges
+  edges: propEdges,
+  direction = "LR"
 }: ConfigGraphProps<T>) {
   const { setViewport, fitView, getZoom } = useReactFlow();
 
@@ -69,7 +72,10 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
 
   const { nodes: expandNodes, edges: expandEdges } = useExpandCollapse(
     nodes,
-    edges
+    edges,
+    {
+      direction
+    }
   );
 
   const { nodes: nodesAnimated } = useAnimatedNodes(expandNodes, {
@@ -103,16 +109,28 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
     const rootNodes = expandNodes.filter(
       (node) => !expandEdges.some((edge) => edge.target === node.id)
     );
-    // Calculate the height of the nodes group
-    const { height: nodesGroupHeight } = getNodesBounds(rootNodes);
-    const { height: viewPortHeight } = getState();
-    setViewport({
-      zoom: 1,
-      x: 0,
-      // Calculate the y position of the nodes group to vertically center it
-      y: (viewPortHeight - nodesGroupHeight - 100) / 2
-    });
-  }, [expandEdges, expandNodes, getState, setViewport]);
+    if (direction === "TB") {
+      // Calculate the width of the nodes group
+      const { width: nodesGroupWidth } = getNodesBounds(rootNodes);
+      const { width: viewPortWidth } = getState();
+      setViewport({
+        zoom: 1,
+        y: 0,
+        // Calculate the x position of the nodes group to horizontally center it
+        x: (viewPortWidth - nodesGroupWidth) / 2
+      });
+    } else {
+      // Calculate the height of the nodes group
+      const { height: nodesGroupHeight } = getNodesBounds(rootNodes);
+      const { height: viewPortHeight } = getState();
+      setViewport({
+        zoom: 1,
+        x: 0,
+        // Calculate the y position of the nodes group to vertically center it
+        y: (viewPortHeight - nodesGroupHeight - 100) / 2
+      });
+    }
+  }, [direction, expandEdges, expandNodes, getState, setViewport]);
 
   useEffect(() => {
     if (!isInitialLayoutSetupDone) {
@@ -165,7 +183,9 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         nodesDraggable={false}
         edgesFocusable={true}
       >
-        <Controls position="top-right" />
+        <Controls position="top-right">
+          <ConfigGraphDirectionToggle />
+        </Controls>
       </ReactFlow>
     </div>
   );

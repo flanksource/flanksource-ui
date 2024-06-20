@@ -5,6 +5,7 @@ import { type NodeData } from "./types";
 
 export type UseExpandCollapseOptions = {
   layoutNodes?: boolean;
+  direction?: "LR" | "TB";
 };
 
 function filterCollapsedChildren(
@@ -38,7 +39,7 @@ function filterCollapsedChildren(
 function useExpandCollapse(
   nodes: Node[],
   edges: Edge[],
-  { layoutNodes = true }: UseExpandCollapseOptions = {}
+  { layoutNodes = true, direction = "LR" }: UseExpandCollapseOptions = {}
 ): { nodes: Node[]; edges: Edge[] } {
   return useMemo(() => {
     if (!layoutNodes) return { nodes, edges };
@@ -48,7 +49,7 @@ function useExpandCollapse(
     const dagre = new Dagre.graphlib.Graph()
       .setDefaultEdgeLabel(() => ({}))
       .setGraph({
-        rankdir: "LR",
+        rankdir: direction,
         width: 400,
         height: 100
       });
@@ -97,14 +98,15 @@ function useExpandCollapse(
         // will not know the data has changed unless we create a new object here.
         const data = { ...node.data };
 
-        node.sourcePosition = Position.Right;
-        node.targetPosition = Position.Left;
+        node.sourcePosition =
+          direction === "LR" ? Position.Right : Position.Bottom;
+        node.targetPosition = direction === "LR" ? Position.Left : Position.Top;
 
         return [{ ...node, position, data }];
       }),
       edges
     };
-  }, [nodes, edges, layoutNodes]);
+  }, [layoutNodes, nodes, edges, direction]);
 }
 
 export default useExpandCollapse;
