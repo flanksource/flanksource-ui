@@ -5,9 +5,16 @@ import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
+import { URLSearchParamsInit } from "react-router-dom";
 import SubmitPlaybookRunForm from "../Submit/SubmitPlaybookRunForm";
 import PlaybookSpecsDropdown from "./PlaybookSpecsDropdown";
 import PlaybookStatusDropdown from "./PlaybookStatusDropdown";
+
+export const playbookRunsDefaultDateFilter: URLSearchParamsInit = {
+  rangeType: "relative",
+  display: "7 days",
+  range: "now-7d"
+};
 
 type PlaybookRunsFilterBarProps = {
   playbookId?: string;
@@ -22,7 +29,9 @@ export default function PlaybookRunsFilterBar({
   setIsEditPlaybookFormOpen = () => {},
   playbook: playbookSpec
 }: PlaybookRunsFilterBarProps) {
-  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams();
+  const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams(
+    playbookRunsDefaultDateFilter
+  );
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
 
@@ -39,7 +48,6 @@ export default function PlaybookRunsFilterBar({
           <PlaybookStatusDropdown />
           <TimeRangePicker
             onChange={(timeRange) => {
-              console.log("timeRange", timeRange);
               setTimeRangeParams(timeRange);
             }}
             className="w-[35rem]"
