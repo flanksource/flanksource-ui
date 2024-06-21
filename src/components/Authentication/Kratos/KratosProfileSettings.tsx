@@ -1,9 +1,3 @@
-import { SettingsFlow, UiText, UpdateSettingsFlowBody } from "@ory/client";
-import { AxiosError } from "axios";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
-
 import {
   Flow,
   Messages,
@@ -11,6 +5,11 @@ import {
 } from "@flanksource-ui/components/Authentication/Kratos/ory";
 import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
+import { SettingsFlow, UiText, UpdateSettingsFlowBody } from "@ory/client";
+import { AxiosError } from "axios";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { ReactNode, useEffect, useState } from "react";
 
 interface Props {
   flow?: SettingsFlow;
@@ -47,7 +46,11 @@ function KratosProfileSettings() {
 
   // Get ?flow=... from the URL
   const router = useRouter();
-  const { flow: flowId, return_to: returnTo } = router.query;
+
+  const searchParams = useSearchParams();
+
+  const flowId = searchParams.get("flow") || undefined;
+  const returnTo = searchParams.get("return_to") || "/";
 
   useEffect(() => {
     // If the router is not ready yet, or we already have a flow, do nothing.
@@ -59,7 +62,7 @@ function KratosProfileSettings() {
     if (flowId) {
       ory
         .getSettingsFlow({
-          id: String(flowId)
+          id: flowId
         })
         .then(({ data }) => {
           setFlow(data);
@@ -71,7 +74,7 @@ function KratosProfileSettings() {
     // Otherwise we initialize it
     ory
       .createBrowserSettingsFlow({
-        returnTo: returnTo ? String(returnTo) : undefined
+        returnTo: returnTo ? returnTo : "/"
       })
       .then(({ data }) => {
         setFlow(data);
@@ -115,121 +118,116 @@ function KratosProfileSettings() {
       );
 
   return (
-    <div className="flex flex-col w-full pt-4 h-screen sm:px-6 lg:px-8">
-      <div className="w-6/12 m-auto">
-        <img
-          alt="Mission Control"
-          src="/images/logo.svg"
-          className="p-2 h-auto m-auto rounded-8px w-48"
-        />
-        <div className="pb-2">
-          <Link as="a" href="/" className="font-medium link">
-            Go back
-          </Link>
-          <Messages messages={messages} />
-          <SettingsCard only="profile" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Profile Settings
-            </h2>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="profile"
-              flow={flow}
-            />
-          </SettingsCard>
-          <SettingsCard only="password" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Change Password
-            </h2>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="password"
-              flow={flow}
-            />
-          </SettingsCard>
-          <SettingsCard only="oidc" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Manage Social Sign In
-            </h2>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="oidc"
-              flow={flow}
-            />
-          </SettingsCard>
-          <SettingsCard only="lookup_secret" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Manage 2FA Backup Recovery Codes
-            </h2>
-            <p>
-              Recovery codes can be used in panic situations where you have lost
-              access to your 2FA device.
-            </p>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="lookup_secret"
-              flow={flow}
-            />
-          </SettingsCard>
-          <SettingsCard only="totp" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Manage 2FA TOTP Authenticator App
-            </h2>
-            <p>
-              Add a TOTP Authenticator App to your account to improve your
-              account security. Popular Authenticator Apps are{" "}
-              <a
-                href="https://www.lastpass.com"
-                rel="noreferrer"
-                target="_blank"
-              >
-                LastPass
-              </a>{" "}
-              and Google Authenticator (
-              <a
-                href="https://apps.apple.com/us/app/google-authenticator/id388497605"
-                target="_blank"
-                rel="noreferrer"
-              >
-                iOS
-              </a>
-              ,{" "}
-              <a
-                href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Android
-              </a>
-              ).
-            </p>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="totp"
-              flow={flow}
-            />
-          </SettingsCard>
-          <SettingsCard only="webauthn" flow={flow}>
-            <h2 className="text-lg font-medium leading-6 text-gray-900">
-              Manage Hardware Tokens and Biometrics
-            </h2>
-            <p>
-              Use Hardware Tokens (e.g. YubiKey) or Biometrics (e.g. FaceID,
-              TouchID) to enhance your account security.
-            </p>
-            <Flow
-              hideGlobalMessages
-              onSubmit={onSubmit}
-              only="webauthn"
-              flow={flow}
-            />
-          </SettingsCard>
-        </div>
+    <div className="flex flex-col h-full w-6/12 m-auto">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt="Mission Control"
+        src="/images/logo.svg"
+        className="p-2 h-auto m-auto rounded-8px w-48"
+      />
+      <div className="pb-2">
+        <a href={returnTo ?? "/"} className="font-medium link">
+          Go back
+        </a>
+        <Messages messages={messages} />
+        <SettingsCard only="profile" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Profile Settings
+          </h2>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="profile"
+            flow={flow}
+          />
+        </SettingsCard>
+        <SettingsCard only="password" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Change Password
+          </h2>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="password"
+            flow={flow}
+          />
+        </SettingsCard>
+        <SettingsCard only="oidc" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Manage Social Sign In
+          </h2>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="oidc"
+            flow={flow}
+          />
+        </SettingsCard>
+        <SettingsCard only="lookup_secret" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Manage 2FA Backup Recovery Codes
+          </h2>
+          <p>
+            Recovery codes can be used in panic situations where you have lost
+            access to your 2FA device.
+          </p>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="lookup_secret"
+            flow={flow}
+          />
+        </SettingsCard>
+        <SettingsCard only="totp" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Manage 2FA TOTP Authenticator App
+          </h2>
+          <p>
+            Add a TOTP Authenticator App to your account to improve your account
+            security. Popular Authenticator Apps are{" "}
+            <a href="https://www.lastpass.com" rel="noreferrer" target="_blank">
+              LastPass
+            </a>{" "}
+            and Google Authenticator (
+            <a
+              href="https://apps.apple.com/us/app/google-authenticator/id388497605"
+              target="_blank"
+              rel="noreferrer"
+            >
+              iOS
+            </a>
+            ,{" "}
+            <a
+              href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Android
+            </a>
+            ).
+          </p>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="totp"
+            flow={flow}
+          />
+        </SettingsCard>
+        <SettingsCard only="webauthn" flow={flow}>
+          <h2 className="text-lg font-medium leading-6 text-gray-900">
+            Manage Hardware Tokens and Biometrics
+          </h2>
+          <p>
+            Use Hardware Tokens (e.g. YubiKey) or Biometrics (e.g. FaceID,
+            TouchID) to enhance your account security.
+          </p>
+          <Flow
+            hideGlobalMessages
+            onSubmit={onSubmit}
+            only="webauthn"
+            flow={flow}
+          />
+        </SettingsCard>
       </div>
     </div>
   );
