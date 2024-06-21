@@ -20,6 +20,8 @@ function TopologyBreadcrumbItem({
 }) {
   const { data: component } = useComponentNameQuery(topologyId, {});
 
+  console.log(component);
+
   if (!component) {
     return null;
   }
@@ -49,9 +51,9 @@ export function TopologyBreadcrumbs({
 
   const ids = useMemo(() => {
     const topologyIds = [
-      ...(component?.path || "").split("."),
-      refererId,
-      topologyId
+      ...(component?.path ? (component.path || "").split(".") : []),
+      ...(refererId ? [refererId] : []),
+      ...(topologyId ? [topologyId] : [])
     ].filter((v) => v?.trim());
     return topologyIds as string[];
   }, [component, topologyId, refererId]);
