@@ -23,7 +23,11 @@ export function prepareConfigsForGraph(
           related_ids: config.related_ids,
           data: {
             type: "config",
-            config: config
+            config: {
+              ...config,
+              // remove self-references
+              related_ids: config.related_ids?.filter((id) => id !== config.id)
+            }
           },
           expanded: false
         } satisfies ConfigGraphNodes
@@ -84,9 +88,10 @@ export function prepareConfigsForGraph(
       // Remove the children from the parent node and add the intermediary node
       const parentConfigNode = configsMap.get(config.id);
       if (parentConfigNode) {
-        const relatedIdsWithoutChildren = parentConfigNode.related_ids?.filter(
-          (id) => !children.map((c) => c.id).includes(id)
-        );
+        const relatedIdsWithoutChildren = parentConfigNode.related_ids
+          ?.filter((id) => !children.map((c) => c.id).includes(id))
+          // remove any children from the node that don't exist in the nodes
+          .filter((id) => configsMap.has(id));
 
         configsMap.set(config.id, {
           ...parentConfigNode,

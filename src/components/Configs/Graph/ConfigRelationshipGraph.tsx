@@ -29,6 +29,8 @@ export type ConfigGraphNodes = {
         numberOfConfigs: number;
       };
   expanded?: boolean;
+  expandable?: boolean;
+  children?: number;
 };
 
 type ConfigGraphProps = {

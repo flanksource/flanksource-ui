@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   ConnectionLineType,
   Controls,
-  DefaultEdgeOptions,
   Edge,
+  EdgeTypes,
   MarkerType,
   Node,
   NodeMouseHandler,
@@ -28,10 +28,13 @@ const nodeTypes: NodeTypes = {
   intermediaryNode: ConfigIntermediaryNodeReactFlowNode
 };
 
+const edgeTypes = {} satisfies EdgeTypes;
+
 const defaultEdgeOptions = {
   type: "smoothstep",
-  markerEnd: { type: MarkerType.ArrowClosed }
-} satisfies DefaultEdgeOptions;
+  markerEnd: { type: MarkerType.ArrowClosed },
+  pathOptions: { offset: 50 }
+};
 
 export type GraphDataGenericConstraint = {
   [key: string]: any;
@@ -117,7 +120,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         zoom: 1,
         y: 0,
         // Calculate the x position of the nodes group to horizontally center it
-        x: (viewPortWidth - nodesGroupWidth) / 2
+        x: (viewPortWidth - nodesGroupWidth) / 3
       });
     } else {
       // Calculate the height of the nodes group
@@ -127,7 +130,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         zoom: 1,
         x: 0,
         // Calculate the y position of the nodes group to vertically center it
-        y: (viewPortHeight - nodesGroupHeight - 100) / 2
+        y: (viewPortHeight - nodesGroupHeight - 100) / 4
       });
     }
   }, [direction, expandEdges, expandNodes, getState, setViewport]);
@@ -135,6 +138,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   useEffect(() => {
     if (!isInitialLayoutSetupDone) {
       sendNodesEdgePoint();
+      // setIsInitialLayoutSetupDone(true);
     }
   }, [isInitialLayoutSetupDone, sendNodesEdgePoint]);
 
@@ -179,9 +183,11 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         connectionLineType={ConnectionLineType.SmoothStep}
         defaultEdgeOptions={defaultEdgeOptions}
         draggable={false}
+        edgeTypes={edgeTypes}
         nodesConnectable={false}
         nodesDraggable={false}
         edgesFocusable={false}
+        onEdgeClick={() => {}}
       >
         <Controls position="top-right">
           <ConfigGraphDirectionToggle />
