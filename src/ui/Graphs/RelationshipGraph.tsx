@@ -69,9 +69,38 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    setNodes(propNodes);
-    setEdges(propEdges);
-  }, [propNodes, propEdges, setNodes, setEdges]);
+    // diff nodes, add only new ones
+    const newNodes = propNodes.filter(
+      (node) => !nodes.find((n) => node.id === n.id)
+    );
+
+    const removedNodesID = nodes
+      .filter((node) => !propNodes.find((pn) => pn.id === node.id))
+      .map((node) => node.id);
+
+    if (newNodes.length > 0 || removedNodesID.length > 0) {
+      setNodes((nodes) => [
+        // If nodes have been removed, remove them from list
+        ...nodes.filter((node) => !removedNodesID.includes(node.id)),
+        // add only new nodes
+        ...newNodes
+      ]);
+    }
+
+    // diff egdes, and only add new ones
+    const newEdges = propEdges.filter(
+      (edge) => !edges.find((e) => e.id === edge.id)
+    );
+    const removeEdgesID = edges
+      .filter((edge) => !propEdges.find((pe) => pe.id === edge.id))
+      .map((edge) => edge.id);
+    if (newEdges.length > 0 || removeEdgesID.length > 0) {
+      setEdges((edges) => [
+        ...edges.filter((edge) => !removeEdgesID.includes(edge.id)),
+        ...newEdges
+      ]);
+    }
+  }, [propNodes, propEdges, setNodes, setEdges, nodes, edges]);
 
   const { nodes: expandNodes, edges: expandEdges } = useExpandCollapse(
     nodes,
@@ -130,7 +159,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         zoom: 1,
         x: 0,
         // Calculate the y position of the nodes group to vertically center it
-        y: (viewPortHeight - nodesGroupHeight - 100) / 4
+        y: (viewPortHeight - nodesGroupHeight - 100) / 2
       });
     }
   }, [direction, expandEdges, expandNodes, getState, setViewport]);

@@ -8,7 +8,6 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
         "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
         "name": "aws-demo-bootstrap",
         "related_ids": [
-          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
           "8aa17279-ead2-4923-9205-e365c0372cf5",
           "962f999c-a9bd-40a4-80bf-47c84b1ad750",
           "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
@@ -87,7 +86,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "e678b215-6421-4038-9e4c-c20ebb843a59",
         "name": "argo-argocd-applicationset-controller-77b7b4f55b-ljd86",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -139,7 +138,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "94f25b55-3a91-40a0-abd3-df91a705dfaa",
         "name": "argo-argocd-applicationset-controller-765b69c7c-vg222",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -153,7 +152,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
         "name": "argo-argocd-applicationset-controller-7df54f78cc",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",
@@ -167,7 +166,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "32fbaf98-9257-4668-92b6-b389fff1d42d",
         "name": "argo-argocd-applicationset-controller-6896bc667f",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",
@@ -204,7 +203,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
         "name": "argo-argocd-applicationset-controller-8576646f48-s7jpf",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -256,7 +255,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
       "config": {
         "id": "f9762c76-52d7-475c-9e0c-5d72466b734e",
         "name": "argo-argocd-applicationset-controller-c49d78678",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",
@@ -334,7 +333,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
         "name": "argo-argocd-notifications-controller-5b67c7675b-4gqpm",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -349,7 +348,6 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
         "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
         "name": "aws-demo-bootstrap",
         "related_ids": [
-          "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
           "8aa17279-ead2-4923-9205-e365c0372cf5",
           "962f999c-a9bd-40a4-80bf-47c84b1ad750",
           "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
@@ -448,7 +446,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
         "name": "argo-argocd-notifications-controller-b9d985cdc",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",
@@ -480,7 +478,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "6c25a469-5230-402d-8902-f678175aa610",
         "name": "argo-argocd-notifications-controller-7946d59c87-wd7g5",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -555,7 +553,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
         "name": "argo-argocd-notifications-controller-6fcf69f85d-fncrg",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::Pod",
       },
       "type": "config",
@@ -569,7 +567,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
         "name": "argo-argocd-notifications-controller-7d6c5f86b9",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",
@@ -605,7 +603,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
       "config": {
         "id": "0d274172-fd9a-42b6-88df-9497219dbd32",
         "name": "argo-argocd-notifications-controller-56f854cd6d",
-        "related_ids": null,
+        "related_ids": undefined,
         "type": "Kubernetes::ReplicaSet",
       },
       "type": "config",

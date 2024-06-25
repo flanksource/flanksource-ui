@@ -72,6 +72,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
         relation: relation
       }),
     enabled: id !== undefined,
+    keepPreviousData: true,
     select: (data) => transformConfigRelationships(data ?? [])
   });
 }
