@@ -10,7 +10,6 @@ import {
   ConfigAnalysis,
   ConfigChange,
   ConfigItem,
-  ConfigRelationships,
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
@@ -384,36 +383,73 @@ export const getConfigsBy = ({
 type GetAConfigRelationshipsParams = {
   configId: string;
   hideDeleted?: boolean;
-  configType?: string;
+  configTypes?: string;
   type_filter?: "all" | "incoming" | "outgoing";
   relation?: "both" | "hard";
+  health?: string;
+  status?: string;
 };
 
 export const getAConfigRelationships = async ({
   configId,
   hideDeleted,
-  configType,
+  configTypes,
   type_filter,
-  relation
+  relation,
+  health,
+  status
 }: GetAConfigRelationshipsParams) => {
-  const configTypeFilter = configType ? `&type=eq.${configType}` : "";
+  const searchParams = new URLSearchParams();
+  searchParams.append("config_id", configId);
+  searchParams.append("include_deleted_configs", `${!hideDeleted}`);
+  searchParams.append("max_depth", "10");
 
-  const typeFilter = type_filter
-    ? `&type_filter=${type_filter}&max_depth=10`
-    : `&max_depth=10`;
+  if (configTypes) {
+    const value = tristateOutputToQueryFilterParam(configTypes, "type")
+      ?.split(",")
+      .map((v) => v.replaceAll("__", "::"))
+      .join(",");
 
-  const kindFilterIncoming =
-    type_filter === "incoming" || type_filter === "all"
-      ? `&incoming_relation=${relation}`
-      : "";
+    if (value) {
+      const [key, values] = value.split("=");
+      searchParams.append(key.replace("&", ""), values);
+    }
+  }
 
-  const kindFilterOutgoing =
-    type_filter === "outgoing" || type_filter === "all"
-      ? `&outgoing_relation=${relation}`
-      : "";
+  if (status) {
+    const value = tristateOutputToQueryFilterParam(status, "status");
+    if (value) {
+      const [key, values] = value.split("=");
+      searchParams.append(key.replace("&", ""), values);
+    }
+  }
 
-  const res = await ConfigDB.get<ConfigRelationships[]>(
-    `/rpc/related_configs_recursive?config_id=${configId}&include_deleted_configs=${!hideDeleted}${typeFilter}${configTypeFilter}${kindFilterIncoming}${kindFilterOutgoing}`
+  if (health) {
+    const value = tristateOutputToQueryFilterParam(health, "health");
+    if (value) {
+      const [key, values] = value.split("=");
+      searchParams.append(key.replace("&", ""), values);
+    }
+  }
+
+  if (type_filter) {
+    searchParams.append("type_filter", type_filter);
+  }
+
+  if (type_filter === "incoming" || type_filter === "all") {
+    if (relation) {
+      searchParams.append("incoming_relation", relation);
+    }
+  }
+
+  if (type_filter === "outgoing" || type_filter === "all") {
+    if (relation) {
+      searchParams.append("outgoing_relation", relation);
+    }
+  }
+
+  const res = await ConfigDB.get<ConfigItem[]>(
+    `/rpc/related_configs_recursive?${searchParams.toString()}`
   );
 
   return res.data ?? [];

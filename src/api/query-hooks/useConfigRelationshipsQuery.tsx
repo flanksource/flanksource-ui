@@ -4,17 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getAConfigRelationships } from "../services/configs";
-import { ConfigRelationships } from "../types/configs";
+import { ConfigItem } from "../types/configs";
 
 export default function useConfigRelationshipsQuery(id: string | undefined) {
   const [searchParams] = useSearchParams();
   const hideDeleted = useHideDeletedConfigs();
-  const configType = searchParams.get("configType") ?? undefined;
   const tag = searchParams.get("tag") ?? undefined;
   const incoming = searchParams.get("incoming") === "true";
   const outgoing = searchParams.get("outgoing") === "true";
   const relation =
     searchParams.get(ConfigRelationKey) === "soft" ? "both" : "hard";
+  const configTypes = searchParams.get("configTypes") ?? undefined;
+  const status = searchParams.get("status") ?? undefined;
+  const health = searchParams.get("health") ?? undefined;
 
   const relationshipType = useMemo(() => {
     const all = incoming && outgoing;
@@ -31,7 +33,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
   }, [incoming, outgoing]);
 
   const transformConfigRelationships = useCallback(
-    (configs: ConfigRelationships[]) =>
+    (configs: ConfigItem[]) =>
       configs.filter((item) => {
         if (
           tag &&
@@ -57,21 +59,26 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
       id,
       hideDeleted,
       tag,
-      configType,
+      configTypes,
       relationshipType,
       relation,
       incoming,
-      outgoing
+      outgoing,
+      status,
+      health
     ],
     queryFn: () =>
       getAConfigRelationships({
         configId: id!,
         type_filter: relationshipType,
-        configType: configType,
+        configTypes: configTypes,
         hideDeleted: hideDeleted,
-        relation: relation
+        relation: relation,
+        status,
+        health
       }),
     enabled: id !== undefined,
+    keepPreviousData: true,
     select: (data) => transformConfigRelationships(data ?? [])
   });
 }

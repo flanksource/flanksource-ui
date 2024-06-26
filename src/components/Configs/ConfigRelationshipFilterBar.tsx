@@ -3,28 +3,27 @@ import ConfigTypesTristateDropdown from "./Changes/ConfigChangesFilters/ConfigTy
 import { ConfigRelationshipToggles } from "./Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
 import { ConfigListToggledDeletedItems } from "./ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGraphTableToggle from "./ConfigsListFilters/ConfigGraphTableToggle";
+import { ConfigHealthyDropdown } from "./ConfigsListFilters/ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigsListFilters/ConfigLabelsDropdown";
-import { ConfigTypesDropdown } from "./ConfigsListFilters/ConfigTypesDropdown";
+import { ConfigStatusDropdown } from "./ConfigsListFilters/ConfigStatusDropdown";
 
-type ConfigRelationshipFilterBarProps = {
-  isGraphView: boolean;
-};
-
-export default function ConfigRelationshipFilterBar({
-  isGraphView
-}: ConfigRelationshipFilterBarProps) {
+export default function ConfigRelationshipFilterBar() {
   return (
     <FormikFilterForm
       paramsToReset={[]}
-      filterFields={["configTypes", "labels", "relationship"]}
+      filterFields={[
+        "configTypes",
+        "labels",
+        "relationship",
+        "status",
+        "health"
+      ]}
     >
-      <div className="flex flex-row items-center gap-2">
-        {isGraphView ? (
-          <ConfigTypesTristateDropdown />
-        ) : (
-          <ConfigTypesDropdown />
-        )}
+      <div className="flex flex-row items-center gap-1">
+        <ConfigTypesTristateDropdown />
         <ConfigLabelsDropdown />
+        <ConfigHealthyDropdown />
+        <ConfigStatusDropdown />
         <ConfigRelationshipToggles />
         <ConfigListToggledDeletedItems />
         <div className="flex-1" />

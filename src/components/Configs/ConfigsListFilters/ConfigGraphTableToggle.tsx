@@ -2,10 +2,15 @@ import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-export type GraphType = "Table" | "Graph"
-export const configRelationshipGraphTableToggle = atomWithStorage<GraphType>("relationshipGraphTableToggle", "Table", undefined, {
-  getOnInit: true
-});
+export type GraphType = "Table" | "Graph";
+export const configRelationshipGraphTableToggle = atomWithStorage<GraphType>(
+  "relationshipGraphTableToggle",
+  "Table",
+  undefined,
+  {
+    getOnInit: true
+  }
+);
 
 export function useConfigGraphTableToggleViewValue() {
   const [hideDeletedConfigs] = useAtom(configRelationshipGraphTableToggle);

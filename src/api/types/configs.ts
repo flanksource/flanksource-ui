@@ -48,7 +48,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   status?: string;
   external_id?: string;
   config_class?: string;
-  type?: string;
+  type: string;
   changes?: Change[];
   analysis?: Analysis[];
   tags?: Record<string, any>;
@@ -87,13 +87,6 @@ export interface ConfigItemGraphData extends ConfigItem {
   expandable?: boolean;
   items?: Pick<ConfigItem, "type">[];
   isIntermediaryNode?: boolean;
-}
-
-export interface ConfigRelationships extends ConfigItem {
-  direction: "incoming" | "outgoing";
-  relation_type?: string;
-  depth?: number;
-  ready?: boolean;
 }
 
 export interface ConfigTypeRelationships extends Timestamped {

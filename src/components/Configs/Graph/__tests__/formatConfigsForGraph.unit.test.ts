@@ -1,116 +1,138 @@
-import {
-  ConfigItem,
-  ConfigRelationships
-} from "@flanksource-ui/api/types/configs";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { prepareConfigsForGraph } from "../formatConfigsForGraph";
-import {
-  applicationSetController,
-  applicationSetControllerRootConfig
-} from "./mocks/argo-argocd-applicationset-controller";
-import {
-  argoArgocdNotificationsController,
-  argoArgocdNotificationsControllerRoot
-} from "./mocks/argo-argocd-notifications-controller";
+import { applicationSetController } from "./mocks/argo-argocd-applicationset-controller";
+import { argoArgocdNotificationsController } from "./mocks/argo-argocd-notifications-controller";
 
 // Test data for ConfigRelationships
 const configs: Pick<
-  ConfigRelationships,
-  "id" | "related_ids" | "direction" | "type"
+  ConfigItem,
+  | "id"
+  | "related_ids"
+  | "type"
+  | "health"
+  | "deleted_at"
+  | "name"
+  | "status"
+  | "tags"
 >[] = [
   {
     id: "1",
     related_ids: ["2"],
-    direction: "outgoing",
+    name: "config1",
+    status: "active",
     type: "type1"
   },
   {
     id: "2",
     related_ids: ["3"],
-    direction: "incoming",
+    name: "config2",
     type: "type2"
   },
   {
     id: "3",
     related_ids: ["1"],
-    direction: "outgoing",
+    name: "config3",
     type: "type3"
+  },
+  {
+    id: "4",
+    related_ids: ["1"],
+    type: "type4",
+    name: "config-current"
   }
 ];
 
-// Test data for ConfigItem
-const currentConfig: Pick<ConfigItem, "id" | "related_ids" | "type"> = {
-  id: "4",
-  related_ids: ["1"],
-  type: "type4"
-};
-
 test("prepareConfigsForGraph should return transformedConfigs", () => {
-  const res = prepareConfigsForGraph(configs, currentConfig);
+  const res = prepareConfigsForGraph(configs);
   expect(res).toMatchInlineSnapshot(`
     [
       {
-        "config": {
-          "direction": "outgoing",
-          "id": "1",
-          "related_ids": [
-            "2",
-          ],
-          "type": "type1",
+        "data": {
+          "config": {
+            "id": "1",
+            "name": "config1",
+            "related_ids": [
+              "2",
+            ],
+            "status": "active",
+            "type": "type1",
+          },
+          "type": "config",
         },
-        "nodeType": "config",
+        "expanded": false,
+        "nodeId": "1",
+        "related_ids": [
+          "2",
+        ],
       },
       {
-        "config": {
-          "direction": "incoming",
-          "id": "2",
-          "related_ids": [
-            "3",
-          ],
-          "type": "type2",
+        "data": {
+          "config": {
+            "id": "2",
+            "name": "config2",
+            "related_ids": [
+              "3",
+            ],
+            "type": "type2",
+          },
+          "type": "config",
         },
-        "nodeType": "config",
+        "expanded": false,
+        "nodeId": "2",
+        "related_ids": [
+          "3",
+        ],
       },
       {
-        "config": {
-          "direction": "outgoing",
-          "id": "3",
-          "related_ids": [
-            "1",
-          ],
-          "type": "type3",
+        "data": {
+          "config": {
+            "id": "3",
+            "name": "config3",
+            "related_ids": [
+              "1",
+            ],
+            "type": "type3",
+          },
+          "type": "config",
         },
-        "nodeType": "config",
+        "expanded": false,
+        "nodeId": "3",
+        "related_ids": [
+          "1",
+        ],
       },
       {
-        "config": {
-          "id": "4",
-          "related_ids": [
-            "1",
-          ],
-          "type": "type4",
+        "data": {
+          "config": {
+            "id": "4",
+            "name": "config-current",
+            "related_ids": [
+              "1",
+            ],
+            "type": "type4",
+          },
+          "type": "config",
         },
-        "nodeType": "config",
+        "expanded": false,
+        "nodeId": "4",
+        "related_ids": [
+          "1",
+        ],
       },
     ]
   `);
 });
 
 test("prepareConfigsForGraph should return formatted config for argo-argocd-notifications-controller", () => {
-  const res = prepareConfigsForGraph(
-    argoArgocdNotificationsController,
-    argoArgocdNotificationsControllerRoot
-  );
+  const res = prepareConfigsForGraph(argoArgocdNotificationsController as any);
   // should add an intermediary node and a root node
-  expect(res.length).toEqual(argoArgocdNotificationsController.length + 2);
+  expect(res.length).toEqual(argoArgocdNotificationsController.length + 1);
   expect(res).toMatchSnapshot();
 });
 
 test("prepareConfigsForGraph should return formatted config for argo-argocd-applicationset-controller-764547bfd6", () => {
-  const res = prepareConfigsForGraph(
-    applicationSetController,
-    applicationSetControllerRootConfig
-  );
+  const res = prepareConfigsForGraph(applicationSetController as any);
   // should add an intermediary node and a root node
-  expect(res.length).toEqual(argoArgocdNotificationsController.length + 2);
+  expect(res.length).toEqual(argoArgocdNotificationsController.length + 1);
   expect(res).toMatchSnapshot();
 });

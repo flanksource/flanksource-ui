@@ -3,6 +3,7 @@ import ReactFlow, {
   ConnectionLineType,
   Controls,
   Edge,
+  EdgeTypes,
   MarkerType,
   Node,
   NodeMouseHandler,
@@ -14,6 +15,7 @@ import ReactFlow, {
   useStoreApi
 } from "reactflow";
 
+import ConfigGraphDirectionToggle from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigGraphDirectionToggle";
 import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigIntermediaryNodeReactFlowNode";
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
 import "reactflow/dist/style.css";
@@ -26,10 +28,12 @@ const nodeTypes: NodeTypes = {
   intermediaryNode: ConfigIntermediaryNodeReactFlowNode
 };
 
+const edgeTypes = {} satisfies EdgeTypes;
+
 const defaultEdgeOptions = {
   type: "smoothstep",
   markerEnd: { type: MarkerType.ArrowClosed },
-  pathOptions: { offset: 5 }
+  pathOptions: { offset: 50 }
 };
 
 export type GraphDataGenericConstraint = {
@@ -41,11 +45,13 @@ export type GraphDataGenericConstraint = {
 type ConfigGraphProps<T extends GraphDataGenericConstraint> = {
   nodes: Node<T>[];
   edges: Edge<T>[];
+  direction?: "LR" | "TB";
 };
 
 export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   nodes: propNodes,
-  edges: propEdges
+  edges: propEdges,
+  direction = "LR"
 }: ConfigGraphProps<T>) {
   const { setViewport, fitView, getZoom } = useReactFlow();
 
@@ -63,13 +69,45 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    setNodes(propNodes);
-    setEdges(propEdges);
-  }, [propNodes, propEdges, setNodes, setEdges]);
+    // diff nodes, add only new ones
+    const newNodes = propNodes.filter(
+      (node) => !nodes.find((n) => node.id === n.id)
+    );
+
+    const removedNodesID = nodes
+      .filter((node) => !propNodes.find((pn) => pn.id === node.id))
+      .map((node) => node.id);
+
+    if (newNodes.length > 0 || removedNodesID.length > 0) {
+      setNodes((nodes) => [
+        // If nodes have been removed, remove them from list
+        ...nodes.filter((node) => !removedNodesID.includes(node.id)),
+        // add only new nodes
+        ...newNodes
+      ]);
+    }
+
+    // diff egdes, and only add new ones
+    const newEdges = propEdges.filter(
+      (edge) => !edges.find((e) => e.id === edge.id)
+    );
+    const removeEdgesID = edges
+      .filter((edge) => !propEdges.find((pe) => pe.id === edge.id))
+      .map((edge) => edge.id);
+    if (newEdges.length > 0 || removeEdgesID.length > 0) {
+      setEdges((edges) => [
+        ...edges.filter((edge) => !removeEdgesID.includes(edge.id)),
+        ...newEdges
+      ]);
+    }
+  }, [propNodes, propEdges, setNodes, setEdges, nodes, edges]);
 
   const { nodes: expandNodes, edges: expandEdges } = useExpandCollapse(
     nodes,
-    edges
+    edges,
+    {
+      direction
+    }
   );
 
   const { nodes: nodesAnimated } = useAnimatedNodes(expandNodes, {
@@ -103,20 +141,33 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
     const rootNodes = expandNodes.filter(
       (node) => !expandEdges.some((edge) => edge.target === node.id)
     );
-    // Calculate the height of the nodes group
-    const { height: nodesGroupHeight } = getNodesBounds(rootNodes);
-    const { height: viewPortHeight } = getState();
-    setViewport({
-      zoom: 1,
-      x: 0,
-      // Calculate the y position of the nodes group to vertically center it
-      y: (viewPortHeight - nodesGroupHeight - 100) / 2
-    });
-  }, [expandEdges, expandNodes, getState, setViewport]);
+    if (direction === "TB") {
+      // Calculate the width of the nodes group
+      const { width: nodesGroupWidth } = getNodesBounds(rootNodes);
+      const { width: viewPortWidth } = getState();
+      setViewport({
+        zoom: 1,
+        y: 0,
+        // Calculate the x position of the nodes group to horizontally center it
+        x: (viewPortWidth - nodesGroupWidth) / 3
+      });
+    } else {
+      // Calculate the height of the nodes group
+      const { height: nodesGroupHeight } = getNodesBounds(rootNodes);
+      const { height: viewPortHeight } = getState();
+      setViewport({
+        zoom: 1,
+        x: 0,
+        // Calculate the y position of the nodes group to vertically center it
+        y: (viewPortHeight - nodesGroupHeight - 100) / 2
+      });
+    }
+  }, [direction, expandEdges, expandNodes, getState, setViewport]);
 
   useEffect(() => {
     if (!isInitialLayoutSetupDone) {
       sendNodesEdgePoint();
+      // setIsInitialLayoutSetupDone(true);
     }
   }, [isInitialLayoutSetupDone, sendNodesEdgePoint]);
 
@@ -161,11 +212,15 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         connectionLineType={ConnectionLineType.SmoothStep}
         defaultEdgeOptions={defaultEdgeOptions}
         draggable={false}
+        edgeTypes={edgeTypes}
         nodesConnectable={false}
         nodesDraggable={false}
         edgesFocusable={false}
+        onEdgeClick={() => {}}
       >
-        <Controls position="top-right" />
+        <Controls position="top-right">
+          <ConfigGraphDirectionToggle />
+        </Controls>
       </ReactFlow>
     </div>
   );

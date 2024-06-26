@@ -1,197 +1,105 @@
-import {
-  ConfigItem,
-  ConfigRelationships
-} from "@flanksource-ui/api/types/configs";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { ConfigGraphNodes } from "./ConfigRelationshipGraph";
-
-export function checkIfConfigHasMoreThan3Siblings(
-  configList: Pick<
-    ConfigRelationships,
-    "id" | "related_ids" | "direction" | "type"
-  >[],
-  configItem: Pick<
-    ConfigRelationships,
-    "id" | "related_ids" | "direction" | "type"
-  >
-) {
-  return (
-    configList.filter((config) => {
-      let relatedIdExistsInBoth = false;
-      config.related_ids?.forEach((relatedId) => {
-        relatedIdExistsInBoth =
-          configItem.related_ids?.includes(relatedId) ?? false;
-      });
-      return relatedIdExistsInBoth && config.direction === configItem.direction;
-    }).length > 3
-  );
-}
-
-export function shouldCreateRootIntermediaryNode(
-  configList: Pick<
-    ConfigRelationships,
-    "id" | "related_ids" | "direction" | "type"
-  >[],
-  configItem: Pick<
-    ConfigRelationships,
-    "id" | "related_ids" | "direction" | "type"
-  >
-) {
-  const types = configList
-    .filter(
-      (config) =>
-        config.related_ids?.includes(configItem.id) &&
-        config.direction === "outgoing"
-    )
-    .reduce((acc, config) => {
-      acc.add(config.type);
-      return acc;
-    }, new Set<string | undefined>());
-
-  return types.size > 1;
-}
 
 export function prepareConfigsForGraph(
   configs: Pick<
-    ConfigRelationships,
-    "id" | "related_ids" | "direction" | "type"
-  >[],
-  currentConfig: Pick<ConfigItem, "id" | "related_ids" | "type">
+    ConfigItem,
+    | "id"
+    | "related_ids"
+    | "type"
+    | "health"
+    | "deleted_at"
+    | "name"
+    | "status"
+    | "tags"
+  >[]
 ) {
-  const transformedConfigs: ConfigGraphNodes[] = [];
+  const configsMap = new Map<string, ConfigGraphNodes>(
+    configs.map((config) => {
+      return [
+        config.id,
+        {
+          nodeId: config.id,
+          related_ids: config.related_ids,
+          data: {
+            type: "config",
+            config: {
+              ...config,
+              // remove self-references
+              related_ids: config.related_ids?.filter((id) => id !== config.id)
+            }
+          },
+          expanded: false
+        } satisfies ConfigGraphNodes
+      ];
+    })
+  );
 
-  const allConfigs = [
-    ...configs,
-    {
-      ...currentConfig
-    } as ConfigRelationships
-  ];
+  /**
+   * @Notes:
+   * Relationship flows from parent to child, with related_ids being the
+   * children of the parent.
+   */
+  configs.forEach((config) => {
+    // First, we find the children of the current config
+    const currentConfigsChildren = configs?.filter((c) =>
+      config.related_ids?.includes(c.id)
+    );
 
-  allConfigs.forEach((config) => {
-    // if config is in the transformedConfigs, skip
-    if (
-      transformedConfigs.find(
-        (node) => node.nodeType === "config" && node.config.id === config.id
-      )
-    ) {
+    // If only 1 child, we don't need to create an intermediary node
+    if (currentConfigsChildren.length < 2) {
       return;
     }
 
-    // first, determine direct children of a config, based on direction
-    // second, determine if a config has more than three children
-    // if so, create an intermediary node, replace related_id with
-    // intermediary node id
-    const childrenConfigs = allConfigs.filter(
-      (configItem) =>
-        configItem.related_ids?.includes(config.id) &&
-        configItem.direction === "outgoing"
+    // Then, we group the children by their type, to create intermediary nodes
+    const groupChildrenByConfigType = currentConfigsChildren.reduce(
+      (acc, c) => {
+        if (!acc[c.type]) {
+          acc[c.type] = [];
+        }
+        acc[c.type].push(c);
+        return acc;
+      },
+      {} as Record<string, ConfigItem[]>
     );
 
-    if (childrenConfigs.length < 4) {
-      // if there are less than three related configs, just push the current
-      // config to the transformedConfigs
-      if (!checkIfConfigHasMoreThan3Siblings(allConfigs, config)) {
-        transformedConfigs.push({
-          nodeType: "config",
-          config: config as ConfigRelationships
-        } satisfies ConfigGraphNodes);
+    // for each type, with more than 1 child, create an intermediary node
+    Object.entries(groupChildrenByConfigType).forEach(([type, children]) => {
+      // If there is less than 3 children, we don't need to create an intermediary
+      if (children.length < 3) {
+        return;
       }
-    } else {
-      // When a root config can have multiple children of the same type
-      // and we need to create an intermediary node to connect the children to
-      // the root config
-      const createRootIntermediaryNode = shouldCreateRootIntermediaryNode(
-        allConfigs,
-        config
-      );
-      // if it's a root config, we need to create an intermediary node that
-      // the 3+ children will connect to
-      const rootConfigIntermediaryNodeID = createRootIntermediaryNode
-        ? `${config.id}-root-intermediary`
-        : undefined;
+      const typeGroupNodeId = `${config.id}-${type}-intermediary`;
+      const intermediaryNode: ConfigGraphNodes = {
+        nodeId: typeGroupNodeId,
+        // The intermediary node should be related to the parent children, for
+        // the type
+        related_ids: children.map((c) => c.id),
+        data: {
+          type: "intermediary",
+          numberOfConfigs: children.length,
+          configType: type
+        },
+        expanded: false
+      };
 
-      if (rootConfigIntermediaryNodeID) {
-        transformedConfigs.push({
-          nodeType: "intermediary",
-          direction: "root" as any,
-          id: rootConfigIntermediaryNodeID,
-          related_id: config.id,
-          configType: config.type!,
-          configs: childrenConfigs as ConfigRelationships[]
-        } satisfies ConfigGraphNodes);
+      configsMap.set(typeGroupNodeId, intermediaryNode);
+
+      // Remove the children from the parent node and add the intermediary node
+      const parentConfigNode = configsMap.get(config.id);
+      if (parentConfigNode) {
+        const relatedIdsWithoutChildren = parentConfigNode.related_ids
+          ?.filter((id) => !children.map((c) => c.id).includes(id))
+          // remove any children from the node that don't exist in the nodes
+          .filter((id) => configsMap.has(id));
+
+        configsMap.set(config.id, {
+          ...parentConfigNode,
+          related_ids: [...(relatedIdsWithoutChildren || []), typeGroupNodeId]
+        });
       }
-
-      childrenConfigs.forEach((child) => {
-        const intermediaryNodeID = `${config.id}-${
-          config.direction ?? "root"
-        }-${child.type}`;
-
-        // determine the number of children the config has, based on the type
-        const siblingsConfigByType = allConfigs.filter(
-          (configItem) =>
-            configItem.related_ids?.includes(config.id) &&
-            configItem.direction === "outgoing" &&
-            configItem.type === child.type
-        );
-
-        // if the config only has one child, push the child to the
-        // transformedConfigs, no need to create an intermediary node
-        if (siblingsConfigByType.length > 1) {
-          if (
-            !transformedConfigs.find(
-              (node) =>
-                node.nodeType === "intermediary" &&
-                node.id === intermediaryNodeID
-            )
-          ) {
-            // This is incorrect, we need to do this based on the child configs and
-            // not the parent config
-            transformedConfigs.push({
-              nodeType: "intermediary",
-              direction: config.direction!,
-              // we need to create a unique id for the intermediary node, based on
-              // the config id and type
-              id: intermediaryNodeID,
-              // for related_id, we need to use related_id, so can place the
-              // intermediary node in between the related configs
-              related_id: rootConfigIntermediaryNodeID ?? config.id!,
-              configType: child.type!,
-              configs: siblingsConfigByType.filter(
-                (c) => c.type === child.type
-              ) as ConfigRelationships[]
-            } satisfies ConfigGraphNodes);
-          }
-
-          // replace related_id with intermediary node id
-          transformedConfigs.push({
-            nodeType: "config",
-            config: {
-              ...(child as ConfigRelationships),
-              related_ids: [intermediaryNodeID]
-            }
-          });
-        } else {
-          // if there are less than three related configs, just push the current
-          // config to the transformedConfigs
-          transformedConfigs.push({
-            nodeType: "config",
-            config: {
-              ...(child as ConfigRelationships),
-              related_ids: [rootConfigIntermediaryNodeID ?? config.id]
-            }
-          } satisfies ConfigGraphNodes);
-        }
-      });
-
-      // Push the root config to the transformedConfigs
-      if (config.id === currentConfig.id) {
-        transformedConfigs.push({
-          nodeType: "config",
-          config: {
-            ...(config as ConfigRelationships)
-          }
-        } satisfies ConfigGraphNodes);
-      }
-    }
+    });
   });
-  return transformedConfigs;
+
+  return Array.from(configsMap.values());
 }

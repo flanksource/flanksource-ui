@@ -2,7 +2,7 @@ import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
 import { FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Handle, NodeProps } from "reactflow";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { ConfigGraphNodes } from "./ConfigRelationshipGraph";
@@ -22,9 +22,15 @@ export function ConfigItemReactFlowNode({
   sourcePosition,
   targetPosition
 }: NodeProps<ConfigGraphNodes>) {
-  if (data.nodeType === "intermediary") {
+  const [searchParams] = useSearchParams({
+    outgoing: "true"
+  });
+
+  if (data.data.type === "intermediary") {
     return null;
   }
+
+  const config = data.data.config;
 
   return (
     <>
@@ -37,25 +43,26 @@ export function ConfigItemReactFlowNode({
       <div
         className={clsx(
           "flex flex-col w-96 gap-2 rounded-8px mb-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
-          (data.config.status
-            ? StatusStyles[data.config.status as ConfigStatus]
+          (config.status
+            ? StatusStyles[config.status as ConfigStatus]
             : "border-white") || "border-white"
         )}
       >
         <div className="flex flex-col gap-2 bg-white border-b rounded-t-md p-2">
           <div
             className="flex flex-col font-bold flex-1 overflow-hidden truncate text-ellipsis align-middle text-15pxinrem leading-1.21rel"
-            title={data.config.name}
+            title={config.name}
           >
             <Link
               to={{
-                pathname: `/catalog/${data.config.id}/relationships`
+                pathname: `/catalog/${config.id}/relationships`,
+                search: searchParams.toString()
               }}
               className={clsx("flex flex-row gap-2")}
             >
-              <ConfigsTypeIcon config={data.config}>
+              <ConfigsTypeIcon config={config}>
                 <span className="block overflow-hidden text-ellipsis flex-1">
-                  {data.config.name}
+                  {config.name}
                 </span>
               </ConfigsTypeIcon>
             </Link>
@@ -63,27 +70,25 @@ export function ConfigItemReactFlowNode({
         </div>
         <div className="flex flex-column bg-lightest-gray rounded-b-8px p-1">
           <div className="flex flex-wrap items-center gap-1 text-gray-500">
-            {data.config.health &&
-              data.config.status &&
-              !data.config.deleted_at && (
-                <Badge
-                  color="gray"
-                  text={
-                    <Status
-                      status={data.config.health}
-                      statusText={data.config.status}
-                      className="text-xs"
-                    />
-                  }
-                />
-              )}
-            {data.config.deleted_at && (
+            {config.health && config.status && !config.deleted_at && (
+              <Badge
+                color="gray"
+                text={
+                  <Status
+                    status={config.health}
+                    statusText={config.status}
+                    className="text-xs"
+                  />
+                }
+              />
+            )}
+            {config.deleted_at && (
               <Badge
                 color="gray"
                 text={
                   <>
                     <FaTrash className="text-red-500" />
-                    <span className="text-red-500">{data.config.status}</span>
+                    <span className="text-red-500">{config.status}</span>
                   </>
                 }
               />
@@ -92,24 +97,24 @@ export function ConfigItemReactFlowNode({
               color="gray"
               text={
                 <ConfigsTypeIcon
-                  config={data.config}
+                  config={config}
                   showLabel
                   showPrimaryIcon={false}
                   showSecondaryIcon={false}
                 />
               }
             />
-            {data.config.tags && (
+            {config.tags && (
               <>
-                {data.config.tags.namespace && (
+                {config.tags.namespace && (
                   <Badge
                     color="gray"
                     className="min-w-min"
-                    text={data.config.tags.namespace}
+                    text={config.tags.namespace}
                   />
                 )}
-                {data.config.tags.cluster && (
-                  <Badge color="gray" text={data.config.tags.cluster} />
+                {config.tags.cluster && (
+                  <Badge color="gray" text={config.tags.cluster} />
                 )}
               </>
             )}
