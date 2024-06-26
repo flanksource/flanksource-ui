@@ -15,6 +15,8 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
   const relation =
     searchParams.get(ConfigRelationKey) === "soft" ? "both" : "hard";
   const configTypes = searchParams.get("configTypes") ?? undefined;
+  const status = searchParams.get("status") ?? undefined;
+  const health = searchParams.get("health") ?? undefined;
 
   const relationshipType = useMemo(() => {
     const all = incoming && outgoing;
@@ -61,7 +63,9 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
       relationshipType,
       relation,
       incoming,
-      outgoing
+      outgoing,
+      status,
+      health
     ],
     queryFn: () =>
       getAConfigRelationships({
@@ -69,7 +73,9 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
         type_filter: relationshipType,
         configTypes: configTypes,
         hideDeleted: hideDeleted,
-        relation: relation
+        relation: relation,
+        status,
+        health
       }),
     enabled: id !== undefined,
     keepPreviousData: true,

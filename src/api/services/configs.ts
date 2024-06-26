@@ -386,6 +386,8 @@ type GetAConfigRelationshipsParams = {
   configTypes?: string;
   type_filter?: "all" | "incoming" | "outgoing";
   relation?: "both" | "hard";
+  health?: string;
+  status?: string;
 };
 
 export const getAConfigRelationships = async ({
@@ -393,7 +395,9 @@ export const getAConfigRelationships = async ({
   hideDeleted,
   configTypes,
   type_filter,
-  relation
+  relation,
+  health,
+  status
 }: GetAConfigRelationshipsParams) => {
   const searchParams = new URLSearchParams();
   searchParams.append("config_id", configId);
@@ -408,7 +412,22 @@ export const getAConfigRelationships = async ({
 
     if (value) {
       const [key, values] = value.split("=");
-      console.log(key, values);
+      searchParams.append(key.replace("&", ""), values);
+    }
+  }
+
+  if (status) {
+    const value = tristateOutputToQueryFilterParam(status, "status");
+    if (value) {
+      const [key, values] = value.split("=");
+      searchParams.append(key.replace("&", ""), values);
+    }
+  }
+
+  if (health) {
+    const value = tristateOutputToQueryFilterParam(health, "health");
+    if (value) {
+      const [key, values] = value.split("=");
       searchParams.append(key.replace("&", ""), values);
     }
   }
