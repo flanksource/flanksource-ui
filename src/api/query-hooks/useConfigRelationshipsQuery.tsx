@@ -9,12 +9,12 @@ import { ConfigItem } from "../types/configs";
 export default function useConfigRelationshipsQuery(id: string | undefined) {
   const [searchParams] = useSearchParams();
   const hideDeleted = useHideDeletedConfigs();
-  const configType = searchParams.get("configType") ?? undefined;
   const tag = searchParams.get("tag") ?? undefined;
   const incoming = searchParams.get("incoming") === "true";
   const outgoing = searchParams.get("outgoing") === "true";
   const relation =
     searchParams.get(ConfigRelationKey) === "soft" ? "both" : "hard";
+  const configTypes = searchParams.get("configTypes") ?? undefined;
 
   const relationshipType = useMemo(() => {
     const all = incoming && outgoing;
@@ -57,7 +57,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
       id,
       hideDeleted,
       tag,
-      configType,
+      configTypes,
       relationshipType,
       relation,
       incoming,
@@ -67,7 +67,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
       getAConfigRelationships({
         configId: id!,
         type_filter: relationshipType,
-        configType: configType,
+        configTypes: configTypes,
         hideDeleted: hideDeleted,
         relation: relation
       }),
