@@ -72,7 +72,7 @@ export function ConfigRelationshipGraph({ configs }: ConfigGraphProps) {
     });
   }, [configsForGraph]);
 
-  if (nodes.length === 0 || edges.length === 0) {
+  if (nodes.length === 0) {
     return null;
   }
 
