@@ -61,9 +61,8 @@ function useExpandCollapse(
       .setDefaultEdgeLabel(() => ({}))
       .setGraph({
         rankdir: direction,
-        edgesep: 250,
-        nodesep: 100,
-        ranksep: 110,
+        ranksep: 120,
+        edgesep: 120,
         width: 400,
         height: 100
       });

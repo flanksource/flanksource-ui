@@ -188,7 +188,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
           return n;
         })
       );
-      setTimeout(() => centerNodeToViewport(node), 350);
+      setTimeout(() => centerNodeToViewport(node), 300);
     },
     [centerNodeToViewport, setNodes]
   );
