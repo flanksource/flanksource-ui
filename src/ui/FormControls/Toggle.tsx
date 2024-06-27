@@ -11,18 +11,23 @@ type Props = {
   onChange?: (value: boolean) => void;
   help?: string;
   label?: string;
-};
+  disabled?: boolean;
+  hint?: string;
+} & Omit<React.ComponentProps<typeof Switch>, "value" | "onChange">;
 
 export function Toggle({
   value = false,
   className = "flex items-center break-all",
   label,
   help,
-  onChange = () => {}
+  onChange = () => {},
+  hint,
+  ...props
 }: Props) {
   return (
-    <Switch.Group as="div" className={className}>
+    <Switch.Group as="div" title={hint} className={className}>
       <Switch
+        {...props}
         checked={value}
         onChange={onChange}
         className={classNames(
