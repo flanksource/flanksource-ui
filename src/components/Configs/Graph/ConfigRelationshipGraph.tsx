@@ -21,6 +21,7 @@ export type ConfigGraphNodes = {
           | "name"
           | "status"
           | "tags"
+          | "changes"
         >;
       }
     | {

@@ -49,7 +49,6 @@ export function ConfigIntermediaryNodeReactFlowNode({
                     color="gray"
                     text={
                       <span className="text-left">
-                        {" "}
                         {data.data.numberOfConfigs}
                       </span>
                     }
