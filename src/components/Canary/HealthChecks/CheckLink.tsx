@@ -6,7 +6,7 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { HealthCheckStatus } from "../../Status/HealthCheckStatus";
 
 type CheckLinkProps = {
-  check?: HealthCheckSummary;
+  check?: Pick<HealthCheckSummary, "type" | "name" | "id" | "status">;
   checkId?: string;
 };
 
