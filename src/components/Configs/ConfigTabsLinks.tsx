@@ -46,6 +46,16 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
       ),
       key: "Playbooks",
       path: `/catalog/${id}/playbooks`
+    },
+    {
+      label: (
+        <>
+          Checks
+          <Badge className="ml-1" text={countSummary?.checks ?? 0} />
+        </>
+      ),
+      key: "Checks",
+      path: `/catalog/${id}/checks`
     }
   ];
 }

@@ -22,7 +22,8 @@ type ConfigDetailsTabsProps = {
     | "Changes"
     | "Insights"
     | "Relationships"
-    | "Playbooks";
+    | "Playbooks"
+    | "Checks";
   className?: string;
 };
 
@@ -48,7 +49,6 @@ export function ConfigDetailsTabs({
   return (
     <>
       <Head
-        // todo, default to prefix
         prefix={configItem ? `${pageTitlePrefix} - ${configItem.name}` : ""}
       />
       <SearchLayout
