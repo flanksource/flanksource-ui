@@ -9,6 +9,7 @@ import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
   ConfigChange,
+  ConfigHealthCheckView,
   ConfigItem,
   ConfigSummary,
   ConfigTypeRelationships
@@ -452,6 +453,13 @@ export const getAConfigRelationships = async ({
     `/rpc/related_configs_recursive?${searchParams.toString()}`
   );
 
+  return res.data ?? [];
+};
+
+export const getConfigChecks = async (configId: string) => {
+  const res = await IncidentCommander.get<ConfigHealthCheckView[]>(
+    `/check_summary_for_config?config_id=eq.${configId}`
+  );
   return res.data ?? [];
 };
 

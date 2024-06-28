@@ -58,6 +58,7 @@ import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
+import { ConfigDetailsChecksPage } from "./pages/config/details/ConfigDetailsChecksPage";
 import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsInsightsPage";
 import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
 import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelationshipsPage";
@@ -497,6 +498,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="playbooks"
             element={withAccessCheck(
               <ConfigDetailsPlaybooksPage />,
+              tables.database,
+              "read"
+            )}
+          />
+          <Route
+            path="checks"
+            element={withAccessCheck(
+              <ConfigDetailsChecksPage />,
               tables.database,
               "read"
             )}

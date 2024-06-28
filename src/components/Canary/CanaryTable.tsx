@@ -42,6 +42,7 @@ type CanaryChecksProps = {
   hideNamespacePrefix?: boolean;
   groupSingleItems?: boolean;
   theadStyle?: React.CSSProperties;
+  noGrouping?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function CanaryTable({
@@ -85,10 +86,10 @@ export function CanaryTable({
     pivotBy !== "none";
 
   return (
-    <Table
+    <ChecksTable
       data={rows}
       labels={labels}
-      pivotCellType={shouldPivot ? pivotCellType : null}
+      pivotCellType={shouldPivot ? pivotCellType : undefined}
       onHealthCheckClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
       groupBy={groupBy}
@@ -100,10 +101,10 @@ export function CanaryTable({
   );
 }
 
-type TableProps = {
+type ChecksTableProps = {
   data: any[];
   labels?: string[];
-  pivotCellType: string | null;
+  pivotCellType?: string;
   hasGrouping: boolean;
   onHealthCheckClick: (check: HealthCheck) => void;
   showNamespaceTags?: boolean;
@@ -113,7 +114,7 @@ type TableProps = {
   isLoading?: boolean;
 };
 
-export function Table({
+export function ChecksTable({
   data,
   labels,
   pivotCellType,
@@ -125,7 +126,7 @@ export function Table({
   groupBy = "canary_name",
   isLoading = false,
   ...rest
-}: TableProps) {
+}: ChecksTableProps) {
   const [params, setParams] = useSearchParams();
 
   const sortByValue = params.get("sortBy") || "name";
