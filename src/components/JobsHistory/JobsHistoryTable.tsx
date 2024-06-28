@@ -40,6 +40,10 @@ export type JobHistory = {
   time_end: string;
   created_at: string;
   resource_name: string;
+  agent?: {
+    id: string;
+    name: string;
+  };
 };
 
 type JobsHistoryTableProps = {

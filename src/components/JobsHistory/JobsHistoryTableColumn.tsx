@@ -62,6 +62,27 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     }
   },
   {
+    header: "Agent",
+    accessorKey: "agent",
+    enableSorting: false,
+    cell: ({ getValue }) => {
+      const agent = getValue<JobHistory["agent"]>();
+
+      if (!agent) {
+        return null;
+      }
+
+      return (
+        <Link to={`/settings/agents?id=${agent.id}`} className="text-blue-500">
+          {agent.name}
+        </Link>
+      );
+    },
+    id: "agent",
+    minSize: 20,
+    maxSize: 60
+  },
+  {
     header: "Resource",
     id: "resource_name",
     minSize: 150,
