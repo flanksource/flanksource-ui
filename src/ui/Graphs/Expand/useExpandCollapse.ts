@@ -19,19 +19,17 @@ function filterCollapsedChildren(
 
   // Only intermediary nodes can be expanded or collapsed, everything else is
   // expanded by default.
-  // Update this node's props so it knows if it has children and can be expanded
-  // or not.
   node.data.expandable = node.data.data.type === "intermediary";
 
   // debugging purposes
-  node.data.children = children ? children.length : 0;
+  node.data.childrenCount = children ? children.length : 0;
 
   // for children with two or less nodes, we want to expand them by default
   node.data.expanded =
     children && children?.length <= 3 ? true : node.data.expanded;
 
   if (children && children?.length > 1) {
-    // If the node is collpased (ie it is not expanded) then we want to remove all
+    // If the node is collapsed (ie it is not expanded) then we want to remove all
     // of its children from the graph *and* any of their children.
     // Please note, only intermediary nodes can be expanded or collapsed,
     // everything else is expanded by default.
@@ -62,9 +60,11 @@ function useExpandCollapse(
       .setGraph({
         rankdir: direction,
         ranksep: 120,
-        edgesep: 120,
+        // edgesep: 30,
+        nodesep: 100,
         width: 400,
-        height: 100
+        height: 100,
+        ranker: "tight-tree"
       });
 
     // 2. Add each node and edge to the dagre graph. Instead of using each node's
