@@ -27,11 +27,10 @@ export type ConfigGraphNodes = {
     | {
         type: "intermediary";
         configType: string;
-        numberOfConfigs: number;
       };
   expanded?: boolean;
   expandable?: boolean;
-  children?: number;
+  childrenCount: number;
 };
 
 type ConfigGraphProps = {

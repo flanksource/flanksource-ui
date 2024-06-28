@@ -3,6 +3,7 @@
 exports[`prepareConfigsForGraph should return formatted config for argo-argocd-applicationset-controller-764547bfd6 1`] = `
 [
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
@@ -26,6 +27,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "60023763-40ea-498d-ad95-6cf4c8c31e31",
@@ -44,6 +46,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "c58dba11-b0ef-4b59-a6ea-0b9853db0b3d",
@@ -62,6 +65,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
@@ -82,6 +86,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "e678b215-6421-4038-9e4c-c20ebb843a59",
@@ -96,6 +101,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "33616137-3536-6531-6236-633631376130",
@@ -116,6 +122,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "c72404ed-7d4c-49c1-9981-0c506c23c086",
@@ -134,6 +141,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "94f25b55-3a91-40a0-abd3-df91a705dfaa",
@@ -148,6 +156,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "4fb8d28b-df0e-4321-9ba9-1e3a86ecee78",
@@ -162,6 +171,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "32fbaf98-9257-4668-92b6-b389fff1d42d",
@@ -176,6 +186,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "9580a93f-7b74-437b-836f-9a419252f3dd",
@@ -199,6 +210,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "35633fe4-85e8-4c68-9893-9a4b22a80dcf",
@@ -213,6 +225,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
@@ -233,6 +246,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "120f8da8-4e2a-42cc-ab76-2451b8fee3f8",
@@ -251,6 +265,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "f9762c76-52d7-475c-9e0c-5d72466b734e",
@@ -265,6 +280,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "8aa17279-ead2-4923-9205-e365c0372cf5",
@@ -287,6 +303,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
@@ -307,9 +324,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "configType": "Kubernetes::ReplicaSet",
-      "numberOfConfigs": 6,
       "type": "intermediary",
     },
     "expanded": false,
@@ -329,6 +346,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-a
 exports[`prepareConfigsForGraph should return formatted config for argo-argocd-notifications-controller 1`] = `
 [
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "a9e6a345-9d6e-4ef5-83bc-bcaa71eb382c",
@@ -343,6 +361,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "3e3a9f54-ffdd-4151-baec-8a6cd7e44867",
@@ -366,6 +385,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "60023763-40ea-498d-ad95-6cf4c8c31e31",
@@ -384,6 +404,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "fe2430b0-bc23-477b-ac02-c252f8ca05e8",
@@ -402,6 +423,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "f5c71026-fcab-4709-ae00-2edcc7e3086a",
@@ -422,6 +444,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "33616137-3536-6531-6236-633631376130",
@@ -442,6 +465,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "d679a51f-2f7b-4e81-b95d-2e60402ef3eb",
@@ -456,6 +480,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "dd6637c8-7484-4619-a587-4549bed3352f",
@@ -474,6 +499,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "6c25a469-5230-402d-8902-f678175aa610",
@@ -488,6 +514,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "b59c1752-1be4-4a51-9f84-8225ebe7c136",
@@ -511,6 +538,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "3ffded9e-7d31-4597-9d54-ad91347a741c",
@@ -529,6 +557,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "962f999c-a9bd-40a4-80bf-47c84b1ad750",
@@ -549,6 +578,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "71b9eab6-6e67-4791-ba78-fe1a8bc19854",
@@ -563,6 +593,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "edb7eec9-2478-442b-b0ee-cd19ec9e6f9a",
@@ -577,6 +608,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "8aa17279-ead2-4923-9205-e365c0372cf5",
@@ -599,6 +631,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "0d274172-fd9a-42b6-88df-9497219dbd32",
@@ -613,6 +646,7 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     "related_ids": null,
   },
   {
+    "childrenCount": 0,
     "data": {
       "config": {
         "id": "9a87e262-0b5a-4bea-8908-606fc1a1bb5d",
@@ -633,9 +667,9 @@ exports[`prepareConfigsForGraph should return formatted config for argo-argocd-n
     ],
   },
   {
+    "childrenCount": 0,
     "data": {
       "configType": "Kubernetes::ReplicaSet",
-      "numberOfConfigs": 6,
       "type": "intermediary",
     },
     "expanded": false,

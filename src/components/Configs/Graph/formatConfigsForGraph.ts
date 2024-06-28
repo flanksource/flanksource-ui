@@ -29,7 +29,9 @@ export function prepareConfigsForGraph(
               related_ids: config.related_ids?.filter((id) => id !== config.id)
             }
           },
-          expanded: false
+          expanded: false,
+          // we don't know the children count yet
+          childrenCount: 0
         } satisfies ConfigGraphNodes
       ];
     })
@@ -77,10 +79,11 @@ export function prepareConfigsForGraph(
         related_ids: children.map((c) => c.id),
         data: {
           type: "intermediary",
-          numberOfConfigs: children.length,
           configType: type
         },
-        expanded: false
+        expanded: false,
+        // we don't know the children count yet
+        childrenCount: 0
       };
 
       configsMap.set(typeGroupNodeId, intermediaryNode);
@@ -100,6 +103,78 @@ export function prepareConfigsForGraph(
       }
     });
   });
+
+  const intermediaryNodesWithSameRelatedIDs = Array.from(configsMap.values())
+    .filter((config) => config.data.type === "intermediary")
+    .filter((config) => config.related_ids)
+    .filter((config, _, self) => {
+      if (config.related_ids) {
+        const similarRelatedIds = self.filter(
+          (c) =>
+            config.related_ids!.length > 0 &&
+            c.related_ids?.length === config.related_ids?.length &&
+            c.related_ids?.every((id) => config.related_ids?.includes(id))
+        );
+        if (similarRelatedIds.length > 1) {
+          return true;
+        }
+        return false;
+      }
+    })
+    // group intermediary nodes with the same related_ids
+    .reduce((acc, config) => {
+      const key = config.related_ids?.sort()?.join(",")!;
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(config);
+      return acc;
+    }, {} as Record<string, ConfigGraphNodes[]>);
+
+  // Create a new intermediary node, a combination of all intermediary nodes
+  // with same related ids
+  Object.values(intermediaryNodesWithSameRelatedIDs).forEach(
+    (intermediaryNodesToBeCombined) => {
+      // Create a new intermediary node
+      const combinedIntermediaryNode = {
+        ...intermediaryNodesToBeCombined[0],
+        nodeId: intermediaryNodesToBeCombined
+          .map((n) => n.nodeId)
+          .join("-combined-with-")
+      } satisfies ConfigGraphNodes;
+
+      // add the new intermediary node
+      configsMap.set(combinedIntermediaryNode.nodeId, combinedIntermediaryNode);
+
+      // remove the intermediary nodes
+      intermediaryNodesToBeCombined.forEach((formerIntermediaryNode) => {
+        // find the parent node,
+        const parentID = Array.from(configsMap.values()).find((config) => {
+          return config.related_ids?.includes(formerIntermediaryNode.nodeId);
+        })?.nodeId;
+
+        // update the parent node related_ids to include the new intermediary
+        // node, while removing the old intermediary node
+        const parentConfigNode = configsMap.get(parentID!);
+        if (parentConfigNode) {
+          const relatedIdsWithoutChildren =
+            parentConfigNode.related_ids?.filter(
+              (id) => id !== formerIntermediaryNode.nodeId
+            );
+
+          configsMap.set(parentID!, {
+            ...parentConfigNode,
+            related_ids: [
+              ...(relatedIdsWithoutChildren || []),
+              combinedIntermediaryNode.nodeId
+            ]
+          });
+        }
+
+        configsMap.delete(formerIntermediaryNode.nodeId);
+      });
+    }
+  );
 
   return Array.from(configsMap.values());
 }

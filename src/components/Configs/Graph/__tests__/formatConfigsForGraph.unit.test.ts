@@ -47,6 +47,7 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
   expect(res).toMatchInlineSnapshot(`
     [
       {
+        "childrenCount": 0,
         "data": {
           "config": {
             "id": "1",
@@ -66,6 +67,7 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         ],
       },
       {
+        "childrenCount": 0,
         "data": {
           "config": {
             "id": "2",
@@ -84,6 +86,7 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         ],
       },
       {
+        "childrenCount": 0,
         "data": {
           "config": {
             "id": "3",
@@ -102,6 +105,7 @@ test("prepareConfigsForGraph should return transformedConfigs", () => {
         ],
       },
       {
+        "childrenCount": 0,
         "data": {
           "config": {
             "id": "4",

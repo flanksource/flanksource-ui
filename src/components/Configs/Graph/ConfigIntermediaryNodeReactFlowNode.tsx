@@ -48,13 +48,11 @@ export function ConfigIntermediaryNodeReactFlowNode({
                   <Badge
                     color="gray"
                     text={
-                      <span className="text-left">
-                        {data.data.numberOfConfigs}
-                      </span>
+                      <span className="text-left">{data.childrenCount}</span>
                     }
                   />
                 </ConfigsTypeIcon>
-                {data.data.numberOfConfigs > 3 && (
+                {data.childrenCount > 3 && (
                   <div className="flex flex-row w-auto justify-end items-center gap-1.5 px-2 text-gray-500">
                     {data.expanded ? (
                       <HiOutlineMinusCircle />
