@@ -1,6 +1,7 @@
 import { CellContext } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { ConfigItem } from "../../../../api/types/configs";
+import ChangeCountIcon from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export default function ConfigListChangeCell({
   row,
@@ -20,12 +21,7 @@ export default function ConfigListChangeCell({
   }
 
   return (
-    <div className="flex flex-col flex-1 w-full max-w-full">
-      <div className="flex flex-row max-w-full overflow-hidden">
-        <div className="flex max-w-full items-center px-2.5 py-0.5 m-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800 overflow-hidden">
-          {totalChanges}
-        </div>
-      </div>
-    </div>
+
+    <ChangeCountIcon count={totalChanges} />
   );
 }
