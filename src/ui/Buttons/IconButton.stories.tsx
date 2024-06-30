@@ -3,7 +3,7 @@ import { BsTrash } from "react-icons/bs";
 import { IconButton } from "./IconButton";
 
 export default {
-  title: "IconButton",
+  title: "Icons/IconButton",
   component: IconButton,
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof IconButton>;

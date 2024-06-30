@@ -1,13 +1,8 @@
 import clsx from "clsx";
 import { useMemo } from "react";
-import { AiFillWarning } from "react-icons/ai";
-import { BiDollarCircle } from "react-icons/bi";
-import { FaRegClock, FaTasks } from "react-icons/fa";
-import { GrIntegration, GrWorkshop } from "react-icons/gr";
-import { ImHeartBroken } from "react-icons/im";
-import { IoMdSpeedometer } from "react-icons/io";
-import { MdOutlineRecommend, MdSecurity } from "react-icons/md";
+import { CiBandage, CiClock2, CiDollar, CiLink, CiStopwatch } from "react-icons/ci";
 import { ConfigAnalysis } from "../../../api/types/configs";
+import { PiBankThin, PiHeartStraightBreakThin, PiLightbulbThin, PiShieldCheckeredFill, PiWarning } from "react-icons/pi";
 
 type Props = {
   analysis: Pick<ConfigAnalysis, "severity" | "analysis_type">;
@@ -21,7 +16,7 @@ function insightSeverityToColorMap(severity: string) {
   if (severity === "warning") {
     return "text-yellow-500";
   }
-  return "text-gray-500";
+  return "text-gray-600";
 }
 
 type InsightTypeToIconProps = {
@@ -38,7 +33,7 @@ export function InsightTypeToIcon({
   switch (type) {
     case "cost":
       return (
-        <BiDollarCircle
+        <CiDollar
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Cost"
@@ -46,7 +41,7 @@ export function InsightTypeToIcon({
       );
     case "availability":
       return (
-        <ImHeartBroken
+        <PiHeartStraightBreakThin
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Availability"
@@ -54,7 +49,7 @@ export function InsightTypeToIcon({
       );
     case "performance":
       return (
-        <IoMdSpeedometer
+        <CiStopwatch
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Performance"
@@ -62,7 +57,7 @@ export function InsightTypeToIcon({
       );
     case "security":
       return (
-        <MdSecurity
+        <PiShieldCheckeredFill
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Security"
@@ -70,7 +65,7 @@ export function InsightTypeToIcon({
       );
     case "integration":
       return (
-        <GrIntegration
+        <CiLink
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Integration"
@@ -78,7 +73,7 @@ export function InsightTypeToIcon({
       );
     case "compliance":
       return (
-        <FaTasks
+        <PiBankThin
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Compliance"
@@ -86,7 +81,7 @@ export function InsightTypeToIcon({
       );
     case "reliability":
       return (
-        <FaRegClock
+        <CiClock2
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Reliability"
@@ -94,7 +89,7 @@ export function InsightTypeToIcon({
       );
     case "technicalDebt":
       return (
-        <GrWorkshop
+        <CiBandage
           className={`${colorClass}`}
           size={size}
           title="Technical Debt"
@@ -102,7 +97,7 @@ export function InsightTypeToIcon({
       );
     case "recommendation":
       return (
-        <MdOutlineRecommend
+        <PiLightbulbThin
           className={clsx(colorClass, "inline-block")}
           size={size}
           title="Recommendation"
@@ -110,7 +105,7 @@ export function InsightTypeToIcon({
       );
   }
   return (
-    <AiFillWarning className={clsx(colorClass, "inline-block")} size="20" />
+    <PiWarning className={clsx(colorClass, "inline-block")} size={size} />
   );
 }
 
