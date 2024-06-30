@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { IconPicker } from "./IconPicker";
 
 export default {
-  title: "IconPicker",
+  title: "Icons/IconPicker",
   component: IconPicker,
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof IconPicker>;
