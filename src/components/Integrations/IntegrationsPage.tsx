@@ -1,10 +1,12 @@
 import { getIntegrationsWithJobStatus } from "@flanksource-ui/api/schemaResources";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
 import { SearchLayout } from "../../ui/Layout/SearchLayout";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import AddIntegrationModal from "./Add/AddIntegrationModal";
 import IntegrationsList from "./IntegrationsList";
 
@@ -43,7 +45,13 @@ export default function IntegrationsPage() {
               >
                 Integrations
               </BreadcrumbRoot>,
-              <AddIntegrationModal key="add-integration" refresh={refetch} />
+              <AuthorizationAccessCheck
+                key="add-integration"
+                resource={tables.integrations}
+                action="write"
+              >
+                <AddIntegrationModal key="add-integration" refresh={refetch} />
+              </AuthorizationAccessCheck>
             ]}
           />
         }

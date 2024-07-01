@@ -9,8 +9,10 @@ import FeatureFlagAddButton from "@flanksource-ui/components/FeatureFlags/Featur
 import FeatureFlagForm from "@flanksource-ui/components/FeatureFlags/FeatureFlagForm";
 import { FeatureFlagsList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagList";
 import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   FeatureFlag,
   PropertyDBObject
@@ -81,11 +83,16 @@ export function FeatureFlagsPage() {
               >
                 Feature Flags
               </BreadcrumbRoot>,
-              <FeatureFlagAddButton
+              <AuthorizationAccessCheck
                 key={"add-button"}
-                onSubmit={onSubmit}
-                onDelete={deleteFeatureFlag}
-              />
+                resource={tables.feature_flags}
+                action="write"
+              >
+                <FeatureFlagAddButton
+                  onSubmit={onSubmit}
+                  onDelete={deleteFeatureFlag}
+                />
+              </AuthorizationAccessCheck>
             ]}
           />
         }

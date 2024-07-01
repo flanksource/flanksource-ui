@@ -13,7 +13,7 @@ import { IconType } from "react-icons";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
-import { withAccessCheck } from "../../components/Authentication/AccessCheck/AccessCheck";
+import { withAuthorizationAccessCheck } from "../../components/Permissions/AuthorizationAccessCheck";
 import { AuthContext } from "../../context";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { useOuterClick } from "../../lib/useOuterClick";
@@ -151,7 +151,7 @@ function SideNavGroup({
               return !isFeatureDisabled(
                 featureName as unknown as keyof typeof features
               )
-                ? withAccessCheck(
+                ? withAuthorizationAccessCheck(
                     <Menu.Item key={href}>
                       {({ active }) => (
                         <NavLink className="w-full" to={href}>
@@ -202,7 +202,7 @@ function SideNavGroup({
               !isFeatureDisabled(
                 item.featureName as unknown as keyof typeof features
               )
-                ? withAccessCheck(
+                ? withAuthorizationAccessCheck(
                     <SideNavItem
                       key={item.name}
                       {...item}
@@ -235,7 +235,7 @@ function SideNav({
           !isFeatureDisabled(
             item.featureName as unknown as keyof typeof features
           )
-            ? withAccessCheck(
+            ? withAuthorizationAccessCheck(
                 <SideNavItem
                   key={item.name}
                   {...item}
@@ -247,7 +247,7 @@ function SideNav({
             : null
         )}
       </div>
-      {withAccessCheck(
+      {withAuthorizationAccessCheck(
         <div>
           <SideNavGroup
             key={"settings"}
