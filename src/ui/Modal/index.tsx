@@ -219,7 +219,7 @@ export function Modal({
 
                 {/* top-right close button */}
                 {!hideCloseButton && (
-                  <DialogButton icon={XIcon} onClick={onClose} />
+                  <DialogButton icon={XIcon} onClick={onClose} name="close" />
                 )}
               </div>
 
