@@ -94,6 +94,7 @@ export function ConfigDetailsChanges({
               value={
                 // eslint-disable-next-line react/jsx-no-useless-fragment
                 <>
+                 {!changeDetails?.created_by && ! changeDetails?.external_created_by && changeDetails?.source}
                   {changeDetails?.created_by ? (
                     <Avatar
                       user={
