@@ -40,3 +40,52 @@ Variant1.args = {
     </div>
   )
 };
+
+export const Small = Template.bind({});
+Small.args = {
+  title: "Modal small title",
+  size: "small",
+  children: (
+    <div>
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child
+    </div>
+  )
+};
+
+export const Large = Template.bind({});
+Large.args = {
+  title: "Modal large",
+  size: "large",
+  children: (
+    <div>
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child
+    </div>
+  )
+};
+
+
+export const Full = Template.bind({});
+Full.args = {
+  title: "Modal fulle",
+  size: "full",
+  children: (
+    <div>
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child Weird child Weird child
+      Weird child Weird child Weird child Weird child
+    </div>
+  )
+};
