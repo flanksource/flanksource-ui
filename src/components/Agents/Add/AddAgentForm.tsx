@@ -1,5 +1,7 @@
 import { useAgentQuery } from "@flanksource-ui/api/query-hooks/useAgentsQuery";
 import FormikSwitchField from "@flanksource-ui/components/Forms/Formik/FormikSwitchField";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
@@ -170,26 +172,30 @@ export default function AgentForm({
                   </div>
                 </div>
               </div>
-              <div
-                className={clsx(
-                  "flex items-center py-4 px-5 bg-gray-100",
-                  agent?.id ? "justify-between" : "justify-end"
-                )}
-              >
-                {agent?.id && (
-                  <DeleteAgentButton agentId={agent.id} onDeleted={onClose} />
-                )}
-                <Button
-                  icon={
-                    isLoading ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  type="submit"
-                  text={agent?.id ? "Save" : isLoading ? "Saving ..." : "Next"}
-                  className="btn-primary"
-                />
-              </div>
+              <AuthorizationAccessCheck resource={tables.agents} action="write">
+                <div
+                  className={clsx(
+                    "flex items-center py-4 px-5 bg-gray-100",
+                    agent?.id ? "justify-between" : "justify-end"
+                  )}
+                >
+                  {agent?.id && (
+                    <DeleteAgentButton agentId={agent.id} onDeleted={onClose} />
+                  )}
+                  <Button
+                    icon={
+                      isLoading ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    type="submit"
+                    text={
+                      agent?.id ? "Save" : isLoading ? "Saving ..." : "Next"
+                    }
+                    className="btn-primary"
+                  />
+                </div>
+              </AuthorizationAccessCheck>
             </Form>
           )}
         </Formik>

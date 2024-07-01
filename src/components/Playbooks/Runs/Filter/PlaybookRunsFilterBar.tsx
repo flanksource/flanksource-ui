@@ -1,5 +1,7 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
@@ -58,13 +60,18 @@ export default function PlaybookRunsFilterBar({
       {playbookId && (
         <>
           <div className="flex-1" />
-          <Button
-            text="Edit Playbook"
-            className="btn-white"
-            icon={<FaEdit />}
-            disabled={isLoading}
-            onClick={() => setIsEditPlaybookFormOpen(true)}
-          />
+          <AuthorizationAccessCheck
+            resource={tables.connections}
+            action="write"
+          >
+            <Button
+              text="Edit Playbook"
+              className="btn-white"
+              icon={<FaEdit />}
+              disabled={isLoading}
+              onClick={() => setIsEditPlaybookFormOpen(true)}
+            />
+          </AuthorizationAccessCheck>
           {playbookSpec && (
             <>
               <Button
@@ -72,11 +79,16 @@ export default function PlaybookRunsFilterBar({
                 text="Run Playbook"
                 onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
               />
-              <SubmitPlaybookRunForm
-                isOpen={isSubmitPlaybookRunFormOpen}
-                onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
-                playbook={playbookSpec}
-              />
+              <AuthorizationAccessCheck
+                resource={tables.playbooks}
+                action="write"
+              >
+                <SubmitPlaybookRunForm
+                  isOpen={isSubmitPlaybookRunFormOpen}
+                  onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
+                  playbook={playbookSpec}
+                />
+              </AuthorizationAccessCheck>
             </>
           )}
         </>

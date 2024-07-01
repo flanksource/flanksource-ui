@@ -1,3 +1,5 @@
+import { AuthContext } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
@@ -66,6 +68,18 @@ const server = setupServer(
   }),
   rest.get("/api/db/playbooks", (req, res, ctx) => {
     return res(ctx.json([mockPlaybook]));
+  }),
+  rest.get("/api/db/people_roles", (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+          name: "Admin",
+          email: "admin@local",
+          roles: ["admin"]
+        }
+      ])
+    );
   })
 );
 
@@ -78,7 +92,20 @@ describe("PlaybookSpecCard", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter>
-          <PlaybookSpecCard playbook={mockPlaybook} />
+          <AuthContext.Provider
+            value={{
+              user: {
+                id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+                email: "admin@local",
+                name: "John Doe"
+              }
+            }}
+          >
+            {" "}
+            <UserAccessStateContextProvider>
+              <PlaybookSpecCard playbook={mockPlaybook} />
+            </UserAccessStateContextProvider>
+          </AuthContext.Provider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -103,7 +130,19 @@ describe("PlaybookSpecCard", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={["/playbooks/runs"]}>
-          <PlaybookSpecCard playbook={mockPlaybook} />
+          <AuthContext.Provider
+            value={{
+              user: {
+                id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+                email: "admin@local",
+                name: "John Doe"
+              }
+            }}
+          >
+            <UserAccessStateContextProvider>
+              <PlaybookSpecCard playbook={mockPlaybook} />
+            </UserAccessStateContextProvider>
+          </AuthContext.Provider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -114,9 +153,21 @@ describe("PlaybookSpecCard", () => {
   it("opens the SubmitPlaybookRunForm when the Run button is clicked", async () => {
     render(
       <QueryClientProvider client={client}>
-        <MemoryRouter>
-          <PlaybookSpecCard playbook={mockPlaybook} />
-        </MemoryRouter>
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <MemoryRouter>
+              <PlaybookSpecCard playbook={mockPlaybook} />
+            </MemoryRouter>
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 

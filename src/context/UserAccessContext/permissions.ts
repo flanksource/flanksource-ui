@@ -12,7 +12,12 @@ export const tables = {
   identities: "identities",
   connections: "connections",
   kratos: "kratos",
-  agents: "agents"
+  agents: "agents",
+  feature_flags: "properties",
+  logging_backends: "logging_backends",
+  integrations: "integrations",
+  notifications: "notifications",
+  playbooks: "playbooks"
 };
 
 export const permDefs = {

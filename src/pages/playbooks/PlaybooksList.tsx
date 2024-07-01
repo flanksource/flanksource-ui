@@ -1,3 +1,5 @@
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
@@ -33,16 +35,22 @@ export function PlaybooksListPage() {
               >
                 Playbook
               </BreadcrumbRoot>,
-              <button
-                key={"playbook-add-item-button"}
-                type="button"
-                className=""
-                onClick={() => {
-                  setIsOpen(true);
-                }}
+              <AuthorizationAccessCheck
+                resource={tables.playbooks}
+                action="write"
+                key="add-playbook"
               >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+                <button
+                  key={"playbook-add-item-button"}
+                  type="button"
+                  className=""
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                >
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
+                </button>
+              </AuthorizationAccessCheck>
             ]}
           />
         }

@@ -1,3 +1,5 @@
+import { AuthContext } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -25,6 +27,18 @@ const server = setupServer(
         }
       ])
     );
+  }),
+  rest.get("/api/db/people_roles", (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+          name: "Admin",
+          email: "admin@local",
+          roles: ["admin"]
+        }
+      ])
+    );
   })
 );
 
@@ -49,12 +63,24 @@ describe("AgentForm", () => {
   it("renders the form with the correct title and fields", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <AgentForm
-          isOpen={true}
-          onClose={onClose}
-          onSuccess={onSuccess}
-          onUpdated={onUpdated}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <AgentForm
+              isOpen={true}
+              onClose={onClose}
+              onSuccess={onSuccess}
+              onUpdated={onUpdated}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
@@ -66,13 +92,25 @@ describe("AgentForm", () => {
   it("renders the form with the correct title and fields when editing an agent", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <AgentForm
-          id="123"
-          isOpen={true}
-          onClose={onClose}
-          onSuccess={onSuccess}
-          onUpdated={onUpdated}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <AgentForm
+              id="123"
+              isOpen={true}
+              onClose={onClose}
+              onSuccess={onSuccess}
+              onUpdated={onUpdated}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
@@ -85,12 +123,24 @@ describe("AgentForm", () => {
     const agentData = { name: "New Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>
-        <AgentForm
-          isOpen={true}
-          onClose={onClose}
-          onSuccess={onSuccess}
-          onUpdated={onUpdated}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <AgentForm
+              isOpen={true}
+              onClose={onClose}
+              onSuccess={onSuccess}
+              onUpdated={onUpdated}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
     const nameInput = await screen.findByLabelText("Name");
@@ -113,13 +163,25 @@ describe("AgentForm", () => {
     const agentData = { name: "Updated Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>
-        <AgentForm
-          id="123"
-          isOpen={true}
-          onClose={onClose}
-          onSuccess={onSuccess}
-          onUpdated={onUpdated}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <AgentForm
+              id="123"
+              isOpen={true}
+              onClose={onClose}
+              onSuccess={onSuccess}
+              onUpdated={onUpdated}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 

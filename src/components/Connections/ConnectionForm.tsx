@@ -1,9 +1,11 @@
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { mapValues, method } from "lodash";
 import { useMemo } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import { Button } from "../../ui/Buttons/Button";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { Connection } from "./ConnectionFormModal";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { TestConnection } from "./TestConnection";
@@ -134,12 +136,17 @@ export function ConnectionForm({
           </div>
           <div className="flex items-center py-4 px-5 gap-2 rounded-lg bg-gray-100">
             {formValue?.id && (
-              <Button
-                text="Delete"
-                icon={<FaTrash />}
-                onClick={handleDelete}
-                className="btn-danger"
-              />
+              <AuthorizationAccessCheck
+                resource={tables.connections}
+                action="write"
+              >
+                <Button
+                  text="Delete"
+                  icon={<FaTrash />}
+                  onClick={handleDelete}
+                  className="btn-danger"
+                />
+              </AuthorizationAccessCheck>
             )}
             {connectionType && !formValue?.id && (
               <button
@@ -152,16 +159,21 @@ export function ConnectionForm({
             )}
             <div className="flex flex-1 gap-2 justify-end">
               {formValue?.id && <TestConnection connectionId={formValue.id} />}
-              <Button
-                type="submit"
-                icon={
-                  isSubmitting ? (
-                    <FaSpinner className="animate-spin" />
-                  ) : undefined
-                }
-                text={Boolean(formValue?.id) ? "Update" : "Save"}
-                className="btn-primary"
-              />
+              <AuthorizationAccessCheck
+                resource={tables.connections}
+                action="write"
+              >
+                <Button
+                  type="submit"
+                  icon={
+                    isSubmitting ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : undefined
+                  }
+                  text={Boolean(formValue?.id) ? "Update" : "Save"}
+                  className="btn-primary"
+                />
+              </AuthorizationAccessCheck>
             </div>
           </div>
         </Form>

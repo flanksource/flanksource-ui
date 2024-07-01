@@ -1,7 +1,9 @@
 import { Roles } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import clsx from "clsx";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
 export type InviteUserFormValue = {
   firstName: string;
@@ -143,9 +145,11 @@ export function InviteUserForm({
           )}
         </div>
         <div className="sm:col-span-2">
-          <button type="submit" className="btn-primary float-right">
-            Invite user
-          </button>
+          <AuthorizationAccessCheck resource={tables.identities} action="write">
+            <button type="submit" className="btn-primary float-right">
+              Invite user
+            </button>
+          </AuthorizationAccessCheck>
           <button
             type="reset"
             onClick={handleCancel}

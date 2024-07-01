@@ -1,6 +1,10 @@
+import { AuthContext } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
 import ConnectionFormModal from "../ConnectionFormModal";
 import { ConnectionValueType } from "../connectionTypes";
 
@@ -9,6 +13,21 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn()
 }));
+
+const server = setupServer(
+  rest.get("/api/db/people_roles", (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+          name: "Admin",
+          email: "admin@local",
+          roles: ["admin"]
+        }
+      ])
+    );
+  })
+);
 
 const client = new QueryClient();
 
@@ -23,6 +42,10 @@ describe("ConnectionForm", () => {
 
   const onConnectionSubmit = jest.fn();
 
+  beforeAll(() => server.listen());
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -30,13 +53,25 @@ describe("ConnectionForm", () => {
   it("renders form when provided with initial value", async () => {
     render(
       <QueryClientProvider client={client}>
-        <ConnectionFormModal
-          formValue={formInitialValue}
-          isOpen={true}
-          setIsOpen={() => {}}
-          onConnectionDelete={async (data) => {}}
-          onConnectionSubmit={onConnectionSubmit}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionFormModal
+              formValue={formInitialValue}
+              isOpen={true}
+              setIsOpen={() => {}}
+              onConnectionDelete={async (data) => {}}
+              onConnectionSubmit={onConnectionSubmit}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
@@ -70,13 +105,25 @@ describe("ConnectionForm", () => {
   it("renders list of connection types", async () => {
     render(
       <QueryClientProvider client={client}>
-        <ConnectionFormModal
-          formValue={undefined}
-          isOpen={true}
-          setIsOpen={() => {}}
-          onConnectionSubmit={async (data) => {}}
-          onConnectionDelete={async (data) => {}}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionFormModal
+              formValue={undefined}
+              isOpen={true}
+              setIsOpen={() => {}}
+              onConnectionSubmit={async (data) => {}}
+              onConnectionDelete={async (data) => {}}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
@@ -87,13 +134,25 @@ describe("ConnectionForm", () => {
   it("renders form when connection type is selected", async () => {
     render(
       <QueryClientProvider client={client}>
-        <ConnectionFormModal
-          formValue={undefined}
-          isOpen={true}
-          setIsOpen={() => {}}
-          onConnectionSubmit={async (data) => {}}
-          onConnectionDelete={async (data) => {}}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionFormModal
+              formValue={undefined}
+              isOpen={true}
+              setIsOpen={() => {}}
+              onConnectionSubmit={async (data) => {}}
+              onConnectionDelete={async (data) => {}}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 

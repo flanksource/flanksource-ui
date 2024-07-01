@@ -1,4 +1,6 @@
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -52,10 +54,16 @@ export default function PlaybookSpecCard({
           <h3 className="flex-1 text-lg leading-6 font-medium text-gray-900">
             {playbook.name}
           </h3>
-          <PlaybookCardMenu
-            onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
-            onDeletePlaybook={() => deletePlaybook(playbook.id)}
-          />
+          <AuthorizationAccessCheck
+            resource={tables.playbooks}
+            action="write"
+            key="add-connection"
+          >
+            <PlaybookCardMenu
+              onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
+              onDeletePlaybook={() => deletePlaybook(playbook.id)}
+            />
+          </AuthorizationAccessCheck>
         </div>
         <div className="flex flex-col flex-1 p-2">
           {playbook.description && (
@@ -72,10 +80,12 @@ export default function PlaybookSpecCard({
             }}
             className="btn-white"
           />
-          <Button
-            text="Run"
-            onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
-          />
+          <AuthorizationAccessCheck resource={tables.playbooks} action="write">
+            <Button
+              text="Run"
+              onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
+            />
+          </AuthorizationAccessCheck>
         </div>
       </div>
 

@@ -1,5 +1,7 @@
+import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { tables } from "../../context/UserAccessContext/permissions";
@@ -127,9 +129,18 @@ function SchemaResourceListItem({
   baseUrl: string;
   table: string;
 }) {
+  const { hasResourceAccess } = useUserAccessStateContext();
+
   const navigate = useNavigate();
-  const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
   const [isJobDetailsModalOpen, setIsJobDetailsModalOpen] = useState(false);
+  const navigateToDetails = async (id: string) => {
+    const hasAccess = await hasResourceAccess(table, "write");
+    if (!hasAccess) {
+      toast.error("You do not have access to this resource");
+      return;
+    }
+    return navigate(`${baseUrl}/${id}`);
+  };
 
   const tags = useMemo(() => {
     return Object.entries(labels ?? {}).map(([key, value]) => ({
