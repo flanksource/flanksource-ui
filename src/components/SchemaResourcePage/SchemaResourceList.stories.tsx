@@ -2,6 +2,9 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
 import { SchemaResourceWithJobStatus } from "../../api/schemaResources";
 import { SchemaResourceList } from "./SchemaResourceList";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default {
   title: "SchemaResourceList",
@@ -9,9 +12,11 @@ export default {
   parameters: { actions: { argTypesRegex: "^on.*" } },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </QueryClientProvider>
     )
   ]
 } as ComponentMeta<typeof SchemaResourceList>;
