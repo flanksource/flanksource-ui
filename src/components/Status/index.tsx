@@ -18,6 +18,10 @@ function getStatusColor(
     return "bg-gray-400";
   }
 
+  if (status === "warning" || status === "warn") {
+    return "bg-light-orange";
+  }
+
   if (mixed !== undefined && mixed) {
     return "bg-light-orange";
   }
@@ -42,7 +46,6 @@ export function Status({
   className = "",
   hideText = false
 }: StatusProps) {
-
   if (!status && good === undefined && mixed === undefined) {
     return null;
   }
