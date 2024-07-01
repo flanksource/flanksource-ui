@@ -60,9 +60,7 @@ export const CreateHypothesis = ({
       title={`Create ${capitalizeFirstLetter(
         getHypothesisChildType(node?.type)
       )}`}
-      size="slightly-small"
-      bodyClass=""
-      containerClassName=""
+      size="small"
     >
       <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
         <div className="p-8 space-y-4">

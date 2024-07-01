@@ -46,7 +46,6 @@ export default function AddSchemaResourceModal({
           onClose();
         }}
         bodyClass="flex flex-col flex-1 overflow-y-auto"
-        size="full"
         title={`Add ${resourceInfo.name}`}
       >
         {resourceInfo.table === "canaries" ? (

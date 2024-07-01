@@ -137,6 +137,7 @@ export function HypothesisDetails({ node, api, ...rest }: IProps) {
         open={evidenceBuilderOpen}
         onClose={() => setEvidenceBuilderOpen(false)}
         size="medium"
+        title=""
       >
         <EvidenceBuilder />
       </Modal>

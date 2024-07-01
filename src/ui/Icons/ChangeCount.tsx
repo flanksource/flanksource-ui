@@ -43,7 +43,7 @@ export function CountBar({
   borderClass?: string;
 }) {
   if (items.length === 0) {
-    return "no items"
+    return null;
   }
 
   return <div className="flex flex-row px-2">

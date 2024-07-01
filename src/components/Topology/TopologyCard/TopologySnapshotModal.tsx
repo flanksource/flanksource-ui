@@ -70,8 +70,7 @@ export default function TopologySnapshotModal({
       onClose={onCloseModal}
       title={`Download ${topology.name} snapshot`}
       open={isModalOpen}
-      size="small"
-      containerClassName=""
+      size="very-small"
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col py-4 space-y-4">

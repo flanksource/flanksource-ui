@@ -99,8 +99,6 @@ export default function ConfigInsightsDetailsModal({
       onClose={() => {
         onClose();
       }}
-      size="full"
-      bodyClass=""
     >
       {isLoading ? (
         <TextSkeletonLoader />

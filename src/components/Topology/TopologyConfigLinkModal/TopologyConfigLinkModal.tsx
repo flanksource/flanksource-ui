@@ -110,7 +110,7 @@ export function TopologyConfigLinkModal({
       }}
       title={`Link to Catalog`}
       open={openModal}
-      size="slightly-small"
+      size="very-small"
       containerClassName=""
       bodyClass=""
     >

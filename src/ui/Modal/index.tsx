@@ -2,9 +2,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
-import PropTypes from "prop-types";
-import React, { Fragment } from "react";
-import { IoMdHelp } from "react-icons/io";
+import React, { Fragment, useState } from "react";
+import HelpLink from "../Buttons/HelpLink";
+import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
+import { useWindowSize } from "react-use-size";
+import DialogButton from "../Buttons/DialogButton";
 
 /**
  *
@@ -14,73 +16,128 @@ import { IoMdHelp } from "react-icons/io";
  *
  */
 export const modalHelpLinkAtom = atom<string | undefined>(undefined);
+export type ModalSize = "very-small" | "small" | "medium" | "large" | "full";
 
-export type ModalSize =
-  | "small"
-  | "slightly-small"
-  | "medium"
-  | "large"
-  | "full";
-
-const modalClassMap: { [k in ModalSize]: string } = {
-  small: "max-w-md my-0 mx-2.5",
-  "slightly-small": "max-w-prose my-0 mx-4",
-  medium: "max-w-5xl my-0 mx-4",
-  large: "max-w-5xl my-0 mx-5",
-  full: "max-w-5xl my-0 mx-5"
-};
-
-const modalClassHeightMap: { [k in ModalSize]: string } = {
-  small: "min-h-[30rem] h-auto",
-  "slightly-small": "min-h-1/4 h-auto max-h-full",
-  medium: "min-h-1/2 h-auto max-h-full",
-  large: "min-h-3/4 h-auto max-h-full",
-  full: "min-h-full h-auto max-h-full"
-};
-
-interface IModalProps {
-  title: React.ReactNode;
-  titleClass: string;
+const HEADER_HEIGHT = 60;
+export interface IModalProps {
+  title?: React.ReactNode;
+  showExpand?: boolean;
+  titleClass?: string;
+  helpLink?: string;
   bodyClass?: string;
-  footerClassName: string;
+  childClassName?: string;
+  footerClassName?: string;
   actions?: React.ReactNode[];
   open: boolean;
-  onClose: (e?: MouseEvent) => void;
-  allowBackgroundClose: boolean;
-  hideCloseButton: boolean;
-  size: ModalSize;
-
-  /**
-   *
-   * If true, the modal will enforce the height of the modal to be the same as
-   * the size. This is useful for modals that have a fixed height, such as
-   * modals that contain a code editor.
-   *
-   */
-  enforceSizeInHeight?: boolean;
-  children: React.ReactNode;
+  onClose?: (e?: MouseEvent) => void;
+  allowBackgroundClose?: boolean;
+  hideCloseButton?: boolean;
+  size?: ModalSize;
+  children?: React.ReactNode;
   containerClassName?: string;
   dialogClassName?: string;
 }
 
+export function useDialogSize(size?: string): {
+  windowHeight: number;
+  windowWidth: number;
+  height: string;
+  width: string;
+  classNames: string;
+} {
+  const { height, width } = useWindowSize();
+  let ret = {
+    classNames: "",
+    windowHeight: height,
+    windowWidth: width,
+    height: "",
+    width: ""
+  };
+
+  if (size === "very-small" || size === "small") {
+    ret.height = " h-full";
+  } else {
+    ret.classNames += " mx-auto my-auto";
+  }
+
+  if (size === "small") {
+    ret.classNames += " max-w-[800px] max-h-[50vh]";
+  }
+
+  if (size === "full") {
+    if (width >= 1600) {
+      ret.width = " w-[1500px]";
+    } else if (width >= 1280) {
+      ret.width = " w-[1200px]";
+    } else if (width >= 1024) {
+      ret.width = " w-[1000px]";
+    } else if (width >= 768) {
+      ret.width = " w-[90vw]";
+    } else if (width < 768) {
+      ret.width = " w-[95vw]";
+    }
+    ret.height = " h-[90vh]";
+  }
+
+  if (size === "medium" || size === undefined) {
+    if (width >= 1280) {
+      ret.width = " w-[1000px]";
+    } else if (width >= 1024) {
+      ret.width = " w-[850px]";
+    } else if (width >= 768) {
+      ret.width = " w-[500vw]";
+    } else if (width < 768) {
+      ret.width = " w-[95vw]";
+    }
+    if (height < 1000) {
+      ret.height = ` max-h-[${height - HEADER_HEIGHT * 2}px]`;
+    } else if (height > 1000) {
+      ret.height = " max-h-[80vh]";
+    }
+  }
+
+  if (size === "large") {
+    if (width >= 1280) {
+      ret.width = " w-[1240px]";
+    } else if (width >= 1024) {
+      ret.width = " w-[1000px]";
+    } else if (width >= 768) {
+      ret.width = " w-[600px]";
+    } else if (width < 768) {
+      ret.width = " w-[95vw]";
+    }
+    if (height < 1000) {
+      ret.height = ` max-h-[${height - HEADER_HEIGHT * 2}px]`;
+    } else if (height > 1000) {
+      ret.height = " max-h-[90vh]";
+    }
+  }
+
+  return ret;
+}
+
 export function Modal({
   title,
+  showExpand = true,
   titleClass,
   bodyClass = "flex flex-col flex-1 overflow-y-auto",
   footerClassName = "flex my-2 px-8 justify-end",
   actions,
   open,
   onClose = () => {},
-  allowBackgroundClose,
+  childClassName = "w-full",
+  allowBackgroundClose = true,
   hideCloseButton,
-  size,
-  enforceSizeInHeight = false,
+  size = "medium",
   children,
   containerClassName = "overflow-auto max-h-full",
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
   ...rest
 }: IModalProps) {
   const [helpLink] = useAtom(modalHelpLinkAtom);
+  const [_size, setSize] = useState(size);
+  const sizeClass = useDialogSize(_size);
+  const isSmall = _size === "very-small" || _size === "small";
 
   return (
     /* @ts-ignore */
@@ -93,9 +150,11 @@ export function Modal({
         {...rest}
       >
         <div
-          className={clsx("flex items-center justify-center h-full", {
-            "py-8": size === "full"
-          })}
+          className={clsx(
+            "flex items-center justify-center",
+            sizeClass.classNames,
+            sizeClass.width
+          )}
         >
           {/* @ts-ignore */}
           <Transition.Child
@@ -121,10 +180,11 @@ export function Modal({
           >
             <div
               className={clsx(
-                "bg-white rounded-lg text-left shadow-xl transform transition-all w-full  flex flex-col",
-                containerClassName,
-                modalClassMap[size],
-                enforceSizeInHeight && modalClassHeightMap[size]
+                !isSmall && "justify-between overflow-auto mt-10 mb-10",
+                !isSmall && childClassName,
+                "bg-white rounded-lg text-left shadow-xl transform transition-all flex flex-col",
+                isSmall && "w-full max-w-prose my-0 mx-4",
+                sizeClass.height
               )}
             >
               <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
@@ -140,36 +200,38 @@ export function Modal({
                 If the modal has a help link, display a help icon in the top right
                 corner of the modal that links to the documentation for the modal.
                 */}
-                {helpLink && (
-                  <a
-                    title="Link to documentation"
-                    href={helpLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    <IoMdHelp size={22} className="inline-block" />
-                  </a>
+                {helpLink && <HelpLink link={helpLink} />}
+                {showExpand && _size !== "full" && !isSmall && (
+                  <DialogButton
+                    icon={BsArrowsFullscreen}
+                    onClick={() => {
+                      setSize("full");
+                    }}
+                  />
                 )}
+
+                {showExpand && _size === "full" && (
+                  <DialogButton
+                    icon={BsFullscreenExit}
+                    onClick={() => setSize(size)}
+                  />
+                )}
+
                 {/* top-right close button */}
                 {!hideCloseButton && (
-                  <div className="flex pointer-events-none sm:pointer-events-auto">
-                    <button
-                      type="button"
-                      className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                      onClick={() => onClose()}
-                    >
-                      <span className="sr-only">Close</span>
-                      <XIcon
-                        className="fill-gray-400 w-6 h-6"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
+                  <DialogButton icon={XIcon} onClick={onClose} />
                 )}
               </div>
 
-              <div className={bodyClass}>{children}</div>
+              <div
+                className={clsx(
+                  !isSmall && "flex flex-col flex-1 mb-auto ",
+                  bodyClass,
+                  `max-h-[${sizeClass.windowHeight - 50}px]`
+                )}
+              >
+                {children}
+              </div>
 
               {Boolean(actions?.length) && (
                 <div className={clsx(footerClassName)}>
@@ -183,23 +245,3 @@ export function Modal({
     </Transition.Root>
   );
 }
-
-Modal.propTypes = {
-  title: PropTypes.oneOfType([PropTypes.node, PropTypes.string]),
-  titleClass: PropTypes.string,
-  footerClassName: PropTypes.string,
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  allowBackgroundClose: PropTypes.bool,
-  hideCloseButton: PropTypes.bool,
-  size: PropTypes.oneOf(["small", "medium", "full", "slightly-small"])
-};
-
-Modal.defaultProps = {
-  title: "",
-  titleClass: "",
-  footerClassName: "",
-  allowBackgroundClose: true,
-  hideCloseButton: false,
-  size: "medium"
-};
