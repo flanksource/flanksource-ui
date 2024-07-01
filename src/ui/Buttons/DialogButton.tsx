@@ -2,10 +2,12 @@ import { IconType } from "react-icons";
 
 export default function DialogButton({
   onClick,
-  icon
+  icon,
+  name
 }: {
   onClick: any;
   icon: IconType;
+  name?: string;
 }) {
   const Icon = icon;
   return (
@@ -15,6 +17,7 @@ export default function DialogButton({
         className="text-gray-400 hover:text-gray-500 focus:outline-none"
         onClick={onClick}
       >
+        {name && <span className="sr-only">{name}</span>}
         <Icon className="fill-gray-400 w-auto h-5" aria-hidden="true" />
       </button>
     </div>
