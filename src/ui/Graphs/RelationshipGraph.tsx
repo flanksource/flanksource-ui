@@ -20,6 +20,9 @@ import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
 import "reactflow/dist/style.css";
 import { Loading } from "../Loading";
+import GraphEdgeTypeToggle, {
+  useGraphEdgeTypeToggleValue
+} from "./Controls/GraphEdgeTypeToggle";
 import useAnimatedNodes from "./Expand/useAnimatedNodes";
 import useExpandCollapse from "./Expand/useExpandCollapse";
 
@@ -29,12 +32,6 @@ const nodeTypes: NodeTypes = {
 };
 
 const edgeTypes = {} satisfies EdgeTypes;
-
-const defaultEdgeOptions = {
-  type: "smoothstep",
-  markerEnd: { type: MarkerType.ArrowClosed },
-  pathOptions: { offset: 50 }
-};
 
 export type GraphDataGenericConstraint = {
   [key: string]: any;
@@ -54,6 +51,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   direction = "LR"
 }: ConfigGraphProps<T>) {
   const { setViewport, fitView, getZoom } = useReactFlow();
+  const edgeType = useGraphEdgeTypeToggleValue();
 
   // During the initial layout setup, we want to align the nodes vertically
   // centered and horizontally aligned to the left. This is done only once and
@@ -67,6 +65,12 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
 
   const [nodes, setNodes, onNodesChange] = useNodesState<T>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    setEdges((edges) =>
+      edges.map((edge) => ({ ...edge, type: edgeType ?? "bezier" }))
+    );
+  }, [edgeType, setEdges]);
 
   useEffect(() => {
     // diff nodes, add only new ones
@@ -211,7 +215,10 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         edgesUpdatable={false}
         nodeTypes={nodeTypes}
         connectionLineType={ConnectionLineType.SmoothStep}
-        defaultEdgeOptions={defaultEdgeOptions}
+        defaultEdgeOptions={{
+          type: edgeType ?? "bezier",
+          markerEnd: { type: MarkerType.ArrowClosed }
+        }}
         draggable={false}
         edgeTypes={edgeTypes}
         nodesConnectable={false}
@@ -221,6 +228,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
       >
         <Controls position="top-right">
           <ConfigGraphDirectionToggle />
+          <GraphEdgeTypeToggle />
         </Controls>
       </ReactFlow>
     </div>
