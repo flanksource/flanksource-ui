@@ -1,9 +1,11 @@
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useState } from "react";
 import { useAgentsListQuery } from "../../api/query-hooks/useAgentsQuery";
 import { User } from "../../api/types/users";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import AddAgent from "./Add/AddAgent";
 import AgentsTable from "./List/AgentsTable";
 
@@ -65,7 +67,13 @@ export default function AgentsPage() {
               <BreadcrumbRoot key={"root-agent"} link="/agents">
                 Agents
               </BreadcrumbRoot>,
-              <AddAgent refresh={refetch} key={"add-agent"} />
+              <AuthorizationAccessCheck
+                resource={tables.agents}
+                action="write"
+                key="add-agent"
+              >
+                <AddAgent refresh={refetch} key={"add-agent"} />
+              </AuthorizationAccessCheck>
             ]}
           />
         }

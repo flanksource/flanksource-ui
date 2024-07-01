@@ -22,13 +22,13 @@ import {
 } from "react-router-dom";
 import { Canary } from "./components";
 import AgentsPage from "./components/Agents/AgentPage";
-import { withAccessCheck } from "./components/Authentication/AccessCheck/AccessCheck";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import EditIntegrationPage from "./components/Integrations/EditIntegrationPage";
 import IntegrationsPage from "./components/Integrations/IntegrationsPage";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
+import { withAuthorizationAccessCheck } from "./components/Permissions/AuthorizationAccessCheck";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
@@ -250,7 +250,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route
         path="/view/topology/:id"
-        element={withAccessCheck(
+        element={withAuthorizationAccessCheck(
           <TopologyCardPage />,
           tables.topologies,
           "read"
@@ -260,11 +260,19 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="topology" element={sidebar}>
         <Route
           path=":id"
-          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+          element={withAuthorizationAccessCheck(
+            <TopologyPage />,
+            tables.database,
+            "read"
+          )}
         />
         <Route
           index
-          element={withAccessCheck(<TopologyPage />, tables.database, "read")}
+          element={withAuthorizationAccessCheck(
+            <TopologyPage />,
+            tables.database,
+            "read"
+          )}
         />
       </Route>
 
@@ -273,7 +281,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":id"
           element={
             <ErrorBoundary>
-              {withAccessCheck(
+              {withAuthorizationAccessCheck(
                 <IncidentDetailsPage />,
                 tables.incident,
                 "read"
@@ -287,7 +295,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="health" element={sidebar}>
         <Route
           index
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <HealthPage url={CANARY_API} />,
             tables.canaries,
             "read"
@@ -298,7 +306,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="playbooks" element={sidebar}>
         <Route
           index
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <PlaybooksListPage />,
             tables.database,
             "read"
@@ -308,7 +316,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         <Route path="runs">
           <Route
             index
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <PlaybookRunsPage />,
               tables.database,
               "read"
@@ -317,7 +325,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
           <Route
             path=":id"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <PlaybookRunsDetailsPage />,
               tables.database,
               "read"
@@ -329,7 +337,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="settings" element={sidebar}>
         <Route
           path="connections"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <ConnectionsPage />,
             tables.connections,
             "read"
@@ -337,11 +345,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
         <Route
           path="users"
-          element={withAccessCheck(<UsersPage />, tables.identities, "read")}
+          element={withAuthorizationAccessCheck(
+            <UsersPage />,
+            tables.identities,
+            "read"
+          )}
         />
         <Route
           path="jobs"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <JobsHistorySettingsPage />,
             tables.database,
             "read"
@@ -349,7 +361,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
         <Route
           path="notifications"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <NotificationsPage />,
             tables.database,
             "read"
@@ -357,7 +369,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
         <Route
           path="feature-flags"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <FeatureFlagsPage />,
             tables.database,
             "read"
@@ -366,7 +378,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
         <Route
           path="event-queue-status"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <EventQueueStatusPage />,
             tables.database,
             "read"
@@ -376,7 +388,11 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         <Route path="agents">
           <Route
             index
-            element={withAccessCheck(<AgentsPage />, tables.agents, "read")}
+            element={withAuthorizationAccessCheck(
+              <AgentsPage />,
+              tables.agents,
+              "read"
+            )}
           />
         </Route>
 
@@ -396,7 +412,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                 <Route
                   index
                   key={`${x.name}-list`}
-                  element={withAccessCheck(
+                  element={withAuthorizationAccessCheck(
                     <SchemaResourcePage
                       resourceInfo={x as SchemaResourceType & { href: string }}
                     />,
@@ -409,7 +425,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                 <Route
                   key={`${x.name}-detail`}
                   path={`:id`}
-                  element={withAccessCheck(
+                  element={withAuthorizationAccessCheck(
                     <SchemaResource resourceInfo={x as SchemaResourceType} />,
                     tables[
                       (x as SchemaResourceType).table as keyof typeof tables
@@ -427,7 +443,11 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={
             <ErrorBoundary>
-              {withAccessCheck(<LogsPage />, tables.database, "read")}
+              {withAuthorizationAccessCheck(
+                <LogsPage />,
+                tables.database,
+                "read"
+              )}
             </ErrorBoundary>
           }
         />
@@ -439,11 +459,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       <Route path="catalog" element={sidebar}>
         <Route
           index
-          element={withAccessCheck(<ConfigListPage />, tables.database, "read")}
+          element={withAuthorizationAccessCheck(
+            <ConfigListPage />,
+            tables.database,
+            "read"
+          )}
         />
         <Route
           path="changes"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <ConfigChangesPage />,
             tables.database,
             "read"
@@ -451,7 +475,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
         <Route
           path="insights"
-          element={withAccessCheck(
+          element={withAuthorizationAccessCheck(
             <ConfigInsightsPage />,
             tables.database,
             "read"
@@ -462,7 +486,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={
               <ErrorBoundary>
-                {withAccessCheck(
+                {withAuthorizationAccessCheck(
                   <ConfigDetailsPage />,
                   tables.database,
                   "read"
@@ -472,7 +496,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           />
           <Route
             path="changes"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <ConfigDetailsChangesPage />,
               tables.database,
               "read"
@@ -480,7 +504,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           />
           <Route
             path="insights"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <ConfigDetailsInsightsPage />,
               tables.database,
               "read"
@@ -488,7 +512,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           />
           <Route
             path="relationships"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <ConfigDetailsRelationshipsPage />,
               tables.database,
               "read"
@@ -496,7 +520,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           />
           <Route
             path="playbooks"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <ConfigDetailsPlaybooksPage />,
               tables.database,
               "read"

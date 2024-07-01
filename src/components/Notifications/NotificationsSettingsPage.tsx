@@ -1,3 +1,4 @@
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
@@ -9,6 +10,7 @@ import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
 import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import { Modal } from "../../ui/Modal";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import NotificationsForm from "./NotificationsForm";
 import NotificationsTable from "./NotificationsTable";
 import { Notification } from "./notificationsTableColumns";
@@ -54,14 +56,20 @@ export default function NotificationsPage() {
               <BreadcrumbRoot key="notifications" link="/settings/jobs">
                 Notifications
               </BreadcrumbRoot>,
-              <button
-                key="notifications-add"
-                type="button"
-                className=""
-                onClick={() => setIsOpen(true)}
+              <AuthorizationAccessCheck
+                resource={tables.notifications}
+                action="write"
+                key="add-notifications"
               >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+                <button
+                  key="notifications-add"
+                  type="button"
+                  className=""
+                  onClick={() => setIsOpen(true)}
+                >
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
+                </button>
+              </AuthorizationAccessCheck>
             ]}
           />
         }

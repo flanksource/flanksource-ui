@@ -1,4 +1,5 @@
 import { useSettingsDeleteResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useCallback, useState } from "react";
@@ -41,15 +42,21 @@ export default function DeleteResource({
 
   return (
     <>
-      <Button
-        text="Delete"
-        disabled={isLoading}
-        icon={
-          !isLoading ? <FaTrash /> : <FaCircleNotch className="animate-spin" />
-        }
-        className="btn-danger"
-        onClick={() => setIsConfirmDialogOpen(true)}
-      />
+      <AuthorizationAccessCheck resource={table} action="write">
+        <Button
+          text="Delete"
+          disabled={isLoading}
+          icon={
+            !isLoading ? (
+              <FaTrash />
+            ) : (
+              <FaCircleNotch className="animate-spin" />
+            )
+          }
+          className="btn-danger"
+          onClick={() => setIsConfirmDialogOpen(true)}
+        />
+      </AuthorizationAccessCheck>
       {isConfirmDialogOpen && (
         <ConfirmationPromptDialog
           title="Delete resource"

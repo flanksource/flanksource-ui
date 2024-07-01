@@ -19,6 +19,7 @@ export const casbinAuthorizer = new Authorizer("manual");
 export type UserAccessState = {
   refresh: () => Promise<unknown>;
   isAdmin: boolean;
+  isViewer: boolean;
   roles: string[];
   hasResourceAccess: (
     resourceName: string,
@@ -33,6 +34,7 @@ export type UserAccessState = {
 const initialState: UserAccessState = {
   refresh: () => Promise.resolve(),
   isAdmin: false,
+  isViewer: false,
   roles: [],
   hasResourceAccess: (resourceName, action) => Promise.resolve(false),
   hasAnyResourceAccess: (resourceNames, action) => Promise.resolve(false)
@@ -64,6 +66,10 @@ export const UserAccessStateContextProvider = ({
     return roles?.includes("admin");
   }, [roles]);
 
+  const isViewer = useMemo(() => {
+    return roles?.includes("viewer");
+  }, [roles]);
+
   const hasResourceAccess = (resourceName: string, action: ActionType) => {
     defineRulesFor(roles);
     return casbinAuthorizer.can(action, resourceName);
@@ -83,6 +89,7 @@ export const UserAccessStateContextProvider = ({
         refresh: async () => refetch(),
         hasResourceAccess,
         hasAnyResourceAccess,
+        isViewer,
         isAdmin,
         roles
       }}

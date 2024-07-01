@@ -1,5 +1,7 @@
 import CanaryStatsCards from "@flanksource-ui/components/Canary/CanaryStatsCard";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { Canary } from "../components/Canary";
 import RefreshDropdown, {
@@ -52,11 +54,16 @@ export function HealthPage({ url }: Props) {
                 <BreadcrumbRoot key={"health"} link="/health">
                   Health
                 </BreadcrumbRoot>,
-                <AddSchemaResourceModal
+                <AuthorizationAccessCheck
+                  resource={tables.canaries}
+                  action="write"
                   key={"add-form"}
-                  onClose={() => setTriggerRefresh(triggerRefresh + 1)}
-                  resourceInfo={resourceInfo!}
-                />
+                >
+                  <AddSchemaResourceModal
+                    onClose={() => setTriggerRefresh(triggerRefresh + 1)}
+                    resourceInfo={resourceInfo!}
+                  />
+                </AuthorizationAccessCheck>
               ]}
             />
           }
