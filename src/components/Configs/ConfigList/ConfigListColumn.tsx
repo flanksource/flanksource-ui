@@ -17,17 +17,9 @@ import ConfigListCostCell, {
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-
-function CountBadge({ value }: { value: number | undefined | null }) {
-  if (!value) {
-    return null;
-  }
-  return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-      {value}
-    </span>
-  );
-}
+import ChangeCountIcon, {
+  CountBar
+} from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
@@ -111,7 +103,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     aggregationFn: changeAggregationFN,
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
       const value = getValue();
-      return <CountBadge value={value} />;
+      return <ChangeCountIcon count={value} />;
     },
     size: 70,
     meta: {
@@ -135,19 +127,25 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
       const data = getValue();
       return (
-        <div className="inline-flex space-x-2 overflow-hidden truncate">
-          {data.map((item: { count: number; analysis: ConfigAnalysis }) => {
-            return (
-              <span
-                className="inline-flex space-x-0.5"
-                key={item.analysis.analysis_type}
-              >
-                <ConfigInsightsIcon analysis={item.analysis} />{" "}
-                <CountBadge value={item.count} />
-              </span>
-            );
-          })}
-        </div>
+        <CountBar
+          iconClass="px-1  bg-zinc-100"
+          items={data.map(
+            (item: { count: number; analysis: ConfigAnalysis }) => {
+              return {
+                count: item.count,
+                icon: (
+                  <ConfigInsightsIcon
+                    size={20}
+                    analysis={{
+                      analysis_type: item.analysis.analysis_type,
+                      severity: item.analysis.severity
+                    }}
+                  />
+                )
+              };
+            }
+          )}
+        />
       );
     },
     minSize: 50,

@@ -18,18 +18,18 @@ import ChangeCount, { CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export function getConfigStatusColor(health?: ConfigSummary["health"]) {
   if (!health) {
-    return "gray";
+    return "bg-gray-400/80";
   }
   if (health.healthy && health.healthy > 0) {
-    return "green";
+    return "bg-green-500/60";
   }
   if (health.unhealthy && health.unhealthy > 0) {
-    return "red";
+    return "bg-red-500/50";
   }
   if (health.warning && health.warning > 0) {
-    return "orange";
+    return "bg-orange-400/60";
   }
-  return "gray";
+  return "bg-gray-500/40";
 }
 
 function ConfigSummaryTypeCell({
@@ -74,19 +74,21 @@ function ConfigSummaryAnalysisCell({
     <div className="flex flex-row gap-1 overflow-hidden truncate">
       <CountBar
         iconClass="px-1  bg-zinc-100"
-        items={
-          Object.entries(value).map(([key, value]) => {
-            return {
-              count: value,
-              icon: <ConfigInsightsIcon
+        items={Object.entries(value).map(([key, value]) => {
+          return {
+            count: value,
+            icon: (
+              <ConfigInsightsIcon
                 size={20}
                 analysis={{
                   analysis_type: key,
-                  severity: value.severity
-                }} />
-            }
-          })
-        } />
+                  severity: ""
+                }}
+              />
+            )
+          };
+        })}
+      />
     </div>
   );
 }
@@ -100,7 +102,7 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
       if (!value) {
         return null;
       }
-      return <ChangeCount count={value} />
+      return <ChangeCount count={value} />;
     },
     size: 40
   },
@@ -180,8 +182,9 @@ export default function ConfigSummaryList({
       if (tags.length > 0) {
         const tagsParam = tags
           .map((column) => {
-            return `${column}__:__${row.original[column as keyof ConfigSummary]
-              }`;
+            return `${column}__:__${
+              row.original[column as keyof ConfigSummary]
+            }`;
           })
           .join(",");
         params.set("labels", tagsParam);
@@ -238,26 +241,26 @@ export default function ConfigSummaryList({
           column === "type"
             ? ConfigSummaryTypeCell
             : ({ getValue, row }: CellContext<ConfigSummary, any>) => {
-              const isTag = groupByTags.includes(column);
-              const value = getValue();
+                const isTag = groupByTags.includes(column);
+                const value = getValue();
 
-              return (
-                <div
-                  className="flex flex-1 flex-row gap-1 items-center"
-                  style={{
-                    marginLeft: (row.depth + 1) * 20
-                  }}
-                >
-                  {isTag && <BiLabel />}
-                  {value ? (
-                    <span>{value}</span>
-                  ) : (
-                    <span className="text-gray-400">(None)</span>
-                  )}
-                  <Badge text={row.original.count} />
-                </div>
-              );
-            }
+                return (
+                  <div
+                    className="flex flex-1 flex-row gap-1 items-center"
+                    style={{
+                      marginLeft: (row.depth + 1) * 20
+                    }}
+                  >
+                    {isTag && <BiLabel />}
+                    {value ? (
+                      <span>{value}</span>
+                    ) : (
+                      <span className="text-gray-400">(None)</span>
+                    )}
+                    <Badge text={row.original.count} />
+                  </div>
+                );
+              }
       } satisfies ColumnDef<ConfigSummary>;
     });
     return [...newColumns, ...configSummaryColumns];

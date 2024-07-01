@@ -1,12 +1,10 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
-import {
-  StatusInfo,
-  StatusLine
-} from "@flanksource-ui/components/StatusLine/StatusLine";
+
 import { CellContext } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getConfigStatusColor } from "../ConfigSummaryList";
+import { Count, CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export function ConfigSummaryHealthCell({
   getValue,
@@ -26,17 +24,16 @@ export function ConfigSummaryHealthCell({
   }, [groupBy, type]);
 
   const statusLines = useMemo(() => {
-    const data: StatusInfo[] = Object.entries(value ?? {}).map(
-      ([key, value]) => {
-        return {
-          label: value,
-          url: `${urlBase}&health=${key}:1`,
-          color: getConfigStatusColor({
-            [key]: value
-          } as ConfigSummary["health"])
-        };
-      }
-    );
+    const data: Count[] = Object.entries(value ?? {}).map(([key, value]) => {
+      return {
+        count: value,
+        label: value,
+        url: `${urlBase}&health=${key}:1`,
+        color: getConfigStatusColor({
+          [key]: value
+        } as ConfigSummary["health"])
+      };
+    });
     return data;
   }, [urlBase, value]);
 
@@ -46,13 +43,12 @@ export function ConfigSummaryHealthCell({
 
   return (
     <div
-      className="flex flex-row gap-1"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
       }}
     >
-      <StatusLine label="" statuses={statusLines} />
+      <CountBar items={statusLines} barStyle="RAG" />
     </div>
   );
 }
@@ -71,25 +67,19 @@ export function ConfigSummaryHealthAggregateCell({
   }, {} as Record<string, number>);
 
   const statusLines = useMemo(() => {
-    const data: StatusInfo[] = Object.entries(value ?? {}).map(
-      ([key, value]) => {
-        return {
-          label: value.toString(),
-          color: getConfigStatusColor({
-            [key]: value
-          } as ConfigSummary["health"])
-        };
-      }
-    );
+    const data: Count[] = Object.entries(value ?? {}).map(([key, value]) => {
+      return {
+        count: value.toString(),
+        color: getConfigStatusColor({
+          [key]: value
+        } as ConfigSummary["health"])
+      };
+    });
     return data;
   }, [value]);
 
   if (!value) {
     return null;
   }
-  return (
-    <div className="flex flex-row gap-1">
-      <StatusLine label="" statuses={statusLines} />
-    </div>
-  );
+  return <CountBar items={statusLines} barStyle="RAG" />;
 }
