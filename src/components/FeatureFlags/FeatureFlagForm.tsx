@@ -1,3 +1,4 @@
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
@@ -5,6 +6,7 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
 import FormikTextInput from "../Forms/Formik/FormikTextInput";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { toastError } from "../Toast/toast";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
@@ -78,14 +80,19 @@ export default function FeatureFlagForm({
           </div>
           <div className="flex items-center py-4 px-5 rounded-lg bg-gray-100">
             {Boolean(formValue?.created_at) && (
-              <Button
-                text="Delete"
-                icon={<FaTrash />}
-                onClick={() => {
-                  onFeatureFlagDelete?.(formValue!);
-                }}
-                className="btn-danger"
-              />
+              <AuthorizationAccessCheck
+                resource={tables.feature_flags}
+                action="write"
+              >
+                <Button
+                  text="Delete"
+                  icon={<FaTrash />}
+                  onClick={() => {
+                    onFeatureFlagDelete?.(formValue!);
+                  }}
+                  className="btn-danger"
+                />
+              </AuthorizationAccessCheck>
             )}
             <div className="flex flex-1 justify-end">
               <button
@@ -98,11 +105,16 @@ export default function FeatureFlagForm({
                 Cancel
               </button>
               {source !== "local" && (
-                <Button
-                  type="submit"
-                  text={Boolean(formValue?.created_at) ? "Update" : "Save"}
-                  className="btn-primary"
-                />
+                <AuthorizationAccessCheck
+                  resource={tables.feature_flags}
+                  action="write"
+                >
+                  <Button
+                    type="submit"
+                    text={Boolean(formValue?.created_at) ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                </AuthorizationAccessCheck>
               )}
             </div>
           </div>

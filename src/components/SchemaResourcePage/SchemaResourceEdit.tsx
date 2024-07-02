@@ -14,6 +14,7 @@ import { Icon } from "../../ui/Icons/Icon";
 import { IconPicker } from "../../ui/Icons/IconPicker";
 import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 import EditTopologyResource from "../Integrations/Topology/EditTopologyResource";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import CanEditResource from "../Settings/CanEditResource";
 import ConfigScrapperSpecEditor from "../SpecEditor/ConfigScrapperSpecEditor";
 import HealthSpecEditor from "../SpecEditor/HealthSpecEditor";
@@ -468,12 +469,16 @@ export function SchemaResourceEdit({
                                 }}
                               />
                             )}
-
-                            <Button
-                              type="submit"
-                              text={!!id ? "Update" : "Save"}
-                              className="btn-primary"
-                            />
+                            <AuthorizationAccessCheck
+                              resource={resourceInfo.table}
+                              action="write"
+                            >
+                              <Button
+                                type="submit"
+                                text={!!id ? "Update" : "Save"}
+                                className="btn-primary"
+                              />
+                            </AuthorizationAccessCheck>
                           </div>
                         </CanEditResource>
                       </form>

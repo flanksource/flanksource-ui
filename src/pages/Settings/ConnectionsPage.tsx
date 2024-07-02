@@ -1,3 +1,5 @@
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -124,14 +126,19 @@ export function ConnectionsPage() {
               <BreadcrumbRoot key="connections" link="/settings/connections">
                 Connections
               </BreadcrumbRoot>,
-              <button
+              <AuthorizationAccessCheck
+                resource={tables.connections}
+                action="write"
                 key="add-connection"
-                type="button"
-                className=""
-                onClick={() => setIsOpen(true)}
               >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+                <button
+                  type="button"
+                  className=""
+                  onClick={() => setIsOpen(true)}
+                >
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
+                </button>
+              </AuthorizationAccessCheck>
             ]}
           />
         }

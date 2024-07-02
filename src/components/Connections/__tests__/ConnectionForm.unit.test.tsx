@@ -1,12 +1,35 @@
+import { AuthContext } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
 import {
   ConnectionType,
   ConnectionValueType,
   connectionTypes
 } from "../connectionTypes";
 import ConnectionForm from "./../ConnectionForm";
+
+const server = setupServer(
+  rest.get("/api/db/people_roles", (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+          name: "Admin",
+          email: "admin@local",
+          roles: ["admin"]
+        }
+      ])
+    );
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 const client = new QueryClient();
 
@@ -41,13 +64,30 @@ describe("ConnectionForm", () => {
     const onConnectionSubmit = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <ConnectionForm
-          connectionType={connectionType}
-          formValue={formInitialValue}
-          onConnectionSubmit={onConnectionSubmit}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={formInitialValue}
+              onConnectionSubmit={onConnectionSubmit}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
+
+    expect(
+      await screen.findByRole("button", { name: /Save/i })
+    ).toBeInTheDocument();
+
     fireEvent.click(
       screen.getByRole("button", {
         name: /Save/i
@@ -70,17 +110,32 @@ describe("ConnectionForm", () => {
     });
   });
 
-  it("calls onConnectionDelete when the delete button is clicked", () => {
+  it("calls onConnectionDelete when the delete button is clicked", async () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <ConnectionForm
-          connectionType={connectionType}
-          formValue={{ ...formInitialValue, id: "123" }}
-          onConnectionDelete={onConnectionDelete}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={{ ...formInitialValue, id: "123" }}
+              onConnectionDelete={onConnectionDelete}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
+
+    expect(await screen.findByText("Delete")).toBeInTheDocument();
+
     fireEvent.click(screen.getByText("Delete"));
     expect(onConnectionDelete).toHaveBeenCalledWith({
       name: "Test Connection",
@@ -95,11 +150,23 @@ describe("ConnectionForm", () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <ConnectionForm
-          connectionType={connectionType}
-          formValue={{ ...formInitialValue, id: "123" }}
-          onConnectionDelete={onConnectionDelete}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={{ ...formInitialValue, id: "123" }}
+              onConnectionDelete={onConnectionDelete}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
     expect(
@@ -113,11 +180,23 @@ describe("ConnectionForm", () => {
     const handleBack = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <ConnectionForm
-          connectionType={connectionType}
-          formValue={formInitialValue}
-          handleBack={handleBack}
-        />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={formInitialValue}
+              handleBack={handleBack}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
     fireEvent.click(screen.getByText("Back"));

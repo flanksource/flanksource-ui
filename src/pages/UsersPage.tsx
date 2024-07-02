@@ -14,7 +14,7 @@ import {
   updateUserRole
 } from "../api/services/users";
 import { Modal } from "../components";
-import { AccessCheck } from "../components/Authentication/AccessCheck/AccessCheck";
+import { AuthorizationAccessCheck } from "../components/Permissions/AuthorizationAccessCheck";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import {
   ManageUserRoleValue,
@@ -119,7 +119,7 @@ export function UsersPage() {
         >
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              <AccessCheck resource={tables.rbac} action="write">
+              <AuthorizationAccessCheck resource={tables.rbac} action="write">
                 <button
                   className="btn-primary"
                   onClick={(e) => setOpenRoleManageModal(true)}
@@ -127,8 +127,11 @@ export function UsersPage() {
                   <MdAdminPanelSettings className="mr-2 h-5 w-5" />
                   Add Role to User
                 </button>
-              </AccessCheck>
-              <AccessCheck resource={tables.identities} action="write">
+              </AuthorizationAccessCheck>
+              <AuthorizationAccessCheck
+                resource={tables.identities}
+                action="write"
+              >
                 <button
                   className="btn-primary"
                   onClick={(e) => setIsOpen(true)}
@@ -136,7 +139,7 @@ export function UsersPage() {
                   <ImUserPlus className="mr-2 h-5 w-5" />
                   Invite User
                 </button>
-              </AccessCheck>
+              </AuthorizationAccessCheck>
             </div>
           </div>
           <UserList

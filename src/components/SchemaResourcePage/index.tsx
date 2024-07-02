@@ -3,6 +3,7 @@ import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
 import { SearchLayout } from "../../ui/Layout/SearchLayout";
 import ErrorPage from "../Errors/ErrorPage";
+import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import AddSchemaResourceModal from "./AddSchemaResourceModal";
 import { SchemaResourceList } from "./SchemaResourceList";
 import { SchemaResourceType } from "./resourceTypes";
@@ -36,11 +37,17 @@ export function SchemaResourcePage({
               >
                 {name}
               </BreadcrumbRoot>,
-              <AddSchemaResourceModal
-                key={"add-resource"}
-                onClose={() => refetch()}
-                resourceInfo={resourceInfo!}
-              />
+              <AuthorizationAccessCheck
+                resource={resourceInfo.table}
+                action="write"
+                key="add-button"
+              >
+                <AddSchemaResourceModal
+                  key={"add-resource"}
+                  onClose={() => refetch()}
+                  resourceInfo={resourceInfo!}
+                />
+              </AuthorizationAccessCheck>
             ]}
           />
         }

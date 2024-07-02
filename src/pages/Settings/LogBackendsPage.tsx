@@ -3,6 +3,8 @@ import ErrorPage from "@flanksource-ui/components/Errors/ErrorPage";
 import { LogBackends } from "@flanksource-ui/components/Logs/LogBackends/LogBackends";
 import LogBackendsForm from "@flanksource-ui/components/Logs/LogBackends/LogBackendsForm";
 import LogBackendsList from "@flanksource-ui/components/Logs/LogBackends/LogBackendsList";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   BreadcrumbNav,
   BreadcrumbRoot
@@ -36,14 +38,20 @@ export function LogBackendsPage() {
               <BreadcrumbRoot link="/settings/" key="breadcrumb-1">
                 Log Backends
               </BreadcrumbRoot>,
-              <button
-                type="button"
+
+              <AuthorizationAccessCheck
                 key="breadcrumb-2"
-                className=""
-                onClick={() => setIsOpen(true)}
+                resource={tables.logging_backends}
+                action="write"
               >
-                <AiFillPlusCircle size={32} className="text-blue-600" />
-              </button>
+                <button
+                  type="button"
+                  className=""
+                  onClick={() => setIsOpen(true)}
+                >
+                  <AiFillPlusCircle size={32} className="text-blue-600" />
+                </button>
+              </AuthorizationAccessCheck>
             ]}
           />
         }

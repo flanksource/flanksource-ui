@@ -2,43 +2,51 @@ import { ReactElement, useCallback, useEffect, useState } from "react";
 import {
   ActionType,
   useUserAccessStateContext
-} from "../../../context/UserAccessContext/UserAccessContext";
+} from "../../context/UserAccessContext/UserAccessContext";
 
-type AccessCheckProps = {
+type AuthorizationAccessCheckProps = {
   resource: string | string[];
   action: ActionType;
   children: ReactElement;
 };
 
-export function AccessCheck({ resource, action, children }: AccessCheckProps) {
+export function AuthorizationAccessCheck({
+  resource,
+  action,
+  children
+}: AuthorizationAccessCheckProps) {
   const { hasAnyResourceAccess, roles } = useUserAccessStateContext();
-  const [render, setRender] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+
+  console.log("roles", roles);
 
   const checkAccess = useCallback(async () => {
     const shouldRender = await hasAnyResourceAccess(
       Array.isArray(resource) ? resource : [resource],
       action
     );
-    setRender(shouldRender);
+    setHasAccess(shouldRender);
   }, [action, hasAnyResourceAccess, resource]);
 
   useEffect(() => {
     checkAccess();
   }, [action, checkAccess, resource, roles]);
 
-  if (render) return children ?? null;
+  if (hasAccess) {
+    return children;
+  }
 
   return null;
 }
 
-export const withAccessCheck = (
+export const withAuthorizationAccessCheck = (
   component: ReactElement,
   resource: string | string[],
   action: ActionType
 ) => {
   return (
-    <AccessCheck resource={resource} action={action}>
+    <AuthorizationAccessCheck resource={resource} action={action}>
       {component}
-    </AccessCheck>
+    </AuthorizationAccessCheck>
   );
 };

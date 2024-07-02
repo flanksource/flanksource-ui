@@ -11,7 +11,7 @@ import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { IconButton } from "../../ui/Buttons/IconButton";
-import { withAccessCheck } from "../Authentication/AccessCheck/AccessCheck";
+import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
 type UserListProps = {
   data: any[];
@@ -83,7 +83,7 @@ const getColumns = (
 };
 
 function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
-  return withAccessCheck(
+  return withAuthorizationAccessCheck(
     <div className="relative">
       <Menu>
         <Float placement="bottom-start" offset={10} portal>
