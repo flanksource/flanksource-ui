@@ -40,6 +40,7 @@ type CanaryChecksProps = {
   hideNamespacePrefix?: boolean;
   groupSingleItems?: boolean;
   theadStyle?: React.CSSProperties;
+  noGrouping?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export function CanaryTable({
@@ -60,21 +61,16 @@ export function CanaryTable({
   const pivotLookup = params.get("pivotLabel");
   const pivotBy = params.get("pivotBy");
 
-  const [tableData, setTableData] = useState(checks);
-
-  // update table data if searchParam or check data changes
-  useEffect(() => {
-    setTableData(
-      groupBy !== "no-group"
-        ? Object.values(
-            getAggregatedGroupedChecks(
-              getGroupedChecks(checks, groupBy),
-              groupSingleItems
-            )
+  const tableData = useMemo(() => {
+    return groupBy !== "no-group"
+      ? Object.values(
+          getAggregatedGroupedChecks(
+            getGroupedChecks(checks, groupBy),
+            groupSingleItems
           )
-        : checks
-    );
-  }, [params, checks, groupBy, groupSingleItems]);
+        )
+      : checks;
+  }, [checks, groupBy, groupSingleItems]);
 
   const { rows } = useMemo(
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
@@ -88,10 +84,10 @@ export function CanaryTable({
     pivotBy !== "none";
 
   return (
-    <Table
+    <ChecksTable
       data={rows}
       labels={labels}
-      pivotCellType={shouldPivot ? pivotCellType : null}
+      pivotCellType={shouldPivot ? pivotCellType : undefined}
       onHealthCheckClick={onCheckClick}
       hasGrouping={groupBy !== "no-group"}
       groupBy={groupBy}
@@ -106,7 +102,7 @@ export function CanaryTable({
 type TableProps = {
   data: any[];
   labels?: string[];
-  pivotCellType: string | null;
+  pivotCellType?: string;
   hasGrouping: boolean;
   onHealthCheckClick: (check: HealthCheck) => void;
   showNamespaceTags?: boolean;
@@ -115,7 +111,7 @@ type TableProps = {
   groupBy?: string;
 };
 
-export function Table({
+export function ChecksTable({
   data,
   labels,
   pivotCellType,

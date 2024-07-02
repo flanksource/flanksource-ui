@@ -1,4 +1,5 @@
 import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
+import { HealthCheck } from "./health";
 
 export interface ConfigChange extends CreatedAt {
   id: string;
@@ -138,4 +139,11 @@ export type ConfigSummary = {
     id: string;
     name: string;
   };
+};
+
+export type ConfigHealthCheckView = Pick<
+  HealthCheck,
+  "id" | "name" | "status" | "icon" | "type"
+> & {
+  config_id: string;
 };
