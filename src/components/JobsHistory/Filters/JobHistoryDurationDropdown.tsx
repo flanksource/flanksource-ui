@@ -2,7 +2,6 @@ import {
   ReactSelectDropdown,
   StateOption
 } from "@flanksource-ui/components/ReactSelectDropdown";
-import dayjs from "dayjs";
 import { useField } from "formik";
 
 export const durationOptions: Record<
@@ -18,42 +17,42 @@ export const durationOptions: Record<
   "15s": {
     label: "15 seconds",
     value: "15s",
-    valueInMillis: dayjs.duration(15, "seconds").asMilliseconds()
+    valueInMillis: 15 * 1000
   },
   "30s": {
     label: "30 seconds",
     value: "30s",
-    valueInMillis: dayjs.duration(30, "seconds").asMilliseconds()
+    valueInMillis: 30 * 1000
   },
   "60s": {
     label: "1 minute",
     value: "60s",
-    valueInMillis: dayjs.duration(1, "minutes").asMilliseconds()
+    valueInMillis: 60 * 1000
   },
   "2m": {
     label: "2 minutes",
     value: "2m",
-    valueInMillis: dayjs.duration(2, "minutes").asMilliseconds()
+    valueInMillis: 2 * 60 * 1000
   },
   "3m": {
     label: "3 minutes",
     value: "3m",
-    valueInMillis: dayjs.duration(3, "minutes").asMilliseconds()
+    valueInMillis: 3 * 60 * 1000
   },
   "5m": {
     label: "5 minutes",
     value: "5m",
-    valueInMillis: dayjs.duration(5, "minutes").asMilliseconds()
+    valueInMillis: 5 * 60 * 1000
   },
   "10m": {
     label: "10 minutes",
     value: "10m",
-    valueInMillis: dayjs.duration(10, "minutes").asMilliseconds()
+    valueInMillis: 10 * 60 * 1000
   },
   "15m": {
     label: "15 minutes",
     value: "15m",
-    valueInMillis: dayjs.duration(15, "minutes").asMilliseconds()
+    valueInMillis: 15 * 60 * 1000
   }
 };
 
