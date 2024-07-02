@@ -60,21 +60,16 @@ export function CanaryTable({
   const pivotLookup = params.get("pivotLabel");
   const pivotBy = params.get("pivotBy");
 
-  const [tableData, setTableData] = useState(checks);
-
-  // update table data if searchParam or check data changes
-  useEffect(() => {
-    setTableData(
-      groupBy !== "no-group"
-        ? Object.values(
-            getAggregatedGroupedChecks(
-              getGroupedChecks(checks, groupBy),
-              groupSingleItems
-            )
+  const tableData = useMemo(() => {
+    return groupBy !== "no-group"
+      ? Object.values(
+          getAggregatedGroupedChecks(
+            getGroupedChecks(checks, groupBy),
+            groupSingleItems
           )
-        : checks
-    );
-  }, [params, checks, groupBy, groupSingleItems]);
+        )
+      : checks;
+  }, [checks, groupBy, groupSingleItems]);
 
   const { rows } = useMemo(
     () => prepareRows({ tableData, hideNamespacePrefix, pivotBy, pivotLookup }),
