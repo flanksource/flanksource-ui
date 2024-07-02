@@ -20,6 +20,9 @@ import { ConfigIntermediaryNodeReactFlowNode } from "@flanksource-ui/components/
 import { ConfigItemReactFlowNode } from "@flanksource-ui/components/Configs/Graph/ConfigItemReactFlowNode";
 import "reactflow/dist/style.css";
 import { Loading } from "../Loading";
+import GraphEdgeTypeToggle, {
+  useGraphEdgeTypeToggleValue
+} from "./Controls/GraphEdgeTypeToggle";
 import useAnimatedNodes from "./Expand/useAnimatedNodes";
 import useExpandCollapse from "./Expand/useExpandCollapse";
 
@@ -29,12 +32,6 @@ const nodeTypes: NodeTypes = {
 };
 
 const edgeTypes = {} satisfies EdgeTypes;
-
-const defaultEdgeOptions = {
-  type: "smoothstep",
-  markerEnd: { type: MarkerType.ArrowClosed },
-  pathOptions: { offset: 50 }
-};
 
 export type GraphDataGenericConstraint = {
   [key: string]: any;
@@ -54,6 +51,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   direction = "LR"
 }: ConfigGraphProps<T>) {
   const { setViewport, fitView, getZoom } = useReactFlow();
+  const edgeType = useGraphEdgeTypeToggleValue();
 
   // During the initial layout setup, we want to align the nodes vertically
   // centered and horizontally aligned to the left. This is done only once and
@@ -67,6 +65,12 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
 
   const [nodes, setNodes, onNodesChange] = useNodesState<T>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  useEffect(() => {
+    setEdges((edges) =>
+      edges.map((edge) => ({ ...edge, type: edgeType ?? "bezier" }))
+    );
+  }, [edgeType, setEdges]);
 
   useEffect(() => {
     // diff nodes, add only new ones
@@ -141,25 +145,26 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
     const rootNodes = expandNodes.filter(
       (node) => !expandEdges.some((edge) => edge.target === node.id)
     );
+    const { width: nodesGroupWidth, height: nodesGroupHeight } =
+      getNodesBounds(rootNodes);
+
+    const { height: viewPortHeight, width: viewPortWidth } = getState();
+
     if (direction === "TB") {
       // Calculate the width of the nodes group
-      const { width: nodesGroupWidth } = getNodesBounds(rootNodes);
-      const { width: viewPortWidth } = getState();
       setViewport({
         zoom: 1,
         y: 0,
         // Calculate the x position of the nodes group to horizontally center it
-        x: (viewPortWidth - nodesGroupWidth) / 3
+        x: viewPortWidth / 2 - nodesGroupWidth
       });
     } else {
       // Calculate the height of the nodes group
-      const { height: nodesGroupHeight } = getNodesBounds(rootNodes);
-      const { height: viewPortHeight } = getState();
       setViewport({
         zoom: 1,
         x: 0,
         // Calculate the y position of the nodes group to vertically center it
-        y: (viewPortHeight - nodesGroupHeight - 100) / 2
+        y: viewPortHeight / 2 - nodesGroupHeight
       });
     }
   }, [direction, expandEdges, expandNodes, getState, setViewport]);
@@ -188,7 +193,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
           return n;
         })
       );
-      setTimeout(() => centerNodeToViewport(node), 350);
+      setTimeout(() => centerNodeToViewport(node), 300);
     },
     [centerNodeToViewport, setNodes]
   );
@@ -210,7 +215,10 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
         edgesUpdatable={false}
         nodeTypes={nodeTypes}
         connectionLineType={ConnectionLineType.SmoothStep}
-        defaultEdgeOptions={defaultEdgeOptions}
+        defaultEdgeOptions={{
+          type: edgeType ?? "bezier",
+          markerEnd: { type: MarkerType.ArrowClosed }
+        }}
         draggable={false}
         edgeTypes={edgeTypes}
         nodesConnectable={false}
@@ -220,6 +228,7 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
       >
         <Controls position="top-right">
           <ConfigGraphDirectionToggle />
+          <GraphEdgeTypeToggle />
         </Controls>
       </ReactFlow>
     </div>

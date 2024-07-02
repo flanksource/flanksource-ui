@@ -70,7 +70,7 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
     queryFn: () =>
       getAConfigRelationships({
         configId: id!,
-        type_filter: relationshipType,
+        type_filter: relationshipType ?? "outgoing",
         configTypes: configTypes,
         hideDeleted: hideDeleted,
         relation: relation,

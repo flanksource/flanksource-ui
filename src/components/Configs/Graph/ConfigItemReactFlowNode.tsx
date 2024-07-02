@@ -1,7 +1,9 @@
 import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import clsx from "clsx";
+import { useMemo } from "react";
 import { FaTrash } from "react-icons/fa";
+import { MdOutlineDifference } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
 import { Handle, NodeProps } from "reactflow";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
@@ -25,6 +27,16 @@ export function ConfigItemReactFlowNode({
   const [searchParams] = useSearchParams({
     outgoing: "true"
   });
+
+  const totalChanges = useMemo(() => {
+    if (data.data.type === "intermediary") {
+      return undefined;
+    }
+    return data.data.config.changes?.reduce(
+      (acc, change) => acc + change.total,
+      0
+    );
+  }, [data]);
 
   if (data.data.type === "intermediary") {
     return null;
@@ -104,6 +116,22 @@ export function ConfigItemReactFlowNode({
                 />
               }
             />
+            {totalChanges && (
+              <Badge
+                color="gray"
+                text={
+                  <Link
+                    to={{
+                      pathname: `/catalog/${config.id}/changes`
+                    }}
+                    className="flex flex-row gap-1 items-center text-sm"
+                  >
+                    <MdOutlineDifference />
+                    <span> {totalChanges}</span>
+                  </Link>
+                }
+              />
+            )}
             {config.tags && (
               <>
                 {config.tags.namespace && (

@@ -21,16 +21,16 @@ export type ConfigGraphNodes = {
           | "name"
           | "status"
           | "tags"
+          | "changes"
         >;
       }
     | {
         type: "intermediary";
         configType: string;
-        numberOfConfigs: number;
       };
   expanded?: boolean;
   expandable?: boolean;
-  children?: number;
+  childrenCount: number;
 };
 
 type ConfigGraphProps = {
@@ -72,7 +72,7 @@ export function ConfigRelationshipGraph({ configs }: ConfigGraphProps) {
     });
   }, [configsForGraph]);
 
-  if (nodes.length === 0 || edges.length === 0) {
+  if (nodes.length === 0) {
     return null;
   }
 
