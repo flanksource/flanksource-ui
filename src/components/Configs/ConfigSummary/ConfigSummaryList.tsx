@@ -1,6 +1,7 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
 import { BiLabel } from "react-icons/bi";
@@ -266,6 +267,8 @@ export default function ConfigSummaryList({
     return [...newColumns, ...configSummaryColumns];
   }, [groupBy, groupByTags]);
 
+  const [sortState, updateSortState] = useReactTableSortState();
+
   return (
     <DataTable
       stickyHead
@@ -278,6 +281,9 @@ export default function ConfigSummaryList({
       hiddenColumns={
         groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : undefined
       }
+      enableServerSideSorting
+      onTableSortByChanged={updateSortState}
+      tableSortByState={sortState}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
