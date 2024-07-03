@@ -68,7 +68,8 @@ export default function ConfigsTypeIcon({
           )}
       </span>
       {showLabel && <span> {value}</span>}
-      {children && <span>{children}</span>}
+      {/*  eslint-disable-next-line react/jsx-no-useless-fragment */}
+      {children && <>{children}</>}
     </div>
   );
 }

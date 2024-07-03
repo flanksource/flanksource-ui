@@ -20,7 +20,7 @@ export function ConfigListPage() {
   const [searchParams] = useSearchParams({
     sortBy: "type",
     sortOrder: "asc",
-    groupBy: "type"
+    groupBy: "config_class,type"
   });
 
   const configType = searchParams.get("configType") ?? undefined;
@@ -103,7 +103,12 @@ export function ConfigListPage() {
               <ConfigsTable
                 data={allConfigs?.data ?? []}
                 isLoading={isLoading}
-                groupBy={groupBy?.[0] === "type" ? undefined : groupBy?.[0]}
+                // We don't want to group by type/class
+                groupBy={
+                  groupBy?.filter(
+                    (g) => !["type", "config_class"].includes(g)
+                  )?.[0]
+                }
               />
             )}
           </div>

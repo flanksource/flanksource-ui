@@ -1,10 +1,9 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
+import ChangeCount, { CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
-import { BiLabel } from "react-icons/bi";
-import { IoChevronDown, IoChevronForward } from "react-icons/io5";
 import { useSearchParams } from "react-router-dom";
 import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
@@ -14,7 +13,8 @@ import {
   ConfigSummaryHealthAggregateCell,
   ConfigSummaryHealthCell
 } from "./Cells/ConfigSummaryHealthCells";
-import ChangeCount, { CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
+import { ConfigSummaryTableVirtualAggregateColumn } from "./Cells/ConfigSummaryTableVirtualAggregateColumn";
+import { ConfigSummaryVirtualColumnCell } from "./Cells/ConfigSummaryVirtualColumnCell";
 
 export function getConfigStatusColor(health?: ConfigSummary["health"]) {
   if (!health) {
@@ -51,7 +51,12 @@ function ConfigSummaryTypeCell({
   }, [configType]);
 
   return (
-    <span className="flex flex-nowrap gap-1">
+    <span
+      className="flex flex-nowrap gap-1"
+      style={{
+        marginLeft: row.depth * 20
+      }}
+    >
       <ConfigsTypeIcon config={{ type: configType }}>
         <div className="flex flex-row items-center gap-1">
           <span className="pl-1">{value}</span>
@@ -93,10 +98,55 @@ function ConfigSummaryAnalysisCell({
   );
 }
 
+function ConfigSummaryAnalysisAggregateCell({
+  row
+}: CellContext<ConfigSummary, unknown>) {
+  const subRows = row.subRows;
+
+  const value = subRows.reduce((acc, row) => {
+    const analysis = row.original.analysis;
+    if (analysis) {
+      Object.entries(analysis).forEach(([key, value]) => {
+        acc[key] = (acc[key] || 0) + value;
+      });
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  return (
+    <div className="flex flex-row gap-1 overflow-hidden truncate">
+      <CountBar
+        iconClass="px-1  bg-zinc-100"
+        items={Object.entries(value).map(([key, value]) => {
+          return {
+            count: value,
+            icon: (
+              <ConfigInsightsIcon
+                size={20}
+                analysis={{
+                  analysis_type: key,
+                  severity: ""
+                }}
+              />
+            )
+          };
+        })}
+      />
+    </div>
+  );
+}
+
 const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
   {
     header: "changes",
     accessorKey: "changes",
+    aggregatedCell: ({ getValue }) => {
+      const value = getValue();
+      if (!value) {
+        return null;
+      }
+      return <ChangeCount count={value} />;
+    },
     cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
       const value = getValue();
       if (!value) {
@@ -118,6 +168,7 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     header: "analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
+    aggregatedCell: ConfigSummaryAnalysisAggregateCell,
     minSize: 30,
     maxSize: 100
   },
@@ -176,7 +227,10 @@ export default function ConfigSummaryList({
       const tags = groupBy
         .filter(
           (column) =>
-            column !== "type" && column !== "health" && column !== "status"
+            column !== "type" &&
+            column !== "health" &&
+            column !== "status" &&
+            column !== "config_class"
         )
         .filter((column) => row.original[column as keyof ConfigSummary]);
       if (tags.length > 0) {
@@ -202,65 +256,17 @@ export default function ConfigSummaryList({
         accessorKey: column,
         maxSize: 250,
         minSize: 100,
-        aggregatedCell: ({ row }) => {
-          if (row.getCanExpand()) {
-            const groupingValue = row.getGroupingValue(
-              row.groupingColumnId!
-            ) as string;
-            const count = row.subRows.reduce(
-              (acc, row) => acc + row.original.count,
-              0
-            );
-            return (
-              <div
-                className="flex flex-row items-center gap-1"
-                style={{
-                  marginLeft: row.depth * 20
-                }}
-              >
-                {row.getIsExpanded() ? <IoChevronDown /> : <IoChevronForward />}
-                {row.groupingColumnId === "type" ? (
-                  <ConfigsTypeIcon config={row.original} showLabel>
-                    <Badge text={count} />
-                  </ConfigsTypeIcon>
-                ) : (
-                  <div className="flex flex-row gap-1 items-center">
-                    {groupingValue ? (
-                      <span>{groupingValue}</span>
-                    ) : (
-                      <span className="text-gray-400">(None)</span>
-                    )}
-                    <Badge text={count} />
-                  </div>
-                )}
-              </div>
-            );
-          }
-        },
+        aggregatedCell: ConfigSummaryTableVirtualAggregateColumn,
         cell:
           column === "type"
             ? ConfigSummaryTypeCell
-            : ({ getValue, row }: CellContext<ConfigSummary, any>) => {
-                const isTag = groupByTags.includes(column);
-                const value = getValue();
-
-                return (
-                  <div
-                    className="flex flex-1 flex-row gap-1 items-center"
-                    style={{
-                      marginLeft: (row.depth + 1) * 20
-                    }}
-                  >
-                    {isTag && <BiLabel />}
-                    {value ? (
-                      <span>{value}</span>
-                    ) : (
-                      <span className="text-gray-400">(None)</span>
-                    )}
-                    <Badge text={row.original.count} />
-                  </div>
-                );
-              }
+            : (props) => (
+                <ConfigSummaryVirtualColumnCell
+                  {...props}
+                  groupByTags={groupByTags}
+                  columnId={column}
+                />
+              )
       } satisfies ColumnDef<ConfigSummary>;
     });
     return [...newColumns, ...configSummaryColumns];
@@ -283,6 +289,7 @@ export default function ConfigSummaryList({
       isLoading={isLoading}
       className="max-w-full overflow-x-auto table-fixed table-auto"
       savePreferences={false}
+      expandAllRows={groupBy[0] === "config_class"}
     />
   );
 }
