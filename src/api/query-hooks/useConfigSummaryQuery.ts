@@ -13,7 +13,7 @@ export function useConfigSummaryQuery({
   const [searchParams] = useSearchParams({
     sortBy: "type",
     sortOrder: "asc",
-    groupBy: "type"
+    groupBy: "config_class,type"
   });
   const hideDeletedConfigs = useHideDeletedConfigs();
   const labels = searchParams.get("labels") ?? undefined;
@@ -33,7 +33,8 @@ export function useConfigSummaryQuery({
   }, [labels]);
 
   const req: ConfigSummaryRequest = {
-    groupBy,
+    // group by config_class is always done on the frontend
+    groupBy: groupBy?.filter((g) => g !== "config_class") || undefined,
     deleted: !hideDeletedConfigs,
     filter: filterSummaryByLabel,
     health: health ? tristateOutputToQueryParamValue(health) : undefined,
@@ -50,6 +51,11 @@ export function useConfigSummaryQuery({
   return useQuery({
     queryKey: ["configs", "configSummary", req],
     queryFn: () => getConfigsSummary(req),
-    enabled
+    enabled,
+    select: (data) =>
+      data.map((summary) => ({
+        ...summary,
+        config_class: summary.type.split("::")[0]
+      }))
   });
 }

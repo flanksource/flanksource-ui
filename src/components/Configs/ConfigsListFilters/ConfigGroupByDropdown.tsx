@@ -37,6 +37,11 @@ const items: GroupByOptions[] = [
     label: "type",
     value: "type",
     icon: <BiLabel />
+  },
+  {
+    label: "provider",
+    value: "config_class",
+    icon: <BiLabel />
   }
 ];
 
@@ -55,7 +60,7 @@ export default function ConfigGroupByDropdown({
       if (configType) {
         return [];
       }
-      return ["type"];
+      return ["config_class", "type"];
     }
     return groupBy.split(",").map((v) => v.replace("__tag", "")) ?? [];
   }, [configType, params, searchParamKey]);
@@ -66,9 +71,18 @@ export default function ConfigGroupByDropdown({
     enabled: true,
     select: (tags) => {
       return [
-        ...Object.values(items).filter(
-          (item) => !configType || item.value !== "type"
-        ),
+        ...Object.values(items).filter((item) => {
+          if (!configType) {
+            return false;
+          }
+          if (item.value === "type") {
+            return false;
+          }
+          if (item.value === "config_class") {
+            return false;
+          }
+          return true;
+        }),
         ...(tags && tags.length > 0
           ? tags
               // ensure that the tags are unique

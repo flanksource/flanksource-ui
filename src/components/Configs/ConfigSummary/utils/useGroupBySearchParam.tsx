@@ -9,7 +9,7 @@ import { useSearchParams } from "react-router-dom";
  */
 export default function useGroupBySearchParam(): string[] | undefined {
   const [searchParams] = useSearchParams({
-    groupBy: "type"
+    groupBy: "config_class,type"
   });
 
   const groupByProp = searchParams.get("groupBy") ?? undefined;

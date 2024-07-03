@@ -20,8 +20,6 @@ function TopologyBreadcrumbItem({
 }) {
   const { data: component } = useComponentNameQuery(topologyId, {});
 
-  console.log(component);
-
   if (!component) {
     return null;
   }
