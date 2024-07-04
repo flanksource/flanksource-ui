@@ -20,9 +20,9 @@ const options: TriStateOptions[] = [
     id: "unknown"
   },
   {
-    label: "Warn",
-    value: "warn",
-    id: "warn"
+    label: "Warning",
+    value: "warning",
+    id: "warning"
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
