@@ -104,6 +104,7 @@ export default function InstallAgentModal({
       onClose={onClose}
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+      helpLink="/installation/saas/agent"
     >
       <div className="flex flex-col gap-4 flex-1 p-4 overflow-y-auto">
         <h3 className="font-bold text-lg">

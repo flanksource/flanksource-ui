@@ -117,6 +117,7 @@ export default function ConnectionFormModal({
         }}
         open={isOpen}
         bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+        helpLink="reference/connections/"
       >
         {type ? (
           <ConnectionForm

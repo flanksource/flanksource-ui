@@ -110,6 +110,7 @@ export default function PlaybookSpecsForm({
       size="full"
       containerClassName="h-full overflow-auto"
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+      helpLink="playbooks"
     >
       <Formik
         initialValues={
