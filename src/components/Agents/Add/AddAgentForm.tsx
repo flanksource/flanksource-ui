@@ -89,6 +89,7 @@ export default function AgentForm({
       onClose={onClose}
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+      helpLink="/installation/saas/agent"
     >
       {isLoadingAgent && id ? (
         <FormSkeletonLoader />

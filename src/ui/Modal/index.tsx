@@ -139,12 +139,15 @@ export function Modal({
   children,
   containerClassName = "overflow-auto max-h-full",
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
+  helpLink: helpLinkProps,
   ...rest
 }: IModalProps) {
-  const [helpLink, setHelpLink] = useAtom(modalHelpLinkAtom);
+  const [_helpLink, setHelpLink] = useAtom(modalHelpLinkAtom);
   const [_size, setSize] = useState(size);
   const sizeClass = useDialogSize(_size);
   const isSmall = _size === "very-small" || _size === "small";
+
+  const helpLink = _helpLink || helpLinkProps;
 
   return (
     /* @ts-ignore */

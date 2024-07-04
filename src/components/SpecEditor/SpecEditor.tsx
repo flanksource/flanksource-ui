@@ -103,6 +103,7 @@ export default function SpecEditor({
             selectedSpec={selectedSpecItem}
             updateSpec={selectedSpecItem.updateSpec}
             onBack={() => {
+              setModalHelpLink(undefined);
               setSelectedSpecItem(undefined);
             }}
             loadSpec={selectedSpecItem.loadSpec}

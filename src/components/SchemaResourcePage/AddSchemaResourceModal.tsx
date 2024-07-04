@@ -47,6 +47,9 @@ export default function AddSchemaResourceModal({
         }}
         bodyClass="flex flex-col flex-1 overflow-y-auto"
         title={`Add ${resourceInfo.name}`}
+        helpLink={
+          resourceInfo.table === "canaries" ? "/canary-checker" : undefined
+        }
       >
         {resourceInfo.table === "canaries" ? (
           <HealthSpecEditor
