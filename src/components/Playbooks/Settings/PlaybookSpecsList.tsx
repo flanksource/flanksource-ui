@@ -39,7 +39,10 @@ export default function PlaybookSpecsList({
             <h2 className="text-lg font-bold">{type ?? "Unknown"}</h2>
             <div className="flex flex-row flex-wrap">
               {playbooks.map((playbook) => (
-                <div className="flex flex-col w-1/4 p-2" key={playbook.id}>
+                <div
+                  className="flex min-w-[23rem] flex-col w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2"
+                  key={playbook.id}
+                >
                   <PlaybookSpecCard playbook={playbook} refetch={refetch} />
                 </div>
               ))}
