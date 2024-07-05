@@ -15,6 +15,7 @@ type SearchedResource = {
   agent: string;
   labels: Record<string, string>;
   icon?: string;
+  tags?: Record<string, string>;
 };
 
 type SelectedResources = {

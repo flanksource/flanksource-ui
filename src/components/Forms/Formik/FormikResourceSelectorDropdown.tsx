@@ -5,6 +5,7 @@ import {
 import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { useQuery } from "@tanstack/react-query";
 import FormikSelectDropdown, {
   FormikSelectDropdownOption
@@ -78,16 +79,28 @@ export default function FormikResourceSelectorDropdown({
         );
       }
       if (data?.configs) {
-        return data.configs.map(
-          (config) =>
-            ({
-              id: config.id,
-              icon: <ConfigIcon config={config} />,
-              description: config.name,
-              value: config.id,
-              label: config.name
-            } satisfies StateOption)
-        );
+        return data.configs.map((config) => {
+          const tags = Object.values(config.tags ?? {}).map((value) => value);
+
+          return {
+            icon: <ConfigIcon config={config} />,
+            value: config.id,
+            search: `${config.name} ${config.type} ${tags.join(" ")}`,
+            label: (
+              <div className="flex flex-wrap gap-1">
+                <span className="mr-2"> {config.name}</span>
+                <Tag title="tags">
+                  {config.type.split("::").at(-1)?.toLocaleLowerCase()}
+                </Tag>
+                {tags.map((tag) => (
+                  <Tag title={tag} key={tag}>
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
+            )
+          } satisfies FormikSelectDropdownOption;
+        });
       }
     },
     staleTime: 0,
@@ -99,6 +112,13 @@ export default function FormikResourceSelectorDropdown({
       name={name}
       className={className}
       options={resourcesOptions}
+      filterOption={(option, query) => {
+        return (
+          (option.data as FormikSelectDropdownOption)?.search
+            ?.toLowerCase()
+            .includes(query.toLowerCase()) ?? false
+        );
+      }}
       label={label}
       isLoading={isLoading}
       required={required}

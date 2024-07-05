@@ -12,6 +12,7 @@ export type FormikSelectDropdownOption = {
   label: React.ReactNode;
   value: string;
   icon?: React.ReactNode;
+  search?: string;
 };
 
 type Props = {
