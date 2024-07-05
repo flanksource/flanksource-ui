@@ -3,11 +3,12 @@ import {
   searchResources
 } from "@flanksource-ui/api/services/search";
 import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
-import { StateOption } from "@flanksource-ui/components/ReactSelectDropdown";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
-import FormikSelectDropdown from "./FormikSelectDropdown";
+import FormikSelectDropdown, {
+  FormikSelectDropdownOption
+} from "./FormikSelectDropdown";
 
 type FormikConfigsDropdownProps = {
   name: string;
@@ -48,7 +49,6 @@ export default function FormikResourceSelectorDropdown({
         return data.checks.map(
           (check) =>
             ({
-              id: check.id,
               icon: (
                 <Icon
                   className="h-4 w-5"
@@ -56,17 +56,15 @@ export default function FormikResourceSelectorDropdown({
                   secondary={check.name}
                 />
               ),
-              description: check.name,
               value: check.id,
               label: check.name
-            } satisfies StateOption)
+            } satisfies FormikSelectDropdownOption)
         );
       }
       if (data?.components) {
         return data.components.map(
           (component) =>
             ({
-              id: component.id,
               icon: (
                 <Icon
                   className="h-4 w-5"
@@ -74,10 +72,9 @@ export default function FormikResourceSelectorDropdown({
                   secondary={component.name}
                 />
               ),
-              description: component.name,
               value: component.id,
               label: component.name
-            } satisfies StateOption)
+            } satisfies FormikSelectDropdownOption)
         );
       }
       if (data?.configs) {
