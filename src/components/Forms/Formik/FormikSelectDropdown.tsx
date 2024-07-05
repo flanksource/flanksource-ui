@@ -8,8 +8,8 @@ import React, {
 } from "react";
 import Select, { components } from "react-select";
 
-type Option = {
-  label: string;
+export type FormikSelectDropdownOption = {
+  label: React.ReactNode;
   value: string;
   icon?: React.ReactNode;
 };
@@ -19,7 +19,7 @@ type Props = {
   label?: string;
   required?: boolean;
   hint?: string;
-  options?: Option[];
+  options?: FormikSelectDropdownOption[];
 } & Omit<ComponentProps<typeof Select>, "option">;
 
 export default function FormikSelectDropdown({
