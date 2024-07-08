@@ -93,14 +93,7 @@ export default function FormikFilterForm({
           paramsToReset={paramsToReset}
           defaultFieldValues={defaultFieldValues}
         >
-          <Form
-            onSubmit={handleSubmit}
-            onChange={(e) => {
-              return console.log(e);
-            }}
-          >
-            {children}
-          </Form>
+          <Form onSubmit={handleSubmit}>{children}</Form>
         </FormikChangesListener>
       )}
     </Formik>
