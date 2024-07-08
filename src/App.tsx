@@ -253,7 +253,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         element={withAuthorizationAccessCheck(
           <TopologyCardPage />,
           tables.topologies,
-          "read"
+          "read",
+          true
         )}
       />
 
@@ -263,7 +264,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -271,7 +273,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
       </Route>
@@ -284,7 +287,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               {withAuthorizationAccessCheck(
                 <IncidentDetailsPage />,
                 tables.incident,
-                "read"
+                "read",
+                true
               )}
             </ErrorBoundary>
           }
@@ -309,7 +313,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <PlaybooksListPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
 
@@ -328,7 +333,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <PlaybookRunsDetailsPage />,
               tables.database,
-              "read"
+              "read",
+              true
             )}
           />
         </Route>
@@ -340,7 +346,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <ConnectionsPage />,
             tables.connections,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -356,7 +363,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <JobsHistorySettingsPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -372,7 +380,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <FeatureFlagsPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
 
@@ -381,7 +390,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <EventQueueStatusPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
 
@@ -391,16 +401,33 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <AgentsPage />,
               tables.agents,
-              "read"
+              "read",
+              true
             )}
           />
         </Route>
 
         <Route path="integrations">
-          <Route index element={<IntegrationsPage />} />
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <IntegrationsPage />,
+              tables.integrations,
+              "read",
+              true
+            )}
+          />
 
           <Route path=":type" caseSensitive>
-            <Route path=":id" element={<EditIntegrationPage />} />
+            <Route
+              path=":id"
+              element={withAuthorizationAccessCheck(
+                <EditIntegrationPage />,
+                tables.integrations,
+                "write",
+                true
+              )}
+            />
           </Route>
         </Route>
 
@@ -419,7 +446,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                     tables[
                       (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
-                    "read"
+                    "read",
+                    true
                   )}
                 />
                 <Route
@@ -430,7 +458,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                     tables[
                       (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
-                    "read"
+                    "read",
+                    true
                   )}
                 />
               </Route>
@@ -446,7 +475,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               {withAuthorizationAccessCheck(
                 <LogsPage />,
                 tables.database,
-                "read"
+                "read",
+                true
               )}
             </ErrorBoundary>
           }
@@ -462,7 +492,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <ConfigListPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -470,7 +501,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <ConfigChangesPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -478,7 +510,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <ConfigInsightsPage />,
             tables.database,
-            "read"
+            "read",
+            true
           )}
         />
         <Route path=":id">
@@ -489,7 +522,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                 {withAuthorizationAccessCheck(
                   <ConfigDetailsPage />,
                   tables.database,
-                  "read"
+                  "read",
+                  true
                 )}
               </ErrorBoundary>
             }
@@ -499,7 +533,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ConfigDetailsChangesPage />,
               tables.database,
-              "read"
+              "read",
+              true
             )}
           />
           <Route
@@ -507,7 +542,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ConfigDetailsInsightsPage />,
               tables.database,
-              "read"
+              "read",
+              true
             )}
           />
           <Route
@@ -515,7 +551,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ConfigDetailsRelationshipsPage />,
               tables.database,
-              "read"
+              "read",
+              true
             )}
           />
           <Route
@@ -523,12 +560,13 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ConfigDetailsPlaybooksPage />,
               tables.database,
-              "read"
+              "read",
+              true
             )}
           />
           <Route
             path="checks"
-            element={withAccessCheck(
+            element={withAuthorizationAccessCheck(
               <ConfigDetailsChecksPage />,
               tables.database,
               "read"

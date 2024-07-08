@@ -17,7 +17,8 @@ export const tables = {
   logging_backends: "logging_backends",
   integrations: "integrations",
   notifications: "notifications",
-  playbooks: "playbooks"
+  playbooks: "playbooks",
+  playbook_runs: "playbook_runs"
 };
 
 export const permDefs = {
