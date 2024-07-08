@@ -30,6 +30,8 @@ export type JobHistory = {
   error_count: number;
   details?: {
     errors?: string[];
+    scrape_summary?: Record<string, Record<string, any>>;
+    summary?: Record<string, any>;
   };
   hostname: string;
   duration_millis: number;
