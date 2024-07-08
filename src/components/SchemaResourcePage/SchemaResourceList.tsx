@@ -129,7 +129,7 @@ function SchemaResourceListItem({
 }) {
   const navigate = useNavigate();
   const navigateToDetails = (id: string) => navigate(`${baseUrl}/${id}`);
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isJobDetailsModalOpen, setIsJobDetailsModalOpen] = useState(false);
 
   const tags = useMemo(() => {
     return Object.entries(labels ?? {}).map(([key, value]) => ({
@@ -137,6 +137,9 @@ function SchemaResourceListItem({
       value
     }));
   }, [labels]);
+
+  const isJobDetailsEmpty =
+    !job_details || Object.keys(job_details).length === 0;
 
   return (
     <tr
@@ -182,21 +185,36 @@ function SchemaResourceListItem({
       {table === "canaries" && <Cell>{schedule}</Cell>}
       {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}
 
-      <Cell className="text-gray-500 lowercase space-x-2">
+      <Cell className="text-gray-500 flex flex-row gap-2 lowercase">
         <JobHistoryStatusColumn
           status={job_status}
           onClick={() => {
-            setIsErrorModalOpen(true);
+            setIsJobDetailsModalOpen(true);
           }}
         />
-        <JobsHistoryDetails
-          isModalOpen={isErrorModalOpen}
-          setIsModalOpen={setIsErrorModalOpen}
-          job={{
-            details: job_details,
-            name: job_name ?? name
-          }}
-        />
+        {!isJobDetailsEmpty && (
+          <>
+            <JobsHistoryDetails
+              isModalOpen={isJobDetailsModalOpen}
+              setIsModalOpen={setIsJobDetailsModalOpen}
+              job={{
+                details: job_details,
+                name: job_name ?? name
+              }}
+            />
+
+            <button
+              className="inline text-blue-500 text-nowrap"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsJobDetailsModalOpen(true);
+              }}
+            >
+              (View details)
+            </button>
+          </>
+        )}
       </Cell>
       <Cell className="text-gray-500">
         <Age from={last_runtime} suffix={true} />
