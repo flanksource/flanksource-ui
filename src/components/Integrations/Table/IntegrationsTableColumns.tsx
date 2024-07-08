@@ -100,22 +100,48 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
 
         const { job_details, job_name, name } = row.original;
 
+        const isJobDetailsEmpty =
+          !job_details || Object.keys(job_details).length === 0;
+
         const status = getValue<JobHistoryStatus>();
+
         return (
-          <>
+          <div
+            className="flex flex-row gap-1 items-center lowercase"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
+          >
             <JobHistoryStatusColumn
               onClick={() => setIsModalOpen(true)}
               status={status}
             />
-            <JobsHistoryDetails
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
-              job={{
-                details: job_details,
-                name: job_name ?? name
-              }}
-            />
-          </>
+            {!isJobDetailsEmpty && (
+              <>
+                <button
+                  className="inline text-blue-500"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsModalOpen(true);
+                  }}
+                >
+                  (View details)
+                </button>
+
+                <JobsHistoryDetails
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  job={{
+                    details: job_details,
+                    name: job_name ?? name
+                  }}
+                />
+              </>
+            )}
+          </div>
         );
       }
     },
