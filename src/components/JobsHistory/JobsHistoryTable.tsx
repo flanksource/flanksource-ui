@@ -120,11 +120,13 @@ export default function JobsHistoryTable({
         onTableSortByChanged={onSortByChanged}
         enableServerSideSorting
       />
-      <JobsHistoryDetails
-        job={selectedJob}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={(isOpen) => setIsModalOpen(isOpen)}
-      />
+      {selectedJob && (
+        <JobsHistoryDetails
+          job={selectedJob}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={(isOpen) => setIsModalOpen(isOpen)}
+        />
+      )}
     </>
   );
 }
