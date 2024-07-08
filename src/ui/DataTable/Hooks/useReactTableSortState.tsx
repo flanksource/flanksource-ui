@@ -30,8 +30,6 @@ export default function useReactTableSortState(
     ] satisfies SortingState;
   }, [sortBy, sortOrder]);
 
-  console.log(tableSortByState);
-
   const updateSortByFn = useCallback(
     (newSortBy: Updater<SortingState>) => {
       const sort = typeof newSortBy === "function" ? newSortBy([]) : newSortBy;
