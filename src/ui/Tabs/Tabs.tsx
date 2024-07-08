@@ -1,19 +1,21 @@
 import clsx from "clsx";
 import React, { useMemo } from "react";
 
+type TabItemProps = {
+  label: string;
+  value: string;
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onSelectTab: () => void;
+  activeTab: string;
+};
+
 function TabItem({
   label,
   value,
   onClick,
   onSelectTab,
   activeTab
-}: {
-  label: string;
-  value: string;
-  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onSelectTab: () => void;
-  activeTab: string;
-}) {
+}: TabItemProps) {
   return (
     <div
       key={label}
@@ -42,27 +44,30 @@ export function Tab({ children, ...props }: TabProps) {
   return <div {...props}>{children}</div>;
 }
 
-type TabsProps = React.HTMLProps<HTMLDivElement> & {
+type TabsProps<Tabs extends string> = React.HTMLProps<HTMLDivElement> & {
   children?: React.ReactElement<TabProps>[];
-  activeTab: string;
-  onSelectTab: (label: string) => void;
+  activeTab: Tabs;
+  onSelectTab: (label: Tabs) => void;
   contentClassName?: string;
 };
 
-export function Tabs({
+export function Tabs<Tabs extends string = string>({
   activeTab,
   onSelectTab,
   children,
   className,
   contentClassName = "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300",
   ...rest
-}: TabsProps) {
+}: TabsProps<Tabs>) {
   const tabs = useMemo(() => {
+    if (!children) {
+      return [];
+    }
     return React.Children.map(children, (child) => {
       const label = child?.props?.label;
       const value = child?.props?.value;
       const onSelectTabFn = () => {
-        onSelectTab?.(value!);
+        onSelectTab?.(value as Tabs);
       };
       return {
         label,
@@ -71,7 +76,13 @@ export function Tabs({
         props: child?.props,
         content: child
       };
-    });
+    }) satisfies {
+      label: string;
+      value: string;
+      onSelectTab: () => void;
+      props: TabProps;
+      content: React.ReactElement<TabProps>;
+    }[];
   }, [children, onSelectTab]);
 
   const content = useMemo(() => {
