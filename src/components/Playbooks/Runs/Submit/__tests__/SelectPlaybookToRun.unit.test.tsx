@@ -1,3 +1,5 @@
+import { AuthContext } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -46,6 +48,18 @@ const server = setupServer(
   }),
   rest.get("/api/db/playbooks", (req, res, ctx) => {
     return res(ctx.json(playbooks));
+  }),
+  rest.get("/api/db/people_roles", (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+          name: "Admin",
+          email: "admin@local",
+          roles: ["admin"]
+        }
+      ])
+    );
   })
 );
 
@@ -59,13 +73,31 @@ describe("SelectPlaybookToRun", () => {
   it("should render dropdown list with playbooks", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <PlaybooksDropdownMenu component_id="component_id" />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <PlaybooksDropdownMenu component_id="component_id" />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
-    const playbooksButton = await screen.findByRole("button", {
-      name: /playbooks/i
-    });
+    const playbooksButton = await screen.findByRole(
+      "button",
+      {
+        name: /playbooks/i
+      },
+      {
+        timeout: 3000
+      }
+    );
 
     userEvent.click(playbooksButton);
 
@@ -76,7 +108,19 @@ describe("SelectPlaybookToRun", () => {
   it("should open runs page, when you click a playbook item", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <PlaybooksDropdownMenu check_id="check_id" />
+        <AuthContext.Provider
+          value={{
+            user: {
+              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+              email: "admin@local",
+              name: "John Doe"
+            }
+          }}
+        >
+          <UserAccessStateContextProvider>
+            <PlaybooksDropdownMenu check_id="check_id" />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
       </QueryClientProvider>
     );
 
