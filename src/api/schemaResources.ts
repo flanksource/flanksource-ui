@@ -1,6 +1,9 @@
 import { EventQueueSummary } from "@flanksource-ui/components/EventQueueStatus/eventQueue";
 import { TopologyComponentItem } from "@flanksource-ui/components/Incidents/FilterIncidents/FilterIncidentsByComponents";
-import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
+import {
+  JobHistory,
+  JobHistoryStatus
+} from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { LogBackends } from "@flanksource-ui/components/Logs/LogBackends/LogBackends";
 import {
   SchemaApi,
@@ -41,7 +44,7 @@ export interface SchemaResourceI {
 
 export interface SchemaResourceWithJobStatus extends SchemaResourceI {
   job_created_at?: string;
-  job_details?: { errors: any[] };
+  job_details?: JobHistory["details"];
   job_duration_millis?: number;
   job_error_count?: number;
   job_hostname?: string;
