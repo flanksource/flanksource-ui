@@ -314,9 +314,8 @@ export async function getConfigsChanges({
       "recursive",
       type_filter === "all" || type_filter === "none" ? "all" : type_filter
     );
+    requestData.set("depth", 5);
   } else {
-    // default to all
-    requestData.set("recursive", "all");
     requestData.set("depth", 1);
   }
 
