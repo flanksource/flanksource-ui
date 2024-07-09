@@ -1,3 +1,4 @@
+import TableSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TableSkeletonLoader";
 import {
   SortingState,
   flexRender,
@@ -12,6 +13,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../api/types/health";
+import { InfoMessage } from "../InfoMessage";
 import { getCanaryTableColumns } from "./CanaryTableColumns";
 import { prepareRows } from "./Rows/lib";
 import { getAggregatedGroupedChecks } from "./aggregate";
@@ -108,6 +110,7 @@ type TableProps = {
   hideNamespacePrefix?: boolean;
   theadStyle?: React.CSSProperties;
   groupBy?: string;
+  isLoading?: boolean;
 };
 
 export function Table({
@@ -120,6 +123,7 @@ export function Table({
   hideNamespacePrefix = false,
   theadStyle = {},
   groupBy = "canary_name",
+  isLoading = false,
   ...rest
 }: TableProps) {
   const [params, setParams] = useSearchParams();
@@ -272,8 +276,12 @@ export function Table({
         </tbody>
       </table>
       {table.getRowModel().rows.length <= 0 && (
-        <div className="flex items-center justify-center py-20 px-2  border-b border-gray-300 text-center text-gray-400">
-          No data available
+        <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
+          {isLoading ? (
+            <TableSkeletonLoader className="mt-2" />
+          ) : (
+            <InfoMessage className="my-8 py-20" message="No data available" />
+          )}
         </div>
       )}
     </div>
