@@ -7,12 +7,13 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 
+export const accountsUrl = process.env.NEXT_PUBLIC_ACCOUNTS_URL;
 export const clerkUrls = {
-  login: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/login",
-  signUp: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL ?? "/registration",
-  createOrganization: "/organizations/create",
-  organizationSwitcher: "/organizations/switcher",
-  organizationProfile: "/organizations/profile"
+  login: `${accountsUrl}/login`,
+  signUp: `${accountsUrl}/sign-up`,
+  createOrganization: `${accountsUrl}/organizations/create`,
+  organizationSwitcher: `${accountsUrl}/organizations/switcher`,
+  organizationProfile: `${accountsUrl}/organizations/profile`
 } as const;
 
 type Props = {
