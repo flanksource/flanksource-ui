@@ -5,7 +5,8 @@ const config = {
   productionBrowserSourceMaps: true,
   env: {
     // make the backend URL available to the frontend
-    NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL
+    NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL,
+    NEXT_PUBLIC_ACCOUNTS_URL: "https://accounts.flanksource.com"
   },
   redirects: async () => {
     if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
