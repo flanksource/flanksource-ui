@@ -9,11 +9,10 @@ import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonL
 
 export const accountsUrl = process.env.NEXT_PUBLIC_ACCOUNTS_URL;
 export const clerkUrls = {
-  login: `${accountsUrl}/login`,
-  signUp: `${accountsUrl}/sign-up`,
-  createOrganization: `${accountsUrl}/organizations/create`,
-  organizationSwitcher: `${accountsUrl}/organizations/switcher`,
-  organizationProfile: `${accountsUrl}/organizations/profile`
+  login: `/login`,
+  createOrganization: `${accountsUrl}/create-organization`,
+  organizationSwitcher: `/organizations/switcher`,
+  organizationProfile: `/organizations/profile`
 } as const;
 
 type Props = {
