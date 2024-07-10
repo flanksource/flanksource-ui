@@ -3,10 +3,10 @@ import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import React, { Fragment, useState } from "react";
-import HelpLink from "../Buttons/HelpLink";
 import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
 import { useWindowSize } from "react-use-size";
 import DialogButton from "../Buttons/DialogButton";
+import HelpLink from "../Buttons/HelpLink";
 
 /**
  *
@@ -23,6 +23,13 @@ export interface IModalProps {
   title?: React.ReactNode;
   showExpand?: boolean;
   titleClass?: string;
+  /**
+   *
+   * Path to the documentation for the modal, relative to the base URL.
+   *
+   * The base is set to `https://docs.flanksource.com/`.
+   *
+   */
   helpLink?: string;
   bodyClass?: string;
   childClassName?: string;
@@ -134,7 +141,7 @@ export function Modal({
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
   ...rest
 }: IModalProps) {
-  const [helpLink] = useAtom(modalHelpLinkAtom);
+  const [helpLink, setHelpLink] = useAtom(modalHelpLinkAtom);
   const [_size, setSize] = useState(size);
   const sizeClass = useDialogSize(_size);
   const isSmall = _size === "very-small" || _size === "small";
@@ -146,7 +153,16 @@ export function Modal({
         as="div"
         auto-reopen="true"
         className={dialogClassName}
-        onClose={allowBackgroundClose ? () => onClose() : () => {}}
+        onClose={() => {
+          // reset the help link when the modal is closed, this is to ensure
+          // that the help link is not displayed when the modal is reopened and
+          // the help link is not set.
+          setHelpLink(undefined);
+
+          if (allowBackgroundClose) {
+            onClose();
+          }
+        }}
         {...rest}
       >
         <div
