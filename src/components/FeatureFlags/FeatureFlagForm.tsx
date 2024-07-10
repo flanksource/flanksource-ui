@@ -29,7 +29,7 @@ export default function FeatureFlagForm({
   return (
     <Modal
       title="Add Feature Flag"
-      size="very-small"
+      size="small"
       onClose={() => {
         setIsOpen(false);
       }}

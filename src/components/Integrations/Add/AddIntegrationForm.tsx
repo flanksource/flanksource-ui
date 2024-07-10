@@ -1,12 +1,13 @@
 import TopologyResourceForm from "@flanksource-ui/components/Integrations/Topology/TopologyResourceForm";
-import LogBackendsForm from "@flanksource-ui/components/Logs/LogBackends/LogBackendsForm";
-import { CreateIntegrationOption } from "./steps/AddIntegrationOptionsList";
+import { IntegrationOption } from "./steps/AddIntegrationOptionsList";
 import CatalogFormOption from "./steps/CatalogFormOption";
 import MissionControlRegistryOptions from "./steps/MissionControlRegistryOptions";
+import { SpecEditorProps } from "@flanksource-ui/components/SpecEditor/SpecEditor";
+import { useMemo } from "react";
 
-type Props = {
+type Props = Pick<SpecEditorProps, | "onBack"> & {
   onSuccess: () => void;
-  selectedOption: CreateIntegrationOption;
+  selectedOption: IntegrationOption;
   onBack: () => void;
 };
 
@@ -15,29 +16,21 @@ export default function AddIntegrationForm({
   selectedOption,
   onBack
 }: Props) {
-  switch (selectedOption) {
-    case "AWS":
-    case "Azure":
-    case "Prometheus":
-    case "Flux":
-    case "Kubernetes":
-    case "Mission Control":
-      return (
-        <MissionControlRegistryOptions
-          selectedOption={selectedOption}
-          onBack={onBack}
-          onSuccess={onSuccess}
-        />
-      );
-    case "Custom Topology":
-      return (
-        <TopologyResourceForm onBack={onBack} isModal onSuccess={onSuccess} />
-      );
-    case "Log Backends":
-      return <LogBackendsForm onUpdated={onSuccess} />;
-    case "Catalog Scraper":
+
+
+  return useMemo(() => {
+    if (selectedOption.category === "Scraper" || selectedOption.name === "Catalog Scraper") {
+
       return <CatalogFormOption onSuccess={onSuccess} onBack={onBack} />;
-    default:
-      return null;
-  }
+    } else if (selectedOption.name === "Custom Topology") {
+      return <TopologyResourceForm onBack={onBack} isModal onSuccess={onSuccess} />
+    } else {
+      return <MissionControlRegistryOptions
+        selectedOption={selectedOption}
+        onBack={onBack}
+        onSuccess={onSuccess}
+      />
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedOption])
 }

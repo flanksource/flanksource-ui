@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Button } from "../../ui/Buttons/Button";
 import { Tab, Tabs } from "../../ui/Tabs/Tabs";
@@ -18,6 +18,7 @@ import FormikTextInput from "./Formik/FormikTextInput";
 
 type SpecEditorFormProps = {
   loadSpec: () => Record<string, any>;
+  footer: boolean;
   updateSpec: (spec: Record<string, any>) => void;
   onBack: () => void;
   specFormat: "yaml" | "json";
@@ -26,14 +27,17 @@ type SpecEditorFormProps = {
   onDeleted: () => void;
 };
 
+
+
 export default function SpecEditorForm({
   resourceInfo,
   loadSpec = () => ({}),
-  updateSpec = () => {},
-  onBack = () => {},
+  updateSpec = () => { },
+  onBack = () => { },
   specFormat = "yaml",
+  footer = true,
   selectedSpec,
-  onDeleted = () => {}
+  onDeleted = () => { }
 }: SpecEditorFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTabs, setActiveTabs] = useState<"Form" | "Code">(
@@ -90,164 +94,170 @@ export default function SpecEditorForm({
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={(values) => {
-        updateSpec(values);
-      }}
-      validateOnBlur
-      validateOnChange
-    >
-      {({ handleSubmit, handleReset, setFieldTouched }) => (
-        <Form
-          onSubmit={(e) => {
-            handleSubmit(e);
-            touchAllFormFields(setFieldTouched);
-          }}
-          onReset={handleReset}
-          className="flex flex-col flex-1 overflow-y-auto space-y-4"
-          ref={formRef}
-        >
-          <div className="flex flex-col flex-1 overflow-y-auto space-y-4 px-4 py-4">
-            <div className="flex flex-col space-y-2">
-              {isFieldSupportedByResourceType("name") && (
-                <FormikTextInput name="name" label="Name" required />
+    // <Formik
+    //   initialValues={initialValues}
+    //   onSubmit={(values) => {
+    //     console.log('123')
+    //     updateSpec(values);
+    //   }}
+    //   validateOnBlur
+    //   validateOnChange
+    // >
+    //   {({ handleSubmit, handleReset, setFieldTouched }) => (
+    //     <Form
+    //       onSubmit={(e) => {
+    //         console.log('456')
+    //         handleSubmit(e);
+    //         touchAllFormFields(setFieldTouched);
+    //       }}
+    //       onReset={handleReset}
+    //       className="flex flex-col flex-1 overflow-y-auto space-y-4"
+    //       ref={formRef}
+    //     >
+    <>
+      <div className="flex flex-col flex-1 space-y-4 px-4 py-4">
+        <div className="flex flex-col space-y-2">
+          {isFieldSupportedByResourceType("name") && (
+            <FormikTextInput name="name" label="Name" required />
+          )}
+          {isFieldSupportedByResourceType("icon") && (
+            <FormikIconPicker name="icon" label="Icon" />
+          )}
+          {isFieldSupportedByResourceType("labels") && (
+            <FormikKeyValueMapField name="labels" label="Labels" />
+          )}
+          {isFieldSupportedByResourceType("source") && (
+            <FormikTextInput
+              name="source"
+              label="Source"
+              hidden
+              readOnly
+            />
+          )}
+          {isFieldSupportedByResourceType("schedule") && (
+            <FormikAutocompleteDropdown
+              name="schedule"
+              label="Schedule"
+              options={[
+                {
+                  label: "@every 30s",
+                  value: "@every 30s"
+                },
+                {
+                  label: "@every 1m",
+                  value: "@every 1m"
+                },
+                {
+                  label: "@every 5m",
+                  value: "@every 5m"
+                },
+                {
+                  label: "@every 30m",
+                  value: "@every 30m"
+                },
+                {
+                  label: "@hourly",
+                  value: "@hourly"
+                },
+                {
+                  label: "@every 6h",
+                  value: "@every 6h"
+                },
+                {
+                  label: "@daily",
+                  value: "@daily"
+                },
+                {
+                  label: "@weekly",
+                  value: "@weekly"
+                }
+              ]}
+            />
+          )}
+        </div>
+        <div className="flex flex-col py-2">
+          {selectedSpec.type !== "form" ? (
+            <>
+              <label className="form-label">Specs</label>
+              <FormikCodeEditor
+                format={specFormat}
+                className="flex flex-col h-[min(600px,calc(90vh))]"
+                fieldName={
+                  selectedSpec.type === "code"
+                    ? `spec.${selectedSpec.specsMapField}`
+                    : // if it's a custom spec, then the field name is `spec`
+                    `spec`
+                }
+                schemaFileName={selectedSpec.schemaFileName}
+                enableSpecUnwrap
+              />
+            </>
+          ) : (
+            <Tabs
+              activeTab={activeTabs}
+              onSelectTab={(v) => setActiveTabs(v as "Code" | "Form")}
+            >
+              <Tab label="Form" value="Form">
+                <div className="flex flex-col space-y-4 p-4">
+                  <selectedSpec.configForm
+                    fieldName="spec"
+                    specsMapField={selectedSpec.specsMapField}
+                  />
+                </div>
+              </Tab>
+              <Tab label="Code" value="Code">
+                <FormikCodeEditor
+                  format={specFormat}
+                  fieldName="spec"
+                  schemaFileName={selectedSpec.schemaFileName}
+                />
+              </Tab>
+            </Tabs>
+          )}
+        </div>
+      </div>
+      {footer &&
+        <div className="flex flex-row  bg-gray-100 p-4">
+          <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
+            <CanEditResource
+              resourceType={resourceInfo.table}
+              id={initialValues.id}
+              namespace={initialValues.namespace}
+              name={initialValues.name}
+              agentId={initialValues.agent_details?.id}
+              agentName={initialValues.agent_details?.name}
+              source={initialValues.source}
+            >
+              {!initialValues.id && (
+                <div className="flex flex-1 flex-row">
+                  <Button
+                    type="button"
+                    text="Back"
+                    className="btn-default btn-btn-secondary-base btn-secondary"
+                    onClick={onBack}
+                  />{" "}
+                </div>
               )}
-              {isFieldSupportedByResourceType("icon") && (
-                <FormikIconPicker name="icon" label="Icon" />
-              )}
-              {isFieldSupportedByResourceType("labels") && (
-                <FormikKeyValueMapField name="labels" label="Labels" />
-              )}
-              {isFieldSupportedByResourceType("source") && (
-                <FormikTextInput
-                  name="source"
-                  label="Source"
-                  required
-                  readOnly
+              {!!initialValues.id && (
+                <DeleteResource
+                  resourceId={initialValues.id}
+                  resourceInfo={resourceInfo}
+                  onDeleted={onDeleted}
                 />
               )}
-              {isFieldSupportedByResourceType("schedule") && (
-                <FormikAutocompleteDropdown
-                  name="schedule"
-                  label="Schedule"
-                  options={[
-                    {
-                      label: "@every 30s",
-                      value: "@every 30s"
-                    },
-                    {
-                      label: "@every 1m",
-                      value: "@every 1m"
-                    },
-                    {
-                      label: "@every 5m",
-                      value: "@every 5m"
-                    },
-                    {
-                      label: "@every 30m",
-                      value: "@every 30m"
-                    },
-                    {
-                      label: "@hourly",
-                      value: "@hourly"
-                    },
-                    {
-                      label: "@every 6h",
-                      value: "@every 6h"
-                    },
-                    {
-                      label: "@daily",
-                      value: "@daily"
-                    },
-                    {
-                      label: "@weekly",
-                      value: "@weekly"
-                    }
-                  ]}
-                />
-              )}
-            </div>
-            <div className="flex flex-col py-2">
-              {selectedSpec.type !== "form" ? (
-                <>
-                  <label className="form-label">Specs</label>
-                  <FormikCodeEditor
-                    format={specFormat}
-                    className="flex flex-col h-[min(600px,calc(90vh))]"
-                    fieldName={
-                      selectedSpec.type === "code"
-                        ? `spec.${selectedSpec.specsMapField}`
-                        : // if it's a custom spec, then the field name is `spec`
-                          `spec`
-                    }
-                    schemaFileName={selectedSpec.schemaFileName}
-                    enableSpecUnwrap
-                  />
-                </>
-              ) : (
-                <Tabs
-                  activeTab={activeTabs}
-                  onSelectTab={(v) => setActiveTabs(v as "Code" | "Form")}
-                >
-                  <Tab label="Form" value="Form">
-                    <div className="flex flex-col space-y-4 p-4">
-                      <selectedSpec.configForm
-                        fieldName="spec"
-                        specsMapField={selectedSpec.specsMapField}
-                      />
-                    </div>
-                  </Tab>
-                  <Tab label="Code" value="Code">
-                    <FormikCodeEditor
-                      format={specFormat}
-                      fieldName="spec"
-                      schemaFileName={selectedSpec.schemaFileName}
-                    />
-                  </Tab>
-                </Tabs>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-row  bg-gray-100 p-4">
-            <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
-              <CanEditResource
-                resourceType={resourceInfo.table}
-                id={initialValues.id}
-                namespace={initialValues.namespace}
-                name={initialValues.name}
-                agentId={initialValues.agent_details?.id}
-                agentName={initialValues.agent_details?.name}
-                source={initialValues.source}
-              >
-                {!initialValues.id && (
-                  <div className="flex flex-1 flex-row">
-                    <Button
-                      type="button"
-                      text="Back"
-                      className="btn-default btn-btn-secondary-base btn-secondary"
-                      onClick={onBack}
-                    />{" "}
-                  </div>
-                )}
-                {!!initialValues.id && (
-                  <DeleteResource
-                    resourceId={initialValues.id}
-                    resourceInfo={resourceInfo}
-                    onDeleted={onDeleted}
-                  />
-                )}
 
-                <Button
-                  type="submit"
-                  text={!!initialValues.id ? "Update" : "Save"}
-                  className={clsx("btn-primary")}
-                />
-              </CanEditResource>
-            </div>
+              <Button
+                type="submit"
+                text={!!initialValues.id ? "Update" : "Save"}
+                className={clsx("btn-primary")}
+              />
+            </CanEditResource>
           </div>
-        </Form>
-      )}
-    </Formik>
+        </div>
+      }
+    </>
+    //     </Form>
+    //   )}
+    // </Formik>
   );
 }

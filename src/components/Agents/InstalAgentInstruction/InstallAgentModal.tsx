@@ -99,12 +99,7 @@ export default function InstallAgentModal({
   const [activeTab, setActiveTab] = useState<"cli" | "flux">("cli");
 
   return (
-    <Modal
-      title={"Installation Instructions"}
-      onClose={onClose}
-      open={isOpen}
-      bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
-    >
+    <Modal title={"Agent Installation"} onClose={onClose} open={isOpen}>
       <div className="flex flex-col gap-4 flex-1 p-4 overflow-y-auto">
         <h3 className="font-bold text-lg">
           Install the Mission Control agent using instructions below

@@ -1,11 +1,12 @@
-import { Modal } from "@flanksource-ui/ui/Modal";
 import { atom, useAtom } from "jotai";
 import { useCallback, useEffect, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import AddIntegrationForm from "./AddIntegrationForm";
 import AddIntegrationOptionsList, {
-  CreateIntegrationOption
+  IntegrationOption
 } from "./steps/AddIntegrationOptionsList";
+import clsx from "clsx";
+import { Modal } from "@flanksource-ui/components";
 
 type Props = {
   refresh: () => void;
@@ -15,10 +16,8 @@ export const integrationsModalSubTitle = atom<string | undefined>(undefined);
 
 export default function AddIntegrationModal({ refresh }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] =
-    useState<CreateIntegrationOption>();
+  const [selectedOption, setSelectedOption] = useState<IntegrationOption>();
   const [subTitle, setSubTitle] = useAtom(integrationsModalSubTitle);
-
   // use effect, to reset the selected option when the modal is closed
   useEffect(() => {
     if (isOpen) {
@@ -27,9 +26,9 @@ export default function AddIntegrationModal({ refresh }: Props) {
   }, [isOpen]);
 
   const onSelectOption = useCallback(
-    (option: CreateIntegrationOption) => {
+    (option: IntegrationOption) => {
       setSelectedOption(option);
-      switch (option) {
+      switch (option.name) {
         case "Catalog Scraper":
           setSubTitle("Catalog Scraper");
           break;
@@ -40,7 +39,7 @@ export default function AddIntegrationModal({ refresh }: Props) {
           setSubTitle("Log Backends");
           break;
         default:
-          setSubTitle(option);
+          setSubTitle(option.name);
           break;
       }
     },
@@ -58,8 +57,17 @@ export default function AddIntegrationModal({ refresh }: Props) {
         onClose={() => {
           setIsOpen(false);
         }}
-        bodyClass="flex flex-col flex-1 overflow-y-auto"
-        size="full"
+        childClassName={clsx(
+          selectedOption && {
+            "w-full": true,
+            "h-full":
+              selectedOption.name !== "Catalog Scraper" &&
+              selectedOption.category !== "Scraper" &&
+              selectedOption.name !== "Custom Topology"
+          },
+          !selectedOption && "w-full"
+        )}
+        // bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
         {selectedOption ? (
           <AddIntegrationForm
@@ -69,7 +77,6 @@ export default function AddIntegrationModal({ refresh }: Props) {
             }}
             selectedOption={selectedOption}
             onBack={() => {
-              setSubTitle(undefined);
               setSelectedOption(undefined);
             }}
           />
