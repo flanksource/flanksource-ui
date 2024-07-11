@@ -7,6 +7,7 @@ import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlag
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
+import ClerkOrgModal from "./ClerkOrgModal";
 
 export const accountsUrl = process.env.NEXT_PUBLIC_ACCOUNTS_URL;
 export const clerkUrls = {
@@ -32,28 +33,6 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
   const { push } = useRouter();
 
   useEffect(() => {
-    if (isOrganizationLoaded && isOrganizationListLoaded && !organization) {
-      // we should redirect to the create organization page if the user is
-      // signed in and does not have an organization
-      if (userMemberships?.count === 0) {
-        // show the create organization modal
-        push(clerkUrls.createOrganization);
-        return;
-      }
-      // otherwise, we should redirect to the organization switcher page
-      // may be in the future, we should just display the organization switcher
-      // as a modal instead of redirecting
-      push(clerkUrls.organizationSwitcher);
-    }
-  }, [
-    isOrganizationListLoaded,
-    isOrganizationLoaded,
-    organization,
-    push,
-    userMemberships?.count
-  ]);
-
-  useEffect(() => {
     if (isSessionLoaded && !isSignedIn) {
       window.location.href = clerkUrls.login;
       return;
@@ -66,6 +45,10 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
 
   if (isSessionLoaded && !isSignedIn) {
     return <FullPageSkeletonLoader />;
+  }
+
+  if (!organization) {
+    return <ClerkOrgModal />;
   }
 
   // if the organization backend is not yet created, we need to wait for it to
