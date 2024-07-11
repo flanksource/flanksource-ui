@@ -3,6 +3,7 @@ import {
   useOrganizationList,
   useSession
 } from "@clerk/nextjs";
+import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
@@ -73,6 +74,5 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
   //   return <InstanceCreationInProgress />;
   // }
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{children}</>;
+  return <FeatureFlagsContextProvider>{children}</FeatureFlagsContextProvider>;
 }

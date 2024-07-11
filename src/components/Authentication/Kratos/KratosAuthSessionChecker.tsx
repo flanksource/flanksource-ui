@@ -1,4 +1,5 @@
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
+import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
 import { Session } from "@ory/client";
 import { AxiosError } from "axios";
 import { useRouter } from "next/router";
@@ -50,6 +51,5 @@ export default function KratosAuthSessionChecker({
     return null;
   }
 
-  // eslint-disable-next-line react/jsx-no-useless-fragment
-  return <>{children}</>;
+  return <FeatureFlagsContextProvider>{children}</FeatureFlagsContextProvider>;
 }
