@@ -27,11 +27,7 @@ export default function InstanceCreationInProgress() {
               afterSelectOrganizationUrl="/organizations/orgs-switched"
               afterCreateOrganizationUrl="/organizations/orgs-switched"
             />
-            <UserButton
-              afterSignOutUrl={clerkUrls.login}
-              afterMultiSessionSingleSignOutUrl={clerkUrls.login}
-              afterSwitchSessionUrl="/"
-            />
+            <UserButton signInUrl={clerkUrls.login} afterSwitchSessionUrl="/" />
           </div>
         </div>
         <div className="flex flex-col items-center justify-center flex-1 p-4">

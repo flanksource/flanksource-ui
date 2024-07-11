@@ -1,32 +1,27 @@
-import { authMiddleware, redirectToSignIn } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { clerkUrls } from "./src/components/Authentication/Clerk/ClerkAuthSessionChecker";
 
-// This example protects all routes including api/trpc routes
-// Please edit this to allow other routes to be public as needed.
-// See https://clerk.com/docs/nextjs/middleware for more information about configuring your middleware
-export default authMiddleware({
-  afterAuth(auth, req, evt) {
-    // handle users who aren't authenticated
-    if (!auth.userId && !auth.isPublicRoute) {
-      return redirectToSignIn({ returnBackUrl: req.url });
+const isPubliclyAccessibleRoute = createRouteMatcher([
+  // all pages except the ones listed below are protected
+  "/login(.*)",
+  "/registration(.*)"
+]);
+
+export default clerkMiddleware(
+  (auth, request) => {
+    // Protect all routes except the ones listed above
+    // https://clerk.com/docs/references/nextjs/clerk-middleware#protect-all-routes
+    if (!isPubliclyAccessibleRoute(request)) {
+      auth().protect();
     }
-    // redirect them to organization selection page
-    if (
-      auth.userId &&
-      !auth.orgId &&
-      req.nextUrl.pathname !== clerkUrls.organizationSwitcher &&
-      req.nextUrl.pathname !== clerkUrls.createOrganization &&
-      req.nextUrl.pathname !== clerkUrls.organizationProfile
-    ) {
-      const orgSelection = new URL(clerkUrls.organizationSwitcher, req.url);
-      return NextResponse.redirect(orgSelection);
-    }
+
+    return NextResponse.next();
   },
-  publicRoutes: ["/", "/login", "/registration"]
-});
+  {
+    debug: true
+  }
+);
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
-  debug: true
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"]
 };

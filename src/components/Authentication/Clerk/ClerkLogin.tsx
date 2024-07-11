@@ -10,9 +10,10 @@ export default function ClerkLogin() {
 
   return (
     <SignIn
+      path="/login"
       routing="path"
       signUpUrl="/registration"
-      afterSignUpUrl={`/?return_to=${redirectUrl}`}
+      fallbackRedirectUrl={`/?return_to=${redirectUrl}`}
     />
   );
 }

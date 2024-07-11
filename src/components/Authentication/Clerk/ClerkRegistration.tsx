@@ -11,10 +11,11 @@ export default function ClerkRegistration() {
   return (
     <SignUpLayout activeStep={1}>
       <SignUp
+        path="/registration"
         routing="path"
         signInUrl="/login"
-        afterSignUpUrl={`/${clerkUrls.createOrganization}?return_to=${redirectUrl}`}
-        afterSignInUrl={`/`}
+        signInForceRedirectUrl={`/${clerkUrls.createOrganization}?return_to=${redirectUrl}`}
+        signInFallbackRedirectUrl={`/`}
       />
     </SignUpLayout>
   );
