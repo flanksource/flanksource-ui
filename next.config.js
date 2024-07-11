@@ -56,7 +56,11 @@ const config = {
         destination: `${backendURL}/:path*`
       }
     ];
-    const rewrites = ["localhost", "netlify"].includes(process.env.ENV)
+    // NODE_ENV is set to "development" when running locally, so we can use it
+    // to determine if we are running in a local environment.
+    const rewrites = ["localhost", "netlify", "development"].includes(
+      process.env.ENV || process.env.NODE_ENV
+    )
       ? LOCALHOST_ENV_URL_REWRITES
       : URL_REWRITES;
 
@@ -65,8 +69,8 @@ const config = {
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
     ? {
-      output: "standalone"
-    }
+        output: "standalone"
+      }
     : {}),
   experimental: {
     // increase the default timeout for the proxy from 30s to 10m to allow for
