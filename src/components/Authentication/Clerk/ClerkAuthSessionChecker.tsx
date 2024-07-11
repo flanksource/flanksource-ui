@@ -35,6 +35,7 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
       // we should redirect to the create organization page if the user is
       // signed in and does not have an organization
       if (userMemberships?.count === 0) {
+        // show the create organization modal
         push(clerkUrls.createOrganization);
         return;
       }
