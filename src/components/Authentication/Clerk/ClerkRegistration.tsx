@@ -1,7 +1,5 @@
 import { SignUp } from "@clerk/nextjs";
 import { useRouter } from "next/router";
-import { clerkUrls } from "./ClerkAuthSessionChecker";
-import SignUpLayout from "./SignUpLayout";
 
 export default function ClerkRegistration() {
   const { query } = useRouter();
@@ -9,14 +7,19 @@ export default function ClerkRegistration() {
   const redirectUrl = query.redirectUrl ? query.return_to : undefined;
 
   return (
-    <SignUpLayout activeStep={1}>
-      <SignUp
-        path="/registration"
-        routing="path"
-        signInUrl="/login"
-        signInForceRedirectUrl={`/${clerkUrls.createOrganization}?return_to=${redirectUrl}`}
-        signInFallbackRedirectUrl={`/`}
-      />
-    </SignUpLayout>
+    <div className="w-full px-3 text-center flex flex-col">
+      <div className="flex flex-col mb-12">
+        <div className="flex flex-col items-center">
+          <SignUp
+            path="/registration"
+            routing="path"
+            signInUrl="/login"
+            signInForceRedirectUrl={
+              redirectUrl ? `/?return_to=${redirectUrl}` : undefined
+            }
+          />
+        </div>
+      </div>
+    </div>
   );
 }

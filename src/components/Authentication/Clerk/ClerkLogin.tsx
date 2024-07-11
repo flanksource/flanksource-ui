@@ -13,7 +13,7 @@ export default function ClerkLogin() {
       path="/login"
       routing="path"
       signUpUrl="/registration"
-      fallbackRedirectUrl={`/?return_to=${redirectUrl}`}
+      forceRedirectUrl={`/?return_to=${redirectUrl}`}
     />
   );
 }

@@ -13,7 +13,7 @@ export function UserProfileDropdown() {
         afterSelectOrganizationUrl={`/organizations/orgs-switched`}
         afterCreateOrganizationUrl={`/organizations/orgs-switched`}
       />
-      <UserButton afterSignOutUrl="/login" />
+      <UserButton signInUrl="/login" />
     </div>
   ) : (
     <KratosUserProfileDropdown />
