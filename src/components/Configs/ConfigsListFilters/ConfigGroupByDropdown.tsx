@@ -72,8 +72,11 @@ export default function ConfigGroupByDropdown({
     select: (tags) => {
       return [
         ...Object.values(items).filter((item) => {
+          // If configType is set, we don't want to show the type and
+          // config_class options in the dropdown, we only have one type of
+          // config type in this case
           if (!configType) {
-            return false;
+            return true;
           }
           if (item.value === "type") {
             return false;
