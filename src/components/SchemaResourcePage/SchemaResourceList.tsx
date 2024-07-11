@@ -186,7 +186,13 @@ function SchemaResourceListItem({
       {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}
 
       <Cell colSpan={2}>
-        <div className="flex flex-row gap-2 items-center">
+        <div
+          className="flex flex-row gap-2 items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+        >
           <JobHistoryStatusColumn
             status={job_status}
             onClick={() => {
