@@ -4,7 +4,7 @@ import ConfigsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsT
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigSummaryList from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryList";
 import useGroupBySearchParam from "@flanksource-ui/components/Configs/ConfigSummary/utils/useGroupBySearchParam";
-import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFilters";
+import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigsListFilters";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import {
