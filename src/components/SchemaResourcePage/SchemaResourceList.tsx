@@ -41,7 +41,7 @@ export function SchemaResourceList({
               <HCell>Agent</HCell>
               {table === "canaries" && <HCell>Schedule</HCell>}
               {table === "topologies" && <HCell colSpan={2}>namespace</HCell>}
-              <HCell>Job Status</HCell>
+              <HCell colSpan={2}>Job Status</HCell>
               <HCell>Last Run</HCell>
               <HCell>Last Failed</HCell>
               <HCell colSpan={2}>Tags</HCell>
@@ -185,36 +185,38 @@ function SchemaResourceListItem({
       {table === "canaries" && <Cell>{schedule}</Cell>}
       {table === "topologies" && <Cell colSpan={2}>{namespace}</Cell>}
 
-      <Cell className="text-gray-500 flex flex-row gap-2 lowercase">
-        <JobHistoryStatusColumn
-          status={job_status}
-          onClick={() => {
-            setIsJobDetailsModalOpen(true);
-          }}
-        />
-        {!isJobDetailsEmpty && (
-          <>
-            <JobsHistoryDetails
-              isModalOpen={isJobDetailsModalOpen}
-              setIsModalOpen={setIsJobDetailsModalOpen}
-              job={{
-                details: job_details,
-                name: job_name ?? name
-              }}
-            />
+      <Cell colSpan={2}>
+        <div className="flex flex-row gap-2 items-center">
+          <JobHistoryStatusColumn
+            status={job_status}
+            onClick={() => {
+              setIsJobDetailsModalOpen(true);
+            }}
+          />
+          {!isJobDetailsEmpty && (
+            <>
+              <JobsHistoryDetails
+                isModalOpen={isJobDetailsModalOpen}
+                setIsModalOpen={setIsJobDetailsModalOpen}
+                job={{
+                  details: job_details,
+                  name: job_name ?? name
+                }}
+              />
 
-            <button
-              className="inline text-blue-500 text-nowrap"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsJobDetailsModalOpen(true);
-              }}
-            >
-              (View details)
-            </button>
-          </>
-        )}
+              <button
+                className="inline text-blue-500 text-nowrap"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsJobDetailsModalOpen(true);
+                }}
+              >
+                (View details)
+              </button>
+            </>
+          )}
+        </div>
       </Cell>
       <Cell className="text-gray-500">
         <Age from={last_runtime} suffix={true} />
