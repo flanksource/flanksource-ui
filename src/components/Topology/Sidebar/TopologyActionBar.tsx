@@ -1,4 +1,3 @@
-import useUpdateComponentMutation from "@flanksource-ui/api/query-hooks/mutations/useUpdateComponentMutation";
 import { EvidenceType } from "@flanksource-ui/api/types/evidence";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
@@ -6,7 +5,7 @@ import { features } from "@flanksource-ui/services/permissions/features";
 import { ActionLink } from "@flanksource-ui/ui/Buttons/ActionLink";
 import React, { useMemo, useState } from "react";
 import { IconType } from "react-icons";
-import { BiHide, BiLink, BiShow, BiZoomIn } from "react-icons/bi";
+import { BiLink, BiZoomIn } from "react-icons/bi";
 import { ImTree } from "react-icons/im";
 import { MdAlarmAdd, MdTableRows } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -114,62 +113,61 @@ export const topologyActionItems: Readonly<TopologyActionItem>[] = [
       );
     }
   },
-  {
-    label: "Hide",
-    icon: BiHide,
-    isShown: (topology) => topology.hidden !== false,
-    ContainerComponent: function Container({
-      child: ChildComponent,
-      topology,
-      onRefresh,
-      icon,
-      text
-    }) {
-      const { mutate: updateVisibility } =
-        useUpdateComponentMutation(onRefresh);
+  // {
+  //   label: "Hide",
+  //   icon: BiHide,
+  //   isShown: (topology) => topology.hidden !== false,
+  //   ContainerComponent: function Container({
+  //     child: ChildComponent,
+  //     topology,
+  //     onRefresh,
+  //     icon,
+  //     text
+  //   }) {
+  //     const { mutate: updateVisibility } =
+  //       useUpdateComponentMutation(onRefresh);
 
-      return (
-        <ChildComponent
-          onClick={() =>
-            updateVisibility({
-              id: topology.id,
-              hidden: true
-            })
-          }
-          icon={icon}
-          text={text}
-        />
-      );
-    }
-  },
-  {
-    label: "Show",
-    icon: BiShow,
-    isShown: (topology) => topology.hidden === false,
-    ContainerComponent: function Container({
-      child: ChildComponent,
-      topology,
-      onRefresh,
-      icon,
-      text
-    }) {
-      const { mutate: updateVisibility } =
-        useUpdateComponentMutation(onRefresh);
-
-      return (
-        <ChildComponent
-          onClick={() =>
-            updateVisibility({
-              id: topology.id,
-              hidden: false
-            })
-          }
-          icon={icon}
-          text={text}
-        />
-      );
-    }
-  },
+  //     return (
+  //       <ChildComponent
+  //         onClick={() =>
+  //           updateVisibility({
+  //             id: topology.id,
+  //             hidden: true
+  //           })
+  //         }
+  //         icon={icon}
+  //         text={text}
+  //       />
+  //     );
+  //   }
+  // },
+  // {
+  //   label: "Show",
+  //   icon: BiShow,
+  //   isShown: (topology) => topology.hidden === false,
+  //   ContainerComponent: function Container({
+  //     child: ChildComponent,
+  //     topology,
+  //     onRefresh,
+  //     icon,
+  //     text
+  //   }) {
+  //     const { mutate: updateVisibility } =
+  //       useUpdateComponentMutation(onRefresh);
+  //     return (
+  //       <ChildComponent
+  //         onClick={() =>
+  //           updateVisibility({
+  //             id: topology.id,
+  //             hidden: false
+  //           })
+  //         }
+  //         icon={icon}
+  //         text={text}
+  //       />
+  //     );
+  //   }
+  // },
   {
     label: "Snapshot",
     icon: ImTree,
