@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 // A small function to help us deal with errors coming from fetching a flow.
 export function handleGetFlowError<S>(
