@@ -2,7 +2,6 @@ import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "jotai";
 import React, { ReactNode, useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
@@ -72,6 +71,7 @@ import { LogsIcon } from "./ui/Icons/LogsIcon";
 import { TopologyIcon } from "./ui/Icons/TopologyIcon";
 import { SidebarLayout } from "./ui/Layout/SidebarLayout";
 import FullPageSkeletonLoader from "./ui/SkeletonLoader/FullPageSkeletonLoader";
+import { ToasterWithCloseButton } from "./ui/ToasterWithCloseButton";
 import { stringSortHelper } from "./utils/common";
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -537,7 +537,7 @@ export function CanaryCheckerApp() {
     <>
       <Head prefix={"Canary Checker"} suffix="" />
       <BrowserRouter>
-        <Toaster position="top-right" reverseOrder={false} />
+        <ToasterWithCloseButton />
         <Provider>
           <HealthPageContextProvider>
             <Canary url="/api/canary/api/summary" />
@@ -581,7 +581,7 @@ export function App() {
   return (
     <BrowserRouter>
       <Provider>
-        <Toaster position="top-right" reverseOrder={false} />
+        <ToasterWithCloseButton />
         <AuthProviderWrapper>
           <UserAccessStateContextProvider>
             <HealthPageContextProvider>
