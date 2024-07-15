@@ -24,7 +24,7 @@ function FormikChangesListener({
   useEffect(() => {
     filterFields.forEach((field) => {
       const value = values[field];
-      if (value) {
+      if (value && value.toLowerCase() !== "all") {
         searchParams.set(field, value);
       } else {
         searchParams.delete(field);
@@ -41,7 +41,7 @@ function FormikChangesListener({
       const value = searchParams.get(field);
       setFieldValue(field, value);
     }, []);
-  }, [filterFields, searchParams]);
+  }, [filterFields, searchParams, setFieldValue]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
