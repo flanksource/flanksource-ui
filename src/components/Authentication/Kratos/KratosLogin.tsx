@@ -4,6 +4,7 @@ import {
 } from "@flanksource-ui/components/Authentication/Kratos/ory";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
+import { ToasterWithCloseButton } from "@flanksource-ui/ui/ToasterWithCloseButton";
 import { LoginFlow, UpdateLoginFlowBody } from "@ory/client";
 import {} from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -12,7 +13,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
 import { toastError } from "../../Toast/toast";
 
 type LoginCredentials = {
@@ -157,7 +157,7 @@ const KratosLogin = () => {
 
   return (
     <div className="w-96">
-      <Toaster position="top-right" reverseOrder={false} />
+      <ToasterWithCloseButton />
       <div>
         <Image
           height={288}
