@@ -7,13 +7,13 @@ export function useFlanksourceUISnippet(
 ) {
   const [isSnippetExecuted, setIsSnippetExecuted] = useState(false);
 
-  const { featureFlags } = useFeatureFlagsContext();
+  const { featureFlags = [] } = useFeatureFlagsContext();
 
   useEffect(() => {
-    if (isSnippetExecuted) {
+    if (isSnippetExecuted || !featureFlags) {
       return;
     }
-    const snippets = featureFlags?.find((flag) => {
+    const snippets = (featureFlags ?? []).find((flag) => {
       return flag.name === "flanksource.ui.snippets" && flag.source === "local";
     });
 
@@ -32,7 +32,7 @@ export function useFlanksourceUISnippet(
         console.error("Error executing snippet", error);
       }
     } else if (user) {
-        setIsSnippetExecuted(true);
+      setIsSnippetExecuted(true);
     }
   }, [featureFlags, user, organization, isSnippetExecuted]);
   return null;
