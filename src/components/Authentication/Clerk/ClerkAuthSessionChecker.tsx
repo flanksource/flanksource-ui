@@ -1,9 +1,4 @@
-import {
-  useOrganization,
-  useOrganizationList,
-  useSession
-} from "@clerk/nextjs";
-import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
+import { useOrganization, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
@@ -24,11 +19,6 @@ type Props = {
 export default function ClerkAuthSessionChecker({ children }: Props) {
   const { isSignedIn, isLoaded: isSessionLoaded } = useSession();
   const { isLoaded: isOrganizationLoaded, organization } = useOrganization();
-
-  // we need to check if the user has an organization and redirect them to the
-  // create organization page if they do not
-  const { isLoaded: isOrganizationListLoaded, userMemberships } =
-    useOrganizationList();
 
   const { push } = useRouter();
 
@@ -57,5 +47,6 @@ export default function ClerkAuthSessionChecker({ children }: Props) {
   //   return <InstanceCreationInProgress />;
   // }
 
-  return <FeatureFlagsContextProvider>{children}</FeatureFlagsContextProvider>;
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{children}</>;
 }
