@@ -1,3 +1,4 @@
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import React, { ComponentProps, useMemo, useState } from "react";
 import { AttachEvidenceDialog } from ".";
 import { useFeatureFlagsContext } from "../../../context/FeatureFlagsContext";
@@ -37,33 +38,35 @@ export default function AttachAsEvidenceButton({
   }
 
   return (
-    <>
-      {ButtonComponent ? (
-        <ButtonComponent
-          onClick={(e) => {
-            onClick(e);
-            setIsDialogOpen(true);
-          }}
-          disabled={isDisabled}
+    <AuthorizationAccessCheck action="write" resource={"incidents"}>
+      <>
+        {ButtonComponent ? (
+          <ButtonComponent
+            onClick={(e) => {
+              onClick(e);
+              setIsDialogOpen(true);
+            }}
+            disabled={isDisabled}
+          />
+        ) : (
+          <Button
+            type="button"
+            disabled={isDisabled}
+            onClick={(e) => {
+              onClick(e);
+              setIsDialogOpen(true);
+            }}
+            hidden={isDisabled}
+            className={className}
+            text="Attach as Evidence"
+          />
+        )}
+        <AttachEvidenceDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          {...props}
         />
-      ) : (
-        <Button
-          type="button"
-          disabled={isDisabled}
-          onClick={(e) => {
-            onClick(e);
-            setIsDialogOpen(true);
-          }}
-          hidden={isDisabled}
-          className={className}
-          text="Attach as Evidence"
-        />
-      )}
-      <AttachEvidenceDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        {...props}
-      />
-    </>
+      </>
+    </AuthorizationAccessCheck>
   );
 }
