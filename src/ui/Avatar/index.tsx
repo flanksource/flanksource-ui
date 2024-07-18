@@ -88,8 +88,7 @@ export function Avatar({
       <div
         {...containerProps}
         className={clsx(
-          `overflow-hidden justify-center items-center leading-none
-        ${inline ? "inline-flex" : "flex"} `,
+          `items-center justify-center overflow-hidden leading-none ${inline ? "inline-flex" : "flex"} `,
           sizeClass,
           containerProps?.className,
           !src && initials ? "bg-dark-blue text-white" : "bg-lighter-gray",
@@ -104,7 +103,7 @@ export function Avatar({
             alt={alt}
             {...imageProps}
             className={clsx(
-              "w-full h-full overflow-hidden",
+              "h-full w-full overflow-hidden",
               imageProps?.className,
               circular ? "rounded-full" : "rounded-md"
             )}

@@ -76,9 +76,9 @@ export function ConfigsPanelList({
   return (
     <div className="flex flex-col space-y-4 text-sm">
       {isLoading ? (
-        <TextSkeletonLoader className="w-full my-2" />
+        <TextSkeletonLoader className="my-2 w-full" />
       ) : configs.length > 0 ? (
-        <ol className="flex flex-col w-full overflow-x-hidden">
+        <ol className="flex w-full flex-col overflow-x-hidden">
           {configs.map((config) => (
             <li
               key={
@@ -86,7 +86,7 @@ export function ConfigsPanelList({
                   ? config.related.id
                   : config.configs.id
               }
-              className={clsx("p-1 relative flex flex-row flex-1", {
+              className={clsx("relative flex flex-1 flex-row p-1", {
                 hidden: hideDeletedConfigs && config.deleted_at
               })}
             >
@@ -96,7 +96,7 @@ export function ConfigsPanelList({
                     ? config.related
                     : config.configs
                 }
-                className="overflow-hidden text-ellipsis flex-1 whitespace-nowrap"
+                className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap"
               />
               {config.deleted_at && (
                 <Badge
@@ -159,14 +159,14 @@ export default function ConfigsPanel({
       isCollapsed={isCollapsed}
       Header={
         <div className="flex flex-row items-center space-x-2">
-          <Title title="Catalog" icon={<VscJson className="w-6 h-auto" />} />
+          <Title title="Catalog" icon={<VscJson className="h-auto w-6" />} />
           <Badge
-            className="w-5 h-5 flex items-center justify-center"
+            className="flex h-5 w-5 items-center justify-center"
             roundedClass="rounded-full"
             text={configs?.length ?? 0}
             title="Total catalog count"
           />
-          <div className="flex grow text-right justify-center">
+          <div className="flex grow justify-center text-right">
             <IconButton
               data-tooltip-id="deleted-tooltip"
               data-tooltip-content={`${
@@ -175,7 +175,7 @@ export default function ConfigsPanel({
               icon={
                 <TrashIconType
                   size={18}
-                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                  className="border-l-1 border-0 border-gray-200 text-gray-600"
                 />
               }
               onClick={handleTrashIconClick}

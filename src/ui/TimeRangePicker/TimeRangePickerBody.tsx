@@ -147,12 +147,12 @@ export function TimeRangePickerBody({
   return (
     <div
       className={clsx(
-        "flex cursor-auto w-full max-h-96 rounded-md py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 shadow-lg shadow-gray-200"
+        "z-50 flex max-h-96 w-full cursor-auto rounded-md bg-white py-2 shadow-lg shadow-gray-200 ring-1 ring-black ring-opacity-5 focus:outline-none"
       )}
     >
       <div
         className={clsx(
-          "absolute shadow-lg shadow-gray-200 z-50",
+          "absolute z-50 shadow-lg shadow-gray-200",
 
           showCalendar && isOpen ? "" : "invisible opacity-0"
         )}
@@ -163,15 +163,15 @@ export function TimeRangePickerBody({
           setShowCalendar={setShowCalendar}
         />
       </div>
-      <div className="border-r border-gray-300 w-3.5/6 px-1 overflow-hidden">
+      <div className="w-3.5/6 overflow-hidden border-r border-gray-300 px-1">
         <div className="p-3">
-          <div className="text-gray-500 text-base sm:space-x-2 whitespace-nowrap font-semibold">
+          <div className="whitespace-nowrap text-base font-semibold text-gray-500 sm:space-x-2">
             Absolute time range
           </div>
           <div>
             <div className="mb-2">
               <div className="my-3">
-                <div className="text-sm font-medium sm:space-x-2 whitespace-nowrap mb-1">
+                <div className="mb-1 whitespace-nowrap text-sm font-medium sm:space-x-2">
                   From
                 </div>
                 <TimePickerInput
@@ -184,7 +184,7 @@ export function TimeRangePickerBody({
                 />
               </div>
               <div className="my-3">
-                <div className="text-sm font-medium sm:space-x-2 whitespace-nowrap mb-1">
+                <div className="mb-1 whitespace-nowrap text-sm font-medium sm:space-x-2">
                   To
                 </div>
                 <TimePickerInput
@@ -198,10 +198,10 @@ export function TimeRangePickerBody({
                 />
               </div>
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex justify-end gap-2">
               <button
                 title="Clear Time Range"
-                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
                 onClick={clearFilter}
               >
                 Clear
@@ -219,7 +219,7 @@ export function TimeRangePickerBody({
                   }
                 }}
                 type="button"
-                className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
+                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-2 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100"
               >
                 Submit
               </button>
@@ -233,7 +233,7 @@ export function TimeRangePickerBody({
       </div>
       <div className="w-auto overflow-y-hidden">
         <TimeRangeList
-          className="overflow-y-auto h-full"
+          className="h-full overflow-y-auto"
           closePicker={closePicker}
           currentRange={currentRange}
           changeRangeValue={changeRangeValue}

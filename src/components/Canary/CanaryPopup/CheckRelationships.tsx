@@ -37,7 +37,7 @@ const columns: ColumnDef<CheckRelationshipsRow>[] = [
       return (
         <div className="flex items-center">
           {icon && (
-            <Icon name={icon} className="mr-2 h-5 w-5 " secondary={name} />
+            <Icon name={icon} className="mr-2 h-5 w-5" secondary={name} />
           )}
           {name}
         </div>

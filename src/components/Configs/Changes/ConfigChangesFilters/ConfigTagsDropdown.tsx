@@ -29,7 +29,7 @@ export function ConfigTagsDropdown({ searchParamKey = "tags" }: Props) {
               </div>
             ),
             value: `${tag.key}____${tag.value}`
-          } satisfies TriStateOptions)
+          }) satisfies TriStateOptions
       );
     }
   }, [data]);

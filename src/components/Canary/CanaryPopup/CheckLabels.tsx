@@ -50,14 +50,14 @@ export default function CheckLabels({ check }: Props) {
   }
 
   return (
-    <div className="flex flex-row gap-2 mb-4 items-center w-full">
+    <div className="mb-4 flex w-full flex-row items-center gap-2">
       <Popover
         menuClass="w-auto top-6"
         toggle={
-          <div className="flex flex-row flex-1 gap-1 items-center">
+          <div className="flex flex-1 flex-row items-center gap-1">
             <div
               id="labels-container"
-              className="flex w-auto flex-row flex-shrink overflow-hidden h-7 gap-1 flex-wrap cursor-pointer"
+              className="flex h-7 w-auto flex-shrink cursor-pointer flex-row flex-wrap gap-1 overflow-hidden"
             >
               {checkLabels.map((item) => (
                 <TagItem
@@ -70,7 +70,7 @@ export default function CheckLabels({ check }: Props) {
               ))}
             </div>
             {isOverflowing && (
-              <div className="w-auto gap-2 underline decoration-solid justify-left text-xs cursor-pointer">
+              <div className="justify-left w-auto cursor-pointer gap-2 text-xs underline decoration-solid">
                 +{checkLabels.length - 1} more
               </div>
             )}
@@ -79,9 +79,9 @@ export default function CheckLabels({ check }: Props) {
         placement="left"
       >
         <div className="flex flex-col p-1">
-          <div className="flex flex-col items-stretch max-h-96 overflow-y-auto">
+          <div className="flex max-h-96 flex-col items-stretch overflow-y-auto">
             <TagList
-              className="flex flex-col flex-1"
+              className="flex flex-1 flex-col"
               tags={checkLabels}
               minimumItemsToShow={checkLabels.length}
               childClassName="bg-blue-100 text-blue-800"

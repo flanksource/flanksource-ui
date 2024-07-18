@@ -49,22 +49,22 @@ export function CanaryStickySidebar({
       ref={ref}
       className={clsx(
         className ||
-          "2xl:flex 2xl:flex-col h-full overflow-y-auto overflow-x-hidden w-80 border-r gap-4",
+          "h-full w-80 gap-4 overflow-y-auto overflow-x-hidden border-r 2xl:flex 2xl:flex-col",
         // for mobile, float the sidebar on top of the content
-        "fixed z-[99] 2xl:z-0 bg-white shadow-md 2xl:static 2xl:shadow-none 2xl:bg-transparent 2xl:border-none 2xl:w-auto 2xl:h-auto 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:flex 2xl:flex-col 2xl:gap-4",
+        "fixed z-[99] bg-white shadow-md 2xl:static 2xl:z-0 2xl:flex 2xl:h-auto 2xl:w-auto 2xl:flex-col 2xl:gap-4 2xl:overflow-y-auto 2xl:overflow-x-hidden 2xl:border-none 2xl:bg-transparent 2xl:shadow-none",
         // for mobile, hide the sidebar when the menu is closed
         isMenuItemOpen ? "flex" : "hidden",
         // move sidebar if mission control UI
         isCanaryUI
-          ? "top-0 left-0"
+          ? "left-0 top-0"
           : isSidebarCollapsed
-          ? "top-16 left-14"
-          : "top-16 left-56"
+            ? "left-14 top-16"
+            : "left-56 top-16"
       )}
       {...props}
     >
       <div
-        className={`flex flex-col flex-1 overflow-y-auto w-full overflow-x-hidden gap-4 p-4 pb-20`}
+        className={`flex w-full flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-4 pb-20`}
       >
         {children}
       </div>

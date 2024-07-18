@@ -36,7 +36,7 @@ export function Cell({ state, value, row, column }: any) {
       return <Status good={value.good} mixed={value.mixed} />;
     } else {
       return (
-        <div className="items-center flex space-x-1">
+        <div className="flex items-center space-x-1">
           <Status good={value === "healthy"} />
           <LastTransitionCell
             value={row.original.last_runtime}
@@ -84,7 +84,7 @@ export function LastTransitionCell({
         {suffix}
         {dayjs.duration(diff).humanize()}
       </span>
-      <span className="text-gray-500 text-light text-xs ml-0.5">ago</span>
+      <span className="text-light ml-0.5 text-xs text-gray-500">ago</span>
     </>
   );
 }
@@ -116,7 +116,7 @@ export function TitleCell({
   const rowValues =
     (row.original as any)?.pivoted === true
       ? // @ts-expect-error
-        row.original[row.original.valueLookup] ?? null
+        (row.original[row.original.valueLookup] ?? null)
       : row.original;
   let title = GetName(rowValues);
   if (hideNamespacePrefix) {
@@ -170,26 +170,26 @@ function getPivotSortValueOrDefault(a: any, b: any, pivotAccessor: any) {
   if (pivotAccessor === "name") {
     const aValue =
       a.original?.pivoted === true
-        ? a?.original[a?.original?.valueLookup] ??
+        ? (a?.original[a?.original?.valueLookup] ??
           a?.original?.aggregate ??
-          undefined
+          undefined)
         : a?.original;
     const bValue =
       b?.original?.pivoted === true
-        ? b?.original[b?.original?.valueLookup] ??
+        ? (b?.original[b?.original?.valueLookup] ??
           b?.original?.aggregate ??
-          undefined
+          undefined)
         : b?.original;
     return { aValue, bValue };
   }
 
   const aValue =
     a.original?.pivoted === true
-      ? a.original[pivotAccessor] ?? a.original.aggregate ?? undefined
+      ? (a.original[pivotAccessor] ?? a.original.aggregate ?? undefined)
       : a.original;
   const bValue =
     b.original?.pivoted === true
-      ? b.original[pivotAccessor] ?? b.original.aggregate ?? undefined
+      ? (b.original[pivotAccessor] ?? b.original.aggregate ?? undefined)
       : b.original;
 
   return { aValue, bValue };
@@ -235,7 +235,7 @@ export function getSortType(pivotCellTypeOrAccessor: any, pivotAccessor: any) {
   };
   return pivotAccessor === "name"
     ? sortTypes[pivotAccessor as any]
-    : sortTypes[pivotCellTypeOrAccessor] ?? "alphanumeric";
+    : (sortTypes[pivotCellTypeOrAccessor] ?? "alphanumeric");
 }
 
 export function makeColumnsForPivot({
@@ -285,8 +285,8 @@ export function getColumns({
         pivotCellType != null
           ? getSortType(pivotCellType, pivotAccessor)
           : accessor != null
-          ? getSortType(accessor, pivotAccessor)
-          : "alphanumeric"
+            ? getSortType(accessor, pivotAccessor)
+            : "alphanumeric"
     };
     return acc;
   }, []);

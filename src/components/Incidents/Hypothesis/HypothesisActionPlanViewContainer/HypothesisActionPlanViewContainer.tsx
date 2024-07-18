@@ -36,7 +36,7 @@ export function HypothesisActionPlanViewContainer({
 
   return (
     <div {...rest}>
-      <div className="flex items-center text-base font-semibold mb-5 justify-end px-4">
+      <div className="mb-5 flex items-center justify-end px-4 text-base font-semibold">
         <div className="flex items-center">
           <div className="pr-4">
             {showAllComments ? "Collapse" : "Expand"} All
@@ -47,7 +47,7 @@ export function HypothesisActionPlanViewContainer({
             onChange={toggleComment}
             className={clsx(
               showAllComments ? "bg-blue-900" : "bg-gray-200",
-              "relative inline-flex shrink-0 h-[30px] w-[50px] cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+              "relative inline-flex h-[30px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
             )}
           >
             <span className="sr-only">Show Comments</span>
@@ -55,7 +55,7 @@ export function HypothesisActionPlanViewContainer({
               aria-hidden="true"
               className={clsx(
                 showAllComments ? "translate-x-5" : "translate-x-0",
-                "h-[26px] w-[26px] pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
+                "pointer-events-none inline-block h-[26px] w-[26px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
               )}
             />
           </Switch>

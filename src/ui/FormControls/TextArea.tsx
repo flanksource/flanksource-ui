@@ -28,7 +28,7 @@ export function TextArea({
         value={value}
         name={id}
         id={id}
-        className={`h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md ${className}`}
+        className={`h-full rounded-md border-gray-300 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${className}`}
         {...rest}
       ></textarea>
     </>

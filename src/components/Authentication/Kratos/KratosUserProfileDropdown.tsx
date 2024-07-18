@@ -12,9 +12,9 @@ export function KratosUserProfileDropdown() {
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
 
   return (
-    <Menu as="div" className="ml-3 relative flex-shrink-0">
+    <Menu as="div" className="relative ml-3 flex-shrink-0">
       <div>
-        <Menu.Button className="flex items-center text-sm rounded-full">
+        <Menu.Button className="flex items-center rounded-full text-sm">
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -39,9 +39,9 @@ export function KratosUserProfileDropdown() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-md transform w-64">
+        <Menu.Items className="absolute right-0 mt-2 w-64 origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
           <Menu.Item>
-            <span className="truncate bg-slate-300 block bold border-0 border-b border-gray-400 broder-black px-4 py-2 rounded-t-md text-gray-600 text-lg">
+            <span className="bold broder-black block truncate rounded-t-md border-0 border-b border-gray-400 bg-slate-300 px-4 py-2 text-lg text-gray-600">
               Hi <b title={user?.name}>{user?.name}</b>
             </span>
           </Menu.Item>
@@ -50,7 +50,7 @@ export function KratosUserProfileDropdown() {
             <Menu.Item key={item.name}>
               <a
                 href={item.href}
-                className="block py-2 px-4 text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200"
+                className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               >
                 {item.name}
               </a>

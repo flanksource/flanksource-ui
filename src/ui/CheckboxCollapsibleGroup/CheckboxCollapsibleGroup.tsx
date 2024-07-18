@@ -22,10 +22,10 @@ export default function CheckboxCollapsibleGroup({
   return (
     <div className={`flex flex-col`}>
       <div
-        className={`flex flex-row items-center space-x-2 py-2 px-2 cursor-pointer`}
+        className={`flex cursor-pointer flex-row items-center space-x-2 px-2 py-2`}
       >
         <input
-          className="text-blue-600 bg-gray-100 border-gray-900 rounded focus:ring-blue-500 focus:ring-2"
+          className="rounded border-gray-900 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
           type="checkbox"
           id={`hideFieldGroups-${label}`}
           checked={isOpen}

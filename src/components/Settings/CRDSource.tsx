@@ -19,12 +19,12 @@ export default function CRDSource({
   }
 
   return (
-    <div className="flex flex-row gap-1 items-center">
+    <div className="flex flex-row items-center gap-1">
       <Icon name="k8s" />
       <span> CRD linked to</span>{" "}
       <Link
         to={`/catalog/${id}`}
-        className="underline text-blue-500 cursor-pointer"
+        className="cursor-pointer text-blue-500 underline"
       >
         <span>
           {namespace ? <>{namespace}/</> : ""}

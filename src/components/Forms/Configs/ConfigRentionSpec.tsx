@@ -53,7 +53,7 @@ export default function ConfigRetentionSpec({
                         label="Name"
                         name={`${fieldName}.changes.${index}.name`}
                         type="text"
-                        className="flex flex-col flex-1"
+                        className="flex flex-1 flex-col"
                       />
                       <FormikTextInput
                         label="Age"
@@ -79,7 +79,7 @@ export default function ConfigRetentionSpec({
                   ))}
                 </div>
               )}
-              <div className="flex flex-row ">
+              <div className="flex flex-row">
                 <Button
                   onClick={() => push({})}
                   text={`Add`}
@@ -110,7 +110,7 @@ export default function ConfigRetentionSpec({
                         label="Name"
                         name={`${fieldName}.type.${index}.name`}
                         type="text"
-                        className="flex flex-col flex-1"
+                        className="flex flex-1 flex-col"
                       />
                       <FormikTextInput
                         label="Created Age"

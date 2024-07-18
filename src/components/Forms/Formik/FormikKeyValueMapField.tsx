@@ -77,7 +77,7 @@ export default function FormikKeyValueMapField({
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-gray-700">{label}</label>
-      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
+      {hint && <p className="py-1 text-sm text-gray-500">{hint}</p>}
       <div className="flex flex-col gap-2">
         {localValues.map(({ value, key }, index: number) => (
           <div className="flex flex-row gap-2" key={index}>
@@ -120,7 +120,7 @@ export default function FormikKeyValueMapField({
           </div>
         ))}
       </div>
-      <div className="flex flex-row gap-2 justify-start">
+      <div className="flex flex-row justify-start gap-2">
         <Button
           className="btn-white border-0"
           onClick={handleAdd}

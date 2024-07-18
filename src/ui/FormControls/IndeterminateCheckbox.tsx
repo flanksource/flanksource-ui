@@ -17,7 +17,7 @@ export function IndeterminateCheckbox({
     <input
       type="checkbox"
       ref={ref}
-      className={className + " cursor-pointer checkbox"}
+      className={className + " checkbox cursor-pointer"}
       {...rest}
     />
   );

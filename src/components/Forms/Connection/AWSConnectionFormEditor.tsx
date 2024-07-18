@@ -17,10 +17,10 @@ export const AWSConnectionFormEditor = ({ name }: { name: string }) => {
       <FormikTextInput name={`${name}.endpoint`} label="Endpoint" />
       <FormikTextInput name={`${name}.objectPath`} label="Object Path" />
 
-      <label className="font-semibold text-sm">Secret Key</label>
+      <label className="text-sm font-semibold">Secret Key</label>
       <FormikEnvVarConfigsFields name={`${name}.secretKey`} />
 
-      <label className="font-semibold text-sm">Access Key</label>
+      <label className="text-sm font-semibold">Access Key</label>
       <FormikEnvVarConfigsFields name={`${name}.accessKey`} />
 
       <div className="flex flex-row md:space-x-2">

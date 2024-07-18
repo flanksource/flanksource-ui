@@ -45,7 +45,7 @@ export default function FormikJSONCheckFields({
         }
       }}
     >
-      <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+      <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
         <FormikTextInput name={`${name}.path`} label="Path" />
         <FormikTextInput name={`${name}.value`} label="Value" />
       </div>

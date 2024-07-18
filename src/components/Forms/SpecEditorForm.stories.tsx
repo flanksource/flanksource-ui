@@ -17,7 +17,7 @@ export default {
     (Story: React.FC) => (
       <MemoryRouter>
         <QueryClientProvider client={defaultQueryClient}>
-          <div className="w-screen h-screen overflow-y-auto p-4">
+          <div className="h-screen w-screen overflow-y-auto p-4">
             <Story />
           </div>
         </QueryClientProvider>

@@ -20,9 +20,9 @@ export default {
               handleSubmit(e);
             }}
             onReset={handleReset}
-            className="flex flex-col flex-1 overflow-y-auto space-y-4"
+            className="flex flex-1 flex-col space-y-4 overflow-y-auto"
           >
-            <div className="w-full h-full flex flex-col gap-4 overflow-y-auto p-4">
+            <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
               <Story />
 
               <div className="flex flex-col space-x-4">

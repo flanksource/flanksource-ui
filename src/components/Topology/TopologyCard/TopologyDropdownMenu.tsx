@@ -23,7 +23,7 @@ function TopologyMenuItem({
   return (
     <Menu.Item as="button" onClick={onClick}>
       {icon}
-      <span className="pl-1 text-sm block">{text}</span>
+      <span className="block pl-1 text-sm">{text}</span>
     </Menu.Item>
   );
 }

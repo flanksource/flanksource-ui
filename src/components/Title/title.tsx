@@ -5,9 +5,9 @@ type Props = {
 
 export default function Title({ title, icon }: Props) {
   return (
-    <h3 className="flex flex-row space-x-1 items-center justify-center">
-      <div className="text-zinc-400 inline-block">{icon}</div>
-      <span className="text-zinc-800 text-lg">{title}</span>
+    <h3 className="flex flex-row items-center justify-center space-x-1">
+      <div className="inline-block text-zinc-400">{icon}</div>
+      <span className="text-lg text-zinc-800">{title}</span>
     </h3>
   );
 }

@@ -134,7 +134,7 @@ export function ChecksTable({
 
   const rowFinder = (row: any) => {
     const rowValues =
-      row?.pivoted === true ? row[row.valueLookup] ?? null : row;
+      row?.pivoted === true ? (row[row.valueLookup] ?? null) : row;
     return rowValues?.subRows || [];
   };
 
@@ -277,7 +277,7 @@ export function ChecksTable({
         </tbody>
       </table>
       {table.getRowModel().rows.length <= 0 && (
-        <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
+        <div className="flex items-center justify-center border-b border-gray-300 px-2 text-center text-gray-400">
           {isLoading ? (
             <TableSkeletonLoader className="mt-2" />
           ) : (

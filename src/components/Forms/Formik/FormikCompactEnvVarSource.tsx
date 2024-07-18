@@ -103,7 +103,7 @@ export function FormikCompactEnvVarSource({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-semibold text-sm">{label}</label>
+      <label className="text-sm font-semibold">{label}</label>
       <div className="flex flex-row gap-2">
         <div className="w-full">
           {type === "Static" ? (
@@ -120,11 +120,11 @@ export function FormikCompactEnvVarSource({
               prefix={prefix}
               data={data}
               setData={setData}
-              className="flex flex-row gap-2 items-center"
+              className="flex flex-row items-center gap-2"
             />
           )}
           {meta.touched && meta.error ? (
-            <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+            <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
           ) : null}
         </div>
         <Switch
@@ -145,7 +145,7 @@ export function FormikCompactEnvVarSource({
           className="w-[24rem]"
         />
       </div>
-      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
+      {hint && <p className="py-1 text-sm text-gray-500">{hint}</p>}
     </div>
   );
 }

@@ -164,7 +164,7 @@ const KratosLogin = () => {
           width={75}
           alt="Mission Control"
           src="/images/logo.svg"
-          className="p-2 h-auto m-auto rounded-8px w-72"
+          className="m-auto h-auto w-72 rounded-8px p-2"
         />
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
           {(() => {
@@ -176,7 +176,7 @@ const KratosLogin = () => {
             return "Sign In to your account";
           })()}
         </h2>
-        <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="mt-8 bg-white px-4 pb-8 pt-4 shadow sm:rounded-lg sm:px-10">
           {loginSuccessful || credentials ? (
             <FormSkeletonLoader />
           ) : (
@@ -185,7 +185,7 @@ const KratosLogin = () => {
         </div>
         <div className="mt-2">
           <Link href="/recovery" passHref>
-            <div className="font-medium link">Reset password</div>
+            <div className="link font-medium">Reset password</div>
           </Link>
         </div>
       </div>

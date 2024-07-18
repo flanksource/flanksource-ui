@@ -5,7 +5,7 @@ import { Status } from "../Status";
 import { isEmpty } from "./utils";
 
 export const empty = (
-  <span className="text-gray-500 text-light text-xs">-</span>
+  <span className="text-light text-xs text-gray-500">-</span>
 );
 
 type CheckStatusProps = {
@@ -68,7 +68,7 @@ export function Duration({ ms }: DurationProps) {
   return (
     <>
       <span className="text-md">{val}</span>
-      <span className="text-gray-500 text-light text-xs ml-0.5">{unit}</span>
+      <span className="text-light ml-0.5 text-xs text-gray-500">{unit}</span>
     </>
   );
 }
@@ -115,7 +115,7 @@ export function Percentage({ val, upper, lower }: PercentageProps) {
       <span className="text-md" title={`${lower}/${upper}`}>
         {val}
       </span>
-      <span className="text-gray-500 text-light text-xs ml-0.5">%</span>
+      <span className="text-light ml-0.5 text-xs text-gray-500">%</span>
     </>
   );
 }

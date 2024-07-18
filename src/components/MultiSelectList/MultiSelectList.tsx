@@ -33,9 +33,9 @@ export default function MultiSelectList<T extends unknown>({
           <div
             key={index}
             className={clsx(
-              "rounded-md relative border p-4 cursor-pointer focus:outline-none",
+              "relative cursor-pointer rounded-md border p-4 focus:outline-none",
               isSelected(option)
-                ? "bg-blue-50 border-blue-200 z-10"
+                ? "z-10 border-blue-200 bg-blue-50"
                 : "border-gray-200"
             )}
             onClick={(e) => onOptionSelect(option)}
@@ -45,7 +45,7 @@ export default function MultiSelectList<T extends unknown>({
                 {isSelected(option) && (
                   <AiFillCheckCircle
                     className={clsx(
-                      "w-5 h-5 absolute m-auto top-0 bottom-0",
+                      "absolute bottom-0 top-0 m-auto h-5 w-5",
                       isSelected(option) ? "text-blue-500" : "text-gray-500"
                     )}
                   />
@@ -53,7 +53,7 @@ export default function MultiSelectList<T extends unknown>({
                 {!isSelected(option) && (
                   <BsCircle
                     className={clsx(
-                      "w-5 h-5 absolute m-auto top-0 bottom-0 text-gray-500"
+                      "absolute bottom-0 top-0 m-auto h-5 w-5 text-gray-500"
                     )}
                   />
                 )}

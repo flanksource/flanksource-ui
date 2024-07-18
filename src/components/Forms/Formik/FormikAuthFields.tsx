@@ -61,8 +61,8 @@ export default function FormikAuthFields({
 
   return (
     <div className="flex flex-col space-y-2">
-      <label className="font-semibold text-sm">{label}</label>
-      <div className="flex flex-row w-full">
+      <label className="text-sm font-semibold">{label}</label>
+      <div className="flex w-full flex-row">
         <Switch
           options={["None", ...types.map((field) => field.label)]}
           defaultValue="None"

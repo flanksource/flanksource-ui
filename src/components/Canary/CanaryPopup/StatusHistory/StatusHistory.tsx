@@ -53,7 +53,7 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
     cell: function MessageCell({ row }: CellContext<HealthCheckStatus, any>) {
       const status = row.original;
       return (
-        <div className="whitespace-normal overflow-x-hidden">
+        <div className="overflow-x-hidden whitespace-normal">
           {/* @ts-expect-error */}
           <CanaryStatus className="" status={status} /> {status.message}{" "}
           {status.error &&
@@ -178,13 +178,13 @@ export function StatusHistory({
   return (
     <div
       className={clsx(
-        "w-full flex flex-col flex-1 overflow-y-auto bg-white",
+        "flex w-full flex-1 flex-col overflow-y-auto bg-white",
         className
       )}
       {...props}
     >
       <StatusHistoryFilters onFiltersChanges={onFiltersChange} />
-      <div className="flex flex-col flex-1 overflow-y-auto ">
+      <div className="flex flex-1 flex-col overflow-y-auto">
         <DataTable
           stickyHead
           columns={columns}

@@ -23,14 +23,14 @@ export function SearchLayout({
   onRefresh
 }: IProps) {
   return (
-    <div className="flex flex-col flex-1 overflow-x-hidden overflow-y-hidden">
-      <div className="sticky top-0 z-10 flex-shrink-0 flex py-3 bg-white shadow h-16">
-        <div className="px-4 flex flex-1 justify-between">
+    <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden">
+      <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white py-3 shadow">
+        <div className="flex flex-1 justify-between px-4">
           <div className="flex items-center">
             <div>{title}</div>
           </div>
           <div
-            className={`ml-4 flex gap-2 items-center md:ml-6 ${extraClassName}`}
+            className={`ml-4 flex items-center gap-2 md:ml-6 ${extraClassName}`}
           >
             {extra}
             {onRefresh && (
@@ -43,7 +43,7 @@ export function SearchLayout({
       </div>
 
       <main
-        className="overflow-y-hidden h-full bg-warm-gray-50 "
+        className="h-full overflow-y-hidden bg-warm-gray-50"
         style={{ zIndex: 0 }}
       >
         <DashboardErrorBoundary>

@@ -22,9 +22,9 @@ export function DisplayGroupedProperties({ items }: Props) {
         return (
           <div
             key={property.label}
-            className="flex flex-col space-y-2 py-1 max-w-full"
+            className="flex max-w-full flex-col space-y-2 py-1"
           >
-            <div className="text-sm text-gray-700 ">
+            <div className="text-sm text-gray-700">
               <span className="border-b border-dashed border-gray-500">
                 {property.icon && (
                   <Icon name={property.icon} className="mr-1 w-4" />
@@ -32,7 +32,7 @@ export function DisplayGroupedProperties({ items }: Props) {
                 {property.label}
               </span>
             </div>
-            <div className="flex flex-col px-1.5 mx-2 gap-2">
+            <div className="mx-2 flex flex-col gap-2 px-1.5">
               {property.properties.map((property) => (
                 <DisplayDetailsRow
                   items={property.rowProperties}

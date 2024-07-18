@@ -143,19 +143,19 @@ export function TimeRangePicker({
       <Popover className={clsx("relative text-sm", className)}>
         <Popover.Button
           type="button"
-          className="inline-flex rounded-md border border-gray-300 shadow-sm px-2 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         >
           {({ open }) => {
             return (
               <>
                 <FiClock className="mt-1" />
                 {updateDisplayValue && (
-                  <div className="ml-2 font-medium items-center">
+                  <div className="ml-2 items-center font-medium">
                     <span>{updateDisplayValue}</span>
                   </div>
                 )}
                 {!updateDisplayValue && (
-                  <div className="ml-2 font-medium items-center">
+                  <div className="ml-2 items-center font-medium">
                     Please select time range
                   </div>
                 )}
@@ -171,7 +171,7 @@ export function TimeRangePicker({
           }}
         </Popover.Button>
         <Popover.Panel
-          className={`absolute flex flex-col origin-top-right z-50 divide-y divide-gray-100 rounded-md drop-shadow-xl bg-slate-50 ring-1 ring-black ring-opacity-5 focus:outline-none`}
+          className={`absolute z-50 flex origin-top-right flex-col divide-y divide-gray-100 rounded-md bg-slate-50 ring-1 ring-black ring-opacity-5 drop-shadow-xl focus:outline-none`}
         >
           {({ open, close }) => {
             return (

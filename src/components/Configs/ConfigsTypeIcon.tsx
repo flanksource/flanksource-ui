@@ -45,7 +45,7 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <div className="flex flex-row items-center gap-1 flex-1 overflow-hidden">
+    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden">
       <span className="flex flex-row items-center gap-1">
         {showPrimaryIcon && (
           <Icon

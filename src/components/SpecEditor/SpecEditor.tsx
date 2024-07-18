@@ -96,9 +96,9 @@ export default function SpecEditor({
   }, [types]);
 
   return (
-    <div className="flex flex-col w-full flex-1 h-full overflow-y-auto">
+    <div className="flex h-full w-full flex-1 flex-col overflow-y-auto">
       {selectedSpecItem ? (
-        <div className="flex flex-col space-y-2 flex-1 overflow-y-auto">
+        <div className="flex flex-1 flex-col space-y-2 overflow-y-auto">
           <SpecEditorForm
             selectedSpec={selectedSpecItem}
             updateSpec={selectedSpecItem.updateSpec}
@@ -113,11 +113,11 @@ export default function SpecEditor({
           />
         </div>
       ) : (
-        <div className="flex flex-col gap-2 flex-1">
-          <div className="flex flex-col gap-2 flex-1">
+        <div className="flex flex-1 flex-col gap-2">
+          <div className="flex flex-1 flex-col gap-2">
             <div className="flex flex-wrap p-2">
               {types.map((type) => (
-                <div key={type.name} className="flex flex-col w-1/5 p-2">
+                <div key={type.name} className="flex w-1/5 flex-col p-2">
                   <div
                     onClick={() => {
                       setSelectedSpecItem(type);
@@ -125,11 +125,11 @@ export default function SpecEditor({
                       setIntegrationsModalSubTitle(type.label ?? type.name);
                     }}
                     role={"button"}
-                    className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                    className="flex h-20 flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-2 text-center hover:border-blue-200 hover:bg-gray-100"
                     key={type.name}
                   >
                     {typeof type.icon === "string" ? (
-                      <Icon name={type.icon} className="w-5 h-5" />
+                      <Icon name={type.icon} className="h-5 w-5" />
                     ) : (
                       <type.icon />
                     )}
@@ -140,7 +140,7 @@ export default function SpecEditor({
             </div>
           </div>
           {onBack && (
-            <div className={`flex flex-row  bg-gray-100 p-4`}>
+            <div className={`flex flex-row bg-gray-100 p-4`}>
               <Button
                 type="button"
                 text="Back"

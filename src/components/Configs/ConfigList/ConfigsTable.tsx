@@ -140,11 +140,14 @@ export default function ConfigsTable({
     }
     return data.map((config) => ({
       ...config,
-      ...tagsGroupBy.reduce((acc, tag) => {
-        const tags = config.tags ?? {};
-        acc[tag.replace("__tag", "")] = tags[tag.replace("__tag", "")];
-        return acc;
-      }, {} as Record<string, string>)
+      ...tagsGroupBy.reduce(
+        (acc, tag) => {
+          const tags = config.tags ?? {};
+          acc[tag.replace("__tag", "")] = tags[tag.replace("__tag", "")];
+          return acc;
+        },
+        {} as Record<string, string>
+      )
     }));
   }, [data, groupByColumns]);
 

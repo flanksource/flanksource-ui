@@ -41,7 +41,7 @@ export function TextInputClearable({
           onChange={onChange}
           type="text"
           className={clsx(
-            `h-full w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 block py-1 sm:text-sm border-gray-300 ${
+            `block h-full w-full border-gray-300 py-1 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
               hideButton ? "rounded-md" : "rounded-l-md"
             } ${inputClassName}`,
             !hideClearButton && value && "pr-6"
@@ -73,7 +73,7 @@ export function TextInputClearable({
         <button
           onClick={() => onSubmit(value)}
           type="submit"
-          className="py-2 px-3 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          className="rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 py-2 hover:bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
           {buttonIcon || (
             <SearchIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />

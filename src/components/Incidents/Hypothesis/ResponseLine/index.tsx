@@ -58,7 +58,7 @@ export function ResponseLine({
   );
 
   return (
-    <div className="pb-4 flex items-start space-x-3 group">
+    <div className="group flex items-start space-x-3 pb-4">
       {created_by.team ? (
         <Icon className="rounded-full" name={created_by.team.icon} />
       ) : (
@@ -68,16 +68,16 @@ export function ResponseLine({
         <div className="flex space-x-2">
           <div className="text-sm">
             {created_by.team ? (
-              <span className="text-gray-900 text-sm font-bold leading-5">
+              <span className="text-sm font-bold leading-5 text-gray-900">
                 {created_by.team.name} ({created_by?.name})
               </span>
             ) : (
-              <span className="text-gray-900 text-sm font-bold leading-5">
+              <span className="text-sm font-bold leading-5 text-gray-900">
                 {created_by?.name}
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-gray-500 leading-5 font-normal">
+          <p className="mt-0.5 font-normal leading-5 text-gray-500">
             <Age from={created_at} />
           </p>
         </div>
@@ -133,9 +133,9 @@ function ResponseLineMenuActions({
               onClick("delete");
             }}
           >
-            <div className="cursor-pointer flex w-full">
+            <div className="flex w-full cursor-pointer">
               <IconButton
-                className="bg-transparent flex items-center"
+                className="flex items-center bg-transparent"
                 ovalProps={{
                   stroke: "blue",
                   height: "18px",
@@ -144,12 +144,12 @@ function ResponseLineMenuActions({
                 }}
                 icon={
                   <BsTrash
-                    className="text-gray-600 border-0 border-l-1 border-gray-200"
+                    className="border-l-1 border-0 border-gray-200 text-gray-600"
                     size={18}
                   />
                 }
               />
-              <span className="pl-2 text-sm block cursor-pionter">
+              <span className="cursor-pionter block pl-2 text-sm">
                 Delete Evidence
               </span>
             </div>
@@ -161,9 +161,9 @@ function ResponseLineMenuActions({
               onClick("markAsDefinitionOfDone");
             }}
           >
-            <div className="cursor-pointer flex w-full">
+            <div className="flex w-full cursor-pointer">
               <IconButton
-                className="bg-transparent flex items-center"
+                className="flex items-center bg-transparent"
                 ovalProps={{
                   stroke: "blue",
                   height: "18px",
@@ -179,12 +179,12 @@ function ResponseLineMenuActions({
                 }
               />
               {!data.definition_of_done && (
-                <span className="pl-2 text-sm block">
+                <span className="block pl-2 text-sm">
                   Add to definition of done
                 </span>
               )}
               {data.definition_of_done && (
-                <span className="pl-2 text-sm block">
+                <span className="block pl-2 text-sm">
                   Remove from definition of done
                 </span>
               )}

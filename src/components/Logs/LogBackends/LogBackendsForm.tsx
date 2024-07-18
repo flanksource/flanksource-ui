@@ -76,21 +76,21 @@ export default function LogBackendsForm({
         <Form
           onSubmit={handleSubmit}
           onReset={handleReset}
-          className="flex flex-col flex-1 overflow-y-auto gap-4"
+          className="flex flex-1 flex-col gap-4 overflow-y-auto"
         >
-          <div className="flex flex-col flex-1 overflow-y-auto gap-4 p-4">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FormikTextInput name="name" label="Name" required />
             <FormikKeyValueMapField label="Labels" name="labels" outputJson />
             <FormikCodeEditor
               label="Spec"
               fieldName="spec"
               format="yaml"
-              className="flex flex-col h-[min(850px,calc(100vh-500px))]"
+              className="flex h-[min(850px,calc(100vh-500px))] flex-col"
             />
           </div>
 
           {!values?.source && (
-            <div className="flex flex-row gap-4 justify-end bg-gray-200 p-4">
+            <div className="flex flex-row justify-end gap-4 bg-gray-200 p-4">
               {!!initialValues.id && (
                 <DeleteResource
                   resourceId={initialValues.id}

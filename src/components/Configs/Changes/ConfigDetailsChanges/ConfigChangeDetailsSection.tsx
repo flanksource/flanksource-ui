@@ -9,11 +9,11 @@ export default function ConfigChangeDetailSection({
   children
 }: ConfigChangeDetailSectionProps) {
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto mt-2">
-      <div className="flex flex-col flex-1 overflow-y-auto w-full gap-4">
+    <div className="mt-2 flex flex-1 flex-col overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col gap-4 overflow-y-auto">
         <div
           className={clsx(
-            "flex flex-1 w-full overflow-y-auto overflow-x-auto border border-gray-200 rounded text-sm"
+            "flex w-full flex-1 overflow-x-auto overflow-y-auto rounded border border-gray-200 text-sm"
           )}
         >
           {children}

@@ -54,7 +54,7 @@ const CanaryChart = ({
 }) => {
   return (
     <>
-      <div className="flex justify-between items-center mb-2 pr-2">
+      <div className="mb-2 flex items-center justify-between pr-2">
         {title !== "" && <span className="text-lg font-medium">{title}</span>}
       </div>
       <div className={`w-full ${height} overflow-visible`}>
@@ -130,8 +130,8 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               append={
                 validUptime &&
                 !Number.isNaN(uptimeValue) && (
-                  <div className="flex flex-col justify-center mx-2 mt-0.5">
-                    <span className="text-xs text-green-700 ">
+                  <div className="mx-2 mt-0.5 flex flex-col justify-center">
+                    <span className="text-xs text-green-700">
                       {data?.uptime?.passed} passed
                     </span>
                     <span className="text-xs text-red-600">
@@ -170,7 +170,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
                   <span className="text-sm">
                     <Age from={check.last_runtime} suffix={true} />
                   </span>
-                  <span className="text-sm font-medium text-gray-500 pt-1">
+                  <span className="pt-1 text-sm font-medium text-gray-500">
                     Transitioned
                   </span>
                   <span className="text-sm">
@@ -228,7 +228,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
             flexDirection: "column",
             overflowY: "hidden"
           }}
-          className="flex-1 flex"
+          className="flex flex-1"
           contentStyle={{
             marginTop: "-1px",
             display: "flex",

@@ -473,7 +473,5 @@
       "displayType": "Text"
     }
   ],
-  "servers": [
-    "kubernetes"
-  ]
+  "servers": ["kubernetes"]
 }

@@ -45,8 +45,8 @@ export const convertRangeValue = (
     return format === "jsDate"
       ? dateToJSDate(value)
       : format === "iso"
-      ? formatISODate(value)
-      : dateToJSDate(value);
+        ? formatISODate(value)
+        : dateToJSDate(value);
   }
   if (format === "jsDate") {
     return dateToJSDate(subtractDateFromNow(...getIntervalData(value)));

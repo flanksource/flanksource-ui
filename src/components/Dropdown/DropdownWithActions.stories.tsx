@@ -35,7 +35,7 @@ const Template: ComponentStory<typeof DropdownWithActions> = (args) => {
   };
 
   return (
-    <div className="flex flex-col max-w-prose space-y-4">
+    <div className="flex max-w-prose flex-col space-y-4">
       <div className="flex">
         <Controller
           control={control}

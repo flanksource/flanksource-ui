@@ -11,10 +11,10 @@ type CanaryFiltersBarProps = {
 
 export default function CanaryFiltersBar({ checks }: CanaryFiltersBarProps) {
   return (
-    <div className="flex flex-col w-full gap-2">
+    <div className="flex w-full flex-col gap-2">
       <FormikFilterForm filterFields={["query"]} paramsToReset={[]}>
-        <div className="flex flex-row w-full gap-2 items-center">
-          <div className="flex flex-col flex-1">
+        <div className="flex w-full flex-row items-center gap-2">
+          <div className="flex flex-1 flex-col">
             <CanarySearchField
               name="query"
               placeholder="Search by name, description, or endpoint"
@@ -27,7 +27,7 @@ export default function CanaryFiltersBar({ checks }: CanaryFiltersBarProps) {
             className="lg:w-64"
             defaultValue="canary_name"
             prefix={
-              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
                 Group By:
               </div>
             }
@@ -37,7 +37,7 @@ export default function CanaryFiltersBar({ checks }: CanaryFiltersBarProps) {
             checks={checks}
             name="tabBy"
             prefix={
-              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
                 Tab By:
               </div>
             }

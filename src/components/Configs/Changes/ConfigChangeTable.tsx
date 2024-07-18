@@ -63,7 +63,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
           paramKey="changeType"
           paramsToReset={paramsToReset.configChanges}
         >
-          <div className="text-ellipsis overflow-hidden space-x-1">
+          <div className="space-x-1 overflow-hidden text-ellipsis">
             <ChangeIcon change={row.original} />
             <span>{changeType}</span>
           </div>

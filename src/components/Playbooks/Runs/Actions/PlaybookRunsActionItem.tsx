@@ -26,7 +26,7 @@ export default function PlaybookRunsActionItem({
       role="button"
       onClick={onClick}
       key={action.id}
-      className={`flex flex-row items-center justify-between px-4 py-2 bg-white border border-gray-200 hover:bg-gray-200 rounded cursor-pointer ${
+      className={`flex cursor-pointer flex-row items-center justify-between rounded border border-gray-200 bg-white px-4 py-2 hover:bg-gray-200 ${
         isSelected ? "bg-gray-200" : ""
       }`}
     >
@@ -35,10 +35,10 @@ export default function PlaybookRunsActionItem({
           <PlaybookStatusIcon status={action.status} />
           {action.name || `Step ${stepNumber}`}
         </div>
-        <div className={`text-xs flex flex-row gap-1 items-center`}></div>
+        <div className={`flex flex-row items-center gap-1 text-xs`}></div>
       </div>
       <div className="flex flex-row gap-2">
-        <div className="text-sm  text-gray-600">
+        <div className="text-sm text-gray-600">
           {action.status === "sleeping" ? (
             <span
               data-tooltip-id="scheduled-tooltip"

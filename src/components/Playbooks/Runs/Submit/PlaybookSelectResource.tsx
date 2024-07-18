@@ -40,15 +40,15 @@ export default function PlaybookSelectResource({
   }
 
   return (
-    <div className="flex flex-col my-2">
-      <label className="form-label text-lg mb-0">Resource</label>
+    <div className="my-2 flex flex-col">
+      <label className="form-label mb-0 text-lg">Resource</label>
       <div className="flex flex-row gap-2">
         <div className="w-36">
           <label htmlFor={`config_id`} className="form-label mb-0 py-4">
             {resourceSelectorLabel?.label}
           </label>
         </div>
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col">
           <FormikResourceSelectorDropdown
             name={resourceSelectorLabel!.fieldName}
             checkResourceSelector={checkResourceSelector}

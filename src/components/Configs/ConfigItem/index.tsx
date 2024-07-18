@@ -34,14 +34,14 @@ const Option: ComponentType<
   return (
     <components.Option {...props}>
       <div
-        className="text-gray-900 cursor-pointer relative p-2 text-sm"
+        className="relative cursor-pointer p-2 text-sm text-gray-900"
         id="listbox-option-0"
       >
         <div className="flex flex-col">
           {data.name && (
             <div className="flex justify-between">
               <p className="text-sm">
-                <span className="text-xs font-bold text-gray-400 pr-2 w-12 inline-block">
+                <span className="inline-block w-12 pr-2 text-xs font-bold text-gray-400">
                   Name:
                 </span>
                 {data.name}
@@ -52,13 +52,13 @@ const Option: ComponentType<
             <p
               className={clsx(
                 !data.name
-                  ? "text-gray-900 text-sm"
-                  : "text-gray-500 text-xs mt-2"
+                  ? "text-sm text-gray-900"
+                  : "mt-2 text-xs text-gray-500"
               )}
             >
               <span
                 className={clsx(
-                  "text-xs font-bold text-gray-400 pr-2 inline-block",
+                  "inline-block pr-2 text-xs font-bold text-gray-400",
                   data.external_id && data.name ? "w-12" : "w-6"
                 )}
               >
@@ -231,7 +231,7 @@ export const ConfigItem = ({
     return (
       <>
         {description && typeof description === "string" && (
-          <div className="px-2 bg-white text-gray-500 font-semibold text-xs mb-2">
+          <div className="mb-2 bg-white px-2 text-xs font-semibold text-gray-500">
             {description}
           </div>
         )}

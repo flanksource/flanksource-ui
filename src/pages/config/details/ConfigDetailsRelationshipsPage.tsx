@@ -28,9 +28,9 @@ export function ConfigDetailsRelationshipsPage() {
       refetch={refetch}
       activeTabName="Relationships"
     >
-      <div className={`flex flex-col flex-1 h-full gap-2 overflow-y-auto`}>
+      <div className={`flex h-full flex-1 flex-col gap-2 overflow-y-auto`}>
         <ConfigRelationshipFilterBar />
-        <div className="flex flex-col flex-1 overflow-y-auto">
+        <div className="flex flex-1 flex-col overflow-y-auto">
           {view === "Graph" ? (
             <ReactFlowProvider>
               {configItems && configItem && (

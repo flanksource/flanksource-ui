@@ -94,13 +94,13 @@ export function CanaryStatusChart({
 
   if (isLoading) {
     return (
-      <Loading className="flex flex-1 h-full items-center justify-center" />
+      <Loading className="flex h-full flex-1 items-center justify-center" />
     );
   }
 
   if (!data?.length) {
     return (
-      <div className="flex flex-1 h-full items-center justify-center text-gray-500 text-sm">
+      <div className="flex h-full flex-1 items-center justify-center text-sm text-gray-500">
         No data available
       </div>
     );
@@ -216,7 +216,7 @@ const CustomTooltip = ({
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="flex flex-col bg-white p-3 border rounded-sm text-xs">
+      <div className="flex flex-col rounded-sm border bg-white p-3 text-xs">
         <p className="">
           <span className="text-gray-500">{payload[0].name}: </span>
           <span className="ml-1 text-gray-700">{payload[0].value}</span>

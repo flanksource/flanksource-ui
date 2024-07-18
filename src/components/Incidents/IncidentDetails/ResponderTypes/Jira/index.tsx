@@ -97,7 +97,7 @@ export const Jira = ({
             required: "Please provide valid value"
           }}
         >
-          <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
+          <p className="text-sm text-red-600">{errors?.configType?.message}</p>
           <ConfigItem
             type="jira"
             control={control}
@@ -127,7 +127,7 @@ export const Jira = ({
               required: "Please provide valid value"
             }}
           >
-            <p className="text-red-600 text-sm">{errors?.project?.message}</p>
+            <p className="text-sm text-red-600">{errors?.project?.message}</p>
             <ConfigItem
               type="jira"
               control={control}
@@ -156,7 +156,7 @@ export const Jira = ({
                 required: "Please provide valid value"
               }}
             />
-            <p className="text-red-600 text-sm">{errors.issueType?.message}</p>
+            <p className="text-sm text-red-600">{errors.issueType?.message}</p>
             <ConfigItem
               type="jira"
               control={control}
@@ -185,7 +185,7 @@ export const Jira = ({
                 required: "Please provide valid value"
               }}
             />
-            <p className="text-red-600 text-sm">{errors.priority?.message}</p>
+            <p className="text-sm text-red-600">{errors.priority?.message}</p>
           </ConfigItem>
         </ConfigItem>
       </div>
@@ -210,7 +210,7 @@ export const Jira = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.summary?.message}</p>
+        <p className="text-sm text-red-600">{errors.summary?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -233,7 +233,7 @@ export const Jira = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.description?.message}</p>
+        <p className="text-sm text-red-600">{errors.description?.message}</p>
       </div>
     </div>
   );

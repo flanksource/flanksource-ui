@@ -30,7 +30,7 @@ export function ConfigAnalysisLink({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col cursor-pointer  space-y-1" {...rest}>
+    <div className="flex cursor-pointer flex-col space-y-1" {...rest}>
       {open && (
         <ConfigInsightsDetailsModal
           id={configAnalysis.id}
@@ -46,17 +46,17 @@ export function ConfigAnalysisLink({
           }}
         >
           {showConfigLogo && (
-            <div className="flex flex-row gap-2 items-center">
+            <div className="flex flex-row items-center gap-2">
               <ConfigIcon
                 config={configAnalysis?.config}
-                className="h-5 mr-1"
+                className="mr-1 h-5"
               />
               <span>{configAnalysis?.config?.name}</span>
               <span>/</span>
             </div>
           )}
           <div
-            className="flex flex-row items-center gap-1 overflow-hidden cursor-pointer"
+            className="flex cursor-pointer flex-row items-center gap-1 overflow-hidden"
             data-html={true}
             data-class="max-w-[20rem]"
           >

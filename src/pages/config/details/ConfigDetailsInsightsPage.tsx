@@ -22,11 +22,11 @@ export function ConfigDetailsInsightsPage() {
       refetch={() => setRefreshButtonClickedTrigger((x) => x++)}
       activeTabName="Insights"
     >
-      <div className={`flex flex-col flex-1 h-full space-y-2`}>
+      <div className={`flex h-full flex-1 flex-col space-y-2`}>
         <div className="flex flex-row items-center">
           <ConfigInsightsFilters />
         </div>
-        <div className="flex flex-col h-full overflow-y-hidden">
+        <div className="flex h-full flex-col overflow-y-hidden">
           <ConfigInsightsList
             setIsLoading={(isLoading) => setIsLoading(isLoading)}
             triggerRefresh={triggerRefresh}

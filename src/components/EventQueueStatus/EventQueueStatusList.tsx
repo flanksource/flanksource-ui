@@ -71,7 +71,7 @@ export default function EventQueueStatusList({
           onClose={() => setSelectedItem(undefined)}
           title={`Most Common Error for ${selectedItem?.name}`}
         >
-          <div className="flex flex-col flex-1 p-4">
+          <div className="flex flex-1 flex-col p-4">
             <p> {selectedItem?.most_common_error}</p>
           </div>
         </Modal>

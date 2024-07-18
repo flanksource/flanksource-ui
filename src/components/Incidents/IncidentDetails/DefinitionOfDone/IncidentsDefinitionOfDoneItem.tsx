@@ -108,18 +108,18 @@ export default function IncidentsDefinitionOfDoneItem({
                   }
                 }}
               >
-                <div className="cursor-pointer flex w-full">
+                <div className="flex w-full cursor-pointer">
                   <FaEdit />
-                  <span className="pl-2 text-sm block cursor-pointer">
+                  <span className="block cursor-pointer pl-2 text-sm">
                     Edit
                   </span>
                 </div>
               </Menu.Item>
               {evidence.type === EvidenceType.Comment && (
                 <Menu.Item onClick={() => setIsTogglingAsResolved(true)}>
-                  <div className="cursor-pointer flex w-full">
+                  <div className="flex w-full cursor-pointer">
                     <IconButton
-                      className="bg-transparent flex items-center"
+                      className="flex items-center bg-transparent"
                       ovalProps={{
                         stroke: "blue",
                         height: "18px",
@@ -134,7 +134,7 @@ export default function IncidentsDefinitionOfDoneItem({
                         )
                       }
                     />
-                    <span className="pl-2 text-sm block cursor-pointer">
+                    <span className="block cursor-pointer pl-2 text-sm">
                       Mark as {evidence.done ? "not resolved" : "resolved"}
                     </span>
                   </div>
@@ -147,9 +147,9 @@ export default function IncidentsDefinitionOfDoneItem({
                   setEvidenceBeingRemoved(evidence);
                 }}
               >
-                <div className="cursor-pointer flex w-full">
+                <div className="flex w-full cursor-pointer">
                   <IconButton
-                    className="bg-transparent flex items-center"
+                    className="flex items-center bg-transparent"
                     ovalProps={{
                       stroke: "blue",
                       height: "18px",
@@ -158,7 +158,7 @@ export default function IncidentsDefinitionOfDoneItem({
                     }}
                     icon={<BsTrash />}
                   />
-                  <span className="pl-2 text-sm block cursor-pointer">
+                  <span className="block cursor-pointer pl-2 text-sm">
                     Remove
                   </span>
                 </div>

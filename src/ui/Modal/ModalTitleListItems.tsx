@@ -8,7 +8,7 @@ export default function ModalTitleListItems({
   items
 }: ModalTitleListItemsProps) {
   return (
-    <div className="flex flex-row gap-1 items-center">
+    <div className="flex flex-row items-center gap-1">
       {items.map((item, idx) => {
         return (
           <>

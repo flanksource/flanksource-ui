@@ -223,9 +223,9 @@ export default function ConfigScrapperSpecEditor({
   // there should only be one spec, so we can just grab the first key that isn't
   // schedule, otherwise we'll just use custom
   const selectedSpec = resourceValue?.spec
-    ? Object.keys(resourceValue?.spec).filter(
+    ? (Object.keys(resourceValue?.spec).filter(
         (key) => key !== "schedule" && key !== "retention"
-      )[0] ?? "custom"
+      )[0] ?? "custom")
     : undefined;
 
   return (

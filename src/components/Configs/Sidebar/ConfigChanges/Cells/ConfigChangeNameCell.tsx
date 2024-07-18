@@ -10,7 +10,7 @@ export default function ConfigChangeNameCell({
 }: CellContext<ConfigChange, unknown>) {
   const item = row.original;
   return (
-    <div className="whitespace-nowrap text-xs ">
+    <div className="whitespace-nowrap text-xs">
       <ConfigDetailsChanges
         key={item.id}
         id={item.id}

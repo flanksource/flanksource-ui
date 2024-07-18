@@ -10,7 +10,7 @@ import FluxInstallAgent from "./FluxInstallAgent";
 export function WarningBox() {
   return (
     <div
-      className="bg-yellow-100 border border-yellow-200 text-yellow-700 px-4 py-3 rounded relative"
+      className="relative rounded border border-yellow-200 bg-yellow-100 px-4 py-3 text-yellow-700"
       role="alert"
     >
       <span className="block sm:inline">
@@ -37,7 +37,7 @@ export function MoreInfoBox() {
         for more options on fine-tuning the import of Kubernetes resources.
       </p>
 
-      <h3 className="font-bold text-lg">Next Steps</h3>
+      <h3 className="text-lg font-bold">Next Steps</h3>
 
       <ul className="list-disc px-6">
         <li>
@@ -106,11 +106,11 @@ export default function InstallAgentModal({
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       helpLink="/installation/saas/agent"
     >
-      <div className="flex flex-col gap-4 flex-1 p-4 overflow-y-auto">
-        <h3 className="font-bold text-lg">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+        <h3 className="text-lg font-bold">
           Install the Mission Control agent using instructions below
         </h3>
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
           <Tabs
             activeTab={activeTab}
             onSelectTab={(v) => setActiveTab(v as any)}

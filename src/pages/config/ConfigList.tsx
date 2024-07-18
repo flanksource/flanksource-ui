@@ -92,7 +92,7 @@ export function ConfigListPage() {
             <ConfigsListFilters />
           </div>
 
-          <div className="flex flex-col h-full overflow-y-hidden">
+          <div className="flex h-full flex-col overflow-y-hidden">
             {showConfigSummaryList ? (
               <ConfigSummaryList
                 isLoading={isLoadingSummary}

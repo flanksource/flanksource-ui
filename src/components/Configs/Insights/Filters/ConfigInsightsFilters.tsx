@@ -17,13 +17,13 @@ export function ConfigInsightsFilters({
       paramsToReset={paramsToReset}
       filterFields={["type", "severity", "analyzer", "component"]}
     >
-      <div className="flex flex-row gap-4 mr-4">
+      <div className="mr-4 flex flex-row gap-4">
         <div className="flex items-center">
-          <div className="flex flex-row gap-2 items-center">
+          <div className="flex flex-row items-center gap-2">
             <ConfigTypesDropdown label="Config Type:" />
             <ConfigInsightsTypeDropdown
               name="type"
-              className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+              className="mr-2 w-auto max-w-[400px] flex-shrink-0"
               dropDownClassNames="w-auto max-w-[400px] left-0"
               hideControlBorder
               showAllOption
@@ -31,7 +31,7 @@ export function ConfigInsightsFilters({
             <ConfigInsightsSeverityDropdown
               prefix="Severity:"
               name="severity"
-              className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+              className="mr-2 w-auto max-w-[400px] flex-shrink-0"
               dropDownClassNames="w-auto max-w-[400px] left-0"
               hideControlBorder
               showAllOption
@@ -39,7 +39,7 @@ export function ConfigInsightsFilters({
             <ConfigInsightsAnalyzerDropdown
               prefix="Analyzer:"
               name="analyzer"
-              className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+              className="mr-2 w-auto max-w-[400px] flex-shrink-0"
               dropDownClassNames="w-auto max-w-[400px] left-0"
               hideControlBorder
               showAllOption
@@ -47,7 +47,7 @@ export function ConfigInsightsFilters({
             <ComponentNamesDropdown
               prefix="Component:"
               name="component"
-              className="w-auto max-w-[400px] mr-2 flex-shrink-0"
+              className="mr-2 w-auto max-w-[400px] flex-shrink-0"
               dropDownClassNames="w-auto max-w-[400px] left-0"
               hideControlBorder
               showAllOption

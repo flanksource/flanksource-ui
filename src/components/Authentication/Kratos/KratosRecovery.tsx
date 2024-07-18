@@ -84,19 +84,19 @@ function KratosRecovery() {
   return (
     <>
       <Head prefix="Recovery" />
-      <div className="flex min-h-screen bg-gray-50 justify-center">
-        <div className="flex min-h-full flex-col justify-center pt-12 pb-28 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen justify-center bg-gray-50">
+        <div className="flex min-h-full flex-col justify-center pb-28 pt-12 sm:px-6 lg:px-8">
           <div className="w-96">
             <div>
               <img
                 alt="Mission Control"
                 src="/images/logo.svg"
-                className="p-2 h-auto m-auto rounded-8px w-48"
+                className="m-auto h-auto w-48 rounded-8px p-2"
               />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                 Recover account
               </h2>
-              <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
+              <div className="mt-8 bg-white px-4 pb-8 pt-4 shadow sm:rounded-lg sm:px-10">
                 <Flow onSubmit={onSubmit} flow={flow} />
               </div>
               <div className="mt-2">

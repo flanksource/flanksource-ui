@@ -19,10 +19,10 @@ export default function AutoCompleteDropdown({
   isDisabled = false
 }: Props) {
   return (
-    <div className="flex flex-col relative w-full">
+    <div className="relative flex w-full flex-col">
       {label && <label className={`form-label mb-0`}>{label}</label>}
       <CreatableSelect
-        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+        className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         onChange={(value) => {
           onChange(value?.value);
         }}

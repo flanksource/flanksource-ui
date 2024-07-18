@@ -9,7 +9,7 @@ export function CreatedAtCell<T extends CreatedAt>({
 }: CellContext<T, unknown>) {
   return (
     <Age
-      className="whitespace-nowrap  text-xs text-slate-500 pr-2"
+      className="whitespace-nowrap pr-2 text-xs text-slate-500"
       from={row.original.created_at}
     />
   );
@@ -22,7 +22,7 @@ export function UpdatedAtCell<T extends UpdatedAt>({
 }: CellContext<T, unknown>) {
   return (
     <Age
-      className="whitespace-nowrap  text-xs text-slate-500 pr-2"
+      className="whitespace-nowrap pr-2 text-xs text-slate-500"
       from={row.original.updated_at}
     />
   );
@@ -35,7 +35,7 @@ export function DeletedAtCell<T extends Deletable>({
 }: CellContext<T, unknown>) {
   return (
     <Age
-      className="whitespace-nowrap  text-xs text-slate-500 pr-2"
+      className="whitespace-nowrap pr-2 text-xs text-slate-500"
       from={row.original.deleted_at}
     />
   );

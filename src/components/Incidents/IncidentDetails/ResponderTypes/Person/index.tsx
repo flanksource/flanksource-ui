@@ -46,7 +46,7 @@ export const Person = ({
           );
         }}
       />
-      <p className="text-red-600 text-sm">{errors.person?.message ?? ""}</p>
+      <p className="text-sm text-red-600">{errors.person?.message ?? ""}</p>
     </div>
   );
 };

@@ -42,7 +42,7 @@ export function Tag({
       {children}
 
       {onFilterByTag && tag && (
-        <div className="hidden group-hover:flex flex-row gap-1 px-1">
+        <div className="hidden flex-row gap-1 px-1 group-hover:flex">
           <IconButton
             onClick={(e) => onFilterByTag(e, tag, "include")}
             icon={<PiMagnifyingGlassPlusThin size={18} />}

@@ -39,7 +39,7 @@ export const ConfigInsightsColumns: ColumnDef<
       const data = cell.row.original;
 
       return (
-        <div className="flex items-center max-w-full space-x-2">
+        <div className="flex max-w-full items-center space-x-2">
           <span className="w-auto">
             <ConfigInsightsIcon analysis={data} />
           </span>
@@ -74,7 +74,7 @@ export const ConfigInsightsColumns: ColumnDef<
     enableSorting: false,
     cell: ({ getValue }) => {
       return (
-        <div className="flex-1 flex flex-row gap-1 items-center overflow-hidden overflow-ellipsis capitalize">
+        <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden overflow-ellipsis capitalize">
           <ConfigInsightsSeverityIcons severity={getValue<string>()} />
           <span>{getValue<string>()}</span>
         </div>

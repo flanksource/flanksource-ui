@@ -35,7 +35,7 @@ export function DropdownMenu({
       >
         <Menu.Items
           style={menuDropdownStyle}
-          className={`${dropdownClass} origin-${anchor} absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none`}
+          className={`${dropdownClass} origin-${anchor} absolute mt-2 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
         >
           {content}
         </Menu.Items>

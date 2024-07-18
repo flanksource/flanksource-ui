@@ -199,7 +199,7 @@ export function FilterForm({
                   buttonClass="w-full"
                   buttonElement={
                     <div
-                      className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
+                      className="flex w-full items-center justify-between border border-gray-300 px-2 py-2"
                       style={{ height: "38px", borderRadius: "4px" }}
                     >
                       <span className="text-sm text-gray-500">
@@ -247,7 +247,7 @@ export function FilterForm({
 
 const SectionTitle = ({ className, children, ...props }) => (
   <div
-    className={`uppercase font-semibold text-sm mb-3 text-blue-700 ${className}`}
+    className={`mb-3 text-sm font-semibold uppercase text-blue-700 ${className}`}
     {...props}
   >
     {children}

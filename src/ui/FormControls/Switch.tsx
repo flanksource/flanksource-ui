@@ -34,7 +34,7 @@ export function Switch<T extends string | number | boolean>({
   return (
     <div
       className={clsx(
-        "flex flex-row group p-0.5 rounded-lg bg-gray-100 hover:bg-gray-200",
+        "group flex flex-row rounded-lg bg-gray-100 p-0.5 hover:bg-gray-200",
         className
       )}
       {...props}
@@ -43,7 +43,7 @@ export function Switch<T extends string | number | boolean>({
         return (
           <button
             type="button"
-            className={`${itemsClassName} rounded-md items-center text-sm text-gray-600 font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus:outline-none focus-visible:ring-offset-gray-100 whitespace-nowrap`}
+            className={`${itemsClassName} items-center whitespace-nowrap rounded-md text-sm font-medium text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100`}
             tabIndex={0}
             onClick={(e) => handleClick(option)}
             key={option.toString()}

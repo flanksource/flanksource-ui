@@ -25,7 +25,7 @@ export default function Percentage({
   if (value > 0) {
     return (
       <div
-        className={`bg-${increaseColor}-100 text-${increaseColor}-800 inline-flex items-baseline rounded-full ml-1 px-1.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0`}
+        className={`bg-${increaseColor}-100 text-${increaseColor}-800 ml-1 inline-flex items-baseline rounded-full px-1.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0`}
       >
         <svg
           className={clsx(
@@ -49,7 +49,7 @@ export default function Percentage({
   } else {
     return (
       <div
-        className={`inline-flex items-baseline rounded-full ml-1 px-1.5 py-0.5 text-xs font-medium bg-${decreaseColor}-100 text-${decreaseColor}-800 md:mt-2 lg:mt-0`}
+        className={`ml-1 inline-flex items-baseline rounded-full px-1.5 py-0.5 text-xs font-medium bg-${decreaseColor}-100 text-${decreaseColor}-800 md:mt-2 lg:mt-0`}
       >
         <svg
           className={clsx(

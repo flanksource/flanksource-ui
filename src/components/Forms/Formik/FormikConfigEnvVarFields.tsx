@@ -67,13 +67,13 @@ export default function FormikEnvVarConfigsFields({
 
   return (
     <div className={className}>
-      <div className="flex flex-row gap-4 w-full items-center">
+      <div className="flex w-full flex-row items-center gap-4">
         {label && (
-          <label className="font-semibold text-sm flex-shrink">{label}</label>
+          <label className="flex-shrink text-sm font-semibold">{label}</label>
         )}
       </div>
-      <div className="flex flex-col py-2 gap-2 ">
-        <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-col gap-2 py-2">
+        <div className="flex flex-row items-center gap-2">
           {selectedMethod === "Static" && (
             <div className="flex flex-1 flex-col">
               {type === "textarea" && (
@@ -95,50 +95,50 @@ export default function FormikEnvVarConfigsFields({
 
           {selectedMethod === "Config Map" && (
             <div className="flex flex-1 flex-row gap-2">
-              <div className="flex flex-row gap-2 flex-1 items-center">
-                <label className="font-semibold text-sm flex-shrink">
+              <div className="flex flex-1 flex-row items-center gap-2">
+                <label className="flex-shrink text-sm font-semibold">
                   ConfigMap Name:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.configMapKeyRef.name`}
-                  className="flex flex-col gap-0 flex-1"
+                  className="flex flex-1 flex-col gap-0"
                 />
               </div>
-              <div className="flex flex-row gap-2 flex-1 items-center">
-                <label className="font-semibold text-sm flex-shrink">
+              <div className="flex flex-1 flex-row items-center gap-2">
+                <label className="flex-shrink text-sm font-semibold">
                   ConfigMap Key:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.configMapKeyRef.key`}
-                  className="flex flex-col gap-0 flex-1"
+                  className="flex flex-1 flex-col gap-0"
                 />
               </div>
             </div>
           )}
 
           {selectedMethod === "Secret" && (
-            <div className="flex flex-row gap-2 flex-1">
-              <div className="flex flex-row gap-2 flex-1 items-center">
-                <label className="font-semibold text-sm flex-shrink">
+            <div className="flex flex-1 flex-row gap-2">
+              <div className="flex flex-1 flex-row items-center gap-2">
+                <label className="flex-shrink text-sm font-semibold">
                   Secret Name:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.secretKeyRef.name`}
-                  className="flex flex-col gap-0 flex-1"
+                  className="flex flex-1 flex-col gap-0"
                 />
               </div>
-              <div className="flex flex-row gap-2 flex-1 items-center">
-                <label className="font-semibold text-sm flex-shrink">
+              <div className="flex flex-1 flex-row items-center gap-2">
+                <label className="flex-shrink text-sm font-semibold">
                   Secret Key:
                 </label>
                 <FormikTextInput
                   name={`${name}.valueFrom.secretKeyRef.key`}
-                  className="flex flex-col gap-0 flex-1"
+                  className="flex flex-1 flex-col gap-0"
                 />
               </div>
             </div>
           )}
-          <div className="flex flex-col-2 flex-shrink-0 mb-auto">
+          <div className="flex-col-2 mb-auto flex flex-shrink-0">
             <Switch
               className="w-full"
               value={selectedMethod}

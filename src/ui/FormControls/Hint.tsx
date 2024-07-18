@@ -19,7 +19,7 @@ export default function Hint({
     return (
       <>
         <div
-          className="space-x-1 flex flex-col"
+          className="flex flex-col space-x-1"
           data-tooltip-id={id}
           data-tooltip-place="top"
           data-tooltip-content={hint}
@@ -30,6 +30,6 @@ export default function Hint({
       </>
     );
   } else {
-    return <p className="text-sm text-gray-500 py-1">{hint}</p>;
+    return <p className="py-1 text-sm text-gray-500">{hint}</p>;
   }
 }

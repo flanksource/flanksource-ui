@@ -19,7 +19,7 @@ export function RefreshButton({
       onClick={onClick}
       type="button"
       className={clsx(
-        "bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none mr-2",
+        "mr-2 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none",
         className
       )}
       {...rest}

@@ -49,7 +49,7 @@ export function HealthCheckEdit({ check }: HealthCheckEditProps) {
         to={{
           pathname: `/settings/canaries/${check.canary_id}`
         }}
-        className="font-semibold cursor-pointer text-blue-500 space-x-2"
+        className="cursor-pointer space-x-2 font-semibold text-blue-500"
       >
         <FaEdit className="inline" size={18} />
         <span>Edit</span>

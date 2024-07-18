@@ -69,8 +69,8 @@ export function HealthPage({ url }: Props) {
           }
           extraClassName="w-full"
           extra={
-            <div className="flex flex-row w-full items-center">
-              <div className="flex-1 flex flex-row justify-center">
+            <div className="flex w-full flex-row items-center">
+              <div className="flex flex-1 flex-row justify-center">
                 <CanaryStatsCards
                   checks={checks ?? []}
                   passing={passing}
@@ -85,8 +85,8 @@ export function HealthPage({ url }: Props) {
           }
           contentClass="flex flex-col h-full p-0"
         >
-          <div className="flex flex-col w-full h-full">
-            <div className="flex flex-row flex-1 mx-auto w-full max-w-[100rem] overflow-y-auto">
+          <div className="flex h-full w-full flex-col">
+            <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-row overflow-y-auto">
               <Canary
                 url={url}
                 onLoading={setLoading}

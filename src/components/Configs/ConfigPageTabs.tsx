@@ -40,9 +40,9 @@ export default function ConfigPageTabs({
   }, [type]);
 
   return (
-    <div className={`flex flex-row h-full`}>
+    <div className={`flex h-full flex-row`}>
       <TabbedLinks tabLinks={configTabsLists} activeTabName={activeTab}>
-        <div className={`flex flex-col flex-1 h-full gap-4`}>{children}</div>
+        <div className={`flex h-full flex-1 flex-col gap-4`}>{children}</div>
       </TabbedLinks>
     </div>
   );

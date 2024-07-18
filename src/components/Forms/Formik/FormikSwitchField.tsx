@@ -34,7 +34,7 @@ export default function FormikSwitchField<OptionsValueType = string>({
         {label}
       </label>
       {hint && hintPosition === "top" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
+        <p className="py-1 text-sm text-gray-500">{hint}</p>
       )}
       <div className="flex flex-row items-center">
         <Switch
@@ -54,10 +54,10 @@ export default function FormikSwitchField<OptionsValueType = string>({
         />
       </div>
       {hint && hintPosition === "bottom" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
+        <p className="py-1 text-sm text-gray-500">{hint}</p>
       )}
       {meta.touched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

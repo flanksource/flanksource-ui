@@ -54,12 +54,12 @@ export default function EvidenceSelectionModal({
     >
       <div className={className}>
         {helpHint && (
-          <div className="flex py-4 px-4">
+          <div className="flex px-4 py-4">
             <div className="text-sm text-gray-500">{helpHint}</div>
           </div>
         )}
         <div
-          className="p-4 pt-0 overflow-y-auto"
+          className="overflow-y-auto p-4 pt-0"
           style={{ maxHeight: "calc(100vh - 16rem)" }}
         >
           <MultiSelectList
@@ -78,9 +78,9 @@ export default function EvidenceSelectionModal({
             renderOption={(evidence, index) => {
               return (
                 <div key={index} className="relative flex items-center">
-                  <div className="min-w-0 flex-1 text-sm mr-4">
+                  <div className="mr-4 min-w-0 flex-1 text-sm">
                     {evidence.description && (
-                      <div className="text-gray-500 py-2 text-base">
+                      <div className="py-2 text-base text-gray-500">
                         {evidence.description}
                       </div>
                     )}
@@ -95,7 +95,7 @@ export default function EvidenceSelectionModal({
           />
         </div>
         {!Boolean(evidences.length) && (
-          <div className="flex items-center justify-center py-5 px-5 h-56">
+          <div className="flex h-56 items-center justify-center px-5 py-5">
             <div className="text-sm text-gray-500">
               <InfoMessage message={noEvidencesMsg} />
             </div>
@@ -105,8 +105,8 @@ export default function EvidenceSelectionModal({
       {!viewOnly && (
         <div
           className={clsx(
-            "flex rounded justify-between bg-gray-100 px-8 pb-4 items-end",
-            "absolute w-full bottom-0 left-0"
+            "flex items-end justify-between rounded bg-gray-100 px-8 pb-4",
+            "absolute bottom-0 left-0 w-full"
           )}
         >
           <div className="flex flex-1">
@@ -130,7 +130,7 @@ export default function EvidenceSelectionModal({
                   type="button"
                   className={clsx(
                     "btn-secondary-base btn-secondary",
-                    "mt-4 mr-4"
+                    "mr-4 mt-4"
                   )}
                   onClick={() => {
                     setSelectedEvidences([]);

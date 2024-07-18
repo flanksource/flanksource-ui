@@ -4,8 +4,8 @@ import { Icon } from "./Icon";
 const iconList = Object.entries(Icons).map(([name, _icon]) => ({
   value: name,
   label: (
-    <div className="flex pl-2 space-x-4 items-center">
-      <Icon name={name} className="w-5 h-auto" /> <span>{name}</span>
+    <div className="flex items-center space-x-4 pl-2">
+      <Icon name={name} className="h-auto w-5" /> <span>{name}</span>
     </div>
   )
 }));

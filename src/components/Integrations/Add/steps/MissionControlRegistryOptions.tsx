@@ -39,7 +39,7 @@ export default function MissionControlRegistryOptions({
   const chartDetails = selectedOptionChartsDetails.get(selectedOption!);
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto h-full">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto">
       <Formik
         initialValues={{
           id: "",
@@ -55,9 +55,9 @@ export default function MissionControlRegistryOptions({
         {({ isValid, handleSubmit, values }) => (
           <Form
             onSubmit={handleSubmit}
-            className="flex flex-col flex-1 overflow-y-auto"
+            className="flex flex-1 flex-col overflow-y-auto"
           >
-            <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <FormikTextInput
                 label="Namespace"
                 name="namespace"
@@ -69,7 +69,7 @@ export default function MissionControlRegistryOptions({
                 fieldName="chartValues"
                 label="Values"
                 jsonSchemaUrl={chartDetails?.schemaURL}
-                className="flex flex-col h-[20rem]"
+                className="flex h-[20rem] flex-col"
               />
 
               <RegistryInstallationInstructions
@@ -78,7 +78,7 @@ export default function MissionControlRegistryOptions({
               />
             </div>
             <div className={`flex flex-col ${footerClassName}`}>
-              <div className="flex flex-1 flex-row items-center space-x-4 justify-between">
+              <div className="flex flex-1 flex-row items-center justify-between space-x-4">
                 <Button
                   type="button"
                   text="Back"

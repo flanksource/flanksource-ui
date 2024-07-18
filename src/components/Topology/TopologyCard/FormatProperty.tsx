@@ -68,7 +68,7 @@ export function FormatProperty({
             rel="noreferrer"
           >
             {link.label}
-            <FiExternalLink className="inline ml-1" size={12} />
+            <FiExternalLink className="ml-1 inline" size={12} />
           </a>
         ))}
       </div>

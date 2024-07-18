@@ -61,7 +61,7 @@ export const HypothesisBarMenu = ({
         <Menu.Items>
           <Menu.Item onClick={() => setShowConfirm(true)}>
             <IconButton
-              className="bg-transparent flex items-center"
+              className="flex items-center bg-transparent"
               ovalProps={{
                 stroke: "blue",
                 height: "18px",
@@ -70,17 +70,17 @@ export const HypothesisBarMenu = ({
               }}
               icon={
                 <BsTrash
-                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                  className="border-l-1 border-0 border-gray-200 text-gray-600"
                   size={18}
                 />
               }
             />
-            <span className="pl-2 text-sm block">Delete hypothesis</span>
+            <span className="block pl-2 text-sm">Delete hypothesis</span>
           </Menu.Item>
 
           <Menu.Item onClick={onEditTitle}>
             <BiHide />
-            <span className="pl-2 text-sm block">Edit title</span>
+            <span className="block pl-2 text-sm">Edit title</span>
           </Menu.Item>
         </Menu.Items>
       </Menu>

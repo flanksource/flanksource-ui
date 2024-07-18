@@ -103,7 +103,7 @@ export function CountBar({
               <div
                 className={clsx(
                   roundedStyle(barStyle, i),
-                  "border border-r-0 flex items-center justify-center",
+                  "flex items-center justify-center border border-r-0",
                   borderClass,
                   iconClass,
                   height
@@ -117,7 +117,7 @@ export function CountBar({
                 barStyle === "RAG" &&
                   `border-${item.color?.replaceAll("bg-", "")}`,
                 roundedStyleValue(barStyle, i, arr.length),
-                "border flex items-center justify-center min-w-7",
+                "flex min-w-7 items-center justify-center border",
                 borderClass,
                 textClass,
                 height,
@@ -132,7 +132,7 @@ export function CountBar({
         if (item.url) {
           return (
             <Link
-              className="inline-flex space-x-1 cursor-pointer"
+              className="inline-flex cursor-pointer space-x-1"
               key={item.url}
               to={item.url}
               target={item.target || ""}

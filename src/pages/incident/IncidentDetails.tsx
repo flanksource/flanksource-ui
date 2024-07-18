@@ -228,15 +228,15 @@ export function IncidentDetailsPage() {
           />
         }
       >
-        <div className="flex flex-row h-full mt-2">
+        <div className="mt-2 flex h-full flex-row">
           {incident ? (
             <>
-              <div className="flex flex-col flex-1 p-6 h-full">
-                <div className="max-w-3xl lg:max-w-6xl w-full mx-auto">
+              <div className="flex h-full flex-1 flex-col p-6">
+                <div className="mx-auto w-full max-w-3xl lg:max-w-6xl">
                   {Boolean(topologyIds?.length) && (
                     <section>
                       <div className="border-b">
-                        <div className="px-2 py-2 flex flex-nowrap overflow-x-auto">
+                        <div className="flex flex-nowrap overflow-x-auto px-2 py-2">
                           {topologyIds?.map((id) => (
                             <TopologyCard
                               key={id}
@@ -265,7 +265,7 @@ export function IncidentDetailsPage() {
               />
             </>
           ) : (
-            <div className="flex flex-col flex-1 p-6 justify-center font-semibold">
+            <div className="flex flex-1 flex-col justify-center p-6 font-semibold">
               <EmptyState title="Incident not found" />
             </div>
           )}

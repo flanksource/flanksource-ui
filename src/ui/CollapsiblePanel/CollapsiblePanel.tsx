@@ -32,7 +32,7 @@ export default function CollapsiblePanel({
 
   return (
     <div
-      className={clsx("flex flex-col h-auto gap-2 py-1", className)}
+      className={clsx("flex h-auto flex-col gap-2 py-1", className)}
       {...props}
       data-minimized={isCollapsed}
     >
@@ -42,9 +42,9 @@ export default function CollapsiblePanel({
           setIsOpen(!isOpen);
           onCollapsedStateChange(!isOpen);
         }}
-        className={`flex flex-row py-2 cursor-pointer items-center justify-center h-12 bg-gray-50 rounded-md px-2 shadow-sm`}
+        className={`flex h-12 cursor-pointer flex-row items-center justify-center rounded-md bg-gray-50 px-2 py-2 shadow-sm`}
       >
-        <div className="flex flex-row flex-1 items-center">{Header}</div>
+        <div className="flex flex-1 flex-row items-center">{Header}</div>
         <div
           className="flex items-center justify-center space-y-0"
           onClick={() => {
@@ -57,7 +57,7 @@ export default function CollapsiblePanel({
               "rotate-180": !isOpen
             })}
           >
-            <IoChevronUpOutline className="w-6 h-6" />
+            <IoChevronUpOutline className="h-6 w-6" />
           </ClickableSvg>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function CollapsiblePanel({
       {/* @ts-ignore */}
       <Transition
         as={Fragment as any}
-        className={`flex-1 max-h-full flex flex-col ${childrenClassName}`}
+        className={`flex max-h-full flex-1 flex-col ${childrenClassName}`}
         show={isOpen}
         enter="transition-opacity duration-75"
         enterFrom="opacity-0"
@@ -74,7 +74,7 @@ export default function CollapsiblePanel({
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className={`flex-1  flex flex-col max-h-full `}>{children}</div>
+        <div className={`flex max-h-full flex-1 flex-col`}>{children}</div>
       </Transition>
     </div>
   );

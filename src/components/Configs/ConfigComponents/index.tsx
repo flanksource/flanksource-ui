@@ -26,7 +26,7 @@ function ConfigComponentsDetails({ configID }: Props) {
       {isLoading ? (
         <TextSkeletonLoader />
       ) : components.length > 0 ? (
-        <ol className="w-full text-sm text-left">
+        <ol className="w-full text-left text-sm">
           {components.map((analysis) => (
             <li className="" key={analysis.id}>
               <Link
@@ -42,7 +42,7 @@ function ConfigComponentsDetails({ configID }: Props) {
           ))}
         </ol>
       ) : (
-        <div className="flex flex-row justify-center items-center space-x-2 text-gray-500 text-center">
+        <div className="flex flex-row items-center justify-center space-x-2 text-center text-gray-500">
           <FaExclamationTriangle />
           <span>No details found</span>
         </div>
@@ -59,8 +59,8 @@ export default function ConfigComponents(props: Props) {
   return (
     <CollapsiblePanel
       Header={
-        <div className="flex flex-row space-x-2 items-center text-xl font-semibold">
-          <TopologyIcon className="text-gray-400 h-5 w-5" />
+        <div className="flex flex-row items-center space-x-2 text-xl font-semibold">
+          <TopologyIcon className="h-5 w-5 text-gray-400" />
           <span>Components</span>
           <CountBadge roundedClass="rounded-full" value={components.length} />
         </div>

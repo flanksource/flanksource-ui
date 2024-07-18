@@ -105,10 +105,10 @@ export default function SpecEditorForm({
             touchAllFormFields(setFieldTouched);
           }}
           onReset={handleReset}
-          className="flex flex-col flex-1 overflow-y-auto space-y-4"
+          className="flex flex-1 flex-col space-y-4 overflow-y-auto"
           ref={formRef}
         >
-          <div className="flex flex-col flex-1 overflow-y-auto space-y-4 px-4 py-4">
+          <div className="flex flex-1 flex-col space-y-4 overflow-y-auto px-4 py-4">
             <div className="flex flex-col space-y-2">
               {isFieldSupportedByResourceType("name") && (
                 <FormikTextInput name="name" label="Name" required />
@@ -174,7 +174,7 @@ export default function SpecEditorForm({
                   <label className="form-label">Specs</label>
                   <FormikCodeEditor
                     format={specFormat}
-                    className="flex flex-col h-[min(600px,calc(90vh))]"
+                    className="flex h-[min(600px,calc(90vh))] flex-col"
                     fieldName={
                       selectedSpec.type === "code"
                         ? `spec.${selectedSpec.specsMapField}`
@@ -209,8 +209,8 @@ export default function SpecEditorForm({
               )}
             </div>
           </div>
-          <div className="flex flex-row  bg-gray-100 p-4">
-            <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
+          <div className="flex flex-row bg-gray-100 p-4">
+            <div className="flex flex-1 flex-row items-center justify-end space-x-4">
               <CanEditResource
                 resourceType={resourceInfo.table}
                 id={initialValues.id}

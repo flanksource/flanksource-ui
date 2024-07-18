@@ -48,7 +48,7 @@ export default function ConfigCostValue({
     );
   }
   return (
-    <Popover className="relative ">
+    <Popover className="relative">
       <Popover.Button>
         <div className="flex w-full flex-row">
           {val}
@@ -56,7 +56,7 @@ export default function ConfigCostValue({
         </div>
       </Popover.Button>
 
-      <Popover.Panel className="absolute z-10  px-3 py-2 text-sm font-medium text-white  bg-gray-900 rounded-lg shadow-sm  dark:bg-gray-700">
+      <Popover.Panel className="absolute z-10 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm dark:bg-gray-700">
         <CostDetailsTable
           cost_per_minute={config.cost_per_minute}
           cost_total_1d={config.cost_total_1d}

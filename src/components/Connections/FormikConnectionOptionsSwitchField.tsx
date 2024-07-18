@@ -30,7 +30,7 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
 
   return (
     <div className="flex flex-col gap-4 overflow-y-auto">
-      <label className="font-semibold text-sm">{field.label}</label>
+      <label className="text-sm font-semibold">{field.label}</label>
       <div className="flex flex-row">
         <Switch
           options={["None", ...field.options?.map((option) => option.label)]}

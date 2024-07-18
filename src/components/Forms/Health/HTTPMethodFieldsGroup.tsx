@@ -20,7 +20,7 @@ function HTTPBody({ method, name }: HTTPBodyProps) {
   return (
     <div className="flex flex-col space-y-2">
       <label className="text-sm font-semibold">Body</label>
-      <div className="flex flex-row w-full">
+      <div className="flex w-full flex-row">
         <Switch
           options={["Text", "Go Template"]}
           defaultValue="Text"
@@ -57,7 +57,7 @@ export default function HTTPMethodFieldsGroup({
 
   return (
     <div className="flex flex-col space-y-2">
-      <label className="font-semibold text-sm">HTTP Method</label>
+      <label className="text-sm font-semibold">HTTP Method</label>
       <div className="flex flex-row">
         <Switch
           options={MethodOptions.map((value) => value)}

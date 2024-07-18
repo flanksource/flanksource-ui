@@ -27,7 +27,7 @@ export default function TabbedLinks({
   return (
     <div
       className={clsx(
-        "flex flex-col overflow-y-auto flex-1",
+        "flex flex-1 flex-col overflow-y-auto",
         containerClassName
       )}
     >
@@ -40,10 +40,10 @@ export default function TabbedLinks({
           <NavLink
             className={({ isActive }) =>
               clsx(
-                "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-b-0 border-gray-300 hover:text-gray-900 mb-[-2px]",
+                "mb-[-2px] cursor-pointer rounded-t-md border border-b-0 border-gray-300 px-4 py-2 text-sm font-medium hover:text-gray-900",
                 isActive || activeTabName === key
-                  ? "text-gray-900 bg-white"
-                  : "text-gray-500 border-transparent"
+                  ? "bg-white text-gray-900"
+                  : "border-transparent text-gray-500"
               )
             }
             key={path}

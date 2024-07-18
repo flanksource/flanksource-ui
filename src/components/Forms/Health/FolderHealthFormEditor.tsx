@@ -24,13 +24,13 @@ export function FolderHealthFormEditor({
     <>
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.name`}
           label="Name"
           required
         />
         <FormikIconPicker
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.icon`}
           label="Icon"
         />
@@ -47,25 +47,25 @@ export function FolderHealthFormEditor({
       <FormikTextInput name={`${fieldName}.description`} label="Description" />
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.minAge`}
           label="Min Age"
         />
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.maxAge`}
           label="Max Age"
         />
       </div>
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.minCount`}
           type="number"
           label="Min Count"
         />
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.maxCount`}
           type="number"
           label="Max Count"
@@ -73,12 +73,12 @@ export function FolderHealthFormEditor({
       </div>
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.minSize`}
           label="Min Size"
         />
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.maxSize`}
           label="Max Size"
         />

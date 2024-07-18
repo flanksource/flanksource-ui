@@ -47,12 +47,12 @@ export default function DateTimeRangerPicker({
     <div className="flex flex-row items-center gap-2">
       <label className="text-xs font-semibold text-gray-400">{label}</label>
       <div className="flex flex-row items-center">
-        <div className="flex flex-row items-center rounded-md rounded-r-none border border-r-0 h-full border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-1 pl-2">
+        <div className="flex h-full flex-row items-center rounded-md rounded-r-none border border-r-0 border-gray-300 px-1 pl-2 shadow-sm focus:border-blue-500 focus:ring-blue-500">
           <label htmlFor="starts" className="text-xs text-gray-400">
             From:
           </label>
           <input
-            className="shadow-sm sm:text-sm border-0 focus:border-0 w-auto"
+            className="w-auto border-0 shadow-sm focus:border-0 sm:text-sm"
             type="datetime-local"
             max={maxDate}
             onChange={(value) => {
@@ -65,7 +65,7 @@ export default function DateTimeRangerPicker({
             id="starts"
           />
         </div>
-        <div className="flex flex-row items-center rounded-md rounded-l-none border border-l-0 h-full border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 px-1">
+        <div className="flex h-full flex-row items-center rounded-md rounded-l-none border border-l-0 border-gray-300 px-1 shadow-sm focus:border-blue-500 focus:ring-blue-500">
           <label htmlFor="ends" className="text-xs text-gray-400">
             To:
           </label>
@@ -73,7 +73,7 @@ export default function DateTimeRangerPicker({
             disabled={!from}
             min={dayjs(from).format("YYYY-MM-DDTHH:mm:ss")}
             max={maxDate}
-            className="shadow-sm sm:text-sm border-0 focus:border-0 w-auto"
+            className="w-auto border-0 shadow-sm focus:border-0 sm:text-sm"
             type="datetime-local"
             value={to ? dayjs(to).format("YYYY-MM-DDTHH:mm:ss") : undefined}
             onChange={(value) => {

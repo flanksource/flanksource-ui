@@ -43,11 +43,11 @@ export function FormatCurrency({
 
 export function CostInfo({ label, value, defaultValue }: CostInfoProps) {
   return (
-    <div className="overflow-hidden flex flex-row ">
-      <div className="text-gray-500 text-sm whitespace-nowrap pr-2 uppercase">
+    <div className="flex flex-row overflow-hidden">
+      <div className="whitespace-nowrap pr-2 text-sm uppercase text-gray-500">
         {label}:
       </div>
-      <div className="pr-2 mr-2 text-gray-100  ">
+      <div className="mr-2 pr-2 text-gray-100">
         <FormatCurrency value={value} defaultValue={defaultValue} />
       </div>
     </div>
@@ -61,7 +61,7 @@ export function CostDetailsTable({
   cost_total_30d
 }: CostDetailsTableProps) {
   return (
-    <div className="flex flex-row  ">
+    <div className="flex flex-row">
       <CostInfo value={cost_total_1d} label="1d" defaultValue="" />
       <CostInfo value={cost_total_7d} label="7d" defaultValue="" />
       <CostInfo value={cost_total_30d} label="30d" defaultValue="" />

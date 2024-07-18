@@ -50,7 +50,7 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
       hideControlBorder
       isMulti
       prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+        <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
           Labels:
         </div>
       }

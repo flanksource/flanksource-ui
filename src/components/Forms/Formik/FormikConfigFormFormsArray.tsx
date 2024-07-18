@@ -41,7 +41,7 @@ export default function FormikConfigFormFormsArray({
             </div>
             {fieldValue?.length > 0 && (
               <div
-                className={`flex flex-col space-y-2 p-4 border border-gray-200 rounded-md`}
+                className={`flex flex-col space-y-2 rounded-md border border-gray-200 p-4`}
               >
                 {fieldValue.map((_: any, index: number) => {
                   return (

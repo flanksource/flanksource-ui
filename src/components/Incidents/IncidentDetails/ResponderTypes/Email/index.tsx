@@ -47,7 +47,7 @@ export const Email = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.to?.message}</p>
+        <p className="text-sm text-red-600">{errors.to?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -70,7 +70,7 @@ export const Email = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.subject?.message}</p>
+        <p className="text-sm text-red-600">{errors.subject?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -93,7 +93,7 @@ export const Email = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.body?.message}</p>
+        <p className="text-sm text-red-600">{errors.body?.message}</p>
       </div>
     </div>
   );

@@ -73,7 +73,6 @@ Large.args = {
   )
 };
 
-
 export const Full = Template.bind({});
 Full.args = {
   title: "Modal fulle",

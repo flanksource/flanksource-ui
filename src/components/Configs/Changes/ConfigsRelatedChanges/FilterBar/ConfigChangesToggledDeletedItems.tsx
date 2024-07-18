@@ -23,7 +23,7 @@ export function ConfigChangesToggledDeletedItems() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex h-full flex-col items-center justify-center">
       <Popover
         className="flex flex-col items-center"
         title="Preferences"

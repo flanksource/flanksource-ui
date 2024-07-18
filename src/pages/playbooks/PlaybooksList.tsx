@@ -59,7 +59,7 @@ export function PlaybooksListPage() {
         loading={isLoading}
       >
         <TabbedLinks tabLinks={playbookRunsPageTabs}>
-          <div className="flex flex-col flex-1 px-6 h-full w-full overflow-y-auto">
+          <div className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6">
             {error && !playbooks ? (
               <ErrorPage error={error} />
             ) : (

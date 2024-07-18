@@ -44,7 +44,7 @@ export default function SQLConfigsFormEditor({
         <FormikTextInput name={`${fieldName}.driver`} label="Driver" />
         <FormikTextInput name={`${fieldName}.format`} label="Format" />
         <FormikTextArea
-          className="h-48 w-full flex flex-col"
+          className="flex h-48 w-full flex-col"
           name={`${fieldName}.query`}
           label="Query"
           required

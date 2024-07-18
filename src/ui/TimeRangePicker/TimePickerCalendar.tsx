@@ -14,14 +14,14 @@ export function TimePickerCalendar({
   setShowCalendar = () => {}
 }: TimePickerCalendarProps) {
   return (
-    <div className="p-2 bg-gray-50 rounded-sm border border-gray-300">
-      <div className="flex justify-between align-center mb-2">
+    <div className="rounded-sm border border-gray-300 bg-gray-50 p-2">
+      <div className="align-center mb-2 flex justify-between">
         <div className="font-medium">Select a time range</div>
         <div>
           <button
             type="button"
             onClick={() => setShowCalendar(false)}
-            className="bg-gray-200 hover:bg-gray-300 rounded-sm px-1.5 py-1.5 transition duration-200 ease"
+            className="ease rounded-sm bg-gray-200 px-1.5 py-1.5 transition duration-200 hover:bg-gray-300"
           >
             <GrClose size="12px" />
           </button>

@@ -22,7 +22,7 @@ export default function JobHistoryNamesDropdown() {
               label: formatJobName(job.name)!,
               value: job.name,
               id: job.name
-            } satisfies TriStateOptions)
+            }) satisfies TriStateOptions
         );
       }
     }

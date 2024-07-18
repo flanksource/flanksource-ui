@@ -47,7 +47,7 @@ export default function FormikEnvVarStaticView({
       <TextArea
         name={name}
         label={""}
-        className="w-full h-32"
+        className="h-32 w-full"
         value={data.static}
         onChange={handleChange}
         disabled={disabled}

@@ -42,7 +42,7 @@ export function DataTableRow<TableColumns extends RowData>({
             }`}
           >
             {cell.getIsGrouped() ? (
-              <div className="flex flex-row relative items-center space-x-2">
+              <div className="relative flex flex-row items-center space-x-2">
                 <div
                   className={`duration-200 ${
                     row.getIsExpanded() ? "rotate-90" : ""

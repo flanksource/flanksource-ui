@@ -5,25 +5,25 @@ export default function FullPageSkeletonLoader() {
   const authSystem = useDetermineAuthSystem();
 
   return (
-    <div className="h-screen w-screen flex flex-row">
-      <div className="flex flex-col w-56 pt-4 px-4 space-y-6 h-full bg-gray-50 border-r border-gray-300 animate-pulse">
-        <div className="w-full bg-gray-200 rounded-md h-12 "></div>
-        <div className="w-full bg-gray-200 rounded-md h-12"></div>
-        <div className="w-full bg-gray-200 rounded-md h-12"></div>
-        <div className="w-full bg-gray-200 rounded-md h-12"></div>
-        <div className="w-full bg-gray-200 rounded-md h-12 "></div>
-        <div className="w-full bg-gray-200 rounded-md h-12"></div>
-        <div className="w-full bg-gray-200 rounded-md h-12"></div>
+    <div className="flex h-screen w-screen flex-row">
+      <div className="flex h-full w-56 animate-pulse flex-col space-y-6 border-r border-gray-300 bg-gray-50 px-4 pt-4">
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
+        <div className="h-12 w-full rounded-md bg-gray-200"></div>
       </div>
-      <div className="flex flex-col flex-1 h-full">
-        <div className="flex flex-row h-auto w-full bg-gray-50 p-3 space-x-4 items-end border-b border-gray-300">
-          <div className="w-36 bg-gray-200 h-full rounded-md animate-pulse"></div>
+      <div className="flex h-full flex-1 flex-col">
+        <div className="flex h-auto w-full flex-row items-end space-x-4 border-b border-gray-300 bg-gray-50 p-3">
+          <div className="h-full w-36 animate-pulse rounded-md bg-gray-200"></div>
           <div className="flex-1 animate-pulse"></div>
           {authSystem === "kratos" ? (
-            <div className="h-12 w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-12 w-12 rounded-full bg-gray-300"></div>
           ) : (
             <div
-              className="h-12 flex flex-row gap-2 items-center"
+              className="flex h-12 flex-row items-center gap-2"
               data-testid="open-user-button"
             >
               <OrganizationSwitcher
@@ -36,18 +36,18 @@ export default function FullPageSkeletonLoader() {
             </div>
           )}
         </div>
-        <div className="flex flex-row flex-1 p-4 animate-pulse">
-          <div className="flex flex-row space-x-4 w-full">
-            <div className="flex flex-col w-1/2 p-4 space-y-6 h-48 rounded-md bg-gray-50">
-              <div className="w-full bg-gray-200 h-12 rounded-md "></div>
-              <div className="w-2/3 bg-gray-200 h-12 rounded-md "></div>
-              <div className="w-1/2 bg-gray-200 h-12 rounded-md "></div>
+        <div className="flex flex-1 animate-pulse flex-row p-4">
+          <div className="flex w-full flex-row space-x-4">
+            <div className="flex h-48 w-1/2 flex-col space-y-6 rounded-md bg-gray-50 p-4">
+              <div className="h-12 w-full rounded-md bg-gray-200"></div>
+              <div className="h-12 w-2/3 rounded-md bg-gray-200"></div>
+              <div className="h-12 w-1/2 rounded-md bg-gray-200"></div>
             </div>
 
-            <div className="flex flex-col w-1/2 p-4 space-y-6 h-48 rounded-md bg-gray-50">
-              <div className="w-full bg-gray-200 h-12 rounded-md "></div>
-              <div className="w-2/3 bg-gray-200 h-12 rounded-md "></div>
-              <div className="w-1/2 bg-gray-200 h-12 rounded-md "></div>
+            <div className="flex h-48 w-1/2 flex-col space-y-6 rounded-md bg-gray-50 p-4">
+              <div className="h-12 w-full rounded-md bg-gray-200"></div>
+              <div className="h-12 w-2/3 rounded-md bg-gray-200"></div>
+              <div className="h-12 w-1/2 rounded-md bg-gray-200"></div>
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
         return (
           <div
             key={index}
-            className="w-full flex items-center justify-center py-4 px-2 border-r last:border-r-0"
+            className="flex w-full items-center justify-center border-r px-2 py-4 last:border-r-0"
             style={{
               borderBottom: isActive
                 ? "3px solid #5d5fef"
@@ -21,22 +21,15 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
           >
             <div className="flex items-center">
               <div
-                className={`flex items-center justify-center border-2 w-10 h-10 rounded-full mr-4 overflow-hidden
-                  ${isOver && "border-blue-700 bg-blue-700"}
-                  ${isActive && "border-blue-700"}
-                  ${isUpcoming && "border-gray-400"}
-                `}
+                className={`mr-4 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 ${isOver && "border-blue-700 bg-blue-700"} ${isActive && "border-blue-700"} ${isUpcoming && "border-gray-400"} `}
               >
                 {isOver ? (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <CheckIcon className="w-6 h-6 text-white" />
+                  <div className="flex h-full w-full items-center justify-center">
+                    <CheckIcon className="h-6 w-6 text-white" />
                   </div>
                 ) : (
                   <span
-                    className={`
-                    ${isActive && "text-blue-700"}
-                    ${isUpcoming && "text-gray-400"}
-                  `}
+                    className={` ${isActive && "text-blue-700"} ${isUpcoming && "text-gray-400"} `}
                   >
                     {parseInt(index, 10) + 1}
                   </span>
@@ -44,11 +37,7 @@ export function EvidenceStepper({ currentStep, steps, ...rest }) {
               </div>
               <div className="flex flex-col">
                 <div
-                  className={`text-sm font-semibold uppercase
-                    ${isOver && "text-gray-700"}
-                    ${isActive && "text-blue-700"}
-                    ${isUpcoming && "text-gray-400"}
-                  `}
+                  className={`text-sm font-semibold uppercase ${isOver && "text-gray-700"} ${isActive && "text-blue-700"} ${isUpcoming && "text-gray-400"} `}
                 >
                   {step.title}
                 </div>

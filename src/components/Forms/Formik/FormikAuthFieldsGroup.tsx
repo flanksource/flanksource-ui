@@ -66,8 +66,8 @@ export default function FormikAuthFieldsGroup({
 
   return (
     <div className="flex flex-col space-y-2">
-      <label className="font-semibold text-sm">Authentication</label>
-      <div className="flex flex-row w-full">
+      <label className="text-sm font-semibold">Authentication</label>
+      <div className="flex w-full flex-row">
         <Switch
           options={["None", "Basic", "NTLM", "NTLMv2"]}
           defaultValue="None"

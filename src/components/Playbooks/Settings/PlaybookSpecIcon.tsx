@@ -13,7 +13,7 @@ export default function PlaybookSpecIcon({
   const { name, spec } = playbook;
 
   return (
-    <div className="flex flex-row gap-1 items-center">
+    <div className="flex flex-row items-center gap-1">
       <Icon name={spec.icon} className="h-5" />
       {showLabel && <span>{name}</span>}
     </div>

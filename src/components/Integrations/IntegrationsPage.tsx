@@ -59,7 +59,7 @@ export default function IntegrationsPage() {
         contentClass="p-0 h-full"
         loading={isLoading || isRefetching}
       >
-        <div className="flex flex-col flex-1 p-6 pb-0 h-full w-full">
+        <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
           <div className="mx-auto flex flex-col">
             <IntegrationsList
               data={integrations ?? []}

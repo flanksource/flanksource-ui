@@ -54,7 +54,7 @@ export function ConfigDetailsChangesPage() {
     const errorMessage =
       typeof error === "symbol"
         ? error
-        : (error as any)?.message ?? "Something went wrong";
+        : ((error as any)?.message ?? "Something went wrong");
 
     return <InfoMessage message={errorMessage} />;
   }
@@ -66,10 +66,10 @@ export function ConfigDetailsChangesPage() {
       refetch={refetch}
       activeTabName="Changes"
     >
-      <div className={`flex flex-col flex-1 h-full overflow-y-auto`}>
-        <div className="flex flex-col flex-1 items-start gap-2 overflow-y-auto">
+      <div className={`flex h-full flex-1 flex-col overflow-y-auto`}>
+        <div className="flex flex-1 flex-col items-start gap-2 overflow-y-auto">
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
-          <div className="flex flex-col flex-1 overflow-y-auto">
+          <div className="flex flex-1 flex-col overflow-y-auto">
             <ConfigChangeTable
               data={changes}
               isLoading={isLoading}

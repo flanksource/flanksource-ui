@@ -59,7 +59,7 @@ export default function FormikResourceSelectorDropdown({
               ),
               value: check.id,
               label: check.name
-            } satisfies FormikSelectDropdownOption)
+            }) satisfies FormikSelectDropdownOption
         );
       }
       if (data?.components) {
@@ -75,7 +75,7 @@ export default function FormikResourceSelectorDropdown({
               ),
               value: component.id,
               label: component.name
-            } satisfies FormikSelectDropdownOption)
+            }) satisfies FormikSelectDropdownOption
         );
       }
       if (data?.configs) {

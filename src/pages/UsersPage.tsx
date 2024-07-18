@@ -114,7 +114,7 @@ export function UsersPage() {
         loading={isLoading}
       >
         <div
-          className="flex flex-col flex-1 p-6 pb-0 h-full max-w-screen-xl mx-auto"
+          className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col p-6 pb-0"
           ref={containerRef}
         >
           <div className="flex justify-end">

@@ -20,8 +20,5 @@ export default function ConfigListChangeCell({
     return null;
   }
 
-  return (
-
-    <ChangeCountIcon count={totalChanges} />
-  );
+  return <ChangeCountIcon count={totalChanges} />;
 }

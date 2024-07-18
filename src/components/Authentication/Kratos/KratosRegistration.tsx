@@ -92,12 +92,12 @@ export default function KratosRegistration() {
           <img
             alt="Mission Control"
             src="/images/logo.svg"
-            className="p-2 h-auto m-auto rounded-8px w-48"
+            className="m-auto h-auto w-48 rounded-8px p-2"
           />
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
             Create account
           </h2>
-          <div className="mt-8 bg-white pt-4 pb-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="mt-8 bg-white px-4 pb-8 pt-4 shadow sm:rounded-lg sm:px-10">
             <Flow onSubmit={onSubmit} flow={flow} />
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function KratosRegistration() {
           <Link
             href="/login"
             passHref
-            className="font-medium cursor-pointer text-blue-600 hover:text-blue-500"
+            className="cursor-pointer font-medium text-blue-600 hover:text-blue-500"
           >
             Sign in
           </Link>

@@ -45,7 +45,7 @@ export default function ProgressBar({ value, className = "h-1.5" }: Props) {
   return (
     <div className={`relative rounded-full bg-gray-400 ${className}`}>
       <div
-        className={`absolute top-0 left-0 h-full ${roundingClassName}`}
+        className={`absolute left-0 top-0 h-full ${roundingClassName}`}
         style={barStyle}
       ></div>
     </div>

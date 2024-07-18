@@ -20,22 +20,22 @@ export function DescriptionCard({
   ...rest
 }: DescriptionCardProps) {
   return (
-    <div className={clsx("flex flex-col max-w-full", className)} {...rest}>
+    <div className={clsx("flex max-w-full flex-col", className)} {...rest}>
       {labelStyle === "left" && (
-        <table className="table-auto shadow-none text-sm w-full max-w-full">
+        <table className="w-full max-w-full table-auto text-sm shadow-none">
           <tbody>
             {items.map((item, index) => (
               <tr
-                className="border-slate-100 border-solid border-b border-t px-1 py-0.5"
+                className="border-b border-t border-solid border-slate-100 px-1 py-0.5"
                 key={(item.label ?? "") + index.toString()}
               >
-                <th className="text-sm overflow-hidden truncate text-gray-500">
+                <th className="overflow-hidden truncate text-sm text-gray-500">
                   {NodePodPropToLabelMap[
                     item.label as keyof typeof NodePodPropToLabelMap
                   ] ?? item.label}{" "}
                 </th>
                 <td
-                  className={`border-none break-all text-xs ${contentClassName}`}
+                  className={`break-all border-none text-xs ${contentClassName}`}
                 >
                   {item.value}
                 </td>
@@ -54,7 +54,7 @@ export function DescriptionCard({
           {items.map((item, index) => {
             return (
               <div className="col-span-1 flex flex-col space-y-0.5" key={index}>
-                <div className="text-sm overflow-hidden truncate text-gray-500">
+                <div className="overflow-hidden truncate text-sm text-gray-500">
                   {NodePodPropToLabelMap[
                     item.label as keyof typeof NodePodPropToLabelMap
                   ] ?? item.label}
@@ -66,14 +66,14 @@ export function DescriptionCard({
         </div>
       )}
       {labelStyle === "column" && (
-        <div className={clsx("flex flex-col flex-1 overflow-y-auto gap-2")}>
+        <div className={clsx("flex flex-1 flex-col gap-2 overflow-y-auto")}>
           {items.map((item, index) => {
             return (
               <div
-                className="flex flex-col overflow-y-auto space-y-0.5"
+                className="flex flex-col space-y-0.5 overflow-y-auto"
                 key={index}
               >
-                <div className="text-sm overflow-hidden truncate text-gray-500">
+                <div className="overflow-hidden truncate text-sm text-gray-500">
                   {NodePodPropToLabelMap[
                     item.label as keyof typeof NodePodPropToLabelMap
                   ] ?? item.label}

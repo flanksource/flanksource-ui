@@ -13,19 +13,19 @@ export default function DisplayDetailsRow({
   className = "flex flex-col flex-1"
 }: DisplayDetailsRowProps) {
   return (
-    <div className="flex flex-row gap-2 w-full">
+    <div className="flex w-full flex-row gap-2">
       {items.map(({ label, value }) => (
         <div
           className={className}
           key={label?.toString()}
           data-testid="display-item-row"
         >
-          <label className="text-sm overflow-hidden truncate text-gray-600 ">
+          <label className="overflow-hidden truncate text-sm text-gray-600">
             <span className="border-b border-dashed border-gray-500">
               {label}
             </span>
           </label>
-          <p className="text-sm text-gray-900 font-medium break-all overflow-hidden whitespace-pre-wrap text-wrap">
+          <p className="overflow-hidden whitespace-pre-wrap text-wrap break-all text-sm font-medium text-gray-900">
             {value}
           </p>
         </div>

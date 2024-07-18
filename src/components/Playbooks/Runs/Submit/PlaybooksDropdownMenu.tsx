@@ -44,14 +44,14 @@ export default function PlaybooksDropdownMenu({
 
   return (
     <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
-      <div className="text-right my-2">
+      <div className="my-2 text-right">
         <Menu as="div" className="relative inline-block text-left">
           <Float placement="bottom-end" portal>
             <Menu.Button className="btn-white">
-              <FaCog className="mr-2 h-4 w-4 mt-0.5" />
+              <FaCog className="mr-2 mt-0.5 h-4 w-4" />
               Playbooks
               <ChevronDownIcon
-                className="ml-2 -mr-1 h-5 w-5"
+                className="-mr-1 ml-2 h-5 w-5"
                 aria-hidden="true"
               />
             </Menu.Button>

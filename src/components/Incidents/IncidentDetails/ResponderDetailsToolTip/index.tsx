@@ -93,7 +93,7 @@ export const ResponderDetailsToolTip = ({
       {element}
       <div
         className={clsx(
-          "absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50",
+          "absolute right-0 z-50 mt-2 w-96 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none",
           showDropdown ? "inline-block" : "hidden"
         )}
         role="menu"
@@ -112,7 +112,7 @@ export const ResponderDetailsToolTip = ({
             <div className="flex space-x-3">
               <div className="flex-shrink-0">
                 {responder?.icon && (
-                  <responder.icon className="w-6 h-6 align-sub" />
+                  <responder.icon className="h-6 w-6 align-sub" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -120,7 +120,7 @@ export const ResponderDetailsToolTip = ({
                   <span>{getResponderTitleByValue(responder?.type)}</span>
                   {responder?.json?.properties?.external_id && (
                     <FiExternalLink
-                      className="float-right w-5 h-5 cursor-pointer"
+                      className="float-right h-5 w-5 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
@@ -131,7 +131,7 @@ export const ResponderDetailsToolTip = ({
                 </p>
               </div>
             </div>
-            <div className="border-gray-200 sm:p-0 mt-2">
+            <div className="mt-2 border-gray-200 sm:p-0">
               <dl
                 className="sm:divide-y sm:divide-gray-200"
                 onClick={(e) => {
@@ -142,14 +142,14 @@ export const ResponderDetailsToolTip = ({
                 {getOptionsList(responder).map((option) => {
                   return (
                     <div
-                      className="sm:grid sm:grid-cols-3 sm:gap-4 py-1"
+                      className="py-1 sm:grid sm:grid-cols-3 sm:gap-4"
                       key={option.label}
                     >
                       <dt className="text-sm font-medium text-gray-500">
                         {option.label}
                       </dt>
                       {option?.link?.value ? (
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                           <a
                             className="link"
                             href={option.link.value}
@@ -160,7 +160,7 @@ export const ResponderDetailsToolTip = ({
                           </a>
                         </dd>
                       ) : (
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                           {option.value}
                         </dd>
                       )}

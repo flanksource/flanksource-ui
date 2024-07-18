@@ -17,7 +17,7 @@ export default function ConfigListDateCell<T extends Record<string, any>>({
     <div className="text-xs">
       <Age from={value} />
       {column.id === "updated_at" && isDeleted && (
-        <FaTrash className="h-4 w-4 inline align-middle mx-2 text-gray-400" />
+        <FaTrash className="mx-2 inline h-4 w-4 align-middle text-gray-400" />
       )}
     </div>
   );

@@ -47,12 +47,12 @@ export default function FormikConfigFormFieldsArray({
   return (
     <div className={containerClassName}>
       <label className="text-sm font-semibold">{label} </label>
-      {hint && <p className="text-sm text-gray-500 py-1 p-1">{hint}</p>}
+      {hint && <p className="p-1 py-1 text-sm text-gray-500">{hint}</p>}
 
       <FieldArray
         name={name}
         render={(arrayHelpers) => (
-          <div className={`flex flex-col space-y-1 `}>
+          <div className={`flex flex-col space-y-1`}>
             {fieldValue &&
               fieldValue.length > 0 &&
               fieldValue.map((_: any, index: number) => (
@@ -82,12 +82,12 @@ export default function FormikConfigFormFieldsArray({
                   />
                 </div>
               ))}
-            <div className="flex flex-row flex-1">
+            <div className="flex flex-1 flex-row">
               <Button
                 onClick={() => arrayHelpers.push(fields.length === 1 ? "" : {})}
                 text={`Add`}
                 icon={<BsPlusCircleFill />}
-                className="btn-icon  pl-1"
+                className="btn-icon pl-1"
               />
             </div>
           </div>

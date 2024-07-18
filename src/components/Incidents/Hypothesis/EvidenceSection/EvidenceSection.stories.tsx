@@ -84,7 +84,7 @@ Base.args = {
   ],
   hypothesis: sampleIncidentNode,
   titlePrepend: (
-    <div className="text-lg font-medium text-gray-900 font-semibold">
+    <div className="text-lg font-medium font-semibold text-gray-900">
       Evidence
     </div>
   ),

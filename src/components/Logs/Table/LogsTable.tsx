@@ -102,7 +102,7 @@ export function LogsTable({
               cell={cell}
               variant={variant}
               viewOnly={viewOnly}
-              className="flex flex-row text-left break-word"
+              className="break-word flex flex-row text-left"
             />
           )
         },
@@ -114,9 +114,9 @@ export function LogsTable({
             const hasSelectedRows = Object.keys(rowSelection).length !== 0;
             return (
               <div className="flex justify-between">
-                <span className="align-middle my-auto">Message</span>
+                <span className="my-auto align-middle">Message</span>
                 {!viewOnly && (
-                  <div className="flex justify-end -m-2 flex-wrap">
+                  <div className="-m-2 flex flex-wrap justify-end">
                     <div className="p-2">
                       <AttachAsEvidenceButton
                         disabled={!hasSelectedRows}
@@ -240,16 +240,16 @@ export function LogsTable({
   return (
     <div
       ref={tableContainerRef}
-      className="flex flex-col flex-1 overflow-y-auto"
+      className="flex flex-1 flex-col overflow-y-auto"
     >
-      <div className="block pb-6 w-full">
+      <div className="block w-full pb-6">
         <table
           className={clsx(
             "w-full table-fixed",
             variant === "comfortable" ? "comfortable-table" : "compact-table"
           )}
         >
-          <thead className="bg-white sticky top-0 font-bold">
+          <thead className="sticky top-0 bg-white font-bold">
             {table.getHeaderGroups().map((headerGroup) => {
               return (
                 <tr key={headerGroup.id}>
@@ -259,7 +259,7 @@ export function LogsTable({
                       style={{
                         width: determineColumnWidth(header.id)
                       }}
-                      className={`relative group overflow-hidden`}
+                      className={`group relative overflow-hidden`}
                     >
                       {flexRender(
                         header.column.columnDef.header,

@@ -57,10 +57,13 @@ export function ConnectionForm({
               }
               return field;
             })
-            .reduce((acc, field) => {
-              acc[field.key] = field.default;
-              return acc;
-            }, {} as Record<string, any>)
+            .reduce(
+              (acc, field) => {
+                acc[field.key] = field.default;
+                return acc;
+              },
+              {} as Record<string, any>
+            )
         );
       }
       const res = connection.convertToFormSpecificValue
@@ -116,15 +119,15 @@ export function ConnectionForm({
       onSubmit={handleSubmit}
     >
       {() => (
-        <Form className="flex flex-col flex-1 overflow-y-auto">
+        <Form className="flex flex-1 flex-col overflow-y-auto">
           <div
             className={clsx(
-              "flex flex-col flex-1 my-2 overflow-y-auto",
+              "my-2 flex flex-1 flex-col overflow-y-auto",
               className
             )}
             {...props}
           >
-            <div className={clsx("flex flex-col px-2 mb-2")}>
+            <div className={clsx("mb-2 flex flex-col px-2")}>
               <div className="flex flex-col space-y-4 overflow-y-auto p-4">
                 {connectionType.fields.map((field, index) => {
                   return (
@@ -134,7 +137,7 @@ export function ConnectionForm({
               </div>
             </div>
           </div>
-          <div className="flex items-center py-4 px-5 gap-2 rounded-lg bg-gray-100">
+          <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
             {formValue?.id && (
               <AuthorizationAccessCheck
                 resource={tables.connections}
@@ -157,7 +160,7 @@ export function ConnectionForm({
                 Back
               </button>
             )}
-            <div className="flex flex-1 gap-2 justify-end">
+            <div className="flex flex-1 justify-end gap-2">
               {formValue?.id && <TestConnection connectionId={formValue.id} />}
               <AuthorizationAccessCheck
                 resource={tables.connections}

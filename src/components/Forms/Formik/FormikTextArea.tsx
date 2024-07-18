@@ -40,9 +40,9 @@ export default function FormikTextArea({
         {...field}
         className="resize-none"
       />
-      {hint && <p className="text-sm text-gray-500 py-1">{hint}</p>}
+      {hint && <p className="py-1 text-sm text-gray-500">{hint}</p>}
       {meta.touched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

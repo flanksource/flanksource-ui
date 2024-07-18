@@ -30,14 +30,14 @@ export function SchemaResourceList({
   isLoading
 }: Props) {
   return (
-    <div className="mx-auto space-y-6 flex flex-col flex-1 overflow-y-auto justify-center">
-      <div className="flex flex-col overflow-y-auto flex-1 w-full">
+    <div className="mx-auto flex flex-1 flex-col justify-center space-y-6 overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col overflow-y-auto">
         <table
-          className="table-auto table-fixed relative w-full border border-gray-200 rounded-md"
+          className="relative w-full table-auto table-fixed rounded-md border border-gray-200"
           aria-label="table"
         >
-          <thead className={`rounded-md sticky top-0 z-01`}>
-            <tr className="border-b border-gray-200 uppercase bg-column-background rounded-t-md items-center">
+          <thead className={`sticky top-0 z-01 rounded-md`}>
+            <tr className="items-center rounded-t-md border-b border-gray-200 bg-column-background uppercase">
               <HCell colSpan={2}>Name</HCell>
               <HCell colSpan={2}>Source Config</HCell>
               <HCell>Agent</HCell>
@@ -64,7 +64,7 @@ export function SchemaResourceList({
           </tbody>
         </table>
         {items.length === 0 && (
-          <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
+          <div className="flex items-center justify-center border-b border-gray-300 px-2 text-center text-gray-400">
             {isLoading ? (
               <TableSkeletonLoader className="mt-2" />
             ) : (
@@ -99,7 +99,7 @@ function Cell({ children, className, colSpan }: CellProps) {
   return (
     <td
       colSpan={colSpan ?? 1}
-      className={clsx("px-3 py-3 text-sm border-b", className)}
+      className={clsx("border-b px-3 py-3 text-sm", className)}
     >
       {children}
     </td>
@@ -154,14 +154,14 @@ function SchemaResourceListItem({
 
   return (
     <tr
-      className="last:border-b-0 border-b cursor-pointer"
+      className="cursor-pointer border-b last:border-b-0"
       onClick={() => navigateToDetails(id)}
     >
       <Cell
         colSpan={2}
-        className="leading-5 text-gray-900 font-medium overflow-hidden truncate"
+        className="overflow-hidden truncate font-medium leading-5 text-gray-900"
       >
-        <div className="flex flex-row w-full gap-2 items-center truncate">
+        <div className="flex w-full flex-row items-center gap-2 truncate">
           {table === tables.config_scrapers && (
             <ConfigScrapperIcon spec={spec} />
           )}
@@ -173,7 +173,7 @@ function SchemaResourceListItem({
       </Cell>
       <Cell
         colSpan={2}
-        className="shrink-0 text-nowrap text-ellipsis overflow-hidden"
+        className="shrink-0 overflow-hidden text-ellipsis text-nowrap"
       >
         {source && source === "KubernetesCRD" ? (
           <Link
@@ -198,7 +198,7 @@ function SchemaResourceListItem({
 
       <Cell colSpan={2}>
         <div
-          className="flex flex-row gap-2 items-center"
+          className="flex flex-row items-center gap-2"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -222,7 +222,7 @@ function SchemaResourceListItem({
               />
 
               <button
-                className="inline text-blue-500 text-nowrap"
+                className="inline text-nowrap text-blue-500"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -246,11 +246,11 @@ function SchemaResourceListItem({
           <Popover
             toggle={
               <div className="flex flex-row items-center">
-                <div className="flex-shrink overflow-x-hidden cursor-pointer">
+                <div className="flex-shrink cursor-pointer overflow-x-hidden">
                   <TagItem tag={tags[0]!} />
                 </div>
                 {tags.length > 1 && (
-                  <div className="flex-shrink whitespace-nowrap space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
+                  <div className="justify-left flex-shrink cursor-pointer space-x-2 whitespace-nowrap text-xs underline decoration-solid">
                     +{tags.length - 1} more
                   </div>
                 )}
@@ -261,9 +261,9 @@ function SchemaResourceListItem({
             menuClass="top-8"
           >
             <div className="flex flex-col p-3">
-              <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
+              <div className="flex max-h-64 flex-col items-stretch overflow-y-auto">
                 <TagList
-                  className="flex flex-col flex-1"
+                  className="flex flex-1 flex-col"
                   tags={tags}
                   minimumItemsToShow={tags.length}
                 />

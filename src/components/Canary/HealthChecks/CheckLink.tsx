@@ -32,13 +32,13 @@ export function CheckLink({ check, checkId }: CheckLinkProps) {
         pathname: `/health`,
         search: `?checkId=${data.id}&timeRange=1h`
       }}
-      className={`flex flex-row justify-between w-full items-center space-x-2 p-2 rounded-md hover:bg-gray-100`}
+      className={`flex w-full flex-row items-center justify-between space-x-2 rounded-md p-2 hover:bg-gray-100`}
     >
-      <div className="flex flex-row gap-2 w-full items-center">
-        <div className="flex flex-row space-x-1 items-center flex-1text-sm ">
+      <div className="flex w-full flex-row items-center gap-2">
+        <div className="flex-1text-sm flex flex-row items-center space-x-1">
           <HealthCheckStatus check={data} />
-          <Icon name={data.type} className="w-4 h-auto" />
-          <div className="overflow-hidden text-ellipsis flex-1">
+          <Icon name={data.type} className="h-auto w-4" />
+          <div className="flex-1 overflow-hidden text-ellipsis">
             {data.name}
           </div>
         </div>

@@ -9,7 +9,7 @@ export default function FormikNotificationsTemplateField({ name }: Props) {
     <div className="flex flex-col gap-2">
       <label className={`form-label`}>Markdown Template</label>
       <FormikCodeEditor
-        className="flex flex-col h-[200px]"
+        className="flex h-[200px] flex-col"
         fieldName={name}
         format={"markdown"}
       />

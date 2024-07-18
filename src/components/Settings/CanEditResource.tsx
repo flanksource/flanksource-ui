@@ -29,11 +29,11 @@ export default function CanEditResource({
     agentId !== undefined
   ) {
     return (
-      <div className="flex flex-row gap-1 items-center">
+      <div className="flex flex-row items-center gap-1">
         <span>Linked to </span>{" "}
         <Link
           to={`/settings/agents?id=${agentId}`}
-          className="underline text-blue-500 cursor-pointer"
+          className="cursor-pointer text-blue-500 underline"
         >
           <span>{agentName}</span>
         </Link>
@@ -52,7 +52,7 @@ export default function CanEditResource({
   if (source === "ConfigFile") {
     return (
       <div className="flex justify-end p-2">
-        <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row items-center gap-1">
           Linked to local file
         </div>
       </div>

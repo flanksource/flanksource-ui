@@ -34,7 +34,7 @@ export function AlertMessageDialog({
       footerClassName="flex justify-end bg-gray-200 p-2 my-0"
       bodyClass="text-sm py-2"
     >
-      <div className="block px-4 py-2 w-full">{message}</div>
+      <div className="block w-full px-4 py-2">{message}</div>
     </Modal>
   );
 }

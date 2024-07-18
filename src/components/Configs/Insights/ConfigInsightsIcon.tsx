@@ -1,8 +1,20 @@
 import clsx from "clsx";
 import { useMemo } from "react";
-import { CiBandage, CiClock2, CiDollar, CiLink, CiStopwatch } from "react-icons/ci";
+import {
+  CiBandage,
+  CiClock2,
+  CiDollar,
+  CiLink,
+  CiStopwatch
+} from "react-icons/ci";
 import { ConfigAnalysis } from "../../../api/types/configs";
-import { PiBankThin, PiHeartStraightBreakThin, PiLightbulbThin, PiShieldCheckeredFill, PiWarning } from "react-icons/pi";
+import {
+  PiBankThin,
+  PiHeartStraightBreakThin,
+  PiLightbulbThin,
+  PiShieldCheckeredFill,
+  PiWarning
+} from "react-icons/pi";
 
 type Props = {
   analysis: Pick<ConfigAnalysis, "severity" | "analysis_type">;
@@ -104,9 +116,7 @@ export function InsightTypeToIcon({
         />
       );
   }
-  return (
-    <PiWarning className={clsx(colorClass, "inline-block")} size={size} />
-  );
+  return <PiWarning className={clsx(colorClass, "inline-block")} size={size} />;
 }
 
 /**

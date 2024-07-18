@@ -52,53 +52,53 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
         className=""
         value={
           <div className="relative flex flex-col items-center">
-            <div className="flex flex-col w-full">
+            <div className="flex w-full flex-col">
               {responders.length > 0 && (
-                <div className="flex flex-col py-4 gap-2">
+                <div className="flex flex-col gap-2 py-4">
                   {responders.map((responder) => {
                     return (
                       <div
                         key={responder.json.id}
-                        className="relative flex items-center mt-1 rounded"
+                        className="relative mt-1 flex items-center rounded"
                       >
-                        <div className="flex flex-col w-full min-w-0">
+                        <div className="flex w-full min-w-0 flex-col">
                           <ResponderDetailsToolTip
                             className="w-full"
                             responder={responder}
                             data={responder?.json?.properties as any}
                             element={
-                              <div className="flex flex-1 flex-row relative w-full overflow-hidden text-sm font-medium truncate text-dark-gray group">
-                                <div className="flex flex-row flex-1 gap-1 overflow-hidden">
+                              <div className="group relative flex w-full flex-1 flex-row overflow-hidden truncate text-sm font-medium text-dark-gray">
+                                <div className="flex flex-1 flex-row gap-1 overflow-hidden">
                                   {responder.icon && <responder.icon />}
                                   <div
-                                    className="flex flex-1 h-full pl-1 align-middle items-center justify-center"
+                                    className="flex h-full flex-1 items-center justify-center pl-1 align-middle"
                                     onClick={() => {
                                       setOpenResponderDetailsDialog(true);
                                       setSelectedResponder(responder);
                                     }}
                                   >
-                                    <div className="flex-1 inline-block align-middle max-w-32">
+                                    <div className="inline-block max-w-32 flex-1 align-middle">
                                       <div
-                                        className="truncate cursor-pointer hover:underline"
+                                        className="cursor-pointer truncate hover:underline"
                                         title={responder?.name}
                                       >
                                         {responder?.name}
                                       </div>
                                     </div>
-                                    <div className="flex-1 inline-block align-middle">
+                                    <div className="inline-block flex-1 align-middle">
                                       {responder.external_id && (
                                         <a
                                           href={
                                             responder?.links?.external_id_link
                                           }
                                           target="_blank"
-                                          className="inline-block pl-1 text-blue-600 underline align-middle hover:text-blue-800 visited:text-blue-600"
+                                          className="inline-block pl-1 align-middle text-blue-600 underline visited:text-blue-600 hover:text-blue-800"
                                           onClick={(e) => e.stopPropagation()}
                                           rel="noreferrer"
                                           title={responder.external_id}
                                         >
                                           (
-                                          <span className="inline-block truncate align-middle max-w-32">
+                                          <span className="inline-block max-w-32 truncate align-middle">
                                             {responder.external_id}
                                           </span>
                                           )
@@ -107,9 +107,9 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="absolute right-0 ml-10 top-1">
+                                <div className="absolute right-0 top-1 ml-10">
                                   <IconButton
-                                    className="hidden bg-transparent group-hover:inline-block z-5"
+                                    className="z-5 hidden bg-transparent group-hover:inline-block"
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
@@ -126,7 +126,7 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
                                       <ClickableSvg styleFill={false}>
                                         {!isLoading ? (
                                           <BsTrash
-                                            className="text-gray-600 border-0 border-gray-200 border-l-1"
+                                            className="border-l-1 border-0 border-gray-200 text-gray-600"
                                             size={18}
                                           />
                                         ) : (
@@ -151,7 +151,7 @@ export function Responders({ incident, className, ...props }: RespondersProps) {
             </div>
 
             <AddResponder
-              className="flex flex-col justify-end flex-1 w-full"
+              className="flex w-full flex-1 flex-col justify-end"
               onSuccess={() => refetch()}
               incident={incident}
             />

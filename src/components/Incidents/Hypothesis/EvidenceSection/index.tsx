@@ -94,7 +94,7 @@ export function EvidenceItem({
       return (
         <div className="pt-2">
           <ConfigAnalysisEvidence
-            className="flex flex-col w-full bg-white p-3 shadow-card shadow rounded"
+            className="flex w-full flex-col rounded bg-white p-3 shadow shadow-card"
             evidence={evidence}
             viewType={viewType}
           />
@@ -116,10 +116,10 @@ const EvidenceAccordion: React.FC<{
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div className="border-b last:border-b-0 flex flex-col" {...rest}>
+    <div className="flex flex-col border-b last:border-b-0" {...rest}>
       <div className="flex items-center justify-between">
         <button
-          className="py-2 flex items-center"
+          className="flex items-center py-2"
           onClick={() => setExpanded(!expanded)}
           type="button"
         >
@@ -128,10 +128,10 @@ const EvidenceAccordion: React.FC<{
               className={`h-5 w-5 transform ${expanded && "rotate-90"}`}
             />
           </div>
-          <div className="flex justify-between w-full items-center">
+          <div className="flex w-full items-center justify-between">
             {title || <span className="text-gray-400">(no title)</span>}
             {date && (
-              <div className="text-gray-400  pl-2">
+              <div className="pl-2 text-gray-400">
                 <Age from={date} />
               </div>
             )}
@@ -166,12 +166,12 @@ export function ConfigEvidenceView({
   }, [evidenceItem]);
 
   return (
-    <div className="break-all	overflow-y-hidden">
+    <div className="overflow-y-hidden break-all">
       {evidenceItem ? (
         <div className="flex flex-col">
           {hunks.map(([hunkStart, hunkEnd], hunkIndex) => (
             <div key={`${hunkStart}-${hunkEnd}`}>
-              <div className="border mb-1 last:mb-0">
+              <div className="mb-1 border last:mb-0">
                 {Object.entries(fullConfig)
                   .filter(
                     ([lineIndex]) =>
@@ -185,11 +185,11 @@ export function ConfigEvidenceView({
                         className="flex"
                         style={selected ? { backgroundColor: "#cfe3ff" } : {}}
                       >
-                        <div className="text-xs flex items-center justify-end px-1 text-gray-600 border-r w-8 select-none">
+                        <div className="flex w-8 select-none items-center justify-end border-r px-1 text-xs text-gray-600">
                           {lineIndex}
                         </div>
                         <code
-                          className={`px-2 whitespace-pre-wrap text-xs ${
+                          className={`whitespace-pre-wrap px-2 text-xs ${
                             selected ? "text-gray-800" : "text-gray-600"
                           }`}
                         >
@@ -200,7 +200,7 @@ export function ConfigEvidenceView({
                   })}
               </div>
               {hunkIndex < hunks.length - 1 && (
-                <DotsVerticalIcon className="h-4 w-4 text-gray-400 mb-1 ml-2" />
+                <DotsVerticalIcon className="mb-1 ml-2 h-4 w-4 text-gray-400" />
               )}
             </div>
           ))}
@@ -262,14 +262,14 @@ export function EvidenceSection({
 }: EvidenceSectionProps) {
   return (
     <div className={rest.className} {...rest}>
-      <div className="flex justify-between items-center">
-        <div className="flex align-baseline font-inter text-large font-semibold">
-          <h2 className="text-gray-900 mr-2">{titlePrepend}</h2>
+      <div className="flex items-center justify-between">
+        <div className="text-large flex align-baseline font-inter font-semibold">
+          <h2 className="mr-2 text-gray-900">{titlePrepend}</h2>
         </div>
         <button
           type="button"
           onClick={onButtonClick}
-          className="inline-flex items-center px-2.5 py-1.5 mb-1 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="mb-1 inline-flex items-center rounded border border-transparent bg-blue-100 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-200 disabled:text-gray-400"
         >
           Add evidence
         </button>
@@ -277,7 +277,7 @@ export function EvidenceSection({
       <div className="mt-2.5">
         {!isLoading ? (
           evidenceList && evidenceList.length > 0 ? (
-            <div className="border rounded-md flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 rounded-md border">
               {evidenceList.map((evidence) => (
                 <div key={evidence.id} className="relative">
                   {onDeleteEvidence && (
@@ -295,12 +295,12 @@ export function EvidenceSection({
               ))}
             </div>
           ) : (
-            <div className="border border-dashed border-gray-300 rounded-8px flex justify-center pt-8 mt-2.5">
-              <div className="flex flex-col mx-auto mb-6">
+            <div className="mt-2.5 flex justify-center rounded-8px border border-dashed border-gray-300 pt-8">
+              <div className="mx-auto mb-6 flex flex-col">
                 <div className="mx-auto">
-                  <Icon name="database-plus" className="w-10 h-10" />
+                  <Icon name="database-plus" className="h-10 w-10" />
                 </div>
-                <p className="text-sm leading-5 font-medium pt-2.5">
+                <p className="pt-2.5 text-sm font-medium leading-5">
                   Add evidence
                 </p>
               </div>
@@ -369,35 +369,35 @@ export function HealthEvidenceViewer({
 
   const evidenceDetailsView = () => {
     return (
-      <div className="flex flex-col flex-1 overflow-x-auto align-middle">
-        <div className="flex flex-col flex-1 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <div className="flex flex-col flex-1 overflow-x-auto divide-y divide-gray-300">
+      <div className="flex flex-1 flex-col overflow-x-auto align-middle">
+        <div className="flex flex-1 flex-col overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="flex flex-1 flex-col divide-y divide-gray-300 overflow-x-auto">
             <div
-              className="flex flex-row flex-1 max-w-full overflow-x-auto cursor-pointer whitespace-nowrap text-sm font-medium text-gray-900"
+              className="flex max-w-full flex-1 cursor-pointer flex-row overflow-x-auto whitespace-nowrap text-sm font-medium text-gray-900"
               onClick={(e) => setShowModal(true)}
             >
-              <div className="flex flex-col flex-1  px-2 py-2 ">
+              <div className="flex flex-1 flex-col px-2 py-2">
                 <CheckTitle
                   className="inline-block"
                   check={check}
                   size="small"
                 />
               </div>
-              <div className="flex flex-col w-auto px-2 py-2">
+              <div className="flex w-auto flex-col px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Health:
-                    <span className="pl-2 inline-block">
+                    <span className="inline-block pl-2">
                       <StatusList checkStatuses={check.checkStatuses} />
                     </span>
                   </label>
                 </div>
               </div>
-              <div className="flex flex-col w-auto px-2 py-2">
+              <div className="flex w-auto flex-col px-2 py-2">
                 <div className="flex flex-row">
                   <label className="text-sm font-medium text-gray-700">
                     Uptime:
-                    <span className="pl-2 inline-block">
+                    <span className="inline-block pl-2">
                       {!Number.isNaN(uptimeValue)
                         ? `${toFixedIfNecessary(uptimeValue?.toString()!, 2)}%`
                         : "-"}
@@ -405,11 +405,11 @@ export function HealthEvidenceViewer({
                   </label>
                 </div>
               </div>
-              <div className="flex flex-col w-auto px-2 py-2">
+              <div className="flex w-auto flex-col px-2 py-2">
                 <div className="flex flex-row">
                   <label className="form-label">
                     Latency:
-                    <span className="pl-2 inline-block">
+                    <span className="inline-block pl-2">
                       <Duration ms={check.latency.p99} />
                     </span>
                   </label>
@@ -417,7 +417,7 @@ export function HealthEvidenceViewer({
               </div>
             </div>
             {validCheck?.checkStatuses?.[0]?.error && (
-              <div className="flex whitespace-wrap px-2 py-2 text-sm font-medium text-gray-900">
+              <div className="whitespace-wrap flex px-2 py-2 text-sm font-medium text-gray-900">
                 {validCheck.checkStatuses[0].error}
               </div>
             )}
@@ -428,7 +428,7 @@ export function HealthEvidenceViewer({
   };
 
   return (
-    <div className="w-full h-84 bg-white">
+    <div className="h-84 w-full bg-white">
       {check && evidenceDetailsView()}
       <Modal
         open={showModal}
@@ -438,11 +438,11 @@ export function HealthEvidenceViewer({
         containerClassName="flex flex-col h-full overflow-y-auto"
         bodyClass="flex flex-col flex-1 overflow-y-auto"
       >
-        <div className="flex flex-col flex-1 py-4 overflow-y-auto">
+        <div className="flex flex-1 flex-col overflow-y-auto py-4">
           <CheckDetails
             check={check}
             timeRange={evidence.evidence?.start}
-            className={`flex flex-col flex-1 px-4 overflow-y-hidden ${mixins.appleScrollbar}`}
+            className={`flex flex-1 flex-col overflow-y-hidden px-4 ${mixins.appleScrollbar}`}
           />
         </div>
       </Modal>

@@ -73,7 +73,7 @@ export default function PlaybookRunsDetailsPage() {
         contentClass="flex flex-col p-0 h-full overflow-y-hidden"
       >
         <TabbedLinks activeTabName={`Runs`} tabLinks={playbookRunsPageTabs}>
-          <div className={`flex flex-col mx-auto h-full p-4`}>
+          <div className={`mx-auto flex h-full flex-col p-4`}>
             {playbookRun ? (
               <PlaybookRunsActions data={playbookRun} />
             ) : (

@@ -106,15 +106,18 @@ function ConfigSummaryAnalysisAggregateCell({
 }: CellContext<ConfigSummary, unknown>) {
   const subRows = row.subRows;
 
-  const value = subRows.reduce((acc, row) => {
-    const analysis = row.original.analysis;
-    if (analysis) {
-      Object.entries(analysis).forEach(([key, value]) => {
-        acc[key] = (acc[key] || 0) + value;
-      });
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const value = subRows.reduce(
+    (acc, row) => {
+      const analysis = row.original.analysis;
+      if (analysis) {
+        Object.entries(analysis).forEach(([key, value]) => {
+          acc[key] = (acc[key] || 0) + value;
+        });
+      }
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return (
     <div className="flex flex-row gap-1 overflow-hidden truncate">
@@ -306,7 +309,7 @@ export default function ConfigSummaryList({
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
-      className="max-w-full overflow-x-auto table-fixed table-auto"
+      className="max-w-full table-auto table-fixed overflow-x-auto"
       savePreferences={false}
       expandAllRows={groupBy[0] === "config_class"}
     />

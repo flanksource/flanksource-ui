@@ -14,7 +14,7 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
         comp = (
           <span
             key={nav}
-            className="text-xl font-semibold whitespace-nowrap mr-1"
+            className="mr-1 whitespace-nowrap text-xl font-semibold"
           >
             {nav}
           </span>
@@ -29,7 +29,7 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
           <Link
             key={nav.to}
             to={nav.to}
-            className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1"
+            className="mr-1 whitespace-nowrap text-xl font-semibold text-blue-600"
           >
             {nav.title}
           </Link>
@@ -46,7 +46,7 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
       return [
         comp,
         // eslint-disable-next-line react/no-array-index-key
-        <span key={`spacer-${i}`} className="text-gray-400 text-2xl mr-1">
+        <span key={`spacer-${i}`} className="mr-1 text-2xl text-gray-400">
           /
         </span>
       ];
@@ -54,7 +54,7 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
     .flat()
     .slice(0, -1);
 
-  return <div className="flex items-center flex-shrink-0">{navs}</div>;
+  return <div className="flex flex-shrink-0 items-center">{navs}</div>;
 }
 
 type BreadcrumbRootProps = {
@@ -70,12 +70,12 @@ export function BreadcrumbRoot({
   return (
     <div
       className={clsx(
-        "inline-flex flex-row space-x-2 items-center justify-center",
+        "inline-flex flex-row items-center justify-center space-x-2",
         className
       )}
       {...props}
     >
-      <h1 className="text-blue-600 text-xl font-semibold whitespace-nowrap mr-1">
+      <h1 className="mr-1 whitespace-nowrap text-xl font-semibold text-blue-600">
         {link && <Link to={link}>{children}</Link>}
         {!link && children}
       </h1>
@@ -96,12 +96,12 @@ export function BreadcrumbChild({
   return (
     <div
       className={clsx(
-        "inline-flex flex-row space-x-2 items-center justify-center",
+        "inline-flex flex-row items-center justify-center space-x-2",
         className
       )}
       {...props}
     >
-      <h1 className="text-gray-500 my-auto text-lg whitespace-nowrap">
+      <h1 className="my-auto whitespace-nowrap text-lg text-gray-500">
         {link && <Link to={link}>{children}</Link>}
         {!link && children}
       </h1>

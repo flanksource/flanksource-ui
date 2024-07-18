@@ -53,7 +53,7 @@ const runsColumns: ColumnDef<PlaybookRun, any>[] = [
       return (
         <Age
           from={row.original.start_time}
-          className="text-xs text-slate-500 pr-2"
+          className="pr-2 text-xs text-slate-500"
         />
       );
     },
@@ -110,17 +110,17 @@ export function PlaybookRunsSidePanel({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
+        <div className="flex w-full flex-row items-center space-x-2">
           <Title
             title="Playbooks"
-            icon={<AiOutlineTeam className="w-6 h-auto" />}
+            icon={<AiOutlineTeam className="h-auto w-6" />}
           />
           <PillBadge>{playbookRuns?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={playbookRuns?.length}
     >
-      <div className="flex flex-col space-y-4 py-2 w-full">
+      <div className="flex w-full flex-col space-y-4 py-2">
         {isLoading ? (
           <TextSkeletonLoader />
         ) : playbookRuns && playbookRuns.length > 0 ? (
@@ -130,7 +130,7 @@ export function PlaybookRunsSidePanel({
               allRows={playbookRuns}
               columns={columns}
               isFetching={isFetching}
-              loaderView={<TextSkeletonLoader className="w-full my-2" />}
+              loaderView={<TextSkeletonLoader className="my-2 w-full" />}
               totalEntries={totalEntries}
               fetchNextPage={() => {
                 if (canGoNext()) {

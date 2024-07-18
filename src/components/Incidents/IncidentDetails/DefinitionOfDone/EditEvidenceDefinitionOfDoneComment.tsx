@@ -40,7 +40,7 @@ export default function EditEvidenceDefinitionOfDoneComment({
       size="full"
       actions={[
         <button
-          className="px-4 py-2 btn-primary"
+          className="btn-primary px-4 py-2"
           type="button"
           key="update"
           onClick={async () => {
@@ -60,7 +60,7 @@ export default function EditEvidenceDefinitionOfDoneComment({
         </button>
       ]}
     >
-      <div className="w-full flex flex-col space-y-4 p-4">
+      <div className="flex w-full flex-col space-y-4 p-4">
         <ManualDoDInput
           value={comment}
           onChange={(comment) => setComment(comment)}

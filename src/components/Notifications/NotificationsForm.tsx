@@ -20,7 +20,7 @@ export default function NotificationsForm({
   onDeleted = () => {}
 }: NotificationsFormProps) {
   return (
-    <div className="flex flex-col gap-2 h-full overflow-y-auto">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto">
       <Formik
         initialValues={{
           ...notification,
@@ -39,9 +39,9 @@ export default function NotificationsForm({
           <Form
             onReset={handleReset}
             onSubmit={(e) => handleSubmit(e)}
-            className="flex flex-col flex-1 overflow-y-auto gap-4"
+            className="flex flex-1 flex-col gap-4 overflow-y-auto"
           >
-            <div className="flex flex-col overflow-y-auto gap-4 p-4">
+            <div className="flex flex-col gap-4 overflow-y-auto p-4">
               <FormikTextInput name="title" label="Title" />
               <FormikNotificationEventsDropdown
                 name="events"
@@ -54,12 +54,12 @@ export default function NotificationsForm({
               <FormikCodeEditor
                 fieldName="properties"
                 label="Properties"
-                className="flex flex-col h-32"
+                className="flex h-32 flex-col"
                 format="json"
               />
             </div>
-            <div className="flex flex-row bg-gray-100 p-4 rounded-b-md">
-              <div className="flex flex-1 flex-row space-x-4 justify-end">
+            <div className="flex flex-row rounded-b-md bg-gray-100 p-4">
+              <div className="flex flex-1 flex-row justify-end space-x-4">
                 {!!notification && (
                   <DeleteResource
                     resourceId={notification.id}

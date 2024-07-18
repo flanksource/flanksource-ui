@@ -63,10 +63,10 @@ export const CreateHypothesis = ({
       size="small"
     >
       <form onSubmit={(...args) => handleSubmit(onSubmit)(...args)}>
-        <div className="p-8 space-y-4">
+        <div className="space-y-4 p-8">
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-gray-700 block"
+              className="block text-sm font-medium text-gray-700"
               htmlFor="hypothesis.title"
             >
               Title
@@ -77,7 +77,7 @@ export const CreateHypothesis = ({
               render={({ field }) => (
                 <input
                   id="hypothesis.title"
-                  className="w-full cursor-pointer bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-base leading-6 font-normal"
+                  className="w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left text-base font-normal leading-6 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
                   type="text"
                   placeholder="Type name"
                   {...field}
@@ -86,10 +86,10 @@ export const CreateHypothesis = ({
             />
           </div>
         </div>
-        <div className="px-8 space-y-4 pb-8">
+        <div className="space-y-4 px-8 pb-8">
           <div className="space-y-2">
             <label
-              className="text-sm font-medium text-gray-700 block"
+              className="block text-sm font-medium text-gray-700"
               htmlFor="hypothesis.status"
             >
               State
@@ -105,10 +105,10 @@ export const CreateHypothesis = ({
             />
           </div>
         </div>
-        <div className="flex justify-end mt-4 py-4 px-8 rounded-b-lg bg-gray-100">
+        <div className="mt-4 flex justify-end rounded-b-lg bg-gray-100 px-8 py-4">
           <button
             type="submit"
-            className="bg-dark-blue text-white rounded-6px py-2 px-6 disabled:bg-gray-200 disabled:text-gray-400 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="rounded-6px bg-dark-blue px-6 py-2 text-white hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-200 disabled:text-gray-400"
             disabled={false}
           >
             Create

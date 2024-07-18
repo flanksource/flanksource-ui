@@ -41,19 +41,19 @@ export function AddDefinitionOfDoneHome({
         />
       ) : (
         <div className="flex flex-col space-y-2 p-4">
-          <div className="text-lg mb-4">
+          <div className="mb-4 text-lg">
             What kind of definition of done would you like to add?
           </div>
           <button
             onClick={() => setSelectedDoDOption("Auto")}
-            className="block space-x-2 rounded-md relative border p-4 cursor-pointer focus:outline-none bg-blue-50 border-blue-200"
+            className="relative block cursor-pointer space-x-2 rounded-md border border-blue-200 bg-blue-50 p-4 focus:outline-none"
           >
             <SiAutomattic className="inline" />
             <span>Automatic</span>
           </button>
           <button
             onClick={() => setSelectedDoDOption("Manual")}
-            className="block space-x-2 rounded-md relative border p-4 cursor-pointer focus:outline-none bg-blue-50 border-blue-200"
+            className="relative block cursor-pointer space-x-2 rounded-md border border-blue-200 bg-blue-50 p-4 focus:outline-none"
           >
             <BsPersonFill className="inline" />
             <span>Manual</span>

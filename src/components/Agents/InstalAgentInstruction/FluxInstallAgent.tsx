@@ -94,7 +94,7 @@ export default function FluxInstallAgent({
   }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
 
   return (
-    <div className="flex flex-col flex-1 max-h-[30rem] border border-gray-200 rounded-md p-2 px-4 gap-4 overflow-y-auto">
+    <div className="flex max-h-[30rem] flex-1 flex-col gap-4 overflow-y-auto rounded-md border border-gray-200 p-2 px-4">
       <JSONViewer code={yaml} format="yaml" showLineNo />
     </div>
   );

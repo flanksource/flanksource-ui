@@ -1,8 +1,9 @@
-export type $ElementProps<T> = T extends React.ComponentType<infer Props>
-  ? Props extends object
-    ? Props
-    : never
-  : never;
+export type $ElementProps<T> =
+  T extends React.ComponentType<infer Props>
+    ? Props extends object
+      ? Props
+      : never
+    : never;
 
 export type $ArrayElemType<T> = T extends readonly (infer E)[] ? E : never;
 

@@ -35,12 +35,12 @@ export default function FormikCheckbox({
         <input
           id={name}
           type="checkbox"
-          className="text-blue-600 bg-gray-100 border-gray-900 rounded focus:ring-blue-500 focus:ring-2"
+          className="rounded border-gray-900 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
           {...field}
           disabled={disabled}
         />
         <label htmlFor={name} className={labelClassName}>
-          <div className="flex flex-col-2 ">
+          <div className="flex-col-2 flex">
             {label}
             {hint && hintPosition === "tooltip" && (
               <Hint id={name} hint={hint} type="tooltip" />

@@ -9,15 +9,15 @@ export default function TableSkeletonLoader({
   return (
     <div
       className={clsx(
-        "flex flex-row w-full animate-pulse justify-center",
+        "flex w-full animate-pulse flex-row justify-center",
         className
       )}
       {...props}
     >
-      <div className="flex flex-col flex-1 w-full">
-        <div className="flex flex-col space-y-2 flex-1 py-4">
+      <div className="flex w-full flex-1 flex-col">
+        <div className="flex flex-1 flex-col space-y-2 py-4">
           {Array.of(1, 2, 3, 4, 5, 6, 7, 8).map((v) => (
-            <div className="w-full p-2 h-8 bg-gray-200 rounded" key={v}></div>
+            <div className="h-8 w-full rounded bg-gray-200 p-2" key={v}></div>
           ))}
         </div>
       </div>

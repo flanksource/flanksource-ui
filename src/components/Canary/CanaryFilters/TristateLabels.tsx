@@ -40,7 +40,7 @@ export function TristateLabels({ labels = [] }: { labels: any[] }) {
   };
 
   return (
-    <div className="w-full break">
+    <div className="break w-full">
       {labels
         .filter((o) => o && o !== undefined)
         .map((label) => (

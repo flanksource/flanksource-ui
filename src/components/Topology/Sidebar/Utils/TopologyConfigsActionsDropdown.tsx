@@ -11,16 +11,16 @@ export default function TopologyConfigsActionsDropdown({
   onUnlinkUser = () => {}
 }: Props) {
   return (
-    <div className="flex flex-row justify-end items-center">
+    <div className="flex flex-row items-center justify-end">
       <Menu>
         <Float placement="bottom-end" offset={10} portal>
-          <Menu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
+          <Menu.Button className="min-w-7 rounded-full p-0.5 text-gray-400 hover:text-gray-500">
             <DotsVerticalIcon className="h-6 w-6" />
           </Menu.Button>
-          <Menu.Items className="w-48 bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10 ">
+          <Menu.Items className="z-10 w-48 divide-y divide-gray-100 rounded-md bg-white shadow-card focus:outline-none">
             <Menu.Item
               as="button"
-              className="flex gap-2 items-center w-full text-gray-700 hover:bg-gray-200 px-3 py-1.5 cursor-pointer"
+              className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-gray-700 hover:bg-gray-200"
               onClick={() => {
                 onUnlinkUser();
               }}
@@ -28,7 +28,7 @@ export default function TopologyConfigsActionsDropdown({
               <>
                 <Icon
                   name="unlink"
-                  className="text-gray-600 border-0 border-gray-200 border-l-1 h-4 align-middles"
+                  className="border-l-1 align-middles h-4 border-0 border-gray-200 text-gray-600"
                 />
                 <span> Unlink catalog</span>
               </>

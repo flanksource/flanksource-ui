@@ -73,7 +73,7 @@ export default function TopologySnapshotModal({
       size="very-small"
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col py-4 space-y-4">
+        <div className="flex flex-col space-y-4 py-4">
           <Controller
             control={control}
             name="timeRange"
@@ -105,7 +105,7 @@ export default function TopologySnapshotModal({
           </div>
           {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
           <a href={url} download={name} className="hidden" ref={ref} />
-          <div className="flex justify-end w-full py-2">
+          <div className="flex w-full justify-end py-2">
             <button className="btn btn-primary" type="submit">
               {isLoading ? (
                 <>

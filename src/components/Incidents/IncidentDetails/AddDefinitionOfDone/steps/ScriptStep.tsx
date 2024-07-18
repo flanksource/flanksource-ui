@@ -43,7 +43,7 @@ export function ScriptStep({ value, onChange, evidenceType }: Props) {
       {options && options.length > 0 && (
         <>
           <div className="font-semibold">Script Shortcuts</div>
-          <div className="flex flex-wrap w-full">
+          <div className="flex w-full flex-wrap">
             {options.map((option, index) => (
               <div className="flex flex-col p-1" key={index}>
                 <button
@@ -61,7 +61,7 @@ export function ScriptStep({ value, onChange, evidenceType }: Props) {
         </>
       )}
       <div className="font-semibold">Script (Optional)</div>
-      <div className="flex flex-col space-y-2 h-[min(400px,calc(100vh-500px))]">
+      <div className="flex h-[min(400px,calc(100vh-500px))] flex-col space-y-2">
         <CodeEditor onChange={onChange} value={value} />
       </div>
     </div>

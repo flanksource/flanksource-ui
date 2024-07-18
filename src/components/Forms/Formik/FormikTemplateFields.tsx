@@ -69,9 +69,9 @@ export default function FormikTemplateFields({
   }, [selectedOption]);
 
   return (
-    <div className="flex flex-col py-2 space-y-2">
-      <label className="font-semibold text-sm">{label}</label>
-      <div className="flex flex-row w-full">
+    <div className="flex flex-col space-y-2 py-2">
+      <label className="text-sm font-semibold">{label}</label>
+      <div className="flex w-full flex-row">
         <Switch
           options={Object.keys(LanguageOptionsForTemplate).map(
             (value) => value

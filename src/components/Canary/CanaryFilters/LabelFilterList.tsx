@@ -28,14 +28,14 @@ export function LabelFilterList({ labels }: { labels: any }) {
           <div key={labelKey} className="mb-2">
             {labels.length > 1 ? (
               <>
-                <div className="text-xs whitespace-nowrap overflow-ellipsis w-full overflow-hidden mb-1 capitalize">
+                <div className="mb-1 w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-xs capitalize">
                   {labelKey}
                 </div>
                 <MultiSelectLabelsDropdownStandalone labels={labels} />
               </>
             ) : labels.length === 1 ? (
-              <div className="flex w-full mb-3">
-                <div className="mr-3 w-full text-xs text-left text-gray-700 break-all overflow-ellipsis overflow-x-hidden flex items-center capitalize">
+              <div className="mb-3 flex w-full">
+                <div className="mr-3 flex w-full items-center overflow-x-hidden overflow-ellipsis break-all text-left text-xs capitalize text-gray-700">
                   {labels[0].key}
                 </div>
                 <TristateLabelStandalone

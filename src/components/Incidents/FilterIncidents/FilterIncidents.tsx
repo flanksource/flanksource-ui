@@ -67,9 +67,9 @@ export default function FilterIncidents() {
   }, 400);
 
   return (
-    <div className="flex flex-col flex-none w-full">
-      <div className="flex flex-row flex-wrap gap-2.5 border-b py-4 border-gray-200">
-        <div className="space-x-3 flex items-center mr-2">
+    <div className="flex w-full flex-none flex-col">
+      <div className="flex flex-row flex-wrap gap-2.5 border-b border-gray-200 py-4">
+        <div className="mr-2 flex items-center space-x-3">
           <IncidentTypeDropdown
             value={watchType}
             control={control}
@@ -82,7 +82,7 @@ export default function FilterIncidents() {
           />
         </div>
 
-        <div className="flex items-center space-x-3 mr-2">
+        <div className="mr-2 flex items-center space-x-3">
           <IncidentSeverityDropdown
             prefix="Severity:"
             name="severity"
@@ -95,7 +95,7 @@ export default function FilterIncidents() {
           />
         </div>
 
-        <div className="flex items-center space-x-3 mr-2">
+        <div className="mr-2 flex items-center space-x-3">
           <IncidentStatusDropdown
             prefix="Status:"
             name="status"
@@ -119,7 +119,7 @@ export default function FilterIncidents() {
         <div className="flex flex-row items-center space-x-3">
           <TextInputClearable
             onChange={handleSearch}
-            className="md:w-64 w-48 mr-2 h-[37.6px]"
+            className="mr-2 h-[37.6px] w-48 md:w-64"
             placeholder="Search for incident"
             defaultValue={watchSearch}
           />

@@ -199,17 +199,17 @@ export function Modal({
           >
             <div
               className={clsx(
-                !isSmall && "justify-between overflow-auto mt-10 mb-10",
+                !isSmall && "mb-10 mt-10 justify-between overflow-auto",
                 !isSmall && childClassName,
-                "bg-white rounded-lg text-left shadow-xl transform transition-all flex flex-col",
-                isSmall && "w-full max-w-prose my-0 mx-4",
+                "flex transform flex-col rounded-lg bg-white text-left shadow-xl transition-all",
+                isSmall && "mx-4 my-0 w-full max-w-prose",
                 sizeClass.height
               )}
             >
-              <div className="py-4 px-4 gap-2 flex item-center rounded-t-lg justify-between bg-gray-100">
+              <div className="item-center flex justify-between gap-2 rounded-t-lg bg-gray-100 px-4 py-4">
                 <h1
                   className={clsx(
-                    "font-semibold flex-1 overflow-x-auto text-lg",
+                    "flex-1 overflow-x-auto text-lg font-semibold",
                     titleClass
                   )}
                 >
@@ -244,7 +244,7 @@ export function Modal({
 
               <div
                 className={clsx(
-                  !isSmall && "flex flex-col flex-1 mb-auto ",
+                  !isSmall && "mb-auto flex flex-1 flex-col",
                   bodyClass,
                   `max-h-[${sizeClass.windowHeight - 50}px]`
                 )}

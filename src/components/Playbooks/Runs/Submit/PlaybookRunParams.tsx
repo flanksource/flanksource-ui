@@ -99,8 +99,8 @@ export default function PlaybookRunParams({
   // if no resource is selected, show a message and hide the parameters
   if (!componentId && !configId && !checkId && isResourceRequired) {
     return (
-      <div className="text-gray-400 flex flex-row items-center">
-        <FaExclamationTriangle className="inline-block mr-2" />
+      <div className="flex flex-row items-center text-gray-400">
+        <FaExclamationTriangle className="mr-2 inline-block" />
         <span>Please select a resource to see the parameters.</span>
       </div>
     );
@@ -138,13 +138,13 @@ export default function PlaybookRunParams({
                   </label>
                 </div>
               )}
-              <div className="flex flex-col flex-1">
+              <div className="flex flex-1 flex-col">
                 <PlaybookParamsFieldsRenderer params={i} key={i.name} />
               </div>
             </div>
           ))
         ) : (
-          <div className="text-gray-400 py-6">
+          <div className="py-6 text-gray-400">
             No parameters for this playbook.
           </div>
         )}

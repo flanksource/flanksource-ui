@@ -17,7 +17,7 @@ function HCell({ children, className }: CellProps) {
 
 function Cell({ children, className }: CellProps) {
   return (
-    <td className={clsx("px-3 py-3 text-sm border-b", className)}>
+    <td className={clsx("border-b px-3 py-3 text-sm", className)}>
       {children}
     </td>
   );
@@ -30,18 +30,18 @@ function JobHistoryErrorDetails({ errors }: { errors?: string[] }) {
 
   return (
     <table
-      className="table-auto table-fixed w-full relative"
+      className="relative w-full table-auto table-fixed"
       aria-label="table"
     >
-      <thead className={`bg-white sticky top-0 z-01`}>
+      <thead className={`sticky top-0 z-01 bg-white`}>
         <tr>
           <HCell>Error</HCell>
         </tr>
       </thead>
       <tbody>
         {errors?.map((error, index) => (
-          <tr key={error} className="last:border-b-0 border-b cursor-pointer">
-            <Cell className="leading-5 text-gray-900 font-medium">{error}</Cell>
+          <tr key={error} className="cursor-pointer border-b last:border-b-0">
+            <Cell className="font-medium leading-5 text-gray-900">{error}</Cell>
           </tr>
         ))}
       </tbody>
@@ -175,9 +175,9 @@ export function JobsHistoryDetails({
       onClose={() => setIsModalOpen(false)}
       open={isModalOpen}
     >
-      <div className="flex flex-col overflow-y-auto justify-center p-4">
+      <div className="flex flex-col justify-center overflow-y-auto p-4">
         <div
-          className="overflow-y-auto flex flex-col"
+          className="flex flex-col overflow-y-auto"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
           <Tabs
@@ -191,7 +191,7 @@ export function JobsHistoryDetails({
                   key={label}
                   label={label}
                   value={value}
-                  className="flex flex-col p-2 w-full"
+                  className="flex w-full flex-col p-2"
                 >
                   <div className={`flex flex-col gap-4`}>{component}</div>
                 </Tab>

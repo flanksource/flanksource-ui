@@ -32,7 +32,7 @@ export const CountBadge = React.memo(function ({
 
   return (
     <span
-      className={`${widthHeightClassName} ${className} ${spanClassName} justify-center inline items-center py-0.5 ${roundedClass} font-medium ${colorClass}`}
+      className={`${widthHeightClassName} ${className} ${spanClassName} inline items-center justify-center py-0.5 ${roundedClass} font-medium ${colorClass}`}
       title={title}
     >
       {value}

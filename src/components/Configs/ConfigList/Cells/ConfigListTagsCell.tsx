@@ -80,9 +80,9 @@ export default function ConfigListTagsCell<
     }
 
     return (
-      <div className="font-mono flex flex-wrap w-full max-w-full pl-1 space-y-1">
+      <div className="flex w-full max-w-full flex-wrap space-y-1 pl-1 font-mono">
         <div
-          className="max-w-full overflow-hidden text-ellipsis bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+          className="mr-1 max-w-full overflow-hidden text-ellipsis rounded-md border border-gray-300 bg-gray-200 px-1 py-0.75 text-xs font-semibold text-gray-600"
           key={groupByProp}
         >
           {groupByProp}:{" "}

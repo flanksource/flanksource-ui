@@ -7,10 +7,10 @@ type Props = {
 
 export default function ErrorPage({ error, hideCause }: Props) {
   return (
-    <div className="flex flex-col h-full w-full items-center justify-center">
-      <div className="border border-red-300 px-12 py-10 rounded-md bg-red-50">
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className="rounded-md border border-red-300 bg-red-50 px-12 py-10">
         <h1 className="items-center justify-center space-x-2 py-4 text-2xl">
-          <FaExclamationTriangle className="text-xl inline" />
+          <FaExclamationTriangle className="inline text-xl" />
           <span>{error?.message ?? "Something went wrong"}</span>
         </h1>
         {error && !hideCause && (

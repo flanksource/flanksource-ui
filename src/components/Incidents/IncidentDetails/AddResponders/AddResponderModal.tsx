@@ -304,7 +304,7 @@ export default function AddResponderModal({
       return state.modalTitle;
     }
     return (
-      <div className="flex flex-row gap-2 w-full">
+      <div className="flex w-full flex-row gap-2">
         {selectedType?.icon && <selectedType.icon className="inline-block" />}{" "}
         <span>{selectedType?.label} Details</span>
       </div>
@@ -322,9 +322,9 @@ export default function AddResponderModal({
       <>
         {state.currentStep === "Select Responder" && (
           <>
-            <div className="p-4 h-auto">
+            <div className="h-auto p-4">
               <div className="flex flex-col gap-4">
-                <div className="flex flex-row flex-1 gap-2 h">
+                <div className="h flex flex-1 flex-row gap-2">
                   <SelectTeamResponderDropdown
                     value={team?.id}
                     onChange={(team) => {
@@ -333,10 +333,10 @@ export default function AddResponderModal({
                     }}
                   />
                 </div>
-                <div className="flex w-auto flex-col gap-2 items-center justify-center text-sm">
+                <div className="flex w-auto flex-col items-center justify-center gap-2 text-sm">
                   OR
                 </div>
-                <div className="flex flex-1 flex-col gap-2 h">
+                <div className="h flex flex-1 flex-col gap-2">
                   <SelectPeopleResponderDropdown
                     value={person?.id}
                     onChange={(person) => {
@@ -350,7 +350,7 @@ export default function AddResponderModal({
             {/* when responder is a person, we just save */}
             {person ? (
               <ActionButtonGroup
-                className="w-full bottom-0 left-0"
+                className="bottom-0 left-0 w-full"
                 nextAction={{
                   label: !loading ? "Add" : "Adding ...",
                   disabled: !person || loading,
@@ -360,7 +360,7 @@ export default function AddResponderModal({
               />
             ) : (
               <ActionButtonGroup
-                className="w-full bottom-0 left-0"
+                className="bottom-0 left-0 w-full"
                 nextAction={{
                   label: "Next",
                   disabled: !team,
@@ -379,10 +379,10 @@ export default function AddResponderModal({
           </>
         )}
         {state.currentStep === "Responder Type" && (
-          <div className="px-8 pt-4 pb-12 h-modal-body-md">
+          <div className="h-modal-body-md px-8 pb-12 pt-4">
             <label
               htmlFor="responder-types"
-              className="block text-base font-medium text-gray-500 my-2"
+              className="my-2 block text-base font-medium text-gray-500"
             >
               Responder Types
             </label>
@@ -401,12 +401,12 @@ export default function AddResponderModal({
                 }}
                 value={selectedType as any}
                 className={clsx(
-                  "overflow-y-auto m-1",
+                  "m-1 overflow-y-auto",
                   responderTypes?.length > 6 ? "h-5/6" : ""
                 )}
               />
             ) : (
-              <div className="text-sm text-center pt-10">
+              <div className="pt-10 text-center text-sm">
                 There were no responders configured for this team
               </div>
             )}
@@ -414,7 +414,7 @@ export default function AddResponderModal({
         )}
         {state.currentStep === "Save Team Responder" && (
           <div>
-            <div className="px-8 py-3 min-h-modal-body-md max-h-modal-body-md mb-20 overflow-y-auto">
+            <div className="mb-20 max-h-modal-body-md min-h-modal-body-md overflow-y-auto px-8 py-3">
               <TeamResponderTypeForm
                 selectedTeam={team?.id!}
                 selectedType={state.responderType}
@@ -425,7 +425,7 @@ export default function AddResponderModal({
                 values={fixedValues}
               />
               <ActionButtonGroup
-                className="absolute w-full bottom-0 left-0"
+                className="absolute bottom-0 left-0 w-full"
                 nextAction={{
                   label: !loading ? "Save" : "Saving...",
                   disabled: !selectedType || loading,

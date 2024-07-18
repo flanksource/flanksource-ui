@@ -21,7 +21,7 @@ export function IncidentList({ incidents }: Props) {
   const columns = useMemo(() => incidentListColumns, []);
 
   return (
-    <div className="flex flex-col overflow-y-auto flex-1  w-full">
+    <div className="flex w-full flex-1 flex-col overflow-y-auto">
       <DataTable
         columns={columns}
         data={incidents}

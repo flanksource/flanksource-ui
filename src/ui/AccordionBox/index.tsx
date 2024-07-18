@@ -28,11 +28,11 @@ export function AccordionBox({
         {hiddenContent}
       </div>
       {hiddenContent && (
-        <div className="flex justify-center mt-1">
+        <div className="mt-1 flex justify-center">
           <button
             type="button"
             onClick={() => setShow(!show)}
-            className="flex items-center bg-white py-1 px-2 border border-gray-300 rounded-full shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="flex items-center rounded-full border border-gray-300 bg-white px-2 py-1 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             <span className="mx-1">{show ? "Show less" : "Show more"}</span>
             <ChevronDownIcon

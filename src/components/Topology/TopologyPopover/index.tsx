@@ -23,7 +23,7 @@ export default function TopologyPopOver({
   };
 
   return (
-    <div className="relative pt-5 sm:flex md:self-center md:pt-0 flex items-center">
+    <div className="relative flex items-center pt-5 sm:flex md:self-center md:pt-0">
       <TopologyPreference cardSize={size} setCardWidth={setCardWidth} />
     </div>
   );

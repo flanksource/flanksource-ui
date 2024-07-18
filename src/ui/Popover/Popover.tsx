@@ -35,7 +35,7 @@ export default function Popover({
           popoverIcon ? (
             popoverIcon
           ) : (
-            <FaCog className="w-6 h-6" />
+            <FaCog className="h-6 w-6" />
           )
         ) : (
           toggle
@@ -47,7 +47,7 @@ export default function Popover({
         <HLPopover.Panel
           ref={refs.setFloating}
           className={clsx(
-            "absolute flex flex-col origin-top-right z-50 divide-y divide-gray-100 rounded-md drop-shadow-xl bg-slate-50 ring-1 ring-black ring-opacity-5 focus:outline-none",
+            "absolute z-50 flex origin-top-right flex-col divide-y divide-gray-100 rounded-md bg-slate-50 ring-1 ring-black ring-opacity-5 drop-shadow-xl focus:outline-none",
             menuClass
           )}
           style={floatingStyles}

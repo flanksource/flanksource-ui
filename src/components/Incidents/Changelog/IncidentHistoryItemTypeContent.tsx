@@ -132,7 +132,7 @@ const IncidentHistoryTypeToComponentMap = new Map<
       return (
         <>
           marked <Badge text={hypothesis?.title} /> as:
-          <Icon className={`h-5 mx-1 inline-block ${className}`} />
+          <Icon className={`mx-1 inline-block h-5 ${className}`} />
           {incidentHistory.description}
         </>
       );

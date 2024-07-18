@@ -96,22 +96,22 @@ export function IncidentDetailsPanel({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <Title title="Details" icon={<BsCardList className="w-6 h-6" />} />
+        <Title title="Details" icon={<BsCardList className="h-6 w-6" />} />
       }
       className={clsx(className)}
       {...props}
     >
       <div className="flex flex-col space-y-2">
-        <div className="py-4 border-b border-gray-200 hidden">
+        <div className="hidden border-b border-gray-200 py-4">
           <div className="flex justify-between">
             <h2 className="mt-0.5 text-2xl font-medium leading-7 text-dark-gray">
               Details
             </h2>
             <button
               type="button"
-              className="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="relative -ml-px inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <BsShareFill className="w-3 h-3 mr-1" /> Share
+              <BsShareFill className="mr-1 h-3 w-3" /> Share
             </button>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function IncidentDetailsPanel({
           title="Id"
           className="h-8"
           value={
-            <span className="text-gray-500 font-medium">
+            <span className="font-medium text-gray-500">
               {incident.incident_id}
             </span>
           }
@@ -186,14 +186,14 @@ export function IncidentDetailsPanel({
           title="Started"
           className=""
           value={
-            <div className="text-gray-500 text-sm">{formattedCreatedAt}</div>
+            <div className="text-sm text-gray-500">{formattedCreatedAt}</div>
           }
         />
         <IncidentDetailsRow
           title="Duration"
           className=""
           value={
-            <div className="text-gray-500 text-sm">{formattedDuration}</div>
+            <div className="text-sm text-gray-500">{formattedDuration}</div>
           }
         />
       </div>

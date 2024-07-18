@@ -19,9 +19,8 @@ export const getAllConfigs = () =>
   resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getConfigsTags = async () => {
-  const res = await ConfigDB.get<{ key: string; value: string }[]>(
-    "/config_tags"
-  );
+  const res =
+    await ConfigDB.get<{ key: string; value: string }[]>("/config_tags");
   return res.data ?? [];
 };
 
@@ -292,11 +291,14 @@ export async function getConfigsChanges({
     // we want to convert the tags array to a string of key=[1,2,3]
     const exclude = tags[0].exclude; // We can only exclude or include all tags, not a mix of both
     const tagList = Object.entries(
-      tags.reduce((acc, tag) => {
-        acc[tag.key] = acc[tag.key] || [];
-        acc[tag.key].push(tag.value);
-        return acc;
-      }, {} as Record<string, string[]>)
+      tags.reduce(
+        (acc, tag) => {
+          acc[tag.key] = acc[tag.key] || [];
+          acc[tag.key].push(tag.value);
+          return acc;
+        },
+        {} as Record<string, string[]>
+      )
     ).map(([key, values]) => {
       if (values.length > 1) {
         const equalSign = exclude ? "notin" : "in";

@@ -46,8 +46,8 @@ export function ConfigDetailsPlaybooksPage() {
       refetch={refetch}
       activeTabName="Playbooks"
     >
-      <div className={`flex flex-col flex-1 h-full space-y-2`}>
-        <div className="flex flex-col h-full overflow-y-hidden">
+      <div className={`flex h-full flex-1 flex-col space-y-2`}>
+        <div className="flex h-full flex-col overflow-y-hidden">
           <PlaybookRunsTable
             data={playbookRuns ?? []}
             isLoading={isLoading}

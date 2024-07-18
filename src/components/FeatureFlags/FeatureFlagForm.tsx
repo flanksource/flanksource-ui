@@ -55,30 +55,30 @@ export default function FeatureFlagForm({
       >
         <Form>
           <div
-            className={clsx("flex flex-col h-full", className)}
+            className={clsx("flex h-full flex-col", className)}
             style={{ maxHeight: "calc(100vh - 8rem)" }}
             {...props}
           >
-            <div className={clsx("flex flex-col px-2 mb-2")}>
-              <div className="flex flex-row overflow-y-auto px-2 py-6 gap-4 justify-center">
+            <div className={clsx("mb-2 flex flex-col px-2")}>
+              <div className="flex flex-row justify-center gap-4 overflow-y-auto px-2 py-6">
                 <div className="flex-1">
                   <FormikTextInput
                     name="name"
                     label="Feature flag"
-                    className="flex flex-row gap-2 items-center"
+                    className="flex flex-row items-center gap-2"
                   />
                 </div>
-                <div className="flex-1 flex flex-col">
+                <div className="flex flex-1 flex-col">
                   <FormikTextInput
                     name="value"
                     label="Value"
-                    className="flex flex-row gap-2 items-center"
+                    className="flex flex-row items-center gap-2"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex items-center py-4 px-5 rounded-lg bg-gray-100">
+          <div className="flex items-center rounded-lg bg-gray-100 px-5 py-4">
             {Boolean(formValue?.created_at) && (
               <AuthorizationAccessCheck
                 resource={tables.feature_flags}

@@ -20,13 +20,11 @@ export const Info1 = {
   }
 };
 
-
 export const Info2 = {
   args: {
     analysis: { severity: "info", analysis_type: "availability" }
   }
 };
-
 
 export const Info3 = {
   args: {
@@ -40,13 +38,11 @@ export const Info4 = {
   }
 };
 
-
 export const Info5 = {
   args: {
     analysis: { severity: "info", analysis_type: "compliance" }
   }
 };
-
 
 export const Info6 = {
   args: {

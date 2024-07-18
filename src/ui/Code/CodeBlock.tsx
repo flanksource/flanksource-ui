@@ -17,7 +17,7 @@ export default function CodeBlock({
   const copyFn = useCopyToClipboard();
 
   return (
-    <div className="flex flex-row w-full gap-4 relative">
+    <div className="relative flex w-full flex-row gap-4">
       <code className={className}>
         <pre className={codeBlockClassName}>{code}</pre>
       </code>
@@ -25,7 +25,7 @@ export default function CodeBlock({
         icon={<FaCopy />}
         title="Copy to clipboard"
         className={clsx(
-          "bg-white  absolute right-4 top-4 whitespace-pre-line",
+          "absolute right-4 top-4 whitespace-pre-line bg-white",
           "text-black"
         )}
         onClick={() => {

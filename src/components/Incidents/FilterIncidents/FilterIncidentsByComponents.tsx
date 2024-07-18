@@ -20,7 +20,7 @@ type Props = {
 
 function FilterIncidentsByComponents({ control, value }: Props) {
   return (
-    <div className="flex flex-row items-center space-x-3 mr-2">
+    <div className="mr-2 flex flex-row items-center space-x-3">
       <ComponentNamesDropdown
         prefix="Component:"
         name="component"

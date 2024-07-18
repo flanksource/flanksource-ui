@@ -14,7 +14,7 @@ export const GCPConnectionFormEditor = ({ name }: { name: string }) => {
       <FormikTextInput name={`${name}.connection`} label="Connection URL" />
       <FormikTextInput name={`${name}.endpoint`} label="Endpoint" />
 
-      <label className="font-semibold text-sm">Credentials</label>
+      <label className="text-sm font-semibold">Credentials</label>
       <FormikEnvVarConfigsFields name={`${name}.credentials`} />
     </div>
   );

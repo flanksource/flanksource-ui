@@ -49,14 +49,14 @@ export function ComponentChecks({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
-          <Title title="Checks" icon={<AiFillHeart className="w-6 h-auto" />} />
+        <div className="flex w-full flex-row items-center space-x-2">
+          <Title title="Checks" icon={<AiFillHeart className="h-auto w-6" />} />
           <PillBadge>{componentChecks?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={componentChecks?.length}
     >
-      <div className="flex flex-col gap-4 w-full">
+      <div className="flex w-full flex-col gap-4">
         {isLoading ? (
           <TextSkeletonLoader />
         ) : componentChecks && componentChecks.length > 0 ? (

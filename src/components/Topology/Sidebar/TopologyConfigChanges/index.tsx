@@ -42,16 +42,16 @@ export function TopologyConfigChanges({ topologyID }: Props) {
 
   return (
     <>
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         <div className="flex flex-col">
-          <div className="flex flex-col overflow-ellipsis px-2 ">
+          <div className="flex flex-col overflow-ellipsis px-2">
             {isLoading ? (
               <TextSkeletonLoader />
             ) : componentConfigChanges.length > 0 ? (
               componentConfigChanges.map((item) => (
                 <div
                   key={`change-${item.id}`}
-                  className="flex flex-row text-sm mb-2 hover:cursor-pointer hover:bg-zinc-100"
+                  className="mb-2 flex flex-row text-sm hover:cursor-pointer hover:bg-zinc-100"
                   onClick={() => {
                     setOpen(true);
                     setSelectedConfigChanges(item);
@@ -59,20 +59,20 @@ export function TopologyConfigChanges({ topologyID }: Props) {
                 >
                   <ConfigIcon config={item.config} />
                   <div
-                    className="flex flex-row shrink overflow-ellipsis whitespace-nowrap  overflow-hidden"
+                    className="flex shrink flex-row overflow-hidden overflow-ellipsis whitespace-nowrap"
                     style={{ direction: "rtl" }}
                   >
-                    <span className="overflow-ellipsis whitespace-nowrap overflow-hidden">
+                    <span className="overflow-hidden overflow-ellipsis whitespace-nowrap">
                       {item.config?.name}
                     </span>
                   </div>
                   &nbsp;/&nbsp;
                   <Icon name={item.change_type} />
-                  <div className="pl-1 flex">
+                  <div className="flex pl-1">
                     {item.summary ?? item.change_type}
                   </div>
                   <div
-                    className="whitespace-nowrap grow text-right pl-2"
+                    className="grow whitespace-nowrap pl-2 text-right"
                     data-tooltip-id="created_at_tooltip"
                     data-tooltip-content={item.created_at?.toString()}
                   >
@@ -125,8 +125,8 @@ export default function ({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
-          <Title title="Changes" icon={<GoDiff className="w-6 h-auto" />} />
+        <div className="flex w-full flex-row items-center space-x-2">
+          <Title title="Changes" icon={<GoDiff className="h-auto w-6" />} />
           <PillBadge>{componentConfigChanges?.length ?? 0}</PillBadge>
         </div>
       }

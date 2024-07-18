@@ -1,7 +1,7 @@
 import { DateType } from "./types/common";
 import { User } from "./types/users";
 
-export interface Timestamped extends CreatedAt, UpdatedAt, Deletable { }
+export interface Timestamped extends CreatedAt, UpdatedAt, Deletable {}
 
 export interface CreatedAt {
   created_at?: DateType;

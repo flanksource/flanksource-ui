@@ -53,7 +53,7 @@ export function CommentsSection({
           onChange={setCommentTextValue}
           onEnter={() => handleComment()}
         />
-        <div className="flex h-full absolute top-0 right-0">
+        <div className="absolute right-0 top-0 flex h-full">
           <button
             disabled={isLoading || !commentTextValue}
             type="button"

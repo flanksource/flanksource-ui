@@ -40,7 +40,7 @@ export function ConfirmationPromptDialog({
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
             >
-              <div className="flex pointer-events-none sm:pointer-events-auto justify-between">
+              <div className="pointer-events-none flex justify-between sm:pointer-events-auto">
                 <span>{title}</span>
                 <button
                   type="button"
@@ -48,7 +48,7 @@ export function ConfirmationPromptDialog({
                   onClick={onClose}
                 >
                   <span className="sr-only">Close</span>
-                  <XIcon className="drop-shadow w-6 h-6" aria-hidden="true" />
+                  <XIcon className="h-6 w-6 drop-shadow" aria-hidden="true" />
                 </button>
               </div>
             </Dialog.Title>

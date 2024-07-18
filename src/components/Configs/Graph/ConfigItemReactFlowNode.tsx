@@ -54,15 +54,15 @@ export function ConfigItemReactFlowNode({
       {targetPosition && <Handle type="target" position={targetPosition} />}
       <div
         className={clsx(
-          "flex flex-col w-96 gap-2 rounded-8px mb-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
+          "card relative mb-3 flex w-96 flex-col gap-2 rounded-8px border-0 border-t-8 bg-lightest-gray shadow-card",
           (config.status
             ? StatusStyles[config.status as ConfigStatus]
             : "border-white") || "border-white"
         )}
       >
-        <div className="flex flex-col gap-2 bg-white border-b rounded-t-md p-2">
+        <div className="flex flex-col gap-2 rounded-t-md border-b bg-white p-2">
           <div
-            className="flex flex-col font-bold flex-1 overflow-hidden truncate text-ellipsis align-middle text-15pxinrem leading-1.21rel"
+            className="flex flex-1 flex-col overflow-hidden truncate text-ellipsis align-middle text-15pxinrem font-bold leading-1.21rel"
             title={config.name}
           >
             <Link
@@ -73,14 +73,14 @@ export function ConfigItemReactFlowNode({
               className={clsx("flex flex-row gap-2")}
             >
               <ConfigsTypeIcon config={config}>
-                <span className="block overflow-hidden text-ellipsis flex-1">
+                <span className="block flex-1 overflow-hidden text-ellipsis">
                   {config.name}
                 </span>
               </ConfigsTypeIcon>
             </Link>
           </div>
         </div>
-        <div className="flex flex-column bg-lightest-gray rounded-b-8px p-1">
+        <div className="flex-column flex rounded-b-8px bg-lightest-gray p-1">
           <div className="flex flex-wrap items-center gap-1 text-gray-500">
             {config.health && config.status && !config.deleted_at && (
               <Badge
@@ -124,7 +124,7 @@ export function ConfigItemReactFlowNode({
                     to={{
                       pathname: `/catalog/${config.id}/changes`
                     }}
-                    className="flex flex-row gap-1 items-center text-sm"
+                    className="flex flex-row items-center gap-1 text-sm"
                   >
                     <MdOutlineDifference />
                     <span> {totalChanges}</span>

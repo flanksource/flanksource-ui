@@ -53,13 +53,13 @@ export const Gauge: FC<GaugeProps> = memo(
     });
 
     return (
-      <div className="inline-block m-2">
+      <div className="m-2 inline-block">
         <svg viewBox="-1 -1 2 1" width={width}>
           <path d={backgroundArc || ""} fill={arcBgColor} />
           <path d={filledArc || ""} fill={arcColor} />
         </svg>
         {label || (
-          <h3 className="font-bold text-2xl text-center -mt-6">
+          <h3 className="-mt-6 text-center text-2xl font-bold">
             {value}
             {units}
           </h3>

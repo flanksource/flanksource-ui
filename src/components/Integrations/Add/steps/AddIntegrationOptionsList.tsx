@@ -145,16 +145,16 @@ export default function AddIntegrationOptionsList({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-2 p-4">
-        <div className="font-semibold px-2">Add via GitOps</div>
+        <div className="px-2 font-semibold">Add via GitOps</div>
         <div className="flex flex-wrap">
           {Array.from(options)
             .filter(([key, value]) => value.category === "Add Via GitOps")
             .map(([, item]) => {
               return (
-                <div className="flex flex-col w-1/4 p-2" key={item.name}>
+                <div className="flex w-1/4 flex-col p-2" key={item.name}>
                   <div
                     role="button"
-                    className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                    className="flex h-20 flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-2 text-center hover:border-blue-200 hover:bg-gray-100"
                     onClick={(e) => {
                       onSelectOption(item.name);
                     }}
@@ -170,7 +170,7 @@ export default function AddIntegrationOptionsList({
         </div>
       </div>
       <div className="flex flex-col gap-2 p-4">
-        <div className="font-semibold px-2">Add Directly</div>
+        <div className="px-2 font-semibold">Add Directly</div>
         <div className="flex flex-wrap">
           {Array.from(options)
             .filter(([key, value]) => value.category === "Add Directly")
@@ -180,10 +180,10 @@ export default function AddIntegrationOptionsList({
             )
             .map(([, item]) => {
               return (
-                <div className="flex flex-col w-1/4 p-2" key={item.name}>
+                <div className="flex w-1/4 flex-col p-2" key={item.name}>
                   <div
                     role="button"
-                    className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+                    className="flex h-20 flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-2 text-center hover:border-blue-200 hover:bg-gray-100"
                     onClick={(e) => {
                       onSelectOption(item.name);
                     }}

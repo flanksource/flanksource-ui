@@ -42,9 +42,9 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
   }, [data.end_time, data.error, data.id, data.start_time, data.status]);
 
   return (
-    <div className="flex flex-col flex-1 gap-6">
+    <div className="flex flex-1 flex-col gap-6">
       <div className="flex flex-col px-4 py-2">
-        <div className="flex flex-row w-full lg:w-auto gap-4">
+        <div className="flex w-full flex-row gap-4 lg:w-auto">
           <VerticalDescription
             label="Playbook"
             value={
@@ -103,7 +103,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             <VerticalDescription
               label="Triggered By"
               value={
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row items-center gap-2">
                   <Avatar user={data.created_by} />{" "}
                   <span>{data.created_by.name}</span>
                 </div>
@@ -112,13 +112,13 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
           )}
         </div>
       </div>
-      <div className="flex flex-col h-full">
-        <div className="flex flex-row h-full">
-          <div className="flex flex-col w-[15rem] lg:w-[20rem] h-full pr-2  border-gray-200">
-            <div className="flex flex-row items-center justify-between ml-[-25px] mr-[-15px] pl-[25px] py-2 mb-2 border-t border-gray-200">
+      <div className="flex h-full flex-col">
+        <div className="flex h-full flex-row">
+          <div className="flex h-full w-[15rem] flex-col border-gray-200 pr-2 lg:w-[20rem]">
+            <div className="mb-2 ml-[-25px] mr-[-15px] flex flex-row items-center justify-between border-t border-gray-200 py-2 pl-[25px]">
               <div className="font-semibold text-gray-600">Actions</div>
             </div>
-            <div className="flex flex-col flex-1 overflow-y-auto gap-2">
+            <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
               {initializationAction && (
                 <PlaybookRunsActionItem
                   isSelected={selectedAction?.id === initializationAction.id}
@@ -139,14 +139,14 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
               ))}
             </div>
           </div>
-          <div className="flex flex-col flex-1 h-full font-mono px-4 py-2 text-white bg-gray-700 overflow-hidden">
+          <div className="flex h-full flex-1 flex-col overflow-hidden bg-gray-700 px-4 py-2 font-mono text-white">
             {selectedAction &&
               (selectedAction.id === "initialization" ? (
-                <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all">
+                <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
                   <PlaybooksRunActionsResults action={selectedAction} />
                 </div>
               ) : (
-                <div className="flex flex-col flex-1 w-full overflow-x-hidden overflow-y-auto gap-2 whitespace-pre-wrap break-all">
+                <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
                   <PlaybookRunActionFetch
                     playbookRunActionId={selectedAction.id}
                   />

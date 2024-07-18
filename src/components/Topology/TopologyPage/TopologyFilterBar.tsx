@@ -80,7 +80,7 @@ export default function TopologyFilterBar({
       paramsToReset={[]}
     >
       <div className="flex px-6">
-        <div className="flex gap-2 py-3 flex-wrap">
+        <div className="flex flex-wrap gap-2 py-3">
           <FormikFilterSelectDropdown
             name="status"
             defaultValue="All"
@@ -88,7 +88,7 @@ export default function TopologyFilterBar({
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             prefix={
-              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
                 Health:
               </div>
             }
@@ -107,7 +107,7 @@ export default function TopologyFilterBar({
             className="inline-block w-auto max-w-[500px]"
             dropDownClassNames="w-auto max-w-[400px] left-0"
             prefix={
-              <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+              <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
                 Team:
               </div>
             }

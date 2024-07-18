@@ -34,7 +34,7 @@ function SettingsCard({
   }
 
   return (
-    <div className="shadow sm:overflow-hidden sm:rounded-md bg-white p-4 my-4">
+    <div className="my-4 bg-white p-4 shadow sm:overflow-hidden sm:rounded-md">
       {children}
     </div>
   );
@@ -118,15 +118,15 @@ function KratosProfileSettings() {
       );
 
   return (
-    <div className="flex flex-col h-full w-6/12 m-auto">
+    <div className="m-auto flex h-full w-6/12 flex-col">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt="Mission Control"
         src="/images/logo.svg"
-        className="p-2 h-auto m-auto rounded-8px w-48"
+        className="m-auto h-auto w-48 rounded-8px p-2"
       />
       <div className="pb-2">
-        <a href={returnTo ?? "/"} className="font-medium link">
+        <a href={returnTo ?? "/"} className="link font-medium">
           Go back
         </a>
         <Messages messages={messages} />

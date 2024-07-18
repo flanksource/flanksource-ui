@@ -8,7 +8,7 @@ export default function PillBadge({
   className = "bg-blue-100 text-blue-800 text-sm"
 }: PillBadgeProps) {
   return (
-    <span className={`font-semibold px-2.5 py-0.5 rounded-full ${className}`}>
+    <span className={`rounded-full px-2.5 py-0.5 font-semibold ${className}`}>
       {children}
     </span>
   );

@@ -24,10 +24,10 @@ export default function ConfigInsights({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
+        <div className="flex w-full flex-row items-center space-x-2">
           <Title
             title="Insights"
-            icon={<MdOutlineInsights className="w-6 h-auto" />}
+            icon={<MdOutlineInsights className="h-auto w-6" />}
           />
           <PillBadge>{count}</PillBadge>
         </div>

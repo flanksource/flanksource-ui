@@ -19,8 +19,8 @@ export function ConfigDetailsChecksPage() {
       refetch={refetch}
       activeTabName="Checks"
     >
-      <div className={`flex flex-col flex-1 h-full gap-2 overflow-y-auto`}>
-        <div className="flex flex-col flex-1 overflow-y-auto">
+      <div className={`flex h-full flex-1 flex-col gap-2 overflow-y-auto`}>
+        <div className="flex flex-1 flex-col overflow-y-auto">
           <div className="flex flex-col border-t border-gray-200">
             <ChecksTable
               data={configChecks ?? []}

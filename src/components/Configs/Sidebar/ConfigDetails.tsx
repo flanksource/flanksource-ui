@@ -79,7 +79,7 @@ export function ConfigDetails({ configId }: Props) {
   }, [configDetails?.last_scraped_time]);
 
   return (
-    <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
+    <div className="flex max-w-full flex-1 flex-col space-y-2 overflow-y-auto py-2">
       {isLoading ? (
         <TextSkeletonLoader />
       ) : configDetails && !error ? (
@@ -101,7 +101,7 @@ export function ConfigDetails({ configId }: Props) {
                     <div className="flex flex-wrap gap-2 py-1">
                       {Object.values(configDetails.tags).map((tag) => (
                         <div
-                          className="flex flex-row p-[0.25rem] rounded-md bg-gray-200 text-gray-600 font-semibold text-xs whitespace-nowrap break-inside-avoid-column"
+                          className="flex break-inside-avoid-column flex-row whitespace-nowrap rounded-md bg-gray-200 p-[0.25rem] text-xs font-semibold text-gray-600"
                           key={tag}
                         >
                           {tag}
@@ -125,7 +125,7 @@ export function ConfigDetails({ configId }: Props) {
                         statusText={configDetails.status}
                       />
                       {configDetails.description ? (
-                        <div className="ml-1 text-gray-600 text-sm">
+                        <div className="ml-1 text-sm text-gray-600">
                           {configDetails.description}
                         </div>
                       ) : null}
@@ -151,7 +151,7 @@ export function ConfigDetails({ configId }: Props) {
                           to={{
                             pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
                           }}
-                          className="link whitespace-nowrap  text-ellipsis overflow-hidden relative"
+                          className="link relative overflow-hidden text-ellipsis whitespace-nowrap"
                         >
                           {configDetails.config_scrapers.name}
                         </Link>
@@ -172,13 +172,13 @@ export function ConfigDetails({ configId }: Props) {
                     <Age from={configDetails.updated_at} suffix={true} />
                     {isLastScrappedMoreThan1Hour &&
                       !configDetails.deleted_at && (
-                        <span className="mx-2 space-x-1 items-center">
+                        <span className="mx-2 items-center space-x-1">
                           (Last scraped{" "}
                           <Age
                             from={configDetails.last_scraped_time}
                             suffix={true}
                           />
-                          <FaExclamationTriangle className="text-yellow-600 inline" />
+                          <FaExclamationTriangle className="inline text-yellow-600" />
                           )
                         </span>
                       )}

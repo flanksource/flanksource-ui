@@ -12,9 +12,9 @@ export default function ClerkAuthErrors() {
   return (
     <>
       <Head prefix="Bad Session Error" />
-      <div className="flex flex-row h-auto w-full bg-gray-50 p-3 space-x-4 items-end border-b border-gray-300">
-        <div className="flex-1 "></div>
-        <div className="h-12 flex flex-row gap-2 items-center">
+      <div className="flex h-auto w-full flex-row items-end space-x-4 border-b border-gray-300 bg-gray-50 p-3">
+        <div className="flex-1"></div>
+        <div className="flex h-12 flex-row items-center gap-2">
           <OrganizationSwitcher
             hidePersonal
             createOrganizationMode="modal"
@@ -24,9 +24,9 @@ export default function ClerkAuthErrors() {
           <UserButton />
         </div>
       </div>
-      <div className="flex flex-col flex-1 bg-gray-50 justify-center">
-        <div className="flex min-h-full flex-col justify-center mx-auto">
-          <div className="flex flex-col max-w-screen-lg gap-2 text-center">
+      <div className="flex flex-1 flex-col justify-center bg-gray-50">
+        <div className="mx-auto flex min-h-full flex-col justify-center">
+          <div className="flex max-w-screen-lg flex-col gap-2 text-center">
             {code === "BAD_SESSION" ? (
               <ErrorPage
                 error={

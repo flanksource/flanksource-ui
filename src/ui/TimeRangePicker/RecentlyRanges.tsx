@@ -13,11 +13,11 @@ export function RecentlyRanges({
   return (
     <div>
       {Boolean(recentRanges.length) && (
-        <div className="text-gray-500 text-base my-2 px-3 font-semibold">
+        <div className="my-2 px-3 text-base font-semibold text-gray-500">
           Recently used absolute ranges
         </div>
       )}
-      <div className="overflow-y-auto max-h-24">
+      <div className="max-h-24 overflow-y-auto">
         {recentRanges?.map((range) => (
           <button
             type="button"
@@ -25,7 +25,7 @@ export function RecentlyRanges({
             key={`${formatTimeRange(range.from)} to ${formatTimeRange(
               range.to
             )}`}
-            className="hover:bg-gray-100 flex text-left justify-between w-full cursor-pointer py-1.5 px-3 text-sm"
+            className="flex w-full cursor-pointer justify-between px-3 py-1.5 text-left text-sm hover:bg-gray-100"
           >
             {`${formatTimeRange(range.from)} to ${formatTimeRange(range.to)}`}
           </button>

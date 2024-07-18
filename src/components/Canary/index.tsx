@@ -185,7 +185,7 @@ export function Canary({
   return (
     <div
       className={clsx(
-        "flex flex-row place-content-center w-full",
+        "flex w-full flex-row place-content-center",
         isCanaryUI
           ? "h-screen min-w-[800px] overflow-auto"
           : "h-full overflow-y-auto"
@@ -196,15 +196,15 @@ export function Canary({
         setIsMenuItemOpen={setIsMenuItemOpen}
       />
 
-      <div className="flex flex-col h-full overflow-y-auto flex-1 p-6">
-        <div className="flex flex-wrap items-center mb-2 gap-2">
+      <div className="flex h-full flex-1 flex-col overflow-y-auto p-6">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
           <div
             role="button"
             title="Toggle filter menu"
             onClick={() => {
               setIsMenuItemOpen((prev) => !prev);
             }}
-            className="flex relative items-center px-4 gap-1 2xl:hidden cursor-pointer"
+            className="relative flex cursor-pointer items-center gap-1 px-4 2xl:hidden"
           >
             <FaFilter />
             <Badge text={totalLabelsApplied} />
@@ -212,7 +212,7 @@ export function Canary({
 
           <CanaryFiltersBar checks={checks ?? []} />
         </div>
-        <div className="flex flex-col flex-1 pb-4">
+        <div className="flex flex-1 flex-col pb-4">
           <CanaryInterfaceMinimal
             checks={checks ?? undefined}
             onLabelFiltersCallback={labelUpdateCallback}

@@ -33,7 +33,7 @@ export function DetailsTable({
   }
 
   return (
-    <table className="w-full text-sm text-left">
+    <table className="w-full text-left text-sm">
       {showHeader && (
         <thead className="text-sm uppercase text-gray-600">
           <tr>
@@ -63,7 +63,7 @@ export function DetailsTable({
                   className={clsx(
                     "p-2",
                     index === 0
-                      ? "text-sm text-black whitespace-nowrap cursor-pointer"
+                      ? "cursor-pointer whitespace-nowrap text-sm text-black"
                       : "py-1"
                   )}
                   key={index}

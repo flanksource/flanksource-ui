@@ -30,7 +30,7 @@ export function IncidentSeverityTag({ severity, iconOnly }: IProps) {
   return (
     <>
       <div className="my-auto">{icon}</div>
-      {!iconOnly && <p className="leading-5  ml-1.5">{value}</p>}
+      {!iconOnly && <p className="ml-1.5 leading-5">{value}</p>}
     </>
   );
 }
