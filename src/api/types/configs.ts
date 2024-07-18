@@ -82,6 +82,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
       url: string;
     }[];
   }[];
+  last_scraped_time?: string;
 }
 
 export interface ConfigItemGraphData extends ConfigItem {
