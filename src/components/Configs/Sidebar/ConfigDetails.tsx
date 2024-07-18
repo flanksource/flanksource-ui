@@ -3,7 +3,9 @@ import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
 import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
+import dayjs from "dayjs";
 import { useMemo } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
 import { Status } from "../../Status";
@@ -64,6 +66,17 @@ export function ConfigDetails({ configId }: Props) {
     () => formatProperties(configDetails),
     [configDetails]
   );
+
+  const isLastScrappedMoreThan1Hour = useMemo(() => {
+    if (!configDetails?.last_scraped_time) {
+      return false;
+    }
+    // if last scraped time is more than an hour ago, show stale icon
+    if (dayjs().diff(dayjs(configDetails.last_scraped_time), "hour") >= 1) {
+      return true;
+    }
+    return false;
+  }, [configDetails?.last_scraped_time]);
 
   return (
     <div className="flex flex-col space-y-2 py-2 max-w-full overflow-y-auto flex-1">
@@ -154,7 +167,22 @@ export function ConfigDetails({ configId }: Props) {
             items={[
               {
                 label: "Updated",
-                value: <Age from={configDetails.updated_at} suffix={true} />
+                value: (
+                  <>
+                    <Age from={configDetails.updated_at} suffix={true} />
+                    {isLastScrappedMoreThan1Hour && (
+                      <span className="mx-2 space-x-1">
+                        (Last scraped{" "}
+                        <Age
+                          from={configDetails.last_scraped_time}
+                          suffix={true}
+                        />
+                        <FaExclamationTriangle className="text-yellow-600 inline" />
+                        )
+                      </span>
+                    )}
+                  </>
+                )
               },
               ...(configDetails.deleted_at
                 ? [
