@@ -66,6 +66,5 @@ export const WithConfigLink = Template.bind({});
 
 WithConfigLink.args = {
   data: Array.from(data),
-  isLoading: false,
-  linkConfig: true
+  isLoading: false
 };
