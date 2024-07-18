@@ -154,7 +154,6 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
 type ConfigChangeTableProps = {
   data: ConfigChange[];
   isLoading?: boolean;
-  linkConfig?: boolean;
   className?: string;
   tableStyle?: React.CSSProperties;
   pagination?: PaginationOptions;
@@ -163,7 +162,6 @@ type ConfigChangeTableProps = {
 export function ConfigChangeTable({
   data,
   isLoading,
-  linkConfig,
   className = "table-auto table-fixed",
   pagination,
   tableStyle
@@ -188,7 +186,6 @@ export function ConfigChangeTable({
       <DataTable
         className={className}
         columns={configChangesColumn}
-        hiddenColumns={linkConfig ? [] : ["config_id"]}
         data={data}
         isLoading={isLoading}
         stickyHead

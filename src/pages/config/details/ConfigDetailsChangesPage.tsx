@@ -15,9 +15,6 @@ export function ConfigDetailsChangesPage() {
   });
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
-  const upstream = params.get("upstream") === "true";
-  const downstream = params.get("downstream") === "true";
-  const hideConfigColumn = !downstream && !upstream;
 
   const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
     keepPreviousData: true,
@@ -74,7 +71,6 @@ export function ConfigDetailsChangesPage() {
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
           <div className="flex flex-col flex-1 overflow-y-auto">
             <ConfigChangeTable
-              linkConfig={!hideConfigColumn}
               data={changes}
               isLoading={isLoading}
               pagination={pagination}

@@ -109,7 +109,6 @@ export function ConfigChangesPage() {
               <ConfigChangeTable
                 data={changes}
                 isLoading={isLoading}
-                linkConfig
                 pagination={pagination}
               />
             </>
