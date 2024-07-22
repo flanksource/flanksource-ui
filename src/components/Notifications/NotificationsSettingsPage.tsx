@@ -1,7 +1,6 @@
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useSearchParams } from "react-router-dom";
 import {
   useCreateNotification,
   useNotificationsSummaryQuery
@@ -18,16 +17,6 @@ import { Notification } from "./notificationsTableColumns";
 export default function NotificationsPage() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const sortBy = searchParams.get("sortBy") ?? "";
-  const sortOrder = searchParams.get("sortOrder") ?? "desc";
-
   const { data, isLoading, refetch, isRefetching } =
     useNotificationsSummaryQuery({
       keepPreviousData: true
@@ -43,8 +32,6 @@ export default function NotificationsPage() {
   };
 
   const notifications = data?.data;
-  const totalEntries = data?.totalEntries;
-  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   return (
     <>
@@ -81,23 +68,6 @@ export default function NotificationsPage() {
           <NotificationsTable
             notifications={notifications ?? []}
             isLoading={isLoading || isRefetching}
-            pageCount={pageCount}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
-            setPageState={setPageState}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            onSortByChanged={(sortBy) => {
-              const sort = typeof sortBy === "function" ? sortBy([]) : sortBy;
-              if (sort.length === 0) {
-                searchParams.delete("sortBy");
-                searchParams.delete("sortOrder");
-              } else {
-                searchParams.set("sortBy", sort[0]?.id);
-                searchParams.set("sortOrder", sort[0].desc ? "desc" : "asc");
-              }
-              setSearchParams(searchParams);
-            }}
             refresh={refetch}
           />
         </div>

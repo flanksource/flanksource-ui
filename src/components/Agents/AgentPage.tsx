@@ -1,6 +1,6 @@
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { useState } from "react";
 import { useAgentsListQuery } from "../../api/query-hooks/useAgentsQuery";
 import { User } from "../../api/types/users";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
@@ -36,10 +36,7 @@ export type AgentSummary = Agent & {
 };
 
 export default function AgentsPage() {
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
+  const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const { data, isLoading, refetch, isRefetching } = useAgentsListQuery(
     {
@@ -88,7 +85,6 @@ export default function AgentsPage() {
             pageCount={pageCount}
             pageIndex={pageIndex}
             pageSize={pageSize}
-            setPageState={setPageState}
             refresh={refetch}
           />
         </div>

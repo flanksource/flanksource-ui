@@ -1,51 +1,27 @@
 import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
-import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { PaginationState, Updater } from "@tanstack/react-table";
-import { useMemo } from "react";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { integrationsTableColumns } from "./Table/IntegrationsTableColumns";
 
 type IntegrationsListProps = {
   data: SchemaResourceWithJobStatus[];
   onRowClick: (row: SchemaResourceWithJobStatus) => void;
-  pageCount: number;
-  pageIndex: number;
-  pageSize: number;
-  isLoading: boolean;
-  setPageState?: (state: Updater<PaginationState>) => void;
+  isLoading?: boolean;
+  pageCount?: number;
 };
 
 export default function IntegrationsList({
   data,
   onRowClick,
-  pageCount,
-  pageIndex,
-  pageSize,
   isLoading = false,
-  setPageState = () => {}
+  pageCount
 }: IntegrationsListProps) {
-  const pagination = useMemo(() => {
-    return {
-      setPagination: (state) => {
-        setPageState(state);
-      },
-      pageIndex,
-      pageSize,
-      pageCount,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    } satisfies PaginationOptions;
-  }, [setPageState, pageIndex, pageSize, pageCount, isLoading]);
-
   return (
-    <DataTable
+    <MRTDataTable
       data={data}
-      handleRowClick={(row) => onRowClick(row.original)}
+      onRowClick={onRowClick}
       columns={integrationsTableColumns}
-      pagination={pagination}
       isLoading={isLoading}
-      groupBy={["integration_type"]}
-      expandAllRows
+      manualPageCount={pageCount}
     />
   );
 }

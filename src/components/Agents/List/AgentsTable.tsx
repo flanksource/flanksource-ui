@@ -1,5 +1,4 @@
-import { DataTable } from "@flanksource-ui/ui/DataTable";
-import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import AgentForm from "../Add/AddAgentForm";
@@ -12,42 +11,31 @@ type AgentsTableProps = {
   pageCount: number;
   pageIndex: number;
   pageSize: number;
-  setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
-  hiddenColumns?: string[];
   refresh?: () => void;
 };
 
 export default function AgentsTable({
   agents,
   isLoading,
-  hiddenColumns = [],
   refresh = () => {}
 }: AgentsTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const agentId = searchParams.get("id") ?? undefined;
 
-  const [sortState, onSortByChanged] = useReactTableSortState();
-
   const columns = useMemo(() => agentsTableColumns, []);
 
   return (
     <>
-      <DataTable
+      <MRTDataTable
         data={agents}
         columns={columns}
         isLoading={isLoading}
-        handleRowClick={(agent) => {
-          searchParams.set("id", agent.original.id!);
+        onRowClick={(agent) => {
+          searchParams.set("id", agent.id!);
           setSearchParams(searchParams);
         }}
-        stickyHead
-        hiddenColumns={hiddenColumns}
-        tableSortByState={sortState}
-        onTableSortByChanged={onSortByChanged}
-        enableServerSideSorting
       />
-
       {agentId && (
         <AgentForm
           isOpen={!!agentId}

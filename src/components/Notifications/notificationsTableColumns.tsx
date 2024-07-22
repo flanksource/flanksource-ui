@@ -1,10 +1,12 @@
 import { Team, User } from "@flanksource-ui/api/types/users";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
+import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { formatDuration } from "@flanksource-ui/utils/date";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { atom, useAtom } from "jotai";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { Icon } from "../../ui/Icons/Icon";
@@ -99,7 +101,7 @@ export const notificationEvents = [
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
-export function StatusColumn({ cell }: CellContext<Notification, any>) {
+export function StatusColumn({ cell }: MRTCellProps<Notification>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const value = cell.row.original.job_status;
 
@@ -166,12 +168,12 @@ export type UpdateNotification = Omit<
   "created_at" | "team" | "job_status" | "person"
 >;
 
-export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
+export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
   {
     header: "Recipients",
     id: "recipients",
     size: 150,
-    cell: ({ cell }) => {
+    Cell: ({ cell }) => {
       const person = cell.row.original.person;
       const team = cell.row.original.team;
       const custom_services = cell.row.original.custom_services;
@@ -210,8 +212,8 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "events",
     accessorKey: "events",
     size: 150,
-    cell: ({ getValue }) => {
-      const value = getValue<Notification["events"]>();
+    Cell: ({ row, column }) => {
+      const value = row.getValue<Notification["events"]>(column.id);
 
       return (
         <div className="flex w-full flex-col">
@@ -229,8 +231,8 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "title",
     size: 150,
     accessorKey: "title",
-    cell: ({ getValue }) => {
-      const value = getValue<string>();
+    Cell: ({ row, column }) => {
+      const value = row.getValue<string>(column.id);
       return (
         <div className="w-full overflow-hidden text-ellipsis">{value}</div>
       );
@@ -241,8 +243,8 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "filter",
     size: 100,
     accessorKey: "filter",
-    cell: ({ getValue }) => {
-      const value = getValue<string>();
+    Cell: ({ row, column }) => {
+      const value = row.getValue<string>(column.id);
       return (
         <div className="w-full overflow-hidden text-ellipsis">{value}</div>
       );
@@ -264,8 +266,8 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "failed",
     accessorKey: "failed",
     size: 70,
-    cell: ({ getValue, row }) => {
-      const value = getValue<number>();
+    Cell: ({ column, row }) => {
+      const value = row.getValue<number>(column.id);
       const notification = row.original;
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -310,8 +312,8 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "avg_duration_ms",
     accessorKey: "avg_duration_ms",
     size: 70,
-    cell: ({ getValue }) => {
-      const value = getValue<number>();
+    Cell: ({ row, column }) => {
+      const value = row.getValue<number>(column.id);
       if (!value) {
         return null;
       }
@@ -324,23 +326,20 @@ export const notificationsTableColumns: ColumnDef<Notification, any>[] = [
     id: "created_at",
     accessorKey: "created_at",
     size: 100,
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Updated At",
     id: "updated_at",
     accessorKey: "updated_at",
     size: 100,
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Created By",
     id: "created_by",
     accessorKey: "created_by",
     size: 100,
-    cell: ({ cell }) => {
-      const value = cell.row.original.created_by;
-      return <Avatar user={value} circular />;
-    }
+    Cell: MRTAvatarCell
   }
 ];

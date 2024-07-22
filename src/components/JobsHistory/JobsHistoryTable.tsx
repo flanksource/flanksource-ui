@@ -1,6 +1,6 @@
-import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
-import { Row } from "@tanstack/react-table";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
@@ -94,9 +94,9 @@ export default function JobsHistoryTable({
     };
   }, [pageIndex, pageSize, pageCount, isLoading, params, setParams]);
 
-  const onSelectJob = useCallback(
-    (row: Row<JobHistory>) => {
-      const jobId = row.original.id;
+  const onRowClick = useCallback(
+    (row: JobHistory) => {
+      const jobId = row.id;
       const job = jobs.find((job) => job.id === jobId);
       if (job) {
         setSelectedJob(job);
@@ -108,18 +108,11 @@ export default function JobsHistoryTable({
 
   return (
     <>
-      <DataTable
+      <MRTDataTable
         data={jobs}
         columns={jobsHistoryTableColumn}
         isLoading={isLoading}
-        handleRowClick={onSelectJob}
-        pagination={pagination}
-        stickyHead
-        preferencesKey="job-history"
-        savePreferences={false}
-        hiddenColumns={hiddenColumns}
-        tableSortByState={tableSortByState}
-        onTableSortByChanged={onSortByChanged}
+        onRowClick={onRowClick}
         enableServerSideSorting
       />
       {selectedJob && (
