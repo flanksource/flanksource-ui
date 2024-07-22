@@ -54,13 +54,16 @@ export function SchemaResourcePage({
         contentClass="flex flex-col h-full p-6"
       >
         <div className="flex w-full flex-1 flex-col overflow-y-auto">
-          <SchemaResourceList
-            items={list || []}
-            baseUrl={href}
-            table={resourceInfo.table}
-            isLoading={isLoading}
-          />
-          {Boolean(error) && <ErrorPage error={error as Error} />}
+          {error ? (
+            <ErrorPage error={error as unknown as Error} />
+          ) : (
+            <SchemaResourceList
+              items={list || []}
+              baseUrl={href}
+              table={resourceInfo.table}
+              isLoading={isLoading}
+            />
+          )}
         </div>
       </SearchLayout>
     </>

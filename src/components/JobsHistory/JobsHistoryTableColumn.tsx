@@ -1,8 +1,8 @@
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
-import { ColumnDef } from "@tanstack/react-table";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { GoCopy, GoLinkExternal } from "react-icons/go";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
@@ -23,27 +23,26 @@ const jobsHistoryResourceTypeMap: Record<string, string> = {
   playbook: "/playbooks"
 };
 
-export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
+export const JobsHistoryTableColumn: MRT_ColumnDef<JobHistory>[] = [
   {
     header: "Timestamp",
     id: "time_start",
     accessorKey: "time_start",
-    minSize: 10,
-    maxSize: 50,
-    cell: DateCell
+    size: 70,
+    maxSize: 100,
+    Cell: MRTDateCell
   },
   {
     header: "Job Name",
     id: "name",
     accessorKey: "name",
     minSize: 120,
-    maxSize: 600,
     enableSorting: false,
-    cell: ({ getValue, row }) => {
+    Cell: ({ column, row }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const [params, setParams] = useSearchParams();
 
-      const value = getValue<JobHistory["name"]>();
+      const value = row.getValue<JobHistory["name"]>(column.id);
       const formattedName = formatJobName(value);
 
       return (
@@ -65,8 +64,9 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Agent",
     accessorKey: "agent",
     enableSorting: false,
-    cell: ({ getValue }) => {
-      const agent = getValue<JobHistory["agent"]>();
+    size: 75,
+    Cell: ({ row, column }) => {
+      const agent = row.getValue<JobHistory["agent"]>(column.id);
 
       if (!agent) {
         return null;
@@ -79,15 +79,13 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
       );
     },
     id: "agent",
-    minSize: 20,
-    maxSize: 60
+    minSize: 50
   },
   {
     header: "Resource",
     id: "resource_name",
     minSize: 150,
-    maxSize: 600,
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       const resourceName = row.original.resource_name;
       const resourceId = row.original.resource_id;
 
@@ -134,9 +132,9 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Status",
     id: "status",
     accessorKey: "status",
-    size: 70,
-    cell: ({ getValue }) => {
-      const value = getValue<JobHistory["status"]>();
+    size: 75,
+    Cell: ({ row, column }) => {
+      const value = row.getValue<JobHistory["status"]>(column.id);
       return (
         <span className={`lowercase`}>
           <JobHistoryStatusColumn status={value} />
@@ -148,9 +146,9 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
     header: "Duration",
     id: "duration_millis",
     accessorKey: "duration_millis",
-    size: 50,
-    cell: ({ getValue }) => {
-      const value = getValue<JobHistory["duration_millis"]>();
+    size: 75,
+    Cell: ({ row, column }) => {
+      const value = row.getValue<JobHistory["duration_millis"]>(column.id);
       const readableTime = formatDuration(value);
       return <span>{readableTime}</span>;
     }
@@ -158,15 +156,16 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
   {
     header: "Statistics",
     id: "statistics",
-    size: 75,
+    enableHiding: true,
     columns: [
       {
         header: "Success",
         id: "success_count",
         accessorKey: "success_count",
-        size: 50,
-        cell: ({ getValue }) => {
-          const value = getValue<JobHistory["success_count"]>();
+        size: 60,
+        maxSize: 100,
+        Cell: ({ row, column }) => {
+          const value = row.getValue<JobHistory["success_count"]>(column.id);
           if (value === 0) {
             return null;
           }
@@ -178,8 +177,9 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
         id: "error_count",
         accessorKey: "error_count",
         size: 50,
-        cell: ({ getValue }) => {
-          const value = getValue<JobHistory["error_count"]>();
+        maxSize: 100,
+        Cell: ({ row, column }) => {
+          const value = row.getValue<JobHistory["error_count"]>(column.id);
           if (value === 0) {
             return null;
           }

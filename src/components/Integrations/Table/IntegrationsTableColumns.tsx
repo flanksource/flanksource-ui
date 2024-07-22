@@ -6,16 +6,17 @@ import { JobsHistoryDetails } from "@flanksource-ui/components/JobsHistory/JobsH
 import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import { LogsIcon } from "@flanksource-ui/ui/Icons/LogsIcon";
 import { SearchInListIcon } from "@flanksource-ui/ui/Icons/SearchInListIcon";
 import { TopologyIcon } from "@flanksource-ui/ui/Icons/TopologyIcon";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo, useState } from "react";
 
 function IntegrationListNameCell({
   row
-}: CellContext<SchemaResourceWithJobStatus, any>) {
+}: MRTCellProps<SchemaResourceWithJobStatus>) {
   const name = row.original.name;
 
   const icon = useMemo(() => {
@@ -42,7 +43,7 @@ function IntegrationListNameCell({
 
 function IntegrationListTypeCell({
   row
-}: CellContext<SchemaResourceWithJobStatus, any>) {
+}: MRTCellProps<SchemaResourceWithJobStatus>) {
   const name = row.original.integration_type;
 
   const icon = useMemo(() => {
@@ -64,21 +65,22 @@ function IntegrationListTypeCell({
   );
 }
 
-export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] =
+export const integrationsTableColumns: MRT_ColumnDef<SchemaResourceWithJobStatus>[] =
   [
-    {
-      id: "integration_type",
-      header: "Type",
-      accessorKey: "integration_type",
-      cell: IntegrationListTypeCell,
-      size: 350
-    },
+    // {
+    //   id: "integration_type",
+    //   header: "Type",
+    //   accessorKey: "integration_type",
+    //   Cell: IntegrationListTypeCell,
+    //   size: 350,
+    //   enableHiding: true
+    // },
     {
       id: "name",
       header: "Name",
       accessorKey: "name",
       size: 250,
-      cell: IntegrationListNameCell
+      Cell: IntegrationListNameCell
     },
     {
       id: "namespace",
@@ -94,7 +96,7 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
       id: "job_status",
       accessorKey: "job_status",
       header: "Job Status",
-      cell: ({ getValue, row }) => {
+      Cell: ({ column, row }) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -103,7 +105,7 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
         const isJobDetailsEmpty =
           !job_details || Object.keys(job_details).length === 0;
 
-        const status = getValue<JobHistoryStatus>();
+        const status = row.getValue<JobHistoryStatus>(column.id);
 
         return (
           <div
@@ -148,7 +150,7 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
     {
       id: "last_run",
       header: "Last Run",
-      cell: ({ row }) => {
+      Cell: ({ row }) => {
         const startTime = row.original.job_time_start;
         return <Age from={startTime} suffix={true} />;
       }
@@ -166,8 +168,8 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
       id: "created_by",
       header: "Created By",
       accessorFn: (row) => row.created_by,
-      cell: ({ getValue }) => {
-        const user = getValue<User>();
+      Cell: ({ row, column }) => {
+        const user = row.getValue<User>(column.id);
         return user ? <Avatar user={user} circular /> : null;
       }
     },
@@ -175,12 +177,12 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
       id: "Created At",
       header: "Created At",
       accessorFn: (row) => row.created_at,
-      cell: DateCell
+      Cell: MRTDateCell
     },
     {
       id: "Updated At",
       header: "Updated At",
       accessorFn: (row) => row.updated_at,
-      cell: DateCell
+      Cell: MRTDateCell
     }
   ];

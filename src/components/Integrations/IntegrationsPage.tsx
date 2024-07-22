@@ -1,7 +1,7 @@
 import { getIntegrationsWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
@@ -13,10 +13,7 @@ import IntegrationsList from "./IntegrationsList";
 export default function IntegrationsPage() {
   const navigate = useNavigate();
 
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
+  const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["integrations", { pageIndex, pageSize }],
@@ -60,7 +57,7 @@ export default function IntegrationsPage() {
         loading={isLoading || isRefetching}
       >
         <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
-          <div className="mx-auto flex flex-col">
+          <div className="mx-auto flex w-full flex-1 flex-col">
             <IntegrationsList
               data={integrations ?? []}
               onRowClick={(row) => {
@@ -68,11 +65,8 @@ export default function IntegrationsPage() {
                   `/settings/integrations/${row.integration_type}/${row.id}`
                 );
               }}
-              isLoading={isLoading || isRefetching}
+              isLoading={isLoading}
               pageCount={pageCount}
-              pageIndex={pageIndex}
-              pageSize={pageSize}
-              setPageState={setPageState}
             />
           </div>
         </div>

@@ -1,13 +1,13 @@
 import { User } from "@flanksource-ui/api/types/users";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
-import { ColumnDef } from "@tanstack/react-table";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import clsx from "clsx";
 import dayjs from "dayjs";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { FaDotCircle } from "react-icons/fa";
 import { AgentSummary } from "../AgentPage";
 
-export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
+export const agentsTableColumns: MRT_ColumnDef<AgentSummary>[] = [
   {
     header: "Name",
     accessorKey: "name",
@@ -34,7 +34,7 @@ export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
     header: "Status",
     accessorKey: "status",
     enableSorting: true,
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       const lastSeen = row.original.last_seen;
       if (!lastSeen) {
         return null;
@@ -60,25 +60,25 @@ export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
     header: "Last Pushed",
     enableSorting: true,
     accessorKey: "last_received",
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Created At",
     enableSorting: true,
     accessorKey: "created_at",
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Updated At",
     accessorKey: "updated_at",
     enableSorting: true,
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Created By",
     minSize: 80,
     accessorKey: "created_by",
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       const createdBy = row?.getValue<User>("created_by");
       return <Avatar user={createdBy} />;
     }

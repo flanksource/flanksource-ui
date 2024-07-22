@@ -1,8 +1,9 @@
-import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { DataTable } from "@flanksource-ui/ui/DataTable";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
-import { CellContext, ColumnDef } from "@tanstack/table-core";
+import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import clsx from "clsx";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { Icon } from "../../ui/Icons/Icon";
 import { Connection } from "./ConnectionFormModal";
 
@@ -12,24 +13,23 @@ type ConnectionListProps = {
   onRowClick?: (data: Connection) => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
-const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
+const NameCell = ({
+  row,
+  renderedCellValue: getValue
+}: MRTCellProps<Connection>) => {
   return (
     <div className="flex flex-row items-center space-x-2">
       <Icon name={row.original.type} className="h-auto w-6" />
-      <div>{getValue()}</div>
+      <div>{getValue}</div>
     </div>
   );
 };
 
-const AvatarCell = ({ getValue }: CellContext<Connection, any>) => {
-  return <Avatar user={getValue()} circular />;
-};
-
-const columns: ColumnDef<Connection>[] = [
+const columns: MRT_ColumnDef<Connection>[] = [
   {
     header: "Name",
     accessorKey: "name",
-    cell: NameCell,
+    Cell: NameCell,
     minSize: 150,
     enableResizing: true
   },
@@ -48,20 +48,20 @@ const columns: ColumnDef<Connection>[] = [
   {
     header: "Created By",
     accessorKey: "created_by",
-    cell: AvatarCell,
+    Cell: MRTAvatarCell,
     maxSize: 50
   },
   {
     header: "Created",
     accessorKey: "created_at",
-    cell: DateCell,
+    Cell: MRTDateCell,
     sortingFn: "datetime",
     maxSize: 50
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
-    cell: DateCell,
+    Cell: MRTDateCell,
     sortingFn: "datetime",
     maxSize: 50
   }
@@ -71,20 +71,16 @@ export function ConnectionList({
   data,
   isLoading,
   className,
-  onRowClick,
+  onRowClick = () => {},
   ...rest
 }: ConnectionListProps) {
   return (
     <div className={clsx(className)} {...rest}>
-      <DataTable
-        stickyHead
+      <MRTDataTable
         columns={columns}
         data={data}
-        tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
-        preferencesKey="connections-list"
-        savePreferences={false}
-        handleRowClick={(row) => onRowClick?.(row.original)}
+        onRowClick={(row) => onRowClick(row)}
       />
     </div>
   );

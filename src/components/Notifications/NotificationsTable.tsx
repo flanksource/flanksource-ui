@@ -1,8 +1,7 @@
-import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { Row, SortingState, Updater } from "@tanstack/react-table";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import EditNotification from "./EditNotification";
 import {
   Notification,
@@ -13,24 +12,12 @@ import {
 type NotificationsTableProps = {
   notifications: Notification[];
   isLoading?: boolean;
-  pageCount: number;
-  pageIndex: number;
-  pageSize: number;
-  sortBy: string;
-  sortOrder: string;
-  setPageState?: (state: { pageIndex: number; pageSize: number }) => void;
-  hiddenColumns?: string[];
-  onSortByChanged?: (sortByState: Updater<SortingState>) => void;
   refresh?: () => void;
 };
 
 export default function NotificationsTable({
   notifications,
   isLoading,
-  hiddenColumns = [],
-  sortBy,
-  sortOrder,
-  onSortByChanged = () => {},
   refresh = () => {}
 }: NotificationsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,17 +31,8 @@ export default function NotificationsTable({
     mostCommonErrorNotification?.person?.name ??
     mostCommonErrorNotification?.team?.name;
 
-  const tableSortByState = useMemo(() => {
-    return [
-      {
-        id: sortBy,
-        desc: sortOrder === "desc"
-      }
-    ];
-  }, [sortBy, sortOrder]);
-
-  const onSelectNotification = useCallback((row: Row<Notification>) => {
-    const id = row.original.id;
+  const onSelectNotification = useCallback((notification: Notification) => {
+    const id = notification.id;
     setSelectedNotificationId(id);
     setIsModalOpen(true);
   }, []);
@@ -72,16 +50,11 @@ export default function NotificationsTable({
           </div>
         </Modal>
       )}
-      <DataTable
+      <MRTDataTable
         data={notifications}
         columns={notificationsTableColumns}
         isLoading={isLoading}
-        handleRowClick={onSelectNotification}
-        stickyHead
-        hiddenColumns={hiddenColumns}
-        tableSortByState={tableSortByState}
-        onTableSortByChanged={onSortByChanged}
-        enableServerSideSorting
+        onRowClick={onSelectNotification}
       />
       {selectedNotificationId && (
         <EditNotification

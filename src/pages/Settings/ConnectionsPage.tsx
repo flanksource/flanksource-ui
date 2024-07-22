@@ -148,7 +148,7 @@ export function ConnectionsPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="mx-auto flex h-full max-w-screen-xl flex-col overflow-y-auto px-6 pb-0">
+        <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
           <ConnectionList
             className="mt-6 flex h-full flex-col overflow-y-auto py-1"
             data={connections ?? []}
