@@ -170,17 +170,18 @@ export function ConfigDetails({ configId }: Props) {
                 value: (
                   <>
                     <Age from={configDetails.updated_at} suffix={true} />
-                    {isLastScrappedMoreThan1Hour && (
-                      <span className="mx-2 space-x-1">
-                        (Last scraped{" "}
-                        <Age
-                          from={configDetails.last_scraped_time}
-                          suffix={true}
-                        />
-                        <FaExclamationTriangle className="text-yellow-600 inline" />
-                        )
-                      </span>
-                    )}
+                    {isLastScrappedMoreThan1Hour &&
+                      !configDetails.deleted_at && (
+                        <span className="mx-2 space-x-1 items-center">
+                          (Last scraped{" "}
+                          <Age
+                            from={configDetails.last_scraped_time}
+                            suffix={true}
+                          />
+                          <FaExclamationTriangle className="text-yellow-600 inline" />
+                          )
+                        </span>
+                      )}
                   </>
                 )
               },
