@@ -1,5 +1,6 @@
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { CellContext } from "@tanstack/react-table";
+import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
@@ -10,13 +11,15 @@ type ConfigListTagsCellProps<
 > = Pick<CellContext<Pick<T, "tags">, any>, "getValue"> & {
   hideGroupByView?: boolean;
   label?: string;
+  enableFilterByTag?: boolean;
 };
 
 export default function ConfigListTagsCell<
   T extends { tags: Record<string, any> }
 >({
   getValue,
-  hideGroupByView = false
+  hideGroupByView = false,
+  enableFilterByTag = false
 }: ConfigListTagsCellProps<T>): JSX.Element | null {
   const [params, setParams] = useSearchParams();
 
@@ -24,6 +27,46 @@ export default function ConfigListTagsCell<
   const tagKeys = Object.keys(tagMap)
     .sort()
     .filter((key) => key !== "toString");
+
+  const onFilterByTag = useCallback(
+    (
+      e: React.MouseEvent<HTMLButtonElement>,
+      tag: {
+        key: string;
+        value: string;
+      },
+      action: "include" | "exclude"
+    ) => {
+      if (!enableFilterByTag) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Get the current tags from the URL
+      const currentTags = params.get("tags");
+      const currentTagsArray = currentTags ? currentTags.split(",") : [];
+
+      // If include, remove all exclude values and vice versa
+      const newValues = currentTagsArray.filter(
+        (value) =>
+          (action === "include" && parseInt(value.split(":")[1]) === 1) ||
+          (action === "exclude" && parseInt(value.split(":")[1]) === -1)
+      );
+
+      // Append the new value
+      const updatedValue = newValues
+        .concat(`${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`)
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .join(",");
+
+      // Update the URL
+      params.set("tags", updatedValue);
+      setParams(params);
+    },
+    [enableFilterByTag, params, setParams]
+  );
 
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
@@ -60,6 +103,7 @@ export default function ConfigListTagsCell<
           title={value}
           key={value}
           variant="gray"
+          onFilterByTag={enableFilterByTag ? onFilterByTag : undefined}
         >
           {value}
         </Tag>
