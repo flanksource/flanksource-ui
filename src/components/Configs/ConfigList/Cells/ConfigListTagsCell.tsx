@@ -18,6 +18,7 @@ export default function ConfigListTagsCell<
   const tagKeys = Object.keys(tagMap)
     .sort()
     .filter((key) => key !== "toString");
+
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
   if (tagKeys.length === 0) {
@@ -42,15 +43,19 @@ export default function ConfigListTagsCell<
     );
   }
 
-  const tags = tagKeys.map((key) => {
-    return tagMap[key];
-  });
-
   return (
     <div className="flex flex-wrap gap-1">
-      {tags.map((tag) => (
-        <Tag title={tag} key={tag} variant="gray">
-          {tag}
+      {Object.entries(tagMap).map(([key, value]) => (
+        <Tag
+          tag={{
+            key,
+            value
+          }}
+          title={value}
+          key={value}
+          variant="gray"
+        >
+          {value}
         </Tag>
       ))}
     </div>
