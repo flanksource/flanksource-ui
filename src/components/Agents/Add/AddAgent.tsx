@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import AgentForm, { AgentFormValues } from "./AddAgentForm";
+import { useSearchParams } from "react-router-dom";
 import { GeneratedAgent } from "../../../api/services/agents";
 import InstallAgentModal from "../InstalAgentInstruction/InstallAgentModal";
-import { useSearchParams } from "react-router-dom";
+import AgentForm, { AgentFormValues } from "./AddAgentForm";
 
 type Props = {
   refresh: () => void;
@@ -34,11 +34,11 @@ export default function AddAgent({ refresh }: Props) {
       <AgentForm
         isOpen={isModalOpen}
         onClose={() => {
-          // todo: show modal with helm install instructions
           refresh();
-          return setIsModalOpen(false);
+          setIsModalOpen(false);
         }}
         onSuccess={(agent, formValues) => {
+          refresh();
           setGeneratedAgent(agent);
           setAgentFormValues(formValues);
           setIsModalOpen(false);
