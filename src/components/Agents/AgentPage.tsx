@@ -45,7 +45,9 @@ export default function AgentsPage() {
       pageSize
     },
     {
-      keepPreviousData: true
+      keepPreviousData: true,
+      staleTime: 0,
+      cacheTime: 0
     }
   );
 
