@@ -3,16 +3,22 @@ import { CellContext } from "@tanstack/react-table";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
+type ConfigListTagsCellProps<
+  T extends {
+    tags: Record<string, any>;
+  }
+> = Pick<CellContext<Pick<T, "tags">, any>, "getValue"> & {
+  hideGroupByView?: boolean;
+  label?: string;
+};
+
 export default function ConfigListTagsCell<
   T extends { tags: Record<string, any> }
 >({
   getValue,
   hideGroupByView = false
-}: Pick<CellContext<Pick<T, "tags">, any>, "getValue"> & {
-  hideGroupByView?: boolean;
-  label?: string;
-}): JSX.Element | null {
-  const [params] = useSearchParams();
+}: ConfigListTagsCellProps<T>): JSX.Element | null {
+  const [params, setParams] = useSearchParams();
 
   const tagMap = getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
