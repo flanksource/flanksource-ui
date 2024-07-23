@@ -98,7 +98,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: React.memo(ConfigListTagsCell),
+    cell: (props) => <ConfigListTagsCell {...props} enableFilterByTag />,
     aggregatedCell: "",
     size: 100
   },

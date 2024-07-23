@@ -1,6 +1,8 @@
 import { ReactNode, useCallback } from "react";
-import { GoPlus } from "react-icons/go";
-import { HiMiniMinusSmall } from "react-icons/hi2";
+import {
+  PiMagnifyingGlassMinusThin,
+  PiMagnifyingGlassPlusThin
+} from "react-icons/pi";
 import { useSearchParams } from "react-router-dom";
 import { IconButton } from "../Buttons/IconButton";
 
@@ -55,12 +57,12 @@ export default function FilterByCellValue({
       <div className="hidden group-hover:flex flex-row gap-1 px-1">
         <IconButton
           onClick={(e) => onClick(e, "include")}
-          icon={<GoPlus size={18} />}
+          icon={<PiMagnifyingGlassPlusThin size={18} />}
           title="Include"
         />
         <IconButton
           onClick={(e) => onClick(e, "exclude")}
-          icon={<HiMiniMinusSmall size={18} />}
+          icon={<PiMagnifyingGlassMinusThin size={18} />}
           title="Exclude"
         />
       </div>
