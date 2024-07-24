@@ -24,7 +24,7 @@ function parseCodeDefaultValue(parameter: PlaybookParam) {
   }
   const language = parameter.properties?.language ?? "yaml";
   if (language === "yaml") {
-    return YAML.parse(parameter.default.replace(/^'(.+)'$/, "$1"));
+    return YAML.parse(parameter.default);
   }
   if (language === "json") {
     return JSON.parse(parameter.default);
@@ -67,7 +67,8 @@ export default function PlaybookRunParams({
         config_id: configId,
         check_id: checkId
       }),
-    enabled: !!componentId || !!configId || !!checkId
+    enabled: !!componentId || !!configId || !!checkId,
+    keepPreviousData: false
   });
 
   // update modal size when params are loaded
