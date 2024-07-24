@@ -1,10 +1,10 @@
+import Hint, { HintPosition } from "@flanksource-ui/ui/FormControls/Hint";
 import { useField, useFormikContext } from "formik";
 import { isEmpty } from "lodash";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import YAML from "yaml";
 import useDebounce from "../../../hooks/useDebounce";
-import Hint, { HintPosition } from "@flanksource-ui/ui/FormControls/Hint";
 
 const CodeEditor = dynamic(
   () => import("@flanksource-ui/ui/Code/CodeEditor").then((m) => m.CodeEditor),
