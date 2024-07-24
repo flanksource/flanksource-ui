@@ -1,7 +1,9 @@
 import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import { configTypesFavorites } from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryTypeFavorite";
 import useGroupBySearchParam from "@flanksource-ui/components/Configs/ConfigSummary/utils/useGroupBySearchParam";
 import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigSummaryRequest, getConfigsSummary } from "../services/configs";
@@ -19,6 +21,8 @@ export function useConfigSummaryQuery({
   const labels = searchParams.get("labels") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
   const health = searchParams.get("health") ?? undefined;
+
+  const [favorites] = useAtom(configTypesFavorites);
 
   const groupBy = useGroupBySearchParam();
 
@@ -55,7 +59,10 @@ export function useConfigSummaryQuery({
     select: (data) =>
       data.map((summary) => ({
         ...summary,
-        config_class: summary.type.split("::")[0]
+        config_class: summary.type.split("::")[0],
+        // we need to add the isFavorite property to the summary, so we can sort
+        // by it in the UI
+        isFavorite: favorites[summary.type]
       }))
   });
 }
