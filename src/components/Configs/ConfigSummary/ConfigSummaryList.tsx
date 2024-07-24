@@ -15,6 +15,7 @@ import {
 } from "./Cells/ConfigSummaryHealthCells";
 import { ConfigSummaryTableVirtualAggregateColumn } from "./Cells/ConfigSummaryTableVirtualAggregateColumn";
 import { ConfigSummaryVirtualColumnCell } from "./Cells/ConfigSummaryVirtualColumnCell";
+import ConfigSummaryFavoriteButton from "./ConfigSummaryTypeFavorite";
 
 export function getConfigStatusColor(health?: ConfigSummary["health"]) {
   if (!health) {
@@ -57,12 +58,14 @@ function ConfigSummaryTypeCell({
         marginLeft: row.depth * 20
       }}
     >
-      <ConfigsTypeIcon config={{ type: configType }}>
-        <div className="flex flex-row items-center gap-1">
-          <span className="pl-1">{value}</span>
-          <Badge text={configCount} />
-        </div>
-      </ConfigsTypeIcon>
+      <ConfigSummaryFavoriteButton configSummary={row.original}>
+        <ConfigsTypeIcon config={{ type: configType }}>
+          <div className="flex flex-row items-center gap-1">
+            <span className="pl-1">{value}</span>
+            <Badge text={configCount} />
+          </div>
+        </ConfigsTypeIcon>
+      </ConfigSummaryFavoriteButton>
     </span>
   );
 }
@@ -191,6 +194,11 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     cell: ConfigListDateCell<ConfigSummary>,
     aggregatedCell: "",
     maxSize: 40
+  },
+  {
+    header: "Is Favorite",
+    accessorKey: "isFavorite",
+    enableHiding: true
   }
 ];
 
@@ -272,6 +280,13 @@ export default function ConfigSummaryList({
     return [...newColumns, ...configSummaryColumns];
   }, [groupBy, groupByTags]);
 
+  // when grouping, remove the last column from the groupBy and always hide the
+  // isFavorite column
+  const hiddenColumns = useMemo(() => {
+    const list = groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : [];
+    return [...list, "isFavorite"];
+  }, [groupBy]);
+
   return (
     <DataTable
       stickyHead
@@ -281,9 +296,13 @@ export default function ConfigSummaryList({
       groupBy={
         groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : undefined
       }
-      hiddenColumns={
-        groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : undefined
-      }
+      tableSortByState={[
+        {
+          desc: false,
+          id: "isFavorite"
+        }
+      ]}
+      hiddenColumns={hiddenColumns}
       handleRowClick={handleRowClick}
       tableStyle={{ borderSpacing: "0" }}
       isLoading={isLoading}
