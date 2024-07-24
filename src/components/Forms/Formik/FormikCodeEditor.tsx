@@ -83,9 +83,8 @@ export function FormikCodeEditor({
   // code editor, so that we can avoid the code editor jumping around when the
   // user is typing
   useEffect(() => {
-    // only do this if the specFormValue is not empty and the codeEditorValue
-    // is undefined
-    if (!isEmpty(specFormValue) && codeEditorValue === undefined) {
+    // only do this if the specFormValue is not equal to the codeEditorValue
+    if (!isEmpty(specFormValue) && specFormValue !== codeEditorValue) {
       if (format === "yaml" || format === "json") {
         const value =
           format === "yaml"
