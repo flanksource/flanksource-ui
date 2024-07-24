@@ -1,9 +1,22 @@
 import Convert from "ansi-to-html";
+import linkifyHtml from "linkify-html";
+import Linkify from "linkify-react";
+import { Opts } from "linkifyjs";
+import { useMemo } from "react";
 import {
   PlaybookRunAction,
   PlaybookSpec
 } from "../../../../api/types/playbooks";
 import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
+
+const options = {
+  className: "text-blue-500 hover:underline pointer",
+  target: "_blank",
+  validate: {
+    // we want to linkify only urls that start with http or https
+    url: (value) => /^https?:\/\//.test(value)
+  }
+} satisfies Opts;
 
 const convert = new Convert();
 
@@ -14,12 +27,23 @@ function DisplayStdout({
   stdout?: string;
   className?: string;
 }) {
-  if (!stdout) {
+  const html = useMemo(() => {
+    if (!stdout) {
+      return null;
+    }
+    return linkifyHtml(convert.toHtml(stdout), options);
+  }, [stdout]);
+
+  if (!html) {
     return null;
   }
-  const html = convert.toHtml(stdout);
   return (
-    <pre className={className} dangerouslySetInnerHTML={{ __html: html }} />
+    <pre
+      className={className}
+      dangerouslySetInnerHTML={{
+        __html: html
+      }}
+    />
   );
 }
 
@@ -30,14 +54,23 @@ function DisplayStderr({
   stderr?: string;
   className?: string;
 }) {
-  if (!stderr) {
+  const html = useMemo(() => {
+    if (!stderr) {
+      return null;
+    }
+    return linkifyHtml(convert.toHtml(stderr), options);
+  }, [stderr]);
+
+  if (!html) {
     return null;
   }
-  const html = convert.toHtml(stderr);
+
   return (
     <pre
-      className={`text-red-500 ${className}`}
-      dangerouslySetInnerHTML={{ __html: html }}
+      className={` ${className}`}
+      dangerouslySetInnerHTML={{
+        __html: html
+      }}
     />
   );
 }
@@ -49,12 +82,24 @@ function DisplayLogs({
   logs?: string;
   className?: string;
 }) {
-  if (!logs) {
+  const html = useMemo(() => {
+    if (!logs) {
+      return null;
+    }
+    return linkifyHtml(convert.toHtml(logs), options);
+  }, [logs]);
+
+  if (!html) {
     return null;
   }
-  const html = convert.toHtml(logs);
+
   return (
-    <pre className={className} dangerouslySetInnerHTML={{ __html: html }} />
+    <pre
+      className={className}
+      dangerouslySetInnerHTML={{
+        __html: html
+      }}
+    />
   );
 }
 
@@ -88,7 +133,11 @@ export default function PlaybooksRunActionsResults({
           <DisplayLogs className={className} logs={result?.logs} />
         </div>
       ) : (
-        <pre className={className}>{JSON.stringify(result, null, 2)}</pre>
+        <pre className={className}>
+          <Linkify as="p" options={options}>
+            {JSON.stringify(result, null, 2)}
+          </Linkify>
+        </pre>
       )}
 
       <PlaybookResultsDropdownButton action={action} playbook={playbook} />
