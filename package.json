@@ -19,6 +19,7 @@
     "@hookform/resolvers": "^2.8.8",
     "@monaco-editor/react": "^4.6.0",
     "@netlify/plugin-nextjs": "^5.1.2",
+    "@next/bundle-analyzer": "^14.2.5",
     "@ory/client": "^1.2.11",
     "@ory/integrations": "^1.1.5",
     "@storybook/client-api": "^7.6.17",
