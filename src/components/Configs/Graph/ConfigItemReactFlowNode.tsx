@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { FaTrash } from "react-icons/fa";
 import { MdOutlineDifference } from "react-icons/md";
 import { Link, useSearchParams } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 import { Handle, NodeProps } from "reactflow";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { ConfigGraphNodes } from "./ConfigRelationshipGraph";
@@ -135,14 +136,29 @@ export function ConfigItemReactFlowNode({
             {config.tags && (
               <>
                 {config.tags.namespace && (
-                  <Badge
-                    color="gray"
-                    className="min-w-min"
-                    text={config.tags.namespace}
-                  />
+                  <>
+                    <Badge
+                      color="gray"
+                      className="min-w-min"
+                      data-tooltip-content={`namespace: ${config.tags.namespace}`}
+                      data-tooltip-class-name="z-[99999]"
+                      data-tooltip-id={`namespace-${config.tags.namespace}`}
+                      text={config.tags.namespace}
+                    />
+                    <Tooltip id={`namespace-${config.tags.namespace}`} />
+                  </>
                 )}
                 {config.tags.cluster && (
-                  <Badge color="gray" text={config.tags.cluster} />
+                  <>
+                    <Badge
+                      color="gray"
+                      text={config.tags.cluster}
+                      data-tooltip-content={`cluster: ${config.tags.cluster}`}
+                      data-tooltip-class-name="z-[99999]"
+                      data-tooltip-id={`cluster-${config.tags.cluster}`}
+                    />
+                    <Tooltip id={`cluster-${config.tags.cluster}`} />
+                  </>
                 )}
               </>
             )}
