@@ -1,5 +1,4 @@
 import { useOrganization } from "@clerk/nextjs";
-import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -61,15 +60,15 @@ export default function ClerkAuthContextProvider({
   }
 
   return (
-    <FeatureFlagsContextProvider>
-      <AuthContext.Provider
-        value={{
-          user: payload.user ?? (payload as any),
-          backendUrl: backendURL as string
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </FeatureFlagsContextProvider>
+    // remove the ?? (payload as any) when the API is updated to return the user
+    // inside payload instead of the payload itself
+    <AuthContext.Provider
+      value={{
+        user: payload.user ?? (payload as any),
+        backendUrl: backendURL as string
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }
