@@ -20,7 +20,7 @@ export default function ConfigsListFilters() {
         "groupBy"
       ]}
     >
-      <div className="mr-4 flex flex-row items-center gap-2">
+      <div className="mr-4 flex flex-wrap items-center gap-2">
         <ConfigTypesDropdown />
 
         <ConfigGroupByDropdown />

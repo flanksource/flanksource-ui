@@ -41,7 +41,7 @@ export function TextInputClearable({
           onChange={onChange}
           type="text"
           className={clsx(
-            `block h-full w-full border-gray-300 py-1 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
+            `block h-full w-full min-w-[5rem] border-gray-300 py-1 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${
               hideButton ? "rounded-md" : "rounded-l-md"
             } ${inputClassName}`,
             !hideClearButton && value && "pr-6"

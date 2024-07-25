@@ -27,7 +27,7 @@ export function ConfigRelatedChangesFilters({
         paramsToReset={paramsToReset}
         filterFields={["configTypes", "changeType", "severity", "tags"]}
       >
-        <div className={clsx("flex flex-row items-center gap-2", className)}>
+        <div className={clsx("flex flex-wrap items-center gap-2", className)}>
           <ConfigTypesTristateDropdown />
           <ChangesTypesDropdown />
           <ConfigChangeSeverity />
