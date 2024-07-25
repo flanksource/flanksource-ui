@@ -92,7 +92,7 @@ export function ConfigChangeFilters({
           ...(configType && { configTypes: defaultConfigType })
         }}
       >
-        <div className={clsx("flex flex-row gap-1", className)} {...props}>
+        <div className={clsx("flex flex-wrap gap-1", className)} {...props}>
           <ConfigTypesTristateDropdown />
           <ChangesTypesDropdown />
           <ConfigChangeSeverity />

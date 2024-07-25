@@ -19,14 +19,13 @@ export default function ConfigRelationshipFilterBar() {
         "health"
       ]}
     >
-      <div className="flex flex-row items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1">
         <ConfigTypesTristateDropdown />
         <ConfigLabelsDropdown />
         <ConfigHealthyDropdown />
         <ConfigStatusDropdown />
         <ConfigRelationshipToggles />
         <ConfigListToggledDeletedItems />
-        <div className="flex-1" />
         <ConfigGraphTableToggle />
       </div>
     </FormikFilterForm>
