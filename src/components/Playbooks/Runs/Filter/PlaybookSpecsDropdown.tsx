@@ -31,7 +31,7 @@ export default function PlaybookSpecsDropdown({
             value: playbook.id,
             // we need a solution for this
             icon: <Icon name={playbook.icon} className="h-5" />
-          } satisfies StateOption)
+          }) satisfies StateOption
       ) ?? []
     );
   }, [playbooks]);
@@ -44,7 +44,7 @@ export default function PlaybookSpecsDropdown({
         items={[{ label: "All Playbooks", value: "all" }, ...options]}
         isLoading={isLoading}
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
             {label}:
           </div>
         }

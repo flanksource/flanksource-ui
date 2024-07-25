@@ -107,12 +107,12 @@ export default function SlidingSideBar({
   return (
     <div
       className={clsx(
-        `flex flex-col bg-white border-l border-gray-200 h-full px-4`,
+        `flex h-full flex-col border-l border-gray-200 bg-white px-4`,
         open && !hideToggle
           ? "w-3"
           : "w-[15rem] md:w-[18rem] lg:w-[24rem] xl:w-[30rem]",
         className,
-        !hideToggle ? "transform origin-right duration-500" : ""
+        !hideToggle ? "origin-right transform duration-500" : ""
       )}
       {...rest}
     >
@@ -122,14 +122,14 @@ export default function SlidingSideBar({
           type="button"
           aria-label={open ? "Open Side Panel" : "Close Side Panel"}
           title={open ? "Open Side Panel" : "Close Side Panel"}
-          className="absolute z-[99999999] text-xl bg-white -left-6 top-6 border border-gray-300 rounded-full transform duration-500 m-2 p-1 hover:bg-gray-200 rotate-180"
+          className="absolute -left-6 top-6 z-[99999999] m-2 rotate-180 transform rounded-full border border-gray-300 bg-white p-1 text-xl duration-500 hover:bg-gray-200"
           onClick={() => setOpen(!open)}
         >
           {open ? <IoChevronForwardOutline /> : <IoChevronBackOutline />}
         </button>
       )}
       <div
-        className={`flex flex-col h-full ${
+        className={`flex h-full flex-col ${
           open && !hideToggle ? "hidden" : ""
         }`}
         ref={contentRef}

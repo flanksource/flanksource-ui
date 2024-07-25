@@ -31,7 +31,7 @@ function RenderLabel(option: OptionItem) {
 }
 
 const Blanket = (props: JSX.IntrinsicElements["div"]) => (
-  <div className="fixed bottom-0 left-0 top-0 right-0 z-10" {...props} />
+  <div className="fixed bottom-0 left-0 right-0 top-0 z-10" {...props} />
 );
 
 export const DropdownIndicator = () => (
@@ -79,15 +79,15 @@ export function SearchSelect({
     <div className={clsx("relative h-full", className)}>
       {!toggleBtn && (
         <button
-          className="relative cursor-pointer w-full h-full items-center bg-white border border-gray-300 rounded-md shadow-sm px-2 py-1 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm flex"
+          className="relative flex h-full w-full cursor-pointer items-center rounded-md border border-gray-300 bg-white px-2 py-1 text-left shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
           onClick={() => setOpen(!isOpen)}
         >
           {name && (
-            <span className="text-gray-500 mr-1 whitespace-nowrap">{name}</span>
+            <span className="mr-1 whitespace-nowrap text-gray-500">{name}</span>
           )}
           {/* @ts-expect-error */}
           <RenderSelection label={value?.label!} value={value?.value!} />
-          <span className="absolute inset-y-0 right-0 flex items-center text-gray-400 pointer-events-none">
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center text-gray-400">
             <HiOutlineSelector size={24} />
           </span>
         </button>

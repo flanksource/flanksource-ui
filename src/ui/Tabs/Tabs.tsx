@@ -25,9 +25,9 @@ function TabItem({
       }}
       className={clsx(
         value === activeTab
-          ? "text-gray-900 bg-white border-b-0"
-          : "text-gray-500 border-0 border-b",
-        "cursor-pointer px-4 py-2 font-medium text-sm rounded-t-md border border-gray-300 hover:text-gray-900"
+          ? "border-b-0 bg-white text-gray-900"
+          : "border-0 border-b text-gray-500",
+        "cursor-pointer rounded-t-md border border-gray-300 px-4 py-2 text-sm font-medium hover:text-gray-900"
       )}
     >
       {label}
@@ -92,7 +92,7 @@ export function Tabs<Tabs extends string = string>({
   return (
     <>
       <div
-        className={clsx(`flex flex-wrap h-auto`, className)}
+        className={clsx(`flex h-auto flex-wrap`, className)}
         aria-label="Tabs"
         {...rest}
       >

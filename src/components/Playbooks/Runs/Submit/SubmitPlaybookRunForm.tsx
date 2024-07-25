@@ -114,13 +114,13 @@ export default function SubmitPlaybookRunForm({
           return (
             <Form
               onSubmit={handleSubmit}
-              className="flex flex-col flex-1 overflow-y-auto"
+              className="flex flex-1 flex-col overflow-y-auto"
             >
-              <div className="flex flex-col overflow-y-auto px-4 py-4 flex-1">
+              <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
                 {resource ? (
                   <>
-                    <label className="form-label text-lg mb-0">Resource</label>
-                    <div className="flex flex-col gap-2 mb-2">
+                    <label className="form-label mb-0 text-lg">Resource</label>
+                    <div className="mb-2 flex flex-col gap-2">
                       {resource.link}
                     </div>
                   </>
@@ -131,10 +131,10 @@ export default function SubmitPlaybookRunForm({
                   )
                 )}
                 {isResourceRequired && (
-                  <div className="border-b border-gray-200 mb-4 mt-2" />
+                  <div className="mb-4 mt-2 border-b border-gray-200" />
                 )}
-                <div className="flex flex-col gap-2 mb-4">
-                  <label className="form-label text-lg mb-4">
+                <div className="mb-4 flex flex-col gap-2">
+                  <label className="form-label mb-4 text-lg">
                     Playbook Parameters
                   </label>
                   <PlaybookRunParams
@@ -144,7 +144,7 @@ export default function SubmitPlaybookRunForm({
                 </div>
               </div>
 
-              <div className="flex justify-end p-4 rounded-b space-x-2 bg-slate-50  ring-1 ring-black/5 ">
+              <div className="flex justify-end space-x-2 rounded-b bg-slate-50 p-4 ring-1 ring-black/5">
                 <Button
                   disabled={values.id === undefined || !isValid}
                   text="Run"

@@ -30,7 +30,7 @@ export default function AWSConfigsFormEditor({
       {/* this a top level schema field, not nested under http */}
       <FormikScheduleField name={`${name}.schedule`} />
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">AWS Connection</label>
+        <label className="text-sm font-semibold">AWS Connection</label>
         <FormikCheckboxFieldsGroup
           label="Access Key"
           name={`${fieldName}.awsConnection.accessKey`}
@@ -72,8 +72,8 @@ export default function AWSConfigsFormEditor({
       </div>
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">Cloudtrail</label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+        <label className="text-sm font-semibold">Cloudtrail</label>
+        <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
           <FormikConfigFormFieldsArray
             name={`${fieldName}.cloudtrail.exclude`}
             label="Exclude"
@@ -119,8 +119,8 @@ export default function AWSConfigsFormEditor({
 
       <FormikCheckboxFieldsGroup name="costReporting" label="Cost Report">
         <div className="flex flex-col space-y-2">
-          <label className="font-semibold text-sm">Cost Reporting</label>
-          <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+          <label className="text-sm font-semibold">Cost Reporting</label>
+          <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
             <FormikTextInput
               name={`${fieldName}.cost_reporting.s3_bucket_path`}
               label="S3 Bucket Path"

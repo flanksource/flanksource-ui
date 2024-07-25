@@ -77,7 +77,7 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
           <label className="block text-sm font-light">Jira Config Types</label>
         }
         description={
-          <div className="px-2 bg-white text-gray-700 text-xs">
+          <div className="bg-white px-2 text-xs text-gray-700">
             list of jira config types
           </div>
         }
@@ -88,7 +88,7 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
       >
         <ConfigItem
           name="project"
-          className="w-96 mt-1"
+          className="mt-1 w-96"
           type="JIRA"
           value={selectedProject}
           autoFetch={false}
@@ -96,10 +96,10 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
           namePath="$.name"
           valuePath="$.name"
           label={
-            <label className="block font-light text-sm mt-2">Project</label>
+            <label className="mt-2 block text-sm font-light">Project</label>
           }
           description={
-            <div className="px-2 bg-white text-gray-700 text-xs">
+            <div className="bg-white px-2 text-xs text-gray-700">
               Jira project name
             </div>
           }
@@ -111,7 +111,7 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
         >
           <ConfigItem
             name="issueType"
-            className="w-96 mt-1"
+            className="mt-1 w-96"
             type="JIRA"
             value={selectedIssue}
             autoFetch={false}
@@ -119,12 +119,12 @@ const JiraConfigItemDropDown = ({ type }: { type: string }) => {
             namePath="$"
             valuePath="$"
             label={
-              <label className="block font-light text-sm mt-2">
+              <label className="mt-2 block text-sm font-light">
                 Issue Type
               </label>
             }
             description={
-              <div className="px-2 bg-white text-gray-700 text-xs">
+              <div className="bg-white px-2 text-xs text-gray-700">
                 Issue Type
               </div>
             }
@@ -152,7 +152,7 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
         autoFetch={true}
         label={<label className="block text-sm font-light">Subnet</label>}
         description={
-          <div className="px-2 bg-white text-gray-700 text-xs">
+          <div className="bg-white px-2 text-xs text-gray-700">
             list of subnets
           </div>
         }
@@ -161,10 +161,10 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
           setDependentSelectedItem(null);
         }}
       >
-        <label className="block font-light text-sm">Device Name</label>
+        <label className="block text-sm font-light">Device Name</label>
         <ConfigItem
           name="deviceName"
-          className="w-96 mt-1"
+          className="mt-1 w-96"
           type="esb"
           value={dependentSelectedItem}
           autoFetch={false}
@@ -176,7 +176,7 @@ const ConfigItemDropDown = ({ type }: { type: string }) => {
           }}
           isDisabled={!selectedItem}
         />
-        <div className="px-2 bg-white text-gray-700 text-xs">
+        <div className="bg-white px-2 text-xs text-gray-700">
           list of device names
         </div>
       </ConfigItem>

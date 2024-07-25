@@ -42,10 +42,10 @@ const FormContainer = () => {
     <div className="flex flex-col">
       <Jira control={control} errors={errors} setValue={setValue} teamId="" />
       <div className="flex flex-row">
-        <button className="btn-secondary p-2 m-2" onClick={(e) => reset()}>
+        <button className="btn-secondary m-2 p-2" onClick={(e) => reset()}>
           reset
         </button>
-        <button className="btn-primary p-2 m-2" onClick={onSubmit}>
+        <button className="btn-primary m-2 p-2" onClick={onSubmit}>
           submit
         </button>
       </div>

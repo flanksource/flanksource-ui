@@ -50,23 +50,23 @@ function TopologyEvidence({
   return (
     <div
       className={clsx(
-        "bg-lightest-gray border-t-8",
+        "border-t-8 bg-lightest-gray",
         StatusStyles[topology.status as keyof typeof StatusStyles] ||
           "border-white",
         className
       )}
       {...rest}
     >
-      <div className="flex flex-col -mt-1 bg-white divide-y divide-gray-200 w-full">
-        <div className="flex pr-1 pt-2.5 pb-2.5 overflow-hidden">
-          <div className="text-gray-500 m-auto mr-2.5 flex-initial max-w-1/4 leading-1.21rel">
-            <h3 className="text-gray-500 leading-1.21rel">
+      <div className="-mt-1 flex w-full flex-col divide-y divide-gray-200 bg-white">
+        <div className="flex overflow-hidden pb-2.5 pr-1 pt-2.5">
+          <div className="m-auto mr-2.5 max-w-1/4 flex-initial leading-1.21rel text-gray-500">
+            <h3 className="leading-1.21rel text-gray-500">
               <Icon name={topology.icon} />
             </h3>
           </div>
-          <div className="flex-1 m-auto overflow-hidden">
+          <div className="m-auto flex-1 overflow-hidden">
             <p
-              className="text-gray-500 font-bold overflow-hidden truncate align-middle leading-1.21rel"
+              className="overflow-hidden truncate align-middle font-bold leading-1.21rel text-gray-500"
               title={topology.name}
             >
               <Link to={prepareTopologyLink(topology)}>
@@ -75,14 +75,14 @@ function TopologyEvidence({
             </p>
             {(topology as any).description != null ||
               (topology.id != null && (
-                <h3 className="text-gray-500 overflow-hidden truncate leading-1.21rel font-medium">
+                <h3 className="overflow-hidden truncate font-medium leading-1.21rel text-gray-500">
                   {(topology as any).description || topology.id}
                 </h3>
               ))}
           </div>
         </div>
         {heading?.length > 0 && false && (
-          <div className="flex pl-1 pr-1.5 pb-3.5 pt-3">
+          <div className="flex pb-3.5 pl-1 pr-1.5 pt-3">
             <CardMetrics items={heading} row={false} />
           </div>
         )}
@@ -151,7 +151,7 @@ function ConfigEvidence({
   return (
     <div className={clsx("overflow-hidden py-2", className)} {...rest}>
       <ConfigIcon config={config} />
-      <span className="pl-1 text-gray-500 font-medium">
+      <span className="pl-1 font-medium text-gray-500">
         {" "}
         {config.name}{" "}
       </span>{" "}
@@ -202,17 +202,17 @@ function HealthEvidence({
         <div className={clsx("flex-shrink-0", "pr-2")}>
           <Icon name={check?.icon || check?.type} />
         </div>
-        <div className="flex flex-row flex-1 overflow-hidden">
+        <div className="flex flex-1 flex-row overflow-hidden">
           <span
             title={check?.name}
             className={clsx(
-              "text-gray-500 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-4"
+              "overflow-hidden overflow-ellipsis whitespace-nowrap pr-4 font-semibold text-gray-500"
             )}
           >
             {check?.name}
           </span>
           <span
-            className="inline-block float-right"
+            className="float-right inline-block"
             title={`Namespace for ${check?.name}`}
             style={{ paddingTop: "1px" }}
           >
@@ -279,7 +279,7 @@ export function EvidenceView({
     case EvidenceType.ConfigChange:
       return (
         <ConfigChangeEvidence
-          className="w-full bg-white rounded"
+          className="w-full rounded bg-white"
           evidence={evidence}
           viewType={size === Size.small ? ViewType.summary : ViewType.detailed}
         />

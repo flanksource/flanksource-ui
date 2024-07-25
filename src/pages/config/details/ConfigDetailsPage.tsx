@@ -79,9 +79,9 @@ export function ConfigDetailsPage() {
       activeTabName="Catalog"
       className=""
     >
-      <div className={`flex flex-col flex-1 pb-0 h-full relative`}>
+      <div className={`relative flex h-full flex-1 flex-col pb-0`}>
         {!isLoading ? (
-          <div className="flex flex-col w-full relative pt-2 border-gray-300 bg-white flex-1 overflow-x-auto overflow-y-auto">
+          <div className="relative flex w-full flex-1 flex-col overflow-x-auto overflow-y-auto border-gray-300 bg-white pt-2">
             <JSONViewer
               code={code}
               format={format}
@@ -92,7 +92,7 @@ export function ConfigDetailsPage() {
             />
           </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex flex-1 flex-col items-center justify-center">
             <Loading />
           </div>
         )}

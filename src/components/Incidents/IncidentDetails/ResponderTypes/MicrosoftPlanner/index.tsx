@@ -100,7 +100,7 @@ export const MicrosoftPlanner = ({
             required: "Please provide valid value"
           }}
         >
-          <p className="text-red-600 text-sm">{errors?.configType?.message}</p>
+          <p className="text-sm text-red-600">{errors?.configType?.message}</p>
           <ConfigItem
             type="ms_planner"
             control={control}
@@ -130,7 +130,7 @@ export const MicrosoftPlanner = ({
               required: "Please provide valid value"
             }}
           >
-            <p className="text-red-600 text-sm">{errors?.plan_id?.message}</p>
+            <p className="text-sm text-red-600">{errors?.plan_id?.message}</p>
             <ConfigItem
               type="ms_planner"
               control={control}
@@ -159,7 +159,7 @@ export const MicrosoftPlanner = ({
                 required: "Please provide valid value"
               }}
             />
-            <p className="text-red-600 text-sm">{errors.bucket_id?.message}</p>
+            <p className="text-sm text-red-600">{errors.bucket_id?.message}</p>
             <ConfigItem
               type="ms_planner"
               control={control}
@@ -188,7 +188,7 @@ export const MicrosoftPlanner = ({
                 required: "Please provide valid value"
               }}
             />
-            <p className="text-red-600 text-sm">{errors.priority?.message}</p>
+            <p className="text-sm text-red-600">{errors.priority?.message}</p>
           </ConfigItem>
         </ConfigItem>
       </div>
@@ -213,7 +213,7 @@ export const MicrosoftPlanner = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.title?.message}</p>
+        <p className="text-sm text-red-600">{errors.title?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -236,7 +236,7 @@ export const MicrosoftPlanner = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.description?.message}</p>
+        <p className="text-sm text-red-600">{errors.description?.message}</p>
       </div>
     </div>
   );

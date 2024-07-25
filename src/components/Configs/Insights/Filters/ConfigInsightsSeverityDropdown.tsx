@@ -24,7 +24,7 @@ export default function ConfigInsightsSeverityDropdown({
 
   return (
     <ReactSelectDropdown
-      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
+      prefix={<span className="text-xs text-gray-500">{prefix}</span>}
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({

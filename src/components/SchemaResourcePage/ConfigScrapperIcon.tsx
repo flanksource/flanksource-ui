@@ -34,5 +34,5 @@ export default function ConfigScrapperIcon({ spec }: Props) {
     return null;
   }
 
-  return <Icon name={icon} className="w-5 h-5" />;
+  return <Icon name={icon} className="h-5 w-5" />;
 }

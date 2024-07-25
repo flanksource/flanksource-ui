@@ -74,9 +74,9 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           className={clsx(
             "relative pb-4",
             hasParent &&
-              "before:content-[''] before:border-gray-200 before:absolute before:w-6 before:h-8 before:-ml-3 before:border-l-2 before:border-b-2 before:rounded-bl-2xl before:z-[-1]",
+              "before:absolute before:z-[-1] before:-ml-3 before:h-8 before:w-6 before:rounded-bl-2xl before:border-b-2 before:border-l-2 before:border-gray-200 before:content-['']",
             !!showSideLine &&
-              "relative after:content-[''] after:absolute after:border-l-2 after:border-gray-200 after:left-2 after:h-full after:z-[-1]"
+              "relative after:absolute after:left-2 after:z-[-1] after:h-full after:border-l-2 after:border-gray-200 after:content-['']"
           )}
         >
           <HypothesisBar
@@ -101,7 +101,7 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
           <div
             className={clsx(
               !!showSideLine &&
-                "relative before:content-[''] before:absolute before:border-l-2 before:border-gray-200 before:left-2 before:h-full before:z-[-1]"
+                "relative before:absolute before:left-2 before:z-[-1] before:h-full before:border-l-2 before:border-gray-200 before:content-['']"
             )}
           >
             <div className="px-5">
@@ -109,18 +109,18 @@ export const HypothesisNode = (props: IHypothesisNodeProps) => {
             </div>
             {node?.type !== "solution" && (
               <div
-                className="text-gray underline flex justify-center items-end cursor-pointer pb-4"
+                className="text-gray flex cursor-pointer items-end justify-center pb-4 underline"
                 onClick={handlerOpenCreateHypothesisModal}
               >
                 <AiOutlinePlusCircle color="text-gray-600" />
-                <span className="pl-1 text-sm block text-gray-600 ">
+                <span className="block pl-1 text-sm text-gray-600">
                   Add {getHypothesisChildType(node?.type)}
                 </span>
               </div>
             )}
 
             {!!chldButLast.length && (
-              <div className="pt-5 pl-5">
+              <div className="pl-5 pt-5">
                 {chldButLast.map((item) => (
                   <HypothesisNode
                     {...props}

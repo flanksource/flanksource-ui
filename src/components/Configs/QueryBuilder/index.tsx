@@ -244,7 +244,7 @@ const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
           type="text"
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
-          className="sm:text-sm border-gray-300"
+          className="border-gray-300 sm:text-sm"
           placeholder="Search configs by using custom queries written here"
           onSubmit={(e) => handleRunQuery(query)}
           style={{ width: "750px" }}
@@ -269,17 +269,17 @@ const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
         title="Save Current Query"
         size="small"
       >
-        <div className="flex flex-col pt-5 pb-3 max-w-lg">
+        <div className="flex max-w-lg flex-col pb-3 pt-5">
           <input
             type="text"
             value={savedQueryValue}
-            className="w-full shadow-sm focus:ring-blue-500 focus:border-blue-400 block py-2 sm:text-sm border-gray-300 rounded-md mr-2 mb-2"
+            className="mb-2 mr-2 block w-full rounded-md border-gray-300 py-2 shadow-sm focus:border-blue-400 focus:ring-blue-500 sm:text-sm"
             placeholder="Query name"
             onChange={onSavedQueryValueChange}
           />
-          <div className="flex justify-end mt-3">
+          <div className="mt-3 flex justify-end">
             <button
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm whitespace-nowrap bg-blue-700 text-gray-50 cursor-pointer"
+              className="cursor-pointer whitespace-nowrap rounded-md border border-gray-300 bg-blue-700 px-3 py-2 text-sm text-gray-50"
               type="button"
               onClick={saveQuery}
               disabled={loading}
@@ -312,10 +312,10 @@ function QueryBuilderActionMenu({
   optionCategories
 }: QueryBuilderActionMenuProps) {
   return (
-    <Menu as="div" className="relative inline-block text-left items-center">
-      <Menu.Button className="inline-flex justify-center w-full pl-3 bg-warm-gray-50 text-sm font-medium text-gray-700">
+    <Menu as="div" className="relative inline-block items-center text-left">
+      <Menu.Button className="inline-flex w-full justify-center bg-warm-gray-50 pl-3 text-sm font-medium text-gray-700">
         <ClickableSvg>
-          <FaCog className="content-center w-6 h-6" />
+          <FaCog className="h-6 w-6 content-center" />
         </ClickableSvg>
       </Menu.Button>
       {/* @ts-ignore */}
@@ -328,9 +328,9 @@ function QueryBuilderActionMenu({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <TextWithDivider
-            className="text-gray-500 text-md font-semibold"
+            className="text-md font-semibold text-gray-500"
             text="Actions"
           />
           {optionCategories.actions.map((option) => {
@@ -353,7 +353,7 @@ function QueryBuilderActionMenu({
           })}
           {!!optionCategories.savedQueryLoadActions.length && (
             <TextWithDivider
-              className="text-gray-500 text-md font-semibold"
+              className="text-md font-semibold text-gray-500"
               text="Saved Queries"
             />
           )}

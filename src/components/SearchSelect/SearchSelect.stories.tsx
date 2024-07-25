@@ -37,7 +37,7 @@ const configTags = configTagData.map(([key, val]) => {
     data: [key, val],
     label: (
       <div
-        className="bg-gray-200 border border-gray-300 px-1 py-0.75 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+        className="mr-1 rounded-md border border-gray-300 bg-gray-200 px-1 py-0.75 text-xs font-semibold text-gray-600"
         key={key}
       >
         {key}: <span className="font-light">{val}</span>

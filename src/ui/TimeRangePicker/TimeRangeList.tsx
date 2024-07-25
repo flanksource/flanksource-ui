@@ -30,7 +30,7 @@ export function TimeRangeList({
       {rangeOptionsCategories.map((category, index) => {
         return (
           <div className="px-4 text-left" key={category.name}>
-            <div className="text-gray-500 text-base sm:space-x-2 pl-1 my-1 whitespace-nowrap font-semibold">
+            <div className="my-1 whitespace-nowrap pl-1 text-base font-semibold text-gray-500 sm:space-x-2">
               {category.name}
             </div>
             {category.options.map((option) => {
@@ -40,19 +40,19 @@ export function TimeRangeList({
                   onClick={() => setOption(option)}
                   key={option.display}
                   className={clsx(
-                    "option-item hover:bg-gray-100 flex justify-between items-center text-left w-full",
+                    "option-item flex w-full items-center justify-between text-left hover:bg-gray-100",
                     { "bg-gray-100": isChecked(option, currentRange) }
                   )}
                 >
                   <label
                     htmlFor={`checkbox-${option.display}`}
-                    className="cursor-pointer py-1.5 px-2"
+                    className="cursor-pointer px-2 py-1.5"
                   >
                     {option.display}
                   </label>
                   <input
                     type="checkbox"
-                    className="opacity-0 cursor-pointer"
+                    className="cursor-pointer opacity-0"
                     checked={isChecked(option, currentRange)}
                     onChange={() => {}}
                     name="range-checkbox"

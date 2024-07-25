@@ -501,7 +501,7 @@ export default function HealthSpecEditor({
       onDeleted={onDeleted}
       types={configTypes}
       format="yaml"
-      selectedSpec={resourceValue?.id ? selectedSpec ?? "custom" : undefined}
+      selectedSpec={resourceValue?.id ? (selectedSpec ?? "custom") : undefined}
       resourceInfo={resourceInfo}
     />
   );

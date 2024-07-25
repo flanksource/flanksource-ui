@@ -164,7 +164,7 @@ export function IncidentCreate({
         <div className="flex flex-col gap-4 p-5">
           <div className="flex flex-col">
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+              <span className="mb-1 mr-4 w-16 text-sm font-bold text-gray-700">
                 Type
               </span>
               <SelectDropdown
@@ -177,7 +177,7 @@ export function IncidentCreate({
                   setValue("type", e);
                 }}
               />
-              <p className="text-red-600 text-sm">{errors.type?.message}</p>
+              <p className="text-sm text-red-600">{errors.type?.message}</p>
             </div>
           </div>
           <div className="flex flex-col">
@@ -197,7 +197,7 @@ export function IncidentCreate({
                 );
               }}
             />
-            <p className="text-red-600 text-sm">{errors.title?.message}</p>
+            <p className="text-sm text-red-600">{errors.title?.message}</p>
           </div>
           <div className="flex flex-col">
             <Controller
@@ -216,13 +216,13 @@ export function IncidentCreate({
                 );
               }}
             />
-            <p className="text-red-600 text-sm">
+            <p className="text-sm text-red-600">
               {errors.description?.message}
             </p>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+            <span className="mb-1 mr-4 w-16 text-sm font-bold text-gray-700">
               Severity
             </span>
             <SelectDropdown
@@ -235,11 +235,11 @@ export function IncidentCreate({
                 setValue("severity", e);
               }}
             />
-            <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+            <p className="text-sm text-red-600">{errors.severity?.message}</p>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+            <span className="mb-1 mr-4 w-16 text-sm font-bold text-gray-700">
               Status
             </span>
             <SelectDropdown
@@ -252,13 +252,13 @@ export function IncidentCreate({
                 setValue("status", e);
               }}
             />
-            <p className="text-red-600 text-sm">{errors.severity?.message}</p>
+            <p className="text-sm text-red-600">{errors.severity?.message}</p>
           </div>
         </div>
-        <div className="flex justify-end bg-gray-100 px-5 py-4 w-full rounded">
+        <div className="flex w-full justify-end rounded bg-gray-100 px-5 py-4">
           <Button
             type="submit"
-            className="px-3 py-2 btn-secondary float-right"
+            className="btn-secondary float-right px-3 py-2"
             text="Create"
           />
         </div>

@@ -30,7 +30,7 @@ export default function GraphEdgeTypeToggle() {
         )
       }
       role="button"
-      className="flex flex-column cursor-pointer gap-2 items-center p-1 border-b border-solid border-gray-200 hover:bg-gray-100"
+      className="flex-column flex cursor-pointer items-center gap-2 border-b border-solid border-gray-200 p-1 hover:bg-gray-100"
     >
       {toggleValue === "smoothstep" ? <GoGraph /> : <FaBezierCurve />}
     </div>

@@ -40,22 +40,22 @@ export default function AddManualDefinitionOfDone({
   );
 
   return (
-    <div className="w-full flex flex-col space-y-4 py-4 px-6 overflow-x-hidden">
+    <div className="flex w-full flex-col space-y-4 overflow-x-hidden px-6 py-4">
       {/* title */}
-      <div className="w-full flex flex-row space-y-2">
-        <div className="flex flex-col flex-1 space-y-2">
+      <div className="flex w-full flex-row space-y-2">
+        <div className="flex flex-1 flex-col space-y-2">
           <h3 className="font-semibold text-gray-900">
             Manual Definition of Done
           </h3>
         </div>
       </div>
-      <div className="w-full flex flex-col space-y-4">
+      <div className="flex w-full flex-col space-y-4">
         <ManualDoDInput value={value} onChange={onChange} />
       </div>
-      <div className={`flex justify-end w-full`}>
+      <div className={`flex w-full justify-end`}>
         <button
           disabled={isLoading || !value}
-          className="px-4 py-2 btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="btn-primary px-4 py-2 disabled:cursor-not-allowed disabled:bg-gray-400"
           type="button"
           onClick={async () => {
             if (value) {

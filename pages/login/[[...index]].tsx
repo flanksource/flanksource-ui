@@ -9,7 +9,7 @@ export default function Signin() {
   return (
     <>
       <Head prefix="Sign in" />
-      <div className="flex min-h-screen bg-gray-50 justify-center">
+      <div className="flex min-h-screen justify-center bg-gray-50">
         <div className="flex min-h-full flex-col justify-center">
           {authSystem === "kratos" && <KratosLogin />}
           {authSystem === "clerk" && <ClerkLogin />}

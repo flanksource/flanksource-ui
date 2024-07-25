@@ -83,9 +83,9 @@ export const TopologyPreference = ({
         }
       `}</style>
       <div ref={popoverRef as LegacyRef<HTMLDivElement>}>
-        <ClickableSvg className="mt-1 ml-4 cursor-pointer md:mt-0">
+        <ClickableSvg className="ml-4 mt-1 cursor-pointer md:mt-0">
           <FaCog
-            className="content-center w-6 h-6"
+            className="h-6 w-6 content-center"
             onClick={() => setIsPopoverActive((val) => !val)}
           />
         </ClickableSvg>
@@ -94,7 +94,7 @@ export const TopologyPreference = ({
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           className={clsx(
-            "origin-top-right absolute right-0 mt-5 w-96 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize",
+            "absolute right-0 z-50 mt-5 w-96 origin-top-right divide-y divide-gray-100 rounded-md bg-white capitalize shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none",
             isPopoverActive ? "display-block" : "hidden"
           )}
         >
@@ -104,10 +104,10 @@ export const TopologyPreference = ({
             </div>
           </div>
           <div className="py-1" role="none">
-            <div className="flex px-4 py-3 items-center">
+            <div className="flex items-center px-4 py-3">
               <label
                 htmlFor="topology-card-width-slider"
-                className="inline-block mr-3 text-xs text-gray-700"
+                className="mr-3 inline-block text-xs text-gray-700"
               >
                 Show hidden components:
               </label>
@@ -126,7 +126,7 @@ export const TopologyPreference = ({
             </div>
           </div>
           <div className="py-1" role="none">
-            <div className="flex px-4 py-4 items-center">
+            <div className="flex items-center px-4 py-4">
               <label
                 htmlFor="topology-card-width-slider"
                 className="mr-3 text-xs text-gray-700"
@@ -141,7 +141,7 @@ export const TopologyPreference = ({
                 value={parseInt(cardSize, 10)}
                 id="topology-card-width-slider"
                 onChange={(e) => setCardWidth(e.target.value)}
-                className="w-64 h-5 rounded-lg cursor-pointer"
+                className="h-5 w-64 cursor-pointer rounded-lg"
               />
             </div>
           </div>

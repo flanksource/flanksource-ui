@@ -32,12 +32,12 @@ function AddDefinitionOfDone({ onClick, ...rest }: AddDefinitionOfDoneProps) {
     <div {...rest}>
       <button
         type="button"
-        className="flex items-center bg-white rounded-md group"
+        className="group flex items-center rounded-md bg-white"
         onClick={onClick}
       >
-        <span className="flex items-center justify-center w-5 h-5 text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-dashed border-gray-300 text-gray-400">
           <svg
-            className="w-5 h-5"
+            className="h-5 w-5"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -122,24 +122,24 @@ export function IncidentsDefinitionOfDone({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
+        <div className="flex w-full flex-row items-center space-x-2">
           <Title
             title="Definition of done"
-            icon={<BsCardChecklist className="w-6 h-6" />}
+            icon={<BsCardChecklist className="h-6 w-6" />}
           />
           <CountBadge
             roundedClass="rounded-full"
             value={dodEvidences?.length ?? 0}
           />
           <div
-            className="relative z-0 inline-flex justify-end ml-5"
+            className="relative z-0 ml-5 inline-flex justify-end"
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
             <ClickableSvg>
               <MdRefresh
-                className={`cursor-pointer mr-3 w-6 h-6 inline-block ${
+                className={`mr-3 inline-block h-6 w-6 cursor-pointer ${
                   isRefetching ? "animate-spin" : ""
                 }`}
                 onClick={() => refetchIncident()}
@@ -147,7 +147,7 @@ export function IncidentsDefinitionOfDone({
             </ClickableSvg>
             <ClickableSvg>
               <RiFullscreenLine
-                className="cursor-pointer w-6 h-6 inline-block "
+                className="inline-block h-6 w-6 cursor-pointer"
                 onClick={() => setDODModalOpen(true)}
               />
             </ClickableSvg>
@@ -160,7 +160,7 @@ export function IncidentsDefinitionOfDone({
       dataCount={dodEvidences?.length}
     >
       <div className="flex flex-col">
-        <div className="flex overflow-x-hidden w-full pb-6 pt-2">
+        <div className="flex w-full overflow-x-hidden pb-6 pt-2">
           <div className="w-full space-y-1">
             {isLoading && !incident ? (
               <div className="flex items-start pl-2 pr-2">
@@ -182,7 +182,7 @@ export function IncidentsDefinitionOfDone({
             <AddDefinitionOfDone
               className={clsx(
                 "flex items-center justify-between",
-                dodEvidences.length ? "py-2 mb-4" : "py-4"
+                dodEvidences.length ? "mb-4 py-2" : "py-4"
               )}
               onClick={() => {
                 setAddToDODModalOpen(true);

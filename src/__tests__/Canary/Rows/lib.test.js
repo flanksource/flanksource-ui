@@ -31,7 +31,7 @@ describe("prepareRows", () => {
     rows.forEach((obj, i) => {
       const pivot =
         subsetOne[i].namespace !== ""
-          ? `piv0t-${subsetOne[i].namespace}` ?? "piv0t-other"
+          ? (`piv0t-${subsetOne[i].namespace}` ?? "piv0t-other")
           : "piv0t-other";
       expect(obj).toEqual({
         valueLookup: pivot,
@@ -62,7 +62,7 @@ describe("prepareRows", () => {
     rows.forEach((obj, i) => {
       const pivot =
         subsetOne[i].namespace !== ""
-          ? `piv0t-${subsetOne[i].namespace}` ?? "piv0t-other"
+          ? (`piv0t-${subsetOne[i].namespace}` ?? "piv0t-other")
           : "piv0t-other";
       expect(obj).toEqual({
         valueLookup: pivot,
@@ -135,11 +135,11 @@ describe("prepareRows", () => {
         expect(obj).toEqual(testRow);
       } else {
         const value =
-          obj?.pivoted === true ? obj[obj?.valueLookup] ?? null : obj;
+          obj?.pivoted === true ? (obj[obj?.valueLookup] ?? null) : obj;
         const sourceObj = subsetMap[value?.sourceName] ?? {};
         const pivot =
           sourceObj.namespace !== ""
-            ? `piv0t-${sourceObj.namespace}` ?? "piv0t-other"
+            ? (`piv0t-${sourceObj.namespace}` ?? "piv0t-other")
             : "piv0t-other";
         // eslint-disable-next-line jest/no-conditional-expect
         expect(obj).toEqual({
@@ -216,7 +216,7 @@ describe("prepareRows", () => {
         expect(obj).toEqual(testRow);
       } else {
         const value =
-          obj?.pivoted === true ? obj[obj?.valueLookup] ?? null : obj;
+          obj?.pivoted === true ? (obj[obj?.valueLookup] ?? null) : obj;
         const sourceObj = subsetMap[value?.sourceName] ?? {};
         const isLabelsPlainObject = isPlainObject(sourceObj.labels);
         if (

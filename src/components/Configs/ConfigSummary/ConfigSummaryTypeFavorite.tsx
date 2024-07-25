@@ -49,7 +49,7 @@ export default function ConfigSummaryFavoriteButton({
   );
 
   return (
-    <div className="flex flex-row w-full gap-1 group">
+    <div className="group flex w-full flex-row gap-1">
       <div className="flex-1 overflow-x-hidden text-ellipsis">{children}</div>
       <div
         role="button"

@@ -77,11 +77,14 @@ export default function FormikFilterForm({
 
   const initialValues = useMemo(
     () =>
-      filterFields.reduce((acc, field) => {
-        const alternativeValue = defaultFieldValues?.[field] ?? undefined;
-        acc[field] = searchParams.get(field) ?? alternativeValue ?? undefined;
-        return acc;
-      }, {} as Record<string, string | undefined>),
+      filterFields.reduce(
+        (acc, field) => {
+          const alternativeValue = defaultFieldValues?.[field] ?? undefined;
+          acc[field] = searchParams.get(field) ?? alternativeValue ?? undefined;
+          return acc;
+        },
+        {} as Record<string, string | undefined>
+      ),
     [defaultFieldValues, filterFields, searchParams]
   );
 

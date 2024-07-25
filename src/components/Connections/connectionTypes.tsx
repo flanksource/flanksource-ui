@@ -412,7 +412,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Windows",
     value: ConnectionValueType.Windows,
-    icon: <FaWindows className="w-5 h-5" />,
+    icon: <FaWindows className="h-5 w-5" />,
     fields: [
       ...commonConnectionFormFields,
       {
@@ -455,7 +455,7 @@ export const connectionTypes: ConnectionType[] = [
   {
     title: "Google Cloud",
     value: ConnectionValueType.GCP,
-    icon: <DiGoogleCloudPlatform className="w-6 h-6" />,
+    icon: <DiGoogleCloudPlatform className="h-6 w-6" />,
     fields: [
       ...commonConnectionFormFields,
       {

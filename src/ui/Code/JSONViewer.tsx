@@ -36,11 +36,11 @@ function JSONViewerLine({
       onKeyUp={onSelect}
     >
       {showLineNo && (
-        <span className="text-gray-300 text-xs pr-3 select-none table-cell">
+        <span className="table-cell select-none pr-3 text-xs text-gray-300">
           {idx + 1}
         </span>
       )}
-      <span className="text-wrap break-all table-cell">
+      <span className="table-cell text-wrap break-all">
         {line.map((token, key) => (
           // key is in the getTokenProps responses. Disabling eslint to skip
           // check for explicit keys.
@@ -108,7 +108,7 @@ export function JSONViewer({
   }, [convertToYaml, format]);
 
   return (
-    <div className="flex flex-col w-full relative p-2">
+    <div className="relative flex w-full flex-col p-2">
       <Highlight
         {...defaultProps}
         code={codeForHighlight}
@@ -145,7 +145,7 @@ export function JSONViewer({
           icon={<GoCopy />}
           title="Copy to clipboard"
           className={
-            "bg-white z-[99999999999999999] absolute right-4  text-black"
+            "absolute right-4 z-[99999999999999999] bg-white text-black"
           }
           onClick={async () => {
             await copyFn(codeForHighlight);

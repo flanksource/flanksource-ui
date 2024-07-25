@@ -22,18 +22,21 @@ export function makeRow({
 }
 
 export function filterRowsByPivotSet(rows: any, pivotSet: any) {
-  return Array.from(pivotSet).reduce((accPivots: any, pivot: any) => {
-    const filteredRows = rows.reduce((acc: any, row: any) => {
-      if (row[pivot] != null) {
-        acc[acc.length] = row[pivot];
+  return Array.from(pivotSet).reduce(
+    (accPivots: any, pivot: any) => {
+      const filteredRows = rows.reduce((acc: any, row: any) => {
+        if (row[pivot] != null) {
+          acc[acc.length] = row[pivot];
+        }
+        return acc;
+      }, []);
+      if (filteredRows.length > 0) {
+        accPivots[pivot] = aggregate(pivot, filteredRows);
       }
-      return acc;
-    }, []);
-    if (filteredRows.length > 0) {
-      accPivots[pivot] = aggregate(pivot, filteredRows);
-    }
-    return accPivots;
-  }, {} as Record<string, any>);
+      return accPivots;
+    },
+    {} as Record<string, any>
+  );
 }
 
 export function prepareRows({

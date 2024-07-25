@@ -41,17 +41,17 @@ export function IncidentChangelog({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
+        <div className="flex w-full flex-row items-center space-x-2">
           <Title
             title="Changelog"
-            icon={<RiPlayListAddFill className="w-6 h-6" />}
+            icon={<RiPlayListAddFill className="h-6 w-6" />}
           />
           <CountBadge
             roundedClass="rounded-full"
             value={incidentHistory?.length ?? 0}
           />
           <div
-            className="relative z-0 inline-flex justify-end ml-5"
+            className="relative z-0 ml-5 inline-flex justify-end"
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -59,7 +59,7 @@ export function IncidentChangelog({
             <button className="" onClick={() => refetch()}>
               <ClickableSvg>
                 <MdRefresh
-                  className={`cursor-pointer w-6 h-6 inline-block ${
+                  className={`inline-block h-6 w-6 cursor-pointer ${
                     isRefetching ? "animate-spin" : ""
                   }`}
                 />
@@ -77,7 +77,7 @@ export function IncidentChangelog({
       ) : incidentHistory.length > 0 ? (
         <VerticalSCrollView>
           <div className="px-4 py-4">
-            <ul className="border-l border-gray-200 dark:border-gray-900 relative flex-col px-4">
+            <ul className="relative flex-col border-l border-gray-200 px-4 dark:border-gray-900">
               {incidentHistory.map((history) => (
                 <IncidentChangelogItem key={history.id} history={history} />
               ))}
@@ -86,7 +86,7 @@ export function IncidentChangelog({
         </VerticalSCrollView>
       ) : (
         <div className="px-4 py-4">
-          <p className="text-gray-800 text-sm">No changelog found</p>
+          <p className="text-sm text-gray-800">No changelog found</p>
         </div>
       )}
     </CollapsiblePanel>

@@ -110,14 +110,14 @@ export default function AgentForm({
         >
           {({ handleSubmit, values }) => (
             <Form
-              className="flex flex-col flex-1 overflow-y-auto"
+              className="flex flex-1 flex-col overflow-y-auto"
               onSubmit={handleSubmit}
             >
               <div
-                className={clsx("flex flex-col h-full my-2 overflow-y-auto")}
+                className={clsx("my-2 flex h-full flex-col overflow-y-auto")}
               >
                 <div
-                  className={clsx("flex flex-col px-2 mb-2 overflow-y-auto")}
+                  className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}
                 >
                   <div className="flex flex-col space-y-4 overflow-y-auto p-4">
                     <FormikTextInput
@@ -140,7 +140,7 @@ export default function AgentForm({
                       ]}
                       name="kubernetes.enabled"
                       label={
-                        <div className="flex flex-col w-full">
+                        <div className="flex w-full flex-col">
                           <span>Kubernetes</span>
                         </div>
                       }
@@ -175,7 +175,7 @@ export default function AgentForm({
               <AuthorizationAccessCheck resource={tables.agents} action="write">
                 <div
                   className={clsx(
-                    "flex items-center py-4 px-5 bg-gray-100",
+                    "flex items-center bg-gray-100 px-5 py-4",
                     agent?.id ? "justify-between" : "justify-end"
                   )}
                 >

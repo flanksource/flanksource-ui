@@ -170,8 +170,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
       expanded: expandAllRows
         ? true
         : savePreferences
-        ? preferences.expandedRows
-        : undefined
+          ? preferences.expandedRows
+          : undefined
     },
     state: {
       sorting: sortBy,
@@ -264,10 +264,10 @@ export function DataTable<TableColumns, Data extends TableColumns>({
   }, [rows.length, virtualRows, pagination, paginationType, table]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto space-y-2 w-full h-full">
+    <div className="flex h-full w-full flex-1 flex-col space-y-2 overflow-y-auto">
       <div
         ref={tableContainerRef}
-        className={clsx("flex flex-col flex-1 overflow-y-auto")}
+        className={clsx("flex flex-1 flex-col overflow-y-auto")}
         {...rest}
         onScroll={(e) => {
           setScrollTop((e.target as HTMLDivElement).scrollTop);
@@ -276,19 +276,19 @@ export function DataTable<TableColumns, Data extends TableColumns>({
         <table
           className={clsx(
             className,
-            `w-full border border-t-0 border-gray-200 rounded-md border-separate`,
+            `w-full border-separate rounded-md border border-t-0 border-gray-200`,
             stickyHead && "relative"
           )}
           style={tableStyle}
         >
           <thead
-            className={`bg-white border-gray-200 rounded-md ${
+            className={`rounded-md border-gray-200 bg-white ${
               stickyHead ? "sticky top-[-0.5px] z-01" : ""
             }`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
-                className="uppercase bg-column-background rounded-t-md items-center border border-gray-200"
+                className="items-center rounded-t-md border border-gray-200 bg-column-background uppercase"
                 key={headerGroup.id}
               >
                 {headerGroup.headers.map((header, colIndex) => (
@@ -296,8 +296,8 @@ export function DataTable<TableColumns, Data extends TableColumns>({
                   // Hence the label for that is not needed
                   <th
                     key={header.id}
-                    className={`border-t border-b border-gray-200 ${theadHeaderClass}${
-                      header.column.getCanSort() ? " cursor-pointer" : ""
+                    className={`border-b border-t border-gray-200 ${theadHeaderClass}${
+                      header.column.getCanSort() ? "cursor-pointer" : ""
                     }`}
                     onClick={header.column.getToggleSortingHandler()}
                     style={{
@@ -375,7 +375,7 @@ export function DataTable<TableColumns, Data extends TableColumns>({
           </tbody>
         </table>
         {table.getRowModel().rows.length === 0 && (
-          <div className="flex items-center justify-center px-2 border-b border-gray-300 text-center text-gray-400">
+          <div className="flex items-center justify-center border-b border-gray-300 px-2 text-center text-gray-400">
             {isLoading ? (
               <TableSkeletonLoader className="mt-2" />
             ) : (

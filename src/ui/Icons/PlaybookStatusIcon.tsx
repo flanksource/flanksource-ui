@@ -13,28 +13,28 @@ export const statusIconMap: Record<
   React.ReactElement
 > = {
   completed: (
-    <PiCheckCircleLight className="text-green-500 inline-block object-center  h-5 w-auto pr-1" />
+    <PiCheckCircleLight className="inline-block h-5 w-auto object-center pr-1 text-green-500" />
   ),
   cancelled: (
-    <MdOutlineCancel className="text-red-500 inline-block object-center  h-5 w-auto pr-1" />
+    <MdOutlineCancel className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
   ),
   failed: (
-    <PiWarningLight className="text-red-500 inline-block object-center h-5 w-auto pr-1" />
+    <PiWarningLight className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
   ),
   pending: (
-    <FaHourglassStart className="text-gray-400 inline-block object-center  h-5 w-auto pr-1" />
+    <FaHourglassStart className="inline-block h-5 w-auto object-center pr-1 text-gray-400" />
   ),
   running: (
-    <ImSpinner2 className="text-blue-500 inline-block object-center h-5 w-auto pr-1" />
+    <ImSpinner2 className="inline-block h-5 w-auto object-center pr-1 text-blue-500" />
   ),
   scheduled: (
-    <IoCalendarNumberOutline className="text-gray-500 inline-block object-center h-5 w-auto pr-1" />
+    <IoCalendarNumberOutline className="inline-block h-5 w-auto object-center pr-1 text-gray-500" />
   ),
   sleeping: (
-    <IoCalendarNumberOutline className="text-gray-400 inline-block object-center h-5 w-auto pr-1" />
+    <IoCalendarNumberOutline className="inline-block h-5 w-auto object-center pr-1 text-gray-400" />
   ),
   skipped: (
-    <MdOutlineCancel className="text-red-500 inline-block object-center  h-5 w-auto pr-1" />
+    <MdOutlineCancel className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
   )
 };
 

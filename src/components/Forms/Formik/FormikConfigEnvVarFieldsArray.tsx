@@ -33,10 +33,10 @@ export default function FormikConfigEnvVarFieldsArray({
               fieldValue.length > 0 &&
               fieldValue.map((_: any, index: number) => (
                 <div className={className} key={index}>
-                  <div className="flex flex-col flex-1">
+                  <div className="flex flex-1 flex-col">
                     <FormikConfigEnvVarFields name={`${name}.${index}`} />
                   </div>
-                  <div className="flex flex-row flex-1 justify-end">
+                  <div className="flex flex-1 flex-row justify-end">
                     <Button
                       onClick={() => arrayHelpers.remove(index)}
                       icon={<FaTrash />}
@@ -45,7 +45,7 @@ export default function FormikConfigEnvVarFieldsArray({
                   </div>
                 </div>
               ))}
-            <div className="flex flex-row flex-1 justify-end">
+            <div className="flex flex-1 flex-row justify-end">
               <Button
                 onClick={() => arrayHelpers.push({})}
                 text={`Add`}

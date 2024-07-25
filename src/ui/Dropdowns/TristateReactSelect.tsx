@@ -143,7 +143,7 @@ function ReactSelectTriStateOptions({
       selectProps={selectProps}
       {...props}
     >
-      <div className="flex flex-row gap-2 items-center text-sm">
+      <div className="flex flex-row items-center gap-2 text-sm">
         <TristateToggle
           onChange={(value) => {
             onItemToggle(data.value!, value);
@@ -153,9 +153,9 @@ function ReactSelectTriStateOptions({
           hideLabel
           size="sm"
         />
-        <div className="flex-1 flex flex-row gap-2 whitespace-nowrap text-ellipsis">
+        <div className="flex flex-1 flex-row gap-2 text-ellipsis whitespace-nowrap">
           {data.icon && <span>{data.icon}</span>}
-          <div className="flex-1 whitespace-nowrap text-ellipsis">
+          <div className="flex-1 text-ellipsis whitespace-nowrap">
             {data.label || children}
           </div>
         </div>
@@ -193,7 +193,7 @@ function ReactSelectTriStateSingleValue({
   );
 
   return (
-    <div className="flex flex-row overflow-hidden text-ellipsis gap-1 text-xs rounded-md">
+    <div className="flex flex-row gap-1 overflow-hidden text-ellipsis rounded-md text-xs">
       {value.length < 4 ? (
         value.map((v) => {
           const [, value] = v.value.split(":");
@@ -206,10 +206,10 @@ function ReactSelectTriStateSingleValue({
                 } ${v.label}`}
                 key={v.id}
                 className={clsx(
-                  "w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-200"
+                  "flex w-auto max-w-full flex-row items-center gap-1 overflow-hidden text-ellipsis text-nowrap bg-gray-200 px-2 py-1"
                 )}
               >
-                <span className="flex-1 text-ellipsis overflow-hidden text-nowrap">
+                <span className="flex-1 overflow-hidden text-ellipsis text-nowrap">
                   {v.label}
                 </span>{" "}
                 <span> {+value === 1 ? "" : <FaBan />}</span>
@@ -221,8 +221,8 @@ function ReactSelectTriStateSingleValue({
       ) : (
         <span className="text-xs">
           {(totalIncluded.length > 0 || totalExcluded.length > 0) && (
-            <div className="w-auto flex flex-row items-center gap-1 px-2 py-1 max-w-full overflow-hidden text-ellipsis text-nowrap bg-gray-200">
-              <span className="flex-1 text-ellipsis overflow-hidden text-nowrap">
+            <div className="flex w-auto max-w-full flex-row items-center gap-1 overflow-hidden text-ellipsis text-nowrap bg-gray-200 px-2 py-1">
+              <span className="flex-1 overflow-hidden text-ellipsis text-nowrap">
                 {totalIncluded.length || totalExcluded.length} Items
               </span>
               {totalExcluded.length > 0 && <FaBan />}
@@ -254,11 +254,11 @@ function TriStateCustomControlContainer({
 }: ControlProps<TriStateOptions>) {
   return (
     <components.Control {...props}>
-      <div className="flex flex-row min-h-[35px] w-full max-w-full text-sm text-gray-600 text-nowrap overflow-hidden items-center px-2">
+      <div className="flex min-h-[35px] w-full max-w-full flex-row items-center overflow-hidden text-nowrap px-2 text-sm text-gray-600">
         <div className="text-xs text-gray-500">
           {props.selectProps.placeholder}:
         </div>
-        <div className="flex flex-row flex-1 max-w-full overflow-hidden">
+        <div className="flex max-w-full flex-1 flex-row overflow-hidden">
           {children}
         </div>
       </div>

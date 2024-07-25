@@ -39,7 +39,7 @@ export function SchemaResourceJobsTab({
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto">
+    <div className="flex flex-1 flex-col overflow-y-auto">
       {!data && error && !isLoading ? (
         <ErrorPage error={error} />
       ) : (

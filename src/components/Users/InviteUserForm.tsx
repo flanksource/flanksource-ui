@@ -69,11 +69,11 @@ export function InviteUserForm({
                 required: "required"
               })}
               type="text"
-              className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md w-full"
+              className="h-full w-full rounded-md border-gray-300 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             />
           </div>
           {errors.firstName && (
-            <span className="text-red-600 text-sm">
+            <span className="text-sm text-red-600">
               Please provide valid first name
             </span>
           )}
@@ -89,11 +89,11 @@ export function InviteUserForm({
                 required: "required"
               })}
               type="text"
-              className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md w-full"
+              className="h-full w-full rounded-md border-gray-300 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             />
           </div>
           {errors.lastName && (
-            <span className="text-red-600 text-sm">
+            <span className="text-sm text-red-600">
               Please provide valid last name
             </span>
           )}
@@ -112,12 +112,12 @@ export function InviteUserForm({
                   message: "Entered value does not match email format"
                 }
               })}
-              className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 py-2 sm:text-sm border-gray-300 rounded-md w-full"
+              className="h-full w-full rounded-md border-gray-300 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               type="email"
             />
           </div>
           {errors.email && (
-            <span className="text-red-600 text-sm">{errors.email.message}</span>
+            <span className="text-sm text-red-600">{errors.email.message}</span>
           )}
         </div>
         <div>
@@ -128,7 +128,7 @@ export function InviteUserForm({
             <select
               id="role"
               className={clsx(
-                "rounded-md border-gray-300 shadow-sm inline-block w-full"
+                "inline-block w-full rounded-md border-gray-300 shadow-sm"
               )}
               {...register("role", {
                 required: "Please select any role"
@@ -141,7 +141,7 @@ export function InviteUserForm({
             </select>
           </div>
           {errors.role && (
-            <span className="text-red-600 text-sm">{errors.role.message}</span>
+            <span className="text-sm text-red-600">{errors.role.message}</span>
           )}
         </div>
         <div className="sm:col-span-2">
@@ -153,7 +153,7 @@ export function InviteUserForm({
           <button
             type="reset"
             onClick={handleCancel}
-            className="px-3 py-2 btn-secondary float-right mr-4"
+            className="btn-secondary float-right mr-4 px-3 py-2"
           >
             Cancel
           </button>

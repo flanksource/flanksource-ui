@@ -209,7 +209,7 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
               nodes: nodes,
               groups: ["oidc"],
               withoutDefaultGroup: true
-            }).length > 0 && <hr className="border-gray-200 my-3" />}
+            }).length > 0 && <hr className="my-3 border-gray-200" />}
 
             <form action={flow.ui.action} method={flow.ui.method}>
               <div className="flex flex-col">

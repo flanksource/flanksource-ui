@@ -48,7 +48,7 @@ export function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
           className="flex flex-row gap-1 px-2 text-xs"
           onRemove={() => onRemove(paramKey, filter)}
         >
-          <span className="text-gray-500 font-semibold">
+          <span className="font-semibold text-gray-500">
             {paramKey === "external_created_by" ? "created_by" : paramKey}:
           </span>
           <span className="text-gray-500">

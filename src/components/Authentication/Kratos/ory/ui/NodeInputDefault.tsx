@@ -41,7 +41,7 @@ export function NodeInputDefault(props: NodeInputProps) {
           disabled={attributes.disabled || disabled}
         />
         {!!node.messages.length && (
-          <div className={clsx("mt-2", { "text-red-600 text-sm": hasError })}>
+          <div className={clsx("mt-2", { "text-sm text-red-600": hasError })}>
             {node.messages.map(({ text, id }, k) => (
               <span key={`${id}-${k}`} data-testid={`ui/message/${id}`}>
                 {text}

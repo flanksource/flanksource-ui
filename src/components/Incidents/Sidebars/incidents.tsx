@@ -93,7 +93,7 @@ export default function Incidents({
           <div className="flex flex-row">
             <IncidentTypeIcon type={item.type as keyof typeof typeItems} />
             <Link
-              className="block mx-1 cursor-pointer text-sm"
+              className="mx-1 block cursor-pointer text-sm"
               to={{
                 pathname: `/incidents/${item.id}`
               }}
@@ -120,7 +120,7 @@ export default function Incidents({
         <div className="flex flex-row items-center justify-center space-x-2">
           <Title
             title="Incidents"
-            icon={<ImLifebuoy className="w-6 h-auto" />}
+            icon={<ImLifebuoy className="h-auto w-6" />}
           />
           <PillBadge>{incidents?.length ?? 0}</PillBadge>
         </div>
@@ -129,13 +129,13 @@ export default function Incidents({
       childrenClassName=""
     >
       <div className="flex flex-col">
-        <div className="flex flex-col items-start relative">
+        <div className="relative flex flex-col items-start">
           <IncidentsFilterBar
             defaultValues={filterIncidentOptions}
             onChangeFilterValues={(value) => setFilterIncidentOptions(value)}
           />
         </div>
-        <div className="flex max-h-full overflow-y-auto flex-col space-y-1">
+        <div className="flex max-h-full flex-col space-y-1 overflow-y-auto">
           <DetailsTable
             loading={isLoading}
             data={incidents || []}

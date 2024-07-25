@@ -45,7 +45,7 @@ export function AgentNamesDropdown({
       hideControlBorder
       defaultValue="All"
       prefix={
-        <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+        <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
           Agent:
         </div>
       }

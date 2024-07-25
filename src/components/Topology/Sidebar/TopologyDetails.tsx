@@ -56,12 +56,12 @@ export default function TopologyDetails({
               data-testid="type-link"
               to={`/topology?type=${topology.type}`}
               data-tooltip={topology.type}
-              className="cursor-pointer text-blue-500 my-auto underline"
+              className="my-auto cursor-pointer text-blue-500 underline"
             >
               <Icon
                 name={topology.icon}
                 secondary={topology.type}
-                className="mr-1 object-center h-5"
+                className="mr-1 h-5 object-center"
               />
             </Link>
           )}
@@ -115,14 +115,14 @@ export default function TopologyDetails({
   return (
     <CollapsiblePanel
       Header={
-        <Title title="Details" icon={<BsCardList className="w-6 h-auto" />} />
+        <Title title="Details" icon={<BsCardList className="h-auto w-6" />} />
       }
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
     >
-      <div className="flex flex-col overflow-x-hidden w-full gap-2">
+      <div className="flex w-full flex-col gap-2 overflow-x-hidden">
         {headlineProperties.length > 0 && (
-          <div className="flex flex-row gap-2 w-min py-2">
+          <div className="flex w-min flex-row gap-2 py-2">
             <CardMetrics items={headlineProperties} />
           </div>
         )}

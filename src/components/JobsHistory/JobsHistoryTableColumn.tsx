@@ -47,7 +47,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
       const formattedName = formatJobName(value);
 
       return (
-        <div className="flex flex-row items-center gap-1 cursor-pointer">
+        <div className="flex cursor-pointer flex-row items-center gap-1">
           <span
             onClick={(e) => {
               e.stopPropagation();
@@ -104,12 +104,12 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
             e.preventDefault();
             e.stopPropagation();
           }}
-          className={`w-full group flex flex-row gap-1 items-center`}
+          className={`group flex w-full flex-row items-center gap-1`}
         >
-          <span className="text-ellipsis overflow-x-hidden">
+          <span className="overflow-x-hidden text-ellipsis">
             {resourcePath ? (
               <Link to={link} className="text-blue-500">
-                {resourceName} <GoLinkExternal className="h-3 w-3 inline" />
+                {resourceName} <GoLinkExternal className="inline h-3 w-3" />
               </Link>
             ) : (
               resourceName
@@ -122,7 +122,7 @@ export const JobsHistoryTableColumn: ColumnDef<JobHistory, any>[] = [
               e.stopPropagation();
               copyFn(resourceId);
             }}
-            className="hidden group-hover:inline "
+            className="hidden group-hover:inline"
           >
             <GoCopy title="Copy resource id" className="h-4 w-5" />
           </span>

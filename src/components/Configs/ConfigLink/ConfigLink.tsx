@@ -53,7 +53,7 @@ export default function ConfigLink({
           showPrimaryIcon={showPrimaryIcon}
           showSecondaryIcon={showSecondaryIcon}
         >
-          <span className="overflow-hidden text-ellipsis flex-1">
+          <span className="flex-1 overflow-hidden text-ellipsis">
             {data.name}
           </span>
         </ConfigsTypeIcon>

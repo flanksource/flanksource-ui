@@ -101,7 +101,7 @@ export default function TopologyResourceForm({
   }, [isLoading, topology]);
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto h-full">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto">
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => handleSubmit(values)}
@@ -109,9 +109,9 @@ export default function TopologyResourceForm({
         {({ isValid, handleSubmit }) => (
           <Form
             onSubmit={handleSubmit}
-            className="flex flex-col flex-1 overflow-y-auto"
+            className="flex flex-1 flex-col overflow-y-auto"
           >
-            <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <FormikTextInput label="Name" name="name" />
               <FormikTextInput
                 label="Namespace"
@@ -131,7 +131,7 @@ export default function TopologyResourceForm({
               />
             </div>
             <div className={`flex flex-col ${footerClassName}`}>
-              <div className="flex flex-1 flex-row items-center space-x-4 justify-end">
+              <div className="flex flex-1 flex-row items-center justify-end space-x-4">
                 <CanEditResource
                   resourceType="topologies"
                   id={topology?.id!}

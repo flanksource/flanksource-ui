@@ -35,7 +35,7 @@ function FilterLogsByComponent() {
 
   if (error && !data) {
     return (
-      <div className="flex space-x-3 items-center">
+      <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2 text-red-600">
           <MdOutlineError />
           <span>Unable to load components!</span>

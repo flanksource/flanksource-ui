@@ -7,8 +7,8 @@ export default function ClerkRegistration() {
   const redirectUrl = query.redirectUrl ? query.return_to : undefined;
 
   return (
-    <div className="w-full px-3 text-center flex flex-col">
-      <div className="flex flex-col mb-12">
+    <div className="flex w-full flex-col px-3 text-center">
+      <div className="mb-12 flex flex-col">
         <div className="flex flex-col items-center">
           <SignUp
             path="/registration"

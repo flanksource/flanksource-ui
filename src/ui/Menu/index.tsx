@@ -9,7 +9,7 @@ type ItemProps = Partial<$ElementProps<typeof HLMenu.Item>>;
 const Item = ({ children, ...props }: ItemProps) => (
   <HLMenu.Item
     as="div"
-    className="flex items-center w-full text-gray-700 hover:bg-gray-200 p-3"
+    className="flex w-full items-center p-3 text-gray-700 hover:bg-gray-200"
     {...props}
   >
     {children}
@@ -41,7 +41,7 @@ const Items = ({
       className={clsx(
         className,
         widthClass,
-        "mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-card  focus:outline-none z-10 "
+        "z-10 mt-2 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-card focus:outline-none"
       )}
       style={styles}
     >
@@ -52,7 +52,7 @@ const Items = ({
 
 type VerticalIconButtonProps = Partial<$ElementProps<typeof HLMenu.Button>>;
 const VerticalIconButton = (_props: VerticalIconButtonProps) => (
-  <HLMenu.Button className="p-0.5 min-w-7 rounded-full text-gray-400 hover:text-gray-500">
+  <HLMenu.Button className="min-w-7 rounded-full p-0.5 text-gray-400 hover:text-gray-500">
     <DotsVerticalIcon className="h-6 w-6" />
   </HLMenu.Button>
 );

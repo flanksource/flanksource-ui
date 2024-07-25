@@ -8,7 +8,7 @@ function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
 
   return (
     <div
-      className="flex flex-row space-x-2 items-center"
+      className="flex flex-row items-center space-x-2"
       style={{
         marginLeft: row.depth * 20
       }}

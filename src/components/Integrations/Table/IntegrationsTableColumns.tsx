@@ -107,7 +107,7 @@ export const integrationsTableColumns: ColumnDef<SchemaResourceWithJobStatus>[] 
 
         return (
           <div
-            className="flex flex-row gap-1 items-center lowercase"
+            className="flex flex-row items-center gap-1 lowercase"
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();

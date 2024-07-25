@@ -33,7 +33,7 @@ export function ConfigSummaryTableVirtualAggregateColumn({
             </div>
           </ConfigsTypeIcon>
         ) : (
-          <div className="flex flex-row gap-1 items-center">
+          <div className="flex flex-row items-center gap-1">
             {groupingValue ? (
               <span>{groupingValue}</span>
             ) : (

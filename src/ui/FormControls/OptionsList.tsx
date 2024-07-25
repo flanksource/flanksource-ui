@@ -40,15 +40,15 @@ export function OptionsList({
 
   return (
     <div
-      className={clsx("bg-white rounded-md -space-y-px border", className)}
+      className={clsx("-space-y-px rounded-md border bg-white", className)}
       {...rest}
     >
       {options.map((option, index) => {
         return (
           <label
             className={clsx(
-              "rounded-tl-md rounded-tr-md relative border-0 border-b p-4 flex cursor-pointer focus:outline-none",
-              selectedOption === option ? "bg-blue-50 z-10" : "border-gray-200"
+              "relative flex cursor-pointer rounded-tl-md rounded-tr-md border-0 border-b p-4 focus:outline-none",
+              selectedOption === option ? "z-10 bg-blue-50" : "border-gray-200"
             )}
             key={index}
             onClick={(e) => optionSelect(option)}
@@ -57,7 +57,7 @@ export function OptionsList({
               type="radio"
               name={name}
               value={option.value}
-              className="h-4 w-4 mt-0.5 cursor-pointer shrink-0 text-blue-600 border-gray-300 focus:ring-blue-500 hidden"
+              className="mt-0.5 hidden h-4 w-4 shrink-0 cursor-pointer border-gray-300 text-blue-600 focus:ring-blue-500"
               aria-labelledby={`name-${index}-label`}
               aria-describedby={`name-${index}-description`}
             />

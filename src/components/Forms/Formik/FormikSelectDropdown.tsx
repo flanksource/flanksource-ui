@@ -65,7 +65,7 @@ export default function FormikSelectDropdown({
       {label && <label className="form-label">{label}</label>}
       <Select
         name={name}
-        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+        className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         options={options}
         value={value}
         onChange={(value: any) => {
@@ -96,12 +96,12 @@ export default function FormikSelectDropdown({
           Option: ({ children, ...props }) => {
             return (
               <components.Option {...props}>
-                <div className="flex flex-row gap-2 items-center text-sm">
+                <div className="flex flex-row items-center gap-2 text-sm">
                   {(props.data as any).icon && (
                     // eslint-disable-next-line react/jsx-no-useless-fragment
                     <>{(props.data as any).icon}</>
                   )}
-                  <div className="flex-1 whitespace-nowrap text-ellipsis break-before-all">
+                  <div className="flex-1 break-before-all text-ellipsis whitespace-nowrap">
                     {children}
                   </div>
                 </div>
@@ -111,12 +111,12 @@ export default function FormikSelectDropdown({
           SingleValue: ({ children, ...props }) => {
             return (
               <components.SingleValue {...props}>
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row items-center gap-2">
                   {(props.data as any).icon && (
                     // eslint-disable-next-line react/jsx-no-useless-fragment
                     <>{(props.data as any).icon}</>
                   )}
-                  <div className="flex-1 whitespace-nowrap text-ellipsis break-after-all">
+                  <div className="flex-1 break-after-all text-ellipsis whitespace-nowrap">
                     {children}
                   </div>
                 </div>
@@ -128,7 +128,7 @@ export default function FormikSelectDropdown({
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
       {isTouched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

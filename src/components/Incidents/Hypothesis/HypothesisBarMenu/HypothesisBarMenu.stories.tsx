@@ -13,7 +13,7 @@ export default {
 
 const Template: ComponentStory<typeof HypothesisBarMenu> = (arg: any) => (
   <QueryClientProvider client={defaultQueryClient}>
-    <div className="w-96 border rounded p-2 flex justify-between">
+    <div className="flex w-96 justify-between rounded border p-2">
       <span>A menu item</span>
       <HypothesisBarMenu {...arg} />
     </div>

@@ -17,7 +17,7 @@ export function ConfigSummaryVirtualColumnCell({
 
   return (
     <div
-      className="flex flex-1 flex-row gap-1 items-center"
+      className="flex flex-1 flex-row items-center gap-1"
       style={{
         marginLeft: row.depth * 20
       }}

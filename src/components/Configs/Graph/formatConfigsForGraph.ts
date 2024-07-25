@@ -122,14 +122,17 @@ export function prepareConfigsForGraph(
       }
     })
     // group intermediary nodes with the same related_ids
-    .reduce((acc, config) => {
-      const key = config.related_ids?.sort()?.join(",")!;
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(config);
-      return acc;
-    }, {} as Record<string, ConfigGraphNodes[]>);
+    .reduce(
+      (acc, config) => {
+        const key = config.related_ids?.sort()?.join(",")!;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(config);
+        return acc;
+      },
+      {} as Record<string, ConfigGraphNodes[]>
+    );
 
   // Create a new intermediary node, a combination of all intermediary nodes
   // with same related ids

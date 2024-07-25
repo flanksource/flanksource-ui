@@ -212,20 +212,20 @@ export function SchemaResourceEdit({
   return (
     <>
       <Head prefix={`${name} - ${resourceName}`} />
-      <div className="flex flex-col flex-1 overflow-y-auto">
+      <div className="flex flex-1 flex-col overflow-y-auto">
         <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
           {subNav.map((nav) => {
             return (
               <Tab
-                className="flex flex-col flex-1 overflow-y-auto"
+                className="flex flex-1 flex-col overflow-y-auto"
                 key={nav.label}
                 label={nav.label}
                 value={nav.value}
               >
-                <div className="flex flex-col flex-1 bg-white overflow-y-auto">
+                <div className="flex flex-1 flex-col overflow-y-auto bg-white">
                   {hasSubNav("spec") &&
                     (table === "canaries" && !source ? (
-                      <div className="flex-col flex flex-1 overflow-y-auto">
+                      <div className="flex flex-1 flex-col overflow-y-auto">
                         <HealthSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           resourceInfo={resourceInfo}
@@ -233,7 +233,7 @@ export function SchemaResourceEdit({
                         />
                       </div>
                     ) : table === "config_scrapers" ? (
-                      <div className="flex-col flex flex-1 overflow-y-auto">
+                      <div className="flex flex-1 flex-col overflow-y-auto">
                         <ConfigScrapperSpecEditor
                           onSubmit={(val) => doSubmit(val)}
                           resourceValue={defaultValues}
@@ -245,7 +245,7 @@ export function SchemaResourceEdit({
                         />
                       </div>
                     ) : table === "topologies" ? (
-                      <div className="flex-col flex flex-1 overflow-y-auto">
+                      <div className="flex flex-1 flex-col overflow-y-auto">
                         <EditTopologyResource
                           topologyResource={
                             defaultValues as unknown as SchemaResourceI
@@ -256,11 +256,11 @@ export function SchemaResourceEdit({
                       </div>
                     ) : (
                       <form
-                        className="flex flex-col flex-1 overflow-y-auto"
+                        className="flex flex-1 flex-col overflow-y-auto"
                         onSubmit={handleSubmit(doSubmit)}
                       >
-                        <div className="flex flex-col flex-1 overflow-y-auto gap-4 pb-4">
-                          <div className="px-8 pt-4 flex flex-col">
+                        <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
+                          <div className="flex flex-col px-8 pt-4">
                             {!source ? (
                               <>
                                 <Controller
@@ -299,7 +299,7 @@ export function SchemaResourceEdit({
                               </>
                             ) : (
                               <div className="flex justify-between">
-                                <h2 className="text-dark-gray font-bold mr-3 text-xl flex items-center space-x-2">
+                                <h2 className="mr-3 flex items-center space-x-2 text-xl font-bold text-dark-gray">
                                   {supportsField("icon") && (
                                     <Icon name={icon} />
                                   )}
@@ -422,11 +422,11 @@ export function SchemaResourceEdit({
                               </div>
                             )}
                           </div>
-                          <div className="px-8 space-y-2">
+                          <div className="space-y-2 px-8">
                             <label htmlFor="icon-picker" className="form-label">
                               Spec
                             </label>
-                            <div className="flex flex-col h-[min(500px,calc(100vh-500px))]">
+                            <div className="flex h-[min(500px,calc(100vh-500px))] flex-col">
                               <CodeEditor
                                 key={keyRef.current}
                                 readOnly={!!source || disabled}
@@ -452,7 +452,7 @@ export function SchemaResourceEdit({
                         >
                           <div
                             className={clsx(
-                              "flex justify-end px-10 rounded-b py-4 space-x-2",
+                              "flex justify-end space-x-2 rounded-b px-10 py-4",
                               {
                                 "bg-gray-100": isModal
                               }

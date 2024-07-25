@@ -14,12 +14,12 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
   const fetchStepOption = (step: Step, index: number) => {
     if (step.finished) {
       return (
-        <li className="relative md:flex-1 md:flex" key={step.label}>
-          <a href="#" className="group flex items-center w-full">
-            <span className="px-6 py-1.5 flex items-center text-sm font-medium">
-              <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full group-hover:bg-blue-800">
+        <li className="relative md:flex md:flex-1" key={step.label}>
+          <a href="#" className="group flex w-full items-center">
+            <span className="flex items-center px-6 py-1.5 text-sm font-medium">
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 group-hover:bg-blue-800">
                 <svg
-                  className="w-6 h-6 text-white"
+                  className="h-6 w-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -39,7 +39,7 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
           </a>
 
           <div
-            className="hidden md:block absolute top-0 right-0 h-full w-5"
+            className="absolute right-0 top-0 hidden h-full w-5 md:block"
             aria-hidden="true"
           >
             <svg
@@ -60,13 +60,13 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
       );
     } else if (step.inProgress) {
       return (
-        <li className="relative md:flex-1 md:flex" key={step.label}>
+        <li className="relative md:flex md:flex-1" key={step.label}>
           <a
             href="#"
-            className="px-6 py-1.5 flex items-center text-sm font-medium"
+            className="flex items-center px-6 py-1.5 text-sm font-medium"
             aria-current="step"
           >
-            <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center border-2 border-blue-600 rounded-full">
+            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-blue-600">
               <span className="text-blue-600">{step.position}</span>
             </span>
             <span className="ml-4 text-sm font-medium text-blue-600">
@@ -75,7 +75,7 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
           </a>
           {index !== steps.length - 1 && (
             <div
-              className="hidden md:block absolute top-0 right-0 h-full w-5"
+              className="absolute right-0 top-0 hidden h-full w-5 md:block"
               aria-hidden="true"
             >
               <svg
@@ -97,10 +97,10 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
       );
     } else {
       return (
-        <li className="relative md:flex-1 md:flex" key={step.label}>
+        <li className="relative md:flex md:flex-1" key={step.label}>
           <a href="#" className="group flex items-center">
-            <span className="px-6 py-1.5 flex items-center text-sm font-medium">
-              <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center border-2 border-gray-300 rounded-full group-hover:border-gray-400">
+            <span className="flex items-center px-6 py-1.5 text-sm font-medium">
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 group-hover:border-gray-400">
                 <span className="text-gray-500 group-hover:text-gray-900">
                   {step.position}
                 </span>
@@ -117,7 +117,7 @@ export function StepProgressBar({ steps, ...rest }: StepProgressBarProps) {
 
   return (
     <nav aria-label="Progress" {...rest}>
-      <ol className="border border-gray-300 rounded-md divide-y divide-gray-300 md:flex md:divide-y-0">
+      <ol className="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
         {steps.map(fetchStepOption)}
       </ol>
     </nav>

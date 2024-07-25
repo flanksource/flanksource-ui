@@ -26,11 +26,11 @@ export default function SelectPeopleResponderDropdown({
   );
 
   return (
-    <div className="flex flex-row gap-2 flex-1 items-center">
-      <label className="text-sm text-gray-500 mr-2 whitespace-nowrap w-12">
+    <div className="flex flex-1 flex-row items-center gap-2">
+      <label className="mr-2 w-12 whitespace-nowrap text-sm text-gray-500">
         Person:
       </label>
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-1 flex-col">
         <ReactSelectDropdown
           name="team"
           isLoading={isLoading}

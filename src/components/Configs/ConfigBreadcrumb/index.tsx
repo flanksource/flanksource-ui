@@ -25,7 +25,7 @@ export function ConfigBreadcrumb({ setTitle }: ConfigBreadcrumbProps) {
             list={[
               { to: "/catalog", title: "Catalog" },
               <span key={data?.id}>
-                <ConfigIcon config={data} className="h-5 mr-1" />
+                <ConfigIcon config={data} className="mr-1 h-5" />
                 {data?.name}
               </span>
             ]}

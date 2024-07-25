@@ -69,7 +69,7 @@ const ConnectionFormEdit = ({
   return (
     <div className="flex flex-col space-y-2">
       <h5 className="font-bold">Connection</h5>
-      <div className="flex flex-row w-full">
+      <div className="flex w-full flex-row">
         <Switch
           options={["None", ...connections]}
           defaultValue="None"
@@ -81,7 +81,7 @@ const ConnectionFormEdit = ({
         />
       </div>
       {FormFields && (
-        <div className="flex flex-col space-y-2 p-2 border border-gray-200 rounded-md">
+        <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-2">
           {showLabel && <label>{FormFields.label}</label>}
           <FormFields.Component name={`${name}.${FormFields.name}`} />
         </div>

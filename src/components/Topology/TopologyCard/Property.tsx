@@ -35,14 +35,14 @@ export function PropertyDisplay({
     >
       <Icon name={icon} className="mr-1 w-4" />
       {!isEmpty(label) && (
-        <span className="text-xs overflow-hidden truncate text-gray-400 pb-1">
+        <span className="overflow-hidden truncate pb-1 text-xs text-gray-400">
           {label}:&nbsp;
         </span>
       )}
       <span
         title={property.text}
         className={clsx(
-          "text-xs overflow-hidden truncate",
+          "overflow-hidden truncate text-xs",
           `text-${color}-500`
         )}
       >

@@ -28,7 +28,7 @@ export default function FormikSelect({
       <select
         id={name}
         className={clsx(
-          "rounded-md flex-1 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block"
+          "inline-block flex-1 rounded-md border-gray-300 py-2 pl-3 pr-10 shadow-sm"
         )}
         {...props}
         {...field}

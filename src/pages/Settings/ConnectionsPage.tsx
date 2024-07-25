@@ -148,9 +148,9 @@ export function ConnectionsPage() {
         contentClass="p-0 h-full"
         loading={loading}
       >
-        <div className="flex flex-col px-6 pb-0 h-full max-w-screen-xl mx-auto overflow-y-auto">
+        <div className="mx-auto flex h-full max-w-screen-xl flex-col overflow-y-auto px-6 pb-0">
           <ConnectionList
-            className="flex flex-col h-full py-1 mt-6 overflow-y-auto"
+            className="mt-6 flex h-full flex-col overflow-y-auto py-1"
             data={connections ?? []}
             isLoading={loading}
             onRowClick={(val) => {

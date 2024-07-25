@@ -25,7 +25,7 @@ export default function ConfigInsightNameCell({
     <div
       data-html={true}
       data-class="max-w-[20rem]"
-      className="overflow-hidden cursor-pointer flex-1"
+      className="flex-1 cursor-pointer overflow-hidden"
     >
       <ConfigAnalysisLink key={insight.id} configAnalysis={insight} />
     </div>

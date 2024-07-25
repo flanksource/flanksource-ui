@@ -49,7 +49,7 @@ export default function TopologyOpenIncidentsFilterBar({
       }}
     >
       <div className="px-2">
-        <FaFilter className="text-gray-500 w-4 inline-block object-center" />
+        <FaFilter className="inline-block w-4 object-center text-gray-500" />
       </div>
 
       <IncidentTypeDropdown

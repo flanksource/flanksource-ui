@@ -27,7 +27,7 @@ const renderIcon = (icon: string | React.ReactNode) => {
   if (typeof icon === "object") {
     return icon;
   } else if (typeof icon === "string") {
-    return <Icon name={icon} className="w-4 h-4" />;
+    return <Icon name={icon} className="h-4 w-4" />;
   }
 };
 
@@ -41,7 +41,7 @@ const StatusInfoEntry = ({
   if (statusInfo.url) {
     return (
       <Link
-        className="inline-flex space-x-1 cursor-pointer"
+        className="inline-flex cursor-pointer space-x-1"
         key={statusInfo.url}
         to={statusInfo.url}
         target={target || ""}
@@ -52,7 +52,7 @@ const StatusInfoEntry = ({
     );
   } else {
     return (
-      <span className="inline-flex space-x-1 cursor-pointer">
+      <span className="inline-flex cursor-pointer space-x-1">
         {statusInfo.icon && renderIcon(statusInfo.icon)}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </span>
@@ -71,7 +71,7 @@ export function StatusLine({
 }: StatusLineProps) {
   return (
     <div
-      className={clsx("flex flex-row space-x-1  items-center", className)}
+      className={clsx("flex flex-row items-center space-x-1", className)}
       {...rest}
     >
       {icon && renderIcon(icon)}
@@ -79,7 +79,7 @@ export function StatusLine({
         <Link
           title={label}
           target={target || ""}
-          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
           to={url}
         >
           {label}
@@ -88,12 +88,12 @@ export function StatusLine({
       {!url && (
         <span
           title={label}
-          className="text-xs cursor-pointer h-4 overflow-hidden truncate"
+          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
         >
           {label}
         </span>
       )}
-      <div className="flex flex-row  space-x-1.5">
+      <div className="flex flex-row space-x-1.5">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;
         })}

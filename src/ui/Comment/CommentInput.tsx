@@ -137,7 +137,7 @@ export function CommentInput({
           })) ?? []
         }
         renderSuggestion={Suggestion}
-        className="bg-blue-200 rounded"
+        className="rounded bg-blue-200"
       />
     </MentionsInput>
   );

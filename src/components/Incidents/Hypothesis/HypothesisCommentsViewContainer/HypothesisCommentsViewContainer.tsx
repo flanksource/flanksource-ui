@@ -47,7 +47,7 @@ type CommentViewEntry = {
 function GroupHeading(props: GroupHeadingProps<any>) {
   return (
     <div className="relative">
-      <div className="text-lg border-b mb-2">
+      <div className="mb-2 border-b text-lg">
         <components.GroupHeading {...props} />
       </div>
     </div>
@@ -56,7 +56,7 @@ function GroupHeading(props: GroupHeadingProps<any>) {
 
 function Option(props: OptionProps<OptionItem>) {
   return (
-    <div className="text-sm pl-4">
+    <div className="pl-4 text-sm">
       <components.Option {...props} />
     </div>
   );
@@ -192,7 +192,7 @@ export function HypothesisCommentsViewContainer({
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex w-full flex-col">
       <div ref={commentRef} className="flex flex-col justify-end">
         <div className="flex flex-col overflow-y-auto p-4">
           {comments.map(({ data, hypothesis, type }, index) => (
@@ -213,13 +213,13 @@ export function HypothesisCommentsViewContainer({
           ))}
         </div>
       </div>
-      <div className="border-b my-1 w-full"></div>
-      <div className="relative flex items-start space-x-3 w-full p-4">
+      <div className="my-1 w-full border-b"></div>
+      <div className="relative flex w-full items-start space-x-3 p-4">
         <div className="relative">
           <Avatar user={user!} circular />
         </div>
-        <div className="min-w-0 flex-1 flex flex-col space-y-4">
-          <div id="comment-box" className="flex flex-col flex-1 space-y-4">
+        <div className="flex min-w-0 flex-1 flex-col space-y-4">
+          <div id="comment-box" className="flex flex-1 flex-col space-y-4">
             <div className="relative">
               <CommentInput
                 isSingleLine
@@ -235,7 +235,7 @@ export function HypothesisCommentsViewContainer({
                   maxWidth: "100%"
                 }}
               />
-              <div className="right-[40px] top-0 absolute">
+              <div className="absolute right-[40px] top-0">
                 <SearchSelect
                   options={selectOptions}
                   name=""
@@ -248,7 +248,7 @@ export function HypothesisCommentsViewContainer({
                   toggleBtn={
                     <>
                       <Tag
-                        className="whitespace-nowrap w-32 text-ellipsis overflow-hidden cursor-pointer bg-blue-100 text-blue-800 px-2 z-100 my-2 ml-2"
+                        className="z-100 my-2 ml-2 w-32 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap bg-blue-100 px-2 text-blue-800"
                         data-tooltip-id="selected-hypothesis-tooltip"
                         data-tooltip-content={selectedHypothesis?.label?.toString()}
                       >
@@ -260,7 +260,7 @@ export function HypothesisCommentsViewContainer({
                   menuPlacement="top"
                 />
               </div>
-              <div className="flex h-full absolute top-0 right-0 z-100">
+              <div className="z-100 absolute right-0 top-0 flex h-full">
                 <button
                   disabled={!commentTextValue}
                   type="button"
@@ -303,7 +303,7 @@ export function HypothesisCommentViewEntry({
     <div className={clsx("relative", !lastComment && "pb-8", className)}>
       {!lastComment && (
         <span
-          className="absolute top-5 left-4 -ml-px h-full w-0.5 bg-gray-200"
+          className="absolute left-4 top-5 -ml-px h-full w-0.5 bg-gray-200"
           aria-hidden="true"
         ></span>
       )}
@@ -328,7 +328,7 @@ export function HypothesisCommentViewEntry({
                 </span>
               </div>
               <div className="flex flex-1 justify-end">
-                <Tag className="bg-blue-100 text-blue-800 inline-flex px-2">
+                <Tag className="inline-flex bg-blue-100 px-2 text-blue-800">
                   {hypothesis}
                 </Tag>
               </div>

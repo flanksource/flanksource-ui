@@ -47,7 +47,7 @@ export const Redhat = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.product?.message}</p>
+        <p className="text-sm text-red-600">{errors.product?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -70,7 +70,7 @@ export const Redhat = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.category?.message}</p>
+        <p className="text-sm text-red-600">{errors.category?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -93,7 +93,7 @@ export const Redhat = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.description?.message}</p>
+        <p className="text-sm text-red-600">{errors.description?.message}</p>
       </div>
       <div className="mb-4">
         <Controller
@@ -116,7 +116,7 @@ export const Redhat = ({
             );
           }}
         />
-        <p className="text-red-600 text-sm">{errors.body?.message}</p>
+        <p className="text-sm text-red-600">{errors.body?.message}</p>
       </div>
     </div>
   );

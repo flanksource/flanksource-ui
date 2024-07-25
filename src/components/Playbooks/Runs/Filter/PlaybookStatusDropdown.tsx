@@ -63,7 +63,7 @@ export default function PlaybookStatusDropdown({
           ...options
         ]}
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
             {label}:
           </div>
         }

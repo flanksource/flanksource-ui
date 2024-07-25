@@ -8,9 +8,9 @@ type MinimalLayoutProps = {
 export function MinimalLayout({ children, title }: MinimalLayoutProps) {
   return (
     <div className="flex flex-1">
-      <div className="flex flex-col flex-1 overflow-x-auto">
-        <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
-          <div className="flex-1 px-4 flex justify-between">
+      <div className="flex flex-1 flex-col overflow-x-auto">
+        <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white shadow">
+          <div className="flex flex-1 justify-between px-4">
             <div className="flex items-center">
               <div>{title}</div>
             </div>
@@ -21,7 +21,7 @@ export function MinimalLayout({ children, title }: MinimalLayoutProps) {
         </div>
 
         <main>
-          <div className="py-6 max-w-screen-lg mx-auto bg-warm-gray-50">
+          <div className="mx-auto max-w-screen-lg bg-warm-gray-50 py-6">
             <div className="mx-auto px-4 sm:px-6 md:px-8">{children}</div>
           </div>
         </main>

@@ -42,7 +42,7 @@ export default function EditEvidenceDefinitionOfDoneScript({
       actions={[
         <button
           key="update"
-          className="px-4 py-2 btn-primary"
+          className="btn-primary px-4 py-2"
           type="button"
           onClick={async () => {
             await mutateAsync([
@@ -58,7 +58,7 @@ export default function EditEvidenceDefinitionOfDoneScript({
         </button>
       ]}
     >
-      <div className="w-full flex flex-col space-y-4 p-4">
+      <div className="flex w-full flex-col space-y-4 p-4">
         <ScriptStep
           value={dodScript}
           evidenceType={evidence.type}

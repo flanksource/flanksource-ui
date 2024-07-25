@@ -8,7 +8,7 @@ export function TagsCell({ row, column }: CellContext<any, any>): JSX.Element {
       {tags?.length > 0 ? (
         tags?.map((tag) => (
           <div
-            className="bg-gray-200 px-1 py-0.5 mr-1 rounded-md text-gray-600 font-semibold text-xs"
+            className="mr-1 rounded-md bg-gray-200 px-1 py-0.5 text-xs font-semibold text-gray-600"
             key={tag}
           >
             {tag}

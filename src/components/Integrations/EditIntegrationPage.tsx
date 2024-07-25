@@ -99,27 +99,27 @@ export default function EditIntegrationPage() {
         contentClass="flex flex-col p-0 h-full"
         loading={isLoading || isRefetching}
       >
-        <div className="flex flex-col flex-1 overflow-y-auto">
-          <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+        <div className="flex flex-1 flex-col overflow-y-auto">
+          <div className="mx-auto flex w-screen max-w-screen-xl flex-1 flex-col overflow-y-auto p-4">
             <Tabs
               activeTab={activeTab}
               onSelectTab={(tab) => setActiveTab(tab as any)}
             >
               <Tab
-                className="flex flex-col flex-1 overflow-y-auto"
+                className="flex flex-1 flex-col overflow-y-auto"
                 label={"Spec"}
                 value={"Edit Form"}
               >
                 {isLoading ? (
-                  <div className="flex flex-col flex-1 items-center justify-center">
+                  <div className="flex flex-1 flex-col items-center justify-center">
                     <Loading />
                   </div>
                 ) : (
-                  <div className="flex flex-col flex-1 overflow-y-auto">
+                  <div className="flex flex-1 flex-col overflow-y-auto">
                     {type === "logging_backends" ? (
                       <LogBackendsForm />
                     ) : type === "topologies" ? (
-                      <div className="flex-col flex flex-1 overflow-y-auto">
+                      <div className="flex flex-1 flex-col overflow-y-auto">
                         <EditTopologyResource
                           onSuccess={() => {}}
                           topologyResource={resource!}
@@ -142,7 +142,7 @@ export default function EditIntegrationPage() {
                 )}
               </Tab>
               <Tab
-                className="flex flex-col flex-1 overflow-y-auto"
+                className="flex flex-1 flex-col overflow-y-auto"
                 label={"Job History"}
                 value={"Job History"}
               >

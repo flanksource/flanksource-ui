@@ -19,9 +19,9 @@ export function RadioOptionsGroup({
     <div className={className}>
       {options.map((option) => (
         <div key={option.value} className="form-check">
-          <label className="flex space-x-2 items-center form-check-label text-gray-800 hover:font-medium">
+          <label className="form-check-label flex items-center space-x-2 text-gray-800 hover:font-medium">
             <input
-              className="border border-gray-300 checked:bg-blue-600 cursor-pointer duration-100 focus:outline-none mt-1 rounded-full transition w-4"
+              className="mt-1 w-4 cursor-pointer rounded-full border border-gray-300 transition duration-100 checked:bg-blue-600 focus:outline-none"
               type="radio"
               name={name}
               id={`id-${option.value}`}

@@ -15,7 +15,7 @@ export function ActionButtonGroup({
   return (
     <div
       className={clsx(
-        "flex rounded-t-lg justify-between bg-gray-100 px-8 pb-4 items-end",
+        "flex items-end justify-between rounded-t-lg bg-gray-100 px-8 pb-4",
         className
       )}
       {...rest}
@@ -27,7 +27,7 @@ export function ActionButtonGroup({
             type="submit"
             className={clsx(
               !previousAction.primary
-                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                ? "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm"
                 : "btn-primary",
               "mt-4",
               {
@@ -47,7 +47,7 @@ export function ActionButtonGroup({
             type="submit"
             className={clsx(
               !nextAction.primary
-                ? "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                ? "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm"
                 : "btn-primary",
               "mt-4",
               {

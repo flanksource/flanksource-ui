@@ -32,7 +32,7 @@ export default function ConfigGraphDirectionToggle() {
           ? "Switch to horizontal layout"
           : "Switch to vertical layout"
       }
-      className="flex flex-column cursor-pointer gap-2 items-center p-1 border-b border-solid border-gray-200 hover:bg-gray-100"
+      className="flex-column flex cursor-pointer items-center gap-2 border-b border-solid border-gray-200 p-1 hover:bg-gray-100"
     >
       {toggleValue === "TB" ? (
         <BsDistributeHorizontal />

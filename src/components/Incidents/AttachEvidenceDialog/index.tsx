@@ -83,12 +83,12 @@ const IncidentOption = ({ option }: any) => {
     return (
       <div className="text-gray-900">
         <b>{option.value}</b>
-        <div className="text-gray-400 text-xs">Create new {option.value}</div>
+        <div className="text-xs text-gray-400">Create new {option.value}</div>
       </div>
     );
   }
   return (
-    <div className="flex space-x-4 justify-between w-full">
+    <div className="flex w-full justify-between space-x-4">
       <div className="flex space-x-4">
         <IncidentSeverityTag iconOnly severity={option.details.severity} />
         <div>{option?.description}</div>
@@ -376,7 +376,7 @@ export function AttachEvidenceDialog({
                 creatable={true}
                 displayOption={IncidentOption}
               />
-              <p className="text-red-600 text-sm">{errors.incident?.message}</p>
+              <p className="text-sm text-red-600">{errors.incident?.message}</p>
               <div className="pt-4">
                 <Controller
                   control={control}
@@ -391,14 +391,14 @@ export function AttachEvidenceDialog({
                     />
                   )}
                 />
-                <p className="text-red-600 text-sm">
+                <p className="text-sm text-red-600">
                   {errors.description?.message}
                 </p>
               </div>
               {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+                    <span className="mb-1 mr-4 w-16 text-sm font-bold text-gray-700">
                       Type
                     </span>
                     <SelectDropdown
@@ -411,7 +411,7 @@ export function AttachEvidenceDialog({
                         setValue("type", e);
                       }}
                     />
-                    <p className="text-red-600 text-sm">
+                    <p className="text-sm text-red-600">
                       {errors.type?.message}
                     </p>
                   </div>
@@ -420,7 +420,7 @@ export function AttachEvidenceDialog({
               {newIncidentCreated && (
                 <div className="space-y-2 pt-4">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-gray-700 mb-1 mr-4 w-16">
+                    <span className="mb-1 mr-4 w-16 text-sm font-bold text-gray-700">
                       Severity
                     </span>
                     <SelectDropdown
@@ -433,7 +433,7 @@ export function AttachEvidenceDialog({
                         setValue("severity", e);
                       }}
                     />
-                    <p className="text-red-600 text-sm">
+                    <p className="text-sm text-red-600">
                       {errors.severity?.message}
                     </p>
                   </div>
@@ -456,21 +456,21 @@ export function AttachEvidenceDialog({
                 }
                 dependentValue={selectedIncident?.value}
               />
-              <p className="text-red-600 text-sm">
+              <p className="text-sm text-red-600">
                 {/* @ts-ignore:next-line */}
                 {errors.hypothesis?.description?.message}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-end mt-4 py-4 px-8 rounded-t-lg bg-gray-100">
+          <div className="mt-4 flex items-center justify-end rounded-t-lg bg-gray-100 px-8 py-4">
             <button
               type="submit"
               className={`${
                 !isSubmitting
-                  ? "text-white bg-blue-600 hover:bg-blue-700"
-                  : "text-gray-400 bg-gray-200"
-              } rounded font-medium p-2 px-4 shadow-sm transition`}
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-gray-200 text-gray-400"
+              } rounded p-2 px-4 font-medium shadow-sm transition`}
             >
               {isSubmitting ? "Linking.." : "Link"}
             </button>

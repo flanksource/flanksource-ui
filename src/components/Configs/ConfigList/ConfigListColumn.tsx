@@ -84,7 +84,7 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
 
       if (row.original.deleted_at) {
         return (
-          <span className="flex flex-row gap-1 items-center">
+          <span className="flex flex-row items-center gap-1">
             <FaTrash className="text-red-500" />
             <span className="text-red-500">{status}</span>
           </span>

@@ -47,7 +47,7 @@ export const agentsTableColumns: ColumnDef<AgentSummary>[] = [
       const isOnline = now.diff(lastSeenDate, "seconds") < 61;
 
       return (
-        <div className="flex flex-row gap-1 items-center">
+        <div className="flex flex-row items-center gap-1">
           <FaDotCircle
             className={clsx(isOnline ? "text-green-500" : "text-red-500")}
           />

@@ -158,22 +158,22 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size as Size] || size }}
       className={clsx(
-        "rounded-8px mb-3 mr-3 shadow-card card bg-lightest-gray border-0 border-t-8 relative",
+        "card relative mb-3 mr-3 rounded-8px border-0 border-t-8 bg-lightest-gray shadow-card",
         StatusStyles[topology.status as ComponentStatus] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
     >
-      <div className="flex flex-row -mt-1 bg-white border-b flex-nowrap rounded-t-md">
-        <div className="flex flex-1 gap-2 pr-1 pt-2.5 pb-3.5 pl-2 overflow-hidden">
-          <div className="text-gray-color m-auto mr-1.5 flex-initial max-w-1/4 leading-1.21rel">
-            <h3 className="text-gray-color text-2xsi leading-1.21rel">
+      <div className="-mt-1 flex flex-row flex-nowrap rounded-t-md border-b bg-white">
+        <div className="flex flex-1 gap-2 overflow-hidden pb-3.5 pl-2 pr-1 pt-2.5">
+          <div className="m-auto mr-1.5 max-w-1/4 flex-initial leading-1.21rel text-gray-color">
+            <h3 className="text-2xsi leading-1.21rel text-gray-color">
               <Icon name={topology.icon} className="h-6 w-auto" />
             </h3>
           </div>
-          <div className="flex flex-col flex-1 m-auto overflow-hidden">
+          <div className="m-auto flex flex-1 flex-col overflow-hidden">
             <div
-              className="font-bold overflow-hidden truncate text-ellipsis align-middle text-15pxinrem leading-1.21rel"
+              className="overflow-hidden truncate text-ellipsis align-middle text-15pxinrem font-bold leading-1.21rel"
               title={topology.name}
             >
               {prepareTopologyLink(topology) && (
@@ -189,7 +189,7 @@ export function TopologyCard({
               {topology.status_reason && (
                 <div
                   title={topology.status_reason}
-                  className="text-sm text-gray-400 flex-1 text-ellipsis overflow-hidden whitespace-nowrap"
+                  className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-400"
                 >
                   {topology.status_reason}
                 </div>
@@ -199,17 +199,17 @@ export function TopologyCard({
         </div>
 
         {!metricsInFooter && (
-          <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
+          <div className="ml-auto flex pb-3.5 pl-1 pr-1.5 pt-3">
             <CardMetrics items={heading} row={size === Size.extra_large} />
           </div>
         )}
 
-        <div className="flex ml-auto pl-1 pr-1.5 pb-3.5 pt-3">
+        <div className="ml-auto flex pb-3.5 pl-1 pr-1.5 pt-3">
           {selectionMode && (
-            <div className="pr-1.5 pt-1 flex min-w-7 justify-end items-start">
+            <div className="flex min-w-7 items-start justify-end pr-1.5 pt-1">
               <input
                 type="checkbox"
-                className="w-4 h-4 outline-none text-dark-blue rounded-4px focus:outline-none"
+                className="h-4 w-4 rounded-4px text-dark-blue outline-none focus:outline-none"
                 checked={selected}
                 readOnly
               />
@@ -221,7 +221,7 @@ export function TopologyCard({
           )}
         </div>
       </div>
-      <div className="flex flex-nowrap bg-lightest-gray rounded-b-8px space-x-4">
+      <div className="flex flex-nowrap space-x-4 rounded-b-8px bg-lightest-gray">
         {metricsInFooter ? (
           <div className="flex flex-1 py-4">
             <CardMetrics items={heading} />
@@ -249,7 +249,7 @@ export function TopologyCard({
               </CustomScroll>
             )}
             <CustomScroll
-              className="flex-1 py-2 pl-2 pr-2 space-y-1.5"
+              className="flex-1 space-y-1.5 py-2 pl-2 pr-2"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
               maxHeight="200px"
               minChildCount={5}

@@ -59,7 +59,7 @@ export function LogBackendsPage() {
         contentClass="p-0 h-full"
         loading={isLoading}
       >
-        <div className="flex flex-col flex-1 px-6 pb-0 h-full max-w-screen-xl mx-auto">
+        <div className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col px-6 pb-0">
           <LogBackendsList
             className="mt-6 overflow-y-hidden"
             data={data || []}

@@ -59,7 +59,7 @@ export default function ConfigInsightsAnalyzerDropdown({
           });
         }
       }}
-      prefix={<span className="text-gray-500 text-xs">{prefix}</span>}
+      prefix={<span className="text-xs text-gray-500">{prefix}</span>}
       name={name}
       className={className}
       dropDownClassNames={dropDownClassNames}

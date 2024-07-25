@@ -68,7 +68,7 @@ export default function JobHistoryDurationDropdown() {
         label=""
         value={field.value ?? "none"}
         items={durationOptions}
-        className="inline-block p-3 w-auto max-w-[500px]"
+        className="inline-block w-auto max-w-[500px] p-3"
         dropDownClassNames="w-auto max-w-[400px] left-0"
         onChange={(val) => {
           if (val && val !== "none") {

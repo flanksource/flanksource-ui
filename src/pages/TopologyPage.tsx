@@ -218,8 +218,8 @@ export function TopologyPage() {
         contentClass="p-0 h-full"
         loading={isLoading}
       >
-        <div className="flex flex-row h-full py-2 overflow-y-auto">
-          <div className="flex flex-col flex-1 h-full overflow-y-auto">
+        <div className="flex h-full flex-row overflow-y-auto py-2">
+          <div className="flex h-full flex-1 flex-col overflow-y-auto">
             <TopologyFilterBar
               data={data}
               setTopologyCardSize={setTopologyCardSize}
@@ -229,8 +229,8 @@ export function TopologyPage() {
             {isLoading && !topology?.length ? (
               <CardsSkeletonLoader />
             ) : (
-              <div className="px-6 py-4 flex leading-1.21rel w-full">
-                <div className="flex flex-wrap w-full">
+              <div className="flex w-full px-6 py-4 leading-1.21rel">
+                <div className="flex w-full flex-wrap">
                   {sortedTopologies.map((item) => (
                     <TopologyCard
                       key={item.id}

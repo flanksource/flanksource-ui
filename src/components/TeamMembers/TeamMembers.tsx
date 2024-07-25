@@ -100,7 +100,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   }, [teamId]);
 
   return (
-    <div className="p-4 pb-8 space-y-8 bg-white rounded shadow flex flex-col">
+    <div className="flex flex-col space-y-8 rounded bg-white p-4 pb-8 shadow">
       {!teamMembers.length && !loading && (
         <div className="flex flex-col">
           <div className="text-center">
@@ -138,7 +138,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
               Add Members
             </button>
           </div>
-          <ul className="divide-y divide-gray-200 border-t border-b border-gray-200">
+          <ul className="divide-y divide-gray-200 border-b border-t border-gray-200">
             {teamMembers.map((teamMember) => {
               return (
                 <li
@@ -167,9 +167,9 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
                             removeTeamMember(teamMember);
                           }}
                         >
-                          <div className="cursor-pointer flex w-full">
+                          <div className="flex w-full cursor-pointer">
                             <IconButton
-                              className="bg-transparent flex items-center"
+                              className="flex items-center bg-transparent"
                               ovalProps={{
                                 stroke: "blue",
                                 height: "18px",
@@ -178,12 +178,12 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
                               }}
                               icon={
                                 <BsTrash
-                                  className="text-gray-600 border-0 border-l-1 border-gray-200"
+                                  className="border-l-1 border-0 border-gray-200 text-gray-600"
                                   size={18}
                                 />
                               }
                             />
-                            <span className="pl-2 text-sm block cursor-pionter">
+                            <span className="cursor-pionter block pl-2 text-sm">
                               Remove user
                             </span>
                           </div>
@@ -211,7 +211,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
         bodyClass=""
       >
         <div
-          className="flex flex-col h-full py-4 mb-16 overflow-y-auto p-4"
+          className="mb-16 flex h-full flex-col overflow-y-auto p-4 py-4"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
           <MultiSelectList
@@ -236,7 +236,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
                     <p className="text-sm text-gray-600">{teamMember.name}</p>
                     {teamMember.email && (
                       <p className="text-xs text-gray-500">
-                        <HiOutlineMail className="pr-1 w-4 h-4 inline-block" />
+                        <HiOutlineMail className="inline-block h-4 w-4 pr-1" />
                         {teamMember.email}
                       </p>
                     )}
@@ -245,7 +245,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
               );
             }}
           />
-          <div className="rounded flex bg-gray-100 px-4 py-2 justify-end absolute w-full bottom-0 left-0">
+          <div className="absolute bottom-0 left-0 flex w-full justify-end rounded bg-gray-100 px-4 py-2">
             <button
               className="btn-primary float-right"
               onClick={() => {

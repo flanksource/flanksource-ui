@@ -16,7 +16,7 @@ export default function ConfigSidebar() {
 
   return (
     <>
-      <div className="fixed top-20 right-2 flex flex-col lg:hidden">
+      <div className="fixed right-2 top-20 flex flex-col lg:hidden">
         <Button
           title="Show Sidebar"
           className="btn-text"

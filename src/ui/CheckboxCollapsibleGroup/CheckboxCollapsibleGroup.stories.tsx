@@ -7,7 +7,7 @@ export default {
   component: CheckboxCollapsibleGroup,
   decorators: [
     (Story: React.FC) => (
-      <div className="w-screen h-screen overflow-y-auto p-1">
+      <div className="h-screen w-screen overflow-y-auto p-1">
         <Story />
       </div>
     )

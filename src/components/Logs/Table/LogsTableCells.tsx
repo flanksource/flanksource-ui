@@ -52,11 +52,11 @@ export function LogsTableLabelsCell({
     <Popover
       toggle={
         <div className="flex flex-row items-center">
-          <div className="flex-shrink overflow-x-hidden cursor-pointer">
+          <div className="flex-shrink cursor-pointer overflow-x-hidden">
             <TagItem tag={tags[0]!} />
           </div>
           {tags.length > 1 && (
-            <div className="flex-shrink space-x-2 underline decoration-solid justify-left text-xs  cursor-pointer">
+            <div className="justify-left flex-shrink cursor-pointer space-x-2 text-xs underline decoration-solid">
               +{tags.length - 1} more
             </div>
           )}
@@ -65,9 +65,9 @@ export function LogsTableLabelsCell({
       placement="left"
     >
       <div className="flex flex-col p-1">
-        <div className="flex flex-col items-stretch max-h-96 overflow-y-auto">
+        <div className="flex max-h-96 flex-col items-stretch overflow-y-auto">
           <TagList
-            className="flex flex-col flex-1"
+            className="flex flex-1 flex-col"
             tags={tags}
             minimumItemsToShow={tags.length}
           />

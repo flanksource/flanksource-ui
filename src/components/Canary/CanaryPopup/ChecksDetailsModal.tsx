@@ -39,16 +39,16 @@ export function ChecksDetailsModal({
       containerClassName="flex flex-col h-full overflow-y-auto"
       bodyClass="flex flex-col flex-1 overflow-y-auto"
     >
-      <div className="flex flex-col flex-1 overflow-y-auto px-4 py-4 mb-16">
+      <div className="mb-16 flex flex-1 flex-col overflow-y-auto px-4 py-4">
         {!check && <Loading className="my-auto" type="modal" />}
         {check && (
           <>
             <CheckDetails
               check={check}
               timeRange={timeRange}
-              className={`flex flex-col overflow-y-auto flex-1`}
+              className={`flex flex-1 flex-col overflow-y-auto`}
             />
-            <div className="rounded-t-none  flex gap-2 bg-gray-100 px-8 py-4 justify-end absolute w-full bottom-0 left-0">
+            <div className="absolute bottom-0 left-0 flex w-full justify-end gap-2 rounded-t-none bg-gray-100 px-8 py-4">
               {check?.canary_id && <HealthCheckEdit check={check} />}
               <CheckRunNow
                 onSuccessfulRun={() => {
@@ -59,7 +59,7 @@ export function ChecksDetailsModal({
               />
               {!isCanaryUI && (
                 <>
-                  <div className="flex flex-col items-center ">
+                  <div className="flex flex-col items-center">
                     <PlaybooksDropdownMenu
                       className="btn-primary"
                       check_id={checkId as string}

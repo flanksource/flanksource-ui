@@ -8,10 +8,10 @@ export default function EmptyState({
   title?: string;
 }) {
   return (
-    <div className="flex flex-row justify-center items-center py-4 text-gray-400">
+    <div className="flex flex-row items-center justify-center py-4 text-gray-400">
       <div className="flex flex-col">
         {header}
-        <div className="flex flex-row space-x-2 text-base items-center">
+        <div className="flex flex-row items-center space-x-2 text-base">
           <FaExclamationTriangle className="text-xl" />
           <span>{title}</span>
         </div>

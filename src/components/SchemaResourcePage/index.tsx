@@ -53,7 +53,7 @@ export function SchemaResourcePage({
         }
         contentClass="flex flex-col h-full p-6"
       >
-        <div className="flex flex-col flex-1 w-full overflow-y-auto">
+        <div className="flex w-full flex-1 flex-col overflow-y-auto">
           <SchemaResourceList
             items={list || []}
             baseUrl={href}

@@ -10,7 +10,7 @@ import HelmCLIAddIntegrationCommand from "./HelmCLIAddIntegrationCommand";
 export function WarningBox() {
   return (
     <div
-      className="bg-yellow-100 border border-yellow-200 text-yellow-700 px-4 py-3 rounded relative"
+      className="relative rounded border border-yellow-200 bg-yellow-100 px-4 py-3 text-yellow-700"
       role="alert"
     >
       <span className="block sm:inline">
@@ -123,14 +123,14 @@ export default function RegistryInstallationInstructions({
 
   if (isLoadingSpec || !helmChartValues) {
     return (
-      <div className="flex flex-col gap-2 p-4 overflow-y-auto h-full">
+      <div className="flex h-full flex-col gap-2 overflow-y-auto p-4">
         <FormSkeletonLoader />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-auto">
+    <div className="flex h-auto flex-col">
       <Tabs
         activeTab={activeSpecTab}
         onSelectTab={(v) => setActiveSpecTab(v as any)}
@@ -138,7 +138,7 @@ export default function RegistryInstallationInstructions({
         <Tab
           label="Flux"
           value="Flux"
-          className="flex flex-col gap-2 h-auto p-2"
+          className="flex h-auto flex-col gap-2 p-2"
         >
           <FluxAddIntegrationCommand
             formValues={formValues}
@@ -148,7 +148,7 @@ export default function RegistryInstallationInstructions({
         </Tab>
 
         <Tab
-          className="flex flex-col gap-2 h-auto p-2"
+          className="flex h-auto flex-col gap-2 p-2"
           label="Helm CLI"
           value="Helm CLI"
         >

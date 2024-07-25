@@ -53,8 +53,8 @@ export default function NotificationsRecipientsTabs() {
   }, [activeTab, setFieldValue, values]);
 
   return (
-    <div className="flex flex-col ">
-      <label className="font-semibold text-sm mb-2">Recipient</label>
+    <div className="flex flex-col">
+      <label className="mb-2 text-sm font-semibold">Recipient</label>
       <Tabs
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab as ActiveTab)}

@@ -160,7 +160,7 @@ export default function ConfigInsightsTypeDropdown({
         }
       }}
       prefix={
-        <div className="text-xs text-gray-500 whitespace-nowrap">{prefix}</div>
+        <div className="whitespace-nowrap text-xs text-gray-500">{prefix}</div>
       }
       name={name}
       className={className}

@@ -264,7 +264,7 @@ export default function TopologyActionBar({
           .map(({ icon: Icon, isShown, label, ContainerComponent }, index) => {
             if (isShown(topology, "TopologySidebar")) {
               return (
-                <div key={label} className="py-1 px-1">
+                <div key={label} className="px-1 py-1">
                   <ContainerComponent
                     onRefresh={onRefresh}
                     topology={topology}

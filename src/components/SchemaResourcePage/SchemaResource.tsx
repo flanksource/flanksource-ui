@@ -52,7 +52,7 @@ export function SchemaResource({
         }
         contentClass="flex flex-col h-full"
       >
-        <div className="flex flex-col flex-1 overflow-y-auto mx-auto w-screen max-w-screen-xl p-4">
+        <div className="mx-auto flex w-screen max-w-screen-xl flex-1 flex-col overflow-y-auto p-4">
           {!resource && isLoading && <TableSkeletonLoader />}
           {error && <ErrorPage error={error} />}
           {resource && !isLoading && (

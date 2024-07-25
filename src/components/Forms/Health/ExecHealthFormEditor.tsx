@@ -23,13 +23,13 @@ export function ExecHealthFormEditor({
     <>
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.name`}
           label="Name"
           required
         />
         <FormikIconPicker
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.icon`}
           label="Icon"
         />
@@ -43,7 +43,7 @@ export function ExecHealthFormEditor({
         format="shell"
         fieldName={`${fieldName}.script`}
         label="Script"
-        className="flex flex-col h-[max(300px,calc(20vh))]"
+        className="flex h-[max(300px,calc(20vh))] flex-col"
         required
       />
 

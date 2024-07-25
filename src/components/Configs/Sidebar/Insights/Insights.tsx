@@ -127,7 +127,7 @@ export default function InsightsDetails(
   );
 
   if (isLoading && !insights?.length) {
-    return <TextSkeletonLoader className="w-full my-2" />;
+    return <TextSkeletonLoader className="my-2 w-full" />;
   }
 
   if (!insights?.length && !isLoading) {
@@ -153,7 +153,7 @@ export default function InsightsDetails(
         isLoading={isLoading && !isFetching}
         isFetching={isFetching}
         allRows={insightsWithSanitizedMessages as ConfigAnalysis[]}
-        loaderView={<TextSkeletonLoader className="w-full my-2" />}
+        loaderView={<TextSkeletonLoader className="my-2 w-full" />}
         totalEntries={totalEntries}
         fetchNextPage={() => {
           if (canGoNext()) {

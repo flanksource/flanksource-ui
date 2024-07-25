@@ -104,8 +104,8 @@ export function InfiniteTable<T>({
       ref={tableContainerRef}
       style={containerStyle}
     >
-      <table className={clsx(`p-0 mr-2`, stickyHead && "relative", className)}>
-        <thead className={`${stickyHead ? "sticky top-0 " : ""}`}>
+      <table className={clsx(`mr-2 p-0`, stickyHead && "relative", className)}>
+        <thead className={`${stickyHead ? "sticky top-0" : ""}`}>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -113,7 +113,7 @@ export function InfiniteTable<T>({
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={clsx(columnsClassName?.[header.id], "py-0 ")}
+                    className={clsx(columnsClassName?.[header.id], "py-0")}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -152,7 +152,7 @@ export function InfiniteTable<T>({
                       key={cell.id}
                       className={clsx(
                         columnsClassName?.[cell.column.id],
-                        "py-0.5 px-0.5"
+                        "px-0.5 py-0.5"
                       )}
                     >
                       {flexRender(

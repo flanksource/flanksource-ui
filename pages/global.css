@@ -35,11 +35,11 @@
 
 @layer components {
   .form-label {
-    @apply block text-sm font-semibold text-gray-700 mb-2;
+    @apply mb-2 block text-sm font-semibold text-gray-700;
   }
 
   .table-auto {
-    @apply shadow-lg   bg-white  rounded-md;
+    @apply rounded-md bg-white shadow-lg;
   }
 
   .table-auto tbody tr {
@@ -48,7 +48,7 @@
 
   .table-auto thead tr {
     border-bottom-width: 1px;
-    @apply border-gray-200  uppercase text-gray-600 font-bold text-sm items-center text-left px-4 py-1;
+    @apply items-center border-gray-200 px-4 py-1 text-left text-sm font-bold uppercase text-gray-600;
   }
 
   .table-auto thead tr th {
@@ -70,11 +70,11 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none;
+    @apply inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none;
   }
 
   .btn-icon {
-    @apply text-gray-600 hover:text-gray-900 inline-flex items-center justify-center px-0 pl-0 border-none text-sm font-medium bg-white focus:outline-none;
+    @apply inline-flex items-center justify-center border-none bg-white px-0 pl-0 text-sm font-medium text-gray-600 hover:text-gray-900 focus:outline-none;
   }
 
   .btn-icon > svg * {
@@ -86,51 +86,51 @@
   }
 
   .link {
-    @apply text-blue-500 hover:text-blue-800 visited:text-blue-500 cursor-pointer;
+    @apply cursor-pointer text-blue-500 visited:text-blue-500 hover:text-blue-800;
   }
 
   .btn-white {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-100 focus:outline-none;
+    @apply inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none;
   }
 
   .btn-danger {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none;
+    @apply inline-flex items-center justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none;
   }
 
   .btn-disabled {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-300;
+    @apply inline-flex items-center justify-center rounded-md border border-transparent bg-gray-300 px-4 py-2 text-sm font-medium text-white shadow-sm;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-500 bg-blue-100 hover:bg-blue-200 focus:ring-offset-white focus:ring-blue-500 focus:outline-none;
+    @apply inline-flex items-center justify-center rounded-md border-none bg-blue-100 font-medium text-blue-500 shadow-sm hover:bg-blue-200 focus:outline-none focus:ring-blue-500 focus:ring-offset-white;
   }
 
   .btn-secondary-disabled {
-    @apply inline-flex items-center justify-center border-none shadow-sm font-medium rounded-md text-blue-100 bg-gray-100 opacity-50 cursor-not-allowed;
+    @apply inline-flex cursor-not-allowed items-center justify-center rounded-md border-none bg-gray-100 font-medium text-blue-100 opacity-50 shadow-sm;
   }
 
   .btn-secondary-xs {
-    @apply px-2.5 py-1.5 rounded-sm text-xs leading-4 font-medium;
+    @apply rounded-sm px-2.5 py-1.5 text-xs font-medium leading-4;
   }
 
   .btn-secondary-sm {
-    @apply px-3.5 py-2.5 rounded-sm text-sm leading-4 font-medium;
+    @apply rounded-sm px-3.5 py-2.5 text-sm font-medium leading-4;
   }
 
   .btn-secondary-base {
-    @apply px-4 py-2 rounded text-sm leading-5 font-medium;
+    @apply rounded px-4 py-2 text-sm font-medium leading-5;
   }
 
   .btn-secondary-l {
-    @apply px-4 py-2 rounded-l text-base leading-6 font-medium;
+    @apply rounded-l px-4 py-2 text-base font-medium leading-6;
   }
 
   .btn-secondary-xl {
-    @apply px-6 py-3 rounded-xl text-base leading-6 font-medium;
+    @apply rounded-xl px-6 py-3 text-base font-medium leading-6;
   }
 
   .checkbox {
-    @apply h-4 w-4 border border-gray-300 rounded bg-white focus:outline-none transition duration-200 bg-no-repeat bg-center bg-contain float-left cursor-pointer;
+    @apply float-left h-4 w-4 cursor-pointer rounded border border-gray-300 bg-white bg-contain bg-center bg-no-repeat transition duration-200 focus:outline-none;
   }
 
   nav a.active {
@@ -157,12 +157,12 @@
   }
 
   .comfortable-table td {
-    @apply text-gray-900 text-sm py-2 px-4;
+    @apply px-4 py-2 text-sm text-gray-900;
   }
 
   .comfortable-table th {
     border-bottom-width: 1px;
-    @apply text-gray-500 text-xs leading-4 font-medium tracking-wider uppercase text-left px-6;
+    @apply px-6 text-left text-xs font-medium uppercase leading-4 tracking-wider text-gray-500;
   }
 
   .comfortable-table th:first-of-type {
@@ -200,7 +200,7 @@
   }
 
   .compact-table td {
-    @apply text-gray-900 text-sm font-medium py-2 px-1;
+    @apply px-1 py-2 text-sm font-medium text-gray-900;
   }
 
   .compact-table th {
@@ -216,7 +216,7 @@
   }
 
   .btn-round-primary {
-    @apply bg-blue-600 text-white inline-flex items-center justify-center p-1 border-transparent hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500;
+    @apply inline-flex items-center justify-center border-transparent bg-blue-600 p-1 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100;
   }
 
   .btn-round-xs {
@@ -256,22 +256,21 @@
   }
 
   .menu-items {
-    @apply absolute bg-white focus:outline-none mt-2 opacity-100 origin-top-right right-0 ring-1 ring-black ring-opacity-5 rounded-md scale-100 shadow-md transform w-64 z-50;
+    @apply absolute right-0 z-50 mt-2 w-64 origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none;
   }
 
   .menu-item {
-    @apply block w-full py-2 px-4  text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 divide-gray-300 text-left;
+    @apply block w-full divide-gray-300 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900;
   }
 }
 
-
 .admonition {
-    border-radius: 0.4rem;
-    box-shadow: 0 1px 2px 0 #0000001a;
-    padding: 0.7rem 0.7rem
+  border-radius: 0.4rem;
+  box-shadow: 0 1px 2px 0 #0000001a;
+  padding: 0.7rem 0.7rem;
 }
 
-.admonition.info  {
+.admonition.info {
   background-color: #eef9fd;
   border: 0px solid #4cb3d4;
   border-left-width: 5px;
@@ -279,8 +278,6 @@
 
 .admonition.warning {
   border: 0px solid #e6a700;
-  background-color:  #fff8e6;
+  background-color: #fff8e6;
   border-left-width: 5px;
-
- }
-
+}

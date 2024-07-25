@@ -16,7 +16,7 @@ function SectionTitle({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`uppercase font-semibold text-sm mb-3 text-blue-700 ${className}`}
+      className={`mb-3 text-sm font-semibold uppercase text-blue-700 ${className}`}
       {...props}
     >
       {children}
@@ -46,20 +46,20 @@ export default function CanarySidebar({
       isMenuItemOpen={isMenuItemOpen}
       setMenuItemOpen={setIsMenuItemOpen}
     >
-      <div className="flex flex-col absolute z-[9999999] top-5 right-1 2xl:hidden">
-        <div className="flex items-center p-1 2xl:hidden rounded-md">
+      <div className="absolute right-1 top-5 z-[9999999] flex flex-col 2xl:hidden">
+        <div className="flex items-center rounded-md p-1 2xl:hidden">
           <button
             type="button"
             className="text-gray-400 hover:text-gray-500 focus:outline-none"
             onClick={() => setIsMenuItemOpen(false)}
           >
             <span className="sr-only">Close</span>
-            <XIcon className="fill-gray-400 w-6 h-6" aria-hidden="true" />
+            <XIcon className="h-6 w-6 fill-gray-400" aria-hidden="true" />
           </button>
         </div>
       </div>
       <SectionTitle className="hidden">Filter by Time Range</SectionTitle>
-      <div className="mb-4 pr-4 w-full hidden">
+      <div className="mb-4 hidden w-full pr-4">
         <TimeRange
           name="time-range"
           value={timeRange || timeRanges[1].value}
@@ -75,20 +75,20 @@ export default function CanarySidebar({
           }}
         />
       </div>
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         <SectionTitle>Filter by Health</SectionTitle>
         <div className="flex items-center pr-5">
           <div className="flex items-center">
             <HidePassingToggle />
           </div>
-          <div className="text-sm text-gray-800 mb-0">Hide Passing</div>
+          <div className="mb-0 text-sm text-gray-800">Hide Passing</div>
         </div>
       </div>
       <div className="flex flex-col">
-        <SectionTitle className="mb-5 flex justify-between items-center">
+        <SectionTitle className="mb-5 flex items-center justify-between">
           Filter by Label
         </SectionTitle>
-        <div className="flex flex-col w-full pr-5">
+        <div className="flex w-full flex-col pr-5">
           <LabelFilterList labels={filteredLabels} />
         </div>
       </div>

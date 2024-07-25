@@ -64,42 +64,42 @@ export const ResponderTypeOptions = [
   {
     label: "Email",
     value: ResponderTypes.email,
-    icon: () => <MdEmail className="w-5 h-5 inline-block" />
+    icon: () => <MdEmail className="inline-block h-5 w-5" />
   },
   {
     label: "Jira",
     value: ResponderTypes.jira,
-    icon: () => <SiJira className="w-5 h-5 inline-block" />
+    icon: () => <SiJira className="inline-block h-5 w-5" />
   },
   {
     label: "ServiceNow",
     value: ResponderTypes.serviceNow,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="servicenow" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="servicenow" />
   },
   {
     label: "CA",
     value: ResponderTypes.ca,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="ca" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="ca" />
   },
   {
     label: "AWS Support",
     value: ResponderTypes.awsSupport,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="aws" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="aws" />
   },
   {
     label: "AWS AMS Service Request",
     value: ResponderTypes.awsAmsServicesRequest,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="aws" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="aws" />
   },
   {
     label: "Redhat",
     value: ResponderTypes.redhat,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="redhat" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="redhat" />
   },
   {
     label: "Oracle",
     value: ResponderTypes.oracle,
-    icon: () => <Icon className="w-5 h-5 inline-block" name="oracle_icon" />
+    icon: () => <Icon className="inline-block h-5 w-5" name="oracle_icon" />
   },
   {
     label: "Microsoft Planner",
@@ -109,12 +109,12 @@ export const ResponderTypeOptions = [
   {
     label: "VMWare",
     value: ResponderTypes.vmware,
-    icon: () => <GrVmware className="w-5 h-5 inline-block" />
+    icon: () => <GrVmware className="inline-block h-5 w-5" />
   },
   {
     label: "Person",
     value: ResponderTypes.person,
-    icon: () => <FiUser className="w-5 h-5 inline-block" />
+    icon: () => <FiUser className="inline-block h-5 w-5" />
   }
 ];
 
@@ -191,12 +191,12 @@ export const AddResponder = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={clsx("flex flex-col flex-1", className)} {...rest}>
+    <div className={clsx("flex flex-1 flex-col", className)} {...rest}>
       <div className="relative flex items-center">
-        <div className="flex items-center bg-white rounded-md group gap-2">
-          <span className="flex items-center justify-center text-gray-400 border-2 border-gray-300 border-dashed rounded-full">
+        <div className="group flex items-center gap-2 rounded-md bg-white">
+          <span className="flex items-center justify-center rounded-full border-2 border-dashed border-gray-300 text-gray-400">
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"

@@ -143,15 +143,15 @@ export function HypothesisBar({
   return (
     <div
       className={clsx(
-        "relative w-full flex justify-between shadow-md bg-white rounded-8px border focus:outline-non cursor-pointer space-x-2",
+        "focus:outline-non relative flex w-full cursor-pointer justify-between space-x-2 rounded-8px border bg-white shadow-md",
         deleting && "pointer-events-none cursor-not-allowed blur-[2px]",
-        isPartOfDOD ? "border-t-blue-600 border-t-2" : ""
+        isPartOfDOD ? "border-t-2 border-t-blue-600" : ""
       )}
     >
-      <div className="flex flex-grow-0 items-center space-x-2 my-1 w-full">
+      <div className="my-1 flex w-full flex-grow-0 items-center space-x-2">
         {showExpand && (
           <button
-            className="ml-2 py-2 flex flex-row items-center"
+            className="ml-2 flex flex-row items-center py-2"
             onClick={() => onToggleExpand && onToggleExpand(!expanded)}
             type="button"
           >
@@ -168,7 +168,7 @@ export function HypothesisBar({
         {!editTitle ? (
           <div
             onClick={() => onToggleExpand && onToggleExpand(!expanded)}
-            className="font-semibold text-gray-900 w-full"
+            className="w-full font-semibold text-gray-900"
           >
             {getValues("title")}
           </div>
@@ -196,7 +196,7 @@ export function HypothesisBar({
                 className="px-1 text-dark-blue"
               />
               {count > 1 && (
-                <span className="-ml-1 font-bold mr-1 mt-3 text-gray-500 text-xs">
+                <span className="-ml-1 mr-1 mt-3 text-xs font-bold text-gray-500">
                   {count}
                 </span>
               )}

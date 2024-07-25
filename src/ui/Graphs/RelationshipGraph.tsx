@@ -199,9 +199,9 @@ export function RelationshipGraph<T extends GraphDataGenericConstraint>({
   );
 
   return (
-    <div className="flex flex-col h-full w-full relative">
+    <div className="relative flex h-full w-full flex-col">
       {showScreen && (
-        <div className="absolute inset-0 bg-white bg-opacity-95  top-0 bottom-0 left-0 right-0 z-[999] flex flex-col items-center justify-center">
+        <div className="absolute inset-0 bottom-0 left-0 right-0 top-0 z-[999] flex flex-col items-center justify-center bg-white bg-opacity-95">
           <Loading />
         </div>
       )}

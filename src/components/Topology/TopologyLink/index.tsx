@@ -68,9 +68,9 @@ function TopologyLinkLocal({
         to={{
           pathname: `/topology/${topology.id}`
         }}
-        className="flex flex-row items-center hover:text-gray-500 my-auto"
+        className="my-auto flex flex-row items-center hover:text-gray-500"
       >
-        <Icon name={topology.icon} className="mr-1 object-center h-5" />
+        <Icon name={topology.icon} className="mr-1 h-5 object-center" />
         <span className={`text-${size}`}> {topology.name}</span>
       </Link>
     );
@@ -78,7 +78,7 @@ function TopologyLinkLocal({
 
   return (
     <>
-      <Icon name={topology.icon} className="mr-1 object-center h-5" />
+      <Icon name={topology.icon} className="mr-1 h-5 object-center" />
       <span className={`text-${size}`}> {topology.name}</span>
     </>
   );

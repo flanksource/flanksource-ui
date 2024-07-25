@@ -13,11 +13,11 @@ export function DetailField({
   ...rest
 }: DetailFieldProps) {
   return (
-    <div className={`flex flex-col flex-shrink-0 pr-6 ${className}`} {...rest}>
-      <div className="text-sm font-medium text-gray-500 break-all overflow-hidden overflow-ellipsis">
+    <div className={`flex flex-shrink-0 flex-col pr-6 ${className}`} {...rest}>
+      <div className="overflow-hidden overflow-ellipsis break-all text-sm font-medium text-gray-500">
         {label}
       </div>
-      <div className="mt-1 text-sm text-gray-900 break-all overflow-hidden overflow-ellipsis">
+      <div className="mt-1 overflow-hidden overflow-ellipsis break-all text-sm text-gray-900">
         {value}
       </div>
     </div>

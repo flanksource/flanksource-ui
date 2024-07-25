@@ -140,7 +140,7 @@ export const TopologySort = ({
     <>
       <div
         ref={popoverRef as LegacyRef<HTMLDivElement>}
-        className="flex cursor-pointer p-0 items-center border border-gray-300 bg-white rounded-md shadow-sm"
+        className="flex cursor-pointer items-center rounded-md border border-gray-300 bg-white p-0 shadow-sm"
       >
         <div
           onClick={() =>
@@ -149,17 +149,17 @@ export const TopologySort = ({
               sortByDirection === "asc" ? "desc" : "asc"
             )
           }
-          className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-1 pr-1 rounded-l-md h-full"
+          className="flex h-full items-center justify-center rounded-l-md px-3 py-1 pr-1 text-gray-700 hover:text-gray-900"
         >
           {sortByDirection === "asc" && (
-            <BsSortUp className="w-5 h-5 text-gray-700 hover:text-gray-900" />
+            <BsSortUp className="h-5 w-5 text-gray-700 hover:text-gray-900" />
           )}
           {sortByDirection === "desc" && (
-            <BsSortDown className="w-5 h-5 text-gray-700 hover:text-gray-900" />
+            <BsSortDown className="h-5 w-5 text-gray-700 hover:text-gray-900" />
           )}
         </div>
         <div
-          className="flex ml-2 text-sm text-gray-700 capitalize bold hover:text-gray-900 px-3 py-1 pl-0 rounded-r-md h-full items-center"
+          className="bold ml-2 flex h-full items-center rounded-r-md px-3 py-1 pl-0 text-sm capitalize text-gray-700 hover:text-gray-900"
           onClick={() => setIsPopoverActive((val) => !val)}
         >
           {sortLabels.find((s) => s.value === sortBy)?.label}
@@ -171,7 +171,7 @@ export const TopologySort = ({
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           className={clsx(
-            "origin-top-right absolute right-0 mt-10 z-50 divide-y divide-gray-100 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none capitalize w-48",
+            "absolute right-0 z-50 mt-10 w-48 origin-top-right divide-y divide-gray-100 rounded-md bg-white capitalize shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none",
             isPopoverActive ? "display-block" : "hidden"
           )}
         >
@@ -185,11 +185,11 @@ export const TopologySort = ({
                     sortByDirection === "asc" ? "desc" : "asc"
                   )
                 }
-                className="flex mx-1 text-gray-600 cursor-pointer hover:text-gray-900"
+                className="mx-1 flex cursor-pointer text-gray-600 hover:text-gray-900"
               >
-                {sortByDirection === "asc" && <BsSortUp className="w-5 h-5" />}
+                {sortByDirection === "asc" && <BsSortUp className="h-5 w-5" />}
                 {sortByDirection === "desc" && (
-                  <BsSortDown className="w-5 h-5" />
+                  <BsSortDown className="h-5 w-5" />
                 )}
               </div>
             </div>
@@ -205,11 +205,11 @@ export const TopologySort = ({
                       sortBy !== s.value
                         ? sortByDirection
                         : sortByDirection === "asc"
-                        ? "desc"
-                        : "asc"
+                          ? "desc"
+                          : "asc"
                     )
                   }
-                  className="flex px-4 py-1 text-base cursor-pointer hover:bg-blue-100"
+                  className="flex cursor-pointer px-4 py-1 text-base hover:bg-blue-100"
                   style={{
                     fontWeight: sortBy === s.value ? "bold" : "inherit"
                   }}

@@ -30,10 +30,10 @@ export function ComponentTypesDropdown({
         defaultValue="All"
         label=""
         items={topologyTypes}
-        className="inline-block p-3 w-auto max-w-[500px]"
+        className="inline-block w-auto max-w-[500px] p-3"
         dropDownClassNames="w-auto max-w-[400px] left-0"
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
             {prefix}:
           </div>
         }

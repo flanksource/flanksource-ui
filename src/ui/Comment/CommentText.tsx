@@ -25,7 +25,7 @@ export function CommentText({ text, onClickTag }: Props) {
               key={tagId}
               onClick={onClickTag && (() => onClickTag("user", tagId))}
               className={clsx(
-                "bg-blue-200 rounded",
+                "rounded bg-blue-200",
                 !onClickTag && "btn-disabled"
               )}
             >

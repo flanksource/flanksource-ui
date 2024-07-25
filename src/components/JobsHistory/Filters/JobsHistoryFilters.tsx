@@ -34,7 +34,7 @@ export default function JobHistoryFilters({
         status: "FINISHED:-1,SUCCESS:-1"
       }}
     >
-      <div className="flex flex-wrap py-4 gap-2">
+      <div className="flex flex-wrap gap-2 py-4">
         <JobHistoryNamesDropdown />
 
         <JobHistoryResourceTypeDropdown />

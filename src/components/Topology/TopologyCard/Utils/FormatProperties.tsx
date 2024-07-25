@@ -27,10 +27,10 @@ export function FormatPropertyURL({ property }: FormatPropertyProps) {
       href={property.text}
       target="_blank"
       rel="noreferrer"
-      className="underline text-sm"
+      className="text-sm underline"
     >
       <span>{property.text?.replace("https://", "")}</span>
-      <FiExternalLink className="inline-block ml-1" />
+      <FiExternalLink className="ml-1 inline-block" />
     </a>
   );
 }
@@ -118,11 +118,11 @@ export function FormatPropertyCPUMemory({
           data-tooltip-content={`${derivedValue} of ${derivedMax} (${percent.toFixed(
             0
           )}%)`}
-          className="flex flex-col gap-1 h-auto items-center"
+          className="flex h-auto flex-col items-center gap-1"
         >
           <div
             className={clsx(
-              `text-xs text-ellipsis whitespace-nowrap w-full`,
+              `w-full text-ellipsis whitespace-nowrap text-xs`,
               isSidebar ? "text-left" : "text-center"
             )}
           >
@@ -233,7 +233,7 @@ export function FormatPropertyDefault({
   return (
     <p
       data-tooltip-html={tooltip}
-      className={clsx("text-ellipsis overflow-hidden relative text-xs")}
+      className={clsx("relative overflow-hidden text-ellipsis text-xs")}
     >
       {value}
     </p>

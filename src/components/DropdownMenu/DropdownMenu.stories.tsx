@@ -13,7 +13,7 @@ export const Default: Story = {
     <DropdownMenu
       buttonElement={
         <div
-          className="border border-gray-300 w-full flex items-center justify-between px-2 py-2"
+          className="flex w-full items-center justify-between border border-gray-300 px-2 py-2"
           style={{ height: "38px", borderRadius: "4px" }}
         >
           <span className="text-sm text-gray-500">Boolean labels</span>

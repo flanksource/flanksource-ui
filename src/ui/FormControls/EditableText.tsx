@@ -88,16 +88,16 @@ export function EditableText({
       {editMode && (
         <>
           <textarea
-            className={`w-full min-w-full py-1 px-px resize-none rounded-sm absolute top-0 bottom-0 left-0 right-0 overflow-y-hidden ${textAreaClassName} ${sharedClassName}`}
+            className={`absolute bottom-0 left-0 right-0 top-0 w-full min-w-full resize-none overflow-y-hidden rounded-sm px-px py-1 ${textAreaClassName} ${sharedClassName}`}
             defaultValue={localValue}
             onChange={onChangeText}
             onBlur={onBlurTextArea}
             ref={inputRef}
           />
-          <div className="absolute right-0 -bottom-7 flex">
+          <div className="absolute -bottom-7 right-0 flex">
             <button
               id={ACTIONS_ID.CHECK_EDITABLE_TEXT}
-              className="border border-gray-300 rounded bg-gray-50 mr-1 p-0.5"
+              className="mr-1 rounded border border-gray-300 bg-gray-50 p-0.5"
               type="button"
               onClick={onClickCheck}
             >
@@ -105,7 +105,7 @@ export function EditableText({
             </button>
             <button
               id={ACTIONS_ID.CLOSE_EDITABLE_TEXT}
-              className="border border-gray-300 rounded bg-gray-50 p-0.5"
+              className="rounded border border-gray-300 bg-gray-50 p-0.5"
               type="button"
               onClick={onClickClose}
             >
@@ -117,7 +117,7 @@ export function EditableText({
 
       <button
         type="button"
-        className={`w-full py-1 px-px text-left border border-transparent hover:border-gray-300 rounded-sm cursor-text ${buttonClassName} ${sharedClassName}`}
+        className={`w-full cursor-text rounded-sm border border-transparent px-px py-1 text-left hover:border-gray-300 ${buttonClassName} ${sharedClassName}`}
         style={{ overflowX: "hidden", wordWrap: "break-word" }}
         onClick={() => setEditMode(true)}
       >
@@ -125,7 +125,7 @@ export function EditableText({
           <span className="whitespace-pre-wrap">{localValue}</span>
         )) ||
           value || (
-            <span className="text-gray-400 ">{placeholder || "(empty)"}</span>
+            <span className="text-gray-400">{placeholder || "(empty)"}</span>
           )}
         {append}
       </button>

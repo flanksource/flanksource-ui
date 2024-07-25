@@ -7,7 +7,7 @@ type InfoMessageProps = {
 
 export function InfoMessage({ message, className }: InfoMessageProps) {
   return (
-    <div className={clsx("w-full flex justify-center", className)}>
+    <div className={clsx("flex w-full justify-center", className)}>
       <div className="rounded-md bg-gray-100 p-4">
         <div className="flex items-center">
           <div className="flex-shrink-0">

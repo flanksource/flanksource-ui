@@ -42,17 +42,17 @@ export function ComponentTeams({
       isCollapsed={isCollapsed}
       onCollapsedStateChange={onCollapsedStateChange}
       Header={
-        <div className="flex flex-row w-full items-center space-x-2">
+        <div className="flex w-full flex-row items-center space-x-2">
           <Title
             title="Teams"
-            icon={<AiOutlineTeam className="w-6 h-auto" />}
+            icon={<AiOutlineTeam className="h-auto w-6" />}
           />
           <PillBadge>{componentTeams?.length ?? 0}</PillBadge>
         </div>
       }
       dataCount={componentTeams?.length}
     >
-      <div className="flex flex-col space-y-4 py-2 w-full">
+      <div className="flex w-full flex-col space-y-4 py-2">
         {isLoading ? (
           <TextSkeletonLoader />
         ) : componentTeams && componentTeams.length > 0 ? (

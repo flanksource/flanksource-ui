@@ -37,13 +37,13 @@ export function IncidentTypeTag({
   };
   if (!icon && !text) {
     return (
-      <p className={`leading-5 ${textClassName}  ml-1.5 font-medium`}>NA</p>
+      <p className={`leading-5 ${textClassName} ml-1.5 font-medium`}>NA</p>
     );
   }
   return (
     <>
       <div className="my-auto">{icon}</div>
-      <p className={`leading-5  ${textClassName} ml-1.5 font-medium`}>{text}</p>
+      <p className={`leading-5 ${textClassName} ml-1.5 font-medium`}>{text}</p>
     </>
   );
 }

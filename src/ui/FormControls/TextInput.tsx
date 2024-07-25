@@ -41,7 +41,7 @@ export function TextInput({
             onEnter(e);
           }
         }}
-        className={`shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md ${className}`}
+        className={`rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm ${className}`}
         {...rest}
       />
     </>

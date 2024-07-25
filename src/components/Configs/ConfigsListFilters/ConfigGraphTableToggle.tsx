@@ -23,7 +23,7 @@ export default function ConfigGraphTableToggle() {
   );
 
   return (
-    <div className="flex flex-row gap-2 items-center px-2">
+    <div className="flex flex-row items-center gap-2 px-2">
       <Switch
         options={["Table", "Graph"]}
         onChange={(v) => {

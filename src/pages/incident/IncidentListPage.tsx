@@ -106,15 +106,15 @@ export function IncidentListPage() {
         onRefresh={() => refetch()}
         contentClass="flex flex-col h-full"
       >
-        <div className="flex flex-col h-full leading-1.21rel">
-          <div className="flex-col flex-1 h-full space-x-2 space-y-2">
-            <div className="relative max-w-screen-xl mx-auto h-full space-y-6 flex flex-col justify-center">
+        <div className="flex h-full flex-col leading-1.21rel">
+          <div className="h-full flex-1 flex-col space-x-2 space-y-2">
+            <div className="relative mx-auto flex h-full max-w-screen-xl flex-col justify-center space-y-6">
               {!isLoading || Boolean(incidents?.length) ? (
                 <>
                   <FilterIncidents />
                   <IncidentList incidents={incidents || []} />
                   {!Boolean(incidents?.length) && (
-                    <div className="absolute text-center text-base text-gray-500 w-full mt-2">
+                    <div className="absolute mt-2 w-full text-center text-base text-gray-500">
                       There are no incidents matching this criteria
                     </div>
                   )}

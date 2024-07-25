@@ -57,7 +57,7 @@ export default function CLIInstallAgent({
   }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
 
   return (
-    <div className="flex flex-col flex-1 p-2  gap-4 overflow-y-auto">
+    <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-2">
       <p>Copy the following command to install agent</p>
       <CodeBlock code={helmCommandTemplate} />
     </div>

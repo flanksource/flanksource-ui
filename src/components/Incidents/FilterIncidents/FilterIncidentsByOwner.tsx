@@ -14,7 +14,7 @@ export default function FilterIncidentsByOwner({
   ownerSelections
 }: Props) {
   return (
-    <div className="flex items-center space-x-3 mr-2">
+    <div className="mr-2 flex items-center space-x-3">
       <ReactSelectDropdown
         control={control}
         name="owner"

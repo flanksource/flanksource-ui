@@ -35,12 +35,12 @@ export function CanarySearchField({
 
   return (
     <div
-      className={`relative w-full flex flex-row ${className}`}
+      className={`relative flex w-full flex-row ${className}`}
       style={{ maxWidth: "480px", width: "100%" }}
     >
       <input
         type="text"
-        className={`shadow-sm focus:ring-blue-500 w-full focus:border-blue-500 block sm:text-base placeholder:text-sm border-gray-300 rounded-l-md`}
+        className={`block w-full rounded-l-md border-gray-300 shadow-sm placeholder:text-sm focus:border-blue-500 focus:ring-blue-500 sm:text-base`}
         placeholder={placeholder}
         value={value ?? defaultValue}
         onChange={(e) => {
@@ -48,7 +48,7 @@ export function CanarySearchField({
         }}
       />
       {!hideClearButton && value && (
-        <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
+        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
           <button
             className="p-1"
             type="button"
@@ -70,7 +70,7 @@ export function CanarySearchField({
       )}
       <button
         type="submit"
-        className="py-2 px-3 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        className="rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 py-2 hover:bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
       >
         <SearchIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
       </button>

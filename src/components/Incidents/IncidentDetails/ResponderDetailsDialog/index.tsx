@@ -82,14 +82,14 @@ export function ResponderDetailsDialog({
   const getStepElement = (key: string, step: string) => {
     if (currentStageKey() === key) {
       return (
-        <MdTimer className="w-7 h-7 flex items-center justify-center rounded-full" />
+        <MdTimer className="flex h-7 w-7 items-center justify-center rounded-full" />
       );
     }
     if (responder?.json?.[key]) {
       return (
-        <span className="w-7 h-7 flex items-center justify-center bg-blue-600 rounded-full">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600">
           <svg
-            className="w-6 h-6 text-white"
+            className="h-6 w-6 text-white"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -105,7 +105,7 @@ export function ResponderDetailsDialog({
       );
     }
     return (
-      <span className="w-7 h-7 flex items-center justify-center border-2 border-blue-600 rounded-full">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600">
         <span className="text-blue-600">{step}</span>
       </span>
     );
@@ -127,11 +127,11 @@ export function ResponderDetailsDialog({
               as="h3"
               className="text-lg font-medium leading-6 text-gray-900"
             >
-              <div className="flex pointer-events-none sm:pointer-events-auto justify-between items-center">
+              <div className="pointer-events-none flex items-center justify-between sm:pointer-events-auto">
                 <div className="flex-shrink-0">
-                  {responder?.icon && <responder.icon className="w-6 h-6" />}
+                  {responder?.icon && <responder.icon className="h-6 w-6" />}
                 </div>
-                <div className="min-w-0 flex-1 ml-2">
+                <div className="ml-2 min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900">
                     {getResponderTitleByValue(responder?.type)}
                   </p>
@@ -142,22 +142,22 @@ export function ResponderDetailsDialog({
                   onClick={onClose}
                 >
                   <span className="sr-only">Close</span>
-                  <XIcon className="drop-shadow w-6 h-6" aria-hidden="true" />
+                  <XIcon className="h-6 w-6 drop-shadow" aria-hidden="true" />
                 </button>
               </div>
             </Dialog.Title>
-            <div className="mt-4 min-h-full mb-4">
-              <div className="lg:border-t lg:border-b lg:border-gray-200 mt-5">
+            <div className="mb-4 mt-4 min-h-full">
+              <div className="mt-5 lg:border-b lg:border-t lg:border-gray-200">
                 <nav className="mx-auto max-w-7xl" aria-label="Progress">
-                  <ol className="rounded-md overflow-hidden lg:flex lg:border-l lg:border-r lg:border-gray-200 lg:rounded-none">
+                  <ol className="overflow-hidden rounded-md lg:flex lg:rounded-none lg:border-l lg:border-r lg:border-gray-200">
                     <li className="relative overflow-hidden lg:flex-1">
-                      <div className="border border-gray-200 overflow-hidden border-b-0 rounded-t-md lg:border-0">
+                      <div className="overflow-hidden rounded-t-md border border-b-0 border-gray-200 lg:border-0">
                         <a href="#" className="group">
-                          <span className="px-2 py-2 flex items-start text-sm font-medium">
+                          <span className="flex items-start px-2 py-2 text-sm font-medium">
                             <span className="flex-shrink-0">
-                              <span className="w-7 h-7 flex items-center justify-center bg-blue-600 rounded-full">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600">
                                 <svg
-                                  className="w-6 h-6 text-white"
+                                  className="h-6 w-6 text-white"
                                   xmlns="http://www.w3.org/2000/svg"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
@@ -171,7 +171,7 @@ export function ResponderDetailsDialog({
                                 </svg>
                               </span>
                             </span>
-                            <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
+                            <span className="ml-2 mt-0.5 flex min-w-0 flex-col">
                               <span className="text-xs font-semibold tracking-wide">
                                 Created
                               </span>
@@ -186,20 +186,20 @@ export function ResponderDetailsDialog({
                       </div>
                     </li>
                     <li className="relative overflow-hidden lg:flex-1">
-                      <div className="border border-gray-200 overflow-hidden lg:border-0">
+                      <div className="overflow-hidden border border-gray-200 lg:border-0">
                         <a href="#" aria-current="step">
                           {currentStageKey() === "acknowledge_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute left-0 top-0 h-full w-1 bg-blue-600 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
                               aria-hidden="true"
                             ></span>
                           )}
-                          <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
+                          <span className="flex items-start px-2 py-2 text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
                               {getStepElement("acknowledge_time", "02")}
                             </span>
-                            <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
-                              <span className="text-xs font-semibold text-blue-600 tracking-wide">
+                            <span className="ml-2 mt-0.5 flex min-w-0 flex-col">
+                              <span className="text-xs font-semibold tracking-wide text-blue-600">
                                 Acknowledged
                               </span>
                               <span className="text-xs font-medium text-gray-500">
@@ -211,7 +211,7 @@ export function ResponderDetailsDialog({
                           </span>
                         </a>
                         <div
-                          className="hidden absolute top-0 left-0 w-3 inset-0 lg:block"
+                          className="absolute inset-0 left-0 top-0 hidden w-3 lg:block"
                           aria-hidden="true"
                         >
                           <svg
@@ -231,20 +231,20 @@ export function ResponderDetailsDialog({
                     </li>
 
                     <li className="relative overflow-hidden lg:flex-1">
-                      <div className="border border-gray-200 overflow-hidden border-t-0 rounded-b-md lg:border-0">
+                      <div className="overflow-hidden rounded-b-md border border-t-0 border-gray-200 lg:border-0">
                         <a href="#" className="group">
                           {currentStageKey() === "signoff_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute left-0 top-0 h-full w-1 bg-blue-600 group-hover:bg-gray-200 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
                               aria-hidden="true"
                             ></span>
                           )}
-                          <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
+                          <span className="flex items-start px-2 py-2 text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
                               {getStepElement("signoff_time", "03")}
                             </span>
-                            <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
-                              <span className="text-xs font-semibold text-gray-500 tracking-wide">
+                            <span className="ml-2 mt-0.5 flex min-w-0 flex-col">
+                              <span className="text-xs font-semibold tracking-wide text-gray-500">
                                 Resolved
                               </span>
                               <span className="text-xs font-medium text-gray-500">
@@ -256,7 +256,7 @@ export function ResponderDetailsDialog({
                           </span>
                         </a>
                         <div
-                          className="hidden absolute top-0 left-0 w-3 inset-0 lg:block"
+                          className="absolute inset-0 left-0 top-0 hidden w-3 lg:block"
                           aria-hidden="true"
                         >
                           <svg
@@ -276,20 +276,20 @@ export function ResponderDetailsDialog({
                     </li>
 
                     <li className="relative overflow-hidden lg:flex-1">
-                      <div className="border border-gray-200 overflow-hidden border-t-0 rounded-b-md lg:border-0">
+                      <div className="overflow-hidden rounded-b-md border border-t-0 border-gray-200 lg:border-0">
                         <a href="#" className="group">
                           {currentStageKey() === "close_time" && (
                             <span
-                              className="absolute top-0 left-0 w-1 h-full bg-blue-600 group-hover:bg-gray-200 lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
+                              className="absolute left-0 top-0 h-full w-1 bg-blue-600 group-hover:bg-gray-200 lg:bottom-0 lg:top-auto lg:h-1 lg:w-full"
                               aria-hidden="true"
                             ></span>
                           )}
-                          <span className="px-2 py-2 flex items-start text-sm font-medium lg:pl-4">
+                          <span className="flex items-start px-2 py-2 text-sm font-medium lg:pl-4">
                             <span className="flex-shrink-0">
                               {getStepElement("close_time", "04")}
                             </span>
-                            <span className="mt-0.5 ml-2 min-w-0 flex flex-col">
-                              <span className="text-xs font-semibold text-gray-500 tracking-wide">
+                            <span className="ml-2 mt-0.5 flex min-w-0 flex-col">
+                              <span className="text-xs font-semibold tracking-wide text-gray-500">
                                 Closed
                               </span>
                               <span className="text-xs font-medium text-gray-500">
@@ -301,7 +301,7 @@ export function ResponderDetailsDialog({
                           </span>
                         </a>
                         <div
-                          className="hidden absolute top-0 left-0 w-3 inset-0 lg:block"
+                          className="absolute inset-0 left-0 top-0 hidden w-3 lg:block"
                           aria-hidden="true"
                         >
                           <svg
@@ -322,19 +322,19 @@ export function ResponderDetailsDialog({
                   </ol>
                 </nav>
               </div>
-              <div className="border-gray-200 sm:p-0 mt-4">
+              <div className="mt-4 border-gray-200 sm:p-0">
                 <dl className="sm:divide-y sm:divide-gray-200">
                   {getOptionsList().map((option) => {
                     return (
                       <div
-                        className="sm:grid sm:grid-cols-3 sm:gap-4 py-2"
+                        className="py-2 sm:grid sm:grid-cols-3 sm:gap-4"
                         key={option.label}
                       >
                         <dt className="text-sm font-medium text-gray-500">
                           {option.label}
                         </dt>
                         {option?.link?.value ? (
-                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             <a
                               className="link"
                               href={option.link.value}
@@ -345,7 +345,7 @@ export function ResponderDetailsDialog({
                             </a>
                           </dd>
                         ) : (
-                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                             {option.value}
                           </dd>
                         )}

@@ -100,7 +100,7 @@ export default function ConfigGroupByDropdown({
                     value: tag.key,
                     isTag: true,
                     icon: <BiLabel />
-                  } satisfies GroupByOptions)
+                  }) satisfies GroupByOptions
               )
           : [])
       ].sort((a, b) => a.label.localeCompare(b.label));

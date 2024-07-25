@@ -28,10 +28,10 @@ export function EvidenceBuilder({ className, ...rest }: Props) {
   return (
     <div
       style={{ maxHeight: "calc(100vh - 6rem)" }}
-      className={`flex flex-col h-full max-h-screen lol  ${className || ""}`}
+      className={`lol flex h-full max-h-screen flex-col ${className || ""}`}
       {...rest}
     >
-      <div className="text-xl font-medium text-gray-800 mb-4">Add Evidence</div>
+      <div className="mb-4 text-xl font-medium text-gray-800">Add Evidence</div>
       <EvidenceStepper steps={evidenceSteps} currentStep={currentStep} />
       <div className="my-4 flex flex-col overflow-y-auto">
         {evidenceSteps[currentStep].component}
@@ -41,7 +41,7 @@ export function EvidenceBuilder({ className, ...rest }: Props) {
           <button
             type="button"
             onClick={() => setCurrentStep(Math.max(currentStep - 1, 0))}
-            className="inline-flex items-center px-3 py-1 mb-1 border border-gray-300 text-sm font-medium rounded text-gray-500  hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="mb-1 inline-flex items-center rounded border border-gray-300 px-3 py-1 text-sm font-medium text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Back
           </button>
@@ -49,7 +49,7 @@ export function EvidenceBuilder({ className, ...rest }: Props) {
         <button
           type="button"
           onClick={() => setCurrentStep(Math.min(currentStep + 1, 2))}
-          className="inline-flex items-center px-3 py-1 mb-1 border border-transparent text-sm font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="mb-1 inline-flex items-center rounded border border-transparent bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Next
         </button>

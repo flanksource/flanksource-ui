@@ -52,7 +52,7 @@ export default function ClosableBadge({
       {children}
       <Button
         icon={<IoMdClose size={12} />}
-        className="hover:text-gray-700 text-gray-500 border-l border-gray-50 pl-1.5 py-1.5 text-xs rounded"
+        className="rounded border-l border-gray-50 py-1.5 pl-1.5 text-xs text-gray-500 hover:text-gray-700"
         size="none"
         onClick={onRemove}
         title="Remove filter"

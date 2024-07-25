@@ -148,12 +148,12 @@ export function CodeEditor({
   return (
     <>
       {enableSpecUnwrap && inlineSpec && (
-        <div className="flex flex-row gap-2 my-1 pb-1 relative" role="alert">
+        <div className="relative my-1 flex flex-row gap-2 pb-1" role="alert">
           <div className="text-red-600">
             Wrapping spec field detected, do you want to unwrap it?
           </div>
           <Button
-            className="bg-white border border-gray-500 px-1.5 rounded"
+            className="rounded border border-gray-500 bg-white px-1.5"
             size="none"
             onClick={unWrapSpec}
           >
@@ -162,7 +162,7 @@ export function CodeEditor({
         </div>
       )}
       <Editor
-        className="border shadow py-2"
+        className="border py-2 shadow"
         defaultLanguage={language}
         language={language}
         value={value}

@@ -10,16 +10,16 @@ export default function ConnectionListView({ setConnectionType }: Props) {
     <div className="flex flex-wrap p-2">
       {connectionTypes.map((item) => {
         return (
-          <div className="flex flex-col w-1/5 p-2" key={item.title}>
+          <div className="flex w-1/5 flex-col p-2" key={item.title}>
             <div
               role="button"
-              className="flex flex-col items-center space-y-2 justify-center p-2 border border-gray-300 hover:border-blue-200 hover:bg-gray-100 rounded-md text-center h-20"
+              className="flex h-20 flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-2 text-center hover:border-blue-200 hover:bg-gray-100"
               onClick={(e) => {
                 setConnectionType(item);
               }}
             >
               {typeof item.icon === "string" ? (
-                <Icon name={item.icon} className="w-6 h-auto" />
+                <Icon name={item.icon} className="h-auto w-6" />
               ) : (
                 item.icon
               )}

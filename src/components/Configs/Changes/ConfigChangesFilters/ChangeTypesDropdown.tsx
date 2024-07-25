@@ -31,7 +31,7 @@ export function ChangesTypesDropdown({ searchParamKey = "changeType" }: Props) {
               label: change_type,
               value: change_type,
               icon: <ChangeIcon change={{ change_type: change_type }} />
-            } satisfies TriStateOptions)
+            }) satisfies TriStateOptions
         );
       }, [])
     }

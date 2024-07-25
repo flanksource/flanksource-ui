@@ -19,7 +19,7 @@ export function ConfigDetailsSelectedLinesControls({
     <div className="flex flex-row space-x-2">
       {selectedCount > 0 && (
         <>
-          <div className="flex items-center mx-4">
+          <div className="mx-4 flex items-center">
             {selectedCount} lines selected
           </div>
           <Button

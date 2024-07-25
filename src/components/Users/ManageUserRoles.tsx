@@ -63,7 +63,7 @@ export function ManageUserRoles({
             <select
               id="userId"
               className={clsx(
-                "rounded-md border-gray-300 shadow-sm inline-block w-full"
+                "inline-block w-full rounded-md border-gray-300 shadow-sm"
               )}
               {...register("userId", {
                 required: "Please select any user"
@@ -81,7 +81,7 @@ export function ManageUserRoles({
             </select>
           </div>
           {errors.userId && (
-            <span className="text-red-600 text-sm">Please select any user</span>
+            <span className="text-sm text-red-600">Please select any user</span>
           )}
         </div>
         <div>
@@ -92,7 +92,7 @@ export function ManageUserRoles({
             <select
               id="role"
               className={clsx(
-                "rounded-md border-gray-300 shadow-sm inline-block w-full"
+                "inline-block w-full rounded-md border-gray-300 shadow-sm"
               )}
               {...register("role", {
                 required: "Please select any role"
@@ -105,7 +105,7 @@ export function ManageUserRoles({
             </select>
           </div>
           {errors.role && (
-            <span className="text-red-600 text-sm">Please select any role</span>
+            <span className="text-sm text-red-600">Please select any role</span>
           )}
         </div>
         <div className="sm:col-span-2">
@@ -115,7 +115,7 @@ export function ManageUserRoles({
           <button
             type="reset"
             onClick={handleCancel}
-            className="px-3 py-2 btn-secondary float-right mr-4"
+            className="btn-secondary float-right mr-4 px-3 py-2"
           >
             Cancel
           </button>

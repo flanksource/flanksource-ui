@@ -133,22 +133,22 @@ export default function PlaybookSpecsForm({
       >
         {({ handleSubmit }) => (
           <Form
-            className="flex flex-col flex-1 overflow-y-auto"
+            className="flex flex-1 flex-col overflow-y-auto"
             onSubmit={handleSubmit}
           >
-            <div className={clsx("flex flex-col h-full my-2 overflow-y-auto")}>
+            <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
               <div
                 className={clsx(
-                  "flex flex-col flex-1 px-2 mb-2 overflow-y-auto"
+                  "mb-2 flex flex-1 flex-col overflow-y-auto px-2"
                 )}
               >
-                <div className="flex flex-col flex-1 space-y-4 overflow-y-auto p-4">
+                <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
                   <FormikTextInput name="name" label="Name" required />
                   <FormikCodeEditor
                     fieldName="spec"
                     label="Spec"
                     format="yaml"
-                    className="flex flex-col flex-1"
+                    className="flex flex-1 flex-col"
                     jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
                     required
                     enableSpecUnwrap
@@ -156,7 +156,7 @@ export default function PlaybookSpecsForm({
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between py-4 px-5 bg-gray-100">
+            <div className="flex items-center justify-between bg-gray-100 px-5 py-4">
               {playbook?.id && (
                 <Button
                   type="button"

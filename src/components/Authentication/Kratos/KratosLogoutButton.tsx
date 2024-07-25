@@ -12,7 +12,7 @@ export default function KratosLogoutButton() {
     <button
       type="button"
       onClick={() => onLogout(returnTo)}
-      className="block w-full py-2 px-4 text-left text-sm text-gray-700  hover:bg-gray-50 hover:text-gray-900 border-0 border-b border-gray-200"
+      className="block w-full border-0 border-b border-gray-200 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
     >
       Sign out
     </button>

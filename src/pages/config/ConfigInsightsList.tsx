@@ -61,7 +61,7 @@ export function ConfigInsightsPage() {
           <div className="flex flex-row items-center">
             <ConfigInsightsFilters paramsToReset={["pageIndex"]} />
           </div>
-          <div className="flex flex-col h-full overflow-y-hidden">
+          <div className="flex h-full flex-col overflow-y-hidden">
             <ConfigInsightsList
               setIsLoading={(isLoading) => setIsLoading(isLoading)}
               triggerRefresh={triggerRefresh}

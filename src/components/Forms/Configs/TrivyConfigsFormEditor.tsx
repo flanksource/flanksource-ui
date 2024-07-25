@@ -86,8 +86,8 @@ export default function TrivyConfigsFormEditor({
           label="Vulnerability Type"
         />
         <div className="flex flex-col space-y-2">
-          <label className="font-semibold text-sm">Kubernetes</label>
-          <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+          <label className="text-sm font-semibold">Kubernetes</label>
+          <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
             <FormikConfigFormFieldsArray
               name={`${fieldName}.kubernetes`}
               label="Components"

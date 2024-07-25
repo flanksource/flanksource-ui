@@ -118,7 +118,7 @@ export function initialiseFormState(defaultValues, url) {
     : "checkStatuses";
   const pivotLabelValueOrDefault = pivotLabelDefaults.has(pivotLabel)
     ? pivotLabel
-    : firstLabel ?? "";
+    : (firstLabel ?? "");
 
   const formState = {
     ...defaultValues,
@@ -182,7 +182,7 @@ export function updateFormState(update, url, labels) {
   const pivotByValueOrDefault = pivotByDefaults.has(pivotBy) ? pivotBy : "none";
   const pivotLabelValueOrDefault = pivotLabelDefaults.has(pivotLabel)
     ? pivotLabel
-    : firstLabel ?? "";
+    : (firstLabel ?? "");
   const pivotCellTypeValueOrDefault = pivotCellDefaults.has(pivotCellType)
     ? pivotCellType
     : "checkStatuses";

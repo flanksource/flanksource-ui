@@ -96,7 +96,7 @@ export const DropdownListbox = ({
           </Listbox.Label>
         )}
         <div className={`${label && "mt-1"} group relative h-full`}>
-          <Listbox.Button className="relative cursor-pointer w-full group-hover:bg-white border border-transparent group-hover:border-gray-300 rounded-full group-hover:shadow-sm p-1 text-left focus:outline-none text-sm">
+          <Listbox.Button className="relative w-full cursor-pointer rounded-full border border-transparent p-1 text-left text-sm focus:outline-none group-hover:border-gray-300 group-hover:bg-white group-hover:shadow-sm">
             {items[value!].iconTitle}
           </Listbox.Button>
           {/* @ts-ignore */}
@@ -107,14 +107,14 @@ export const DropdownListbox = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+            <Listbox.Options className="absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {Object.values(items).map((item) => (
                 <Listbox.Option
                   key={`option-${item.value}`}
                   className={({ active }) =>
                     clsx(
-                      active ? "text-white bg-blue-600" : "text-gray-900",
-                      "cursor-pointer select-none relative py-2 pl-3 pr-9 text-sm"
+                      active ? "bg-blue-600 text-white" : "text-gray-900",
+                      "relative cursor-pointer select-none py-2 pl-3 pr-9 text-sm"
                     )
                   }
                   value={item.value}

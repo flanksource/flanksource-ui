@@ -114,8 +114,8 @@ export default function PlaybookRunsPage() {
         contentClass="flex flex-col p-0 h-full overflow-y-hidden"
       >
         <TabbedLinks tabLinks={playbookRunsPageTabs}>
-          <div className={`flex flex-col max-w-screen-xl mx-auto h-full py-4`}>
-            <div className="flex flex-row justify-between w-full py-2 gap-2">
+          <div className={`mx-auto flex h-full max-w-screen-xl flex-col py-4`}>
+            <div className="flex w-full flex-row justify-between gap-2 py-2">
               <PlaybookRunsFilterBar
                 isLoading={isLoading}
                 playbookId={playbookId}
@@ -123,7 +123,7 @@ export default function PlaybookRunsPage() {
                 playbook={playbook}
               />
             </div>
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-1 flex-col">
               <PlaybookRunsTable
                 data={playbookRuns ?? []}
                 isLoading={isLoadingPlaybookRuns}

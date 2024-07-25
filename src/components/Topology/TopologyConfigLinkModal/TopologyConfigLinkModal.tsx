@@ -114,12 +114,12 @@ export function TopologyConfigLinkModal({
       containerClassName=""
       bodyClass=""
     >
-      <div className="flex flex-col divide-y divide-gray-200 space-y-4">
+      <div className="flex flex-col space-y-4 divide-y divide-gray-200">
         <div className={clsx("flex flex-col px-4 py-4")}>
-          <div className="text-sm font-bold text-gray-700 inline-block">
+          <div className="inline-block text-sm font-bold text-gray-700">
             Catalog
           </div>
-          <div className="flex flex-col w-full">
+          <div className="flex w-full flex-col">
             {isLoading ? (
               <TextSkeletonLoader className="w-full" />
             ) : (
@@ -158,7 +158,7 @@ export function TopologyConfigLinkModal({
             )}
           </div>
         </div>
-        <div className="flex items-center justify-end p-2 rounded bg-gray-100">
+        <div className="flex items-center justify-end rounded bg-gray-100 p-2">
           <button
             type="submit"
             disabled={!value || isSubmitting}

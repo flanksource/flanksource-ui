@@ -55,11 +55,11 @@ export function Status({
   return (
     <div className="flex flex-row items-center">
       <span
-        className={`flex-shrink-0 inline-block h-3 w-3 rounded-full shadow-md ${className} ${color}`}
+        className={`inline-block h-3 w-3 flex-shrink-0 rounded-full shadow-md ${className} ${color}`}
         aria-hidden="true"
       />
       {!hideText && (
-        <span className="capitalize pl-1">{statusText ?? status}</span>
+        <span className="pl-1 capitalize">{statusText ?? status}</span>
       )}
     </div>
   );

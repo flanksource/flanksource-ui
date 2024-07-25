@@ -17,7 +17,7 @@ export function Loading({
   if (type === "modal") {
     return (
       <div
-        className={clsx("flex justify-center items-center", className)}
+        className={clsx("flex items-center justify-center", className)}
         {...props}
       >
         <BallTriangle stroke="zinc" opacity={0.8} fill="gray" height="4em" />
@@ -26,11 +26,11 @@ export function Loading({
   } else {
     return (
       <div
-        className={clsx("flex justify-center items-center", className)}
+        className={clsx("flex items-center justify-center", className)}
         {...props}
       >
         <Oval stroke="gray" height="1.5em" />
-        <span className="text-sm ml-3">{text}</span>
+        <span className="ml-3 text-sm">{text}</span>
       </div>
     );
   }

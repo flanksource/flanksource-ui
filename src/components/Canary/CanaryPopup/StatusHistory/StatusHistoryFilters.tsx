@@ -72,7 +72,7 @@ export function StatusHistoryFilters(props: StatusHistoryFiltersProps) {
         dropDownClassNames="w-auto max-w-[38rem] left-0"
         hideControlBorder
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
             Status:
           </div>
         }
@@ -93,7 +93,7 @@ export function StatusHistoryFilters(props: StatusHistoryFiltersProps) {
         dropDownClassNames="w-auto max-w-[38rem] left-0"
         hideControlBorder
         prefix={
-          <div className="text-xs text-gray-500 mr-2 whitespace-nowrap">
+          <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
             Duration:
           </div>
         }

@@ -109,7 +109,7 @@ export default function PlaybookRunsTable({
   );
 
   return (
-    <div className="flex flex-col h-full overflow-y-hidden" {...rest}>
+    <div className="flex h-full flex-col overflow-y-hidden" {...rest}>
       <DataTable
         stickyHead
         columns={playbookRunsTableColumns}

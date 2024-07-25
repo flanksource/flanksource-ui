@@ -24,13 +24,13 @@ export function MongoHealthFormEditor({
     <>
       <div className="flex flex-row md:space-x-2">
         <FormikTextInput
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.name`}
           label="Name"
           required
         />
         <FormikIconPicker
-          className="flex flex-col w-1/2"
+          className="flex w-1/2 flex-col"
           name={`${fieldName}.icon`}
           label="Icon"
         />

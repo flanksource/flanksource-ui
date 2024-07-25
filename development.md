@@ -11,6 +11,7 @@ typescript: {
   check: false,
 }
 ```
+
 With CRA it's more complicated.
 
 ### css prop type
@@ -21,11 +22,10 @@ For type information related to css prop types (see: [issue-comment](https://git
   "jsxImportSource": "@emotion/react",
 ```
 
-
 ## Packages
 
 ### @headlressui/react
 
-We are using incsider (master) version of headlessui/react, for the `by` property on `Combobox`.  Without `by`, selected item logic was difficult to achieve.
+We are using incsider (master) version of headlessui/react, for the `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve.
 
 Be careful about updating this package.

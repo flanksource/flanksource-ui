@@ -36,16 +36,16 @@ export const Pagination = ({
           </div>
           <div
             className={clsx(
-              "mt-1 inline-block rounded-md shadow-sm pr-2",
+              "mt-1 inline-block rounded-md pr-2 shadow-sm",
               paginationType === "complete" ? "" : "hidden"
             )}
           >
-            <span className="px-4 py-2 inline-block items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500">
+            <span className="inline-block items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-4 py-2 text-gray-500">
               Go to page
             </span>
             <input
               type="number"
-              className="rounded-none rounded-r-md border-gray-300 px-4 py-2 w-24"
+              className="w-24 rounded-none rounded-r-md border-gray-300 px-4 py-2"
               value={pageIndex + 1}
               min={1}
               max={pageCount}
@@ -58,7 +58,7 @@ export const Pagination = ({
           </div>
           <select
             className={clsx(
-              "rounded-md w-35 border-gray-300 py-2 pl-3 pr-10 shadow-sm inline-block",
+              "w-35 inline-block rounded-md border-gray-300 py-2 pl-3 pr-10 shadow-sm",
               paginationType === "complete" ? "" : "hidden"
             )}
             value={pageSize}
@@ -77,7 +77,7 @@ export const Pagination = ({
       <div className="inline-flex items-center -space-x-px">
         <button
           className={clsx(
-            "disabled:opacity-50 inline-block rounded-l-md border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            "inline-block rounded-l-md border border-gray-300 bg-white px-2 py-2 text-gray-500 disabled:opacity-50",
             canPreviousPage && "hover:bg-gray-100"
           )}
           onClick={() => gotoPage(0)}
@@ -87,7 +87,7 @@ export const Pagination = ({
         </button>
         <button
           className={clsx(
-            "disabled:opacity-50 inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            "inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500 disabled:opacity-50",
             canPreviousPage && "hover:bg-gray-100"
           )}
           onClick={() => previousPage()}
@@ -97,7 +97,7 @@ export const Pagination = ({
         </button>
         <button
           className={clsx(
-            "disabled:opacity-50 inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500",
+            "inline-block border border-gray-300 bg-white px-2 py-2 text-gray-500 disabled:opacity-50",
             canNextPage && "hover:bg-gray-100"
           )}
           onClick={() => nextPage()}
@@ -107,7 +107,7 @@ export const Pagination = ({
         </button>
         <button
           className={clsx(
-            "disabled:opacity-50 inline-block rounded-r-md border border-gray-300 bg-white px-4 py-2 text-gray-500",
+            "inline-block rounded-r-md border border-gray-300 bg-white px-4 py-2 text-gray-500 disabled:opacity-50",
             canNextPage && "hover:bg-gray-100"
           )}
           onClick={() => gotoPage(pageCount - 1)}

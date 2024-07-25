@@ -44,7 +44,7 @@ export function TopologyConfigAnalysisLine({
   const analysis: StatusLineData = useMemo(() => {
     if (!insights) {
       return {
-        icon: <MdOutlineInsights className="w-4 h-4" />,
+        icon: <MdOutlineInsights className="h-4 w-4" />,
         label: "Insights",
         statuses: []
       };
@@ -77,7 +77,7 @@ export function TopologyConfigAnalysisLine({
     });
 
     return {
-      icon: <MdOutlineInsights className="w-4 h-4" />,
+      icon: <MdOutlineInsights className="h-4 w-4" />,
       label: "Insights",
       url: `/catalog/insights?component=${topology.id}`,
       statuses: Object.values(analysisToCountMap)

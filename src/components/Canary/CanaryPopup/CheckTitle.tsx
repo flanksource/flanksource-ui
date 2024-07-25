@@ -33,22 +33,22 @@ export function CheckTitle({
           name={check?.icon || check?.type}
           className={
             size === "large"
-              ? "flex flex-row w-14 h-auto"
-              : "flex flex-row w-6 h-auto"
+              ? "flex h-auto w-14 flex-row"
+              : "flex h-auto w-6 flex-row"
           }
         />
       </div>
       <div
         className={clsx(
-          "flex flex-1 flex-row whitespace-nowrap overflow-ellipsis overflow-hidden gap-1",
-          size === "large" ? " mr-10" : ""
+          "flex flex-1 flex-row gap-1 overflow-hidden overflow-ellipsis whitespace-nowrap",
+          size === "large" ? "mr-10" : ""
         )}
       >
-        <div className="flex flex-row overflow-x-auto items-center">
+        <div className="flex flex-row items-center overflow-x-auto">
           <span
             title={check?.name}
             className={clsx(
-              "text-gray-800 flex-1 font-semibold whitespace-nowrap overflow-ellipsis overflow-hidden pr-1",
+              "flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap pr-1 font-semibold text-gray-800",
               size === "large" ? "text-2xl" : ""
             )}
           >
@@ -56,7 +56,7 @@ export function CheckTitle({
           </span>{" "}
           {size === "large" && (
             <span
-              className="hidden sm:block "
+              className="hidden sm:block"
               title={`Namespace for ${check?.name}`}
               style={{ paddingTop: "1px" }}
             >
@@ -66,7 +66,7 @@ export function CheckTitle({
         </div>
         <div
           title={`Endpoint for ${check?.name}`}
-          className="text-sm text-gray-400 mt-0.5 overflow-x-hidden overflow-ellipsis break-all"
+          className="mt-0.5 overflow-x-hidden overflow-ellipsis break-all text-sm text-gray-400"
         >
           {check?.endpoint}
         </div>

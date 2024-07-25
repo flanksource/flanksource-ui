@@ -807,7 +807,7 @@ export function Icon({
     <>
       {prefix}{" "}
       <IconSVG
-        className={`inline-block object-center fill-current text-gray-700 ${className}`}
+        className={`inline-block fill-current object-center text-gray-700 ${className}`}
         {...props}
       />
     </>
@@ -823,7 +823,7 @@ export function Avatar({ url, alt = "", ...props }: AvatarProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
+      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-white"
       src={url}
       alt={alt}
       {...props}

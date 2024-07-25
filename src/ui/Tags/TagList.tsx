@@ -64,12 +64,12 @@ export function TagItem({
 }: TagItemProps) {
   return (
     <div
-      className={`flex flex-row p-[0.15rem] rounded-md ${className}`}
+      className={`flex flex-row rounded-md p-[0.15rem] ${className}`}
       data-tooltip-id={`tag-item-tooltip-${key}-${value}`}
       data-tooltip-content={`${key}:${value}`}
     >
       <div
-        className="flex flex-row space-x-1 font-semibold p-[0.2rem]  text-xs whitespace-nowrap break-inside-avoid-column"
+        className="flex break-inside-avoid-column flex-row space-x-1 whitespace-nowrap p-[0.2rem] text-xs font-semibold"
         style={containerWidth ? { width: containerWidth } : {}}
       >
         <span className={keyClassName}>{key}:</span>
@@ -134,7 +134,7 @@ export function TagList({
       <div
         ref={innerContainerRef}
         className={clsx(
-          `flex flex-col flex-1 h-auto space-y-2`,
+          `flex h-auto flex-1 flex-col space-y-2`,
           !showAll ? `overflow-y-hidden` : ""
         )}
         style={

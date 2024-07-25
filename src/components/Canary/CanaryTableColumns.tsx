@@ -76,7 +76,7 @@ export function getCanaryTableColumns({
           good = value === "healthy";
         }
         return (
-          <div className="items-center flex space-x-1">
+          <div className="flex items-center space-x-1">
             <Status good={good} mixed={mixed} />
             <LastTransitionCell
               value={row.original.last_runtime}

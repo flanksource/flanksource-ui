@@ -137,7 +137,7 @@ export default function RefreshDropdown({
     <div className="flex flex-row px-2">
       <button
         onClick={() => onClick()}
-        className={`border border-r-0 border-gray-300 p-[0.35rem] px-2 rounded-md rounded-r-none hover:bg-blue-200`}
+        className={`rounded-md rounded-r-none border border-r-0 border-gray-300 p-[0.35rem] px-2 hover:bg-blue-200`}
       >
         <HiOutlineRefresh
           size={18}
@@ -146,7 +146,7 @@ export default function RefreshDropdown({
       </button>
       <div className="relative">
         <Menu>
-          <Menu.Button className="border border-gray-300 p-2 text-sm rounded-md rounded-l-none">
+          <Menu.Button className="rounded-md rounded-l-none border border-gray-300 p-2 text-sm">
             <span className="inline p-1 pr-2">{refreshRate.rate}</span>
             <HiOutlineChevronDown className="inline" />
           </Menu.Button>
@@ -179,7 +179,7 @@ export default function RefreshDropdown({
                         disabled={refreshDropdownDisabledOptions.has(
                           optionsKeys as any
                         )}
-                        className={`flex group w-full items-center rounded-md px-2 py-2 text-sm ${
+                        className={`group flex w-full items-center rounded-md px-2 py-2 text-sm ${
                           disabled ? "text-gray-500" : "cursor-pointer"
                         } ${active ? "bg-blue-200" : "text-gray-900"} ${
                           refreshRate.rate === optionsKeys ? "font-bold" : ""

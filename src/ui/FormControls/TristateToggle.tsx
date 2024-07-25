@@ -36,8 +36,8 @@ export function TristateToggle({
     size === "sm"
       ? "min-w-[40px] min-h-[16px]"
       : size === "md"
-      ? "min-w-[66px] min-h-[24px]"
-      : "min-w-[90px] min-h-[32px]";
+        ? "min-w-[66px] min-h-[24px]"
+        : "min-w-[90px] min-h-[32px]";
 
   const [stateValue, setValue] = useState(value || states[0]);
   const [position, setPosition] = useState<string>();
@@ -90,7 +90,7 @@ export function TristateToggle({
   return (
     <div className={`${className} flex`}>
       <div
-        className={`flex items-center relative justify-center ${containerSizeClassNames} overflow-hidden rounded-[40px] duration-200`}
+        className={`relative flex items-center justify-center ${containerSizeClassNames} overflow-hidden rounded-[40px] duration-200`}
         style={{ backgroundColor: bgColor }}
       >
         <button
@@ -98,13 +98,13 @@ export function TristateToggle({
           onClick={() => {
             toggleState(-1);
           }}
-          className={`flex justify-center items-center flex-1 h-full duration-100`}
+          className={`flex h-full flex-1 items-center justify-center duration-100`}
           title={`Exclude ${label?.label}`}
         >
           <BiX style={{ color: fgColor, marginLeft: "4px" }} />
         </button>
         <button
-          className={`flex justify-center items-center flex-1 h-full duration-100`}
+          className={`flex h-full flex-1 items-center justify-center duration-100`}
           type="button"
           title={`Do not filter ${label?.label}`}
           onClick={() => {
@@ -118,14 +118,14 @@ export function TristateToggle({
           onClick={() => {
             toggleState(1);
           }}
-          className={`flex justify-center items-center flex-1 h-full duration-100`}
+          className={`flex h-full flex-1 items-center justify-center duration-100`}
           title={`Include ${label?.label}`}
         >
           <BiCheck style={{ color: fgColor, marginRight: "4px" }} />
         </button>
         <div
           className={clsx(
-            `absolute ${sizeClassNames} rounded-full bg-white pointer-events-none shadow-md transition-transform duration-150 transform`
+            `absolute ${sizeClassNames} pointer-events-none transform rounded-full bg-white shadow-md transition-transform duration-150`
           )}
           style={{
             ...(position === "left" && {
@@ -151,7 +151,7 @@ export function TristateToggle({
       ))}
       {label?.label && !hideLabel && (
         <span
-          className={`${labelClass || "ml-3 text-xs text-left text-gray-700"}`}
+          className={`${labelClass || "ml-3 text-left text-xs text-gray-700"}`}
         >
           {label.label}
         </span>

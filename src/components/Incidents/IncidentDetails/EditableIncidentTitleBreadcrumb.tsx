@@ -16,7 +16,7 @@ export default function EditableIncidentTitleBreadcrumb({
   const [isEditing, setIsEditing] = useState(false);
 
   return isEditing ? (
-    <div className="flex flex-row w-full gap-2 items-center">
+    <div className="flex w-full flex-row items-center gap-2">
       <EditIncidentTitleForm
         incident={incident}
         updateHandler={updateHandler}
@@ -24,7 +24,7 @@ export default function EditableIncidentTitleBreadcrumb({
       />
     </div>
   ) : (
-    <div className="flex flex-row gap-2 items-center">
+    <div className="flex flex-row items-center gap-2">
       <span>{incident.title}</span>
       <IconButton
         title="Edit"

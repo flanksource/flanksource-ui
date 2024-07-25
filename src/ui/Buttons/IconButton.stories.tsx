@@ -17,7 +17,7 @@ Base.args = {
   className: "w-4",
   icon: (
     <BsTrash
-      className="text-gray-600 border-0 border-l-1 border-gray-200"
+      className="border-l-1 border-0 border-gray-200 text-gray-600"
       size={18}
     />
   ),

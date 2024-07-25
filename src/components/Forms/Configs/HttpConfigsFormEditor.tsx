@@ -55,8 +55,8 @@ export default function HttpConfigsFormEditor({
       />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">Advanced Options</label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+        <label className="text-sm font-semibold">Advanced Options</label>
+        <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
           <FormikAdvancedScrapperFields fieldName={fieldName} />
         </div>
       </div>

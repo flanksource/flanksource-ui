@@ -42,7 +42,7 @@ export default function FormikIconPicker({
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
       {meta.touched && meta.error ? (
-        <p className="text-sm text-red-500 w-full">{meta.error}</p>
+        <p className="w-full text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

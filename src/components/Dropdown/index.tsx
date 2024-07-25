@@ -156,9 +156,7 @@ export function DropdownListbox({
           )}
           <div className={`${label && "mt-1"} relative h-full`}>
             <Listbox.Button
-              className={`relative cursor-pointer h-full w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-1 text-left  focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm
-              ${items[value]?.id === "_empty" && "text-gray-400"}
-            `}
+              className={`relative h-full w-full cursor-pointer rounded-md border border-gray-300 bg-white py-1 pl-3 pr-10 text-left shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm ${items[value]?.id === "_empty" && "text-gray-400"} `}
             >
               <div className="flex items-center">
                 {prefix}
@@ -170,7 +168,7 @@ export function DropdownListbox({
                 </span>
                 {suffix}
               </div>
-              <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <SelectorIcon
                   className="h-5 w-5 text-gray-400"
                   aria-hidden="true"
@@ -188,7 +186,7 @@ export function DropdownListbox({
             >
               {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
               <>
-                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                   {Object.values(items)
                     .sort((a, b) => {
                       if (
@@ -210,8 +208,8 @@ export function DropdownListbox({
                         key={item.id || item.value}
                         className={({ active }) =>
                           clsx(
-                            active ? "text-white bg-blue-600" : "text-gray-900",
-                            "cursor-pointer select-none relative py-2 pl-3 pr-9"
+                            active ? "bg-blue-600 text-white" : "text-gray-900",
+                            "relative cursor-pointer select-none py-2 pl-3 pr-9"
                           )
                         }
                         value={item.value}

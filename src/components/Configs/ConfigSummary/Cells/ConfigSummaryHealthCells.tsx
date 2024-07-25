@@ -56,15 +56,18 @@ export function ConfigSummaryHealthCell({
 export function ConfigSummaryHealthAggregateCell({
   row
 }: CellContext<ConfigSummary, any>) {
-  const value = row.subRows.reduce((acc, row) => {
-    const health = row.original.health;
-    if (health) {
-      Object.entries(health).forEach(([key, value]) => {
-        acc[key] = (acc[key] || 0) + value;
-      });
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const value = row.subRows.reduce(
+    (acc, row) => {
+      const health = row.original.health;
+      if (health) {
+        Object.entries(health).forEach(([key, value]) => {
+          acc[key] = (acc[key] || 0) + value;
+        });
+      }
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   const statusLines = useMemo(() => {
     const data: Count[] = Object.entries(value ?? {}).map(([key, value]) => {

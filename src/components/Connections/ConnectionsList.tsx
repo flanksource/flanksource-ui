@@ -14,8 +14,8 @@ type ConnectionListProps = {
 
 const NameCell = ({ row, getValue }: CellContext<Connection, any>) => {
   return (
-    <div className="flex flex-row space-x-2 items-center">
-      <Icon name={row.original.type} className="w-6 h-auto" />
+    <div className="flex flex-row items-center space-x-2">
+      <Icon name={row.original.type} className="h-auto w-6" />
       <div>{getValue()}</div>
     </div>
   );

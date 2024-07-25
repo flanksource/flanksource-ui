@@ -104,12 +104,12 @@ export default function ConnectionFormModal({
               ) : (
                 connectionType.icon
               )}
-              <div className="font-semibold text-lg">
+              <div className="text-lg font-semibold">
                 {connectionType.title} Connection Details
               </div>
             </div>
           ) : (
-            <div className="font-semibold text-lg">Select Connection Type</div>
+            <div className="text-lg font-semibold">Select Connection Type</div>
           )
         }
         onClose={() => {

@@ -72,7 +72,7 @@ export function ConfigChangesPage() {
   const errorMessage =
     typeof error === "string"
       ? error
-      : (error as Record<string, string>)?.message ?? "Something went wrong";
+      : ((error as Record<string, string>)?.message ?? "Something went wrong");
 
   return (
     <>

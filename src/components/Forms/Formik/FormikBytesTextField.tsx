@@ -85,7 +85,7 @@ export default function FormikBytesTextField({
         </label>
       )}
       {hint && hintPosition === "top" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
+        <p className="py-1 text-sm text-gray-500">{hint}</p>
       )}
       <div className="relative mt-2 rounded-md shadow-sm">
         <TextInputWithSuffix
@@ -119,10 +119,10 @@ export default function FormikBytesTextField({
         </div>
       </div>
       {hint && hintPosition === "bottom" && (
-        <p className="text-sm text-gray-500 py-1">{hint}</p>
+        <p className="py-1 text-sm text-gray-500">{hint}</p>
       )}
       {meta.touched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

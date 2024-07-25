@@ -95,12 +95,12 @@ export function LogsPage() {
             dropdownElem={<TimeRange name="time-range" />}
             defaultValue={searchParams.get("start") ?? timeRanges[0].value}
             paramKey="start"
-            className="w-44 mr-2"
+            className="mr-2 w-44"
             name="time-range"
           />
         }
       >
-        <div className="flex flex-col space-y-6 h-full">
+        <div className="flex h-full flex-col space-y-6">
           <LogsFilterBar refetch={refetch} />
           <LogsTable
             variant="comfortable"

@@ -126,7 +126,7 @@ export function CheckDetailsTabs({
         )}
         {shareHeight && (
           <div
-            className="absolute invisible"
+            className="invisible absolute"
             ref={sharedHeightRef as LegacyRef<HTMLDivElement>}
           >
             {Object.entries(tabs).map(([key, tab]) => (

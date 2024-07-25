@@ -12,14 +12,14 @@ export default function IncidentChangelogItem({
 }: IncidentChangelogItemProps) {
   return (
     <li className="mb-6 ml-2" key={history.id}>
-      <div className="absolute flex items-center justify-center bg-blue-200 rounded-full -left-3 ring-8 ring-white">
+      <div className="absolute -left-3 flex items-center justify-center rounded-full bg-blue-200 ring-8 ring-white">
         <Avatar user={history.created_by} circular size="sm" />
       </div>
-      <div className="min-w-0 flex-1 flex items-center justify-between">
-        <div className="text-sm block flex-1 normal-case justify-center text-gray-500">
+      <div className="flex min-w-0 flex-1 items-center justify-between">
+        <div className="block flex-1 justify-center text-sm normal-case text-gray-500">
           <span className="text-gray-500">{history.created_by?.name}</span>{" "}
           <IncidentHistoryItemTypeContent incidentHistory={history} />{" "}
-          <span className="text-gray-500 font-medium">
+          <span className="font-medium text-gray-500">
             <Age from={history.created_at} />
           </span>
         </div>

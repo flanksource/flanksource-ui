@@ -51,7 +51,7 @@ export default function FormikAutocompleteDropdown({
         <p className="text-sm text-gray-500">{hint}</p>
       )}
       <CreatableSelect
-        className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+        className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         onChange={(value) => {
           field.onChange({
             target: {
@@ -84,7 +84,7 @@ export default function FormikAutocompleteDropdown({
         <p className="text-sm text-gray-500">{hint}</p>
       )}
       {isTouched && meta.error ? (
-        <p className="text-sm text-red-500 w-full py-1">{meta.error}</p>
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
   );

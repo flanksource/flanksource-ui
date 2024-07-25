@@ -49,19 +49,17 @@ export function MultiSelectDropdown({
             <div className={containerClassName}>
               <div
                 className={clsx(
-                  `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white text-sm
-                ${!value ? "text-gray-500" : ""}
-              `,
+                  `relative h-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-8 text-left text-sm shadow-sm ${!value ? "text-gray-500" : ""} `,
                   className
                 )}
               >
-                <div className="flex gap-2 items-center truncate w-full">
+                <div className="flex w-full items-center gap-2 truncate">
                   {label && (
-                    <div className="text-xs text-gray-500 whitespace-nowrap">
+                    <div className="whitespace-nowrap text-xs text-gray-500">
                       {label}:
                     </div>
                   )}
-                  <div className="flex flex-row overflow-hidden text-ellipsis text-sm space-x-1 items-center">
+                  <div className="flex flex-row items-center space-x-1 overflow-hidden text-ellipsis text-sm">
                     {((isArray(value) && value.length === 0) ||
                       (typeof value === "string" && !value)) && (
                       <span className="text-black">
@@ -71,7 +69,7 @@ export function MultiSelectDropdown({
                     {isMulti ? (
                       (value as GroupByOptions[]).map((v) => (
                         <div
-                          className="flex flex-row bg-gray-200 items-center px-1 gap-1 rounded-md"
+                          className="flex flex-row items-center gap-1 rounded-md bg-gray-200 px-1"
                           key={v.value}
                         >
                           {v?.icon && <div>{v.icon}</div>}
@@ -95,7 +93,7 @@ export function MultiSelectDropdown({
                     )}
                   </div>
                 </div>
-                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   {open ? (
                     <ChevronUpIcon className="h-5 w-5 text-gray-400" />
                   ) : (
@@ -110,7 +108,7 @@ export function MultiSelectDropdown({
             <Popover.Panel
               ref={refs.setFloating}
               className={clsx(
-                "flex flex-col bg-white rounded-sm shadow-lg absolute"
+                "absolute flex flex-col rounded-sm bg-white shadow-lg"
               )}
               style={floatingStyles}
             >
@@ -129,7 +127,7 @@ export function MultiSelectDropdown({
                       return (
                         <components.Option {...props}>
                           <div
-                            className="flex items-center text-sm cursor-pointer"
+                            className="flex cursor-pointer items-center text-sm"
                             title={props.data.description}
                           >
                             {props.data.icon && <div>{props.data.icon}</div>}

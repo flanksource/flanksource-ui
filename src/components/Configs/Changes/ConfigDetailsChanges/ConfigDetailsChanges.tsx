@@ -55,7 +55,7 @@ export function ConfigDetailsChanges({
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto">
+    <div className="flex flex-1 flex-col overflow-y-auto">
       <ConfigDetailChangeModal
         // do not show modal if the config is not loaded
         isLoading={isLoading}
@@ -65,8 +65,8 @@ export function ConfigDetailsChanges({
       />
 
       {viewType === ViewType.detailed && (
-        <div className="flex flex-col flex-1 px-4 py-3 overflow-y-auto">
-          <div className="flex flex-row w-full gap-12">
+        <div className="flex flex-1 flex-col overflow-y-auto px-4 py-3">
+          <div className="flex w-full flex-row gap-12">
             <Stat
               title="Date"
               sizeStyle="sm"
@@ -94,7 +94,9 @@ export function ConfigDetailsChanges({
               value={
                 // eslint-disable-next-line react/jsx-no-useless-fragment
                 <>
-                 {!changeDetails?.created_by && ! changeDetails?.external_created_by && changeDetails?.source}
+                  {!changeDetails?.created_by &&
+                    !changeDetails?.external_created_by &&
+                    changeDetails?.source}
                   {changeDetails?.created_by ? (
                     <Avatar
                       user={
@@ -179,14 +181,14 @@ export function ConfigDetailChangeModal({
             items={[
               <div
                 key={"config-details"}
-                className="flex flex-row gap-1 flex-shrink items-center"
+                className="flex flex-shrink flex-row items-center gap-1"
               >
                 <ChangeIcon change={changeDetails} />
                 <span> {changeDetails?.change_type}</span>
               </div>,
               <ConfigLink
                 key={"config-link"}
-                className="link text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+                className="link overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold"
                 config={config}
               />
             ]}
@@ -216,7 +218,7 @@ export function ConfigDetailChangeModal({
           />
         )}
       </div>
-      <div className="flex items-center justify-end py-4 px-5 rounded-lg bg-gray-100">
+      <div className="flex items-center justify-end rounded-lg bg-gray-100 px-5 py-4">
         <AttachAsEvidenceButton
           config_change_id={changeDetails?.id}
           config_id={changeDetails?.config_id}

@@ -24,21 +24,21 @@ export function ConfigIntermediaryNodeReactFlowNode({
       {targetPosition && <Handle type="target" position={targetPosition} />}
       <div
         className={clsx(
-          "flex flex-col w-auto justify-center",
+          "flex w-auto flex-col justify-center",
           targetPosition === Position.Top ? undefined : "h-[6.05rem]"
         )}
       >
         <div
           className={clsx(
-            "flex flex-col gap-2 w-96 justify-center cursor-pointer shadow-card card border-0 relative rounded-md"
+            "card relative flex w-96 cursor-pointer flex-col justify-center gap-2 rounded-md border-0 shadow-card"
           )}
         >
           <div className="flex flex-col gap-2 bg-white p-2">
             <div
-              className="flex flex-row font-bold w-auto overflow-hidden truncate text-ellipsis align-middle text-15pxinrem leading-1.21rel"
+              className="flex w-auto flex-row overflow-hidden truncate text-ellipsis align-middle text-15pxinrem font-bold leading-1.21rel"
               title={data.data.configType}
             >
-              <div className="flex flex-1 flex-row w-auto gap-2">
+              <div className="flex w-auto flex-1 flex-row gap-2">
                 <ConfigsTypeIcon
                   showLabel
                   config={{
@@ -53,7 +53,7 @@ export function ConfigIntermediaryNodeReactFlowNode({
                   />
                 </ConfigsTypeIcon>
                 {data.childrenCount > 3 && (
-                  <div className="flex flex-row w-auto justify-end items-center gap-1.5 px-2 text-gray-500">
+                  <div className="flex w-auto flex-row items-center justify-end gap-1.5 px-2 text-gray-500">
                     {data.expanded ? (
                       <HiOutlineMinusCircle />
                     ) : (

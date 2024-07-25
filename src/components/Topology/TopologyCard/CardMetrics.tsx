@@ -25,16 +25,16 @@ export const CardMetrics = ({
   metricsClasses = "font-bold text-xs leading-1.21rel flex flex-center justify-center"
 }: IProps) => {
   return (
-    <div className="flex rounded-b-8px divide-x flex-1 justify-between items-center">
+    <div className="flex flex-1 items-center justify-between divide-x rounded-b-8px">
       {items.map((item) => (
         <div
           key={item.name}
           className={clsx(containerClasses, {
-            "flex-col max-w-[15ch]": !row,
-            "flex-row items-center justify-center max-w-[15ch]": row
+            "max-w-[15ch] flex-col": !row,
+            "max-w-[15ch] flex-row items-center justify-center": row
           })}
         >
-          <h6 className={`space-x-2 whitespace-nowrap  ${labelClasses}`}>
+          <h6 className={`space-x-2 whitespace-nowrap ${labelClasses}`}>
             {showLabelIcons && (
               <Icon name={item.icon} className="w-5" secondary={item.name} />
             )}

@@ -62,7 +62,7 @@ export default function HelmCLIAddIntegrationCommand({
 
   return (
     <CodeBlock
-      className="flex flex-col flex-1 text-sm text-left gap-2 bg-white text-black rounded-lg p-4 pl-6"
+      className="flex flex-1 flex-col gap-2 rounded-lg bg-white p-4 pl-6 text-left text-sm text-black"
       code={helmInstallationCommand}
     />
   );

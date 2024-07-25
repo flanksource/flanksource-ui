@@ -11,7 +11,7 @@ export default function TextSkeletonLoader({
     <div className="animate-pulse" {...props}>
       <div
         className={clsx(
-          "bg-gray-200 h-8 rounded-md",
+          "h-8 rounded-md bg-gray-200",
           className ? className : "w-36"
         )}
       ></div>

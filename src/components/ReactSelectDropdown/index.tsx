@@ -150,7 +150,7 @@ export const ReactSelectDropdown = ({
               className={
                 labelClass
                   ? labelClass
-                  : "text-sm font-medium text-gray-700 block"
+                  : "block text-sm font-medium text-gray-700"
               }
             >
               {label}
@@ -158,18 +158,16 @@ export const ReactSelectDropdown = ({
           )}
           <div
             className={clsx(
-              `relative cursor-pointer h-full pl-3 rounded-md shadow-sm pr-8 py-2 text-left border border-gray-300 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm
-                ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""}
-              `,
+              `relative h-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-8 text-left text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 ${SelectedOption?.id === "_empty" ? "text-gray-400" : ""} `,
               className
             )}
             onClick={toggleOpen}
           >
-            <div className="flex space-x-2 items-center truncate w-full">
+            <div className="flex w-full items-center space-x-2 truncate">
               {prefix && (
                 <div className="flex flex-col text-gray-600"> {prefix} </div>
               )}
-              <div className="flex text-sm space-x-1 items-center">
+              <div className="flex items-center space-x-1 text-sm">
                 {SelectedOption?.icon && <div>{SelectedOption.icon}</div>}
                 <span className="block">{SelectedOption?.description}</span>
                 {!SelectedOption && value && isCreatable && (
@@ -177,7 +175,7 @@ export const ReactSelectDropdown = ({
                 )}
               </div>
             </div>
-            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronDown className="h-5 w-5 text-gray-400" />
             </span>
           </div>
@@ -347,7 +345,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
     {target}
     {isOpen ? (
       <Menu
-        className={`absolute bg-white z-[99] text-sm drop-shadow-md ${className}`}
+        className={`absolute z-[99] bg-white text-sm drop-shadow-md ${className}`}
       >
         {children}
       </Menu>
@@ -378,7 +376,7 @@ const DropdownIndicator = () => (
 );
 const ChevronDown = ({ className }: { className: string }) => (
   <Svg
-    className={clsx("inline-block float-right", className)}
+    className={clsx("float-right inline-block", className)}
     style={{ marginRight: -6 }}
   >
     <path

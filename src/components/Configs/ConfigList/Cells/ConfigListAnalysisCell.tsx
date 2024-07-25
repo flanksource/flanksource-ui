@@ -17,14 +17,14 @@ export default function ConfigListAnalysisCell({
     <Popover
       toggle={
         <div className="flex flex-row items-center">
-          <div className="flex flex-row items-center flex-shrink space-x-1 truncate">
+          <div className="flex flex-shrink flex-row items-center space-x-1 truncate">
             <span className="w-auto">
               <ConfigInsightsIcon analysis={analysis[0]} />
             </span>
             <span className="flex-1">{analysis[0].analyzer}</span>
           </div>
           {analysis.length > 1 && (
-            <div className="flex-shrink underline decoration-solid justify-left text-xs mx-2">
+            <div className="justify-left mx-2 flex-shrink text-xs underline decoration-solid">
               +{analysis.length - 1} more
             </div>
           )}
@@ -33,9 +33,9 @@ export default function ConfigListAnalysisCell({
       placement="left"
       title="Analysis"
     >
-      <div className="flex flex-col w-full max-w-full space-y-2 p-3">
+      <div className="flex w-full max-w-full flex-col space-y-2 p-3">
         {analysis.map((item, index) => (
-          <div className="flex flex-row space-x-2 max-w-full" key={index}>
+          <div className="flex max-w-full flex-row space-x-2" key={index}>
             <span className="w-auto">
               <ConfigInsightsIcon analysis={item} />
             </span>

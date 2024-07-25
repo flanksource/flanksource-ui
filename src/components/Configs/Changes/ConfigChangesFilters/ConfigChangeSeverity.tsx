@@ -85,7 +85,7 @@ export function ConfigChangeSeverity({ searchParamKey = "severity" }: Props) {
       dropDownClassNames="w-auto max-w-[400px] left-0"
       hideControlBorder
       prefix={
-        <div className="text-xs text-gray-500 whitespace-nowrap">Severity:</div>
+        <div className="whitespace-nowrap text-xs text-gray-500">Severity:</div>
       }
     />
   );

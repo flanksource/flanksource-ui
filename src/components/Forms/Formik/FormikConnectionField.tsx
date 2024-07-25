@@ -45,7 +45,7 @@ export default function FormikConnectionField({
   return (
     <FormikSelectDropdown
       name={name}
-      className="h-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md"
+      className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
       options={connections}
       label={label}
       isLoading={isLoading}

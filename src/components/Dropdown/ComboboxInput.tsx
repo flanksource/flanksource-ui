@@ -20,9 +20,9 @@ export function ComboboxInput<T>({
     onChange(event.target.value);
   }, debounceTime);
   return (
-    <div className="bg-white cursor-default relative w-full">
+    <div className="relative w-full cursor-default bg-white">
       <Combobox.Input
-        className="border border-gray-300 focus:border-blue-500 focus:ring-blue-500 leading-5 pl-3 pr-10 py-2 rounded-md shadow-sm text-gray-900 text-sm w-full"
+        className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         displayValue={(value: T) => displayValue(value)}
         onChange={debouncedChangeFn}
       />

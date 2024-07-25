@@ -77,27 +77,27 @@ export function EvidenceGroupSelectorStep({
 
   return (
     <div
-      className={`flex flex-col space-y-4 p-4 rounded-md border ${
+      className={`flex flex-col space-y-4 rounded-md border p-4 ${
         isAllSelected ? "border-blue-200" : "border-gray-300"
       }`}
     >
-      <div className="flex flex-row space-x-4 items-center">
+      <div className="flex flex-row items-center space-x-4">
         <input
           onChange={onSelectAllCheckboxChange}
           id={`selectAll${evidenceType}`}
           type="checkbox"
           /* this might not work */
           checked={isAllSelected}
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+          className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-blue-500"
         />
         <label
           htmlFor={`selectAll${evidenceType}`}
-          className="capitalize font-semibold"
+          className="font-semibold capitalize"
         >
           {evidenceType}
         </label>
       </div>
-      <div className="flex flex-col space-y-2 ml-4">
+      <div className="ml-4 flex flex-col space-y-2">
         <MultiSelectList
           options={noneDODEvidencesFilteredByType}
           onOptionSelect={(evidence) => {
@@ -110,9 +110,9 @@ export function EvidenceGroupSelectorStep({
           renderOption={(evidence, index) => {
             return (
               <div key={index} className="relative flex items-center">
-                <div className="min-w-0 flex-1 text-sm mr-4">
+                <div className="mr-4 min-w-0 flex-1 text-sm">
                   {evidence.description && (
-                    <div className="text-gray-500 py-2 text-base">
+                    <div className="py-2 text-base text-gray-500">
                       {evidence.description}
                     </div>
                   )}
@@ -138,7 +138,7 @@ export default function EvidenceSelectorStep({
   state
 }: EvidenceSelectorStepProps) {
   return (
-    <div className="w-full flex flex-col space-y-4">
+    <div className="flex w-full flex-col space-y-4">
       {Object.entries(EvidenceType)
         // remove comment evidence, as they are Manual DoD
         .filter(([_, value]) => value !== EvidenceType.Comment)

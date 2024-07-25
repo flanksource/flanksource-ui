@@ -18,7 +18,7 @@ export default function CatalogFormOption({ onSuccess, onBack }: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto h-full">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto">
       <ConfigScrapperSpecEditor onSubmit={createResource} onBack={onBack} />
     </div>
   );

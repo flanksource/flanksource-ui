@@ -36,7 +36,7 @@ export default function SelectDropdown<TValue = string>({
               {...props}
             >
               <div
-                className="flex flex-row gap-2 items-center cursor-pointer"
+                className="flex cursor-pointer flex-row items-center gap-2"
                 role="button"
               >
                 <span>{props.data.icon}</span> <span>{props.data.label}</span>
@@ -48,7 +48,7 @@ export default function SelectDropdown<TValue = string>({
           return (
             <components.Option {...props}>
               <div
-                className="flex flex-row gap-2 items-center cursor-pointer"
+                className="flex cursor-pointer flex-row items-center gap-2"
                 role="button"
               >
                 <span>{props.data.icon}</span> <span>{props.data.label}</span>

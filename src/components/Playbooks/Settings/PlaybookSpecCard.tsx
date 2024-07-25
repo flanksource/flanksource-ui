@@ -48,10 +48,10 @@ export default function PlaybookSpecCard({
 
   return (
     <>
-      <div className="flex flex-col w-full h-full rounded-8px shadow-card card bg-lightest-gray relative">
-        <div className="flex flex-row gap-2 p-2 bg-white items-center">
-          <Icon name={playbook.icon} className="w-6 h-6" />
-          <h3 className="flex-1 text-lg leading-6 font-medium text-gray-900">
+      <div className="card relative flex h-full w-full flex-col rounded-8px bg-lightest-gray shadow-card">
+        <div className="flex flex-row items-center gap-2 bg-white p-2">
+          <Icon name={playbook.icon} className="h-6 w-6" />
+          <h3 className="flex-1 text-lg font-medium leading-6 text-gray-900">
             {playbook.name}
           </h3>
           <AuthorizationAccessCheck
@@ -65,7 +65,7 @@ export default function PlaybookSpecCard({
             />
           </AuthorizationAccessCheck>
         </div>
-        <div className="flex flex-col flex-1 p-2">
+        <div className="flex flex-1 flex-col p-2">
           {playbook.description && (
             <div className="mt-2 max-w-xl text-sm text-gray-500">
               <p>{playbook.description}</p>

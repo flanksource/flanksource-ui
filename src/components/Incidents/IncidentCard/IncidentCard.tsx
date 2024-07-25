@@ -17,10 +17,10 @@ export default function IncidentCard({
 }: IncidentCardProps) {
   return (
     <div className={clsx("border-b border-dashed", className)} {...props}>
-      <div className="flex flex-row text-sm pl-2 pb-1">
+      <div className="flex flex-row pb-1 pl-2 text-sm">
         <IncidentTypeIcon type={incident.type as keyof typeof typeItems} />
         <Link
-          className="block text-xs mx-1 cursor-pointer"
+          className="mx-1 block cursor-pointer text-xs"
           to={{
             pathname: `/incidents/${incident.id}`
           }}
@@ -28,7 +28,7 @@ export default function IncidentCard({
           {incident.title}
         </Link>
         <IncidentStatusTag status={incident.status!} className="ml-1" />
-        <div className="text-right grow">
+        <div className="grow text-right">
           <Age from={incident.created_at} />
         </div>
       </div>

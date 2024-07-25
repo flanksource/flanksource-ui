@@ -26,9 +26,9 @@ function TestForm({
             handleSubmit(e);
           }}
           onReset={handleReset}
-          className="flex flex-col flex-1 overflow-y-auto space-y-4"
+          className="flex flex-1 flex-col space-y-4 overflow-y-auto"
         >
-          <div className="w-full h-full flex flex-col gap-4 overflow-y-auto p-4">
+          <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4">
             <FormikBytesTextField name="bytes" label="Bytes" />
             <button type="submit">Submit</button>
           </div>

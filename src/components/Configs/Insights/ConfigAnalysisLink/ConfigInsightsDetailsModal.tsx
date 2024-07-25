@@ -79,7 +79,7 @@ export default function ConfigInsightsDetailsModal({
         <ModalTitleListItems
           items={[
             <div
-              className="flex flex-row flex-grow-0 gap-1 whitespace-nowrap items-center"
+              className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap"
               key={"analyzer"}
             >
               <ConfigInsightsIcon analysis={configInsight} />
@@ -87,7 +87,7 @@ export default function ConfigInsightsDetailsModal({
             </div>,
             configInsight.config != null ? (
               <ConfigLink
-                className="text-blue-600 text-xl font-semibold whitespace-nowrap overflow-hidden overflow-ellipsis"
+                className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-blue-600"
                 config={configInsight.config}
                 key={"config"}
               />
@@ -104,7 +104,7 @@ export default function ConfigInsightsDetailsModal({
         <TextSkeletonLoader />
       ) : (
         <>
-          <div className="flex flex-col px-4 py-4 space-y-6">
+          <div className="flex flex-col space-y-6 px-4 py-4">
             <DescriptionCard items={properties} labelStyle="top" columns={3} />
             <DescriptionCard
               items={[
@@ -123,7 +123,7 @@ export default function ConfigInsightsDetailsModal({
             />
           </div>
 
-          <div className="flex items-center justify-end mt-4 py-2 px-4 rounded bg-gray-100">
+          <div className="mt-4 flex items-center justify-end rounded bg-gray-100 px-4 py-2">
             <AttachAsEvidenceButton
               config_analysis_id={configInsight.id}
               config_id={configInsight.config_id}

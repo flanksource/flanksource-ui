@@ -40,7 +40,7 @@ export default function PlaybookRunsFilterBar({
   const range = getTimeRangeFromUrl();
 
   return (
-    <div className="flex flex-row gap-2 w-full">
+    <div className="flex w-full flex-row gap-2">
       <FormikFilterForm
         filterFields={["playbook", "status"]}
         paramsToReset={[]}

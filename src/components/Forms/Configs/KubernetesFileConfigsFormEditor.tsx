@@ -23,8 +23,8 @@ export default function KubernetesFileConfigsFormEditor({
       <FormikTextInput name={`${fieldName}.type`} label="Type" required />
       <FormikTextInput name={`${fieldName}.id`} label="ID" required />
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">Selector</label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+        <label className="text-sm font-semibold">Selector</label>
+        <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
           <FormikTextInput name={`${fieldName}.selector.kind`} label="Kind" />
           <FormikTextInput name={`${fieldName}.selector.name`} label="Name" />
           <FormikTextInput
@@ -72,10 +72,10 @@ export default function KubernetesFileConfigsFormEditor({
       <FormikTextInput name={`${fieldName}.tags`} label="Tags" />
 
       <div className="flex flex-col space-y-2">
-        <label className="font-semibold text-sm">
+        <label className="text-sm font-semibold">
           Advanced scrapper options
         </label>
-        <div className="flex flex-col p-4 space-y-2 border border-gray-200 rounded-md">
+        <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
           <FormikAdvancedScrapperFields fieldName={fieldName} />
         </div>
       </div>

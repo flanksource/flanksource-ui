@@ -67,13 +67,13 @@ export default function ViewPlaybookParamsModal({
           const paramValue = playbookParams[paramSpec.name];
           return (
             <div key={index} className="flex flex-col gap-2">
-              <div className="flex flex-row gap-2 items-center">
+              <div className="flex flex-row items-center gap-2">
                 <div className="w-36">
                   <label className="text-sm font-semibold">
                     {paramSpec.label}:
                   </label>
                 </div>
-                <div className="flex flex-col flex-1 justify-center">
+                <div className="flex flex-1 flex-col justify-center">
                   <RenderParamValue
                     paramSpec={paramSpec}
                     paramValue={paramValue}
