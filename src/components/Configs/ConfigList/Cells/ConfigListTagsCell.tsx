@@ -100,7 +100,6 @@ export default function ConfigListTagsCell<
             key,
             value
           }}
-          title={value}
           key={value}
           variant="gray"
           onFilterByTag={enableFilterByTag ? onFilterByTag : undefined}

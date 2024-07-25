@@ -10,7 +10,7 @@ type BadgeProps = {
   className?: string;
   colorClass?: string;
   roundedClass?: string;
-};
+} & React.HTMLAttributes<HTMLSpanElement>;
 
 export function Badge({
   text,
@@ -20,7 +20,8 @@ export function Badge({
   title,
   color = "blue",
   className,
-  roundedClass = "rounded"
+  roundedClass = "rounded",
+  ...props
 }: BadgeProps) {
   if (text == null || text === "") {
     return null;
@@ -39,6 +40,7 @@ export function Badge({
       <span
         className={`${className} ${spanClassName} inline items-center ${roundedClass} font-medium ${colorClass}`}
         title={title}
+        {...props}
       >
         {dot != null && (
           <svg
