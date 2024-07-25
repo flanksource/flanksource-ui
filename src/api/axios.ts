@@ -3,7 +3,9 @@ import { toastError } from "../components/Toast/toast";
 
 const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
 
-const API_BASE = "/api";
+// The base URL for the API is either / or /api depending on the auth system,
+// for clerk the base URL is /, for the rest it is /api
+const API_BASE = isClerkAuthSystem ? "/" : "/api";
 
 export const apiBase = axios.create({
   baseURL: `${API_BASE}`,
