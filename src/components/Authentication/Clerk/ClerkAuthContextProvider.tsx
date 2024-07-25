@@ -1,6 +1,5 @@
 import { useOrganization } from "@clerk/nextjs";
 import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
-import useClerkAttachAuthInterceptorsToAxios from "@flanksource-ui/hooks/useClerkAttachAuthInterceptorsToAxios";
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -21,10 +20,6 @@ export default function ClerkAuthContextProvider({
   const { organization } = useOrganization();
 
   const backendURL = organization?.publicMetadata.backend_url;
-
-  // We need to attach the auth interceptors to axios before we can make any for
-  // clerk only
-  useClerkAttachAuthInterceptorsToAxios();
 
   const {
     data: payload,

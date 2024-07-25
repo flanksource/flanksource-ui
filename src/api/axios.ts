@@ -1,11 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { toastError } from "../components/Toast/toast";
 
-const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
-
-// The base URL for the API is either / or /api depending on the auth system,
-// for clerk the base URL is /, for the rest it is /api
-const API_BASE = isClerkAuthSystem ? "" : "/api";
+const API_BASE = "/api";
 
 export const apiBase = axios.create({
   baseURL: `${API_BASE}`,
@@ -147,21 +143,20 @@ for (const client of [
   Rback,
   Snapshot
 ]) {
-  // only attach the interceptor if the system is not clerk
-  if (!isClerkAuthSystem) {
-    client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        redirectToLoginPageOnSessionExpiry(error);
-        toastError(error.response.data.message);
-        return Promise.reject(error);
-      }
-    );
-  }
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      redirectToLoginPageOnSessionExpiry(error);
+      toastError(error.response.data.message);
+      return Promise.reject(error);
+    }
+  );
 }
 
-export function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
+function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
   if (error?.response?.status === 401) {
+    const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
+
     if (isClerkAuthSystem) {
       const url = `/auth-state-checker?return_to=${window.location.pathname}${window.location.search}`;
       window.location.href = url;
