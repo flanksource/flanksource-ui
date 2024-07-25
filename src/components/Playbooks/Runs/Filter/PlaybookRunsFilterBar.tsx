@@ -52,6 +52,7 @@ export default function PlaybookRunsFilterBar({
             onChange={(timeRange) => {
               setTimeRangeParams(timeRange);
             }}
+            className="w-[35rem]"
             value={range}
           />
         </div>
@@ -65,20 +66,18 @@ export default function PlaybookRunsFilterBar({
           >
             <Button
               text="Edit Playbook"
-              className="btn-white min-w-max"
+              className="btn-white"
               icon={<FaEdit />}
               disabled={isLoading}
               onClick={() => setIsEditPlaybookFormOpen(true)}
             />
           </AuthorizationAccessCheck>
-
           {playbookSpec && (
             <>
               <Button
                 disabled={isLoading}
                 text="Run Playbook"
                 onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
-                className="btn-primary min-w-max"
               />
               <AuthorizationAccessCheck
                 resource={tables.playbooks}
