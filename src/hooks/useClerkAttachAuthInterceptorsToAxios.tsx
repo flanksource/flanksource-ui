@@ -24,6 +24,19 @@ const allAxiosInstances = [
   Snapshot
 ];
 
+function parseBoolean(value: unknown): boolean {
+  if (typeof value === "string") {
+    return value.toLowerCase() === "true";
+  }
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "undefined" || value === null) {
+    return false;
+  }
+  throw new Error("Invalid boolean value");
+}
+
 export default function useClerkAttachAuthInterceptorsToAxios() {
   const { getToken } = useAuth();
   const { organization } = useOrganization();
@@ -32,7 +45,19 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
   // organization set
   const backendUrl = organization?.publicMetadata.backend_url as string;
 
+  // we need to know if th organization supports direct access to the backend or
+  // not so we can set the base URL correctly
+  const direct = parseBoolean(organization?.publicMetadata.direct);
+
+  console.log({ direct });
+
   useEffect(() => {
+    // if the organization does not support direct access to the backend, we
+    // should not attach the interceptors
+    if (!direct) {
+      return;
+    }
+
     const interceptorsRequestCleanups: number[] = [];
     const interceptorsResponseCleanups: number[] = [];
 
@@ -51,7 +76,9 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
             config.headers.Authorization = `Bearer ${token}`;
           }
           // set the base URL to the organization's backend URL, not
-          const currentBaseUrl = config.baseURL;
+          // the API base URL
+          // For direct access, the base path does not include /api
+          const currentBaseUrl = config.baseURL?.replaceAll("/api", "");
           config.baseURL = new URL(
             currentBaseUrl ?? "/", //current base url is probably something like /api/auth or /api/db
             backendUrl
@@ -89,5 +116,5 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
         });
       });
     };
-  }, [backendUrl, getToken]);
+  }, [backendUrl, direct, getToken]);
 }
