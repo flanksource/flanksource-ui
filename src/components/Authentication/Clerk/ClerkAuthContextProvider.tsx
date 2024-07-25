@@ -1,6 +1,4 @@
 import { useOrganization } from "@clerk/nextjs";
-import { FeatureFlagsContextProvider } from "@flanksource-ui/context/FeatureFlagsContext";
-import useClerkAttachAuthInterceptorsToAxios from "@flanksource-ui/hooks/useClerkAttachAuthInterceptorsToAxios";
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -21,10 +19,6 @@ export default function ClerkAuthContextProvider({
   const { organization } = useOrganization();
 
   const backendURL = organization?.publicMetadata.backend_url;
-
-  // We need to attach the auth interceptors to axios before we can make any for
-  // clerk only
-  useClerkAttachAuthInterceptorsToAxios();
 
   const {
     data: payload,
@@ -66,15 +60,15 @@ export default function ClerkAuthContextProvider({
   }
 
   return (
-    <FeatureFlagsContextProvider>
-      <AuthContext.Provider
-        value={{
-          user: payload.user ?? (payload as any),
-          backendUrl: backendURL as string
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </FeatureFlagsContextProvider>
+    // remove the ?? (payload as any) when the API is updated to return the user
+    // inside payload instead of the payload itself
+    <AuthContext.Provider
+      value={{
+        user: payload.user ?? (payload as any),
+        backendUrl: backendURL as string
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }
