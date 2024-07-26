@@ -21,7 +21,14 @@ export function ConfigDetailsChangesPage() {
     enabled: !!id
   });
 
-  const changes = data?.changes ?? [];
+  const changes = (data?.changes ?? []).map((changes) => ({
+    ...changes,
+    config: {
+      id: changes.config_id!,
+      type: changes.type!,
+      name: changes.name!
+    }
+  }));
 
   const totalChanges = data?.total ?? 0;
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
