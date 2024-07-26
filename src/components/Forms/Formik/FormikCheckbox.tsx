@@ -10,6 +10,7 @@ type FormikCheckboxProps = {
   disabled?: boolean;
   labelClassName?: string;
   className?: string;
+  assertAsString?: boolean;
 };
 
 export default function FormikCheckbox({
@@ -20,7 +21,8 @@ export default function FormikCheckbox({
   disabled,
   hint,
   hintPosition = "bottom",
-  label
+  label,
+  assertAsString = false
 }: FormikCheckboxProps) {
   const [field] = useField({
     name,
@@ -37,6 +39,17 @@ export default function FormikCheckbox({
           type="checkbox"
           className="rounded border-gray-900 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
           {...field}
+          checked={assertAsString ? field.value === "true" : field.value}
+          onChange={(e) => {
+            field.onChange({
+              target: {
+                name: e.target.name,
+                value: assertAsString
+                  ? e.target.checked.valueOf().toString()
+                  : e.target.checked
+              }
+            });
+          }}
           disabled={disabled}
         />
         <label htmlFor={name} className={labelClassName}>
