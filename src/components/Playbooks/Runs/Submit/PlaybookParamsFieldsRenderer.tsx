@@ -46,6 +46,7 @@ export default function PlaybookParamsFieldsRenderer({
           label={label}
           name={`params.${fieldName}`}
           required={required}
+          assertAsString
         />
       );
 
