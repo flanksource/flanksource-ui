@@ -3,14 +3,16 @@ import {
   PlaybookRunStatus
 } from "@flanksource-ui/api/types/playbooks";
 import { User } from "@flanksource-ui/api/types/users";
+import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
+import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
+import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Icon } from "../../../ui/Icons/Icon";
+import { useNavigate } from "react-router-dom";
 import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
 
@@ -28,21 +30,25 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
     cell: ({ row }) => {
       const component = row.original.component;
       const componentId = row.original.component_id;
+      const configId = row.original.config_id;
+      const config = row.original.config;
+      const checkId = row.original.check_id;
+      const check = row.original.check;
 
-      if (componentId) {
-        return (
-          <Link
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="block"
-            to={`/topology/${componentId}`}
-          >
-            <Icon name={component?.icon} className="mr-2 h-5" />
-            <span>{component?.name}</span>
-          </Link>
-        );
-      }
+      return (
+        <div
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {componentId && (
+            <TopologyLink topology={component} topologyId={componentId} />
+          )}
+          {configId && <ConfigLink config={config} configId={configId} />}
+          {checkId && <CheckLink check={check} checkId={checkId} />}
+        </div>
+      );
     }
   },
   {
