@@ -6,17 +6,19 @@ import { ConfigItem } from "../../../../api/types/configs";
 
 type ConfigListTagsCellProps<
   T extends {
-    tags: Record<string, any>;
+    tags?: Record<string, any>;
+    id: string;
   }
-> = Pick<CellContext<Pick<T, "tags">, any>, "getValue"> & {
+> = Pick<CellContext<Pick<T, "tags" | "id">, any>, "getValue" | "row"> & {
   hideGroupByView?: boolean;
   label?: string;
   enableFilterByTag?: boolean;
 };
 
 export default function ConfigListTagsCell<
-  T extends { tags: Record<string, any> }
+  T extends { tags?: Record<string, any>; id: string }
 >({
+  row,
   getValue,
   hideGroupByView = false,
   enableFilterByTag = false
@@ -100,6 +102,7 @@ export default function ConfigListTagsCell<
             key,
             value
           }}
+          id={row.original.id}
           key={value}
           variant="gray"
           onFilterByTag={enableFilterByTag ? onFilterByTag : undefined}
