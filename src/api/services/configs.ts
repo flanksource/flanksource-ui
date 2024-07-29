@@ -316,7 +316,7 @@ export async function getConfigsChanges({
     );
     requestData.set("depth", 5);
   } else {
-    requestData.set("depth", 1);
+    requestData.set("recursive", "none");
   }
 
   if (severity) {
