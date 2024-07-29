@@ -123,7 +123,7 @@ export default function PlaybookRunsPage() {
                 playbook={playbook}
               />
             </div>
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col overflow-y-auto">
               <PlaybookRunsTable
                 data={playbookRuns ?? []}
                 isLoading={isLoadingPlaybookRuns}
