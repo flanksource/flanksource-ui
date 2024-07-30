@@ -1,20 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
-import clsx from "clsx";
-import { Form, Formik } from "formik";
-import { FaTrash } from "react-icons/fa";
 import {
   createPlaybookSpec,
   deletePlaybookSpec,
   updatePlaybookSpec
-} from "../../../api/services/playbooks";
+} from "@flanksource-ui/api/services/playbooks";
 import {
   NewPlaybookSpec,
   PlaybookSpec,
   UpdatePlaybookSpec
-} from "../../../api/types/playbooks";
-import { useUser } from "../../../context";
-import { Button } from "../../../ui/Buttons/Button";
-import { Modal } from "../../../ui/Modal";
+} from "@flanksource-ui/api/types/playbooks";
+import { useUser } from "@flanksource-ui/context";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Modal } from "@flanksource-ui/ui/Modal";
+import { useMutation } from "@tanstack/react-query";
+import clsx from "clsx";
+import { Form, Formik } from "formik";
+import { FaTrash } from "react-icons/fa";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { toastError, toastSuccess } from "../../Toast/toast";
