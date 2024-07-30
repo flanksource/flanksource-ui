@@ -1,15 +1,17 @@
 import {
-  SearchResourcesRequest,
-  searchResources
+  searchResources,
+  SearchResourcesRequest
 } from "@flanksource-ui/api/services/search";
 import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { useQuery } from "@tanstack/react-query";
-import FormikSelectDropdown, {
-  FormikSelectDropdownOption
-} from "./FormikSelectDropdown";
+import { useField } from "formik";
+import { debounce } from "lodash";
+import { useCallback, useMemo, useRef, useState } from "react";
+import Select, { components, InputActionMeta } from "react-select";
+import { FormikSelectDropdownOption } from "./FormikSelectDropdown";
 
 type FormikConfigsDropdownProps = {
   name: string;
@@ -32,19 +34,62 @@ export default function FormikResourceSelectorDropdown({
   checkResourceSelector,
   className = "flex flex-col space-y-2 py-2"
 }: FormikConfigsDropdownProps) {
-  const resourceSelector: SearchResourcesRequest = {
-    checks: checkResourceSelector,
-    components: componentResourceSelector,
-    configs: configResourceSelector
-  };
+  const [inputText, setInputText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>();
+  const [isTouched, setIsTouched] = useState(false);
 
-  const { data: resourcesOptions = [], isLoading } = useQuery({
+  const [field, meta] = useField<string | string[]>({
+    name,
+    type: "text",
+    required,
+    validate: useCallback(
+      (value: string) => {
+        if (required && !value) {
+          return "This field is required";
+        }
+      },
+      [required]
+    )
+  });
+
+  const resourceSelector: SearchResourcesRequest = useMemo(
+    () => ({
+      checks: checkResourceSelector
+        ? [...checkResourceSelector.map((r) => ({ ...r, search: searchText }))]
+        : undefined,
+      components: componentResourceSelector
+        ? [
+            ...componentResourceSelector.map((r) => ({
+              ...r,
+              search: searchText
+            }))
+          ]
+        : undefined,
+      configs: configResourceSelector
+        ? [
+            ...configResourceSelector.map((r) => ({
+              ...r,
+              search: searchText
+            }))
+          ]
+        : undefined
+    }),
+    [
+      configResourceSelector,
+      componentResourceSelector,
+      checkResourceSelector,
+      searchText
+    ]
+  );
+
+  const { data: options = [], isLoading } = useQuery({
     queryKey: ["searchResources", resourceSelector],
     queryFn: () => searchResources(resourceSelector),
     enabled:
       configResourceSelector !== undefined ||
       componentResourceSelector !== undefined ||
-      checkResourceSelector !== undefined,
+      checkResourceSelector !== undefined ||
+      (field.value === undefined && field.value === "" && field.value === null),
     select: (data) => {
       if (data?.checks) {
         return data.checks.map(
@@ -59,7 +104,7 @@ export default function FormikResourceSelectorDropdown({
               ),
               value: check.id,
               label: check.name
-            }) satisfies FormikSelectDropdownOption
+            }) as FormikSelectDropdownOption
         );
       }
       if (data?.components) {
@@ -75,7 +120,7 @@ export default function FormikResourceSelectorDropdown({
               ),
               value: component.id,
               label: component.name
-            }) satisfies FormikSelectDropdownOption
+            }) as FormikSelectDropdownOption
         );
       }
       if (data?.configs) {
@@ -85,7 +130,7 @@ export default function FormikResourceSelectorDropdown({
           return {
             icon: <ConfigIcon config={config} />,
             value: config.id,
-            search: `${config.name} ${config.type} ${tags.join(" ")}`,
+            search: config.name,
             label: (
               <div className="flex flex-wrap gap-1">
                 <span className="mr-2"> {config.name}</span>
@@ -99,7 +144,7 @@ export default function FormikResourceSelectorDropdown({
                 ))}
               </div>
             )
-          } satisfies FormikSelectDropdownOption;
+          } as FormikSelectDropdownOption;
         });
       }
     },
@@ -107,22 +152,98 @@ export default function FormikResourceSelectorDropdown({
     cacheTime: 0
   });
 
+  const handleSearchDebounced = useRef(
+    debounce((searchText) => setSearchText(searchText), 300)
+  ).current;
+
+  const handleInputChange = (inputText: string, meta: InputActionMeta) => {
+    if (meta.action !== "input-blur" && meta.action !== "menu-close") {
+      setInputText(inputText);
+      if (inputText === "" || field.value) {
+        console.log("Not searching");
+        return;
+      }
+      handleSearchDebounced(inputText);
+    }
+  };
+
+  const value = useMemo(() => {
+    return options?.filter((item) => item.value === field.value);
+  }, [field.value, options]);
+
   return (
-    <FormikSelectDropdown
-      name={name}
-      className={className}
-      options={resourcesOptions}
-      filterOption={(option, query) => {
-        return (
-          (option.data as FormikSelectDropdownOption)?.search
-            ?.toLowerCase()
-            .includes(query.toLowerCase()) ?? false
-        );
-      }}
-      label={label}
-      isLoading={isLoading}
-      required={required}
-      hint={hint}
-    />
+    <div className={className}>
+      {label && <label className="form-label">{label}</label>}
+      <Select
+        name={name}
+        isLoading={isLoading}
+        className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        options={options}
+        value={value}
+        onChange={(value: any) => {
+          field.onChange({
+            target: {
+              name: field.name,
+              value: Array.isArray(value)
+                ? value.map((item) => item.value)
+                : value.value
+            }
+          });
+        }}
+        onInputChange={handleInputChange}
+        inputValue={inputText ?? value}
+        menuPortalTarget={document.body}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 })
+        }}
+        menuPosition={"fixed"}
+        menuShouldBlockScroll={true}
+        onBlur={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
+        onFocus={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
+        filterOption={null}
+        components={{
+          Option: ({ children, ...props }) => {
+            return (
+              <components.Option {...props}>
+                <div className="flex flex-row items-center gap-2 text-sm">
+                  {(props.data as any).icon && (
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>{(props.data as any).icon}</>
+                  )}
+                  <div className="flex-1 break-before-all text-ellipsis whitespace-nowrap">
+                    {children}
+                  </div>
+                </div>
+              </components.Option>
+            );
+          },
+          SingleValue: ({ children, ...props }) => {
+            return (
+              <components.SingleValue {...props}>
+                <div className="flex flex-row items-center gap-2">
+                  {(props.data as any).icon && (
+                    // eslint-disable-next-line react/jsx-no-useless-fragment
+                    <>{(props.data as any).icon}</>
+                  )}
+                  <div className="flex-1 break-after-all text-ellipsis whitespace-nowrap">
+                    {children}
+                  </div>
+                </div>
+              </components.SingleValue>
+            );
+          }
+        }}
+      />
+      {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      {isTouched && meta.error ? (
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
+      ) : null}
+    </div>
   );
 }

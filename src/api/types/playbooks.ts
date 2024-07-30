@@ -72,6 +72,7 @@ export type PlaybookResourceSelector = {
   statuses?: string[];
   labelSelector?: string;
   fieldSelector?: string;
+  search?: string;
 };
 
 export type PlaybookSpec = {
