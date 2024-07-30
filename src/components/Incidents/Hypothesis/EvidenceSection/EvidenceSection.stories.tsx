@@ -1,25 +1,13 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
 import { EvidenceType } from "../../../../api/types/evidence";
 import { sampleIncidentNode } from "../../../../data/sampleIncident";
 import { EvidenceSection } from "./index";
-
-const client = new QueryClient();
 
 export default {
   title: "EvidenceSection",
   component: EvidenceSection,
   parameters: { actions: { argTypesRegex: "^on.*" } },
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={client}>
-        <MemoryRouter>
-          <Story />
-        </MemoryRouter>
-      </QueryClientProvider>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof EvidenceSection>;
 
 const Template: ComponentStory<typeof EvidenceSection> = (arg: any) => (

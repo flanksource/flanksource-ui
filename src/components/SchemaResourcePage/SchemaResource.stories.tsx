@@ -1,29 +1,11 @@
-import { MemoryRouter } from "react-router-dom";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { SchemaResource } from "./SchemaResource";
-import {
-  QueryClientProvider,
-  QueryClient,
-  QueryCache
-} from "@tanstack/react-query";
 import { schemaResourceTypes } from "./resourceTypes";
-
-const queryClient = new QueryClient({
-  queryCache: new QueryCache()
-});
+import { SchemaResource } from "./SchemaResource";
 
 export default {
   title: "SchemaResource",
   component: SchemaResource,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <Story />
-        </QueryClientProvider>
-      </MemoryRouter>
-    )
-  ],
+  decorators: [(Story) => <Story />],
   parameters: { actions: { argTypesRegex: "^on.*" } }
 } as ComponentMeta<typeof SchemaResource>;
 

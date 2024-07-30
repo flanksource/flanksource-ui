@@ -1,19 +1,11 @@
-import { MemoryRouter } from "react-router-dom";
-
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { AiFillPlusCircle } from "react-icons/ai/";
 import { BreadcrumbNav } from "./index";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   title: "BreadcrumbNav",
   component: BreadcrumbNav,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof BreadcrumbNav>;
 
 const Template: ComponentStory<typeof BreadcrumbNav> = (arg) => (

@@ -1,25 +1,13 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
+import { Topology } from "../../../api/types/topology";
 import { Size } from "../../../types";
 import { TopologyCard } from "./index";
-import { Topology } from "../../../api/types/topology";
-
-const defaultQueryClient = new QueryClient();
 
 export default {
   title: "TopologyCard",
   component: TopologyCard,
   parameters: { actions: { argTypesRegex: "^on.*" } },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <QueryClientProvider client={defaultQueryClient}>
-          <Story />
-        </QueryClientProvider>
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof TopologyCard>;
 
 const topology: Topology = {

@@ -1,16 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import RefreshDropdown from "./index";
-import { MemoryRouter } from "react-router-dom";
 export default {
   title: "RefreshDropdown",
   component: RefreshDropdown,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ],
+  decorators: [(Story) => <Story />],
   args: {
     // eslint-disable-next-line no-alert
     onClick: () => alert("hello!"),

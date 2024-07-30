@@ -1,17 +1,10 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { MemoryRouter } from "react-router-dom";
 import { HealthSummary } from "./HealthSummary";
 
 export default {
   title: "HealthSummary",
   component: HealthSummary,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as Meta<typeof HealthSummary>;
 
 const component = {

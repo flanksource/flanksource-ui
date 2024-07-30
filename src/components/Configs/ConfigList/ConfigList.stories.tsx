@@ -1,18 +1,11 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { MemoryRouter } from "react-router-dom";
 import sampleConfigList from "../../../data/sampleConfigList";
 import ConfigsTable from "./ConfigsTable";
 
 export default {
   title: "ConfigList",
   component: ConfigsTable,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof ConfigsTable>;
 
 const Template: ComponentStory<typeof ConfigsTable> = (args) => (

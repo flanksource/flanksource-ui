@@ -33,7 +33,7 @@ const preview: Preview = {
     // 👇 Defining the decorator in the preview file applies it to all stories
     (Story, { parameters }) => {
       return (
-        <MemoryRouter>
+        <MemoryRouter initialEntries={["/incidents"]}>
           <QueryClientProvider client={queryClient}>
             <Story />
           </QueryClientProvider>

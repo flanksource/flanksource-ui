@@ -1,12 +1,11 @@
-import React from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { ComponentStory } from "@storybook/react";
+import { Route, Routes } from "react-router-dom";
 import {
   IncidentSeverity,
   IncidentStatus,
   IncidentSummary
 } from "../../../api/types/incident";
 import { IncidentList } from "./index";
-import { ComponentStory } from "@storybook/react";
 
 export default {
   title: "IncidentList",
@@ -92,11 +91,9 @@ const incidents: IncidentSummary[] = [
 ];
 
 const Template: ComponentStory<typeof IncidentList> = (arg) => (
-  <MemoryRouter initialEntries={["/incidents"]}>
-    <Routes>
-      <Route element={<IncidentList {...arg} />} path="/incidents" />
-    </Routes>
-  </MemoryRouter>
+  <Routes>
+    <Route element={<IncidentList {...arg} />} path="/incidents" />
+  </Routes>
 );
 
 export const Variant1 = Template.bind({});

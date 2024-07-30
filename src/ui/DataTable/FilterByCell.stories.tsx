@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import React from "react";
-import { MemoryRouter, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { JSONViewer } from "../Code/JSONViewer";
 import FilterByCellValue from "./FilterByCellValue";
@@ -8,13 +8,7 @@ import FilterByCellValue from "./FilterByCellValue";
 export default {
   title: "FilterByCellValue",
   component: FilterByCellValue,
-  decorators: [
-    (Story: React.FC) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story: React.FC) => <Story />]
 } satisfies Meta<typeof FilterByCellValue>;
 
 const Template: StoryFn<typeof FilterByCellValue> = (arg) => {
