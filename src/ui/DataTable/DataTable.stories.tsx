@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import React from "react";
-import { MemoryRouter } from "react-router-dom";
 import { DataTable } from "./index";
 
 import { ColumnDef } from "@tanstack/react-table";
@@ -51,13 +50,7 @@ const defaultTableColumns: ColumnDef<any>[] = [
 export default {
   title: "DataTable",
   component: DataTable,
-  decorators: [
-    (Story: React.FC) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story: React.FC) => <Story />]
 } as ComponentMeta<typeof DataTable>;
 
 const configData = [

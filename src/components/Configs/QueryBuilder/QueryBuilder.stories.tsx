@@ -1,17 +1,10 @@
-import { MemoryRouter } from "react-router-dom";
-import { QueryBuilder } from "./index";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { QueryBuilder } from "./index";
 
 export default {
   title: "QueryBuilder",
   component: QueryBuilder,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof QueryBuilder>;
 
 const Template: ComponentStory<typeof QueryBuilder> = (arg) => (

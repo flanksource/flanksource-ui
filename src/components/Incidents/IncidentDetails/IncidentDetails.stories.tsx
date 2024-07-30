@@ -1,6 +1,4 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
 import { IncidentSeverity, IncidentStatus } from "../../../api/types/incident";
 import { IncidentSidebar } from "./IncidentSidebar";
 
@@ -9,14 +7,7 @@ export default {
   component: IncidentSidebar,
   decorators: [
     (Story) => {
-      const queryClient = new QueryClient();
-      return (
-        <MemoryRouter>
-          <QueryClientProvider client={queryClient}>
-            <Story />
-          </QueryClientProvider>
-        </MemoryRouter>
-      );
+      return <Story />;
     }
   ],
   parameters: { actions: { argTypesRegex: "^on.*" } }

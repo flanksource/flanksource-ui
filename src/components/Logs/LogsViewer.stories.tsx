@@ -1,22 +1,10 @@
-import { MemoryRouter } from "react-router-dom";
-import { LogsViewer } from "./index";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-
-const client = new QueryClient();
+import { LogsViewer } from "./index";
 
 export default {
   title: "LogsViewer",
   component: LogsViewer,
-  decorators: [
-    (Story) => (
-      <QueryClientProvider client={client}>
-        <MemoryRouter>
-          <Story />
-        </MemoryRouter>
-      </QueryClientProvider>
-    )
-  ]
+  decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof LogsViewer>;
 
 const logsExample = [

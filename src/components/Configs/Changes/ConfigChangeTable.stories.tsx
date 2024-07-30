@@ -1,6 +1,4 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
 import { ConfigChange } from "../../../api/types/configs";
 import { ConfigChangeTable } from "./ConfigChangeTable";
 
@@ -9,14 +7,7 @@ export default {
   component: ConfigChangeTable,
   decorators: [
     (Story) => {
-      const queryClient = new QueryClient();
-      return (
-        <MemoryRouter>
-          <QueryClientProvider client={queryClient}>
-            <Story />
-          </QueryClientProvider>
-        </MemoryRouter>
-      );
+      return <Story />;
     }
   ]
 } satisfies Meta<typeof ConfigChangeTable>;
