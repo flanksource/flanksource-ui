@@ -143,12 +143,16 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             {selectedAction &&
               (selectedAction.id === "initialization" ? (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
-                  <PlaybooksRunActionsResults action={selectedAction} />
+                  <PlaybooksRunActionsResults
+                    action={selectedAction}
+                    playbook={data.playbooks!}
+                  />
                 </div>
               ) : (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
                   <PlaybookRunActionFetch
                     playbookRunActionId={selectedAction.id}
+                    playbook={data.playbooks!}
                   />
                 </div>
               ))}

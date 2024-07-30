@@ -1,5 +1,9 @@
 import Convert from "ansi-to-html";
-import { PlaybookRunAction } from "../../../../api/types/playbooks";
+import {
+  PlaybookRunAction,
+  PlaybookSpec
+} from "../../../../api/types/playbooks";
+import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
 
 const convert = new Convert();
 
@@ -55,13 +59,18 @@ function DisplayLogs({
 }
 
 type Props = {
-  action: Pick<PlaybookRunAction, "result" | "error">;
+  action: Pick<
+    PlaybookRunAction,
+    "result" | "error" | "id" | "playbook_run_id" | "start_time"
+  >;
   className?: string;
+  playbook: Pick<PlaybookSpec, "name">;
 };
 
 export default function PlaybooksRunActionsResults({
   action,
-  className = "whitespace-pre-wrap break-all"
+  className = "whitespace-pre-wrap break-all",
+  playbook
 }: Props) {
   const { result, error } = action;
 
@@ -69,21 +78,20 @@ export default function PlaybooksRunActionsResults({
     return <>No result</>;
   }
 
-  if (action.error) {
-    return <pre className={className}>{action.error}</pre>;
-  }
+  return (
+    <div className="relative flex h-full w-full flex-col">
+      {action.error && <pre className={className}>{action.error}</pre>}
+      {result?.stderr || result?.stdout || result?.logs ? (
+        <div className={`flex flex-col gap-2 ${className}`}>
+          <DisplayStdout className={className} stdout={result?.stdout} />
+          <DisplayStderr className={className} stderr={result?.stderr} />
+          <DisplayLogs className={className} logs={result?.logs} />
+        </div>
+      ) : (
+        <pre className={className}>{JSON.stringify(result, null, 2)}</pre>
+      )}
 
-  if (result?.stderr || result?.stdout || result?.logs) {
-    return (
-      <div className={`flex flex-col gap-2 ${className}`}>
-        <DisplayStdout className={className} stdout={result?.stdout} />
-        <DisplayStderr className={className} stderr={result?.stderr} />
-        <DisplayLogs className={className} logs={result?.logs} />
-      </div>
-    );
-  }
-
-  const json = JSON.stringify(result, null, 2);
-
-  return <pre className={className}>{json}</pre>;
+      <PlaybookResultsDropdownButton action={action} playbook={playbook} />
+    </div>
+  );
 }
