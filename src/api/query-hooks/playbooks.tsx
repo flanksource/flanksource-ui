@@ -111,7 +111,14 @@ export function useGetPlaybookSpecsDetails(
 
 export function useSubmitPlaybookRunMutation(
   options: Omit<
-    UseMutationOptions<any, Error, SubmitPlaybookRunFormValues>,
+    UseMutationOptions<
+      {
+        run_id: string;
+        starts_at: string;
+      },
+      Error,
+      SubmitPlaybookRunFormValues
+    >,
     "mutationFn"
   > = {}
 ) {

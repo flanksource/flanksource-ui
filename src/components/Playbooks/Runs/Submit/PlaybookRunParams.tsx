@@ -34,7 +34,7 @@ function parseCodeDefaultValue(parameter: PlaybookParam) {
 
 type PlaybookRunParamsProps = {
   isResourceRequired: boolean;
-  playbook: PlaybookSpec;
+  playbook: Pick<PlaybookSpec, "spec">;
 };
 
 export default function PlaybookRunParams({
@@ -88,13 +88,16 @@ export default function PlaybookRunParams({
   useEffect(() => {
     if (data?.params && data.params.length > 0) {
       data.params.forEach((param) => {
-        if (param.default !== undefined) {
+        // We don't want to override form values if they are already set by user
+        // action, like for instance when re-running a playbook with the same
+        // parameters, we don't want to set the default values again
+        if (param.default !== undefined && !values.params?.[param.name]) {
           const defaultValue = parseCodeDefaultValue(param);
           setFieldValue(`params.${param.name}`, defaultValue);
         }
       });
     }
-  }, [data, setFieldValue]);
+  }, [data, setFieldValue, values.params]);
 
   // if no resource is selected, show a message and hide the parameters
   if (!componentId && !configId && !checkId && isResourceRequired) {
