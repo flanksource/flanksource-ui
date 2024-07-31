@@ -7,12 +7,12 @@ import Popover from "@flanksource-ui/ui/Popover/Popover";
 import { TagItem, TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import AgentBadge from "../Agents/AgentBadge";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import ConfigScrapperIcon from "../SchemaResourcePage/ConfigScrapperIcon";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
+import ResourceSettingsSourceLink from "./ResourceSettingsSourceLink";
 
 function MRTJobHistoryStatusColumn({
   row
@@ -134,7 +134,7 @@ const columns: MRT_ColumnDef<
     accessorKey: "name",
     enableResizing: true,
     header: "Name",
-    minSize: 100,
+    minSize: 150,
     Cell: ({ row }) => {
       const { agent, name, spec, table } = row.original;
 
@@ -157,34 +157,21 @@ const columns: MRT_ColumnDef<
     header: "Source",
     accessorKey: "sourceConfig",
     enableResizing: true,
-    minSize: 100,
+    size: 80,
     Cell: ({ row }) => {
-      const { source, id, name, namespace } = row.original;
+      const { source, id, name, namespace, agent } = row.original;
 
-      return source && source === "KubernetesCRD" ? (
-        <Link
-          to={`/catalog/${id}`}
-          className="cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <span className="text-gray-500">
-            {namespace ? <>{namespace}/</> : ""}
-            {name}
-          </span>
-        </Link>
-      ) : (
-        <a href={`${source}`}>Link</a>
+      return (
+        <ResourceSettingsSourceLink
+          source={source}
+          id={id}
+          name={name}
+          namespace={namespace}
+          agentName={agent?.name}
+          agentId={agent?.id}
+          showMinimal
+        />
       );
-    }
-  },
-  {
-    header: "Agent",
-    accessorKey: "agent",
-    enableResizing: true,
-    Cell: ({ row }) => {
-      return row.original.name;
     }
   },
   {
@@ -203,21 +190,22 @@ const columns: MRT_ColumnDef<
     accessorKey: "jobStatus",
     header: "Job Status",
     enableResizing: true,
+    size: 120,
     Cell: ({ row }) => <MRTJobHistoryStatusColumn row={row} />
   },
   {
     accessorKey: "last_runtime",
     header: "Last Run",
-    enableResizing: false,
+    enableResizing: true,
     Cell: MRTDateCell,
-    size: 120
+    size: 100
   },
   {
     accessorKey: "job_last_failed",
     header: "Last Failed",
-    enableResizing: false,
+    enableResizing: true,
     Cell: MRTDateCell,
-    size: 140
+    size: 80
   },
   {
     header: "Tags",
@@ -225,29 +213,32 @@ const columns: MRT_ColumnDef<
     enableResizing: true,
     enableSorting: false,
     Cell: ({ row }) => <DataTableTagsColumn row={row} />,
-    minSize: 250
+    size: 150
   },
   {
     header: "Created",
     accessorKey: "created_at",
-    enableResizing: false,
+    enableResizing: true,
     Cell: MRTDateCell,
-    size: 120
+    size: 80,
+    maxSize: 200
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
-    enableResizing: false,
+    enableResizing: true,
     Cell: MRTDateCell,
-    size: 120
+    size: 80,
+    maxSize: 200
   },
   {
     header: "Created By",
     accessorKey: "created_by",
-    enableResizing: false,
+    enableResizing: true,
     enableSorting: false,
-    size: 120,
-    Cell: ({ row, column }) => {
+    size: 80,
+    maxSize: 200,
+    Cell: ({ row }) => {
       const { created_by } = row.original;
       if (!created_by) {
         return null;

@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 
 type ComponentResourceSourceProps = {
   source: string;
+  showMinimal?: boolean;
 };
 
 export default function ComponentResourceSource({
-  source
+  source,
+  showMinimal = false
 }: ComponentResourceSourceProps) {
   const componentID = source?.split("/")[1] || "";
 
@@ -39,7 +41,7 @@ export default function ComponentResourceSource({
         }}
         className="block text-blue-500"
       >
-        Created by {component.name}
+        {showMinimal ? "link" : <> Created by {component.name}</>}
       </Link>
     </div>
   );
