@@ -139,7 +139,7 @@ const columns: MRT_ColumnDef<
       const { agent, name, spec, table } = row.original;
 
       return (
-        <div className="flex w-full flex-row items-center gap-1">
+        <div className="flex w-full flex-row items-center gap-2 truncate">
           {table === tables.config_scrapers && (
             <div className="min-w-max">
               <ConfigScrapperIcon spec={spec} />
