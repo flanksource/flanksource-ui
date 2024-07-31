@@ -44,7 +44,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
   return (
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex flex-col px-4 py-2">
-        <div className="flex w-full flex-row gap-4 lg:w-auto">
+        <div className="flex w-full flex-wrap gap-4 lg:w-auto">
           <VerticalDescription
             label="Playbook"
             value={
