@@ -32,7 +32,7 @@ function MRTJobHistoryStatusColumn({
 
   return (
     <div
-      className="flex flex-row gap-2 items-center"
+      className="flex flex-row items-center gap-2"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -56,7 +56,7 @@ function MRTJobHistoryStatusColumn({
           />
 
           <button
-            className="inline text-blue-500 text-nowrap"
+            className="inline text-nowrap text-blue-500"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -96,11 +96,11 @@ function DataTableTagsColumn({
         <Popover
           toggle={
             <div className="flex flex-row items-center">
-              <div className="flex-shrink overflow-x-hidden cursor-pointer">
+              <div className="flex-shrink cursor-pointer overflow-x-hidden">
                 <TagItem tag={tags[0]!} />
               </div>
               {tags.length > 1 && (
-                <div className="flex-shrink whitespace-nowrap space-x-2 underline decoration-solid justify-left text-xs cursor-pointer">
+                <div className="justify-left flex-shrink cursor-pointer space-x-2 whitespace-nowrap text-xs underline decoration-solid">
                   +{tags.length - 1} more
                 </div>
               )}
@@ -111,9 +111,9 @@ function DataTableTagsColumn({
           menuClass="top-8"
         >
           <div className="flex flex-col p-3">
-            <div className="flex flex-col items-stretch max-h-64 overflow-y-auto">
+            <div className="flex max-h-64 flex-col items-stretch overflow-y-auto">
               <TagList
-                className="flex flex-col flex-1"
+                className="flex flex-1 flex-col"
                 tags={tags}
                 minimumItemsToShow={tags.length}
               />
@@ -139,9 +139,11 @@ const columns: MRT_ColumnDef<
       const { agent, name, spec, table } = row.original;
 
       return (
-        <div className="flex flex-row w-full gap-2 items-center truncate">
+        <div className="flex w-full flex-row items-center gap-1">
           {table === tables.config_scrapers && (
-            <ConfigScrapperIcon spec={spec} />
+            <div className="min-w-max">
+              <ConfigScrapperIcon spec={spec} />
+            </div>
           )}
           <div data-tip={name} className="block truncate">
             <span className="mr-1"> {name}</span>
