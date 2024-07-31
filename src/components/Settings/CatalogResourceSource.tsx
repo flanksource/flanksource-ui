@@ -3,7 +3,13 @@ import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLo
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
-export function CatalogResourceSource({ source }: { source: string }) {
+export function CatalogResourceSource({
+  source,
+  showMinimal = false
+}: {
+  source: string;
+  showMinimal?: boolean;
+}) {
   const catalogId = source?.split("/")[1] || "";
 
   const { data: catalog, isLoading } = useQuery(
@@ -33,7 +39,7 @@ export function CatalogResourceSource({ source }: { source: string }) {
         }}
         className="block text-blue-500"
       >
-        Created by {catalog.name}
+        {showMinimal ? "link" : <> Created by {catalog.name}</>}
       </Link>
     </div>
   );
