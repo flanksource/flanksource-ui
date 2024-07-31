@@ -6,8 +6,8 @@ import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
 import { atom, useAtom } from "jotai";
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
-import { toastError, toastSuccess } from "../../../Toast/toast";
+import { useNavigate } from "react-router-dom";
+import { toastError } from "../../../Toast/toast";
 import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";
 import PlaybookRunParams from "./PlaybookRunParams";
@@ -33,24 +33,28 @@ export type SubmitPlaybookRunFormValues = {
 
 type Props = {
   isOpen: boolean;
-  onClose: () => void;
-  playbook: PlaybookSpec;
+  onClose?: () => void;
+  playbook: Pick<PlaybookSpec, "id" | "spec" | "name">;
   checkId?: string;
   componentId?: string;
   configId?: string;
+  params?: Record<string, any>;
 };
 
 export default function SubmitPlaybookRunForm({
   isOpen,
-  onClose,
+  onClose = () => {},
   playbook,
   checkId,
   componentId,
-  configId
+  configId,
+  params = {}
 }: Props) {
   const [modalSize, setModalSize] = useAtom(
     submitPlaybookRunFormModalSizesAtom
   );
+
+  const navigate = useNavigate();
 
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
     return {
@@ -58,28 +62,24 @@ export default function SubmitPlaybookRunForm({
       component_id: componentId,
       check_id: checkId,
       config_id: configId,
-      params: {}
+      params: {
+        ...params
+      }
     };
-  }, [checkId, componentId, configId, playbook.id]);
+  }, [checkId, componentId, configId, params, playbook.id]);
 
-  const { mutate: submitPlaybookRun } = useSubmitPlaybookRunMutation({
-    onSuccess: (run) => {
-      toastSuccess(
-        <>
-          <Link className="link mr-2" to={`/playbooks/runs/${run.run_id}`}>
-            Playbook Run
-          </Link>{" "}
-          submitted successfully
-        </>
-      );
-      onClose();
-    },
-    onError: (error) => {
-      const message =
-        ((error as AxiosError).response?.data as any)?.error ?? error.message;
-      toastError(message ?? error.message);
+  const { mutate: submitPlaybookRun, isLoading } = useSubmitPlaybookRunMutation(
+    {
+      onSuccess: (run) => {
+        navigate(`/playbooks/runs/${run.run_id}`);
+      },
+      onError: (error) => {
+        const message =
+          ((error as AxiosError).response?.data as any)?.error ?? error.message;
+        toastError(message ?? error.message);
+      }
     }
-  });
+  );
 
   const resource = getResourceForRun(initialValues);
 
@@ -146,11 +146,12 @@ export default function SubmitPlaybookRunForm({
 
               <div className="flex justify-end space-x-2 rounded-b bg-slate-50 p-4 ring-1 ring-black/5">
                 <Button
-                  disabled={values.id === undefined || !isValid}
-                  text="Run"
+                  disabled={values.id === undefined || !isValid || isLoading}
                   role="button"
                   type="submit"
-                />
+                >
+                  {isLoading ? "Running..." : "Run"}
+                </Button>
               </div>
             </Form>
           );

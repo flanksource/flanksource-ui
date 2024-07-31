@@ -2,7 +2,7 @@ import { PlaybookSpec } from "../../api/types/playbooks";
 import { Icon } from "../../ui/Icons/Icon";
 
 type PlaybookSpecModalTitleProps = {
-  playbookSpec?: PlaybookSpec;
+  playbookSpec?: Pick<PlaybookSpec, "spec" | "name">;
   defaultTitle?: string;
 };
 

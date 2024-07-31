@@ -1,5 +1,5 @@
+import { fireEvent, render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
@@ -111,12 +111,10 @@ describe("SubmitPlaybookRunForm", () => {
   });
 
   it("should submit the form when the submit button is clicked", async () => {
-    const closeFn = jest.fn();
     render(
       <QueryClientProvider client={queryClient}>
         <SubmitPlaybookRunForm
           isOpen={true}
-          onClose={closeFn}
           playbook={playbook}
           componentId={componentId}
           checkId={checkId}
@@ -138,9 +136,5 @@ describe("SubmitPlaybookRunForm", () => {
     const btn = screen.getByRole("button", { name: /Run/i });
 
     userEvent.click(btn);
-
-    await waitFor(() => {
-      expect(closeFn).toHaveBeenCalled();
-    });
   });
 });

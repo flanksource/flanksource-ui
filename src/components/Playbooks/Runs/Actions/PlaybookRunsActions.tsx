@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { getResourceForRun } from "../services";
+import ReRunPlaybookWithParamsButton from "../Submit/ReRunPlaybookWithParamsButton";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
@@ -43,7 +44,7 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex flex-col px-4 py-2">
+      <div className="flex flex-row px-4 py-2">
         <div className="flex w-full flex-wrap gap-4 lg:w-auto">
           <VerticalDescription
             label="Playbook"
@@ -110,6 +111,15 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
               }
             />
           )}
+        </div>
+        <div className="ml-auto flex h-auto flex-col">
+          <ReRunPlaybookWithParamsButton
+            playbook={data.playbooks!}
+            params={data.parameters}
+            checkId={data.check_id}
+            componentId={data.component_id}
+            configId={data.config_id}
+          />
         </div>
       </div>
       <div className="flex h-full flex-col">
