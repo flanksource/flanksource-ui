@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { ToasterWithCloseButton } from "./ToasterWithCloseButton";
 
 export default {
@@ -27,6 +28,20 @@ const Template: StoryFn<typeof ToasterWithCloseButton> = () => {
           }}
         >
           Show success toast
+        </button>
+
+        <button
+          className="btn-primary"
+          onClick={() => {
+            toast.success(
+              <p>
+                <span>This is a success message </span>{" "}
+                <Link to="/home"> home</Link>
+              </p>
+            );
+          }}
+        >
+          Show success toast with Link
         </button>
         <button
           className="btn-primary"
