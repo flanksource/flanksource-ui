@@ -17,6 +17,7 @@ import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { FaHome } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
 
@@ -91,7 +92,7 @@ export default function PlaybookRunsPage() {
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot key={"playbooks"} link="/playbooks">
-                Playbooks
+                <FaHome className="text-black" />
               </BreadcrumbRoot>,
               ...(playbook
                 ? [
@@ -102,10 +103,14 @@ export default function PlaybookRunsPage() {
                       <PlaybookSpecIcon playbook={playbook} showLabel />
                     </BreadcrumbChild>
                   ]
-                : []),
-              <BreadcrumbChild key={"/playbooks/runs"} link={`/playbooks/runs`}>
-                Runs
-              </BreadcrumbChild>
+                : [
+                    <BreadcrumbChild
+                      key={"/playbooks/runs"}
+                      link={`/playbooks/runs`}
+                    >
+                      Runs
+                    </BreadcrumbChild>
+                  ])
             ]}
           />
         }
