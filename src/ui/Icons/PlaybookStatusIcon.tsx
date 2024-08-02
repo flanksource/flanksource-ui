@@ -1,8 +1,12 @@
-import { FaHourglassStart } from "react-icons/fa";
-import { ImSpinner2 } from "react-icons/im";
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { MdOutlineCancel } from "react-icons/md";
-import { PiCheckCircleLight, PiWarningLight } from "react-icons/pi";
+import {
+  BsCheckCircle,
+  BsCircle,
+  BsClock,
+  BsPlayCircle,
+  BsSlashCircle,
+  BsStopCircle,
+  BsXCircle
+} from "react-icons/bs";
 import {
   PlaybookRunActionStatus,
   PlaybookRunStatus
@@ -13,28 +17,28 @@ export const statusIconMap: Record<
   React.ReactElement
 > = {
   completed: (
-    <PiCheckCircleLight className="inline-block h-5 w-auto object-center pr-1 text-green-500" />
+    <BsCheckCircle className="inline-block h-5 w-auto object-center pr-1 text-green-500" />
   ),
   cancelled: (
-    <MdOutlineCancel className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
+    <BsStopCircle className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
   ),
   failed: (
-    <PiWarningLight className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
+    <BsXCircle className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
   ),
   pending: (
-    <FaHourglassStart className="inline-block h-5 w-auto object-center pr-1 text-gray-400" />
+    <BsCircle className="inline-block h-5 w-auto object-center pr-1 text-orange-500" />
   ),
   running: (
-    <ImSpinner2 className="inline-block h-5 w-auto object-center pr-1 text-blue-500" />
+    <BsPlayCircle className="inline-block h-5 w-auto object-center pr-1 text-orange-500" />
   ),
   scheduled: (
-    <IoCalendarNumberOutline className="inline-block h-5 w-auto object-center pr-1 text-gray-500" />
+    <BsClock className="inline-block h-5 w-auto object-center pr-1 text-gray-500" />
   ),
   sleeping: (
-    <IoCalendarNumberOutline className="inline-block h-5 w-auto object-center pr-1 text-gray-400" />
+    <BsClock className="inline-block h-5 w-auto object-center pr-1 text-gray-400" />
   ),
   skipped: (
-    <MdOutlineCancel className="inline-block h-5 w-auto object-center pr-1 text-red-500" />
+    <BsSlashCircle className="inline-block h-5 w-auto object-center pr-1 text-gray-500" />
   )
 };
 

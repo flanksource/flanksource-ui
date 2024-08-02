@@ -23,7 +23,13 @@ type PlaybookRunActionsProps = {
 };
 
 export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
-  const [selectedAction, setSelectedAction] = useState<PlaybookRunAction>();
+  const [selectedAction, setSelectedAction] = useState<
+    PlaybookRunAction | undefined
+  >(() => {
+    // show the last action by default
+    return data.actions.at(-1);
+  });
+
   const resource = getResourceForRun(data);
 
   // if the playbook run failed, create an action for the initialization step
