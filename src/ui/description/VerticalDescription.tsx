@@ -6,7 +6,7 @@ export default function VerticalDescription({
   value: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-2 px-2 xl:flex-none">
+    <div className="flex flex-1 flex-col gap-1 xl:flex-none">
       <div className="overflow-hidden truncate text-sm text-gray-500">
         {label}
       </div>

@@ -1,18 +1,22 @@
 import { getPlaybookRun } from "@flanksource-ui/api/services/playbooks";
+import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
+import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
+import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { PlaybookStatusIcon } from "@flanksource-ui/ui/Icons/PlaybookStatusIcon";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
-import { relativeDateTime } from "@flanksource-ui/utils/date";
 import { useQuery } from "@tanstack/react-query";
+import { FaHome } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
 export default function PlaybookRunsDetailsPage() {
@@ -36,7 +40,7 @@ export default function PlaybookRunsDetailsPage() {
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot key={"/playbooks"} link="/playbooks">
-                Playbooks
+                <FaHome className="text-black" />
               </BreadcrumbRoot>,
               ...(playbookRun?.playbooks
                 ? [
@@ -51,20 +55,25 @@ export default function PlaybookRunsDetailsPage() {
                     </BreadcrumbChild>
                   ]
                 : []),
-              <BreadcrumbChild key={`/playbooks/runs`} link="/playbooks/runs">
-                Runs
-              </BreadcrumbChild>,
-              ...(playbookRun?.start_time
-                ? [
-                    <BreadcrumbChild key={playbookRun.start_time}>
-                      {relativeDateTime(playbookRun.start_time)}
-                    </BreadcrumbChild>
-                  ]
-                : [
-                    <BreadcrumbChild key={playbookRun?.id}>
-                      {playbookRun?.id}
-                    </BreadcrumbChild>
-                  ])
+
+              <BreadcrumbChild key={playbookRun?.start_time}>
+                <span className="flex flex-row gap-2">
+                  {playbookRun?.config ? (
+                    <ConfigLink
+                      config={playbookRun.config}
+                      showPrimaryIcon={false}
+                    />
+                  ) : null}
+                  {playbookRun?.component ? (
+                    <TopologyLink topology={playbookRun.component} />
+                  ) : null}
+                  {playbookRun?.check ? (
+                    <CheckLink check={playbookRun.check} />
+                  ) : null}
+
+                  <PlaybookStatusIcon status={playbookRun?.status!} />
+                </span>
+              </BreadcrumbChild>
             ]}
           />
         }

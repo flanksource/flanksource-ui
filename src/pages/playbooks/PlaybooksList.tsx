@@ -2,6 +2,7 @@ import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { FaHome } from "react-icons/fa";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
 import ErrorPage from "../../components/Errors/ErrorPage";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
@@ -29,11 +30,8 @@ export function PlaybooksListPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot
-                key={"playbook-root-item"}
-                link="/settings/connections"
-              >
-                Playbook
+              <BreadcrumbRoot key={"playbook-root-item"} link="/playbooks">
+                <FaHome className="text-black" />
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
                 resource={tables.playbooks}

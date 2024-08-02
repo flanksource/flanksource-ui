@@ -49,8 +49,8 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
   }, [data.end_time, data.error, data.id, data.start_time, data.status]);
 
   return (
-    <div className="flex flex-1 flex-col gap-6">
-      <div className="flex flex-row px-4 py-2">
+    <div className="flex flex-1 flex-col gap-2 pl-2">
+      <div className="flex flex-wrap py-4">
         <div className="flex w-full flex-wrap gap-4 lg:w-auto">
           <VerticalDescription
             label="Playbook"
