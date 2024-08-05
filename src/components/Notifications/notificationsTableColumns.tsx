@@ -19,85 +19,66 @@ export const notificationMostCommonErrorAtom = atom<Notification | undefined>(
 );
 
 export const notificationEvents = [
-  {
-    label: "check.passed",
-    value: "check.passed"
-  },
+  // Source: mission-control/api/event.go
   {
     label: "check.failed",
     value: "check.failed"
   },
   {
-    label: "incident.created",
-    value: "incident.created"
+    label: "check.passed",
+    value: "check.passed"
   },
   {
-    label: "incident.responder.added",
-    value: "incident.responder.added"
+    label: "component.healthy",
+    value: "component.healthy"
   },
   {
-    label: "incident.responder.removed",
-    value: "incident.responder.removed"
+    label: "component.unhealthy",
+    value: "component.unhealthy"
   },
   {
-    label: "incident.comment.added",
-    value: "incident.comment.added"
+    label: "component.unknown",
+    value: "component.unknown"
   },
   {
-    label: "incident.dod.added",
-    value: "incident.dod.added"
+    label: "component.warning",
+    value: "component.warning"
   },
   {
-    label: "incident.dod.passed",
-    value: "incident.dod.passed"
+    label: "config.created",
+    value: "config.created"
   },
   {
-    label: "incident.dod.regressed",
-    value: "incident.dod.regressed"
+    label: "config.deleted",
+    value: "config.deleted"
   },
   {
-    label: "incident.status.open",
-    value: "incident.status.open"
+    label: "config.healthy",
+    value: "config.healthy"
   },
   {
-    label: "incident.status.closed",
-    value: "incident.status.closed"
+    label: "config.unhealthy",
+    value: "config.unhealthy"
   },
   {
-    label: "incident.status.mitigated",
-    value: "incident.status.mitigated"
+    label: "config.unknown",
+    value: "config.unknown"
   },
   {
-    label: "incident.status.resolved",
-    value: "incident.status.resolved"
+    label: "config.updated",
+    value: "config.updated"
   },
   {
-    label: "incident.status.investigating",
-    value: "incident.status.investigating"
+    label: "config.warning",
+    value: "config.warning"
   },
   {
-    label: "incident.status.identified",
-    value: "incident.status.cancelled"
+    label: "playbook.approval.inserted",
+    value: "playbook.approval.inserted"
   },
   {
-    label: "component.status.healthy",
-    value: "component.status.healthy"
-  },
-  {
-    label: "component.status.unhealthy",
-    value: "component.status.unhealthy"
-  },
-  {
-    label: "component.status.warning",
-    value: "component.status.warning"
-  },
-  {
-    label: "component.status.error",
-    value: "component.status.error"
-  },
-  {
-    label: "component.status.info",
-    value: "component.status.info"
+    label: "playbook.spec.approval.updated",
+    value: "playbook.spec.approval.updated"
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
