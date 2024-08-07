@@ -39,7 +39,7 @@ export default function PlaybookRunsDetailsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot key={"/playbooks"} link="/playbooks">
+              <BreadcrumbRoot key={"/playbooks/runs"} link="/playbooks/runs">
                 <FaHome className="text-black" />
               </BreadcrumbRoot>,
               ...(playbookRun?.playbooks
@@ -57,15 +57,21 @@ export default function PlaybookRunsDetailsPage() {
                 : []),
 
               <BreadcrumbChild key={playbookRun?.start_time}>
-                <span className="flex flex-row gap-2">
+                <span className="flex flex-row items-center gap-2">
                   {playbookRun?.config ? (
                     <ConfigLink
                       config={playbookRun.config}
                       showPrimaryIcon={false}
+                      className=""
                     />
                   ) : null}
                   {playbookRun?.component ? (
-                    <TopologyLink topology={playbookRun.component} />
+                    <TopologyLink
+                      topology={playbookRun.component}
+                      className=""
+                      linkClassName=""
+                      size="md"
+                    />
                   ) : null}
                   {playbookRun?.check ? (
                     <CheckLink check={playbookRun.check} />

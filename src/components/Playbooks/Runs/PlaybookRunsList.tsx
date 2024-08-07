@@ -3,13 +3,12 @@ import {
   PlaybookRunStatus
 } from "@flanksource-ui/api/types/playbooks";
 import { User } from "@flanksource-ui/api/types/users";
-import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
-import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
-import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { ColumnDef } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -36,17 +35,29 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
       const check = row.original.check;
 
       return (
-        <div
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          {componentId && (
-            <TopologyLink topology={component} topologyId={componentId} />
+        <div className="flex flex-row items-center gap-1">
+          {componentId && component && (
+            <>
+              <Icon name={component?.icon} className="h-auto w-5" />
+              <span> {component.name}</span>
+            </>
           )}
-          {configId && <ConfigLink config={config} configId={configId} />}
-          {checkId && <CheckLink check={check} checkId={checkId} />}
+          {configId && config && (
+            <>
+              <ConfigIcon className="h-auto w-5" config={config} />
+              <span className="overflow-hidden text-ellipsis text-sm">
+                {config.name}
+              </span>
+            </>
+          )}
+          {checkId && check && (
+            <>
+              <Icon name={check.type} className="h-auto w-5" />
+              <span className="flex-1 overflow-hidden text-ellipsis">
+                {check.name}
+              </span>
+            </>
+          )}
         </div>
       );
     }

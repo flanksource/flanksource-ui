@@ -8,9 +8,14 @@ import { HealthCheckStatus } from "../../Status/HealthCheckStatus";
 type CheckLinkProps = {
   check?: Pick<HealthCheckSummary, "type" | "name" | "id" | "status">;
   checkId?: string;
+  className?: string;
 };
 
-export function CheckLink({ check, checkId }: CheckLinkProps) {
+export function CheckLink({
+  check,
+  checkId,
+  className = "flex w-full flex-row items-center justify-between space-x-2 rounded-md p-2 hover:bg-gray-100"
+}: CheckLinkProps) {
   const { data } = useQuery(["check", checkId, check], () => {
     if (check) {
       return check;
@@ -32,17 +37,11 @@ export function CheckLink({ check, checkId }: CheckLinkProps) {
         pathname: `/health`,
         search: `?checkId=${data.id}&timeRange=1h`
       }}
-      className={`flex w-full flex-row items-center justify-between space-x-2 rounded-md p-2 hover:bg-gray-100`}
+      className={className}
     >
-      <div className="flex w-full flex-row items-center gap-2">
-        <div className="flex-1text-sm flex flex-row items-center space-x-1">
-          <HealthCheckStatus check={data} />
-          <Icon name={data.type} className="h-auto w-4" />
-          <div className="flex-1 overflow-hidden text-ellipsis">
-            {data.name}
-          </div>
-        </div>
-      </div>
+      <HealthCheckStatus check={data} />
+      <Icon name={data.type} className="h-auto w-4" />
+      <span className="flex-1 overflow-hidden text-ellipsis">{data.name}</span>
     </Link>
   );
 }

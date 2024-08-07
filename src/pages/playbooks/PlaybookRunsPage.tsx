@@ -91,11 +91,12 @@ export default function PlaybookRunsPage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot key={"playbooks"} link="/playbooks">
-                <FaHome className="text-black" />
-              </BreadcrumbRoot>,
               ...(playbook
                 ? [
+                    <BreadcrumbRoot key={"playbooks"} link="/playbooks/runs">
+                      <FaHome className="text-black" />
+                    </BreadcrumbRoot>,
+
                     <BreadcrumbChild
                       key={"/playbooks"}
                       link={`/playbooks/runs?playbook=${playbookId}`}
@@ -104,6 +105,9 @@ export default function PlaybookRunsPage() {
                     </BreadcrumbChild>
                   ]
                 : [
+                    <BreadcrumbRoot key={"playbooks"} link="/playbooks">
+                      <FaHome className="text-black" />
+                    </BreadcrumbRoot>,
                     <BreadcrumbChild
                       key={"/playbooks/runs"}
                       link={`/playbooks/runs`}
