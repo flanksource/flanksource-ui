@@ -7,16 +7,26 @@ export function TopologyLink({
   topology,
   topologyId,
   viewType = "link",
-  size = "xl"
+  size = "xl",
+  className,
+  linkClassName
 }: {
   topologyId?: string | undefined;
   topology?: Topology;
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
+  className?: string;
+  linkClassName?: string;
 }) {
   if (topology != null) {
     return (
-      <TopologyLinkLocal topology={topology} viewType={viewType} size={size} />
+      <TopologyLinkLocal
+        topology={topology}
+        viewType={viewType}
+        size={size}
+        className={className}
+        linkClassName={linkClassName}
+      />
     );
   }
   return (
@@ -24,6 +34,8 @@ export function TopologyLink({
       topologyId={topologyId || ""}
       viewType={viewType}
       size={size}
+      className={className}
+      linkClassName={linkClassName}
     />
   );
 }
@@ -31,11 +43,15 @@ export function TopologyLink({
 function TopologyLinkRemote({
   topologyId,
   viewType = "link",
-  size = "xl"
+  size = "xl",
+  className,
+  linkClassName
 }: {
   topologyId: string;
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
+  className?: string;
+  linkClassName?: string;
 }) {
   const { data: component, isLoading } = useComponentNameQuery(topologyId, {});
 
@@ -44,18 +60,28 @@ function TopologyLinkRemote({
   }
 
   return (
-    <TopologyLinkLocal topology={component} viewType={viewType} size={size} />
+    <TopologyLinkLocal
+      topology={component}
+      viewType={viewType}
+      size={size}
+      className={className}
+      linkClassName={linkClassName}
+    />
   );
 }
 
 function TopologyLinkLocal({
   topology,
   viewType = "link",
-  size = "xl"
+  size = "xl",
+  className = "mr-1 h-5 object-center",
+  linkClassName = "my-auto flex flex-row items-center hover:text-gray-500"
 }: {
   topology?: Component | undefined | null;
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
+  className?: string;
+  linkClassName?: string;
 }) {
   if (!topology) {
     return null;
@@ -68,9 +94,9 @@ function TopologyLinkLocal({
         to={{
           pathname: `/topology/${topology.id}`
         }}
-        className="my-auto flex flex-row items-center hover:text-gray-500"
+        className={linkClassName}
       >
-        <Icon name={topology.icon} className="mr-1 h-5 object-center" />
+        <Icon name={topology.icon} className={className} />
         <span className={`text-${size}`}> {topology.name}</span>
       </Link>
     );
@@ -78,7 +104,7 @@ function TopologyLinkLocal({
 
   return (
     <>
-      <Icon name={topology.icon} className="mr-1 h-5 object-center" />
+      <Icon name={topology.icon} className={className} />
       <span className={`text-${size}`}> {topology.name}</span>
     </>
   );
