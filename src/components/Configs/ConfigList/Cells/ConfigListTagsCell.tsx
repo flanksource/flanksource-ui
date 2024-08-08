@@ -48,17 +48,20 @@ export default function ConfigListTagsCell<
 
       // Get the current tags from the URL
       const currentTags = params.get("tags");
-      const currentTagsArray = currentTags ? currentTags.split(",") : [];
+      const currentTagsArray = (
+        currentTags ? currentTags.split(",") : []
+      ).filter((value) => {
+        const tagKey = value.split("____")[0];
+        const tagAction = value.split(":")[1] === "1" ? "include" : "exclude";
 
-      // If include, remove all exclude values and vice versa
-      const newValues = currentTagsArray.filter(
-        (value) =>
-          (action === "include" && parseInt(value.split(":")[1]) === 1) ||
-          (action === "exclude" && parseInt(value.split(":")[1]) === -1)
-      );
+        if (tagKey === tag.key && tagAction !== action) {
+          return false;
+        }
+        return true;
+      });
 
-      // Append the new value
-      const updatedValue = newValues
+      // Append the new value, but for same tags, don't allow including and excluding at the same time
+      const updatedValue = currentTagsArray
         .concat(`${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`)
         .filter((value, index, self) => self.indexOf(value) === index)
         .join(",");
