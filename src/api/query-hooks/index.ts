@@ -365,7 +365,7 @@ export function useGetConfigTagsListQuery(
 
 export function useGetConfigLabelsListQuery() {
   return useQuery({
-    queryKey: ["configs", "tags", "list"],
+    queryKey: ["configs", "labels", "list"],
     queryFn: async () => {
       const { error, data } = await getConfigLabelsList();
       if (error) {
