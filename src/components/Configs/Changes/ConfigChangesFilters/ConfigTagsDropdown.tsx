@@ -52,6 +52,7 @@ export function ConfigTagsDropdown({ searchParamKey = "tags" }: Props) {
       className="w-auto max-w-[38rem]"
       label={"Tags"}
       isLoading={isLoading}
+      isTagsDropdown
     />
   );
 }

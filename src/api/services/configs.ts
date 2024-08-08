@@ -288,8 +288,6 @@ export async function getConfigsChanges({
     requestData.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
   }
   if (tags) {
-    // we want to convert the tags array to a string of key=[1,2,3]
-    const exclude = tags[0].exclude; // We can only exclude or include all tags, not a mix of both
     const tagList = Object.entries(
       tags.reduce(
         (acc, tag) => {
@@ -300,6 +298,7 @@ export async function getConfigsChanges({
         {} as Record<string, string[]>
       )
     ).map(([key, values]) => {
+      const exclude = tags.find((tag) => tag.key === key)?.exclude;
       if (values.length > 1) {
         const equalSign = exclude ? "notin" : "in";
         return `${key} ${equalSign} (${values.join(",")})`;

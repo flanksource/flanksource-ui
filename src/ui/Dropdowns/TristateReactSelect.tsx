@@ -43,6 +43,7 @@ declare module "react-select/dist/declarations/src/Select" {
   > {
     toggleState?: TriStateToggleState;
     setCurrenToggleState?: Dispatch<SetStateAction<TriStateToggleState>>;
+    isTagsDropdown?: boolean;
   }
 }
 
@@ -105,7 +106,8 @@ function ReactSelectTriStateOptions({
 }: ReactSelectTriStateOptionsProps) {
   const {
     toggleState: currentToggleState = {},
-    setCurrenToggleState = () => {}
+    setCurrenToggleState = () => {},
+    isTagsDropdown = false
   } = selectProps;
 
   const toggleValue = useMemo(
@@ -123,6 +125,13 @@ function ReactSelectTriStateOptions({
               .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
           };
         }
+        if (isTagsDropdown) {
+          // We don't reset the values if it's a tags dropdown, as we can have
+          return {
+            ...prev,
+            [key]: +value
+          };
+        }
         return {
           // Reset all other values to 0 that don't have same value, and set the
           // current value to the
@@ -133,7 +142,7 @@ function ReactSelectTriStateOptions({
         };
       });
     },
-    [setCurrenToggleState]
+    [isTagsDropdown, setCurrenToggleState]
   );
 
   return (
@@ -219,13 +228,20 @@ function ReactSelectTriStateSingleValue({
           );
         })
       ) : (
-        <span className="text-xs">
-          {(totalIncluded.length > 0 || totalExcluded.length > 0) && (
+        <span className="flex flex-row space-x-1 text-xs">
+          {totalIncluded.length > 0 && (
             <div className="flex w-auto max-w-full flex-row items-center gap-1 overflow-hidden text-ellipsis text-nowrap bg-gray-200 px-2 py-1">
               <span className="flex-1 overflow-hidden text-ellipsis text-nowrap">
-                {totalIncluded.length || totalExcluded.length} Items
+                {totalIncluded.length} Items
               </span>
-              {totalExcluded.length > 0 && <FaBan />}
+            </div>
+          )}
+          {totalExcluded.length > 0 && (
+            <div className="flex w-auto max-w-full flex-row items-center gap-1 overflow-hidden text-ellipsis text-nowrap bg-gray-200 px-2 py-1">
+              <span className="flex-1 overflow-hidden text-ellipsis text-nowrap">
+                {totalExcluded.length} Items
+              </span>
+              <FaBan />
             </div>
           )}
         </span>
@@ -273,6 +289,7 @@ type TristateReactSelectProps = {
   value?: string;
   label: string;
   className?: string;
+  isTagsDropdown?: boolean;
 };
 
 export function TristateReactSelectComponent({
@@ -281,7 +298,8 @@ export function TristateReactSelectComponent({
   onChange = () => {},
   value,
   label,
-  className = "w-auto max-w-80"
+  className = "w-auto max-w-80",
+  isTagsDropdown = false
 }: TristateReactSelectProps) {
   const [currentToggleState, setToggleState] = useState<TriStateToggleState>(
     () => {
@@ -435,6 +453,7 @@ export function TristateReactSelectComponent({
       // Pass the toggle state and the setter to the custom Option component
       toggleState={currentToggleState}
       setCurrenToggleState={setToggleState}
+      isTagsDropdown={isTagsDropdown}
     />
   );
 }
