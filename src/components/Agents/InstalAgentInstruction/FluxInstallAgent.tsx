@@ -1,4 +1,5 @@
 import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
+import { useUser } from "@flanksource-ui/context";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
@@ -40,6 +41,11 @@ spec:
       username: token
       agentName: {{agentFormValues.name}}
       password: {{generatedAgent.access_token}}
+{{#if pushTelemetry}}
+    pushTelemetry:
+      enabled: true
+      topologyName: {{pushTelemetry.topologyName}}
+{{/if}}
 {{#if kubeOptions}}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -72,16 +78,27 @@ export default function FluxInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const kubeOptions = agentFormValues?.kubernetes;
-
   const baseUrl = useAgentsBaseURL();
+  const { backendUrl, orgSlug } = useUser();
 
   const yaml = useMemo(() => {
+    const kubeOptions = agentFormValues?.kubernetes;
+    const pushTelemetry = agentFormValues?.pushTelemetry ?? undefined;
+
     return template(
       {
         generatedAgent,
         baseUrl,
         agentFormValues,
+        pushTelemetry: pushTelemetry?.enabled
+          ? {
+              ...pushTelemetry,
+              topologyName: orgSlug
+                ? `${orgSlug}-${pushTelemetry.topologyName}`
+                : pushTelemetry.topologyName
+            }
+          : undefined,
+        backendUrl,
         kubeOptions: kubeOptions
           ? {
               interval: kubeOptions?.interval,
@@ -91,7 +108,7 @@ export default function FluxInstallAgent({
       },
       {}
     );
-  }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
+  }, [agentFormValues, backendUrl, baseUrl, generatedAgent, orgSlug]);
 
   return (
     <div className="flex max-h-[30rem] flex-1 flex-col gap-4 overflow-y-auto rounded-md border border-gray-200 p-2 px-4">

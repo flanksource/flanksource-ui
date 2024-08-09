@@ -70,7 +70,8 @@ export default function ClerkAuthContextProvider({
       <AuthContext.Provider
         value={{
           user: payload.user ?? (payload as any),
-          backendUrl: backendURL as string
+          backendUrl: backendURL as string,
+          orgSlug: organization?.slug ?? undefined
         }}
       >
         {children}

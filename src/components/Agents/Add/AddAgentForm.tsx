@@ -1,6 +1,7 @@
 import { useAgentQuery } from "@flanksource-ui/api/query-hooks/useAgentsQuery";
 import FormikSwitchField from "@flanksource-ui/components/Forms/Formik/FormikSwitchField";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import clsx from "clsx";
@@ -23,6 +24,10 @@ import DeleteAgentButton from "../DeleteAgentButton";
 
 export type AgentFormValues = GenerateAgent & {
   kubernetes?: Record<string, any>;
+  pushTelemetry?: {
+    enabled?: boolean;
+    topologyName?: string;
+  };
 };
 
 type Props = {
@@ -40,6 +45,7 @@ export default function AgentForm({
   onSuccess = () => {},
   onUpdated = () => {}
 }: Props) {
+  const { backendUrl } = useUser();
   const [formValues, setFormValues] = useState<AgentFormValues>();
 
   const { data, isLoading: isLoadingAgent } = useAgentQuery(id!, {
@@ -103,6 +109,10 @@ export default function AgentForm({
             kubernetes: {
               interval: "30m",
               enabled: false
+            },
+            pushTelemetry: {
+              enabled: false,
+              topologyName: backendUrl ?? ""
             }
           }}
           onSubmit={handleSubmit}
@@ -167,6 +177,27 @@ export default function AgentForm({
                         label="Scrape Interval"
                         hintPosition="top"
                         hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
+                      />
+                    )}
+
+                    <FormikSwitchField
+                      options={[
+                        { label: "Enabled", key: true },
+                        { label: "Disabled", key: false }
+                      ]}
+                      name="pushTelemetry.enabled"
+                      label={
+                        <div className="flex w-full flex-col">
+                          <span>Telemetry</span>
+                        </div>
+                      }
+                    />
+                    {Boolean(values.pushTelemetry?.enabled) === true && (
+                      <FormikTextInput
+                        name="pushTelemetry.topologyName"
+                        label="Label"
+                        hintPosition="top"
+                        hint='A unique name describing the company and cluster in which the agent is running, e.g. "acme-prod"'
                       />
                     )}
                   </div>
