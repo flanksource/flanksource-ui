@@ -1,4 +1,5 @@
 import { GeneratedAgent } from "@flanksource-ui/api/services/agents";
+import { useUser } from "@flanksource-ui/context";
 import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
@@ -15,6 +16,10 @@ helm install mc-agent flanksource/mission-control-agent -n "mission-control-agen
   --set upstream.username=token \\
   --set upstream.password={{generatedAgent.access_token}} \\
   --set upstream.agentName={{agentFormValues.name}} \\
+{{#if pushTelemetry}}
+  --set pushTelemetry.enabled=true \\
+  --set pushTelemetry.topologyName={{pushTelemetry.topologyName}}
+{{/if}}
   --create-namespace
 
 {{#if kubeOptions}}
@@ -35,16 +40,27 @@ export default function CLIInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const kubeOptions = agentFormValues?.kubernetes;
-
   const baseUrl = useAgentsBaseURL();
+  const { backendUrl, orgSlug } = useUser();
 
   const helmCommandTemplate = useMemo(() => {
+    const kubeOptions = agentFormValues?.kubernetes;
+    const pushTelemetry = agentFormValues?.pushTelemetry;
+
     return template(
       {
         generatedAgent,
         baseUrl,
         agentFormValues,
+        pushTelemetry: pushTelemetry?.enabled
+          ? {
+              ...pushTelemetry,
+              topologyName: orgSlug
+                ? `${orgSlug}-${pushTelemetry.topologyName}`
+                : pushTelemetry.topologyName
+            }
+          : undefined,
+        backendUrl,
         kubeOptions: kubeOptions
           ? {
               interval: kubeOptions?.interval,
@@ -54,7 +70,7 @@ export default function CLIInstallAgent({
       },
       {}
     );
-  }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
+  }, [agentFormValues, backendUrl, baseUrl, generatedAgent, orgSlug]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-2">
