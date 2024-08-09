@@ -6,9 +6,14 @@ import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import { VersionInfo } from "../../VersionInfo/VersionInfo";
 import KratosLogoutButton from "./KratosLogoutButton";
 
-export function KratosUserProfileDropdown() {
-  const { user } = useUser();
+type UserProfileDropdownProps = {
+  openKubeConfigModal: () => void;
+};
 
+export function KratosUserProfileDropdown({
+  openKubeConfigModal
+}: UserProfileDropdownProps) {
+  const { user } = useUser();
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
 
   return (
@@ -56,6 +61,14 @@ export function KratosUserProfileDropdown() {
               </a>
             </Menu.Item>
           ))}
+          <Menu.Item>
+            <button
+              onClick={openKubeConfigModal}
+              className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Download kubeconfig
+            </button>
+          </Menu.Item>
           <Menu.Item>
             <VersionInfo />
           </Menu.Item>
