@@ -23,6 +23,7 @@ import DeleteAgentButton from "../DeleteAgentButton";
 
 export type AgentFormValues = GenerateAgent & {
   kubernetes?: Record<string, any>;
+  pushTelemetry?: Record<string, any>;
 };
 
 type Props = {
@@ -103,6 +104,10 @@ export default function AgentForm({
             kubernetes: {
               interval: "30m",
               enabled: false
+            },
+            pushTelemetry: {
+              enabled: false,
+              topologyName: ""
             }
           }}
           onSubmit={handleSubmit}
@@ -167,6 +172,27 @@ export default function AgentForm({
                         label="Scrape Interval"
                         hintPosition="top"
                         hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
+                      />
+                    )}
+
+                    <FormikSwitchField
+                      options={[
+                        { label: "Enabled", key: true },
+                        { label: "Disabled", key: false }
+                      ]}
+                      name="pushTelemetry.enabled"
+                      label={
+                        <div className="flex w-full flex-col">
+                          <span>Telemetry</span>
+                        </div>
+                      }
+                    />
+                    {Boolean(values.pushTelemetry?.enabled) === true && (
+                      <FormikTextInput
+                        name="pushTelemetry.topologyName"
+                        label="Topology Name"
+                        hintPosition="top"
+                        hint='A unique name describing the company and cluster in which the agent is running, e.g. "acme-prod"'
                       />
                     )}
                   </div>

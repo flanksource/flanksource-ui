@@ -40,6 +40,11 @@ spec:
       username: token
       agentName: {{agentFormValues.name}}
       password: {{generatedAgent.access_token}}
+{{#if pushTelemetry}}
+    pushTelemetry:
+      enabled: true
+      topologyName: {{pushTelemetry.topologyName}}
+{{/if}}
 {{#if kubeOptions}}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -72,16 +77,18 @@ export default function FluxInstallAgent({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const kubeOptions = agentFormValues?.kubernetes;
-
   const baseUrl = useAgentsBaseURL();
 
   const yaml = useMemo(() => {
+    const kubeOptions = agentFormValues?.kubernetes;
+    const pushTelemetry = agentFormValues?.pushTelemetry ?? undefined;
+
     return template(
       {
         generatedAgent,
         baseUrl,
         agentFormValues,
+        pushTelemetry: pushTelemetry,
         kubeOptions: kubeOptions
           ? {
               interval: kubeOptions?.interval,
@@ -91,7 +98,7 @@ export default function FluxInstallAgent({
       },
       {}
     );
-  }, [agentFormValues, baseUrl, generatedAgent, kubeOptions]);
+  }, [agentFormValues, baseUrl, generatedAgent]);
 
   return (
     <div className="flex max-h-[30rem] flex-1 flex-col gap-4 overflow-y-auto rounded-md border border-gray-200 p-2 px-4">
