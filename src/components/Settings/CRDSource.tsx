@@ -16,7 +16,7 @@ export default function CRDSource({
   source,
   showMinimal = false
 }: CRDSourceProps) {
-  if (!source || source === "UI") {
+  if (source?.toLowerCase() !== "KubernetesCRD".toLowerCase()) {
     return null;
   }
 
