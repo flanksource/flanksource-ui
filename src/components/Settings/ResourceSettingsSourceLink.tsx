@@ -49,6 +49,10 @@ export default function ResourceSettingsSourceLink({
     );
   }
 
+  if (source?.toLowerCase() === "push") {
+    return null;
+  }
+
   if (source?.startsWith("component")) {
     return (
       <ComponentResourceSource source={source} showMinimal={showMinimal} />
