@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import {
   PiMagnifyingGlassMinusThin,
   PiMagnifyingGlassPlusThin
@@ -13,7 +13,7 @@ type FilterByCellProps = {
   paramsToReset?: string[];
 };
 
-export default function FilterByCellValue({
+export function FilterByCellValue({
   paramKey,
   children,
   filterValue,
@@ -69,3 +69,5 @@ export default function FilterByCellValue({
     </div>
   );
 }
+
+export default React.memo(FilterByCellValue);
