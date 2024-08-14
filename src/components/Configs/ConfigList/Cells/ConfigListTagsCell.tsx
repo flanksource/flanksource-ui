@@ -13,6 +13,7 @@ type ConfigListTagsCellProps<
   hideGroupByView?: boolean;
   label?: string;
   enableFilterByTag?: boolean;
+  filterByTagParamKey?: string;
 };
 
 export default function ConfigListTagsCell<
@@ -21,7 +22,8 @@ export default function ConfigListTagsCell<
   row,
   getValue,
   hideGroupByView = false,
-  enableFilterByTag = false
+  enableFilterByTag = false,
+  filterByTagParamKey = "tags"
 }: ConfigListTagsCellProps<T>): JSX.Element | null {
   const [params, setParams] = useSearchParams();
 
@@ -67,10 +69,10 @@ export default function ConfigListTagsCell<
         .join(",");
 
       // Update the URL
-      params.set("tags", updatedValue);
+      params.set(filterByTagParamKey, updatedValue);
       setParams(params);
     },
-    [enableFilterByTag, params, setParams]
+    [enableFilterByTag, filterByTagParamKey, params, setParams]
   );
 
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
