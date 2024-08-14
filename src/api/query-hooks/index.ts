@@ -218,7 +218,7 @@ export function prepareConfigListQuery({
       });
     }
     if (filterQueries.length) {
-      query = `${query}&or=(${filterQueries.join(",")})`;
+      query = `${query}&or=(and(${filterQueries.join(",")}))`;
     }
   }
   if (sortBy && sortOrder) {

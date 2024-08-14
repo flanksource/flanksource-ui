@@ -22,10 +22,10 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
         (tag) =>
           ({
             label: (
-              <div className="block space-x-1 text-sm">
-                <span className="w-auto text-gray-600">{tag.key}:</span>
-                <span className="w-full">{tag.value}</span>
-              </div>
+              <span className="space-x-1 text-sm">
+                <span className="text-gray-600">{tag.key}:</span>
+                <span>{tag.value}</span>
+              </span>
             ),
             value: `${tag.key}____${tag.value}`,
             id: `${tag.key}____${tag.value}`
@@ -54,6 +54,7 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
           });
         }
       }}
+      minMenuWidth="400px"
       value={field.value}
       className="w-auto max-w-[400px]"
       label={"Labels"}

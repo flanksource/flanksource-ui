@@ -12,6 +12,7 @@ type MRTConfigListTagsCellProps<
 > = MRTCellProps<T> & {
   hideGroupByView?: boolean;
   enableFilterByTag?: boolean;
+  filterByTagParamKey?: string;
 };
 
 export default function MRTConfigListTagsCell<
@@ -20,7 +21,8 @@ export default function MRTConfigListTagsCell<
   row,
   cell,
   hideGroupByView = false,
-  enableFilterByTag = false
+  enableFilterByTag = false,
+  filterByTagParamKey = "tags"
 }: MRTConfigListTagsCellProps<T>): JSX.Element | null {
   const [params, setParams] = useSearchParams();
 
@@ -46,7 +48,7 @@ export default function MRTConfigListTagsCell<
       e.stopPropagation();
 
       // Get the current tags from the URL
-      const currentTags = params.get("tags");
+      const currentTags = params.get(filterByTagParamKey);
       const currentTagsArray = (
         currentTags ? currentTags.split(",") : []
       ).filter((value) => {
@@ -66,10 +68,10 @@ export default function MRTConfigListTagsCell<
         .join(",");
 
       // Update the URL
-      params.set("tags", updatedValue);
+      params.set(filterByTagParamKey, updatedValue);
       setParams(params);
     },
-    [enableFilterByTag, params, setParams]
+    [enableFilterByTag, filterByTagParamKey, params, setParams]
   );
 
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
