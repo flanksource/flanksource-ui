@@ -12,15 +12,15 @@ import {
   MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowUp
 } from "react-icons/md";
+import { DropdownIndicatorProps } from "react-select/dist/declarations/src/components/indicators";
+import { Tooltip } from "react-tooltip";
 import Select, {
   ControlProps,
   GroupBase,
   MultiValueProps,
   OptionProps,
   components
-} from "react-select";
-import { DropdownIndicatorProps } from "react-select/dist/declarations/src/components/indicators";
-import { Tooltip } from "react-tooltip";
+} from "react-windowed-select";
 import { TristateToggle } from "../FormControls/TristateToggle";
 
 export type TriStateOptions = {
@@ -165,7 +165,7 @@ function ReactSelectTriStateOptions({
       selectProps={selectProps}
       {...props}
     >
-      <div className="flex flex-row items-center gap-2 text-sm">
+      <div className="flex min-w-min flex-row items-center gap-2 text-sm">
         <TristateToggle
           onChange={(value) => {
             onItemToggle(data.value!, value);
@@ -303,6 +303,7 @@ type TristateReactSelectProps = {
   label: string;
   className?: string;
   isTagsDropdown?: boolean;
+  minMenuWidth?: string;
 };
 
 export function TristateReactSelectComponent({
@@ -312,7 +313,8 @@ export function TristateReactSelectComponent({
   value,
   label,
   className = "w-auto max-w-80",
-  isTagsDropdown = false
+  isTagsDropdown = false,
+  minMenuWidth = "100% !important"
 }: TristateReactSelectProps) {
   const [currentToggleState, setToggleState] = useState<TriStateToggleState>(
     () => {
@@ -434,8 +436,8 @@ export function TristateReactSelectComponent({
       styles={{
         menu: (baseStyles) => ({
           ...baseStyles,
-          width: "max-content !important",
-          minWidth: "100% !important",
+          width: "min-content !important",
+          minWidth: minMenuWidth,
           maxWidth: "800px !important"
         }),
         valueContainer: (baseStyles) => ({
@@ -456,10 +458,14 @@ export function TristateReactSelectComponent({
         // React.memo here is a hack, force the component to re-render when the
         // toggle state changes from other options or parent components, which
         // is not ideal, but it works for now.
+        // @ts-expect-error
         Option: React.memo(ReactSelectTriStateOptions),
+        // @ts-expect-error
         SingleValue: ReactSelectTriStateSingleValue,
+        // @ts-expect-error
         DropdownIndicator: TriStateCustomDropdownIndicator,
         IndicatorSeparator: () => null,
+        // @ts-expect-error
         Control: TriStateCustomControlContainer,
         Placeholder: () => <>None</>
       }}
