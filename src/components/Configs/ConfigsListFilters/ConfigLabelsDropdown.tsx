@@ -1,7 +1,9 @@
 import { useGetConfigLabelsListQuery } from "@flanksource-ui/api/query-hooks";
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
 import { useMemo } from "react";
-import { ReactSelectDropdown } from "../../ReactSelectDropdown";
 
 type Props = {
   searchParamKey?: string;
@@ -16,30 +18,33 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
 
   const labelItems = useMemo(() => {
     if (data && Array.isArray(data)) {
-      const options = data.map((tag) => ({
-        label: (
-          <div className="block space-x-1 text-sm">
-            <span className="w-auto text-gray-600">{tag.key}:</span>
-            <span className="w-full">{tag.value}</span>
-          </div>
-        ),
-        value: `${tag.key}__:__${tag.value}`
-      }));
-      return [{ label: "All", value: "All" }, ...options];
+      return data.map(
+        (tag) =>
+          ({
+            label: (
+              <div className="block space-x-1 text-sm">
+                <span className="w-auto text-gray-600">{tag.key}:</span>
+                <span className="w-full">{tag.value}</span>
+              </div>
+            ),
+            value: `${tag.key}____${tag.value}`,
+            id: `${tag.key}____${tag.value}`
+          }) satisfies TriStateOptions
+      );
     } else {
       // Adding this console.error to help debug the issue I noticed happening
       // inside the Saas, that's leading to the catalog page crashing
       console.error("Invalid data for ConfigLabelsDropdown", data);
-      return [{ label: "All", value: "All" }];
+      return [];
     }
   }, [data]);
 
   return (
-    <ReactSelectDropdown
-      items={labelItems}
-      name="type"
+    <TristateReactSelect
+      isLoading={isLoading}
+      options={labelItems}
       onChange={(value) => {
-        if (value && value !== "All") {
+        if (value && value !== "all") {
           field.onChange({
             target: { name: searchParamKey, value: value }
           });
@@ -49,17 +54,9 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
           });
         }
       }}
-      value={field.value ?? "All"}
-      className="w-auto max-w-[38rem]"
-      dropDownClassNames="w-auto max-w-[38rem] left-0"
-      hideControlBorder
-      isMulti
-      prefix={
-        <div className="mr-2 whitespace-nowrap text-xs text-gray-500">
-          Labels:
-        </div>
-      }
-      isLoading={isLoading}
+      value={field.value}
+      className="w-auto max-w-[400px]"
+      label={"Labels"}
     />
   );
 }
