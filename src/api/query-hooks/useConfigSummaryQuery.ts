@@ -9,6 +9,23 @@ import { useSearchParams } from "react-router-dom";
 import { ConfigSummaryRequest, getConfigsSummary } from "../services/configs";
 import { ConfigSummary } from "../types/configs";
 
+export function useLabelFiltersFromParams() {
+  const [searchParams] = useSearchParams();
+  const labels = searchParams.get("labels") ?? undefined;
+
+  return useMemo(() => {
+    if (labels) {
+      return labels.split(",").reduce((acc, label) => {
+        const [filterValue, operand] = label.split(":");
+        const [key, value] = filterValue.split("____");
+        const symbol = parseInt(operand) === -1 ? "!" : "";
+        return { ...acc, [key]: `${symbol}${value}` };
+      }, {});
+    }
+    return undefined;
+  }, [labels]);
+}
+
 export function useConfigSummaryQuery({
   enabled = true
 }: UseQueryOptions<ConfigSummary[]> = {}) {
@@ -18,7 +35,6 @@ export function useConfigSummaryQuery({
     groupBy: "config_class,type"
   });
   const hideDeletedConfigs = useHideDeletedConfigs();
-  const labels = searchParams.get("labels") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
   const health = searchParams.get("health") ?? undefined;
 
@@ -26,15 +42,7 @@ export function useConfigSummaryQuery({
 
   const groupBy = useGroupBySearchParam();
 
-  const filterSummaryByLabel = useMemo(() => {
-    if (labels) {
-      return labels.split(",").reduce((acc, label) => {
-        const [key, value] = label.split("__:__");
-        return { ...acc, [key]: value };
-      }, {});
-    }
-    return undefined;
-  }, [labels]);
+  const filterSummaryByLabel = useLabelFiltersFromParams();
 
   const req: ConfigSummaryRequest = {
     // group by config_class is always done on the frontend

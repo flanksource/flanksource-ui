@@ -205,16 +205,20 @@ export function prepareConfigListQuery({
     }
     if (labels) {
       labels.split(",").forEach((label) => {
-        const [k, v] = label.split("__:__");
+        const [k, v] = label.split("____");
+        const [realValue, operand] = v.split(":");
+        const operator = parseInt(operand) === -1 ? "neq" : "eq";
         if (!isNull(v)) {
-          filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
+          filterQueries.push(
+            `labels->>${k}.${operator}.${encodeURIComponent(realValue)}`
+          );
         } else {
           filterQueries.push(`labels->>${k}=is.null`);
         }
       });
     }
     if (filterQueries.length) {
-      query = `${query}&${filterQueries.join("&")}`;
+      query = `${query}&or=(${filterQueries.join(",")})`;
     }
   }
   if (sortBy && sortOrder) {
