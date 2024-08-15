@@ -16,8 +16,8 @@ export default function useReactTablePaginationState() {
       const updated =
         typeof param === "function"
           ? param({
-              pageIndex: pageIndex,
-              pageSize: pageSize
+              pageIndex: pageIndex ?? 0,
+              pageSize: pageSize ?? 50
             })
           : param;
       params.set("pageIndex", updated.pageIndex.toString());

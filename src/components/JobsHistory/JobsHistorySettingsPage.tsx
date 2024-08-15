@@ -9,8 +9,7 @@ import JobsHistoryTable from "./JobsHistoryTable";
 export default function JobsHistorySettingsPage() {
   const [searchParams] = useSearchParams();
 
-  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
-  const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
 
   const { data, isLoading, refetch, isRefetching } =
     useJobsHistoryForSettingQuery({
@@ -45,8 +44,7 @@ export default function JobsHistorySettingsPage() {
             jobs={jobs ?? []}
             isLoading={isLoading || isRefetching}
             pageCount={pageCount}
-            pageIndex={pageIndex}
-            pageSize={pageSize}
+            totalJobHistoryItems={totalEntries}
           />
         </div>
       </SearchLayout>

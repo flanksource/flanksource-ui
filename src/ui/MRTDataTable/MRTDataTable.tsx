@@ -1,3 +1,4 @@
+import { VisibilityState } from "@tanstack/react-table";
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -15,6 +16,12 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   enableServerSideSorting?: boolean;
   enableServerSidePagination?: boolean;
   manualPageCount?: number;
+  hiddenColumns?: string[];
+  /**
+   * The total number of rows in the dataset. This is used for server-side
+   * pagination to determine the total number of pages.
+   */
+  totalRowCount?: number;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -25,7 +32,9 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   disablePagination = false,
   enableServerSideSorting = false,
   enableServerSidePagination = false,
-  manualPageCount
+  manualPageCount,
+  totalRowCount,
+  hiddenColumns = []
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
@@ -50,6 +59,8 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     manualSorting: enableServerSideSorting,
     manualPagination: enableServerSidePagination,
     pageCount: manualPageCount,
+    rowCount: totalRowCount,
+    autoResetPageIndex: false,
     onPaginationChange: setPageIndex,
     onSortingChange: setSortState,
     mantineTableBodyRowProps: ({ row }) => ({
@@ -75,15 +86,15 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
       density: "xs",
       pagination: {
         pageIndex,
-        pageSize: pageSize
+        pageSize
       },
       sorting: sortState
     },
     initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: pageSize
-      }
+      columnVisibility: hiddenColumns.reduce((acc: VisibilityState, column) => {
+        acc[column] = false;
+        return acc;
+      }, {})
     },
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
