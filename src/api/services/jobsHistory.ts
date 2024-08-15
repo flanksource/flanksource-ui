@@ -1,7 +1,7 @@
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { JobHistory } from "../../components/JobsHistory/JobsHistoryTable";
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 
 export type GetJobsHistoryParams = {
   pageIndex: number;
@@ -55,7 +55,7 @@ export const getJobsHistory = async ({
       ? `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`
       : "";
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<JobHistory[] | null>(
       `/job_histories?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}${durationParam}`,
       {
@@ -72,7 +72,7 @@ export type JobHistoryNames = {
 };
 
 export const getJobsHistoryNames = async () => {
-  const res = await resolve(
+  const res = await resolvePostGrestRequestWithPagination(
     IncidentCommander.get<JobHistoryNames[] | null>(
       `/job_history_names?order=name.asc`
     )

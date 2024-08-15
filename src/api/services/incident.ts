@@ -1,7 +1,7 @@
 import { stringify } from "qs";
 import { AVATAR_INFO } from "../../constants";
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   Incident,
   IncidentStatus,
@@ -12,7 +12,7 @@ import { User } from "../types/users";
 
 export const searchIncident = (query: string) => {
   const hypotheses = `hypotheses(id, type)`;
-  return resolve<Incident[]>(
+  return resolvePostGrestRequestWithPagination<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&title=ilike.*${query}*&select=*,${hypotheses}`
     )
@@ -21,7 +21,7 @@ export const searchIncident = (query: string) => {
 export const getAllIncident = ({ limit = 10 }) => {
   const limitStr = limit ? `limit=${limit}` : "";
   const hypotheses = `hypotheses(id, type)`;
-  return resolve<Incident[]>(
+  return resolvePostGrestRequestWithPagination<Incident[]>(
     IncidentCommander.get(
       `/incidents?order=created_at.desc&${limitStr}&select=*,${hypotheses}`
     )
@@ -31,7 +31,7 @@ export const getAllIncident = ({ limit = 10 }) => {
 export const getIncident = async (id: string) => {
   const hypotheses = `hypotheses(*,created_by(${AVATAR_INFO}),evidences(*,created_by(${AVATAR_INFO})),comments(created_at,comment,external_created_by,responder_id(team_id(*)),created_by(id,${AVATAR_INFO}),id))`;
 
-  const res = await resolve<Incident[] | null>(
+  const res = await resolvePostGrestRequestWithPagination<Incident[] | null>(
     IncidentCommander.get(
       `/incidents?id=eq.${id}&select=*,${hypotheses},commander:commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),responders(created_by(${AVATAR_INFO}))`
     )
@@ -65,14 +65,14 @@ export const getIncidentsBy = async ({
 
   if (topologyId) {
     params["component_id"] = `eq.${topologyId}`;
-    return resolve(
+    return resolvePostGrestRequestWithPagination(
       IncidentCommander.get<Incident[] | null>(
         `incidents_by_component?${stringify(params)}`
       )
     );
   } else {
     params["config_id"] = `eq.${configId}`;
-    return resolve(
+    return resolvePostGrestRequestWithPagination(
       IncidentCommander.get<Incident[] | null>(
         `incidents_by_config?${stringify(params)}`
       )
@@ -86,7 +86,9 @@ export const getIncidentsSummary = async (
   const { search = "" } = params!;
   const searchStr = search ? `&title=ilike.*${search}*` : "";
   const { search: _, ...filters } = params ?? {};
-  const { data } = await resolve<IncidentSummary[] | null>(
+  const { data } = await resolvePostGrestRequestWithPagination<
+    IncidentSummary[] | null
+  >(
     IncidentCommander.get(
       `/incident_summary?${searchStr}&order=created_at.desc`,
       {
@@ -110,7 +112,7 @@ export const getIncidentsWithParams = async (
   const searchStr = search ? `&title=ilike.*${search}*` : "";
   const { search: _, ...filters } = params!;
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<Incident[]>(
       `/incidents?${searchStr}&select=*,${hypotheses},${comments},commander_id(${AVATAR_INFO}),communicator_id(${AVATAR_INFO}),${responder}&order=created_at.desc`,
       {
@@ -147,9 +149,9 @@ export const createIncident = async (
     communicator_id: user.id
   };
 
-  const { data, error } = await resolve<Incident[]>(
-    IncidentCommander.post(`/incidents?select=*`, params)
-  );
+  const { data, error } = await resolvePostGrestRequestWithPagination<
+    Incident[]
+  >(IncidentCommander.post(`/incidents?select=*`, params));
 
   if (error) {
     return { error };

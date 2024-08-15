@@ -12,7 +12,7 @@ import {
 import { AxiosResponse } from "axios";
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
-import { resolve } from "./resolve";
+import { resolvePostGrestRequestWithPagination } from "./resolve";
 import { ConfigItem } from "./types/configs";
 
 export interface SchemaResourceI {
@@ -178,7 +178,7 @@ export async function getIntegrationsWithJobStatus(
 ) {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const res = await resolve(
+  const res = await resolvePostGrestRequestWithPagination(
     CanaryCheckerDB.get<SchemaResourceWithJobStatus[] | null>(
       // todo: add back created_by
       `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}`,

@@ -1,5 +1,5 @@
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { Team, User } from "../types/users";
 
 export const getTeam = async (id: string): Promise<Team | undefined> => {
@@ -35,11 +35,13 @@ export const addUserToTeam = (teamId: string, userIds: string[]) => {
       person_id: userId
     };
   });
-  return resolve(IncidentCommander.post(`/team_members`, payload));
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.post(`/team_members`, payload)
+  );
 };
 
 export const removeUserFromTeam = (userId: string) => {
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.delete(`/team_members?person_id=eq.${userId}`)
   );
 };

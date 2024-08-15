@@ -1,7 +1,7 @@
 import { Agent, AgentSummary } from "../../components/Agents/AgentPage";
 import { AVATAR_INFO } from "../../constants";
 import { AgentAPI, IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { AgentItem } from "../types/common";
 
 export const Local = "00000000-0000-0000-0000-000000000000";
@@ -23,7 +23,7 @@ export const getAgentsList = async (
     pageIndex || pageSize
       ? `&limit=${pageSize}&offset=${pageIndex! * pageSize!}`
       : "";
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<AgentSummary[] | null>(
       `/agents_summary?select=*,created_by(${AVATAR_INFO})&order=created_at.desc&${pagingParamsStr}${sortByParam}${sortOrderParam}`,
       {

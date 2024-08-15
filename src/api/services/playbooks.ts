@@ -2,7 +2,7 @@ import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbook
 import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NewPlaybookSpec,
   PlaybookNames,
@@ -180,7 +180,7 @@ export async function getPlaybookRuns({
     ? `&playbook_id=eq.${playbookId}`
     : "";
 
-  const res = await resolve(
+  const res = await resolvePostGrestRequestWithPagination(
     ConfigDB.get<PlaybookRun[] | null>(
       `/playbook_runs?select=*,playbooks(id,name,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}${statusParamString}${dateFilter}`,
       {

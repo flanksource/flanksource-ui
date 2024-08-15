@@ -6,7 +6,7 @@ import {
   IncidentCommander,
   Snapshot
 } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { SchemaResourceI } from "../schemaResources";
 import { PaginationInfo } from "../types/common";
 import {
@@ -182,7 +182,7 @@ export const getCheckStatuses = (
   queryString = `${queryString}&limit=${pageSize}&offset=${
     pageIndex * pageSize
   }`;
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     CanaryCheckerDB.get<HealthCheckStatus[] | null>(
       `/check_statuses?${queryString}`,
       {
@@ -234,7 +234,9 @@ export const getComponentTemplate = async (id: string) => {
 };
 
 export const getHealthCheckSummary = async (id: string) => {
-  const res = await resolve<HealthCheckSummary[] | null>(
+  const res = await resolvePostGrestRequestWithPagination<
+    HealthCheckSummary[] | null
+  >(
     IncidentCommander.get(`/checks?id=eq.${id}&select=id,name,icon,status,type`)
   );
   if (res.data && res.data.length > 0) {
@@ -244,7 +246,9 @@ export const getHealthCheckSummary = async (id: string) => {
 };
 
 export const getHealthCheckDetails = async (id: string) => {
-  const res = await resolve<Omit<HealthCheck, "source">[] | null>(
+  const res = await resolvePostGrestRequestWithPagination<
+    Omit<HealthCheck, "source">[] | null
+  >(
     IncidentCommander.get(
       `/checks?id=eq.${id}&select=*,canaries(id,name,source),agents(id, name),components:check_component_relationships(components(id,name,icon)),configs:check_config_relationships(configs(id,name,type))`
     )
