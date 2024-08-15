@@ -1,5 +1,5 @@
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { Evidence } from "../types/evidence";
 import {
   Hypothesis,
@@ -7,11 +7,11 @@ import {
   HypothesisStatus,
   NewHypothesis
 } from "../types/hypothesis";
-import { User } from "../types/users";
 import { Comment } from "../types/incident";
+import { User } from "../types/users";
 
 export const getAllHypothesisByIncident = (incidentId: string) =>
-  resolve<Hypothesis[]>(
+  resolvePostGrestRequestWithPagination<Hypothesis[]>(
     IncidentCommander.get(
       `/hypotheses?incident_id=eq.${incidentId}&order=created_at.asc`
     )
@@ -20,7 +20,7 @@ export const getAllHypothesisByIncident = (incidentId: string) =>
 export const getHypothesis = async (id: string) => {
   const comments = `comments!comments_incident_id_fkey(id,created_by(id,name,avatar))`;
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.get(`/hypotheses?id=eq.${id}&select(*,${comments})`)
   );
 };
@@ -30,7 +30,7 @@ export const getHypothesisResponse = async (id: string) => {
     "comments(id,*,created_by(id,name,avatar),responder_id(*,team_id(*)))";
   const evidence = "evidences(id,*,created_by(id,name,avatar))";
 
-  const { data, error } = await resolve<
+  const { data, error } = await resolvePostGrestRequestWithPagination<
     [
       {
         id: string;
@@ -52,14 +52,16 @@ export const getHypothesisResponse = async (id: string) => {
 };
 
 export const searchHypothesis = (incidentId: string, query: string) =>
-  resolve<Hypothesis[]>(
+  resolvePostGrestRequestWithPagination<Hypothesis[]>(
     IncidentCommander.get(
       `/hypotheses?order=created_at.desc&title=ilike.*${query}*&incident_id=eq.${incidentId}`
     )
   );
 
 export const createHypothesis = async ({ user, ...params }: NewHypothesis) => {
-  const { data, error } = await resolve<[Hypothesis]>(
+  const { data, error } = await resolvePostGrestRequestWithPagination<
+    [Hypothesis]
+  >(
     IncidentCommander.post(`/hypotheses`, {
       ...params,
       created_by: user.id
@@ -100,9 +102,15 @@ export const updateHypothesis = (
 
 // NOTE: Needs to be a database transaction. Possibility of partial deletes.
 export const deleteHypothesis = async (id: string) => {
-  await resolve(IncidentCommander.delete(`/comments?hypothesis_id=eq.${id}`));
-  await resolve(IncidentCommander.delete(`/evidences?hypothesis_id=eq.${id}`));
-  return resolve(IncidentCommander.delete(`/hypotheses?id=eq.${id}`));
+  await resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/comments?hypothesis_id=eq.${id}`)
+  );
+  await resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/evidences?hypothesis_id=eq.${id}`)
+  );
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/hypotheses?id=eq.${id}`)
+  );
 };
 
 export const deleteHypothesisBulk = async (idList: string[]) => {
@@ -113,5 +121,7 @@ export const deleteHypothesisBulk = async (idList: string[]) => {
       ids += ",";
     }
   });
-  return resolve(IncidentCommander.delete(`/hypotheses?id=in.(${ids})`));
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/hypotheses?id=in.(${ids})`)
+  );
 };

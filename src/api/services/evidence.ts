@@ -1,9 +1,11 @@
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { Evidence } from "../types/evidence";
 
 export const getEvidence = async (id: string) =>
-  resolve(IncidentCommander.get(`/evidences?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination(
+    IncidentCommander.get(`/evidences?id=eq.${id}`)
+  );
 
 export const createEvidence = async (
   args: Omit<Evidence, "created_by" | "created_at" | "hypothesis_id" | "id">
@@ -25,7 +27,7 @@ export const createEvidence = async (
     script
   } = args;
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.post<Evidence[]>(`/evidences`, {
       config_id,
       config_analysis_id,
@@ -46,14 +48,16 @@ export const createEvidence = async (
 };
 
 export const updateEvidence = async (id: string, params: Partial<Evidence>) =>
-  resolve(
+  resolvePostGrestRequestWithPagination(
     IncidentCommander.patch<Evidence[] | null>(`/evidences?id=eq.${id}`, {
       ...params
     })
   );
 
 export const deleteEvidence = async (id: string) =>
-  resolve(IncidentCommander.delete(`/evidences?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/evidences?id=eq.${id}`)
+  );
 
 export const deleteEvidenceBulk = async (idList: string[]) => {
   let ids = "";
@@ -63,5 +67,7 @@ export const deleteEvidenceBulk = async (idList: string[]) => {
       ids += ",";
     }
   });
-  return resolve(IncidentCommander.delete(`/evidences?id=in.(${ids})`));
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.delete(`/evidences?id=in.(${ids})`)
+  );
 };

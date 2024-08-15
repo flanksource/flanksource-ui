@@ -1,10 +1,10 @@
 import { Notification } from "../../components/Notifications/notificationsTableColumns";
 import { AVATAR_INFO } from "../../constants";
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 
 export const getNotificationsSummary = async () => {
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<Notification[] | null>(
       `/notifications_summary?select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})&order=created_at.desc`,
       {

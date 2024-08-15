@@ -1,29 +1,35 @@
 import { Auth, CanaryChecker, IncidentCommander, Rback } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
 import { NewUser, PeopleRoles, RegisteredUser, User } from "../types/users";
 
 export const getPerson = (id: string) =>
-  resolve<User[]>(IncidentCommander.get<User[]>(`/people?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination<User[]>(
+    IncidentCommander.get<User[]>(`/people?id=eq.${id}`)
+  );
 
 export const getPersons = () =>
-  resolve<User[]>(
+  resolvePostGrestRequestWithPagination<User[]>(
     IncidentCommander.get<User[]>(`/people?select=*&order=name.asc`)
   );
 
 export const getPersonWithEmail = (email: string) =>
-  resolve<User>(IncidentCommander.get(`/people?email=eq.${email}`));
+  resolvePostGrestRequestWithPagination<User>(
+    IncidentCommander.get(`/people?email=eq.${email}`)
+  );
 
 export const createPerson = ({ name, email, avatar }: NewUser) =>
-  resolve<User>(IncidentCommander.post("/people", { name, email, avatar }));
+  resolvePostGrestRequestWithPagination<User>(
+    IncidentCommander.post("/people", { name, email, avatar })
+  );
 
 export const fetchPeopleRoles = (personIds: string[]) =>
-  resolve<PeopleRoles[]>(
+  resolvePostGrestRequestWithPagination<PeopleRoles[]>(
     IncidentCommander.get(`/people_roles?id=in.(${personIds.toString()})`)
   );
 
 export const getRegisteredUsers = () =>
-  resolve<RegisteredUser[]>(
+  resolvePostGrestRequestWithPagination<RegisteredUser[]>(
     IncidentCommander.get(`/identities`).then(async (res) => {
       const { data: peopleRoles } = await fetchPeopleRoles(
         res.data.map((item: { id: string }) => item.id)
@@ -57,12 +63,12 @@ export type InviteUserPayload = {
 };
 
 export const inviteUser = ({ firstName, lastName, email }: InviteUserPayload) =>
-  resolve<{
+  resolvePostGrestRequestWithPagination<{
     id: string;
   }>(Auth.post("/invite_user", { firstName, lastName, email }));
 
 export const getVersionInfo = () =>
-  resolve<VersionInfo>(
+  resolvePostGrestRequestWithPagination<VersionInfo>(
     CanaryChecker.get("/about").then((data) => {
       const versionInfo: any = data.data || {};
       data.data = {
@@ -74,7 +80,7 @@ export const getVersionInfo = () =>
   );
 
 export const updateUserRole = (userId: string, roles: string[]) => {
-  return resolve<{
+  return resolvePostGrestRequestWithPagination<{
     message: string;
   }>(
     Rback.post(`/${userId}/update_role`, {
@@ -84,7 +90,9 @@ export const updateUserRole = (userId: string, roles: string[]) => {
 };
 
 export const deleteUser = (userId: string) =>
-  resolve<{}>(IncidentCommander.delete(`/identities?id=eq.${userId}`));
+  resolvePostGrestRequestWithPagination<{}>(
+    IncidentCommander.delete(`/identities?id=eq.${userId}`)
+  );
 
 export type WhoamiResponse = {
   message: string;

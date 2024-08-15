@@ -1,16 +1,21 @@
 import { IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { Responder } from "../types/incident";
 
 export const getResponder = async (ids: string[]) =>
-  resolve(IncidentCommander.get<Responder | null>(`/person?id=in.(${ids})`));
+  resolvePostGrestRequestWithPagination(
+    IncidentCommander.get<Responder | null>(`/person?id=in.(${ids})`)
+  );
 
 export const saveResponder = (
   params: Omit<Responder, "id" | "created_at" | "updated_at">
-) => resolve(IncidentCommander.post<Responder>(`/responders?select=*`, params));
+) =>
+  resolvePostGrestRequestWithPagination(
+    IncidentCommander.post<Responder>(`/responders?select=*`, params)
+  );
 
 export const getRespondersForTheIncident = async (id: string) => {
-  const res = await resolve(
+  const res = await resolvePostGrestRequestWithPagination(
     IncidentCommander.get<Responder[] | null>(
       `/responders?incident_id=eq.${id}&select=*,team:team_id(id,name,icon,spec),person:person_id(id,name,avatar)&deleted_at=is.null`
     )

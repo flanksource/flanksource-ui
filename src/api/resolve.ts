@@ -13,9 +13,17 @@ export type ApiResp<T = any> = Promise<
     }
 >;
 
-export const resolve: <T>(promise: AxiosPromise<T>) => ApiResp<T> = async (
-  promise
-) => {
+/**
+ *
+ * Takes a response from postgrest and extracts the pagination information from
+ * headers and adds it to the response object.
+ *
+ * https://docs.postgrest.org/en/v12/references/api/pagination_count.html
+ *
+ */
+export const resolvePostGrestRequestWithPagination: <T>(
+  promise: AxiosPromise<T>
+) => ApiResp<T> = async (promise) => {
   try {
     const { data, headers } = await promise;
     const hasContentRangeHeader = !!headers["content-range"]?.trim();

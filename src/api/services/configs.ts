@@ -4,7 +4,7 @@ import {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AnyMessageParams } from "yup/lib/types";
 import { Catalog, Config, ConfigDB, IncidentCommander } from "../axios";
-import { resolve } from "../resolve";
+import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
@@ -16,7 +16,7 @@ import {
 } from "../types/configs";
 
 export const getAllConfigs = () =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/configs`));
+  resolvePostGrestRequestWithPagination<ConfigItem[]>(ConfigDB.get(`/configs`));
 
 export const getConfigsTags = async () => {
   const res =
@@ -29,12 +29,12 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   if (query) {
     url = `${url}&${query}`;
   }
-  return resolve<ConfigItem[]>(ConfigDB.get(url));
+  return resolvePostGrestRequestWithPagination<ConfigItem[]>(ConfigDB.get(url));
 };
 
 export const getAllConfigsForSearchPurpose = async () => {
   let url = `/configs?select=id,name,config_class,type`;
-  const res = await resolve<
+  const res = await resolvePostGrestRequestWithPagination<
     Pick<ConfigItem, "name" | "config_class" | "type" | "id">[]
   >(ConfigDB.get(url));
 
@@ -70,7 +70,7 @@ export const getConfigsSummary = async (request: ConfigSummaryRequest) => {
 };
 
 export const getConfigsByIDs = async (ids: string[]) => {
-  const res = await resolve<ConfigItem[] | null>(
+  const res = await resolvePostGrestRequestWithPagination<ConfigItem[] | null>(
     ConfigDB.get(
       `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
     )
@@ -79,7 +79,7 @@ export const getConfigsByIDs = async (ids: string[]) => {
 };
 
 export const getConfigsByID = async (id: string) => {
-  const res = await resolve<ConfigItem[] | null>(
+  const res = await resolvePostGrestRequestWithPagination<ConfigItem[] | null>(
     ConfigDB.get(`/configs?id=eq.${id}&select=id,name,config_class,type`)
   );
   if (res.data && res.data.length > 0) {
@@ -125,7 +125,7 @@ export const getAllChanges = (
     queryString += `&and=(created_at.gte.${startsAt},created_at.lte.${endsAt})`;
   }
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigChange[]>(
       `/config_changes_items?order=created_at.desc${pagingParams}&select=id,change_type,summary,source,created_at,config_id,config:config_names!inner(id,name,type)${queryString}`,
       {
@@ -138,7 +138,7 @@ export const getAllChanges = (
 };
 
 export const getConfig = (id: string) =>
-  resolve<ConfigItem[]>(
+  resolvePostGrestRequestWithPagination<ConfigItem[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*,config_scrapers(id,name)`)
   );
 
@@ -152,10 +152,14 @@ export const getConfigTagsList = () => {
 };
 
 export const getConfigLabelsList = () =>
-  resolve<ConfigsTagList[] | null>(ConfigDB.get(`/config_labels`));
+  resolvePostGrestRequestWithPagination<ConfigsTagList[] | null>(
+    ConfigDB.get(`/config_labels`)
+  );
 
 export const getConfigName = (id: string) =>
-  resolve<ConfigItem[]>(ConfigDB.get(`/config_names?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination<ConfigItem[]>(
+    ConfigDB.get(`/config_names?id=eq.${id}`)
+  );
 
 export const getConfigChanges = (
   id: string,
@@ -178,7 +182,7 @@ export const getConfigChanges = (
   if (starts_at && ends_at) {
     paginationQueryParams += `&and=(created_at.gte.${starts_at},created_at.lte.${ends_at})`;
   }
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigChange[]>(
       `/config_changes?config_id=eq.${id}&order=created_at.desc${paginationQueryParams}`,
       {
@@ -331,7 +335,9 @@ export async function getConfigsChanges({
 }
 
 export const getConfigListFilteredByType = (types: string[]) => {
-  return resolve<Pick<ConfigItem, "id" | "name" | "config_class" | "type">[]>(
+  return resolvePostGrestRequestWithPagination<
+    Pick<ConfigItem, "id" | "name" | "config_class" | "type">[]
+  >(
     ConfigDB.get(
       `/config_items?select=id,name,type,config_class${
         // if type is not provided, return all configs
@@ -362,14 +368,14 @@ export const getConfigsBy = ({
   const configFields = `id, type, name, config_class, deleted_at`;
   const deletedAt = hideDeleted ? `&deleted_at=is.null` : "";
   if (topologyId) {
-    return resolve<ConfigTypeRelationships[]>(
+    return resolvePostGrestRequestWithPagination<ConfigTypeRelationships[]>(
       ConfigDB.get(
         `/config_component_relationships?component_id=eq.${topologyId}&configs.order=name&select=*,configs!config_component_relationships_config_id_fkey(${configFields})${deletedAt}`
       )
     );
   }
   if (configId) {
-    return resolve(
+    return resolvePostGrestRequestWithPagination(
       ConfigDB.get<ConfigTypeRelationships[]>(
         `/config_relationships?or=(related_id.eq.${configId},config_id.eq.${configId})&configs.order=name&select=*,configs:configs!config_relationships_config_id_fkey(${configFields}),related:configs!config_relationships_related_id_fkey(${configFields})${deletedAt}`
       )
@@ -468,7 +474,7 @@ export const addManualComponentConfigRelationship = (
   topologyId: string,
   configId: string
 ) => {
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.post(`/config_component_relationships`, {
       component_id: topologyId,
       config_id: configId,
@@ -481,7 +487,7 @@ export const removeManualComponentConfigRelationship = (
   topologyId: string,
   configId: string
 ) => {
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.delete(
       `/config_component_relationships?component_id=eq.${topologyId}&config_id=eq.${configId}&selector_id=eq.manual`
     )
@@ -492,7 +498,7 @@ export const searchConfigs = (type: string, input: string) => {
   const orCondition = input
     ? `&or=(name.ilike.*${input}*,external_id.ilike.*${input}*)`
     : "";
-  return resolve<ConfigItem[]>(
+  return resolvePostGrestRequestWithPagination<ConfigItem[]>(
     ConfigDB.get(
       `/configs?select=id,external_id,name,type,analysis,changes&type=ilike.${type}${orCondition}`
     )
@@ -500,7 +506,7 @@ export const searchConfigs = (type: string, input: string) => {
 };
 
 export const createConfigItem = (type: string, params: {}) =>
-  resolve<ConfigItem>(
+  resolvePostGrestRequestWithPagination<ConfigItem>(
     ConfigDB.post(`/config_item`, {
       type: type,
       ...params
@@ -508,23 +514,29 @@ export const createConfigItem = (type: string, params: {}) =>
   );
 
 export const updateConfigItem = (id: string, params: {}) =>
-  resolve<ConfigItem>(
+  resolvePostGrestRequestWithPagination<ConfigItem>(
     ConfigDB.patch(`/config_item?id=eq.${id}`, { ...params })
   );
 
 export const deleteConfigItem = (id: string) =>
-  resolve(ConfigDB.delete(`/config_item?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination(
+    ConfigDB.delete(`/config_item?id=eq.${id}`)
+  );
 
 // Saved Queries
 
 export const getAllSavedQueries = () =>
-  resolve(ConfigDB.get<AnyMessageParams>(`/saved_query`));
+  resolvePostGrestRequestWithPagination(
+    ConfigDB.get<AnyMessageParams>(`/saved_query`)
+  );
 
 export const getSavedQuery = (id: string) =>
-  resolve(ConfigDB.get(`/saved_query?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination(
+    ConfigDB.get(`/saved_query?id=eq.${id}`)
+  );
 
 export const createSavedQuery = (query: string, params: any) =>
-  resolve(
+  resolvePostGrestRequestWithPagination(
     ConfigDB.post(`/saved_query`, {
       query,
       ...params
@@ -532,15 +544,19 @@ export const createSavedQuery = (query: string, params: any) =>
   );
 
 export const updateSavedQuery = (id: string, params: any) =>
-  resolve(ConfigDB.patch(`/saved_query?id=eq.${id}`, { ...params }));
+  resolvePostGrestRequestWithPagination(
+    ConfigDB.patch(`/saved_query?id=eq.${id}`, { ...params })
+  );
 
 export const deleteSavedQuery = (id: string) =>
-  resolve(ConfigDB.delete(`/saved_query?id=eq.${id}`));
+  resolvePostGrestRequestWithPagination(
+    ConfigDB.delete(`/saved_query?id=eq.${id}`)
+  );
 
 export const getConfigsByQuery = async (query: string) => {
-  const { data, error } = await resolve<{ results: { tags: any }[] }>(
-    Config.get(`/query?query=${query}`)
-  );
+  const { data, error } = await resolvePostGrestRequestWithPagination<{
+    results: { tags: any }[];
+  }>(Config.get(`/query?query=${query}`));
   if (error) {
     console.error(error);
     return [];
@@ -618,7 +634,7 @@ export const getConfigInsights = (
       pageIndex! * pageSize
     }`;
   }
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.get<
       Pick<
         ConfigAnalysis,
@@ -667,7 +683,7 @@ export const getTopologyRelatedInsights = async (
     }`;
   }
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.get<
       | {
           analysis_id: string;
@@ -749,7 +765,7 @@ export const getAllConfigInsights = async (
     : // default sort by first_observed
       "&order=first_observed.desc";
 
-  return resolve(
+  return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigAnalysis[] | null>(
       `/config_analysis_items?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
