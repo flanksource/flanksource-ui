@@ -1,8 +1,5 @@
-import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useCallback, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCallback, useState } from "react";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn as jobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 
@@ -52,47 +49,19 @@ type JobsHistoryTableProps = {
   jobs: JobHistory[];
   isLoading?: boolean;
   pageCount: number;
-  pageIndex: number;
-  pageSize: number;
   hiddenColumns?: string[];
+  totalJobHistoryItems?: number;
 };
 
 export default function JobsHistoryTable({
   jobs,
   isLoading,
   pageCount,
-  pageIndex,
-  pageSize,
-  hiddenColumns = []
+  hiddenColumns = [],
+  totalJobHistoryItems
 }: JobsHistoryTableProps) {
-  const [params, setParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
-
-  const [tableSortByState, onSortByChanged] = useReactTableSortState();
-
-  const pagination: PaginationOptions = useMemo(() => {
-    return {
-      setPagination: (updater) => {
-        const newParams =
-          typeof updater === "function"
-            ? updater({
-                pageIndex,
-                pageSize
-              })
-            : updater;
-        params.set("pageIndex", newParams.pageIndex.toString());
-        params.set("pageSize", newParams.pageSize.toString());
-        setParams(params);
-      },
-      pageIndex,
-      pageSize,
-      pageCount,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    };
-  }, [pageIndex, pageSize, pageCount, isLoading, params, setParams]);
 
   const onRowClick = useCallback(
     (row: JobHistory) => {
@@ -114,6 +83,10 @@ export default function JobsHistoryTable({
         isLoading={isLoading}
         onRowClick={onRowClick}
         enableServerSideSorting
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        hiddenColumns={hiddenColumns}
+        totalRowCount={totalJobHistoryItems}
       />
       {selectedJob && (
         <JobsHistoryDetails

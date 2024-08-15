@@ -47,8 +47,7 @@ export function SchemaResourceJobsTab({
           jobs={jobs ?? []}
           isLoading={isLoading}
           pageCount={pageCount}
-          pageIndex={pageIndex}
-          pageSize={pageSize}
+          totalJobHistoryItems={totalEntries}
           hiddenColumns={["resource_id", "resource_type", "resource_name"]}
         />
       )}
