@@ -16,8 +16,8 @@ dayjs.extend(relativeTime);
 
 const jobsHistoryResourceTypeMap: Record<string, string> = {
   canary: "/settings/canaries",
-  config_scraper: "/settings/config_scrapers",
-  catalog_scraper: "/settings/config_scrapers",
+  config_scraper: "/catalog/scrapers",
+  catalog_scraper: "/catalog/scrapers",
   topology: "/settings/topologies",
   config: "/catalog",
   playbook: "/playbooks"

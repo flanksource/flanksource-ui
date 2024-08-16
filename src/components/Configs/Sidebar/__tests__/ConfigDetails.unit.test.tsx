@@ -81,7 +81,7 @@ describe("ConfigDetails", () => {
       })
     ).toHaveAttribute(
       "href",
-      expect.stringContaining("/settings/config_scrapers/config_scraper_id")
+      expect.stringContaining("/catalog/scrapers/config_scraper_id")
     );
   });
 });

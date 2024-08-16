@@ -61,6 +61,8 @@ import { ConfigDetailsChecksPage } from "./pages/config/details/ConfigDetailsChe
 import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsInsightsPage";
 import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
 import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelationshipsPage";
+import ConfigScrapersEditPage from "./pages/config/settings/ConfigScrapersEditPage";
+import ConfigScrapersPage from "./pages/config/settings/ConfigScrapersPage";
 import { HealthPage } from "./pages/health";
 import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
 import PlaybookRunsPage from "./pages/playbooks/PlaybookRunsPage";
@@ -170,10 +172,13 @@ const settingsNav: SettingsNavigationItems = {
             resourceName: tables.identities
           }
         ]),
-    ...schemaResourceTypes.map((x) => ({
-      ...x,
-      href: `/settings/${x.table}`
-    })),
+    ...schemaResourceTypes
+      // remove catalog_scraper from settings
+      .filter((resource) => resource.table !== "config_scrapers")
+      .map((x) => ({
+        ...x,
+        href: `/settings/${x.table}`
+      })),
     {
       name: "Jobs History",
       href: "/settings/jobs",
@@ -516,6 +521,27 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
+        <Route path="scrapers">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <ConfigScrapersPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+
+          <Route
+            path=":id"
+            element={withAuthorizationAccessCheck(
+              <ConfigScrapersEditPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+        </Route>
         <Route path=":id">
           <Route
             index

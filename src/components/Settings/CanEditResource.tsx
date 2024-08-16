@@ -1,3 +1,4 @@
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Link } from "react-router-dom";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import CRDSource from "./CRDSource";
@@ -15,7 +16,7 @@ type CanEditResourceProps = {
   name: string;
 };
 
-export default function CanEditResource({
+export function CanEditResourceInner({
   resourceType,
   source,
   agentId,
@@ -65,4 +66,27 @@ export default function CanEditResource({
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
+}
+
+export default function CanEditResource({
+  onBack,
+  ...props
+}: CanEditResourceProps & {
+  onBack?: () => void;
+}) {
+  return (
+    <div className="flex flex-1 flex-row justify-end gap-2">
+      <div className="flex flex-1">
+        {onBack && (
+          <Button
+            type="button"
+            text="Back"
+            className="btn-default btn-btn-secondary-base btn-secondary"
+            onClick={onBack}
+          />
+        )}
+      </div>
+      <CanEditResourceInner {...props} />
+    </div>
+  );
 }

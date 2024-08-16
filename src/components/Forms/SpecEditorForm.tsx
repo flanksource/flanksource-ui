@@ -219,17 +219,8 @@ export default function SpecEditorForm({
                 agentId={initialValues.agent_details?.id}
                 agentName={initialValues.agent_details?.name}
                 source={initialValues.source}
+                onBack={onBack}
               >
-                {!initialValues.id && (
-                  <div className="flex flex-1 flex-row">
-                    <Button
-                      type="button"
-                      text="Back"
-                      className="btn-default btn-btn-secondary-base btn-secondary"
-                      onClick={onBack}
-                    />{" "}
-                  </div>
-                )}
                 {!!initialValues.id && (
                   <DeleteResource
                     resourceId={initialValues.id}

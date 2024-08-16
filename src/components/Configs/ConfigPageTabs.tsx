@@ -35,6 +35,11 @@ export default function ConfigPageTabs({
         key: "Insights",
         path: `/catalog/insights`,
         search: `${query}`
+      },
+      {
+        label: "Scrapers",
+        key: "Scrapers",
+        path: `/catalog/scrapers`
       }
     ];
   }, [type]);
