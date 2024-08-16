@@ -149,7 +149,7 @@ export function ConfigDetails({ configId }: Props) {
                         by{" "}
                         <Link
                           to={{
-                            pathname: `/settings/config_scrapers/${configDetails.config_scrapers.id}`
+                            pathname: `/catalog/scrapers/${configDetails.config_scrapers.id}`
                           }}
                           className="link relative overflow-hidden text-ellipsis whitespace-nowrap"
                         >

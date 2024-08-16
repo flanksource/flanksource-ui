@@ -22,7 +22,6 @@ export function SchemaResourceJobsTab({
 }: SchemaResourceJobsTabProps) {
   const [searchParams] = useSearchParams();
 
-  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
 
   const { isLoading, data, error } = useJobsHistoryForSettingQuery(
