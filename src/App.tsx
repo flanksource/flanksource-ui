@@ -20,7 +20,7 @@ import {
   Routes,
   useLocation
 } from "react-router-dom";
-import { Canary } from "./components";
+import { Canary, Icon } from "./components";
 import AgentsPage from "./components/Agents/AgentPage";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -123,7 +123,9 @@ const navigation: NavigationItems = [
   {
     name: "Playbooks",
     href: "/playbooks",
-    icon: FaTasks,
+    icon: ({ className }: { className?: string }) => (
+      <Icon name="playbook" className={`${className} text-white`} />
+    ),
     featureName: features.playbooks,
     resourceName: tables.database
   }

@@ -1,9 +1,14 @@
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
-import { Float } from "@headlessui-float/react";
-import { Menu, Transition } from "@headlessui/react";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition
+} from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { Fragment, useState } from "react";
-import { FaCog } from "react-icons/fa";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
@@ -46,40 +51,38 @@ export default function PlaybooksDropdownMenu({
     <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
       <div className="my-2 text-right">
         <Menu as="div" className="relative inline-block text-left">
-          <Float placement="bottom-end" portal>
-            <Menu.Button className="btn-white">
-              <FaCog className="mr-2 mt-0.5 h-4 w-4" />
-              Playbooks
-              <ChevronDownIcon
-                className="-mr-1 ml-2 h-5 w-5"
-                aria-hidden="true"
-              />
-            </Menu.Button>
+          <MenuButton className="btn-white px-2 py-1">
+            <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
+            Playbooks
+            <ChevronDownIcon
+              className="-mr-1 ml-2 h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </MenuButton>
 
-            {/* @ts-ignore */}
-            <Transition
-              as={Fragment as any}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="menu-items">
-                {playbooks?.map((playbook) => (
-                  <Menu.Item
-                    as="button"
-                    className="menu-item"
-                    onClick={() => setSelectedPlaybookSpec(playbook)}
-                    key={playbook.id}
-                  >
-                    <PlaybookSpecIcon playbook={playbook} showLabel />
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </Transition>
-          </Float>
+          {/* @ts-ignore */}
+          <Transition
+            as={Fragment as any}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <MenuItems portal className="menu-items" anchor="bottom start">
+              {playbooks?.map((playbook) => (
+                <MenuItem
+                  as="button"
+                  className="menu-item w-full"
+                  onClick={() => setSelectedPlaybookSpec(playbook)}
+                  key={playbook.id}
+                >
+                  <PlaybookSpecIcon playbook={playbook} showLabel showTag />
+                </MenuItem>
+              ))}
+            </MenuItems>
+          </Transition>
         </Menu>
         {selectedPlaybookSpec && (
           <SubmitPlaybookRunForm

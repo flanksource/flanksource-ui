@@ -11,7 +11,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@clerk/nextjs": "^5.3.0",
     "@dagrejs/dagre": "^1.1.1",
-    "@flanksource/icons": "^1.0.25",
+    "@flanksource/icons": "^1.0.28",
     "@floating-ui/react": "^0.26.9",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^1.0.3",
