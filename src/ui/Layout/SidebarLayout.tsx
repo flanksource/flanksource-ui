@@ -3,8 +3,13 @@ import {
   MissionControlLogoWhite,
   MissionControlWhite
 } from "@flanksource/icons/mi";
-import { Float } from "@headlessui-float/react";
-import { Disclosure, Menu } from "@headlessui/react";
+import {
+  Disclosure,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems
+} from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { useAtom } from "jotai";
@@ -140,39 +145,41 @@ function SideNavGroup({
   if (collapseSidebar) {
     return (
       <Menu as="div" className="relative">
-        <Float placement="top-start" portal>
-          <Menu.Button className="w-full">
-            <NavItemWrapper className="justify-center">
-              <NavLabel icon={icon} active={current} iconOnly name={name} />
-            </NavItemWrapper>
-          </Menu.Button>
+        <MenuButton className="w-full">
+          <NavItemWrapper className="justify-center">
+            <NavLabel icon={icon} active={current} iconOnly name={name} />
+          </NavItemWrapper>
+        </MenuButton>
 
-          <Menu.Items className="absolute left-0 top-0 z-10 ml-12 w-48 space-y-1 border bg-gray-800 shadow-md">
-            {submenu.map(({ name, icon, href, featureName, resourceName }) => {
-              return !isFeatureDisabled(
-                featureName as unknown as keyof typeof features
-              )
-                ? withAuthorizationAccessCheck(
-                    <Menu.Item key={href}>
-                      {({ active }) => (
-                        <NavLink className="w-full" to={href}>
-                          <NavItemWrapper active={active}>
-                            <NavLabel
-                              icon={icon as IconType}
-                              active={active}
-                              name={name}
-                            />
-                          </NavItemWrapper>
-                        </NavLink>
-                      )}
-                    </Menu.Item>,
-                    resourceName,
-                    "read"
-                  )
-                : null;
-            })}
-          </Menu.Items>
-        </Float>
+        <MenuItems
+          anchor={"right start"}
+          portal
+          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border bg-gray-800 shadow-md"
+        >
+          {submenu.map(({ name, icon, href, featureName, resourceName }) => {
+            return !isFeatureDisabled(
+              featureName as unknown as keyof typeof features
+            )
+              ? withAuthorizationAccessCheck(
+                  <MenuItem key={href}>
+                    {({ active }) => (
+                      <NavLink className="w-full" to={href}>
+                        <NavItemWrapper active={active}>
+                          <NavLabel
+                            icon={icon as IconType}
+                            active={active}
+                            name={name}
+                          />
+                        </NavItemWrapper>
+                      </NavLink>
+                    )}
+                  </MenuItem>,
+                  resourceName,
+                  "read"
+                )
+              : null;
+          })}
+        </MenuItems>
       </Menu>
     );
   }

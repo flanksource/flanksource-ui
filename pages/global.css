@@ -256,7 +256,7 @@
   }
 
   .menu-items {
-    @apply absolute right-0 z-50 mt-2 w-64 origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none;
+    @apply absolute z-50 mt-2 min-w-fit origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none;
   }
 
   .menu-item {
