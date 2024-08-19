@@ -250,7 +250,7 @@ export const getHealthCheckDetails = async (id: string) => {
     Omit<HealthCheck, "source">[] | null
   >(
     IncidentCommander.get(
-      `/checks?id=eq.${id}&select=*,canaries(id,name,source),agents(id, name),components:check_component_relationships(components(id,name,icon)),configs:check_config_relationships(configs(id,name,type))`
+      `/checks?id=eq.${id}&select=*,canaries!checks_canary_id_fkey(id,name,source),agents!checks_agent_id_fkey(id, name),components:check_component_relationships(components(id,name,icon)),configs:check_config_relationships(configs(id,name,type))`
     )
   );
   return res.data?.[0];
