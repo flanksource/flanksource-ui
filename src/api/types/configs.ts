@@ -19,6 +19,8 @@ export interface ConfigChange extends CreatedAt {
   name?: string;
   created_by?: string;
   tags?: Record<string, any>;
+  first_observed?: string;
+  count?: number;
 }
 
 export interface Change {

@@ -1,11 +1,12 @@
 import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
+import { Age } from "@flanksource-ui/ui/Age";
 import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
+import { CellContext } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
 import React, { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
@@ -16,6 +17,27 @@ export const paramsToReset = {
   configChanges: ["pageIndex", "pageSize"]
 };
 
+export function ConfigChangeDateCell({
+  row,
+  column
+}: CellContext<ConfigChange, any>) {
+  const dateString = row?.getValue<string>(column.id);
+  const firstObserved = row?.original.first_observed;
+  return (
+    <div className="text-xs">
+      <Age from={dateString} />
+      {firstObserved && (
+        <div
+          title="First observed"
+          className="inline-block px-1 text-xs text-gray-500"
+        >
+          (<Age from={firstObserved} />)
+        </div>
+      )}
+    </div>
+  );
+}
+
 const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Created",
@@ -25,8 +47,8 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 20,
-    cell: DateCell
+    maxSize: 50,
+    cell: ConfigChangeDateCell
   },
   {
     header: "Catalog",
@@ -57,6 +79,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     accessorKey: "change_type",
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
+      const count = row.original.count;
       return (
         <FilterByCellValue
           filterValue={changeType}
@@ -66,6 +89,10 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
           <div className="space-x-1 overflow-hidden text-ellipsis">
             <ChangeIcon change={row.original} />
             <span>{changeType}</span>
+
+            {(count || 1) > 1 && (
+              <span className="inline-block text-gray-500">(x{count})</span>
+            )}
           </div>
         </FilterByCellValue>
       );
