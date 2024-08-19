@@ -2,8 +2,13 @@ import {
   PlaybookRunAction,
   PlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";
-import { Float } from "@headlessui-float/react";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition
+} from "@headlessui/react";
 import { Fragment, useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCog } from "react-icons/fa";
@@ -74,37 +79,31 @@ export default function PlaybookResultsDropdownButton({
 
   return (
     <Menu as="div">
-      <Float placement="bottom-end" portal>
-        <Menu.Button className="absolute right-5 top-5 z-[99999] text-lg">
-          <FaCog className="h-4 w-4" />
-        </Menu.Button>
+      <MenuButton className="absolute right-5 top-5 z-[99999] text-lg">
+        <FaCog className="h-4 w-4" />
+      </MenuButton>
 
-        {/* @ts-ignore */}
-        <Transition
-          as={Fragment as any}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="menu-items">
-            <Menu.Item
-              as="button"
-              className="menu-item"
-              onClick={onDownloadLogs}
-            >
-              {isDownloading ? (
-                <ImSpinner className="inline animate-spin" size={16} />
-              ) : (
-                <MdOutlineFileDownload className="inline" size={16} />
-              )}
-              <span>Download logs</span>
-            </Menu.Item>
-          </Menu.Items>
-        </Transition>
-      </Float>
+      {/* @ts-ignore */}
+      <Transition
+        as={Fragment as any}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <MenuItems className="menu-items" portal anchor="bottom end">
+          <MenuItem as="button" className="menu-item" onClick={onDownloadLogs}>
+            {isDownloading ? (
+              <ImSpinner className="inline animate-spin" size={16} />
+            ) : (
+              <MdOutlineFileDownload className="inline" size={16} />
+            )}
+            <span>Download logs</span>
+          </MenuItem>
+        </MenuItems>
+      </Transition>
     </Menu>
   );
 }

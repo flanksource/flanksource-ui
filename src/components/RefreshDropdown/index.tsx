@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems, Transition } from "@headlessui/react";
 import { Fragment, useContext, useEffect, useState } from "react";
 import {
   HiOutlineChevronDown,
@@ -146,10 +146,10 @@ export default function RefreshDropdown({
       </button>
       <div className="relative">
         <Menu>
-          <Menu.Button className="rounded-md rounded-l-none border border-gray-300 p-2 text-sm">
+          <MenuButton className="rounded-md rounded-l-none border border-gray-300 p-2 text-sm">
             <span className="inline p-1 pr-2">{refreshRate.rate}</span>
             <HiOutlineChevronDown className="inline" />
-          </Menu.Button>
+          </MenuButton>
           {/* @ts-ignore */}
           <Transition
             as={Fragment as any}
@@ -160,7 +160,7 @@ export default function RefreshDropdown({
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <MenuItems className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {RefreshOptionsList.map(([optionsKeys, optionsValue]) => (
                 <Fragment key={optionsValue}>
                   <Menu.Item
@@ -195,7 +195,7 @@ export default function RefreshDropdown({
                   </Menu.Item>
                 </Fragment>
               ))}
-            </Menu.Items>
+            </MenuItems>
           </Transition>
         </Menu>
       </div>

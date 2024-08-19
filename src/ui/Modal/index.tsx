@@ -1,8 +1,8 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
 import { useWindowSize } from "react-use-size";
 import DialogButton from "../Buttons/DialogButton";
@@ -150,117 +150,97 @@ export function Modal({
   const helpLink = _helpLink || helpLinkProps;
 
   return (
-    /* @ts-ignore */
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog
-        as="div"
-        auto-reopen="true"
-        className={dialogClassName}
-        onClose={() => {
-          // reset the help link when the modal is closed, this is to ensure
-          // that the help link is not displayed when the modal is reopened and
-          // the help link is not set.
-          setHelpLink(undefined);
+    <Dialog
+      as="div"
+      open={open}
+      auto-reopen="true"
+      className={dialogClassName}
+      onClose={() => {
+        // reset the help link when the modal is closed, this is to ensure
+        // that the help link is not displayed when the modal is reopened and
+        // the help link is not set.
+        setHelpLink(undefined);
 
-          if (allowBackgroundClose) {
-            onClose();
-          }
-        }}
-        {...rest}
+        if (allowBackgroundClose) {
+          onClose();
+        }
+      }}
+      {...rest}
+    >
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-black/30 duration-300 ease-out data-[closed]:opacity-0"
+      />
+      <DialogPanel
+        transition
+        className={clsx(
+          "flex items-center justify-center",
+          sizeClass.classNames,
+          sizeClass.width
+        )}
       >
         <div
           className={clsx(
-            "flex items-center justify-center",
-            sizeClass.classNames,
-            sizeClass.width
+            !isSmall && "mb-10 mt-10 justify-between overflow-auto",
+            !isSmall && childClassName,
+            "flex transform flex-col rounded-lg bg-white text-left shadow-xl transition-all",
+            isSmall && "mx-4 my-0 w-full max-w-prose",
+            sizeClass.height
           )}
         >
-          {/* @ts-ignore */}
-          <Transition.Child
-            as={Fragment as any}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
-
-          <Transition.Child
-            as={Fragment as any}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <div
+          <div className="item-center flex justify-between gap-2 rounded-t-lg bg-gray-100 px-4 py-4">
+            <h1
               className={clsx(
-                !isSmall && "mb-10 mt-10 justify-between overflow-auto",
-                !isSmall && childClassName,
-                "flex transform flex-col rounded-lg bg-white text-left shadow-xl transition-all",
-                isSmall && "mx-4 my-0 w-full max-w-prose",
-                sizeClass.height
+                "flex-1 overflow-x-auto text-lg font-semibold",
+                titleClass
               )}
             >
-              <div className="item-center flex justify-between gap-2 rounded-t-lg bg-gray-100 px-4 py-4">
-                <h1
-                  className={clsx(
-                    "flex-1 overflow-x-auto text-lg font-semibold",
-                    titleClass
-                  )}
-                >
-                  {title}
-                </h1>
-                {/*
-                If the modal has a help link, display a help icon in the top right
-                corner of the modal that links to the documentation for the modal.
-                */}
-                {helpLink && <HelpLink link={helpLink} />}
-                {showExpand && _size !== "full" && !isSmall && (
-                  <DialogButton
-                    icon={BsArrowsFullscreen}
-                    onClick={() => {
-                      setSize("full");
-                    }}
-                  />
-                )}
+              {title}
+            </h1>
+            {/*
+              If the modal has a help link, display a help icon in the top right
+              corner of the modal that links to the documentation for the modal.
+              */}
+            {helpLink && <HelpLink link={helpLink} />}
+            {showExpand && _size !== "full" && !isSmall && (
+              <DialogButton
+                icon={BsArrowsFullscreen}
+                onClick={() => {
+                  setSize("full");
+                }}
+              />
+            )}
 
-                {showExpand && _size === "full" && (
-                  <DialogButton
-                    icon={BsFullscreenExit}
-                    onClick={() => setSize(size)}
-                  />
-                )}
+            {showExpand && _size === "full" && (
+              <DialogButton
+                icon={BsFullscreenExit}
+                onClick={() => setSize(size)}
+              />
+            )}
 
-                {/* top-right close button */}
-                {!hideCloseButton && (
-                  <DialogButton icon={XIcon} onClick={onClose} name="close" />
-                )}
-              </div>
+            {/* top-right close button */}
+            {!hideCloseButton && (
+              <DialogButton icon={XIcon} onClick={onClose} name="close" />
+            )}
+          </div>
 
-              <div
-                className={clsx(
-                  !isSmall && "mb-auto flex flex-1 flex-col",
-                  bodyClass,
-                  `max-h-[${sizeClass.windowHeight - 50}px]`
-                )}
-              >
-                {children}
-              </div>
+          <div
+            className={clsx(
+              !isSmall && "mb-auto flex flex-1 flex-col",
+              bodyClass,
+              `max-h-[${sizeClass.windowHeight - 50}px]`
+            )}
+          >
+            {children}
+          </div>
 
-              {Boolean(actions?.length) && (
-                <div className={clsx(footerClassName)}>
-                  {actions?.length && actions}
-                </div>
-              )}
+          {Boolean(actions?.length) && (
+            <div className={clsx(footerClassName)}>
+              {actions?.length && actions}
             </div>
-          </Transition.Child>
+          )}
         </div>
-      </Dialog>
-    </Transition.Root>
+      </DialogPanel>
+    </Dialog>
   );
 }
