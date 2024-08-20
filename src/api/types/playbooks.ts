@@ -79,11 +79,12 @@ export type PlaybookResourceSelector = {
 export type PlaybookSpec = {
   id: string;
   name: string;
+  title: string;
   description?: string;
   icon?: string;
   created_by?: User;
   category?: string;
-  spec: {
+  spec?: {
     actions?: Record<string, any>[];
     configs?: PlaybookResourceSelector[];
     components?: PlaybookResourceSelector[];
@@ -102,6 +103,7 @@ export type PlaybookSpec = {
 export type PlaybookNames = {
   id: string;
   name: string;
+  title: string;
   icon?: string;
   category?: string;
   description?: string;
@@ -213,5 +215,5 @@ export type NewPlaybookSpec = Omit<
 
 export type UpdatePlaybookSpec = Omit<
   PlaybookSpec,
-  "created_at" | "updated_at" | "deleted_at" | "created_by"
+  "created_at" | "updated_at" | "deleted_at" | "created_by" | "name"
 >;

@@ -14,6 +14,7 @@ const playbook: RunnablePlaybook & {
 } = {
   id: "1",
   name: "Playbook 1",
+  title: "Playbook 1",
   source: "UI",
   parameters: [
     {
@@ -28,8 +29,7 @@ const playbook: RunnablePlaybook & {
     icon: "playbook.svg",
     components: [
       {
-        type: "kubernetes",
-        tags: ["kubernetes"]
+        types: ["kubernetes"]
       }
     ]
   }

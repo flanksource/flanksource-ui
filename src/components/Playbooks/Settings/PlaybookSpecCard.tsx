@@ -52,7 +52,8 @@ export default function PlaybookSpecCard({
         <div className="flex flex-row items-center gap-2 bg-white p-2">
           <Icon name={playbook.icon} className="h-6 w-6" />
           <h3 className="flex-1 text-lg font-medium leading-6 text-gray-900">
-            {playbook.name}
+            {/* For now, default to name, when title isn't there */}
+            {playbook.title || playbook.name}
           </h3>
           <AuthorizationAccessCheck
             resource={tables.playbooks}

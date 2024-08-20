@@ -84,7 +84,9 @@ export default function PlaybookRunsPage() {
     <>
       <Head
         prefix={
-          playbookId ? `${playbook?.name} Playbook Runs` : "Playbook Runs"
+          playbookId
+            ? `${playbook?.title ?? playbook?.name} Playbook Runs`
+            : "Playbook Runs"
         }
       />
       <SearchLayout

@@ -16,7 +16,7 @@ export default function PlaybookSpecModalTitle({
 
   return (
     <div className="flex flex-row items-center gap-2 overflow-ellipsis whitespace-nowrap">
-      <Icon name={playbookSpec.spec.icon} />
+      <Icon name={playbookSpec.spec?.icon} />
       <span>{playbookSpec.name}</span>
     </div>
   );
