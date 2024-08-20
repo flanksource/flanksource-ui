@@ -39,6 +39,8 @@ export default function PlaybookSpecsForm({
     mutationFn: async (payload: NewPlaybookSpec) => {
       const res = await createPlaybookSpec({
         ...payload,
+        // we sync the title with the name field
+        name: payload.title,
         created_by: user?.id
       });
       return res;
@@ -53,20 +55,20 @@ export default function PlaybookSpecsForm({
   const { mutate: updatePlaybook } = useMutation({
     mutationFn: async ({
       id,
-      name,
+      title,
       source,
       spec,
       description,
       icon
-    }: PlaybookSpec) => {
+    }: UpdatePlaybookSpec) => {
       // let's avoid updating fields that are not editable
       const newPayload: UpdatePlaybookSpec = {
         id,
-        name,
         source,
+        title,
         spec,
         // temporary fix for updating category
-        category: spec.category,
+        category: spec?.category,
         description,
         icon
       };
@@ -112,22 +114,32 @@ export default function PlaybookSpecsForm({
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       helpLink="playbooks"
     >
-      <Formik
+      <Formik<NewPlaybookSpec | UpdatePlaybookSpec>
         initialValues={
-          playbook || {
-            name: undefined,
+          playbook ||
+          ({
+            title: "",
+            name: "",
             source: "UI",
             category: undefined,
             spec: undefined,
             created_by: user?.id
-          }
+          } satisfies NewPlaybookSpec)
         }
         onSubmit={(value) => {
-          console.log(value);
           if (playbook?.id) {
-            updatePlaybook(value as PlaybookSpec);
+            updatePlaybook({
+              ...value,
+              // // we sync the title with the name field
+              // name: playbook.title,
+              id: playbook.id
+            });
           } else {
-            createPlaybook(value as NewPlaybookSpec);
+            createPlaybook({
+              ...value,
+              // we sync the title with the name field
+              name: value.title
+            });
           }
         }}
       >
@@ -143,7 +155,7 @@ export default function PlaybookSpecsForm({
                 )}
               >
                 <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
-                  <FormikTextInput name="name" label="Name" required />
+                  <FormikTextInput name="title" label="Title" required />
                   <FormikCodeEditor
                     fieldName="spec"
                     label="Spec"

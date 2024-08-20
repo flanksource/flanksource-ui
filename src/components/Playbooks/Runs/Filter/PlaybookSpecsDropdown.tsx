@@ -27,7 +27,7 @@ export default function PlaybookSpecsDropdown({
       playbooks?.map(
         (playbook) =>
           ({
-            label: playbook.name,
+            label: playbook.title || playbook.name,
             value: playbook.id,
             // we need a solution for this
             icon: <Icon name={playbook.icon} className="h-5" />

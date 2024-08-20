@@ -34,7 +34,7 @@ export type SubmitPlaybookRunFormValues = {
 type Props = {
   isOpen: boolean;
   onClose?: () => void;
-  playbook: Pick<PlaybookSpec, "id" | "spec" | "name">;
+  playbook: Pick<PlaybookSpec, "id" | "spec" | "name" | "title">;
   checkId?: string;
   componentId?: string;
   configId?: string;
@@ -95,7 +95,7 @@ export default function SubmitPlaybookRunForm({
       title={
         <PlaybookSpecModalTitle
           playbookSpec={playbook}
-          defaultTitle={playbook.name ?? "Run Playbook"}
+          defaultTitle={playbook.title ?? "Run Playbook"}
         />
       }
       open={isOpen}

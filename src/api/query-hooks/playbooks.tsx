@@ -74,6 +74,7 @@ export function useGetPlaybooksToRun(
       const specs = await getPlaybookSpecsByIDs(ids);
       return res.map((playbook) => ({
         ...playbook,
+        title: specs.find((spec) => spec.id === playbook.id)!.title,
         spec: specs.find((spec) => spec.id === playbook.id)!.spec
       })) as (RunnablePlaybook & {
         spec: any;

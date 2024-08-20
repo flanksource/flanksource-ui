@@ -49,7 +49,7 @@ export default function ViewPlaybookParamsModal({
   isModalOpen,
   setIsModalOpen
 }: ViewPlaybookParamsModalProps) {
-  const playbookParamsSpecs = data.playbooks?.spec.parameters ?? [];
+  const playbookParamsSpecs = data.playbooks?.spec?.parameters ?? [];
   const playbookParams = data.parameters;
 
   if (!playbookParamsSpecs || !playbookParams) {

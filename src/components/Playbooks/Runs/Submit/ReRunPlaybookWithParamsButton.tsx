@@ -6,7 +6,7 @@ import SubmitPlaybookRunForm from "./SubmitPlaybookRunForm";
 
 type ReRunPlaybookWithParamsProps = {
   params?: Record<string, unknown>;
-  playbook: Pick<PlaybookSpec, "id" | "spec" | "name">;
+  playbook: Pick<PlaybookSpec, "id" | "spec" | "name" | "title">;
   componentId?: string;
   configId?: string;
   checkId?: string;

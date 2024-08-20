@@ -121,7 +121,7 @@ export default function PlaybookRunParams({
   // dependent on the resource and are always available
   const parameters = isResourceRequired
     ? data?.params
-    : playbook.spec.parameters || [];
+    : playbook.spec?.parameters || [];
 
   return (
     <div className="flex flex-col">
