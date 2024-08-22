@@ -39,6 +39,7 @@ type Props = {
   componentId?: string;
   configId?: string;
   params?: Record<string, any>;
+  isReRun?: boolean;
 };
 
 export default function SubmitPlaybookRunForm({
@@ -48,6 +49,7 @@ export default function SubmitPlaybookRunForm({
   checkId,
   componentId,
   configId,
+  isReRun = false,
   params = {}
 }: Props) {
   const [modalSize, setModalSize] = useAtom(
@@ -140,6 +142,7 @@ export default function SubmitPlaybookRunForm({
                   <PlaybookRunParams
                     isResourceRequired={isResourceRequired}
                     playbook={playbook}
+                    isReRun={isReRun}
                   />
                 </div>
               </div>

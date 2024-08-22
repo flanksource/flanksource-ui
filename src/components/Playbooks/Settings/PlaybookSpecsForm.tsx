@@ -152,7 +152,6 @@ export default function PlaybookSpecsForm({
                     jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
                     required
                     enableSpecUnwrap
-                    saveAsString
                   />
                 </div>
               </div>

@@ -41,6 +41,7 @@ export default function ReRunPlaybookWithParamsButton({
         checkId={checkId}
         configId={configId}
         params={params}
+        isReRun
       />
     </>
   );
