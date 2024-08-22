@@ -135,7 +135,7 @@ export type Notification = {
   pending?: number;
   avg_duration_ms?: number;
   failed?: number;
-  success?: number;
+  sent?: number;
   most_common_error?: string;
 };
 
@@ -240,7 +240,7 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
     header: "Pending",
     id: "pending",
     accessorKey: "pending",
-    size: 70
+    size: 90
   },
   {
     header: "Failed",
@@ -263,7 +263,7 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
       return (
         <>
           <div
-            className="w-full"
+            className="z-[99999999] w-full"
             data-tooltip-id="most-common-error-tooltip"
             data-tooltip-content={
               value > 0 ? notification.most_common_error : undefined
@@ -283,9 +283,13 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
     }
   },
   {
-    header: "Success",
-    id: "success",
-    accessorKey: "success",
+    header: "Sent",
+    id: "sent",
+    accessorKey: "sent",
+    Cell: ({ row }) => {
+      const value = row.original.sent;
+      return value;
+    },
     size: 70
   },
   {
