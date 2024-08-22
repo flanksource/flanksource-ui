@@ -81,6 +81,11 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         flex: "1 1 0"
       }
     },
+    mantineTableBodyCellProps: ({ column }) => ({
+      sx: {
+        zIndex: "auto"
+      }
+    }),
     state: {
       isLoading,
       density: "xs",
