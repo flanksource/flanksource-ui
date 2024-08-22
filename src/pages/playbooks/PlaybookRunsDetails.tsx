@@ -29,7 +29,22 @@ export default function PlaybookRunsDetailsPage() {
   } = useQuery({
     queryKey: ["playbookRuns", id],
     queryFn: () => getPlaybookRun(id!),
-    enabled: !!id
+    enabled: !!id,
+    staleTime: 0,
+    cacheTime: 0,
+    // When the playbook run is running or pending, we want to refetch every 5
+    // seconds to get the latest status. Otherwise, we don't want to refetch at
+    // all.
+    refetchInterval: (playbookRun) => {
+      if (
+        playbookRun?.status === "running" ||
+        playbookRun?.status === "waiting" ||
+        playbookRun?.status === "pending"
+      ) {
+        return 5000;
+      }
+      return false;
+    }
   });
 
   return (
