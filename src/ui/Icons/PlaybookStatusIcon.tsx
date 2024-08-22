@@ -28,6 +28,9 @@ export const statusIconMap: Record<
   pending: (
     <BsCircle className="inline h-5 w-auto object-center pr-1 text-orange-500" />
   ),
+  waiting: (
+    <BsCircle className="inline h-5 w-auto object-center pr-1 text-orange-500" />
+  ),
   running: (
     <BsPlayCircle className="inline h-5 w-auto object-center pr-1 text-orange-500" />
   ),
