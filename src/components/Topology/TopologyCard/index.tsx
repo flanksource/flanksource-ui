@@ -37,7 +37,22 @@ export const StatusStyles: Record<keyof typeof ComponentHealth, string> = {
 interface IProps {
   size?: Size | string;
   topologyId?: string;
-  topology?: Topology;
+  topology?: Pick<
+    Topology,
+    | "summary"
+    | "is_leaf"
+    | "id"
+    | "properties"
+    | "components"
+    | "agent_id"
+    | "status"
+    | "status_reason"
+    | "text"
+    | "name"
+    | "icon"
+    | "health"
+    | "config_id"
+  >;
   selectionMode?: boolean;
   hideMenu?: boolean;
   // where to open new links
@@ -106,6 +121,12 @@ export function TopologyCard({
   const prepareTopologyLink = (topologyItem: Topology) => {
     if (topologyItem.id === parentId && parentId) {
       return "";
+    }
+
+    // we want to link to the config page if it exists, where we will show a
+    // merged  view of the topology and the config
+    if (topologyItem?.config_id) {
+      return `/catalog/${topologyItem.config_id}`;
     }
 
     const params = Object.fromEntries(searchParams.entries());
