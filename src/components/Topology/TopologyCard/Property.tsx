@@ -14,6 +14,7 @@ export function PropertyDisplay({
   className = "",
   ...props
 }: PropertyDisplayProps) {
+  console.log("property display", property);
   const { name, icon, color } = property;
   const label =
     NodePodPropToLabelMap[name as keyof typeof NodePodPropToLabelMap] || name;
