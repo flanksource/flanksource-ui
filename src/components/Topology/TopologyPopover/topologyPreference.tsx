@@ -1,14 +1,12 @@
+import { useOnMouseActivity } from "@flanksource-ui/hooks/useMouseActivity";
+import { Size } from "@flanksource-ui/types";
+import { ClickableSvg } from "@flanksource-ui/ui/ClickableSvg/ClickableSvg";
+import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import clsx from "clsx";
-import { FaCog } from "react-icons/fa";
-
-import { CardWidth } from "../TopologyCard";
-
 import { LegacyRef } from "react";
+import { FaCog } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
-import { Size } from "../../../types";
-import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
-import { Toggle } from "../../../ui/FormControls/Toggle";
+import { CardWidth } from "../TopologyCard/TopologyCard";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");

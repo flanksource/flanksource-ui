@@ -14,6 +14,7 @@ type FormatPropertyProps = {
 };
 
 export function FormatPropertyURL({ property }: FormatPropertyProps) {
+  console.log("property", property);
   if (property == null) {
     return null;
   }

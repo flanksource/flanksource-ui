@@ -13,7 +13,7 @@ import { HealthChecksSummary } from "../../Canary/HealthChecksSummary";
 import { HealthSummary } from "../../Canary/HealthSummary";
 import IncidentCardSummary from "../../Incidents/IncidentCardSummary";
 import { CardMetrics } from "./CardMetrics";
-import { PropertyDisplay } from "./Property";
+import TopologyCardPropertiesColumn from "./TopologyCardPropertiesColumn";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
@@ -173,6 +173,8 @@ export function TopologyCard({
           </div>
           <div className="m-auto flex flex-1 flex-col overflow-hidden">
             <div
+              role="heading"
+              aria-level={2}
               className="overflow-hidden truncate text-ellipsis align-middle text-15pxinrem font-bold leading-1.21rel"
               title={topology.name}
             >
@@ -228,26 +230,7 @@ export function TopologyCard({
           </div>
         ) : (
           <>
-            {Boolean(properties.length) && (
-              <CustomScroll
-                className="flex-1 py-2 pl-2"
-                showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
-                maxHeight="200px"
-                minChildCount={6}
-              >
-                {properties.map((property, index) => (
-                  <PropertyDisplay
-                    key={index}
-                    property={property}
-                    className={
-                      index === topology.properties!.length - 1
-                        ? "mb-0"
-                        : "mb-1.5"
-                    }
-                  />
-                ))}
-              </CustomScroll>
-            )}
+            <TopologyCardPropertiesColumn properties={properties} />
             <CustomScroll
               className="flex-1 space-y-1.5 py-2 pl-2 pr-2"
               showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
