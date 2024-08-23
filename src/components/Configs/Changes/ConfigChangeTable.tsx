@@ -23,16 +23,15 @@ export function ConfigChangeDateCell({
 }: CellContext<ConfigChange, any>) {
   const dateString = row?.getValue<string>(column.id);
   const firstObserved = row?.original.first_observed;
+  const count = row.original.count;
+
   return (
     <div className="text-xs">
       <Age from={dateString} />
-      {firstObserved && (
-        <div
-          title="First observed"
-          className="inline-block px-1 text-xs text-gray-500"
-        >
-          (<Age from={firstObserved} />)
-        </div>
+      {(count || 1) > 1 && (
+        <span className="inline-block pl-1 text-gray-500">
+          (x{count} over <Age from={firstObserved} />)
+        </span>
       )}
     </div>
   );
@@ -40,14 +39,14 @@ export function ConfigChangeDateCell({
 
 const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
-    header: "Created",
+    header: "Last Seen",
     id: "created_at",
     enableSorting: true,
     accessorKey: "created_at",
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 50,
+    maxSize: 70,
     cell: ConfigChangeDateCell
   },
   {
@@ -79,7 +78,6 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     accessorKey: "change_type",
     cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
-      const count = row.original.count;
       return (
         <FilterByCellValue
           filterValue={changeType}
@@ -89,10 +87,6 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
           <div className="space-x-1 overflow-hidden text-ellipsis">
             <ChangeIcon change={row.original} />
             <span>{changeType}</span>
-
-            {(count || 1) > 1 && (
-              <span className="inline-block text-gray-500">(x{count})</span>
-            )}
           </div>
         </FilterByCellValue>
       );
