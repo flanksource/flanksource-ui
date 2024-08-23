@@ -20,7 +20,7 @@ import { HypothesisBuilder } from "../../components/Incidents/Hypothesis/Hypothe
 import { HypothesisCommentsViewContainer } from "../../components/Incidents/Hypothesis/HypothesisCommentsViewContainer/HypothesisCommentsViewContainer";
 import EditableIncidentTitleBreadcrumb from "../../components/Incidents/IncidentDetails/EditableIncidentTitleBreadcrumb";
 import { IncidentSidebar } from "../../components/Incidents/IncidentDetails/IncidentSidebar";
-import { TopologyCard } from "../../components/Topology/TopologyCard";
+import { TopologyCard } from "../../components/Topology/TopologyCard/TopologyCard";
 import { useIncidentState } from "../../store/incident.state";
 import { Size } from "../../types";
 import {
