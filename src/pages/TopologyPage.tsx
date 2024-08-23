@@ -79,6 +79,8 @@ export function TopologyPage() {
 
   const { data, isLoading, refetch } = useTopologyPageQuery();
 
+  // We probably need to fetch related configs at this point
+
   const currentTopology = useMemo(() => data?.components?.[0], [data]);
 
   const topology = useMemo(() => {
