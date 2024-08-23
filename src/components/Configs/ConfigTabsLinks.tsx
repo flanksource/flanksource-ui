@@ -1,8 +1,10 @@
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useParams } from "react-router-dom";
-import { ConfigItem } from "../../api/types/configs";
+import { ConfigItemDetails } from "../../api/types/configs";
 
-export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
+export function useConfigDetailsTabs(
+  countSummary?: ConfigItemDetails["summary"]
+) {
   const { id } = useParams<{ id: string }>();
 
   return [
