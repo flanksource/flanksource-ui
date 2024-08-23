@@ -36,8 +36,7 @@ export function formatProperties(topology?: Pick<Topology, "properties">) {
   const items = new Map<string, PropertyItem>();
 
   // remove headline properties from the list of properties
-  const topologyProperties =
-    topology?.properties?.filter((property) => !property.headline) ?? [];
+  const topologyProperties = topology?.properties ?? [];
 
   const rowKeysMaps = new Map([
     ["region", "region/zone"],

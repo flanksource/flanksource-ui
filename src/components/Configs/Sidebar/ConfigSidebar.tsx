@@ -1,3 +1,4 @@
+import { Topology } from "@flanksource-ui/api/types/topology";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import FloatableSlidingSideBar from "@flanksource-ui/ui/SlidingSideBar/FloatableSlidingSideBar";
 import { useState } from "react";
@@ -6,7 +7,13 @@ import { useParams } from "react-router-dom";
 import ConfigActionBar from "./ConfigActionBar";
 import { ConfigDetails } from "./ConfigDetails";
 
-export default function ConfigSidebar() {
+type ConfigSidebarProps = {
+  topologyProperties?: Topology["properties"];
+};
+
+export default function ConfigSidebar({
+  topologyProperties
+}: ConfigSidebarProps) {
   const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -31,7 +38,7 @@ export default function ConfigSidebar() {
         onSidebarToggle={setIsSidebarOpen}
       >
         <ConfigActionBar configId={id!} />
-        <ConfigDetails configId={id} />
+        <ConfigDetails configId={id} topologyProperties={topologyProperties} />
       </FloatableSlidingSideBar>
     </>
   );

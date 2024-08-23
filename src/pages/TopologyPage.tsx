@@ -8,17 +8,18 @@ import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
 import { useTopologyCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import { Head } from "@flanksource-ui/ui/Head";
-import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
+
 import {
-  getSortLabels,
-  getSortedTopology
-} from "../components/Topology/TopologyPopover/topologySort";
+  getSortedTopology,
+  getSortLabels
+} from "@flanksource-ui/components/Topology/TopologyPopover/topologySort";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 
 export const allOption = {
   All: {
@@ -77,7 +78,13 @@ export function TopologyPage() {
 
   const loadingBarRef = useRef<LoadingBarRef>(null);
 
-  const { data, isLoading, refetch } = useTopologyPageQuery();
+  const {
+    data,
+    isLoading: isLoadingTopology,
+    refetch
+  } = useTopologyPageQuery();
+
+  const isLoading = isLoadingTopology;
 
   const currentTopology = useMemo(() => data?.components?.[0], [data]);
 
