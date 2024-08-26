@@ -31,7 +31,7 @@ export default function JobHistoryFilters({
       paramsToReset={paramsToReset}
       filterFields={["name", "resource_type", "status", "duration"]}
       defaultFieldValues={{
-        status: "FINISHED:-1,SUCCESS:-1"
+        status: "SUCCESS:-1"
       }}
     >
       <div className="flex flex-wrap gap-2 py-4">

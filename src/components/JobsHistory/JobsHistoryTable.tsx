@@ -4,7 +4,6 @@ import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn as jobsHistoryTableColumn } from "./JobsHistoryTableColumn";
 
 export type JobHistoryStatus =
-  | "FINISHED"
   | "RUNNING"
   | "WARNING"
   | "FAILED"
@@ -14,7 +13,6 @@ export type JobHistoryStatus =
 export const classNameMaps = new Map<JobHistoryStatus, string>([
   ["RUNNING", "text-yellow-500"],
   ["WARNING", "text-orange-500"],
-  ["FINISHED", "text-green-500"],
   ["SUCCESS", "text-green-500"],
   ["FAILED", "text-red-500"],
   ["STOPPED", "text-red-500"]

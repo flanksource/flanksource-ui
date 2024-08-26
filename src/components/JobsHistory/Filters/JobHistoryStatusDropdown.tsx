@@ -4,28 +4,23 @@ import TristateReactSelect, {
 import { useField } from "formik";
 
 const statusOptions: Record<string, TriStateOptions> = {
-  finished: {
-    id: "1",
-    label: "Finished",
-    value: "FINISHED"
-  },
   running: {
-    id: "2",
+    id: "1",
     label: "Running",
     value: "RUNNING"
   },
   success: {
-    id: "3",
+    id: "2",
     label: "Success",
     value: "SUCCESS"
   },
   warning: {
-    id: "4",
+    id: "3",
     label: "Warning",
     value: "WARNING"
   },
   failed: {
-    id: "5",
+    id: "4",
     label: "Failed",
     value: "FAILED"
   }
