@@ -2,9 +2,62 @@ import Editor, { loader, useMonaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
 import { configureMonacoYaml } from "monaco-yaml";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import YAML from "yaml";
 import { Button } from "../Buttons/Button";
+
+function useSpecUnwrap(
+  onChange: (value: string | undefined, viewUpdate: unknown) => void,
+  value: string | undefined,
+  language?: string
+) {
+  const canInlineSpec = useMemo(() => {
+    if (!value) {
+      return false;
+    }
+    if (language === "json") {
+      try {
+        const parsed = JSON.parse(value);
+        return !!parsed.spec;
+      } catch (e) {
+        return false;
+      }
+    }
+    if (language === "yaml") {
+      try {
+        const parsed = YAML.parse(value);
+        return !!parsed.spec;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }, [language, value]);
+
+  const unWrapSpec = useCallback(() => {
+    if (!value) {
+      return;
+    }
+    if (language === "json") {
+      try {
+        const parsed = JSON.parse(value);
+        onChange(JSON.stringify(parsed.spec, null, 2), {});
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (language === "yaml") {
+      try {
+        const parsed = YAML.parse(value);
+        onChange(YAML.stringify(parsed.spec, { indent: 2 }), {});
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [language, onChange, value]);
+
+  return { unWrapSpec, canInlineSpec };
+}
 
 loader.config({ monaco });
 
@@ -53,6 +106,7 @@ export function CodeEditor({
   enableSpecUnwrap = false
 }: Props) {
   const monaco = useMonaco();
+  const [forceValue, setForceValue] = useState(false);
 
   // if we have a schema file, we will use the monaco-yaml plugin to enable
   const schemaUrl =
@@ -95,50 +149,19 @@ export function CodeEditor({
     };
   }, [jsonSchemaUrl, language, monaco, schemaUrl]);
 
-  const inlineSpec = useMemo(() => {
-    if (!value) {
-      return false;
-    }
-    if (language === "json") {
-      try {
-        const parsed = JSON.parse(value);
-        return !!parsed.spec;
-      } catch (e) {
-        return false;
-      }
-    }
-    if (language === "yaml") {
-      try {
-        const parsed = YAML.parse(value);
-        return !!parsed.spec;
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
-  }, [language, value]);
+  const onChangeValue = useCallback(
+    (value: string | undefined) => {
+      setForceValue(true);
+      onChange(value, {});
+    },
+    [onChange]
+  );
 
-  const unWrapSpec = useCallback(() => {
-    if (!value) {
-      return;
-    }
-    if (language === "json") {
-      try {
-        const parsed = JSON.parse(value);
-        onChange(JSON.stringify(parsed.spec, null, 2), {});
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    if (language === "yaml") {
-      try {
-        const parsed = YAML.parse(value);
-        onChange(YAML.stringify(parsed.spec, { indent: 2 }), {});
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }, [language, onChange, value]);
+  const { unWrapSpec, canInlineSpec } = useSpecUnwrap(
+    onChangeValue,
+    value,
+    language
+  );
 
   const lineHeight = 15;
   if (lines) {
@@ -147,7 +170,7 @@ export function CodeEditor({
 
   return (
     <>
-      {enableSpecUnwrap && inlineSpec && (
+      {enableSpecUnwrap && canInlineSpec && (
         <div className="relative my-1 flex flex-row gap-2 pb-1" role="alert">
           <div className="text-red-600">
             Wrapping spec field detected, do you want to unwrap it?
@@ -165,8 +188,19 @@ export function CodeEditor({
         className="border py-2 shadow"
         defaultLanguage={language}
         language={language}
-        value={value}
-        onChange={onChange}
+        // This is an uncontrolled component, we only set the initial value and
+        // let the user type in the editor, we only update the value when the
+        // user clicks the unwrap button.
+        defaultValue={value}
+        // We only want to update value after mount, under very specific
+        // conditions such as the user clicking the unwrap button, otherwise we
+        // treat the code editor as an uncontrolled component to avoid losing
+        // the cursor position when the user types in the editor.
+        value={forceValue ? value : undefined}
+        onChange={(v) => {
+          onChange(v, {});
+          setForceValue(false);
+        }}
         height={height}
         width="100%"
         options={{
