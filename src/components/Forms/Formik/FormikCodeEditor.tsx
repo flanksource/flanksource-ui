@@ -77,6 +77,8 @@ export function FormikCodeEditor({
     if (typeof specFormValue === "string") {
       return specFormValue;
     }
+    // In case the value is not a string, we need to convert it to a string, as
+    // the code editor only accepts strings.
     if (format === "yaml") {
       return YAML.stringify(specFormValue);
     }
@@ -90,6 +92,9 @@ export function FormikCodeEditor({
     (v?: string) => {
       if (v) {
         try {
+          // The code editor will always return a string, so we need to parse
+          // it before setting the formik field value, unless saveAsString is
+          // true in which case we just set the value as a string.
           if ((format === "yaml" || format === "json") && !saveAsString) {
             if (v) {
               setFieldValue(
