@@ -85,24 +85,6 @@ export function TopologyCard({
     [size]
   );
 
-  const canShowChildHealth = () => {
-    let totalCount = 0;
-    if (topology?.summary?.checks) {
-      topology.summary.checks.healthy = topology.summary.checks.healthy || 0;
-      topology.summary.checks.unhealthy =
-        topology.summary.checks.unhealthy || 0;
-      topology.summary.checks.warning = topology.summary.checks.warning || 0;
-      Object.keys(topology.summary.checks).forEach((key) => {
-        totalCount +=
-          topology.summary?.checks?.[key as keyof Topology["summary"]] || 0;
-      });
-    }
-    return (
-      !topology?.components?.length &&
-      (!topology?.is_leaf || (topology.is_leaf && totalCount !== 1))
-    );
-  };
-
   const prepareTopologyLink = (topologyItem: Topology) => {
     if (topologyItem.id === parentId && parentId) {
       return "";
@@ -143,16 +125,43 @@ export function TopologyCard({
     [topology?.components]
   );
 
+  const { heading, properties, isPropertiesPanelEmpty } = useMemo(() => {
+    const allProperties = topology?.properties || [];
+    const properties = allProperties.filter((i) => !i.headline);
+
+    const heading = allProperties.filter(
+      (i) => i.headline && (!!i.value || !!i.text || !!i.url)
+    );
+
+    const isPropertiesPanelShown =
+      properties.filter(
+        (i) => !i.headline && i.type !== "hidden" && (i.text || i.value)
+      ).length > 0;
+
+    return {
+      heading,
+      properties,
+      isPropertiesPanelEmpty: !isPropertiesPanelShown
+    };
+  }, [topology?.properties]);
+
+  const isAnalyticsPanelEmpty = useMemo(() => {
+    // if there are no insights, checks or components, we don't need to show the
+    // second panel at all
+    return (
+      !topology?.summary?.insights &&
+      !topology?.summary?.checks &&
+      (sortedTopologyComponents ?? []).length === 0
+    );
+  }, [
+    sortedTopologyComponents,
+    topology?.summary?.checks,
+    topology?.summary?.insights
+  ]);
+
   if (topology == null) {
     return <TopologyCardSkeletonLoader />;
   }
-
-  const allProperties = topology.properties || [];
-  const properties = allProperties.filter((i) => !i.headline);
-
-  const heading = allProperties.filter(
-    (i) => i.headline && (!!i.value || !!i.text || !!i.url)
-  );
 
   return (
     <div
@@ -224,42 +233,43 @@ export function TopologyCard({
         </div>
       </div>
       <div className="flex flex-nowrap space-x-4 rounded-b-8px bg-lightest-gray">
-        {metricsInFooter ? (
+        {metricsInFooter && heading.length > 0 ? (
           <div className="flex flex-1 py-4">
             <CardMetrics items={heading} />
           </div>
         ) : (
           <>
-            <TopologyCardPropertiesColumn properties={properties} />
-            <CustomScroll
-              className="flex-1 space-y-1.5 py-2 pl-2 pr-2"
-              showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
-              maxHeight="200px"
-              minChildCount={5}
-            >
-              <TopologyConfigAnalysisLine topology={topology} />
-              {canShowChildHealth() && (
-                <HealthSummary
+            <TopologyCardPropertiesColumn
+              displayTwoColumns={isAnalyticsPanelEmpty}
+              properties={properties}
+            />
+            {!isAnalyticsPanelEmpty && (
+              <CustomScroll
+                className={clsx(
+                  "flex-1 py-2 pl-2 pr-2",
+                  isPropertiesPanelEmpty ? "grid grid-cols-2 gap-1" : ""
+                )}
+                showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
+                maxHeight="200px"
+                // When we showing two columns, we need to show more items
+                minChildCount={isPropertiesPanelEmpty ? 5 : 10}
+              >
+                <TopologyConfigAnalysisLine topology={topology} />
+                <HealthChecksSummary
+                  checks={topology?.summary?.checks}
                   className=""
-                  target={target}
-                  key={topology.id}
-                  component={topology}
                 />
-              )}
-              <HealthChecksSummary
-                checks={topology?.summary?.checks}
-                className=""
-              />
-              {topology?.id && <IncidentCardSummary topology={topology} />}
-              {sortedTopologyComponents?.map((component: any) => (
-                <HealthSummary
-                  className=""
-                  target={target}
-                  key={component.id}
-                  component={component}
-                />
-              ))}
-            </CustomScroll>
+                {sortedTopologyComponents?.map((component: any) => (
+                  <HealthSummary
+                    className=""
+                    target={target}
+                    key={component.id}
+                    component={component}
+                  />
+                ))}
+                {topology?.id && <IncidentCardSummary topology={topology} />}
+              </CustomScroll>
+            )}
           </>
         )}
       </div>

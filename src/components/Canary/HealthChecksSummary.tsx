@@ -23,7 +23,7 @@ export function HealthChecksSummary({
 
     const data: StatusLineProps = {
       label: "Health Checks",
-      icon: <AiFillHeart className="mr-1 inline-block h-3.5 w-3.5" />,
+      icon: <AiFillHeart className="inline-block h-4 w-4" />,
       url: "/health",
       statuses: [
         ...(checks.healthy > 0
