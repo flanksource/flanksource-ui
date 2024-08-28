@@ -137,6 +137,7 @@ export type Notification = {
   failed?: number;
   sent?: number;
   most_common_error?: string;
+  repeat_interval?: string;
 };
 
 export type NewNotification = Omit<
@@ -231,11 +232,6 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
       );
     }
   },
-  // {
-  //   header: "Status",
-  //   id: "job_status",
-  //   cell: StatusColumn
-  // },
   {
     header: "Pending",
     id: "pending",
@@ -296,7 +292,7 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
     header: "Avg Duration",
     id: "avg_duration_ms",
     accessorKey: "avg_duration_ms",
-    size: 70,
+    size: 130,
     Cell: ({ row, column }) => {
       const value = row.getValue<number>(column.id);
       if (!value) {
@@ -304,6 +300,16 @@ export const notificationsTableColumns: MRT_ColumnDef<Notification>[] = [
       }
       const formattedDuration = formatDuration(value);
       return formattedDuration;
+    }
+  },
+  {
+    header: "Repeat Interval",
+    id: "repeat_interval",
+    accessorKey: "repeat_interval",
+    size: 130,
+    Cell: ({ row }) => {
+      const value = row.original.repeat_interval;
+      return value;
     }
   },
   {

@@ -1,16 +1,16 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
-  getNotificationById,
-  getNotificationsSummary
-} from "../services/notifications";
-import {
   NewNotification,
   Notification,
   UpdateNotification
 } from "../../components/Notifications/notificationsTableColumns";
-import { createResource, updateResource } from "../schemaResources";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
+import { createResource, updateResource } from "../schemaResources";
+import {
+  getNotificationById,
+  getNotificationsSummary
+} from "../services/notifications";
 
 export type DatabaseResponse<T extends Record<string, any>> =
   | { error: Error; data: null; totalEntries: undefined }

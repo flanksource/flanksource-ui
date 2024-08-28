@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "../../ui/Buttons/Button";
+import FormikAutocompleteDropdown from "../Forms/Formik/FormikAutocompleteDropdown";
 import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
 import FormikNotificationEventsDropdown from "../Forms/Formik/FormikNotificationEventsDropdown";
 import FormikNotificationsTemplateField from "../Forms/Formik/FormikNotificationsTemplateField";
@@ -50,6 +51,20 @@ export default function NotificationsForm({
               />
               <FormikTextInput name="filter" label="Filter" />
               <NotificationsRecipientsTabs />
+              <FormikAutocompleteDropdown
+                isClearable
+                options={[
+                  { label: "1h", value: "1h" },
+                  { label: "2h", value: "2h" },
+                  { label: "3h", value: "3h" },
+                  { label: "6h", value: "6h" },
+                  { label: "1d", value: "1d" },
+                  { label: "1w", value: "1w" },
+                  { label: "1m", value: "1m" }
+                ]}
+                name="repeat_interval"
+                label="Repeat Interval"
+              />
               <FormikNotificationsTemplateField name="template" />
               <FormikCodeEditor
                 fieldName="properties"
