@@ -4,6 +4,7 @@ import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
 import JobHistoryStatusColumn from "@flanksource-ui/components/JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "@flanksource-ui/components/JobsHistory/JobsHistoryDetails";
 import { JobHistoryStatus } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
+import ResourceSettingsSourceLink from "@flanksource-ui/components/Settings/ResourceSettingsSourceLink";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { LogsIcon } from "@flanksource-ui/ui/Icons/LogsIcon";
@@ -90,7 +91,22 @@ export const integrationsTableColumns: MRT_ColumnDef<SchemaResourceWithJobStatus
     {
       id: "source",
       header: "Source",
-      accessorKey: "source"
+      accessorKey: "source",
+      Cell: ({ row }) => {
+        const { source, id, name, namespace, agent } = row.original;
+
+        return (
+          <ResourceSettingsSourceLink
+            source={source}
+            id={id}
+            name={name}
+            namespace={namespace}
+            agentName={agent?.name}
+            agentId={agent?.id}
+            showMinimal
+          />
+        );
+      }
     },
     {
       id: "job_status",
