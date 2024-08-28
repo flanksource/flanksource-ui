@@ -1,3 +1,4 @@
+import { RiRobot2Fill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import CRDSource from "./CRDSource";
 import { CatalogResourceSource } from "./CatalogResourceSource";
@@ -32,6 +33,7 @@ export default function ResourceSettingsSourceLink({
             to={`/settings/agents?id=${agentId}`}
             className="cursor-pointer text-blue-500 underline"
           >
+            <RiRobot2Fill className="mr-1 inline" />
             <span>link</span>
           </Link>
         ) : (
@@ -41,6 +43,7 @@ export default function ResourceSettingsSourceLink({
               to={`/settings/agents?id=${agentId}`}
               className="cursor-pointer text-blue-500 underline"
             >
+              <RiRobot2Fill className="mr-1 inline" />
               <span>{agentName}</span>
             </Link>
           </>
