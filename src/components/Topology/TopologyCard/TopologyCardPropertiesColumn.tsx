@@ -1,13 +1,16 @@
 import { Property } from "@flanksource-ui/api/types/topology";
 import { CustomScroll } from "@flanksource-ui/ui/CustomScroll";
+import clsx from "clsx";
 import { PropertyDisplay } from "./Property";
 
 type TopologyCardPropertiesColumnProps = {
   properties: Property[];
+  displayTwoColumns?: boolean;
 };
 
 export default function TopologyCardPropertiesColumn({
-  properties
+  properties,
+  displayTwoColumns = false
 }: TopologyCardPropertiesColumnProps) {
   // Filter out properties that are hidden, have no text or value, and are not a
   // headline property.
@@ -21,7 +24,10 @@ export default function TopologyCardPropertiesColumn({
 
   return (
     <CustomScroll
-      className="flex-1 py-2 pl-2"
+      className={clsx(
+        "flex-1 py-2 pl-2",
+        displayTwoColumns ? "grid grid-cols-2" : ""
+      )}
       showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
       maxHeight="200px"
       minChildCount={6}

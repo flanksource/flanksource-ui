@@ -20,15 +20,21 @@ export type StatusLineData = {
 
 export type StatusLineProps = React.HTMLProps<HTMLDivElement> & StatusLineData;
 
-const renderIcon = (icon: string | React.ReactNode) => {
+interface RenderIconProps {
+  icon: string | React.ReactNode;
+}
+
+const RenderIcon: React.FC<RenderIconProps> = ({ icon }) => {
   if (!icon) {
     return null;
   }
   if (typeof icon === "object") {
-    return icon;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{icon}</>;
   } else if (typeof icon === "string") {
-    return <Icon name={icon} className="h-4 w-4" />;
+    return <Icon name={icon} className="h-4 w-4 min-w-max" />;
   }
+  return null;
 };
 
 const StatusInfoEntry = ({
@@ -46,14 +52,14 @@ const StatusInfoEntry = ({
         to={statusInfo.url}
         target={target || ""}
       >
-        {statusInfo.icon && renderIcon(statusInfo.icon)}
+        {statusInfo.icon && <RenderIcon icon={statusInfo.icon} />}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </Link>
     );
   } else {
     return (
       <span className="inline-flex cursor-pointer space-x-1">
-        {statusInfo.icon && renderIcon(statusInfo.icon)}
+        {statusInfo.icon && <RenderIcon icon={statusInfo.icon} />}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </span>
     );
@@ -74,7 +80,7 @@ export function StatusLine({
       className={clsx("flex flex-row items-center space-x-1", className)}
       {...rest}
     >
-      {icon && renderIcon(icon)}
+      {icon && <RenderIcon icon={icon} />}
       {url && (
         <Link
           title={label}

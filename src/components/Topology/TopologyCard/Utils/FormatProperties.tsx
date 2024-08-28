@@ -13,8 +13,54 @@ type FormatPropertyProps = {
   isSidebar?: boolean;
 };
 
+export default function PropertyGauge({
+  property,
+  derivedMax,
+  derivedValue,
+  isSidebar
+}: FormatPropertyProps & {
+  derivedValue?: string;
+  derivedMax?: string;
+}) {
+  if (!property) {
+    return null;
+  }
+
+  const { value, max } = property;
+
+  if (!value || !max) {
+    return null;
+  }
+
+  const percent = (Number(value) / Number(max)) * 100;
+
+  return (
+    <>
+      <div
+        data-tooltip-id="format-tooltip"
+        data-tooltip-content={`${derivedValue} of ${derivedMax} (${percent.toFixed(
+          0
+        )}%)`}
+        className="flex h-auto flex-col items-center gap-1"
+      >
+        <div
+          className={clsx(
+            `w-full text-ellipsis whitespace-nowrap text-xs`,
+            isSidebar ? "text-left" : "text-center"
+          )}
+        >
+          {derivedValue}
+        </div>
+        <div className="block w-12">
+          <ProgressBar value={percent} />
+        </div>
+      </div>
+      <Tooltip id="format-tooltip" />
+    </>
+  );
+}
+
 export function FormatPropertyURL({ property }: FormatPropertyProps) {
-  console.log("property", property);
   if (property == null) {
     return null;
   }
@@ -103,7 +149,6 @@ export function FormatPropertyCPUMemory({
     return null;
   }
 
-  const value = property.value;
   const max = property.max;
 
   const derivedMax = property.unit?.startsWith("milli")
@@ -111,30 +156,13 @@ export function FormatPropertyCPUMemory({
     : formatBytes(Number(property.max), 1);
 
   if (max) {
-    const percent = (Number(value) / Number(max)) * 100;
     return (
-      <>
-        <div
-          data-tooltip-id="format-tooltip"
-          data-tooltip-content={`${derivedValue} of ${derivedMax} (${percent.toFixed(
-            0
-          )}%)`}
-          className="flex h-auto flex-col items-center gap-1"
-        >
-          <div
-            className={clsx(
-              `w-full text-ellipsis whitespace-nowrap text-xs`,
-              isSidebar ? "text-left" : "text-center"
-            )}
-          >
-            {derivedValue}
-          </div>
-          <div className="block w-12">
-            <ProgressBar value={percent} />
-          </div>
-        </div>
-        <Tooltip id="format-tooltip" />
-      </>
+      <PropertyGauge
+        property={property}
+        derivedValue={derivedValue}
+        derivedMax={derivedMax}
+        isSidebar={isSidebar}
+      />
     );
   }
 
