@@ -1,7 +1,7 @@
 import { IconType } from "@flanksource/icons";
 import { IconMap as Icons } from "@flanksource/icons/mi";
 import { isEmpty } from "lodash";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
@@ -760,6 +760,20 @@ export const findByName = function (name?: string): IconType | undefined {
   return icon;
 };
 
+const iconColorsClasssNamesMap = {
+  error: "fill-red-500",
+  success: "fill-green-500",
+  healthy: "fill-green-500",
+  unhealthy: "fill-red-500",
+  warning: "fill-orange-500",
+  unknown: "fill-gray-500",
+  orange: "fill-orange-500",
+  red: "fill-red-500",
+  green: "fill-green-500",
+  blue: "fill-blue-500",
+  gray: "fill-gray-500"
+} satisfies Readonly<Record<string, string>>;
+
 export type IconProps = {
   name?: string;
   secondary?: string;
@@ -767,6 +781,7 @@ export type IconProps = {
   alt?: string;
   prefix?: any;
   size?: any;
+  iconWithColor?: string;
 };
 
 export function Icon({
@@ -775,9 +790,20 @@ export function Icon({
   className = "h-6 max-w-6",
   alt = "",
   prefix,
+  iconWithColor,
   ...props
 }: IconProps) {
   const IconSVG = useMemo(() => {
+    if (iconWithColor) {
+      const [icon] = iconWithColor.split(":");
+      if (icon) {
+        const iconType = findByName(icon);
+        if (iconType) {
+          return iconType;
+        }
+      }
+    }
+
     if (!name && !secondary) {
       return undefined;
     }
@@ -792,7 +818,21 @@ export function Icon({
     }
     const secondaryIcon = findByName(secondary);
     return secondaryIcon;
-  }, [name, secondary]);
+  }, [iconWithColor, name, secondary]);
+
+  const colorClassName = useMemo(() => {
+    if (iconWithColor) {
+      const [_, color] = iconWithColor.split(":");
+      if (color) {
+        return iconColorsClasssNamesMap[
+          color as keyof typeof iconColorsClasssNamesMap
+        ];
+      }
+    }
+    return "text-gray-700";
+  }, [iconWithColor]);
+
+  console.log("IconSVG", IconSVG, colorClassName);
 
   if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
     // eslint-disable-next-line @next/next/no-img-element
@@ -807,26 +847,9 @@ export function Icon({
     <>
       {prefix}{" "}
       <IconSVG
-        className={`inline-block fill-current object-center text-gray-700 ${className}`}
+        className={`inline-block fill-current object-center ${className} ${colorClassName}`}
         {...props}
       />
     </>
-  );
-}
-
-type AvatarProps = React.ImgHTMLAttributes<HTMLImageElement> & {
-  url: string;
-  alt?: string;
-};
-
-export function Avatar({ url, alt = "", ...props }: AvatarProps) {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-white"
-      src={url}
-      alt={alt}
-      {...props}
-    />
   );
 }
