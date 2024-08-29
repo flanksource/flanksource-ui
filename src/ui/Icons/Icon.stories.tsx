@@ -167,3 +167,24 @@ export const Primary: Story = {
     </div>
   )
 };
+
+const iconWithColors = [
+  "error:red",
+  "info:blue",
+  "success:green",
+  "error:orange",
+  "shutdown:red"
+];
+
+export const IconWithColor: Story = {
+  render: () => (
+    <div className="flex flex-row flex-wrap">
+      {iconWithColors.map((icon) => (
+        <div key={icon}>
+          {icon}: <Icon iconWithColor={icon} /> &nbsp;
+          <br />
+        </div>
+      ))}
+    </div>
+  )
+};
