@@ -1,82 +1,172 @@
-replicaCount: 1
+# yaml-language-server: $schema=values.schema.json
 
+# @schema
+# required: false
+# @schema
 global:
+  # @schema
+  # required: false
+  # @schema
   imageRegistry: docker.io
+  # @schema
+  # required: false
+  # @schema
   imagePrefix: flanksource
+  # @schema
+  # required: false
+  # @schema
+  labels: {}
+  # @schema
+  # required: false
+  # additionalProperties: true
+  # type: object
+  # @schema
+  # -- node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
+  nodeSelector: {}
 
+  # @schema
+  # required: false
+  # type: array
+  # items:
+  #   $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration
+  # @schema
+  tolerations: []
+
+  # @schema
+  # required: false
+  # $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity
+  # @schema
+  affinity: {}
+
+# @schema
+# default: 1
+# @schema
+replicas: 1
+
+# @schema
+# required: false
+# @schema
 image:
-  repositoryPrefix: "docker.io/flanksource" # Repository prefix, without trailing /
-  name: '{{.Values.global.imagePrefix}}/incident-manager-ui'
+  name: "{{.Values.global.imagePrefix}}/incident-manager-ui"
+  # @schema
+  # required: false
+  # @schema
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
+# @schema
+# required: false
+# @schema
 imagePullSecrets: []
-nameOverride: "flanksource-ui"
+# @schema
+# required: false
+# @schema
 fullnameOverride: "flanksource-ui"
+
+# @schema
+# required: false
+# @schema
 oryKratosURL: ""
+# @schema
+# required: false
+# @schema
 backendURL: ""
 
+# @schema
+# required: false
+# @schema
 serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # @schema
+  # required: false
+  # default: "flanksource-ui-sa"
+  # @schema
   name: "flanksource-ui-sa"
 
+  # @schema
+  # additionalProperties: true
+  # required: false
+  # @schema
+  annotations: {}
+
+# @schema
+# additionalProperties: true
+# required: false
+# @schema
 podAnnotations: {}
 
+# @schema
+# $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext
+# required: false
+# @schema
 podSecurityContext: {}
-  # fsGroup: 2000
 
+# @schema
+# $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.SecurityContext
+# required: false
+# @schema
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 80
-
+# @schema
+# required: false
+# @schema
 ingress:
+  # @schema
+  # required: false
+  # @schema
   enabled: false
+  # @schema
+  # required: false
+  # @schema
   className: ""
+  # @schema
+  # required: false
+  # @schema
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  # @schema
+  # required: false
+  # default:  incident-commander-ui.local
+  # @schema
   host: incident-commander-ui.local
+  # @schema
+  # required: false
+  # type: array
+  # items:
+  #   $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.networking.v1.IngressTLS
+  # @schema
   tls: []
-    # - secretName: chart-example-tls
-    #   hosts:
-    #     - chart-example.local
-  
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# @schema
+# $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.ResourceRequirements
+# @schema
+resources:
+  requests:
+    cpu: 200m
+    memory: 200Mi
+  limits:
+    memory: 2Gi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
+# @schema
+# required: false
+# additionalProperties: true
+# type: object
+# @schema
+# -- node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)
 nodeSelector: {}
 
+# @schema
+# required: false
+# type: array
+# items:
+#   $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration
+# @schema
 tolerations: []
 
+# @schema
+# required: false
+# $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity
+# @schema
 affinity: {}

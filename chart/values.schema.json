@@ -1,0 +1,158 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "affinity": {
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity"
+    },
+    "backendURL": {
+      "default": "",
+      "title": "backendURL"
+    },
+    "fullnameOverride": {
+      "default": "flanksource-ui",
+      "title": "fullnameOverride"
+    },
+    "global": {
+      "additionalProperties": false,
+      "properties": {
+        "affinity": {
+          "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity"
+        },
+        "imagePrefix": {
+          "default": "flanksource",
+          "title": "imagePrefix"
+        },
+        "imageRegistry": {
+          "default": "docker.io",
+          "title": "imageRegistry"
+        },
+        "labels": {
+          "additionalProperties": false,
+          "title": "labels"
+        },
+        "nodeSelector": {
+          "additionalProperties": true,
+          "description": "node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)",
+          "title": "nodeSelector",
+          "type": "object"
+        },
+        "tolerations": {
+          "items": {
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration"
+          },
+          "title": "tolerations",
+          "type": "array"
+        }
+      },
+      "title": "global"
+    },
+    "image": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "{{.Values.global.imagePrefix}}/incident-manager-ui",
+          "title": "name",
+          "type": "string"
+        },
+        "pullPolicy": {
+          "default": "IfNotPresent",
+          "title": "pullPolicy"
+        },
+        "tag": {
+          "default": "latest",
+          "description": "Overrides the image tag whose default is the chart appVersion.",
+          "title": "tag",
+          "type": "string"
+        }
+      },
+      "title": "image",
+      "required": [
+        "name",
+        "tag"
+      ]
+    },
+    "imagePullSecrets": {
+      "items": {},
+      "title": "imagePullSecrets"
+    },
+    "ingress": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": false,
+          "title": "annotations"
+        },
+        "className": {
+          "default": "",
+          "title": "className"
+        },
+        "enabled": {
+          "default": "false",
+          "title": "enabled"
+        },
+        "host": {
+          "default": "incident-commander-ui.local",
+          "title": "host"
+        },
+        "tls": {
+          "items": {
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.networking.v1.IngressTLS"
+          },
+          "title": "tls",
+          "type": "array"
+        }
+      },
+      "title": "ingress"
+    },
+    "nodeSelector": {
+      "additionalProperties": true,
+      "description": "node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)",
+      "title": "nodeSelector",
+      "type": "object"
+    },
+    "oryKratosURL": {
+      "default": "",
+      "title": "oryKratosURL"
+    },
+    "podAnnotations": {
+      "additionalProperties": true,
+      "title": "podAnnotations"
+    },
+    "podSecurityContext": {
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext"
+    },
+    "replicas": {
+      "default": 1,
+      "title": "replicas"
+    },
+    "resources": {
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.ResourceRequirements"
+    },
+    "securityContext": {
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.SecurityContext"
+    },
+    "serviceAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": true,
+          "title": "annotations"
+        },
+        "name": {
+          "default": "flanksource-ui-sa",
+          "title": "name"
+        }
+      },
+      "title": "serviceAccount"
+    },
+    "tolerations": {
+      "items": {
+        "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration"
+      },
+      "title": "tolerations",
+      "type": "array"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object"
+}
