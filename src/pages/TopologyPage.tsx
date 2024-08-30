@@ -1,4 +1,4 @@
-import { getTopology } from "@flanksource-ui/api/services/topology";
+import useTopologyPageQuery from "@flanksource-ui/api/query-hooks/useTopologyPageQuery";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
@@ -6,14 +6,13 @@ import TopologySidebar from "@flanksource-ui/components/Topology/Sidebar/Topolog
 import { TopologyBreadcrumbs } from "@flanksource-ui/components/Topology/TopologyBreadcrumbs";
 import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
-import { getCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
+import { useTopologyCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
-import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import {
@@ -72,62 +71,13 @@ export function TopologyPage() {
     sortOrder: "desc"
   });
 
-  const [topologyCardSize, setTopologyCardSize] = useState(() =>
-    getCardWidth()
-  );
+  const [topologyCardSize, setTopologyCardSize] = useTopologyCardWidth();
 
-  const selectedLabel = searchParams.get("labels") ?? "All";
-  const team = searchParams.get("team") ?? "All";
-  const topologyType = searchParams.get("type") ?? "All";
-  const healthStatus = searchParams.get("status") ?? "All";
   const refererId = searchParams.get("refererId") ?? undefined;
-  const sortBy = searchParams.get("sortBy") ?? "status";
-  const sortOrder = searchParams.get("sortOrder") ?? "desc";
-  const agentId = searchParams.get("agent_id") ?? undefined;
-  const showHiddenComponents =
-    searchParams.get("showHiddenComponents") ?? undefined;
 
   const loadingBarRef = useRef<LoadingBarRef>(null);
 
-  const { data, isLoading, refetch } = useQuery(
-    [
-      "topologies",
-      id,
-      healthStatus,
-      team,
-      selectedLabel,
-      topologyType,
-      showHiddenComponents,
-      sortBy,
-      sortOrder,
-      agentId
-    ],
-    () => {
-      loadingBarRef.current?.continuousStart();
-      const apiParams = {
-        id,
-        status: healthStatus,
-        type: topologyType,
-        team: team,
-        labels: selectedLabel,
-        sortBy,
-        sortOrder,
-        // only flatten, if topology type is set
-        ...(topologyType &&
-          topologyType.toString().toLowerCase() !== "all" && {
-            flatten: true
-          }),
-        hidden: showHiddenComponents === "no" ? false : undefined,
-        agent_id: agentId
-      };
-      return getTopology(apiParams);
-    },
-    {
-      onSettled: () => {
-        loadingBarRef.current?.complete();
-      }
-    }
-  );
+  const { data, isLoading, refetch } = useTopologyPageQuery();
 
   const currentTopology = useMemo(() => data?.components?.[0], [data]);
 
