@@ -8,7 +8,6 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMutation } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import { VscDebugRerun } from "react-icons/vsc";
-import { toastSuccess } from "../../Toast/toast";
 
 // admin, editor, responder, commander roles are allowed to run checks
 const allowedRoles = ["admin", "editor", "responder", "commander"];
@@ -27,11 +26,7 @@ export default function CheckRunNow({
   const { isLoading, mutate: runNow } = useMutation({
     mutationFn: runHealthCheckNow,
     onSuccess: (data) => {
-      toastSuccess("You have successfully initiated the check run.");
       onSuccessfulRun(data.data);
-    },
-    onError: (error) => {
-      console.error("Error running check", error);
     }
   });
 

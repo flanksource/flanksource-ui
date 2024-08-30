@@ -832,8 +832,6 @@ export function Icon({
     return "text-gray-700";
   }, [iconWithColor]);
 
-  console.log("IconSVG", IconSVG, colorClassName);
-
   if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={name} className={className} alt={alt} {...props} />;
