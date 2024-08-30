@@ -4,6 +4,7 @@ import { initialize, mswLoader } from "msw-storybook-addon";
 import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
+import "react-tooltip/dist/react-tooltip.css";
 import "tailwindcss/tailwind.css";
 import "../pages/global.css";
 import "./storybook.css";

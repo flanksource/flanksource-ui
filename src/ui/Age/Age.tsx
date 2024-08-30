@@ -1,45 +1,84 @@
-import dayjs from "dayjs";
 import clsx from "clsx";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import { Tooltip } from "react-tooltip";
 import { isEmpty } from "../../utils/date";
+
+function formatDate(data: dayjs.Dayjs) {
+  return data.format("YYYY-MM-DD HH:mm:ssZ");
+}
+
+dayjs.extend(LocalizedFormat);
+
+type AgeProps = {
+  className?: string;
+  from?: Date | string;
+  to?: Date | string;
+  suffix?: boolean;
+};
 
 export default function Age({
   className = "",
   from,
   to,
   suffix = false
-}: {
-  className?: string;
-  from?: Date | string;
-  to?: Date | string;
-  suffix?: boolean;
-}) {
+}: AgeProps) {
   if (isEmpty(from)) {
     return null;
   }
-  let _from = dayjs(from);
+
+  const _from = dayjs(from);
 
   if (isEmpty(to)) {
     return (
-      <span title={_from.format()} className={className}>
-        {_from.local().fromNow(!suffix)}
-      </span>
+      <>
+        <span
+          data-tooltip-id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
+          className={className}
+        >
+          {_from.local().fromNow(!suffix)}
+        </span>
+        <Tooltip
+          id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
+          content={formatDate(_from)}
+        />
+      </>
     );
   }
-  let _to = dayjs(to);
 
-  let duration = dayjs.duration(_to.diff(_from));
+  const _to = dayjs(to);
+
+  const duration = dayjs.duration(_to.diff(_from));
 
   if (duration.asMilliseconds() < 1000) {
     return (
-      <span title={_from.format()} className={className}>
-        {duration.asMilliseconds()}ms
-      </span>
+      <>
+        <span
+          data-tooltip-id={`age-tooltip-${duration.asMilliseconds()}`}
+          className={className}
+        >
+          {duration.asMilliseconds()}ms
+        </span>
+        <Tooltip
+          id={`age-tooltip-${duration.asMilliseconds()}`}
+          content={`${formatDate(_from)}`}
+        />
+      </>
     );
   }
 
   return (
-    <span className={clsx(className, "whitespace-nowrap")}>
-      {_from.local().to(_to)}
-    </span>
+    <>
+      <span
+        data-tooltip-id={`age-tooltip-${_from.local().to(_to)}`}
+        className={clsx(className, "whitespace-nowrap")}
+      >
+        {_from.local().to(_to)}
+      </span>
+      <Tooltip
+        id={`age-tooltip-${_from.local().to(_to)}`}
+        content={`${formatDate(_from)} - ${formatDate(_to)}`}
+      />
+    </>
   );
 }
