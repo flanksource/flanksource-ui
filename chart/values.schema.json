@@ -8,12 +8,16 @@
       "default": "",
       "title": "backendURL"
     },
+    "enabled": {
+      "default": true,
+      "title": "enabled"
+    },
     "fullnameOverride": {
       "default": "flanksource-ui",
       "title": "fullnameOverride"
     },
     "global": {
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "affinity": {
           "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity"
@@ -61,14 +65,12 @@
         "tag": {
           "default": "latest",
           "description": "Overrides the image tag whose default is the chart appVersion.",
-          "title": "tag",
-          "type": "string"
+          "title": "tag"
         }
       },
       "title": "image",
       "required": [
-        "name",
-        "tag"
+        "name"
       ]
     },
     "imagePullSecrets": {
@@ -104,6 +106,10 @@
       },
       "title": "ingress"
     },
+    "nameOverride": {
+      "default": "flanksource-ui",
+      "title": "nameOverride"
+    },
     "nodeSelector": {
       "additionalProperties": true,
       "description": "node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)",
@@ -130,6 +136,21 @@
     },
     "securityContext": {
       "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.SecurityContext"
+    },
+    "service": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "default": "ClusterIP",
+          "title": "type",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer"
+          ]
+        }
+      },
+      "title": "service"
     },
     "serviceAccount": {
       "additionalProperties": false,

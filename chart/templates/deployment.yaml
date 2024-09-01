@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.fullname" . }}
+  name: {{ include "chart.name" . }}
   labels:
     {{- include "chart.labels" . | nindent 4 }}
 spec:
@@ -40,7 +40,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3000 # TODO(infra): application port. Make configurable.
+              containerPort: 3000
               protocol: TCP
           livenessProbe:
             httpGet:
