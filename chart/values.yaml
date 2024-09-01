@@ -2,6 +2,7 @@
 
 # @schema
 # required: false
+# additionalProperties: true
 # @schema
 global:
   # @schema
@@ -39,6 +40,12 @@ global:
   affinity: {}
 
 # @schema
+# required: false
+# default: true
+# @schema
+enabled: true
+
+# @schema
 # default: 1
 # @schema
 replicas: 1
@@ -53,12 +60,21 @@ image:
   # @schema
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
+  # @schema
+  # required: false
+  # @schema
   tag: "latest"
 
 # @schema
 # required: false
 # @schema
 imagePullSecrets: []
+
+# @schema
+# required: false
+# @schema
+nameOverride: "flanksource-ui"
+
 # @schema
 # required: false
 # @schema
@@ -170,3 +186,16 @@ tolerations: []
 # $ref: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity
 # @schema
 affinity: {}
+
+# @schema
+# required: false
+# @schema
+service:
+  # @schema
+  # required: false
+  # enum:
+  # - ClusterIP
+  # - NodePort
+  # - LoadBalancer
+  # @schema
+  type: ClusterIP

@@ -33,7 +33,13 @@ A Helm chart for flanksource-ui
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"200Mi"` |  |
 | securityContext | object | `{}` |  |
+| service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.name | string | `"flanksource-ui-sa"` |  |
 | tolerations | list | `[]` |  |
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Flanksource |  | <https://www.flanksource.com> |
