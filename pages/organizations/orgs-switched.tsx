@@ -17,9 +17,7 @@ export default function OrgsSwitchedPage() {
   const { push } = useRouter();
 
   useEffect(() => {
-    console.log("Attempting to clear cache");
     client.clear();
-    console.log("Cleared cache, redirecting to /topology");
     push("/topology");
   }, [client, push]);
 
