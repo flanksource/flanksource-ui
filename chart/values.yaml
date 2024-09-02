@@ -90,22 +90,6 @@ oryKratosURL: ""
 backendURL: ""
 
 # @schema
-# required: false
-# @schema
-serviceAccount:
-  # @schema
-  # required: false
-  # default: "flanksource-ui-sa"
-  # @schema
-  name: "flanksource-ui-sa"
-
-  # @schema
-  # additionalProperties: true
-  # required: false
-  # @schema
-  annotations: {}
-
-# @schema
 # additionalProperties: true
 # required: false
 # @schema
