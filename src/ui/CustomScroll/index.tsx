@@ -19,7 +19,6 @@ export const CustomScroll = ({
 }: CustomScrollProps) => {
   const items = React.Children.toArray(children);
   const [showMore, setShowMore] = useState(false);
-  const [hasScroll, setHasScroll] = useState(false);
 
   useEffect(() => {
     setShowMore(minChildCount < items.length);
@@ -50,7 +49,6 @@ export const CustomScroll = ({
         <div
           onClick={() => {
             setShowMore(false);
-            setHasScroll(true);
           }}
           className={clsx(
             "bottom-0 m-auto w-full hover:underline",

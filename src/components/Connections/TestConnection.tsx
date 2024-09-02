@@ -36,7 +36,6 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
       }>
     ) => {
       if (res?.code === "ERR_BAD_REQUEST") {
-        console.log(res?.response?.data.error);
         if (res?.response?.data.error) {
           try {
             const error = JSON.parse(res.response.data.error);
