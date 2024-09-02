@@ -1,6 +1,6 @@
+import { Property as PropertyD } from "@flanksource-ui/api/types/topology";
+import { Age } from "@flanksource-ui/ui/Age";
 import { FiExternalLink } from "react-icons/fi";
-import { Property as PropertyD } from "../../../api/types/topology";
-import { Age } from "../../../ui/Age";
 import {
   FormatPropertyCPUMemory,
   FormatPropertyCurrency,
@@ -26,7 +26,13 @@ export function FormatProperty({
 
   let { text } = property;
 
-  if (property.name === "created" && typeof text === "string") {
+  if (
+    (property.name === "created" ||
+      property.name === "created_at" ||
+      property.name === "updated_at" ||
+      property.type === "age") &&
+    typeof text === "string"
+  ) {
     return <Age from={text} />;
   }
 
