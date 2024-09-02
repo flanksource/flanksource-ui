@@ -8,6 +8,7 @@ A Helm chart for flanksource-ui
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | backendURL | string | `""` |  |
+| enabled | bool | `true` |  |
 | fullnameOverride | string | `"flanksource-ui"` |  |
 | global.affinity | object | `{}` |  |
 | global.imagePrefix | string | `"flanksource"` |  |
@@ -24,6 +25,7 @@ A Helm chart for flanksource-ui
 | ingress.enabled | bool | `false` |  |
 | ingress.host | string | `"incident-commander-ui.local"` |  |
 | ingress.tls | list | `[]` |  |
+| nameOverride | string | `"flanksource-ui"` |  |
 | nodeSelector | object | `{}` | node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/) |
 | oryKratosURL | string | `""` |  |
 | podAnnotations | object | `{}` |  |

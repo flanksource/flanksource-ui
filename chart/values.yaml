@@ -137,6 +137,7 @@ ingress:
   className: ""
   # @schema
   # required: false
+  # additionalProperties: true
   # @schema
   annotations: {}
   # @schema
