@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../values.schema.json
+global:
+  db:
+    url: 123
+ingress:
+  annotations:
+    tls/acme: "true"
