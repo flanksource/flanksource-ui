@@ -1,20 +1,17 @@
 import { getTopology } from "@flanksource-ui/api/services/topology";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { Size } from "@flanksource-ui/types";
-import { CustomScroll } from "@flanksource-ui/ui/CustomScroll";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import TopologyCardSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TopologyCardSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
+import { isEmpty } from "lodash";
 import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import AgentName from "../../Agents/AgentName";
-import { HealthChecksSummary } from "../../Canary/HealthChecksSummary";
-import { HealthSummary } from "../../Canary/HealthSummary";
-import IncidentCardSummary from "../../Incidents/IncidentCardSummary";
 import { CardMetrics } from "./CardMetrics";
+import TopologyCardStatuses from "./TopologCardStatuses";
 import TopologyCardPropertiesColumn from "./TopologyCardPropertiesColumn";
-import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
 export enum ComponentHealth {
@@ -85,11 +82,13 @@ export function TopologyCard({
     [size]
   );
 
-  const prepareTopologyLink = (topologyItem: Topology) => {
-    if (topologyItem.id === parentId && parentId) {
-      return "";
+  const topologyLink = useMemo(() => {
+    if (!topology) {
+      return undefined;
     }
-
+    if (topology.id === parentId && parentId) {
+      return undefined;
+    }
     const params = Object.fromEntries(searchParams.entries());
     delete params.refererId;
     delete params.status;
@@ -99,31 +98,13 @@ export function TopologyCard({
       })
       .join("&");
 
-    const parentIdAsPerPath = (topologyItem.path || "").split(".").pop();
-    return `/topology/${topologyItem.id}?${queryString}${
-      parentId && parentIdAsPerPath !== parentId && parentId !== topologyItem.id
+    const parentIdAsPerPath = (topology.path || "").split(".").pop();
+    return `/topology/${topology.id}?${queryString}${
+      parentId && parentIdAsPerPath !== parentId && parentId !== topology.id
         ? `&refererId=${parentId}`
         : ""
     }`;
-  };
-
-  const sortedTopologyComponents = useMemo(
-    () =>
-      topology?.components?.sort((a, b) => {
-        // we want to move unhealthy components to the top, then warning, then healthy
-        if (a.status === "unhealthy" && b.status !== "unhealthy") {
-          return -1;
-        }
-        if (a.status === "warning" && b.status === "healthy") {
-          return -1;
-        }
-        if (a.status === "healthy" && b.status !== "healthy") {
-          return 1;
-        }
-        return 0;
-      }),
-    [topology?.components]
-  );
+  }, [parentId, searchParams, topology]);
 
   const { heading, properties, isPropertiesPanelEmpty } = useMemo(() => {
     const allProperties = topology?.properties || [];
@@ -135,6 +116,8 @@ export function TopologyCard({
 
     const isPropertiesPanelShown =
       properties.filter(
+        // we don't want to show properties that are hidden or have no value or
+        // text
         (i) => !i.headline && i.type !== "hidden" && (i.text || i.value)
       ).length > 0;
 
@@ -151,12 +134,35 @@ export function TopologyCard({
     return (
       !topology?.summary?.insights &&
       !topology?.summary?.checks &&
-      (sortedTopologyComponents ?? []).length === 0
+      !(
+        (topology?.components ?? []).filter((i) => {
+          return (
+            !isEmpty(i.summary) ||
+            !isEmpty(i.summary?.checks) ||
+            !isEmpty(i.summary?.insights)
+          );
+        }).length > 0
+      )
     );
   }, [
-    sortedTopologyComponents,
+    topology?.components,
     topology?.summary?.checks,
     topology?.summary?.insights
+  ]);
+
+  const isFooterEmpty = useMemo(() => {
+    if (metricsInFooter && heading.length > 0) {
+      return false;
+    }
+    if (isAnalyticsPanelEmpty && isPropertiesPanelEmpty) {
+      return true;
+    }
+    return false;
+  }, [
+    heading.length,
+    isAnalyticsPanelEmpty,
+    isPropertiesPanelEmpty,
+    metricsInFooter
   ]);
 
   if (topology == null) {
@@ -173,7 +179,12 @@ export function TopologyCard({
       )}
       {...selectionModeRootProps}
     >
-      <div className="-mt-1 flex flex-row flex-nowrap rounded-t-md border-b bg-white">
+      <div
+        className={clsx(
+          "-mt-1 flex flex-row flex-nowrap rounded-t-md border-b bg-white",
+          isFooterEmpty ? "rounded-b-md" : ""
+        )}
+      >
         <div className="flex flex-1 gap-2 overflow-hidden pb-3.5 pl-2 pr-1 pt-2.5">
           <div className="m-auto mr-1.5 max-w-1/4 flex-initial leading-1.21rel text-gray-color">
             <h3 className="text-2xsi leading-1.21rel text-gray-color">
@@ -187,13 +198,11 @@ export function TopologyCard({
               className="overflow-hidden truncate text-ellipsis align-middle text-15pxinrem font-bold leading-1.21rel"
               title={topology.name}
             >
-              {prepareTopologyLink(topology) && (
-                <Link to={prepareTopologyLink(topology)}>
-                  {topology.text || topology.name}
-                </Link>
+              {topologyLink ? (
+                <Link to={topologyLink}>{topology.text || topology.name}</Link>
+              ) : (
+                topology.text || topology.name
               )}
-              {!prepareTopologyLink(topology) &&
-                (topology.text || topology.name)}
             </div>
             <div className="flex flex-row items-center gap-1.5 text-gray-500">
               <AgentName agentId={topology.agent_id} />
@@ -232,47 +241,26 @@ export function TopologyCard({
           )}
         </div>
       </div>
-      <div className="flex flex-nowrap space-x-4 rounded-b-8px bg-lightest-gray">
-        {metricsInFooter && heading.length > 0 ? (
-          <div className="flex flex-1 py-4">
-            <CardMetrics items={heading} />
-          </div>
-        ) : (
-          <>
-            <TopologyCardPropertiesColumn
-              displayTwoColumns={isAnalyticsPanelEmpty}
-              properties={properties}
-            />
-            {!isAnalyticsPanelEmpty && (
-              <CustomScroll
-                className={clsx(
-                  "flex-1 py-2 pl-2 pr-2",
-                  isPropertiesPanelEmpty ? "grid grid-cols-2 gap-1" : ""
-                )}
-                showMoreClass="text-xs linear-1.21rel mr-1 cursor-pointer"
-                maxHeight="200px"
-                // When we showing two columns, we need to show more items
-                minChildCount={isPropertiesPanelEmpty ? 5 : 10}
-              >
-                <TopologyConfigAnalysisLine topology={topology} />
-                <HealthChecksSummary
-                  checks={topology?.summary?.checks}
-                  className=""
-                />
-                {sortedTopologyComponents?.map((component: any) => (
-                  <HealthSummary
-                    className=""
-                    target={target}
-                    key={component.id}
-                    component={component}
-                  />
-                ))}
-                {topology?.id && <IncidentCardSummary topology={topology} />}
-              </CustomScroll>
-            )}
-          </>
-        )}
-      </div>
+      {!isFooterEmpty && (
+        <div className="flex flex-nowrap space-x-4 rounded-b-8px bg-lightest-gray py-1">
+          {metricsInFooter && heading.length > 0 ? (
+            <div className="flex flex-1 py-4">
+              <CardMetrics items={heading} />
+            </div>
+          ) : (
+            <>
+              <TopologyCardPropertiesColumn
+                displayTwoColumns={isAnalyticsPanelEmpty}
+                properties={properties}
+              />
+              <TopologyCardStatuses
+                topology={topology}
+                isPropertiesPanelEmpty={isPropertiesPanelEmpty}
+              />
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
