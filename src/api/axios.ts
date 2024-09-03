@@ -1,5 +1,5 @@
+import { toastError } from "@flanksource-ui/components/Toast/toast";
 import axios, { AxiosError } from "axios";
-import { toastError } from "../components/Toast/toast";
 
 const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
 
@@ -146,10 +146,26 @@ for (const client of [
   Snapshot
 ]) {
   client.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      return response;
+    },
     (error) => {
       redirectToLoginPageOnSessionExpiry(error);
-      toastError(error.response.data.message);
+      if ("code" in (error as any)) {
+        // Show a toast message for timeout and network errors
+        if (error.code === "ECONNABORTED") {
+          toastError("Request timed out. Please try again.");
+          return;
+        }
+        if (error.code === "ERR_NETWORK") {
+          toastError("Network Error. Please try again.");
+          return;
+        }
+        if (error.code === "ERR_INTERNET_DISCONNECTED") {
+          toastError("No internet connection. Please try again.");
+          return;
+        }
+      }
       return Promise.reject(error);
     }
   );

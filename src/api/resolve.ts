@@ -24,21 +24,10 @@ export type ApiResp<T = any> = Promise<
 export const resolvePostGrestRequestWithPagination: <T>(
   promise: AxiosPromise<T>
 ) => ApiResp<T> = async (promise) => {
-  try {
-    const { data, headers } = await promise;
-    const hasContentRangeHeader = !!headers["content-range"]?.trim();
-    const totalEntries = hasContentRangeHeader
-      ? +headers["content-range"].split("/")[1]
-      : undefined;
-    return { data, error: null, totalEntries };
-  } catch (error: any) {
-    if (error instanceof Error) {
-      return { error, data: null };
-    } else {
-      return {
-        error: Error("Unknown error happened while fetching."),
-        data: null
-      };
-    }
-  }
+  const { data, headers } = await promise;
+  const hasContentRangeHeader = !!headers["content-range"]?.trim();
+  const totalEntries = hasContentRangeHeader
+    ? +headers["content-range"].split("/")[1]
+    : undefined;
+  return { data, error: null, totalEntries };
 };
