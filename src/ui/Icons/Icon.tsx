@@ -178,7 +178,6 @@ export const aliases: IconMap = {
   authorizesecuritygroupingress: "add-firewall",
   azuredevops: "azure-devops",
   backoff: "snail",
-
   backofflimitexceeded: "snail",
   podcrashlooping: "error",
   bindgithubaccounttokentoapplication: "git",
@@ -599,10 +598,12 @@ export var prefixes: IconMap = {
   isup: "heart",
   killing: "stop",
   lookup: "search",
+  missioncontrol: "mission-control",
   modify: "edit",
   monitor: "graph",
   move: "settings",
   operator: "operatorframework",
+  playbook: "playbook",
   poll: "list",
   post: "upload",
   preview: "show",
@@ -686,7 +687,7 @@ export var prefixes: IconMap = {
   wipe: "trash"
 };
 
-const find = function (name?: string): IconType | undefined {
+export function findIconName(name?: string): IconType | undefined {
   if (isEmpty(name) || !name) {
     return undefined;
   }
@@ -715,50 +716,94 @@ const find = function (name?: string): IconType | undefined {
   }
 
   return undefined;
-};
+}
 
-export const findByName = function (name?: string): IconType | undefined {
-  if (isEmpty(name) || !name) {
-    return undefined;
-  }
-
-  name = name
+export function processIconNameSearch(name: string): string {
+  return name
     .replaceAll("--", "-")
     .replaceAll("::", "-")
     .toLowerCase()
     .replaceAll("k8-", "k8s-")
     .replaceAll("kubernetes-", "k8s-");
+}
 
-  var icon = find(name);
+export function areTwoIconNamesEqual(
+  firstIconName?: string,
+  secondIconName?: string
+) {
+  if (!firstIconName || !secondIconName) {
+    return false;
+  }
+
+  const firstIcon = processIconNameSearch(firstIconName);
+  const secondIcon = processIconNameSearch(secondIconName);
+  if (firstIcon === secondIcon) {
+    return true;
+  }
+  // ensure they aren't aliased to each other
+  const firstIconAlias = aliases[firstIcon as keyof typeof aliases];
+  const secondIconAlias = aliases[secondIcon as keyof typeof aliases];
+
+  if (firstIconAlias === secondIcon || secondIconAlias === firstIcon) {
+    return true;
+  }
+  if (firstIconAlias === secondIconAlias) {
+    return true;
+  }
+
+  // replace k8s with nothing
+  if (firstIcon.replace("k8s-", "") === secondIcon) {
+    return true;
+  }
+
+  if (secondIcon.replace("k8s-", "") === firstIcon) {
+    return true;
+  }
+
+  if (firstIcon.replace("k8s-", "") === secondIcon.replace("k8s-", "")) {
+    return true;
+  }
+
+  return false;
+}
+
+export function findByName(name?: string): IconType | undefined {
+  if (isEmpty(name) || !name) {
+    return undefined;
+  }
+
+  name = processIconNameSearch(name);
+
+  var icon = findIconName(name);
 
   if (icon != null) {
     return icon;
   }
 
-  icon = find(name.replace("k8s-", ""));
+  icon = findIconName(name.replace("k8s-", ""));
 
   if (icon != null) {
     return icon;
   }
 
   if (icon == null) {
-    icon = find("aws-" + name);
+    icon = findIconName("aws-" + name);
   } else if (icon != null) {
     return icon;
   }
   if (icon == null) {
-    icon = find("azure-" + name);
+    icon = findIconName("azure-" + name);
   } else if (icon != null) {
     return icon;
   }
   if (icon == null) {
-    icon = find("k8s-" + name);
+    icon = findIconName("k8s-" + name);
   } else if (icon != null) {
     return icon;
   }
 
   return icon;
-};
+}
 
 const iconColorsClasssNamesMap = {
   error: "fill-red-500",

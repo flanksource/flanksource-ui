@@ -1,6 +1,6 @@
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
+import { areTwoIconNamesEqual, Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useMemo } from "react";
-import { ConfigItem } from "../../api/types/configs";
-import { Icon } from "../../ui/Icons/Icon";
 
 export type ConfigIconProps = {
   config?: Pick<ConfigItem, "type">;
@@ -23,12 +23,16 @@ export default function ConfigsTypeIcon({
 
   const [primaryIcon, secondaryIcon] = useMemo(() => {
     if (configType?.split("::").length === 1) {
-      return [configType, null];
+      return [configType, undefined];
     }
     const primaryIcon = configType?.split("::")[0];
-    let secondaryIcon = configType;
+    let secondaryIcon = configType ?? undefined;
     return [primaryIcon, secondaryIcon];
   }, [configType]);
+
+  const isPrimaryIconSameAsSecondaryIcon = useMemo(() => {
+    return areTwoIconNamesEqual(primaryIcon, secondaryIcon);
+  }, [primaryIcon, secondaryIcon]);
 
   const value = useMemo(() => {
     if (configType?.split("::").length === 1) {
@@ -55,6 +59,7 @@ export default function ConfigsTypeIcon({
           />
         )}
         {showSecondaryIcon &&
+          !isPrimaryIconSameAsSecondaryIcon &&
           secondaryIcon &&
           primaryIcon !== secondaryIcon && (
             <Icon
