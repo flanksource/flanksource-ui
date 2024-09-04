@@ -1,22 +1,24 @@
 import { ReactElement, useCallback, useEffect, useState } from "react";
-import { FaExclamationCircle } from "react-icons/fa";
 import {
   ActionType,
   useUserAccessStateContext
 } from "../../context/UserAccessContext/UserAccessContext";
+import UnAuthorizedPage, { UnAuthorizedMessage } from "./UnAuhorizedPage";
 
 type AuthorizationAccessCheckProps = {
   resource: string | string[];
   action: ActionType;
   children: ReactElement;
   showUnauthorizedMessage?: boolean;
+  hideNavbar?: boolean;
 };
 
 export function AuthorizationAccessCheck({
   resource,
   action,
   showUnauthorizedMessage = false,
-  children
+  children,
+  hideNavbar = false
 }: AuthorizationAccessCheckProps) {
   const { hasAnyResourceAccess, roles, isLoading } =
     useUserAccessStateContext();
@@ -42,15 +44,11 @@ export function AuthorizationAccessCheck({
     return null;
   }
 
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <h1 className="font-semibold text-red-500">
-        <FaExclamationCircle className="mr-2 inline-block" />
-        Unauthorized
-      </h1>
-      <p>You do not have permission to access this page</p>
-    </div>
-  );
+  if (hideNavbar) {
+    return <UnAuthorizedMessage />;
+  }
+
+  return <UnAuthorizedPage isLoading={isLoading} />;
 }
 
 export const withAuthorizationAccessCheck = (
