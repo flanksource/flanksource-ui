@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
 import { debounce } from "lodash";
 import { useCallback, useMemo, useRef, useState } from "react";
-import Select, { components, InputActionMeta } from "react-select";
+import Select, { components, InputActionMeta } from "react-windowed-select";
 import { FormikSelectDropdownOption } from "./FormikSelectDropdown";
 
 type FormikConfigsDropdownProps = {
@@ -239,6 +239,7 @@ export default function FormikResourceSelectorDropdown({
             );
           }
         }}
+        windowThreshold={20}
       />
       {hint && <p className="text-sm text-gray-500">{hint}</p>}
       {isTouched && meta.error ? (
