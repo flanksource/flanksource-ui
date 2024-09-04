@@ -6,7 +6,7 @@ import { UserProfileDropdown } from "../../components/Users/UserProfile";
 interface IProps {
   children: React.ReactNode;
   contentClass?: string;
-  title: React.ReactNode;
+  title?: React.ReactNode;
   onRefresh?: () => void;
   loading?: boolean;
   extra?: React.ReactNode;
