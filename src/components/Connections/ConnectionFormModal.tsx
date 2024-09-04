@@ -3,6 +3,7 @@ import { Icon } from "../../ui/Icons/Icon";
 import { Modal } from "../../ui/Modal";
 import ConnectionForm from "./ConnectionForm";
 import ConnectionListView from "./ConnectionListView";
+import ConnectionSpecEditor from "./ConnectionSpecEditor";
 import {
   ConnectionType,
   ConnectionValueType,
@@ -123,6 +124,16 @@ export default function ConnectionFormModal({
           <ConnectionForm
             handleBack={() => setConnectionType(undefined)}
             connectionType={type}
+            onConnectionSubmit={onConnectionSubmit}
+            onConnectionDelete={onConnectionDelete}
+            formValue={formValue}
+            className={className}
+            isSubmitting={isSubmitting}
+            isDeleting={isDeleting}
+          />
+        ) : formValue?.id ? (
+          <ConnectionSpecEditor
+            handleBack={() => setConnectionType(undefined)}
             onConnectionSubmit={onConnectionSubmit}
             onConnectionDelete={onConnectionDelete}
             formValue={formValue}
