@@ -88,7 +88,9 @@ export const enum ConnectionValueType {
   Webhook = "webhook",
   Windows = "windows",
   ZulipChat = "zulip_chat",
-  Folder = "folder"
+  Folder = "folder",
+  GCS = "gcs",
+  Gitlab = "gitlab"
 }
 
 export type ConnectionType = {
@@ -474,6 +476,27 @@ export const connectionTypes: ConnectionType[] = [
     ]
   },
   {
+    title: "Google Cloud Storage",
+    icon: "gcs",
+    value: ConnectionValueType.GCS,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Endpoint",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Certificate",
+        key: "certificate",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        variant: variants.large,
+        required: true
+      }
+    ]
+  },
+  {
     title: "SFTP",
     icon: "sftp",
     value: ConnectionValueType.SFTP,
@@ -727,6 +750,20 @@ export const connectionTypes: ConnectionType[] = [
     title: "GitHub",
     icon: "github",
     value: ConnectionValueType.Github,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Personal Access Token",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      }
+    ]
+  },
+  {
+    title: "Gitlab",
+    icon: "gitlab",
+    value: ConnectionValueType.Gitlab,
     fields: [
       ...commonConnectionFormFields,
       {
