@@ -118,6 +118,12 @@ ingress:
   # @schema
   # required: false
   # @schema
+  ingressClassName: ""
+
+  # Deprecated: use ingressClassName instead
+  # @schema
+  # required: false
+  # @schema
   className: ""
   # @schema
   # required: false

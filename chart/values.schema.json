@@ -88,6 +88,10 @@
           "default": "",
           "title": "className"
         },
+        "ingressClassName": {
+          "default": "",
+          "title": "ingressClassName"
+        },
         "enabled": {
           "default": "false",
           "title": "enabled"
