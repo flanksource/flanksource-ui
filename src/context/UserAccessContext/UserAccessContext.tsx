@@ -22,6 +22,7 @@ export type UserAccessState = {
   isViewer: boolean;
   roles: string[];
   isLoading: boolean;
+  isLoaded: boolean;
   hasResourceAccess: (
     resourceName: string,
     action: ActionType
@@ -35,6 +36,7 @@ export type UserAccessState = {
 const initialState: UserAccessState = {
   refresh: () => Promise.resolve(),
   isAdmin: false,
+  isLoaded: false,
   isViewer: false,
   roles: [],
   isLoading: false,
@@ -62,7 +64,12 @@ export const UserAccessStateContextProvider = ({
     casbinAuthorizer.setPermission(builtPerms);
   }, []);
 
-  const { data: roles = [], refetch, isLoading } = usePeopleRoles(user?.id);
+  const { data, refetch, isLoading } = usePeopleRoles(user?.id);
+
+  const { roles, isLoaded } = data || {
+    roles: [],
+    isLoaded: false
+  };
 
   const isAdmin = useMemo(() => {
     return roles?.includes("admin");
@@ -89,6 +96,7 @@ export const UserAccessStateContextProvider = ({
     <UserAccessStateContext.Provider
       value={{
         isLoading,
+        isLoaded,
         refresh: async () => refetch(),
         hasResourceAccess,
         hasAnyResourceAccess,

@@ -20,7 +20,9 @@ export function AuthorizationAccessCheck({
   children,
   hideNavbar = false
 }: AuthorizationAccessCheckProps) {
-  const { hasAnyResourceAccess, roles, isLoading } =
+  const [isChecking, setIsChecking] = useState(true);
+
+  const { hasAnyResourceAccess, roles, isLoading, isLoaded } =
     useUserAccessStateContext();
   const [hasAccess, setHasAccess] = useState(false);
 
@@ -30,7 +32,10 @@ export function AuthorizationAccessCheck({
       action
     );
     setHasAccess(shouldRender);
-  }, [action, hasAnyResourceAccess, resource]);
+    if (isLoaded) {
+      setIsChecking(false);
+    }
+  }, [action, hasAnyResourceAccess, isLoaded, resource]);
 
   useEffect(() => {
     checkAccess();
@@ -40,7 +45,7 @@ export function AuthorizationAccessCheck({
     return children;
   }
 
-  if (!showUnauthorizedMessage || isLoading) {
+  if (!showUnauthorizedMessage || isLoading || !isLoaded || isChecking) {
     return null;
   }
 
