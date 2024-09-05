@@ -124,7 +124,7 @@ describe("ConfigsPanelList", () => {
     );
 
     // should render the correct config name, the one that is not the configId
-    expect(await screen.findByText(/canaries/i)).toBeInTheDocument();
+    expect(await screen.findByText("canaries")).toBeInTheDocument();
     expect(await screen.findByText(/canaries 1/i)).toBeInTheDocument();
     expect(await screen.findByText(/canaries 2/i)).toBeInTheDocument();
     expect(await screen.findByText(/canaries 3/i)).toBeInTheDocument();

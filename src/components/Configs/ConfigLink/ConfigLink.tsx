@@ -1,10 +1,10 @@
+import { getConfigsByID } from "@flanksource-ui/api/services/configs";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
-import { getConfigsByID } from "../../../api/services/configs";
 import { ConfigItem } from "../../../api/types/configs";
-import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
 
 type ConfigLinkProps = ConfigIconProps & {
@@ -25,17 +25,16 @@ export default function ConfigLink({
   showPrimaryIcon = true,
   showSecondaryIcon = true
 }: ConfigLinkProps) {
-  const { data } = useQuery(["config", configId, config], () => {
-    if (config) {
-      return config;
-    }
-    if (configId != null) {
-      return getConfigsByID(configId);
-    }
-    return null;
+  const { data: configFromRequest } = useQuery({
+    queryKey: ["config", configId, config],
+    queryFn: () => getConfigsByID(configId!),
+    // Only run the query if we have a configId and we don't have a config
+    enabled: !!configId && !config
   });
 
-  if (data == null) {
+  const data = config || configFromRequest;
+
+  if (!data) {
     return null;
   }
 
