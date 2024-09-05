@@ -15,9 +15,15 @@ export function usePeopleRoles(userId?: string) {
     select: (data) => {
       const roles = data.find((item) => item.id === userId)?.roles || [];
       if (!roles.length) {
-        return [Roles.viewer];
+        return {
+          isLoaded: true,
+          roles: [Roles.viewer]
+        };
       }
-      return roles;
+      return {
+        isLoaded: true,
+        roles: roles
+      };
     }
   });
 }
