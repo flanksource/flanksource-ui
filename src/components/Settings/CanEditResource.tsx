@@ -11,9 +11,9 @@ type CanEditResourceProps = {
   agentId?: string;
   agentName?: string;
   children: React.ReactNode;
-  id: string;
-  namespace: string;
-  name: string;
+  id?: string;
+  namespace?: string;
+  name?: string;
 };
 
 export function CanEditResourceInner({
