@@ -14,18 +14,20 @@ import { TopologyCard } from "../Topology/TopologyCard";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
 
-type ConfigDetailsTabsProps = {
+export type ConfigTab =
+  | "Catalog"
+  | "Changes"
+  | "Insights"
+  | "Relationships"
+  | "Playbooks"
+  | "Checks";
+
+export type ConfigDetailsTabsProps = {
   refetch?: () => void;
   children: ReactNode;
   isLoading?: boolean;
   pageTitlePrefix: string;
-  activeTabName:
-    | "Catalog"
-    | "Changes"
-    | "Insights"
-    | "Relationships"
-    | "Playbooks"
-    | "Checks";
+  activeTabName: ConfigTab;
   className?: string;
 };
 
