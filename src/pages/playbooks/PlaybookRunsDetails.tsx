@@ -14,13 +14,17 @@ import {
 import { Head } from "@flanksource-ui/ui/Head";
 import { PlaybookStatusIcon } from "@flanksource-ui/ui/Icons/PlaybookStatusIcon";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import { FaHome } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
 export default function PlaybookRunsDetailsPage() {
   const { id } = useParams();
+
+  const [, setRefreshTrigger] = useAtom(refreshButtonClickedTrigger);
 
   const {
     data: playbookRun,
@@ -98,7 +102,10 @@ export default function PlaybookRunsDetailsPage() {
             ]}
           />
         }
-        onRefresh={refetch}
+        onRefresh={() => {
+          setRefreshTrigger((prev) => prev++);
+          refetch();
+        }}
         loading={isLoading}
         contentClass="flex flex-col p-0 h-full overflow-y-hidden"
       >

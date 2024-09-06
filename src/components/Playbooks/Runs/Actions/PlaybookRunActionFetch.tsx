@@ -1,6 +1,9 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import { Loading } from "@flanksource-ui/ui/Loading";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 import { getPlaybookRunActionById } from "../../../../api/services/playbooks";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 
@@ -13,11 +16,24 @@ export default function PlaybookRunActionFetch({
   playbookRunActionId,
   playbook
 }: Props) {
-  const { data: action, isLoading } = useQuery({
+  const [refreshTrigger] = useAtom(refreshButtonClickedTrigger);
+
+  const {
+    data: action,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: ["playbookRunAction", playbookRunActionId],
     queryFn: () => getPlaybookRunActionById(playbookRunActionId),
-    enabled: !!playbookRunActionId
+    enabled: !!playbookRunActionId,
+    staleTime: 0,
+    cacheTime: 0
   });
+
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTrigger]);
 
   if (isLoading || !action) {
     return (
