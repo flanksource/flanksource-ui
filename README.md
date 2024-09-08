@@ -26,11 +26,10 @@ See [javascript style guide](https://github.com/flanksource/style-guide/blob/mas
 6. If you don't have any account to login please create an account by going to the page [http://localhost:3000/registration](http://localhost:3000/registration).
 7. If you have account login using that account by going to the page [http://localhost:3000/login](http://localhost:3000/login).
 
-## Svg files
 
-Run them through https://github.com/svg/svgo to make them compatible with react.
-See: https://stackoverflow.com/questions/59820954/syntaxerror-unknown-namespace-tags-are-not-supported-by-default
+## Script
 
-## Scripts
-
-See [package.json](https://github.com/flanksource/flanksource-ui/blob/chore%2Fdeps-update-cleanup/package.json) scripts.
+- `npm run storybook` to start a storybook server to test components without the need for a backend
+- `npm run start` to start next.js in watch mode
+- `npm run test:ci` to run tests
+- `npm run build` to test production build
