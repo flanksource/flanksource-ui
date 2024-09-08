@@ -157,7 +157,6 @@ const KratosLogin = () => {
     }
   }, [flow, submitFlow, credentials]);
 
-  console.log("flow", flow);
 
   return (
     <div className="w-96">
