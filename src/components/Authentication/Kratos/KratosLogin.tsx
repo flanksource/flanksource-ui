@@ -13,7 +13,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { toastError } from "../../Toast/toast";
 
 type LoginCredentials = {
   username: string;
@@ -116,14 +115,17 @@ const KratosLogin = () => {
           updateLoginFlowBody: values
         });
         setLoginSuccessful(true);
-        console.log("Login successful");
         push(String(returnTo || "/"));
       } catch (error) {
-        console.error(error);
-        toastError((error as AxiosError).message);
+        if ((error as AxiosError).response?.status === 400) {
+          // Yup, it is!
+          setFlow((error as AxiosError).response?.data as any);
+          return;
+        }
+        handleError(error as AxiosError);
       }
     },
-    [flow, push, returnTo]
+    [flow?.id, handleError, push, returnTo]
   );
 
   useEffect(() => {
@@ -154,6 +156,7 @@ const KratosLogin = () => {
       });
     }
   }, [flow, submitFlow, credentials]);
+
 
   return (
     <div className="w-96">
