@@ -1,12 +1,12 @@
-import {
-  InviteUserForm,
-  InviteUserFormValue
-} from "@flanksource-ui/components/Users/InviteUserForm";
+import useUpdateUser from "@flanksource-ui/api/query-hooks/useUserAPI";
+import { RegisteredUser } from "@flanksource-ui/api/types/users";
+import UserForm, {
+  UserFormValue
+} from "@flanksource-ui/components/Users/UserForm";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
-import { MdAdminPanelSettings } from "react-icons/md";
 import {
   deleteUser,
   getRegisteredUsers,
@@ -16,10 +16,6 @@ import {
 import { Modal } from "../components";
 import { AuthorizationAccessCheck } from "../components/Permissions/AuthorizationAccessCheck";
 import { toastError, toastSuccess } from "../components/Toast/toast";
-import {
-  ManageUserRoleValue,
-  ManageUserRoles
-} from "../components/Users/ManageUserRoles";
 import { UserList } from "../components/Users/UserList";
 import { tables } from "../context/UserAccessContext/permissions";
 import { ConfirmationPromptDialog } from "../ui/AlertDialog/ConfirmationPromptDialog";
@@ -31,7 +27,7 @@ export function UsersPage() {
     useState<boolean>(false);
   const [deletedUserId, setDeletedUserId] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
-  const [openRoleManageModal, setOpenRoleManageModal] = useState(false);
+  const [editUser, setEditUser] = useState<RegisteredUser>();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -47,38 +43,29 @@ export function UsersPage() {
     cacheTime: 0
   });
 
-  const onSubmit = async (val: InviteUserFormValue) => {
-    try {
-      await inviteUser({
-        firstName: val.firstName,
-        lastName: val.lastName,
-        email: val.email
-      });
-      const userId = users.find((item) => item.email === val.email)?.id;
-      if (userId) {
-        await updateUserRole(userId, [val.role]);
-        return;
+  const inviteUserFunction = useCallback(
+    async (val: UserFormValue) => {
+      try {
+        await inviteUser({
+          firstName: val.firstName,
+          lastName: val.lastName,
+          email: val.email
+        });
+        const userId = users.find((item) => item.email === val.email)?.id;
+        if (userId) {
+          await updateUserRole(userId, [val.role]);
+          return;
+        }
+        const userName = `${val.firstName} ${val.lastName}`;
+        toastSuccess(`${userName} invited successfully`);
+        setIsOpen(false);
+        refetch();
+      } catch (ex) {
+        toastError(ex as any);
       }
-      const userName = `${val.firstName} ${val.lastName}`;
-      toastSuccess(`${userName} invited successfully`);
-      setIsOpen(false);
-      refetch();
-    } catch (ex) {
-      toastError(ex as any);
-    }
-  };
-
-  const onRoleSubmit = async (val: ManageUserRoleValue) => {
-    try {
-      await updateUserRole(val.userId, [val.role]);
-      const user = users.find((item) => item.id === val.userId);
-      toastSuccess(`${user!.name} role updated successfully`);
-      setOpenRoleManageModal(false);
-      refetch();
-    } catch (ex) {
-      toastError(ex as any);
-    }
-  };
+    },
+    [refetch, users]
+  );
 
   async function deleteUserAction(userId: string | undefined) {
     if (!userId) {
@@ -96,6 +83,20 @@ export function UsersPage() {
     setOpenDeleteConfirmDialog(false);
   }
 
+  const { mutate: updateUserFunction, isLoading: updatingUser } = useUpdateUser(
+    {
+      onSuccess: (user) => {
+        setEditUser(undefined);
+        refetch();
+        const userName = `${user?.name.first} ${user?.name.last}`;
+        toastSuccess(`${userName} updated successfully`);
+      },
+      onError: (error) => {
+        toastError(error);
+      }
+    }
+  );
+
   return (
     <>
       <Head prefix="Users" />
@@ -111,7 +112,7 @@ export function UsersPage() {
         }
         onRefresh={refetch}
         contentClass="p-0 h-full"
-        loading={isLoading}
+        loading={isLoading || updatingUser}
       >
         <div
           className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col p-6 pb-0"
@@ -119,15 +120,6 @@ export function UsersPage() {
         >
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              <AuthorizationAccessCheck resource={tables.rbac} action="write">
-                <button
-                  className="btn-primary"
-                  onClick={(e) => setOpenRoleManageModal(true)}
-                >
-                  <MdAdminPanelSettings className="mr-2 h-5 w-5" />
-                  Add Role to User
-                </button>
-              </AuthorizationAccessCheck>
               <AuthorizationAccessCheck
                 resource={tables.identities}
                 action="write"
@@ -151,6 +143,7 @@ export function UsersPage() {
                 containerRef.current?.getBoundingClientRect()?.top ?? 0
               }px)`
             }}
+            editUser={(user) => setEditUser(user)}
             deleteUser={(userId) => {
               setDeletedUserId(userId);
               setOpenDeleteConfirmDialog(true);
@@ -164,27 +157,34 @@ export function UsersPage() {
             open={isOpen}
             bodyClass=""
           >
-            <InviteUserForm
+            <UserForm
               className="flex flex-col bg-white p-4"
-              onSubmit={onSubmit}
-              closeModal={() => setIsOpen(false)}
+              onSubmit={inviteUserFunction}
+              onClose={() => setIsOpen(false)}
             />
           </Modal>
-          <Modal
-            title="Update User Role"
-            onClose={() => {
-              setOpenRoleManageModal(false);
-            }}
-            open={openRoleManageModal}
-            bodyClass=""
-          >
-            <ManageUserRoles
-              className="flex flex-col bg-white p-4"
-              onSubmit={onRoleSubmit}
-              registeredUsers={users}
-              closeModal={() => setOpenRoleManageModal(false)}
-            />
-          </Modal>
+
+          {editUser && (
+            <Modal
+              title="Edit User"
+              onClose={() => {
+                setEditUser(undefined);
+              }}
+              open={!!editUser}
+              bodyClass=""
+            >
+              <UserForm
+                className="flex flex-col bg-white p-4"
+                onSubmit={updateUserFunction}
+                isSubmitting={updatingUser}
+                onClose={() => {
+                  setEditUser(undefined);
+                }}
+                user={editUser}
+              />
+            </Modal>
+          )}
+
           <ConfirmationPromptDialog
             isOpen={openDeleteConfirmDialog}
             title="Delete User ?"

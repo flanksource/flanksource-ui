@@ -1,65 +1,59 @@
-import { User } from "@flanksource-ui/api/types/users";
+import { RegisteredUser } from "@flanksource-ui/api/types/users";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Age } from "@flanksource-ui/ui/Age";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
+import { ColumnDef, sortingFns } from "@tanstack/react-table";
 import { CellContext } from "@tanstack/table-core";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BiSolidEdit } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import { IconButton } from "../../ui/Buttons/IconButton";
 import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
-type UserListProps = {
-  data: any[];
-  isLoading?: boolean;
-  deleteUser: (userId: string) => void;
-} & Omit<React.HTMLProps<HTMLDivElement>, "data">;
-
-const DateCell = ({ getValue }: CellContext<User, any>) => (
+const DateCell = ({ getValue }: CellContext<RegisteredUser, any>) => (
   <Age from={getValue<string>()} />
 );
 
+const userListColumns: ColumnDef<RegisteredUser>[] = [
+  {
+    header: "Name",
+    accessorKey: "name"
+  },
+  {
+    header: "Email",
+    accessorKey: "email"
+  },
+  {
+    header: "Roles",
+    accessorKey: "roles",
+    size: 50
+  },
+  {
+    header: "State",
+    accessorKey: "state",
+    size: 50
+  },
+  {
+    header: "Created At",
+    accessorKey: "created_at",
+    cell: DateCell,
+    sortingFn: sortingFns.datetime,
+    size: 80
+  }
+];
+
 const getColumns = (
   deleteUser: (userId: string) => void,
+  editUser: (user: RegisteredUser) => void,
   canDeleteUser: boolean
 ) => {
-  let columns = [
-    {
-      header: "Name",
-      accessorKey: "name"
-    },
-    {
-      header: "Email",
-      accessorKey: "email",
-      Aggregated: ""
-    },
-    {
-      header: "Roles",
-      accessorKey: "roles",
-      size: 50,
-      aggregatedCell: ""
-    },
-    {
-      header: "State",
-      accessorKey: "state",
-      size: 50,
-      aggregatedCell: ""
-    },
-    {
-      header: "Created At",
-      accessorKey: "created_at",
-      cell: DateCell,
-      sortType: "datetime",
-      size: 80,
-      Aggregated: ""
-    }
-  ];
   if (canDeleteUser) {
     return [
-      ...columns,
+      ...userListColumns,
       {
         header: "Actions",
         accessorKey: "actions",
@@ -72,18 +66,33 @@ const getColumns = (
               deleteUser={() => {
                 deleteUser(userId);
               }}
+              editUser={() => {
+                editUser(row.original);
+              }}
             />
           );
         }
       }
     ];
   }
-  return columns;
+  return userListColumns;
 };
 
-function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
+function ActionMenu({
+  deleteUser,
+  editUser
+}: {
+  deleteUser: () => void;
+  editUser: () => void;
+}) {
   return withAuthorizationAccessCheck(
-    <div className="relative">
+    <div
+      className="relative"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
       <Menu>
         <MenuButton className="min-w-7 rounded-full p-0.5 text-gray-400 hover:text-gray-500">
           <DotsVerticalIcon className="h-6 w-6" />
@@ -93,6 +102,32 @@ function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
           anchor="bottom end"
           className="z-10 w-48 divide-y divide-gray-100 rounded-md bg-white shadow-card focus:outline-none"
         >
+          <MenuItem
+            as="div"
+            className="flex w-full cursor-pointer items-center p-3 text-gray-700 hover:bg-gray-200"
+            onClick={() => {
+              editUser();
+            }}
+          >
+            <>
+              <IconButton
+                className="z-5 mr-2 bg-transparent group-hover:inline-block"
+                ovalProps={{
+                  stroke: "blue",
+                  height: "18px",
+                  width: "18px",
+                  fill: "transparent"
+                }}
+                icon={
+                  <BiSolidEdit
+                    className="border-l-1 border-0 border-gray-200 text-gray-600"
+                    size={18}
+                  />
+                }
+              />
+              Edit User
+            </>
+          </MenuItem>
           <MenuItem
             as="div"
             className="flex w-full cursor-pointer items-center p-3 text-gray-700 hover:bg-gray-200"
@@ -127,10 +162,18 @@ function ActionMenu({ deleteUser }: { deleteUser: () => void }) {
   );
 }
 
+type UserListProps = {
+  data: RegisteredUser[];
+  isLoading?: boolean;
+  deleteUser: (userId: string) => void;
+  editUser: (user: RegisteredUser) => void;
+} & Omit<React.HTMLProps<HTMLDivElement>, "data">;
+
 export function UserList({
   data,
   isLoading,
   deleteUser,
+  editUser,
   className,
   ...rest
 }: UserListProps) {
@@ -146,13 +189,14 @@ export function UserList({
   }, [hasResourceAccess, roles]);
 
   const columns = useMemo(() => {
-    return getColumns(deleteUser, canDeleteUser);
-  }, [canDeleteUser, deleteUser]);
+    return getColumns(deleteUser, editUser, canDeleteUser);
+  }, [canDeleteUser, deleteUser, editUser]);
 
   return (
     <div className={clsx(className)} {...rest} ref={containerRef}>
       <DataTable
         stickyHead
+        handleRowClick={(row) => editUser(row.original)}
         columns={columns}
         data={data}
         tableStyle={{ borderSpacing: "0" }}
