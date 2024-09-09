@@ -1,4 +1,5 @@
 import { toastError } from "@flanksource-ui/components/Toast/toast";
+import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import axios, { AxiosError } from "axios";
 
 const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
@@ -150,7 +151,10 @@ for (const client of [
       return response;
     },
     (error) => {
-      redirectToLoginPageOnSessionExpiry(error);
+      // For canary UI, we don't have an auth system in place
+      if (!isCanaryUI) {
+        redirectToLoginPageOnSessionExpiry(error);
+      }
       if ("code" in (error as any)) {
         // Show a toast message for timeout and network errors
         if (error.code === "ECONNABORTED") {
