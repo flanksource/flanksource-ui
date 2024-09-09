@@ -16,7 +16,10 @@ export default function CRDSource({
   source,
   showMinimal = false
 }: CRDSourceProps) {
-  if (source?.toLowerCase() !== "KubernetesCRD".toLowerCase()) {
+  if (
+    source?.toLowerCase() !== "KubernetesCRD".toLowerCase() &&
+    !source?.toLowerCase().startsWith("kubernetes")
+  ) {
     return null;
   }
 
