@@ -45,7 +45,7 @@ export default function PlaybookRunsDetailsPage() {
         playbookRun?.status === "waiting" ||
         playbookRun?.status === "pending"
       ) {
-        return 5000;
+        return 2000;
       }
       return false;
     }

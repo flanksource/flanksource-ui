@@ -27,7 +27,13 @@ export default function PlaybookRunActionFetch({
     queryFn: () => getPlaybookRunActionById(playbookRunActionId),
     enabled: !!playbookRunActionId,
     staleTime: 0,
-    cacheTime: 0
+    cacheTime: 0,
+    refetchInterval: (data) => {
+      if (data?.status !== "completed" && data?.status !== "failed") {
+        return 1000;
+      }
+      return false;
+    }
   });
 
   useEffect(() => {
