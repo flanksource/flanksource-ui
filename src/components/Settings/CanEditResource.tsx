@@ -76,16 +76,17 @@ export default function CanEditResource({
 }) {
   return (
     <div className="flex flex-1 flex-row justify-end gap-2">
-      <div className="flex flex-1">
-        {onBack && (
+      {onBack && (
+        <div className="flex flex-1">
           <Button
             type="button"
             text="Back"
             className="btn-default btn-btn-secondary-base btn-secondary"
             onClick={onBack}
           />
-        )}
-      </div>
+        </div>
+      )}
+
       <CanEditResourceInner {...props} />
     </div>
   );

@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import { Button } from "../../ui/Buttons/Button";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
+import CanEditResource from "../Settings/CanEditResource";
 import { Connection } from "./ConnectionFormModal";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { TestConnection } from "./TestConnection";
@@ -138,46 +139,48 @@ export function ConnectionForm({
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
-            {formValue?.id && (
-              <AuthorizationAccessCheck
-                resource={tables.connections}
-                action="write"
-              >
-                <Button
-                  text="Delete"
-                  icon={<FaTrash />}
-                  onClick={handleDelete}
-                  className="btn-danger"
-                />
-              </AuthorizationAccessCheck>
-            )}
-            {connectionType && !formValue?.id && (
-              <button
-                className={clsx("btn-secondary-base btn-secondary")}
-                type="button"
-                onClick={handleBack}
-              >
-                Back
-              </button>
-            )}
-            <div className="flex flex-1 justify-end gap-2">
-              {formValue?.id && <TestConnection connectionId={formValue.id} />}
-              <AuthorizationAccessCheck
-                resource={tables.connections}
-                action="write"
-              >
-                <Button
-                  type="submit"
-                  icon={
-                    isSubmitting ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  text={Boolean(formValue?.id) ? "Update" : "Save"}
-                  className="btn-primary"
-                />
-              </AuthorizationAccessCheck>
-            </div>
+            <CanEditResource
+              id={formValue?.id}
+              namespace={formValue?.namespace}
+              name={formValue?.name}
+              resourceType={"connections"}
+              source={formValue?.source}
+              onBack={connectionType && !formValue?.id ? handleBack : undefined}
+            >
+              {formValue?.id && (
+                <AuthorizationAccessCheck
+                  resource={tables.connections}
+                  action="write"
+                >
+                  <Button
+                    text="Delete"
+                    icon={<FaTrash />}
+                    onClick={handleDelete}
+                    className="btn-danger"
+                  />
+                </AuthorizationAccessCheck>
+              )}
+              <div className="flex flex-1 justify-end gap-2">
+                {formValue?.id && (
+                  <TestConnection connectionId={formValue.id} />
+                )}
+                <AuthorizationAccessCheck
+                  resource={tables.connections}
+                  action="write"
+                >
+                  <Button
+                    type="submit"
+                    icon={
+                      isSubmitting ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    text={Boolean(formValue?.id) ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                </AuthorizationAccessCheck>
+              </div>
+            </CanEditResource>
           </div>
         </Form>
       )}
