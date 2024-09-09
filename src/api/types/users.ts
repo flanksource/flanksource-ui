@@ -1,9 +1,10 @@
-import { CreatedAt, Avatar, Timestamped, UpdatedAt } from "../traits";
+import { Avatar, CreatedAt, Timestamped, UpdatedAt } from "../traits";
 
 export interface NewUser {
   name: string;
   email: string;
   avatar?: string;
+  roles?: string;
 }
 
 export interface RegisteredUser extends CreatedAt, UpdatedAt {

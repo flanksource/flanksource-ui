@@ -1,4 +1,11 @@
-import { Auth, CanaryChecker, IncidentCommander, Rback } from "../axios";
+import { UserFormValue } from "@flanksource-ui/components/Users/UserForm";
+import {
+  Auth,
+  CanaryChecker,
+  IncidentCommander,
+  People,
+  Rback
+} from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
 import { NewUser, PeopleRoles, RegisteredUser, User } from "../types/users";
@@ -87,6 +94,16 @@ export const updateUserRole = (userId: string, roles: string[]) => {
       roles
     })
   );
+};
+
+export const updateUser = (user: UserFormValue) => {
+  return People.post<{
+    email: string;
+    name: {
+      first: string;
+      last: string;
+    };
+  } | null>(`/update`, user);
 };
 
 export const deleteUser = (userId: string) =>

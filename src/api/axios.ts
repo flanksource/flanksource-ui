@@ -118,6 +118,15 @@ export const Auth = axios.create({
   }
 });
 
+export const People = axios.create({
+  baseURL: `${API_BASE}/people`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const PlaybookAPI = axios.create({
   baseURL: `${API_BASE}/playbook`,
   headers: {

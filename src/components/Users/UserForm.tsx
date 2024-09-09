@@ -1,61 +1,76 @@
+import { RegisteredUser } from "@flanksource-ui/api/types/users";
 import { Roles } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import clsx from "clsx";
-import React from "react";
 import { useForm } from "react-hook-form";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
-export type InviteUserFormValue = {
+export type UserFormValue = {
+  id?: string;
   firstName: string;
   lastName: string;
   email: string;
   role: string;
+  active: boolean;
 };
 
-export type InviteUserFormProps = Omit<
-  React.HTMLProps<HTMLDivElement>,
-  "onSubmit"
-> & {
-  onSubmit: (val: InviteUserFormValue) => void;
-  closeModal: () => void;
-};
-
-const defaultFormValue = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  role: ""
+export type InviteUserFormProps = {
+  onSubmit: (val: UserFormValue) => void;
+  onClose: () => void;
+  className?: string;
+  user?: RegisteredUser;
+  isSubmitting?: boolean;
 };
 
 const allRoles = Object.keys(Roles);
 
-export function InviteUserForm({
+export default function UserForm({
   onSubmit,
   className,
-  closeModal,
-  ...rest
+  onClose,
+  user,
+  isSubmitting = false
 }: InviteUserFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset
-  } = useForm({
-    defaultValues: defaultFormValue
+  } = useForm<UserFormValue>({
+    defaultValues: {
+      id: user?.id,
+      firstName: user?.traits?.name.first || "",
+      lastName: user?.traits?.name.last || "",
+      email: user?.traits?.email || "",
+      role:
+        user?.roles?.sort(
+          // we want highest role to be selected by default in case of multiple
+          // roles
+          (a, b) => {
+            if (a === "admin") return -1;
+            if (b === "admin") return 1;
+            if (a === "editor") return -1;
+            if (b === "editor") return 1;
+            if (a === "viewer") return -1;
+            if (b === "viewer") return 1;
+            return 0;
+          }
+        )?.[0] || "",
+      active: user?.state === "active"
+    }
   });
-  const onSubmitFn = async (data: InviteUserFormValue) => {
-    onSubmit(data);
-  };
+
   const handleCancel = () => {
     reset();
-    closeModal();
+    onClose();
   };
 
   return (
-    <div className={clsx(className)} {...rest}>
+    <div className={clsx(className)}>
       <form
         className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
-        onSubmit={handleSubmit(onSubmitFn)}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <div>
@@ -147,7 +162,10 @@ export function InviteUserForm({
         <div className="sm:col-span-2">
           <AuthorizationAccessCheck resource={tables.identities} action="write">
             <button type="submit" className="btn-primary float-right">
-              Invite user
+              {isSubmitting && (
+                <AiOutlineLoading3Quarters className="mr-2 animate-spin" />
+              )}
+              {user?.id ? "Update" : " Invite user"}
             </button>
           </AuthorizationAccessCheck>
           <button
