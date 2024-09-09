@@ -17,7 +17,7 @@ export function ConfigDetailsInsightsPage() {
 
   return (
     <ConfigDetailsTabs
-      pageTitlePrefix={"Catalog Changes"}
+      pageTitlePrefix={"Catalog Insights"}
       isLoading={isLoading}
       refetch={() => setRefreshButtonClickedTrigger((x) => x++)}
       activeTabName="Insights"

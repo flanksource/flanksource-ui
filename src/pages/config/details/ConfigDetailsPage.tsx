@@ -73,7 +73,7 @@ export function ConfigDetailsPage() {
 
   return (
     <ConfigDetailsTabs
-      pageTitlePrefix={"Catalog Changes"}
+      pageTitlePrefix={"Catalog"}
       isLoading={isLoading}
       refetch={refetch}
       activeTabName="Catalog"
