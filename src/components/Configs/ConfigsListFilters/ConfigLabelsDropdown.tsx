@@ -15,7 +15,7 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
   const { data, isLoading } = useGetConfigLabelsListQuery();
 
   const labelItems = useMemo(() => {
-    if (data) {
+    if (data && Array.isArray(data)) {
       const options = data.map((tag) => ({
         label: (
           <div className="block space-x-1 text-sm">
@@ -26,6 +26,11 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
         value: `${tag.key}__:__${tag.value}`
       }));
       return [{ label: "All", value: "All" }, ...options];
+    } else {
+      // Adding this console.error to help debug the issue I noticed happening
+      // inside the Saas, that's leading to the catalog page crashing
+      console.error("Invalid data for ConfigLabelsDropdown", data);
+      return [{ label: "All", value: "All" }];
     }
   }, [data]);
 
