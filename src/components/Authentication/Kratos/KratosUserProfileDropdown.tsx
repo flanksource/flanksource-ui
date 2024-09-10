@@ -1,4 +1,10 @@
-import { Menu, Transition } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition
+} from "@headlessui/react";
 import { Fragment } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useUser } from "../../../context";
@@ -19,7 +25,7 @@ export function KratosUserProfileDropdown({
   return (
     <Menu as="div" className="relative ml-3 flex-shrink-0">
       <div>
-        <Menu.Button className="flex items-center rounded-full text-sm">
+        <MenuButton className="flex items-center rounded-full text-sm">
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -32,7 +38,7 @@ export function KratosUserProfileDropdown({
               <FaUserAlt size={24} />
             </ClickableSvg>
           )}
-        </Menu.Button>
+        </MenuButton>
       </div>
       {/* @ts-ignore */}
       <Transition
@@ -44,38 +50,38 @@ export function KratosUserProfileDropdown({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 mt-2 w-64 origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <Menu.Item>
+        <MenuItems className="absolute right-0 mt-2 w-64 origin-top-right scale-100 transform rounded-md bg-white opacity-100 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <MenuItem>
             <span className="bold broder-black block truncate rounded-t-md border-0 border-b border-gray-400 bg-slate-300 px-4 py-2 text-lg text-gray-600">
               Hi <b title={user?.name}>{user?.name}</b>
             </span>
-          </Menu.Item>
+          </MenuItem>
 
           {userNavigation.map((item) => (
-            <Menu.Item key={item.name}>
+            <MenuItem key={item.name}>
               <a
                 href={item.href}
                 className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               >
                 {item.name}
               </a>
-            </Menu.Item>
+            </MenuItem>
           ))}
-          <Menu.Item>
+          <MenuItem>
             <button
               onClick={openKubeConfigModal}
               className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
             >
               Download kubeconfig
             </button>
-          </Menu.Item>
-          <Menu.Item>
+          </MenuItem>
+          <MenuItem>
             <VersionInfo />
-          </Menu.Item>
-          <Menu.Item>
+          </MenuItem>
+          <MenuItem>
             <KratosLogoutButton />
-          </Menu.Item>
-        </Menu.Items>
+          </MenuItem>
+        </MenuItems>
       </Transition>
     </Menu>
   );
