@@ -36,14 +36,17 @@ export default function PlaybookRunsDetailsPage() {
     enabled: !!id,
     staleTime: 0,
     cacheTime: 0,
+    // We want to refetch the playbook run every 5 seconds when the page is in
+    // the background.
+    refetchIntervalInBackground: true,
     // When the playbook run is running or pending, we want to refetch every 5
     // seconds to get the latest status. Otherwise, we don't want to refetch at
     // all.
     refetchInterval: (playbookRun) => {
       if (
-        playbookRun?.status === "running" ||
-        playbookRun?.status === "waiting" ||
-        playbookRun?.status === "pending"
+        playbookRun?.status !== "completed" &&
+        playbookRun?.status !== "failed" &&
+        playbookRun?.status !== "cancelled"
       ) {
         return 2000;
       }

@@ -28,6 +28,9 @@ export default function PlaybookRunActionFetch({
     enabled: !!playbookRunActionId,
     staleTime: 0,
     cacheTime: 0,
+    // We want to refetch the playbook run every 5 seconds when the page is in
+    // the background.
+    refetchIntervalInBackground: true,
     refetchInterval: (data) => {
       if (data?.status !== "completed" && data?.status !== "failed") {
         return 1000;
