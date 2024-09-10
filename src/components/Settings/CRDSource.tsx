@@ -7,6 +7,7 @@ type CRDSourceProps = {
   name?: string;
   source?: string;
   showMinimal?: boolean;
+  hideSourceLink?: boolean;
 };
 
 export default function CRDSource({
@@ -14,12 +15,17 @@ export default function CRDSource({
   name,
   namespace,
   source,
-  showMinimal = false
+  showMinimal = false,
+  hideSourceLink = false
 }: CRDSourceProps) {
   if (
     source?.toLowerCase() !== "KubernetesCRD".toLowerCase() &&
     !source?.toLowerCase().startsWith("kubernetes")
   ) {
+    return null;
+  }
+
+  if (hideSourceLink) {
     return null;
   }
 

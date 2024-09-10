@@ -92,6 +92,7 @@ export default function NotificationsForm({
                       onDeleted={onDeleted}
                     />
                   )}
+                  <div className="flex-1" />
                   {(notification?.source === "UI" || !notification?.source) && (
                     <Button
                       type="submit"

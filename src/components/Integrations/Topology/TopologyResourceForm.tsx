@@ -140,7 +140,15 @@ export default function TopologyResourceForm({
                   name={topology?.name!}
                   agentId={topology?.agent?.id}
                   agentName={topology?.agent?.name}
-                  onBack={onBack}
+                  extraButtons={
+                    onBack && (
+                      <Button
+                        text="Back"
+                        onClick={onBack}
+                        className="btn-secondary"
+                      />
+                    )
+                  }
                 >
                   {!!topology?.id && (
                     <>
