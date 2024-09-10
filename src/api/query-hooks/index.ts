@@ -1,7 +1,6 @@
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { isNull } from "lodash";
-import { CostsData } from "../../api/types/common";
 import { toastError } from "../../components/Toast/toast";
 import { getIncidentHistory } from "../services/IncidentsHistory";
 import { getAllAgents } from "../services/agents";
@@ -30,6 +29,7 @@ import {
   getTopologyNameByID
 } from "../services/topology";
 import { getPersons, getVersionInfo } from "../services/users";
+import { Analysis } from "../types/configs";
 import { IncidentHistory } from "../types/incident";
 import { ComponentTeamItem } from "../types/topology";
 
@@ -372,7 +372,10 @@ export function useGetConfigLabelsListQuery() {
         throw error;
       }
       return data ?? [];
-    }
+    },
+    // 1 minute
+    cacheTime: 1000 * 60,
+    staleTime: 1000 * 60
   });
 }
 
@@ -435,9 +438,9 @@ export function useIncidentsHistoryQuery(
 
 export function useConfigAnalysisQuery(
   configId: string,
-  options?: UseQueryOptions<CostsData[], Error>
+  options?: UseQueryOptions<Analysis[], Error>
 ) {
-  return useQuery<CostsData[], Error>(
+  return useQuery<Analysis[], Error>(
     ["config_analysis", configId],
     () => getConfigAnalysis(configId),
     options
