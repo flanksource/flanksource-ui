@@ -38,5 +38,5 @@ values.schema.deref.json:
 	cp values.schema.json deref.ts $(TMP)
 	bash -c  "cd $(TMP) && \
 		npm i @apidevtools/json-schema-ref-parser && \
-		npx @digitak/esrun  deref.ts > $(pwd)/values.schema.deref.json"
+		npx @digitak/esrun  deref.ts | jq  > $(pwd)/values.schema.deref.json"
 

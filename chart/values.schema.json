@@ -86,11 +86,8 @@
         },
         "className": {
           "default": "",
+          "description": "Deprecated: use ingressClassName instead",
           "title": "className"
-        },
-        "ingressClassName": {
-          "default": "",
-          "title": "ingressClassName"
         },
         "enabled": {
           "default": "false",
@@ -99,6 +96,10 @@
         "host": {
           "default": "incident-commander-ui.local",
           "title": "host"
+        },
+        "ingressClassName": {
+          "default": "",
+          "title": "ingressClassName"
         },
         "tls": {
           "items": {
