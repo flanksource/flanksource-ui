@@ -5,7 +5,7 @@ import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import dayjs from "dayjs";
 import { useMemo } from "react";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
 import { Status } from "../../Status";
@@ -113,11 +113,27 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
-          {configDetails.health && (
+          {configDetails.deleted_at && (
             <DisplayDetailsRow
               items={[
                 {
                   label: "Status",
+                  value: (
+                    <div className="flex items-center gap-1">
+                      <FaTrash className="inline text-red-500" />
+                      <span>Deleted</span>
+                      <Age from={configDetails.deleted_at} suffix={true} />
+                    </div>
+                  )
+                }
+              ]}
+            />
+          )}
+          {configDetails.health && (
+            <DisplayDetailsRow
+              items={[
+                {
+                  label: configDetails.deleted_at ? "Last status" : "Status",
                   value: (
                     <>
                       <Status
@@ -184,17 +200,7 @@ export function ConfigDetails({ configId }: Props) {
                       )}
                   </>
                 )
-              },
-              ...(configDetails.deleted_at
-                ? [
-                    {
-                      label: "Deleted",
-                      value: (
-                        <Age from={configDetails.deleted_at} suffix={true} />
-                      )
-                    }
-                  ]
-                : [])
+              }
             ]}
           />
 

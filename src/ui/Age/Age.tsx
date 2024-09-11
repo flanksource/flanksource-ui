@@ -4,7 +4,7 @@ import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import { Tooltip } from "react-tooltip";
 import { isEmpty } from "../../utils/date";
 
-function formatDate(data: dayjs.Dayjs) {
+export function formatDateForTooltip(data: dayjs.Dayjs) {
   return data.format("YYYY-MM-DD HH:mm:ssZ");
 }
 
@@ -40,7 +40,7 @@ export default function Age({
         </span>
         <Tooltip
           id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
-          content={formatDate(_from)}
+          content={formatDateForTooltip(_from)}
         />
       </>
     );
@@ -61,7 +61,7 @@ export default function Age({
         </span>
         <Tooltip
           id={`age-tooltip-${duration.asMilliseconds()}`}
-          content={`${formatDate(_from)}`}
+          content={`${formatDateForTooltip(_from)}`}
         />
       </>
     );
@@ -77,7 +77,7 @@ export default function Age({
       </span>
       <Tooltip
         id={`age-tooltip-${_from.local().to(_to)}`}
-        content={`${formatDate(_from)} - ${formatDate(_to)}`}
+        content={`${formatDateForTooltip(_from)} - ${formatDateForTooltip(_to)}`}
       />
     </>
   );
