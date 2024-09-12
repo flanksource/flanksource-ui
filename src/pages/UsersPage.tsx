@@ -1,4 +1,6 @@
-import useUpdateUser from "@flanksource-ui/api/query-hooks/useUserAPI";
+import useUpdateUser, {
+  useDeleteUser
+} from "@flanksource-ui/api/query-hooks/useUserAPI";
 import { RegisteredUser } from "@flanksource-ui/api/types/users";
 import UserForm, {
   UserFormValue
@@ -8,7 +10,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
 import {
-  deleteUser,
   getRegisteredUsers,
   inviteUser,
   updateUserRole
@@ -67,21 +68,18 @@ export function UsersPage() {
     [refetch, users]
   );
 
-  async function deleteUserAction(userId: string | undefined) {
-    if (!userId) {
-      return;
-    }
-    try {
-      const { data } = await deleteUser(userId);
+  const { mutate: deleteUserFunction, isLoading: isDeleting } = useDeleteUser({
+    onSuccess: () => {
       refetch();
-      if (data) {
-        toastSuccess(`user deleted successfully`);
-      }
-    } catch (ex: any) {
-      toastError(ex);
+      toastSuccess(`user deleted successfully`);
+    },
+    onError: (error) => {
+      toastError(error);
+    },
+    onSettled: () => {
+      setOpenDeleteConfirmDialog(false);
     }
-    setOpenDeleteConfirmDialog(false);
-  }
+  });
 
   const { mutate: updateUserFunction, isLoading: updatingUser } = useUpdateUser(
     {
@@ -190,8 +188,9 @@ export function UsersPage() {
             title="Delete User ?"
             description="Are you sure you want to delete this user ?"
             onClose={() => setOpenDeleteConfirmDialog(false)}
+            isLoading={isDeleting}
             onConfirm={() => {
-              deleteUserAction(deletedUserId);
+              deleteUserFunction({ id: deletedUserId! });
             }}
           />
         </div>

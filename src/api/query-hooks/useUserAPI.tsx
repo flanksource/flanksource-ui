@@ -1,6 +1,23 @@
 import { UserFormValue } from "@flanksource-ui/components/Users/UserForm";
-import { useMutation } from "@tanstack/react-query";
-import { updateUser } from "../services/users";
+import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import { deleteUser, updateUser } from "../services/users";
+
+export function useDeleteUser(
+  options: UseMutationOptions<
+    any,
+    any,
+    {
+      id: string;
+    }
+  >
+) {
+  return useMutation({
+    mutationFn: async ({ id }) => {
+      await deleteUser(id);
+    },
+    ...options
+  });
+}
 
 export default function useUpdateUser({
   onSuccess,

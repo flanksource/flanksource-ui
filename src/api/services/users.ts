@@ -106,10 +106,7 @@ export const updateUser = (user: UserFormValue) => {
   } | null>(`/update`, user);
 };
 
-export const deleteUser = (userId: string) =>
-  resolvePostGrestRequestWithPagination<{}>(
-    IncidentCommander.delete(`/identities?id=eq.${userId}`)
-  );
+export const deleteUser = (userId: string) => People.delete(`/${userId}`);
 
 export type WhoamiResponse = {
   message: string;
