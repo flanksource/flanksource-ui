@@ -7,7 +7,7 @@ import { IoCloseCircleSharp } from "react-icons/io5";
 export function ToasterWithCloseButton() {
   return (
     <Toaster
-      position="top-right"
+      position="bottom-right"
       reverseOrder={false}
       toastOptions={{
         duration: 5000
