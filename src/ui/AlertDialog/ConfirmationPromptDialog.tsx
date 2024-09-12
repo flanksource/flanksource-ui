@@ -2,6 +2,7 @@ import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
 import { ComponentProps } from "react";
+import { FaCircleNotch } from "react-icons/fa";
 
 type ConfirmationPromptDialogProps = {
   isOpen: boolean;
@@ -11,6 +12,7 @@ type ConfirmationPromptDialogProps = {
   onConfirm: () => void;
   yesLabel?: string;
   closeLabel?: string;
+  isLoading?: boolean;
 } & ComponentProps<typeof Dialog>;
 
 export function ConfirmationPromptDialog({
@@ -21,6 +23,7 @@ export function ConfirmationPromptDialog({
   onConfirm,
   yesLabel = "Delete",
   closeLabel = "Close",
+  isLoading = false,
   className,
   ...rest
 }: ConfirmationPromptDialogProps) {
@@ -64,6 +67,9 @@ export function ConfirmationPromptDialog({
                 onClick={onConfirm}
                 data-testid="confirm-button"
               >
+                {isLoading && (
+                  <FaCircleNotch className="mr-1 inline animate-spin" />
+                )}
                 {yesLabel}
               </button>
             </div>
