@@ -219,7 +219,15 @@ export default function SpecEditorForm({
                 agentId={initialValues.agent_details?.id}
                 agentName={initialValues.agent_details?.name}
                 source={initialValues.source}
-                onBack={onBack}
+                extraButtons={
+                  onBack && (
+                    <Button
+                      text="Back"
+                      onClick={onBack}
+                      className="btn-secondary"
+                    />
+                  )
+                }
               >
                 {!!initialValues.id && (
                   <DeleteResource

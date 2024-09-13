@@ -6,10 +6,11 @@ import { useMemo } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import { Button } from "../../ui/Buttons/Button";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
+import CanEditResource from "../Settings/CanEditResource";
 import { Connection } from "./ConnectionFormModal";
+import { ConnectionType, connectionTypes } from "./connectionTypes";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { TestConnection } from "./TestConnection";
-import { ConnectionType, connectionTypes } from "./connectionTypes";
 
 interface ConnectionFormProps {
   connectionType: ConnectionType;
@@ -138,44 +139,74 @@ export function ConnectionForm({
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
-            {formValue?.id && (
+            <div className="flex flex-1 gap-2">
+              {connectionType && !formValue?.id && (
+                <Button
+                  text="Back"
+                  onClick={handleBack}
+                  className="btn-secondary"
+                />
+              )}
+
+              {formValue?.id && (
+                <AuthorizationAccessCheck
+                  resource={tables.connections}
+                  action="write"
+                >
+                  <CanEditResource
+                    id={formValue?.id}
+                    namespace={formValue?.namespace}
+                    name={formValue?.name}
+                    resourceType={"connections"}
+                    source={formValue?.source}
+                    hideSourceLink
+                    className="flex flex-row gap-2"
+                  >
+                    <Button
+                      text="Delete"
+                      icon={<FaTrash />}
+                      onClick={handleDelete}
+                      className="btn-danger"
+                    />
+                  </CanEditResource>
+                </AuthorizationAccessCheck>
+              )}
+              {/* We want to push test connection next to save button, if we have delete and update buttons */}
+              {(formValue?.source === "UI" || !formValue?.source) && (
+                <div className="flex-1" />
+              )}
+              {formValue?.id && (
+                <>
+                  <TestConnection connectionId={formValue.id} />
+                  {/* We want to show Test Connection Button at the start, we we won't show delete button */}
+                  {formValue.source !== "UI" && formValue.source && (
+                    <div className="flex-1" />
+                  )}
+                </>
+              )}
               <AuthorizationAccessCheck
                 resource={tables.connections}
                 action="write"
               >
-                <Button
-                  text="Delete"
-                  icon={<FaTrash />}
-                  onClick={handleDelete}
-                  className="btn-danger"
-                />
-              </AuthorizationAccessCheck>
-            )}
-            {connectionType && !formValue?.id && (
-              <button
-                className={clsx("btn-secondary-base btn-secondary")}
-                type="button"
-                onClick={handleBack}
-              >
-                Back
-              </button>
-            )}
-            <div className="flex flex-1 justify-end gap-2">
-              {formValue?.id && <TestConnection connectionId={formValue.id} />}
-              <AuthorizationAccessCheck
-                resource={tables.connections}
-                action="write"
-              >
-                <Button
-                  type="submit"
-                  icon={
-                    isSubmitting ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  text={Boolean(formValue?.id) ? "Update" : "Save"}
-                  className="btn-primary"
-                />
+                <CanEditResource
+                  id={formValue?.id}
+                  namespace={formValue?.namespace}
+                  name={formValue?.name}
+                  resourceType={"connections"}
+                  source={formValue?.source}
+                  className="flex flex-row gap-2"
+                >
+                  <Button
+                    type="submit"
+                    icon={
+                      isSubmitting ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    text={Boolean(formValue?.id) ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                </CanEditResource>
               </AuthorizationAccessCheck>
             </div>
           </div>

@@ -7,6 +7,7 @@ import FormikNotificationsTemplateField from "../Forms/Formik/FormikNotification
 import FormikTextInput from "../Forms/Formik/FormikTextInput";
 import NotificationsRecipientsTabs from "../Forms/Notifications/NotificationsRecipientsTabs";
 import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
+import CanEditResource from "../Settings/CanEditResource";
 import { Notification } from "./notificationsTableColumns";
 
 type NotificationsFormProps = {
@@ -74,26 +75,33 @@ export default function NotificationsForm({
               />
             </div>
             <div className="flex flex-row rounded-b-md bg-gray-100 p-4">
-              <div className="flex flex-1 flex-row justify-end space-x-4">
-                {!!notification && (
-                  <DeleteResource
-                    resourceId={notification.id}
-                    resourceInfo={{
-                      table: "notifications",
-                      name: "Notifications",
-                      api: "config-db"
-                    }}
-                    onDeleted={onDeleted}
-                  />
-                )}
-                {(notification?.source === "UI" || !notification?.source) && (
-                  <Button
-                    type="submit"
-                    text={!!notification ? "Update" : "Save"}
-                    className="btn-primary"
-                  />
-                )}
-              </div>
+              <CanEditResource
+                id={notification?.id}
+                resourceType={"notifications"}
+                source={notification?.source}
+              >
+                <div className="flex flex-1 flex-row justify-end space-x-4">
+                  {!!notification && (
+                    <DeleteResource
+                      resourceId={notification.id}
+                      resourceInfo={{
+                        table: "notifications",
+                        name: "Notifications",
+                        api: "config-db"
+                      }}
+                      onDeleted={onDeleted}
+                    />
+                  )}
+                  <div className="flex-1" />
+                  {(notification?.source === "UI" || !notification?.source) && (
+                    <Button
+                      type="submit"
+                      text={!!notification ? "Update" : "Save"}
+                      className="btn-primary"
+                    />
+                  )}
+                </div>
+              </CanEditResource>
             </div>
           </Form>
         )}
