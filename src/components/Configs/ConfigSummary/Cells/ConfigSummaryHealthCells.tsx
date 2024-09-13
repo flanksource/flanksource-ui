@@ -48,7 +48,7 @@ export function ConfigSummaryHealthCell({
         e.stopPropagation();
       }}
     >
-      <CountBar items={statusLines} barStyle="RAG" />
+      <CountBar items={sortData(statusLines)} barStyle="RAG" />
     </div>
   );
 }
@@ -84,5 +84,21 @@ export function ConfigSummaryHealthAggregateCell({
   if (!value) {
     return null;
   }
-  return <CountBar items={statusLines} barStyle="RAG" />;
+  return <CountBar items={sortData(statusLines)} barStyle="RAG" />;
+}
+
+function num(count: number | string) {
+  if (typeof count == "string") {
+    return parseInt(count);
+  }
+
+  return count;
+}
+
+function sortData(data: Count[]) {
+  if (data.length === 0) {
+    return data;
+  }
+
+  return data.sort((a, b) => num(a.count) - num(b.count));
 }
