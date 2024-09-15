@@ -4,7 +4,11 @@ import { CellContext } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getConfigStatusColor } from "../ConfigSummaryList";
-import { Count, CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
+import {
+  Count,
+  CountBar,
+  OrderByColor
+} from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export function ConfigSummaryHealthCell({
   getValue,
@@ -48,7 +52,7 @@ export function ConfigSummaryHealthCell({
         e.stopPropagation();
       }}
     >
-      <CountBar items={statusLines} barStyle="RAG" />
+      <CountBar items={OrderByColor(statusLines)} barStyle="RAG" />
     </div>
   );
 }
@@ -84,5 +88,5 @@ export function ConfigSummaryHealthAggregateCell({
   if (!value) {
     return null;
   }
-  return <CountBar items={statusLines} barStyle="RAG" />;
+  return <CountBar items={OrderByColor(statusLines)} barStyle="RAG" />;
 }
