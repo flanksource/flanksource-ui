@@ -19,6 +19,24 @@ export default function ChangeCountIcon({ count }: { count: number }) {
   );
 }
 
+export function OrderByColor(items: Count[]) {
+  const colorOrder = ["green", "red", "orange", "gray"];
+
+  return items.sort((a, b) => {
+    const colorA = a.color?.toLowerCase() || "";
+    const colorB = b.color?.toLowerCase() || "";
+
+    const indexA = colorOrder.findIndex((color) => colorA.includes(color));
+    const indexB = colorOrder.findIndex((color) => colorB.includes(color));
+
+    if (indexA === -1 && indexB === -1) return 0;
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+
+    return indexA - indexB;
+  });
+}
+
 function num(count: number | string) {
   let val = `${count}`;
 
