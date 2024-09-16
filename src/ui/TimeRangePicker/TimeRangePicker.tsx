@@ -12,12 +12,14 @@ type TimeRangePickerType = Omit<
 > & {
   value?: TimeRangeOption;
   onChange: (val: TimeRangeOption) => void;
+  showFutureTimeRanges?: boolean;
 };
 
 export function TimeRangePicker({
   onChange = () => {},
   value,
-  className = "w-fit"
+  className = "w-fit",
+  showFutureTimeRanges = false
 }: TimeRangePickerType) {
   const currentRange = useMemo((): TimeRangeOption | undefined => {
     return value;
@@ -143,19 +145,19 @@ export function TimeRangePicker({
       <Popover className={clsx("relative text-sm", className)}>
         <Popover.Button
           type="button"
-          className="inline-flex rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          className="inline-flex w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         >
           {({ open }) => {
             return (
               <>
                 <FiClock className="mt-1" />
                 {updateDisplayValue && (
-                  <div className="ml-2 items-center font-medium">
+                  <div className="ml-2 flex-1 items-center text-left font-medium">
                     <span>{updateDisplayValue}</span>
                   </div>
                 )}
                 {!updateDisplayValue && (
-                  <div className="ml-2 items-center font-medium">
+                  <div className="ml-2 flex-1 items-center text-left font-medium">
                     Please select time range
                   </div>
                 )}
@@ -180,6 +182,7 @@ export function TimeRangePicker({
                 closePicker={() => close()}
                 currentRange={currentRange}
                 changeRangeValue={changeRangeValue}
+                showFutureTimeRanges={showFutureTimeRanges}
               />
             );
           }}

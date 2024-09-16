@@ -21,13 +21,15 @@ type TimeRangePickerBodyProps = {
   closePicker: any;
   currentRange?: TimeRangeOption;
   changeRangeValue: (range: TimeRangeOption) => void;
+  showFutureTimeRanges?: boolean;
 };
 
 export function TimeRangePickerBody({
   isOpen,
   closePicker = () => {},
   currentRange,
-  changeRangeValue = () => {}
+  changeRangeValue = () => {},
+  showFutureTimeRanges = false
 }: TimeRangePickerBodyProps) {
   const [params, setParams] = useSearchParams();
   const [recentRanges, setRecentRanges] = useAtom(recentlyUsedTimeRangesAtom);
@@ -153,7 +155,6 @@ export function TimeRangePickerBody({
       <div
         className={clsx(
           "absolute z-50 shadow-lg shadow-gray-200",
-
           showCalendar && isOpen ? "" : "invisible opacity-0"
         )}
       >
@@ -238,6 +239,7 @@ export function TimeRangePickerBody({
           currentRange={currentRange}
           changeRangeValue={changeRangeValue}
           setShowCalendar={setShowCalendar}
+          showFutureTimeRanges={showFutureTimeRanges}
         />
       </div>
     </div>

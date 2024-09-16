@@ -1,7 +1,8 @@
-import { Notification } from "../../components/Notifications/notificationsTableColumns";
+import { Notification } from "@flanksource-ui/components/Notifications/notificationsTableColumns";
 import { AVATAR_INFO } from "../../constants";
-import { IncidentCommander } from "../axios";
+import { IncidentCommander, NotificationAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
+import { SilenceNotificationResponse } from "../types/notifications";
 
 export const getNotificationsSummary = async () => {
   return resolvePostGrestRequestWithPagination(
@@ -21,4 +22,11 @@ export const getNotificationById = async (id: string) => {
     `/notifications?id=eq.${id}&select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})`
   );
   return res.data ? res.data?.[0] : undefined;
+};
+
+export const silenceNotification = async (
+  data: SilenceNotificationResponse
+) => {
+  const res = await NotificationAPI.post("/silence", data);
+  return res.data;
 };

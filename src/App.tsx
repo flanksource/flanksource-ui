@@ -54,6 +54,7 @@ import {
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
+import NotificationSilencePage from "./pages/Settings/NotificationSilencePage";
 import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
@@ -374,14 +375,27 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
-        <Route
-          path="notifications"
-          element={withAuthorizationAccessCheck(
-            <NotificationsPage />,
-            tables.database,
-            "read"
-          )}
-        />
+        <Route path="notifications">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <NotificationsPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+
+          <Route
+            path="silence"
+            element={withAuthorizationAccessCheck(
+              <NotificationSilencePage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+        </Route>
         <Route
           path="feature-flags"
           element={withAuthorizationAccessCheck(
