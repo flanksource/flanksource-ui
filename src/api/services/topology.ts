@@ -11,6 +11,7 @@ import { SchemaResourceI } from "../schemaResources";
 import { PaginationInfo } from "../types/common";
 import {
   HealthCheck,
+  HealthCheckNames,
   HealthCheckStatus,
   HealthCheckSummary
 } from "../types/health";
@@ -292,5 +293,10 @@ export const getComponentChecks = async (id: string) => {
   const res = await IncidentCommander.get<ComponentHealthCheckView[]>(
     `/checks_by_component?component_id=eq.${id}`
   );
+  return res.data;
+};
+
+export const getCheckNames = async () => {
+  const res = await IncidentCommander.get<HealthCheckNames[]>(`/check_names`);
   return res.data;
 };

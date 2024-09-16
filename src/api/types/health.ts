@@ -62,6 +62,11 @@ export type HealthCheckSummary = Pick<
   | "last_transition_time"
 >;
 
+export type HealthCheckNames = Pick<
+  HealthCheck,
+  "id" | "name" | "canary_id" | "status" | "type"
+>;
+
 export interface HealthCheckStatus {
   status: boolean;
   time: string;
