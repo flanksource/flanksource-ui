@@ -23,6 +23,7 @@ export type TimeRangeOption =
 
 export type RangeOptionsCategory = {
   name: string;
+  type: "future" | "past";
   options: TimeRangeOption[];
 };
 
@@ -31,107 +32,179 @@ export const displayTimeFormat = "YYYY-MM-DD HH:mm";
 export const rangeOptionsCategories: RangeOptionsCategory[] = [
   {
     name: "Relative time ranges",
+    type: "past",
     options: [
       {
         type: "relative",
         display: "5 minutes",
-
         range: "now-5m"
       },
       {
         display: "15 minutes",
         type: "relative",
-
         range: "now-15m"
       },
       {
         display: "30 minutes",
         type: "relative",
-
         range: "now-30m"
       },
       {
         display: "1 hour",
         type: "relative",
-
         range: "now-1h"
       },
       {
         display: "3 hours",
         type: "relative",
-
         range: "now-3h"
       },
       {
         display: "6 hours",
         type: "relative",
-
         range: "now-6h"
       },
       {
         display: "12 hours",
         type: "relative",
-
         range: "now-12h"
       },
       {
         display: "24 hours",
         type: "relative",
-
         range: "now-24h"
       },
       {
         display: "2 days",
         type: "relative",
-
         range: "now-2d"
       },
       {
         display: "7 days",
         type: "relative",
-
         range: "now-7d"
       },
       {
         display: "30 days",
         type: "relative",
-
         range: "now-30d"
       },
       {
         display: "90 days",
         type: "relative",
-
         range: "now-90d"
       },
       {
         display: "6 months",
         type: "relative",
-
         range: "now-6M"
       },
       {
         display: "1 year",
         type: "relative",
-
         range: "now-1y"
       },
       {
         display: "2 year",
         type: "relative",
-
         range: "now-2y"
       },
       {
         display: "5 year",
         type: "relative",
-
         range: "now-5y"
       }
     ]
   },
   {
+    name: "Relative time ranges",
+    type: "future",
+    options: [
+      {
+        type: "relative",
+        display: "5 minutes",
+        range: "now+5m"
+      },
+      {
+        display: "15 minutes",
+        type: "relative",
+        range: "now+15m"
+      },
+      {
+        display: "30 minutes",
+        type: "relative",
+        range: "now+30m"
+      },
+      {
+        display: "1 hour",
+        type: "relative",
+        range: "now+1h"
+      },
+      {
+        display: "3 hours",
+        type: "relative",
+        range: "now+3h"
+      },
+      {
+        display: "6 hours",
+        type: "relative",
+        range: "now+6h"
+      },
+      {
+        display: "12 hours",
+        type: "relative",
+        range: "now+12h"
+      },
+      {
+        display: "24 hours",
+        type: "relative",
+        range: "now+24h"
+      },
+      {
+        display: "2 days",
+        type: "relative",
+        range: "now+2d"
+      },
+      {
+        display: "7 days",
+        type: "relative",
+        range: "now+7d"
+      },
+      {
+        display: "30 days",
+        type: "relative",
+        range: "now+30d"
+      },
+      {
+        display: "90 days",
+        type: "relative",
+        range: "now+90d"
+      },
+      {
+        display: "6 months",
+        type: "relative",
+        range: "now+6M"
+      },
+      {
+        display: "1 year",
+        type: "relative",
+        range: "now+1y"
+      },
+      {
+        display: "2 year",
+        type: "relative",
+        range: "now+2y"
+      },
+      {
+        display: "5 year",
+        type: "relative",
+        range: "now+5y"
+      }
+    ]
+  },
+  {
     name: "Other quick ranges",
+    type: "past",
     options: [
       {
         display: "Yesterday",

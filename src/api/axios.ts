@@ -136,6 +136,15 @@ export const Rback = axios.create({
   }
 });
 
+export const NotificationAPI = axios.create({
+  baseURL: `${API_BASE}/notification`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 for (const client of [
   Auth,
   IncidentCommander,

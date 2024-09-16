@@ -300,3 +300,13 @@ export const getCheckNames = async () => {
   const res = await IncidentCommander.get<HealthCheckNames[]>(`/check_names`);
   return res.data;
 };
+
+export const getCanaryNames = async () => {
+  const res = await IncidentCommander.get<
+    {
+      id: string;
+      name: string;
+    }[]
+  >(`/canary_names`);
+  return res.data;
+};
