@@ -1,10 +1,10 @@
 import {
   useGetNotificationsByIDQuery,
   useUpdateNotification
-} from "../../api/query-hooks/useNotificationsQuery";
-import { Modal } from "../../ui/Modal";
-import NotificationsForm from "./NotificationsForm";
-import { Notification } from "./notificationsTableColumns";
+} from "../../../api/query-hooks/useNotificationsQuery";
+import { Modal } from "../../../ui/Modal";
+import NotificationsRulesForm from "./NotificationsRulesForm";
+import { NotificationRules } from "./notificationsRulesTableColumns";
 
 type Props = {
   notificationId: string;
@@ -13,7 +13,7 @@ type Props = {
   refresh: () => void;
 };
 
-export default function EditNotification({
+export default function EditNotificationRules({
   notificationId,
   isModalOpen,
   setIsModalOpen,
@@ -31,7 +31,7 @@ export default function EditNotification({
     refetch();
   });
 
-  const onSubmit = (notification: Partial<Notification>) => {
+  const onSubmit = (notification: Partial<NotificationRules>) => {
     updateNotification(notification);
   };
 
@@ -45,7 +45,7 @@ export default function EditNotification({
       onClose={() => setIsModalOpen(false)}
       title="Edit Notification"
     >
-      <NotificationsForm
+      <NotificationsRulesForm
         onDeleted={() => {
           refresh();
           setIsModalOpen(false);

@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaBell, FaTasks } from "react-icons/fa";
+import { FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -27,7 +27,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import EditIntegrationPage from "./components/Integrations/EditIntegrationPage";
 import IntegrationsPage from "./components/Integrations/IntegrationsPage";
 import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
-import NotificationsPage from "./components/Notifications/NotificationsSettingsPage";
 import { withAuthorizationAccessCheck } from "./components/Permissions/AuthorizationAccessCheck";
 import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
@@ -55,6 +54,9 @@ import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
 import NotificationSilencePage from "./pages/Settings/NotificationSilencePage";
+import NotificationsPage from "./pages/Settings/notifications/NotificationsPage";
+import NotificationRulesPage from "./pages/Settings/notifications/NotificationsRulesPage";
+import NotificationsSilencedPage from "./pages/Settings/notifications/NotificationsSilencedPage";
 import { TopologyCardPage } from "./pages/TopologyCard";
 import { UsersPage } from "./pages/UsersPage";
 import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
@@ -185,13 +187,6 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/jobs",
       icon: FaTasks,
       featureName: features["settings.job_history"],
-      resourceName: tables.database
-    },
-    {
-      name: "Notifications",
-      href: "/settings/notifications",
-      icon: FaBell,
-      featureName: features["settings.notifications"],
       resourceName: tables.database
     },
     {
@@ -346,6 +341,48 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             )}
           />
         </Route>
+      </Route>
+
+      <Route path="notifications" element={sidebar}>
+        <Route
+          index
+          element={withAuthorizationAccessCheck(
+            <NotificationsPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+
+        <Route
+          path="rules"
+          element={withAuthorizationAccessCheck(
+            <NotificationRulesPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+
+        <Route
+          path="silenced"
+          element={withAuthorizationAccessCheck(
+            <NotificationsSilencedPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+
+        <Route
+          path="silence"
+          element={withAuthorizationAccessCheck(
+            <NotificationSilencePage />,
+            tables.database,
+            "write",
+            true
+          )}
+        />
       </Route>
 
       <Route path="settings" element={sidebar}>

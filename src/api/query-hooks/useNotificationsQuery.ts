@@ -1,9 +1,9 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
-  NewNotification,
-  Notification,
-  UpdateNotification
-} from "../../components/Notifications/notificationsTableColumns";
+  NewNotificationRule,
+  NotificationRules,
+  UpdateNotificationRule
+} from "../../components/Notifications/Rules/notificationsRulesTableColumns";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
 import { useUser } from "../../context";
 import { createResource, updateResource } from "../schemaResources";
@@ -21,9 +21,9 @@ export type DatabaseResponse<T extends Record<string, any>> =
     };
 
 export function useNotificationsSummaryQuery(
-  options?: UseQueryOptions<DatabaseResponse<Notification>, Error>
+  options?: UseQueryOptions<DatabaseResponse<NotificationRules>, Error>
 ) {
-  return useQuery<DatabaseResponse<Notification>, Error>(
+  return useQuery<DatabaseResponse<NotificationRules>, Error>(
     ["notifications", "settings"],
     () => getNotificationsSummary(),
     options
@@ -32,9 +32,9 @@ export function useNotificationsSummaryQuery(
 
 export function useGetNotificationsByIDQuery(
   id: string,
-  options?: UseQueryOptions<Notification | undefined, Error>
+  options?: UseQueryOptions<NotificationRules | undefined, Error>
 ) {
-  return useQuery<Notification | undefined, Error>(
+  return useQuery<NotificationRules | undefined, Error>(
     ["notifications", "settings", id],
     () => getNotificationById(id),
     options
@@ -43,7 +43,7 @@ export function useGetNotificationsByIDQuery(
 
 export const useUpdateNotification = (onSuccess = () => {}) => {
   return useMutation(
-    async (props: Partial<UpdateNotification>) => {
+    async (props: Partial<UpdateNotificationRule>) => {
       const payload = {
         ...props,
         // we want to remove person id, team id and custom services if they are
@@ -78,7 +78,7 @@ export const useCreateNotification = (onSuccess = () => {}) => {
   const { user } = useUser();
 
   return useMutation(
-    async (data: Partial<NewNotification>) => {
+    async (data: Partial<NewNotificationRule>) => {
       await createResource(
         {
           api: "config-db",
