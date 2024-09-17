@@ -17,7 +17,7 @@ import { PropertyDisplay } from "./Property";
 import { TopologyConfigAnalysisLine } from "./TopologyConfigAnalysisLine";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 
-export enum ComponentStatus {
+export enum ComponentHealth {
   unhealthy = "unhealthy",
   warning = "warning"
 }
@@ -29,9 +29,9 @@ export const CardWidth: Record<keyof typeof Size, string> = {
   [Size.extra_large]: "554px"
 };
 
-export const StatusStyles: Record<keyof typeof ComponentStatus, string> = {
-  [ComponentStatus.unhealthy]: "border-red-300",
-  [ComponentStatus.warning]: "border-orange-300"
+export const StatusStyles: Record<keyof typeof ComponentHealth, string> = {
+  [ComponentHealth.unhealthy]: "border-red-300",
+  [ComponentHealth.warning]: "border-orange-300"
 } as const;
 
 interface IProps {
@@ -159,7 +159,7 @@ export function TopologyCard({
       style={{ width: CardWidth[size as Size] || size }}
       className={clsx(
         "card relative mb-3 mr-3 rounded-8px border-0 border-t-8 bg-lightest-gray shadow-card",
-        StatusStyles[topology.status as ComponentStatus] || "border-white",
+        StatusStyles[topology.health as ComponentHealth] || "border-white",
         selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
