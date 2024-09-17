@@ -123,6 +123,7 @@ export function TopologyCard({
         ? `&refererId=${parentId}`
         : ""
     }`;
+  };
 
   const sortedTopologyComponents = useMemo(
     () =>
