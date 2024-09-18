@@ -3,8 +3,8 @@ import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm"
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker";
+import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { URLSearchParamsInit } from "react-router-dom";

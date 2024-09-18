@@ -2,7 +2,7 @@ import { durationOptions } from "@flanksource-ui/components/JobsHistory/Filters/
 import { jobHistoryDefaultDateFilter } from "@flanksource-ui/components/JobsHistory/Filters/JobsHistoryFilters";
 import { JobHistory } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { resourceTypeMap } from "@flanksource-ui/components/SchemaResourcePage/SchemaResourceEditJobsTab";
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
