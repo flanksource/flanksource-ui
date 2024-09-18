@@ -53,7 +53,7 @@ import {
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
-import NotificationSilencePage from "./pages/Settings/NotificationSilencePage";
+import NotificationSilencedAddPage from "./pages/Settings/notifications/NotificationSilencedAddPage";
 import NotificationsPage from "./pages/Settings/notifications/NotificationsPage";
 import NotificationRulesPage from "./pages/Settings/notifications/NotificationsRulesPage";
 import NotificationsSilencedPage from "./pages/Settings/notifications/NotificationsSilencedPage";
@@ -364,25 +364,27 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
 
-        <Route
-          path="silenced"
-          element={withAuthorizationAccessCheck(
-            <NotificationsSilencedPage />,
-            tables.database,
-            "read",
-            true
-          )}
-        />
+        <Route path="silenced">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <NotificationsSilencedPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
 
-        <Route
-          path="silence"
-          element={withAuthorizationAccessCheck(
-            <NotificationSilencePage />,
-            tables.database,
-            "write",
-            true
-          )}
-        />
+          <Route
+            path="add"
+            element={withAuthorizationAccessCheck(
+              <NotificationSilencedAddPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+        </Route>
       </Route>
 
       <Route path="settings" element={sidebar}>
@@ -412,27 +414,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
-        <Route path="notifications">
-          <Route
-            index
-            element={withAuthorizationAccessCheck(
-              <NotificationsPage />,
-              tables.database,
-              "read",
-              true
-            )}
-          />
 
-          <Route
-            path="silence"
-            element={withAuthorizationAccessCheck(
-              <NotificationSilencePage />,
-              tables.database,
-              "write",
-              true
-            )}
-          />
-        </Route>
         <Route
           path="feature-flags"
           element={withAuthorizationAccessCheck(

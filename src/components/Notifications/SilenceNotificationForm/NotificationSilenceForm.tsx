@@ -4,17 +4,15 @@ import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckb
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
-import {
-  toastError,
-  toastSuccess
-} from "@flanksource-ui/components/Toast/toast";
+import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useMutation } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
 import { FaCircleNotch } from "react-icons/fa";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function NotificationSilenceForm() {
   const [searchParam] = useSearchParams();
+  const navigate = useNavigate();
 
   const component_id = searchParam.get("component_id") ?? undefined;
   const config_id = searchParam.get("config_id") ?? undefined;
@@ -31,8 +29,7 @@ export default function NotificationSilenceForm() {
   const { isLoading, mutate } = useMutation({
     mutationFn: (data: SilenceNotificationRequest) => silenceNotification(data),
     onSuccess: () => {
-      // do something
-      toastSuccess("Silenced notification");
+      navigate("/notifications/silenced");
     },
     onError: (error) => {
       // do something

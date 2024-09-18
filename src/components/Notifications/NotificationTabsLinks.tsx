@@ -10,6 +10,7 @@ import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { Link } from "react-router-dom";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { SearchLayout } from "../Layout/SearchLayout";
@@ -85,14 +86,14 @@ export default function NotificationTabsLinks({
                       action="write"
                       key="add-notifications"
                     >
-                      <button
+                      <Link
                         key="notifications-silenced-add"
                         type="button"
                         className=""
-                        onClick={() => setIsModalOpen(true)}
+                        to="/notifications/silenced/add"
                       >
                         <AiFillPlusCircle size={32} className="text-blue-600" />
-                      </button>
+                      </Link>
                     </AuthorizationAccessCheck>
                   ]
                 : [])
