@@ -52,7 +52,7 @@ export default function NotificationTabsLinks({
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot key="notifications" link="/settings/jobs">
+              <BreadcrumbRoot key="notifications" link="/notifications">
                 Notifications
               </BreadcrumbRoot>,
               ...(activeTab === "Notification Rules"
