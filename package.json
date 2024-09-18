@@ -17,7 +17,7 @@
     "@heroicons/react": "^1.0.3",
     "@hookform/resolvers": "^2.8.8",
     "@monaco-editor/react": "^4.6.0",
-    "@netlify/plugin-nextjs": "^5.1.2",
+    "@netlify/plugin-nextjs": "^5.7.1",
     "@next/bundle-analyzer": "^14.2.5",
     "@ory/client": "^1.2.11",
     "@ory/integrations": "^1.1.5",
@@ -41,6 +41,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "@types/testing-library__react": "^10.2.0",
     "ansi-to-html": "^0.7.2",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.6.2",
     "casbin.js": "^0.5.0",
     "clsx": "^2.1.1",
@@ -219,6 +220,5 @@
   },
   "msw": {
     "workerDirectory": "public"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

@@ -2,6 +2,7 @@ import { VisibilityState } from "@tanstack/react-table";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Row,
   useMantineReactTable
 } from "mantine-react-table";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
@@ -63,7 +64,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     autoResetPageIndex: false,
     onPaginationChange: setPageIndex,
     onSortingChange: setSortState,
-    mantineTableBodyRowProps: ({ row }) => ({
+    mantineTableBodyRowProps: ({ row }: { row: MRT_Row<T> }) => ({
       onClick: () => onRowClick(row.original),
       sx: { cursor: "pointer", maxHeight: "100%", overflowY: "auto" }
     }),
@@ -81,7 +82,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         flex: "1 1 0"
       }
     },
-    mantineTableBodyCellProps: ({ column }) => ({
+    mantineTableBodyCellProps: () => ({
       sx: {
         zIndex: "auto"
       }
