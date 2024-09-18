@@ -1,4 +1,4 @@
-import { formatTimeRange } from "../../utils/date";
+import { formatTimeRange } from "../../../utils/date";
 import { TimeRangeAbsoluteOption, TimeRangeOption } from "./rangeOptions";
 
 type RecentlyRangesProps = {

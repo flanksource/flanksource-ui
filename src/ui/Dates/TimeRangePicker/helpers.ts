@@ -4,8 +4,8 @@ import {
   formatISODate,
   isValidDate,
   subtractDateFromNow
-} from "../../utils/date";
-import { getLocalItem, setLocalItem } from "../../utils/storage";
+} from "../../../utils/date";
+import { getLocalItem, setLocalItem } from "../../../utils/storage";
 
 export const getIntervalData = (interval: string): [number, string] => {
   if (interval === "now") {

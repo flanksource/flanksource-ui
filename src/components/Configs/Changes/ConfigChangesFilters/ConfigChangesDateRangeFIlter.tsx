@@ -1,5 +1,5 @@
-import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker";
-import useTimeRangeParams from "@flanksource-ui/ui/TimeRangePicker/useTimeRangeParams";
+import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker";
+import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { URLSearchParamsInit } from "react-router-dom";
 
 type Props = {

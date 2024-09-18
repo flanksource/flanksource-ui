@@ -1,8 +1,8 @@
 import {
   rangeOptionsCategories,
   TimeRangeOption
-} from "@flanksource-ui/ui/TimeRangePicker/rangeOptions";
-import { TimeRangePicker } from "@flanksource-ui/ui/TimeRangePicker/TimeRangePicker";
+} from "@flanksource-ui/ui/Dates/TimeRangePicker/rangeOptions";
+import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker/TimeRangePicker";
 import dayjs from "dayjs";
 import { useFormikContext } from "formik";
 import { useMemo } from "react";
