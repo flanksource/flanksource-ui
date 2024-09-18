@@ -48,7 +48,6 @@ export default function JobHistoryFilters({
             onChange={(timeRange) =>
               setTimeRangeParams(timeRange, paramsToReset)
             }
-            className="w-[35rem]"
             value={timeRangeValue}
           />
         </div>
