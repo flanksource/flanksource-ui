@@ -119,14 +119,6 @@ export default function SpecEditorForm({
               {isFieldSupportedByResourceType("labels") && (
                 <FormikKeyValueMapField name="labels" label="Labels" />
               )}
-              {isFieldSupportedByResourceType("source") && (
-                <FormikTextInput
-                  name="source"
-                  label="Source"
-                  required
-                  readOnly
-                />
-              )}
               {isFieldSupportedByResourceType("schedule") && (
                 <FormikAutocompleteDropdown
                   name="schedule"
