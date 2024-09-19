@@ -13,12 +13,16 @@ type NotificationsTableProps = {
   notifications: NotificationRules[];
   isLoading?: boolean;
   refresh?: () => void;
+  totalRecordCount: number;
+  pageCount: number;
 };
 
 export default function NotificationsRulesTable({
   notifications,
   isLoading,
-  refresh = () => {}
+  refresh = () => {},
+  pageCount,
+  totalRecordCount
 }: NotificationsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNotificationId, setSelectedNotificationId] =
@@ -58,6 +62,9 @@ export default function NotificationsRulesTable({
         columns={notificationsRulesTableColumns}
         isLoading={isLoading}
         onRowClick={onSelectNotification}
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        totalRowCount={totalRecordCount}
       />
       {selectedNotificationId && (
         <EditNotificationRules

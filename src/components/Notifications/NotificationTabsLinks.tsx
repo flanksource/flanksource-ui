@@ -25,8 +25,8 @@ const tabLinks = [
 type NotificationTabsLinksProps = {
   activeTab: "Notifications" | "Notification Rules" | "Silenced Notifications";
   children: React.ReactNode;
-  refresh: () => void;
-  isLoading: boolean;
+  refresh?: () => void;
+  isLoading?: boolean;
   className?: string;
   setIsModalOpen?: (isOpen: boolean) => void;
 };

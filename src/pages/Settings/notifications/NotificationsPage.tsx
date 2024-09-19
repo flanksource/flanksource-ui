@@ -13,7 +13,8 @@ export default function NotificationsPage() {
       getNotificationSendHistory({
         pageIndex,
         pageSize
-      })
+      }),
+    keepPreviousData: true
   });
 
   const notifications = data?.data ?? [];
@@ -31,6 +32,7 @@ export default function NotificationsPage() {
           data={notifications ?? []}
           isLoading={isLoading || isRefetching}
           pageCount={pageCount}
+          sendHistoryRowCount={totalEntries}
         />
       </div>
     </NotificationTabsLinks>

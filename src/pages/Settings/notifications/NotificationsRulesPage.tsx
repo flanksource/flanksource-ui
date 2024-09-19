@@ -1,3 +1,4 @@
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useState } from "react";
 import {
   useCreateNotification,
@@ -12,10 +13,18 @@ import { Modal } from "../../../ui/Modal";
 export default function NotificationRulesPage() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const { pageIndex, pageSize } = useReactTablePaginationState();
+
   const { data, isLoading, refetch, isRefetching } =
-    useNotificationsSummaryQuery({
-      keepPreviousData: true
-    });
+    useNotificationsSummaryQuery(
+      {
+        pageIndex,
+        pageSize
+      },
+      {
+        keepPreviousData: true
+      }
+    );
 
   const { mutate: createNotification } = useCreateNotification(() => {
     refetch();
@@ -27,6 +36,8 @@ export default function NotificationRulesPage() {
   };
 
   const notifications = data?.data;
+  const totalEntries = data?.totalEntries;
+  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   return (
     <>
@@ -41,6 +52,8 @@ export default function NotificationRulesPage() {
             notifications={notifications ?? []}
             isLoading={isLoading || isRefetching}
             refresh={refetch}
+            totalRecordCount={totalEntries ?? 0}
+            pageCount={pageCount}
           />
         </div>
       </NotificationTabsLinks>

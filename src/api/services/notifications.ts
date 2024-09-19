@@ -22,10 +22,15 @@ export function getPagingParams({
   return pagingParams;
 }
 
-export const getNotificationsSummary = async () => {
+export const getNotificationsSummary = async ({
+  pageIndex,
+  pageSize
+}: NotificationQueryFilterOptions) => {
+  const pagingParams = getPagingParams({ pageIndex, pageSize });
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationRules[] | null>(
-      `/notifications_summary?select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})&order=created_at.desc`,
+      `/notifications_summary?select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})&order=created_at.desc${pagingParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -52,10 +57,7 @@ export const silenceNotification = async (
 export const getNotificationSendHistory = async ({
   pageIndex,
   pageSize
-}: {
-  pageIndex: number;
-  pageSize: number;
-}) => {
+}: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
@@ -69,13 +71,15 @@ export const getNotificationSendHistory = async ({
   );
 };
 
+export type NotificationQueryFilterOptions = {
+  pageIndex: number;
+  pageSize: number;
+};
+
 export const getNotificationSilences = async ({
   pageIndex,
   pageSize
-}: {
-  pageIndex: number;
-  pageSize: number;
-}) => {
+}: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSilenceItemApiResponse[] | null>(

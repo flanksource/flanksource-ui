@@ -9,7 +9,8 @@ import { useUser } from "../../context";
 import { createResource, updateResource } from "../schemaResources";
 import {
   getNotificationById,
-  getNotificationsSummary
+  getNotificationsSummary,
+  NotificationQueryFilterOptions
 } from "../services/notifications";
 
 export type DatabaseResponse<T extends Record<string, any>> =
@@ -21,11 +22,12 @@ export type DatabaseResponse<T extends Record<string, any>> =
     };
 
 export function useNotificationsSummaryQuery(
+  filterOptions: NotificationQueryFilterOptions,
   options?: UseQueryOptions<DatabaseResponse<NotificationRules>, Error>
 ) {
   return useQuery<DatabaseResponse<NotificationRules>, Error>(
-    ["notifications", "settings"],
-    () => getNotificationsSummary(),
+    ["notifications", "settings", filterOptions],
+    () => getNotificationsSummary(filterOptions),
     options
   );
 }

@@ -7,7 +7,7 @@ import { MRT_ColumnDef } from "mantine-react-table";
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
   [
     {
-      header: "Subject",
+      header: "Recipient",
       Cell: ({ row }) => {
         const user = row.original.person;
 
@@ -62,13 +62,15 @@ type NotificationSendHistoryListProps = {
   onRowClick?: (row: NotificationSendHistoryApiResponse) => void;
   refresh?: () => void;
   pageCount: number;
+  sendHistoryRowCount: number;
 };
 
 export default function NotificationSendHistoryList({
   data,
   isLoading,
   onRowClick = () => {},
-  pageCount
+  pageCount,
+  sendHistoryRowCount
 }: NotificationSendHistoryListProps) {
   return (
     <MRTDataTable
@@ -77,7 +79,9 @@ export default function NotificationSendHistoryList({
       isLoading={isLoading}
       onRowClick={onRowClick}
       manualPageCount={pageCount}
-      enableServerSidePagination={true}
+      totalRowCount={sendHistoryRowCount}
+      enableServerSidePagination
+      enableServerSideSorting
     />
   );
 }

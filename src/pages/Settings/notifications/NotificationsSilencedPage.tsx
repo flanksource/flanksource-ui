@@ -9,7 +9,8 @@ export default function NotificationsSilencedPage() {
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["notification_silenced", { pageIndex, pageSize }],
-    queryFn: () => getNotificationSilences({ pageIndex, pageSize })
+    queryFn: () => getNotificationSilences({ pageIndex, pageSize }),
+    keepPreviousData: true
   });
 
   const notifications = data?.data;
@@ -28,6 +29,7 @@ export default function NotificationsSilencedPage() {
           isLoading={isLoading || isRefetching}
           refresh={refetch}
           pageCount={pageCount}
+          recordCount={totalEntries ?? 0}
         />
       </div>
     </NotificationTabsLinks>

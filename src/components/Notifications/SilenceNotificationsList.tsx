@@ -74,13 +74,15 @@ type NotificationSendHistoryListProps = {
   onRowClick?: (row: NotificationSilenceItemApiResponse) => void;
   refresh?: () => void;
   pageCount: number;
+  recordCount: number;
 };
 
 export default function SilenceNotificationsList({
   data,
   isLoading,
   onRowClick = () => {},
-  pageCount
+  pageCount,
+  recordCount
 }: NotificationSendHistoryListProps) {
   return (
     <MRTDataTable
@@ -90,6 +92,7 @@ export default function SilenceNotificationsList({
       onRowClick={onRowClick}
       manualPageCount={pageCount}
       enableServerSidePagination={true}
+      totalRowCount={recordCount}
     />
   );
 }
