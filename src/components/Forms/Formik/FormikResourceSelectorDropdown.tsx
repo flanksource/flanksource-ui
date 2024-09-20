@@ -90,7 +90,11 @@ export default function FormikResourceSelectorDropdown({
     ]
   );
 
-  const { data: options = [], isLoading } = useQuery({
+  const {
+    data: options = [],
+    isLoading,
+    isRefetching
+  } = useQuery({
     queryKey: ["searchResources", resourceSelector],
     queryFn: () => searchResources(resourceSelector),
     enabled:
@@ -184,7 +188,7 @@ export default function FormikResourceSelectorDropdown({
       {label && <label className="form-label">{label}</label>}
       <Select
         name={name}
-        isLoading={isLoading}
+        isLoading={isLoading || isRefetching}
         className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         options={options}
         value={value}
