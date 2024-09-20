@@ -1,5 +1,5 @@
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { FaExclamationCircle } from "react-icons/fa";
-import { SearchLayout } from "../Layout/SearchLayout";
 
 export function UnAuthorizedMessage() {
   return (

@@ -1,7 +1,6 @@
 import { useSettingsUpdateResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
 import { getResource } from "@flanksource-ui/api/schemaResources";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { SchemaResourceJobsTab } from "@flanksource-ui/components/SchemaResourcePage/SchemaResourceEditJobsTab";
 import ConfigScrapperSpecEditor from "@flanksource-ui/components/SpecEditor/ConfigScrapperSpecEditor";
 import {
@@ -10,6 +9,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
 import { useQuery } from "@tanstack/react-query";

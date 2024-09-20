@@ -1,7 +1,6 @@
 import { getTopology } from "@flanksource-ui/api/services/topology";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import TopologySidebar from "@flanksource-ui/components/Topology/Sidebar/TopologySidebar";
 import { TopologyBreadcrumbs } from "@flanksource-ui/components/Topology/TopologyBreadcrumbs";
@@ -9,6 +8,7 @@ import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
 import { getCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";

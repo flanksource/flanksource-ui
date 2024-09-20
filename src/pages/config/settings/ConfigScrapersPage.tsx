@@ -1,6 +1,5 @@
 import { getAll } from "@flanksource-ui/api/schemaResources";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import AddSchemaResourceModal from "@flanksource-ui/components/SchemaResourcePage/AddSchemaResourceModal";
 import {
@@ -13,6 +12,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 

@@ -1,7 +1,6 @@
 import { getPlaybookRun } from "@flanksource-ui/api/services/playbooks";
 import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
@@ -13,6 +12,7 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { PlaybookStatusIcon } from "@flanksource-ui/ui/Icons/PlaybookStatusIcon";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
