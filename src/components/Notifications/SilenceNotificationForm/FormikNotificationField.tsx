@@ -98,11 +98,33 @@ export default function FormikNotificationResourceField() {
         <FormikResourceSelectorDropdown
           required
           name={fieldName.name}
-          checkResourceSelector={switchOption === "Check" ? [{}] : undefined}
-          componentResourceSelector={
-            switchOption === "Component" ? [{}] : undefined
+          checkResourceSelector={
+            switchOption === "Check"
+              ? [
+                  {
+                    id: check_id
+                  }
+                ]
+              : undefined
           }
-          configResourceSelector={switchOption === "Catalog" ? [{}] : undefined}
+          componentResourceSelector={
+            switchOption === "Component"
+              ? [
+                  {
+                    id: component_id
+                  }
+                ]
+              : undefined
+          }
+          configResourceSelector={
+            switchOption === "Catalog"
+              ? [
+                  {
+                    id: config_id
+                  }
+                ]
+              : undefined
+          }
         />
       </div>
     </div>

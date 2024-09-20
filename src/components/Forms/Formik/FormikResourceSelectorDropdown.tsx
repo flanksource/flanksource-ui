@@ -55,13 +55,20 @@ export default function FormikResourceSelectorDropdown({
   const resourceSelector: SearchResourcesRequest = useMemo(
     () => ({
       checks: checkResourceSelector
-        ? [...checkResourceSelector.map((r) => ({ ...r, search: searchText }))]
+        ? [
+            ...checkResourceSelector.map((r) => ({
+              ...r,
+              search: searchText,
+              id: searchText ? undefined : r.id
+            }))
+          ]
         : undefined,
       components: componentResourceSelector
         ? [
             ...componentResourceSelector.map((r) => ({
               ...r,
-              search: searchText
+              search: searchText,
+              id: searchText ? undefined : r.id
             }))
           ]
         : undefined,
@@ -69,7 +76,8 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...configResourceSelector.map((r) => ({
               ...r,
-              search: searchText
+              search: searchText,
+              id: searchText ? undefined : r.id
             }))
           ]
         : undefined
@@ -82,14 +90,17 @@ export default function FormikResourceSelectorDropdown({
     ]
   );
 
-  const { data: options = [], isLoading } = useQuery({
+  const {
+    data: options = [],
+    isLoading,
+    isRefetching
+  } = useQuery({
     queryKey: ["searchResources", resourceSelector],
     queryFn: () => searchResources(resourceSelector),
     enabled:
       configResourceSelector !== undefined ||
       componentResourceSelector !== undefined ||
-      checkResourceSelector !== undefined ||
-      (field.value === undefined && field.value === "" && field.value === null),
+      checkResourceSelector !== undefined, // || (field.value === undefined && field.value === "" && field.value === null),
     select: (data) => {
       if (data?.checks) {
         return data.checks.map(
@@ -148,6 +159,7 @@ export default function FormikResourceSelectorDropdown({
         });
       }
     },
+    keepPreviousData: true,
     staleTime: 0,
     cacheTime: 0
   });
@@ -159,10 +171,10 @@ export default function FormikResourceSelectorDropdown({
   const handleInputChange = (inputText: string, meta: InputActionMeta) => {
     if (meta.action !== "input-blur" && meta.action !== "menu-close") {
       setInputText(inputText);
-      if (inputText === "" || field.value) {
-        console.log("Not searching");
-        return;
-      }
+      // if (inputText === "" || field.value) {
+      //   console.log("Not searching");
+      //   return;
+      // }
       handleSearchDebounced(inputText);
     }
   };
@@ -176,7 +188,7 @@ export default function FormikResourceSelectorDropdown({
       {label && <label className="form-label">{label}</label>}
       <Select
         name={name}
-        isLoading={isLoading}
+        isLoading={isLoading || isRefetching}
         className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         options={options}
         value={value}
