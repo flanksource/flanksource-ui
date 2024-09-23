@@ -1,10 +1,11 @@
+import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { GoCopy, GoLinkExternal } from "react-icons/go";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { formatJobName } from "../../utils/common";
 import { formatDuration } from "../../utils/date";
@@ -39,24 +40,17 @@ export const JobsHistoryTableColumn: MRT_ColumnDef<JobHistory>[] = [
     minSize: 120,
     enableSorting: false,
     Cell: ({ column, row }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [params, setParams] = useSearchParams();
-
       const value = row.getValue<JobHistory["name"]>(column.id);
       const formattedName = formatJobName(value);
 
       return (
-        <div className="flex cursor-pointer flex-row items-center gap-1">
-          <span
-            onClick={(e) => {
-              e.stopPropagation();
-              params.set("name", value);
-              setParams(params);
-            }}
-          >
-            {formattedName}
-          </span>
-        </div>
+        <FilterByCellValue
+          paramKey={"name"}
+          filterValue={value}
+          paramsToReset={["pageIndex"]}
+        >
+          {formattedName}
+        </FilterByCellValue>
       );
     }
   },
