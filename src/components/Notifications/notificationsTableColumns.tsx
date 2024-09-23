@@ -12,7 +12,7 @@ import { Tooltip } from "react-tooltip";
 import { Icon } from "../../ui/Icons/Icon";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
-import { JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
+import { JobHistory, JobHistoryStatus } from "../JobsHistory/JobsHistoryTable";
 
 export const notificationMostCommonErrorAtom = atom<Notification | undefined>(
   undefined
@@ -129,9 +129,7 @@ export type Notification = {
   team?: Team;
   job_status?: JobHistoryStatus;
   job_name?: string;
-  job_details?: {
-    errors?: string[];
-  };
+  job_details?: JobHistory["details"];
   pending?: number;
   avg_duration_ms?: number;
   failed?: number;
