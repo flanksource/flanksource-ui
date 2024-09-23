@@ -32,7 +32,8 @@ export type JobHistory = {
             };
           };
         }
-      | string;
+      | string
+      | string[];
     scrape_summary?: Record<string, Record<string, any>>;
     summary?: Record<string, any>;
   };

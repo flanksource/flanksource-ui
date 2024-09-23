@@ -1,9 +1,27 @@
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
+import clsx from "clsx";
 import { isEmpty } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "../../ui/Modal";
 import { JobHistory } from "./JobsHistoryTable";
+
+interface CellProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+function HCell({ children, className }: CellProps) {
+  return <th className={className}>{children}</th>;
+}
+
+function Cell({ children, className }: CellProps) {
+  return (
+    <td className={clsx("border-b px-3 py-3 text-sm", className)}>
+      {children}
+    </td>
+  );
+}
 
 function JobHistoryErrorDetails({
   details
@@ -13,7 +31,7 @@ function JobHistoryErrorDetails({
   const errors = details?.errors;
 
   const errorObject = useMemo(() => {
-    if (typeof errors === "string" || !errors) {
+    if (typeof errors === "string" || !errors || Array.isArray(errors)) {
       return undefined;
     }
 
@@ -36,6 +54,31 @@ function JobHistoryErrorDetails({
       <div className="px-3 py-3 text-sm font-medium leading-5 text-gray-900">
         {errors}
       </div>
+    );
+  }
+
+  // Fall back to array
+  if (Array.isArray(errors)) {
+    return (
+      <table
+        className="relative w-full table-auto table-fixed"
+        aria-label="table"
+      >
+        <thead className={`sticky top-0 z-01 bg-white`}>
+          <tr>
+            <HCell>Error</HCell>
+          </tr>
+        </thead>
+        <tbody>
+          {errors?.map((error, index) => (
+            <tr key={error} className="cursor-pointer border-b last:border-b-0">
+              <Cell className="font-medium leading-5 text-gray-900">
+                {error}
+              </Cell>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     );
   }
 
