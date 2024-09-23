@@ -1,4 +1,5 @@
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import PlaybookSpecFormModal from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecFormModal";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
@@ -6,7 +7,6 @@ import { FaHome } from "react-icons/fa";
 import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
 import ErrorPage from "../../components/Errors/ErrorPage";
 import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
-import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
 import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
@@ -65,7 +65,7 @@ export function PlaybooksListPage() {
             )}
           </div>
         </TabbedLinks>
-        <PlaybookSpecsForm
+        <PlaybookSpecFormModal
           isOpen={isOpen}
           onClose={() => {
             setIsOpen(false);
