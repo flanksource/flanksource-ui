@@ -1,51 +1,50 @@
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
-import clsx from "clsx";
 import { isEmpty } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "../../ui/Modal";
 import { JobHistory } from "./JobsHistoryTable";
 
-interface CellProps {
-  children: React.ReactNode;
-  className?: string;
-}
+function JobHistoryErrorDetails({
+  details
+}: {
+  details?: JobHistory["details"];
+}) {
+  const errors = details?.errors;
 
-function HCell({ children, className }: CellProps) {
-  return <th className={className}>{children}</th>;
-}
+  const errorObject = useMemo(() => {
+    if (typeof errors === "string" || !errors) {
+      return undefined;
+    }
 
-function Cell({ children, className }: CellProps) {
-  return (
-    <td className={clsx("border-b px-3 py-3 text-sm", className)}>
-      {children}
-    </td>
-  );
-}
+    // for object, we remap
+    return Object.keys(errors).reduce(
+      (acc, key) => {
+        acc[key] = errors[key].error.error;
+        return acc;
+      },
+      {} as Record<string, any>
+    );
+  }, [errors]);
 
-function JobHistoryErrorDetails({ errors }: { errors?: string[] }) {
   if (!errors || isEmpty(errors)) {
     return null;
   }
 
+  if (typeof errors === "string") {
+    return (
+      <div className="px-3 py-3 text-sm font-medium leading-5 text-gray-900">
+        {errors}
+      </div>
+    );
+  }
+
   return (
-    <table
-      className="relative w-full table-auto table-fixed"
-      aria-label="table"
-    >
-      <thead className={`sticky top-0 z-01 bg-white`}>
-        <tr>
-          <HCell>Error</HCell>
-        </tr>
-      </thead>
-      <tbody>
-        {errors?.map((error, index) => (
-          <tr key={error} className="cursor-pointer border-b last:border-b-0">
-            <Cell className="font-medium leading-5 text-gray-900">{error}</Cell>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <JSONViewer
+      code={JSON.stringify(errorObject, null, 2)}
+      convertToYaml
+      format={"json"}
+    />
   );
 }
 
@@ -103,7 +102,7 @@ export function JobsHistoryDetails({
   setIsModalOpen
 }: JobsHistoryDetailsProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
-    if (job?.details?.errors) {
+    if (job?.details?.errors && !isEmpty(job.details?.errors)) {
       return "errors";
     }
     if (job?.details?.scrape_summary) {
@@ -114,7 +113,7 @@ export function JobsHistoryDetails({
 
   // update active tab if job details change
   useEffect(() => {
-    if (job?.details?.errors) {
+    if (job?.details?.errors && !isEmpty(job.details?.errors)) {
       setActiveTab("errors");
     } else if (job?.details?.scrape_summary) {
       setActiveTab("scrape_summary");
@@ -129,12 +128,12 @@ export function JobsHistoryDetails({
     }
 
     return [
-      ...(job.details?.errors
+      ...(job.details?.errors && !isEmpty(job.details?.errors)
         ? [
             {
               value: "errors",
               label: "Errors",
-              component: <JobHistoryErrorDetails errors={job.details?.errors} />
+              component: <JobHistoryErrorDetails details={job.details} />
             }
           ]
         : []),

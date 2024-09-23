@@ -24,7 +24,15 @@ export type JobHistory = {
   success_count: number;
   error_count: number;
   details?: {
-    errors?: string[];
+    errors?:
+      | {
+          [key: string]: {
+            error: {
+              error?: string;
+            };
+          };
+        }
+      | string;
     scrape_summary?: Record<string, Record<string, any>>;
     summary?: Record<string, any>;
   };
