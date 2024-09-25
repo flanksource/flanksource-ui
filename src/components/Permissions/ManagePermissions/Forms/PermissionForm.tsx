@@ -6,6 +6,7 @@ import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
+import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import {
   toastError,
   toastSuccess
@@ -29,7 +30,7 @@ import PermissionsSubjectControls from "./PermissionSubjectControls";
 type PermissionFormProps = {
   onClose: () => void;
   isOpen: boolean;
-  data?: PermissionTable;
+  data?: Partial<PermissionTable>;
 };
 
 export default function PermissionForm({
@@ -43,7 +44,8 @@ export default function PermissionForm({
       data?.config_id ||
       data?.canary_id ||
       data?.canary_id ||
-      data?.playbook_id
+      data?.playbook_id ||
+      data?.connection_id
     );
   }, [data]);
 
@@ -107,7 +109,7 @@ export default function PermissionForm({
             config_id: data?.config_id,
             canary_id: data?.canary_id,
             playbook_id: data?.playbook_id,
-            deny: data?.deny,
+            deny: data?.deny ?? false,
             description: data?.description,
             connection_id: data?.connection_id,
             created_at: data?.created_at,
@@ -147,34 +149,42 @@ export default function PermissionForm({
               <FormikCheckbox name="deny" label="Is deny action" />
               <FormikTextArea name="description" label="Description" />
             </div>
-            <AuthorizationAccessCheck
-              resource={tables.permissions}
-              action="write"
+            <CanEditResource
+              id={data?.id}
+              name={"Permission"}
+              resourceType={"permissions"}
+              source={data?.source}
+              className="flex flex-col"
             >
-              <div
-                className={clsx(
-                  "flex items-center bg-gray-100 px-5 py-4",
-                  data?.id ? "justify-between" : "justify-end"
-                )}
+              <AuthorizationAccessCheck
+                resource={tables.permissions}
+                action="write"
               >
-                {data?.id && (
-                  <DeletePermission
-                    permissionId={data.id}
-                    onDeleted={onClose}
+                <div
+                  className={clsx(
+                    "flex items-center bg-gray-100 px-5 py-4",
+                    data?.id ? "justify-between" : "justify-end"
+                  )}
+                >
+                  {data?.id && (
+                    <DeletePermission
+                      permissionId={data.id}
+                      onDeleted={onClose}
+                    />
+                  )}
+                  <Button
+                    icon={
+                      isLoading ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    type="submit"
+                    text={data?.id ? "Save" : isLoading ? "Saving ..." : "Save"}
+                    className="btn-primary"
                   />
-                )}
-                <Button
-                  icon={
-                    isLoading ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  type="submit"
-                  text={data?.id ? "Save" : isLoading ? "Saving ..." : "Save"}
-                  className="btn-primary"
-                />
-              </div>
-            </AuthorizationAccessCheck>
+                </div>
+              </AuthorizationAccessCheck>
+            </CanEditResource>
           </Form>
         </Formik>
       </div>

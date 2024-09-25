@@ -266,7 +266,8 @@ const permanentlyHiddenColumnsForTableMap: Record<
   canaries: ["namespace"],
   config_scrapers: ["schedule", "namespace"],
   incident_rules: ["schedule", "namespace"],
-  teams: ["schedule", "namespace"]
+  teams: ["schedule", "namespace"],
+  permissions: ["schedule", "namespace"]
 };
 
 type ResourceTableProps = {

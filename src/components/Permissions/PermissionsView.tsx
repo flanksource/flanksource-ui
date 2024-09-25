@@ -2,10 +2,14 @@ import {
   fetchPermissions,
   FetchPermissionsInput
 } from "@flanksource-ui/api/services/permissions";
-import { PermissionAPIResponse } from "@flanksource-ui/api/types/permissions";
+import {
+  PermissionAPIResponse,
+  PermissionTable
+} from "@flanksource-ui/api/types/permissions";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Button } from "..";
 import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
 import PermissionsTable from "./PermissionsTable";
 
@@ -13,16 +17,21 @@ type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
   setIsLoading?: (isLoading: boolean) => void;
   hideResourceColumn?: boolean;
+  newPermissionData?: Partial<PermissionTable>;
+  showAddPermission?: boolean;
 };
 
 export default function PermissionsView({
   permissionRequest,
   setIsLoading = () => {},
-  hideResourceColumn = false
+  hideResourceColumn = false,
+  newPermissionData,
+  showAddPermission = false
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionAPIResponse>();
   const { pageSize, pageIndex } = useReactTablePaginationState();
+  const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: [
@@ -51,6 +60,17 @@ export default function PermissionsView({
 
   return (
     <>
+      {showAddPermission && (
+        <div className="flex flex-row items-center justify-between p-2">
+          <Button
+            onClick={() => {
+              setIsPermissionModalOpen(true);
+            }}
+          >
+            Add Permission
+          </Button>
+        </div>
+      )}
       <PermissionsTable
         permissions={permissions}
         isLoading={isLoading}
@@ -67,6 +87,16 @@ export default function PermissionsView({
             refetch();
           }}
           data={selectedPermission}
+        />
+      )}
+      {showAddPermission && (
+        <PermissionForm
+          data={newPermissionData}
+          isOpen={isPermissionModalOpen}
+          onClose={() => {
+            setIsPermissionModalOpen(false);
+            refetch();
+          }}
         />
       )}
     </>
