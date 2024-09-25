@@ -2,7 +2,7 @@ import { PlaybookSpec } from "../../api/types/playbooks";
 import { Icon } from "../../ui/Icons/Icon";
 
 type PlaybookSpecModalTitleProps = {
-  playbookSpec?: Pick<PlaybookSpec, "spec" | "name">;
+  playbookSpec?: Pick<PlaybookSpec, "spec" | "name" | "title">;
   defaultTitle?: string;
 };
 
@@ -17,7 +17,7 @@ export default function PlaybookSpecModalTitle({
   return (
     <div className="flex flex-row items-center gap-2 overflow-ellipsis whitespace-nowrap">
       <Icon name={playbookSpec.spec?.icon} />
-      <span>{playbookSpec.name}</span>
+      <span>{playbookSpec.title || playbookSpec.name}</span>
     </div>
   );
 }
