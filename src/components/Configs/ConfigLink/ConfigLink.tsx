@@ -1,5 +1,6 @@
 import { getConfigsByID } from "@flanksource-ui/api/services/configs";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { HTMLAttributeAnchorTarget } from "react";
@@ -25,7 +26,7 @@ export default function ConfigLink({
   showPrimaryIcon = true,
   showSecondaryIcon = true
 }: ConfigLinkProps) {
-  const { data: configFromRequest } = useQuery({
+  const { data: configFromRequest, isLoading } = useQuery({
     queryKey: ["config", configId, config],
     queryFn: () => getConfigsByID(configId!),
     // Only run the query if we have a configId and we don't have a config
@@ -33,6 +34,10 @@ export default function ConfigLink({
   });
 
   const data = config || configFromRequest;
+
+  if (isLoading) {
+    return <TextSkeletonLoader className="h-5 w-24" />;
+  }
 
   if (!data) {
     return null;
