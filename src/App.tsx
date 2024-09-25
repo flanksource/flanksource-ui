@@ -12,6 +12,7 @@ import {
   MdOutlineIntegrationInstructions,
   MdOutlineSupportAgent
 } from "react-icons/md";
+import { RiShieldUserFill } from "react-icons/ri";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -53,6 +54,7 @@ import {
 import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
 import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
 import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
+import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import NotificationSilencedAddPage from "./pages/Settings/notifications/NotificationSilencedAddPage";
 import NotificationsPage from "./pages/Settings/notifications/NotificationsPage";
 import NotificationRulesPage from "./pages/Settings/notifications/NotificationsRulesPage";
@@ -163,6 +165,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: BsLink,
       featureName: features["settings.connections"],
       resourceName: tables.connections
+    },
+    {
+      name: "Permissions",
+      href: "/settings/permissions",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.permissions
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -395,6 +404,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             tables.connections,
             "read",
             true
+          )}
+        />
+        <Route
+          path="permissions"
+          element={withAuthorizationAccessCheck(
+            <PermissionsPage />,
+            tables.permissions,
+            "read"
           )}
         />
         <Route
