@@ -13,6 +13,7 @@ import {
   MdOutlineIntegrationInstructions,
   MdOutlineSupportAgent
 } from "react-icons/md";
+import { RiShieldUserFill } from "react-icons/ri";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -36,6 +37,8 @@ import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
+
+import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { features } from "./services/permissions/features";
 import { Head } from "./ui/Head";
 import { LogsIcon } from "./ui/Icons/LogsIcon";
@@ -288,12 +291,12 @@ export type SettingsNavigationItems = {
   submenu: (
     | (SchemaResourceType & { href: string })
     | {
-        name: string;
-        href: string;
-        icon: React.ComponentType<{ className: string }>;
-        featureName: string;
-        resourceName: string;
-      }
+      name: string;
+      href: string;
+      icon: React.ComponentType<{ className: string }>;
+      featureName: string;
+      resourceName: string;
+    }
   )[];
 };
 
@@ -309,17 +312,24 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features["settings.connections"],
       resourceName: tables.connections
     },
+    {
+      name: "Permissions",
+      href: "/settings/permissions",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.permissions
+    },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
       : [
-          {
-            name: "Users",
-            href: "/settings/users",
-            icon: HiUser,
-            featureName: features["settings.users"],
-            resourceName: tables.identities
-          }
-        ]),
+        {
+          name: "Users",
+          href: "/settings/users",
+          icon: HiUser,
+          featureName: features["settings.users"],
+          resourceName: tables.identities
+        }
+      ]),
     ...schemaResourceTypes
       // remove catalog_scraper from settings
       .filter((resource) => resource.table !== "config_scrapers")
@@ -543,6 +553,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
+          path="permissions"
+          element={withAuthorizationAccessCheck(
+            <PermissionsPage />,
+            tables.permissions,
+            "read"
+          )}
+        />
+        <Route
           path="users"
           element={withAuthorizationAccessCheck(
             <UsersPage />,
@@ -629,7 +647,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                       resourceInfo={x as SchemaResourceType & { href: string }}
                     />,
                     tables[
-                      (x as SchemaResourceType).table as keyof typeof tables
+                    (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
                     "read",
                     true
@@ -641,7 +659,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                   element={withAuthorizationAccessCheck(
                     <SchemaResource resourceInfo={x as SchemaResourceType} />,
                     tables[
-                      (x as SchemaResourceType).table as keyof typeof tables
+                    (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
                     "read",
                     true
