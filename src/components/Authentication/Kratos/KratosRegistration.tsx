@@ -63,12 +63,7 @@ export default function KratosRegistration() {
             updateRegistrationFlowBody: values
           })
           .then(({ data }) => {
-            // If we ended up here, it means we are successfully signed up!
-            //
-            // You can do cool stuff here, like having access to the identity which just signed up:
-            console.log("This is the user session: ", data, data.identity);
-
-            // For now however we just want to redirect home!
+            console.log("User logged in", data, data.identity);
             window.location.href = flow?.return_to || "/";
           })
           .catch(handleFlowError(router, "registration", setFlow))

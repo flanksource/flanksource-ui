@@ -49,8 +49,6 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
   // not so we can set the base URL correctly
   const direct = parseBoolean(organization?.publicMetadata.direct);
 
-  console.log({ direct });
-
   useEffect(() => {
     // if the organization does not support direct access to the backend, we
     // should not attach the interceptors

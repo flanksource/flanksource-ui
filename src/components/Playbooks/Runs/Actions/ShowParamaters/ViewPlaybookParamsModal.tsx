@@ -15,7 +15,6 @@ type RenderParamValueProps = {
 };
 
 function RenderParamValue({ paramSpec, paramValue }: RenderParamValueProps) {
-  console.log(paramSpec, paramValue);
   switch (paramSpec.type) {
     // for code, we want to render the code in a JSONViewer
     case "code":

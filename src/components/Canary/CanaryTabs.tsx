@@ -95,7 +95,6 @@ export function generateTabs(tabBy: string, checks: HealthCheck[]) {
       )
     };
   }
-  console.log("tabs", tabs);
   return tabs;
 }
 
