@@ -92,7 +92,5 @@ export function updatePermission(permission: PermissionTable) {
 }
 
 export function deletePermission(id: string) {
-  return IncidentCommander.patch(`/permissions?id=eq.${id}`, {
-    deleted_at: "now()"
-  });
+  return IncidentCommander.delete(`/permissions?id=eq.${id}`);
 }

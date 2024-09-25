@@ -166,18 +166,17 @@ export function ConnectionsPage() {
               setEditedRow(val);
             }}
           />
-
-          <ConnectionFormModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            onConnectionSubmit={onSubmit}
-            onConnectionDelete={(data) => deleteConnection(data)}
-            isSubmitting={isSubmitting}
-            isDeleting={isDeleting}
-            formValue={editedRow}
-            key={editedRow?.id || "connection-form"}
-          />
         </div>
+        <ConnectionFormModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onConnectionSubmit={onSubmit}
+          onConnectionDelete={(data) => deleteConnection(data)}
+          isSubmitting={isSubmitting}
+          isDeleting={isDeleting}
+          formValue={editedRow}
+          key={editedRow?.id || "connection-form"}
+        />
       </SearchLayout>
     </>
   );
