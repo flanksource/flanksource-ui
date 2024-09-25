@@ -1,4 +1,3 @@
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import AddPermissionButton from "@flanksource-ui/components/Permissions/ManagePermissions/Forms/AddPermissionButton";
 import PermissionsView from "@flanksource-ui/components/Permissions/PermissionsView";
@@ -8,6 +7,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
