@@ -105,6 +105,13 @@ export const getNotificationSendHistory = async ({
   );
 };
 
+export const getNotificationSendHistoryById = async (id: string) => {
+  const res = await IncidentCommander.get<NotificationSendHistoryApiResponse[]>(
+    `/notification_send_history_summary?id=eq.${id}`
+  );
+  return res.data?.[0];
+};
+
 export type NotificationQueryFilterOptions = {
   pageIndex: number;
   pageSize: number;
