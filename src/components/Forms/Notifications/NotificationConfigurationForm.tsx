@@ -1,4 +1,4 @@
-import { NotificationRules } from "@flanksource-ui/components/Notifications/Rules/notificationsRulesTableColumns";
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { useFormikContext } from "formik";
 import FormikConnectionField from "../Formik/FormikConnectionField";
 import FormikTextArea from "../Formik/FormikTextArea";

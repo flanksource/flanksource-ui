@@ -1,10 +1,10 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import {
   useGetNotificationsByIDQuery,
   useUpdateNotification
 } from "../../../api/query-hooks/useNotificationsQuery";
 import { Modal } from "../../../ui/Modal";
 import NotificationsRulesForm from "./NotificationsRulesForm";
-import { NotificationRules } from "./notificationsRulesTableColumns";
 
 type Props = {
   notificationId: string;

@@ -1,5 +1,4 @@
-import { Team, User } from "@flanksource-ui/api/types/users";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
@@ -9,10 +8,8 @@ import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { Icon } from "../../../ui/Icons/Icon";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
-import { JobHistoryStatus } from "../../JobsHistory/JobsHistoryTable";
 
 export const notificationMostCommonErrorAtom = atom<
   NotificationRules | undefined
@@ -104,42 +101,6 @@ export function StatusColumn({ cell }: MRTCellProps<NotificationRules>) {
   );
 }
 
-export type NotificationRules = {
-  id: string;
-  title: string;
-  events: string[];
-  source?: "KubernetesCRD" | "ConfigFile" | "UI" | "Topology";
-  template: string;
-  filter?: string;
-  properties?: Record<string, any>;
-  person_id?: string;
-  team_id?: string;
-  custom_services?: {
-    name: string;
-    filters?: string;
-    url?: string;
-    connection?: string;
-    properties?: Record<string, any>;
-  }[];
-  created_by?: User;
-  created_at: string;
-  updated_at: string;
-  deleted_at?: string;
-  person?: User;
-  team?: Team;
-  job_status?: JobHistoryStatus;
-  job_name?: string;
-  job_details?: {
-    errors?: string[];
-  };
-  pending?: number;
-  avg_duration_ms?: number;
-  failed?: number;
-  sent?: number;
-  most_common_error?: string;
-  repeat_interval?: string;
-};
-
 export type NewNotificationRule = Omit<
   NotificationRules,
   "id" | "created_at" | "team" | "job_status" | "person"
@@ -152,48 +113,48 @@ export type UpdateNotificationRule = Omit<
 
 export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] =
   [
-    {
-      header: "Recipients",
-      id: "recipients",
-      size: 150,
-      Cell: ({ cell }) => {
-        const person = cell.row.original.person;
-        const team = cell.row.original.team;
-        const custom_services = cell.row.original.custom_services;
+    // {
+    //   header: "Recipients",
+    //   id: "recipients",
+    //   size: 150,
+    //   Cell: ({ cell }) => {
+    //     const person = cell.row.original.person;
+    //     const team = cell.row.original.team;
+    //     const custom_services = cell.row.original.custom_services;
 
-        return (
-          <div className="flex flex-wrap gap-2">
-            {person && (
-              <div className="flex max-w-full flex-wrap items-center gap-2">
-                <Avatar user={person} circular size="sm" /> {person.name}{" "}
-              </div>
-            )}
+    //     return (
+    //       <div className="flex flex-wrap gap-2">
+    //         {person && (
+    //           <div className="flex max-w-full flex-wrap items-center gap-2">
+    //             <Avatar user={person} circular size="sm" /> {person.name}{" "}
+    //           </div>
+    //         )}
 
-            {team && (
-              <div className="flex max-w-full flex-wrap items-center gap-2">
-                <Icon className="inline-block h-6" name={team.icon} />{" "}
-                {team.name}{" "}
-              </div>
-            )}
+    //         {team && (
+    //           <div className="flex max-w-full flex-wrap items-center gap-2">
+    //             <Icon className="inline-block h-6" name={team.icon} />{" "}
+    //             {team.name}{" "}
+    //           </div>
+    //         )}
 
-            {custom_services &&
-              custom_services.length > 0 &&
-              custom_services.map(({ connection, name }) => (
-                <div
-                  className="flex flex-row items-center gap-2"
-                  key={connection ?? name}
-                >
-                  <Icon
-                    className="inline-block h-6"
-                    name={connection ?? name}
-                  />
-                  {name}
-                </div>
-              ))}
-          </div>
-        );
-      }
-    },
+    //         {custom_services &&
+    //           custom_services.length > 0 &&
+    //           custom_services.map(({ connection, name }) => (
+    //             <div
+    //               className="flex flex-row items-center gap-2"
+    //               key={connection ?? name}
+    //             >
+    //               <Icon
+    //                 className="inline-block h-6"
+    //                 name={connection ?? name}
+    //               />
+    //               {name}
+    //             </div>
+    //           ))}
+    //       </div>
+    //     );
+    //   }
+    // },
     {
       header: "Events",
       id: "events",

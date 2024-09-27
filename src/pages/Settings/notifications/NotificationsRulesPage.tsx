@@ -1,3 +1,4 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useState } from "react";
 import {
@@ -7,7 +8,6 @@ import {
 import NotificationTabsLinks from "../../../components/Notifications/NotificationTabsLinks";
 import NotificationsRulesForm from "../../../components/Notifications/Rules/NotificationsRulesForm";
 import NotificationsRulesTable from "../../../components/Notifications/Rules/NotificationsRulesTable";
-import { NotificationRules } from "../../../components/Notifications/Rules/notificationsRulesTableColumns";
 import { Modal } from "../../../ui/Modal";
 
 export default function NotificationRulesPage() {
@@ -42,12 +42,12 @@ export default function NotificationRulesPage() {
   return (
     <>
       <NotificationTabsLinks
-        activeTab={"Notification Rules"}
+        activeTab={"Rules"}
         refresh={refetch}
         isLoading={isLoading || isRefetching}
         setIsModalOpen={setIsOpen}
       >
-        <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
+        <div className="flex h-full w-full flex-1 flex-col p-3">
           <NotificationsRulesTable
             notifications={notifications ?? []}
             isLoading={isLoading || isRefetching}

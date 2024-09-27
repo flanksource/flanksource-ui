@@ -8,7 +8,7 @@ export default function NotificationsSilencedPage() {
   const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
-    queryKey: ["notification_silenced", { pageIndex, pageSize }],
+    queryKey: ["notification_silences", { pageIndex, pageSize }],
     queryFn: () => getNotificationSilences({ pageIndex, pageSize }),
     keepPreviousData: true
   });
@@ -19,11 +19,11 @@ export default function NotificationsSilencedPage() {
 
   return (
     <NotificationTabsLinks
-      activeTab={"Silenced Notifications"}
+      activeTab={"Silences"}
       refresh={refetch}
       isLoading={isLoading || isRefetching}
     >
-      <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
+      <div className="flex h-full w-full flex-1 flex-col p-3">
         <SilenceNotificationsList
           data={notifications ?? []}
           isLoading={isLoading || isRefetching}

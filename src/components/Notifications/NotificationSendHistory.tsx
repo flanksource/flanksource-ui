@@ -1,65 +1,108 @@
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import { Topology } from "@flanksource-ui/api/types/topology";
+import { Age } from "@flanksource-ui/ui/Age";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
+import { useState } from "react";
+import { CheckLink } from "../Canary/HealthChecks/CheckLink";
+import ConfigLink from "../Configs/ConfigLink/ConfigLink";
+import { TopologyLink } from "../Topology/TopologyLink";
+import NotificationDetailsModal from "./NotificationDetailsModal";
+import { NotificationStatusCell } from "./NotificationsStatusCell";
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
   [
     {
-      header: "Recipient",
+      header: "Age",
+      accessorKey: "created_at",
+      size: 100,
       Cell: ({ row }) => {
-        const user = row.original.person;
+        const dateString = row.original.created_at;
+        const count = row.original.count;
+        const firstObserved = row.original.first_observed;
 
-        return <Avatar user={user} />;
+        return (
+          <div className="text-xs">
+            <Age from={dateString} />
+            {(count || 1) > 1 && (
+              <span className="inline-block pl-1 text-gray-500">
+                (x{count} over <Age from={firstObserved} />)
+              </span>
+            )}
+          </div>
+        );
+      }
+    },
+    {
+      header: "Resource",
+      size: 300,
+      Cell: ({ row }) => {
+        const resource = row.original.resource;
+
+        const resourceType = row.original.resource_type;
+
+        return (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            className="flex flex-row items-center"
+          >
+            {resourceType === "check" && (
+              <CheckLink
+                className="flex w-full flex-row items-center justify-between space-x-2 rounded-md hover:bg-gray-100"
+                check={resource as HealthCheck}
+              />
+            )}
+            {resourceType === "config" && (
+              <ConfigLink config={resource as ConfigItem} />
+            )}
+            {resourceType === "component" && (
+              <TopologyLink
+                topology={resource as Topology}
+                className="h-5 w-5 text-gray-600"
+                linkClassName="text-gray-600"
+                size="md"
+              />
+            )}
+          </div>
+        );
       }
     },
     {
       header: "Status",
-      Cell: ({ row }) => {
-        const status = row.original.status;
-        return <span>{status}</span>;
-      }
+      size: 100,
+      Cell: NotificationStatusCell
     },
     {
-      header: "Body",
-      Cell: ({ row }) => {
-        const body = row.original.body;
-        return <span>{body}</span>;
-      }
-    },
-    {
-      header: "Count",
-      Cell: ({ row }) => {
-        const count = row.original.count;
-        return <span>{count}</span>;
-      }
-    },
-    {
-      header: "First Observed",
-      Cell: MRTDateCell,
-      accessorKey: "first_observed"
-    },
-    {
-      header: "Source Event",
+      header: "Event",
+      size: 100,
       Cell: ({ row }) => {
         const sourceEvent = row.original.source_event;
         return <span>{sourceEvent}</span>;
       }
-    },
-    {
-      header: "Age",
-      accessorKey: "created_at",
-      Cell: (props) => {
-        return <MRTDateCell {...props} />;
-      }
     }
+    // {
+    //   header: "Body",
+    //   size: 400,
+    //   Cell: ({ row }) => {
+    //     const body = row.original.body;
+    //     return <span>{body}</span>;
+    //   }
+    // }
+    // {
+    //   header: "First Observed",
+    //   Cell: MRTDateCell,
+    //   accessorKey: "first_observed"
+    // }
   ];
 
 type NotificationSendHistoryListProps = {
   data: NotificationSendHistoryApiResponse[];
   isLoading: boolean;
-  onRowClick?: (row: NotificationSendHistoryApiResponse) => void;
   refresh?: () => void;
   pageCount: number;
   sendHistoryRowCount: number;
@@ -68,20 +111,35 @@ type NotificationSendHistoryListProps = {
 export default function NotificationSendHistoryList({
   data,
   isLoading,
-  onRowClick = () => {},
   pageCount,
   sendHistoryRowCount
 }: NotificationSendHistoryListProps) {
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationSendHistoryApiResponse>();
+
   return (
-    <MRTDataTable
-      data={data}
-      columns={notificationSendHistoryColumns}
-      isLoading={isLoading}
-      onRowClick={onRowClick}
-      manualPageCount={pageCount}
-      totalRowCount={sendHistoryRowCount}
-      enableServerSidePagination
-      enableServerSideSorting
-    />
+    <>
+      <MRTDataTable
+        data={data}
+        columns={notificationSendHistoryColumns}
+        isLoading={isLoading}
+        onRowClick={(row) => {
+          setSelectedNotification(row);
+        }}
+        manualPageCount={pageCount}
+        totalRowCount={sendHistoryRowCount}
+        enableServerSidePagination
+        enableServerSideSorting
+      />
+      {selectedNotification && (
+        <NotificationDetailsModal
+          isOpen={!!selectedNotification}
+          onClose={() => {
+            setSelectedNotification(undefined);
+          }}
+          notification={selectedNotification}
+        />
+      )}
+    </>
   );
 }

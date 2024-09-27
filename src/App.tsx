@@ -364,7 +364,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
 
-        <Route path="silenced">
+        <Route path="silences">
           <Route
             index
             element={withAuthorizationAccessCheck(

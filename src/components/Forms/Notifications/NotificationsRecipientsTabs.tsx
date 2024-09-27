@@ -1,7 +1,7 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
-import { NotificationRules } from "../../Notifications/Rules/notificationsRulesTableColumns";
 import FormikPeopleDropdown from "../Formik/FormikPeopleDropdown";
 import FormikTeamsDropdown from "../Formik/FormikTeamsDropdown";
 import NotificationConfigurationForm from "./NotificationConfigurationForm";

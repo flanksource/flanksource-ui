@@ -5,6 +5,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import clsx from "clsx";
@@ -13,17 +14,16 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
-import { SearchLayout } from "../Layout/SearchLayout";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
 const tabLinks = [
   { label: "Notifications", path: "/notifications" },
   { label: "Rules", path: "/notifications/rules" },
-  { label: "Silenced Notifications", path: "/notifications/silenced" }
+  { label: "Silences", path: "/notifications/silences" }
 ];
 
 type NotificationTabsLinksProps = {
-  activeTab: "Notifications" | "Notification Rules" | "Silenced Notifications";
+  activeTab: "Notifications" | "Rules" | "Silences";
   children: React.ReactNode;
   refresh?: () => void;
   isLoading?: boolean;
@@ -55,7 +55,7 @@ export default function NotificationTabsLinks({
               <BreadcrumbRoot key="notifications" link="/notifications">
                 Notifications
               </BreadcrumbRoot>,
-              ...(activeTab === "Notification Rules"
+              ...(activeTab === "Rules"
                 ? [
                     <BreadcrumbChild key="rules">Rules</BreadcrumbChild>,
 
@@ -75,10 +75,10 @@ export default function NotificationTabsLinks({
                     </AuthorizationAccessCheck>
                   ]
                 : []),
-              ...(activeTab === "Silenced Notifications"
+              ...(activeTab === "Silences"
                 ? [
                     <BreadcrumbChild key="silenced-notifications">
-                      Silenced
+                      Silences
                     </BreadcrumbChild>,
 
                     <AuthorizationAccessCheck
@@ -90,7 +90,7 @@ export default function NotificationTabsLinks({
                         key="notifications-silenced-add"
                         type="button"
                         className=""
-                        to="/notifications/silenced/add"
+                        to="/notifications/silences/add"
                       >
                         <AiFillPlusCircle size={32} className="text-blue-600" />
                       </Link>

@@ -1,7 +1,6 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
   NewNotificationRule,
-  NotificationRules,
   UpdateNotificationRule
 } from "../../components/Notifications/Rules/notificationsRulesTableColumns";
 import { toastError, toastSuccess } from "../../components/Toast/toast";
@@ -12,6 +11,7 @@ import {
   getNotificationsSummary,
   NotificationQueryFilterOptions
 } from "../services/notifications";
+import { NotificationRules } from "../types/notifications";
 
 export type DatabaseResponse<T extends Record<string, any>> =
   | { error: Error; data: null; totalEntries: undefined }

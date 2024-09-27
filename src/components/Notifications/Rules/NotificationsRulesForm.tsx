@@ -1,3 +1,4 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Form, Formik } from "formik";
 import { Button } from "../../../ui/Buttons/Button";
 import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
@@ -8,7 +9,6 @@ import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import NotificationsRecipientsTabs from "../../Forms/Notifications/NotificationsRecipientsTabs";
 import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 import CanEditResource from "../../Settings/CanEditResource";
-import { NotificationRules } from "./notificationsRulesTableColumns";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;

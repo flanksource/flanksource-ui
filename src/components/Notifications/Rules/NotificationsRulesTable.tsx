@@ -1,10 +1,10 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import EditNotificationRules from "./EditNotificationRules";
 import {
-  NotificationRules,
   notificationMostCommonErrorAtom,
   notificationsRulesTableColumns
 } from "./notificationsRulesTableColumns";

@@ -1,8 +1,9 @@
-import { NotificationRules } from "@flanksource-ui/components/Notifications/Rules/notificationsRulesTableColumns";
+import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
 import { IncidentCommander, NotificationAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
+  NotificationRules,
   NotificationSendHistoryApiResponse,
   NotificationSilenceItemApiResponse,
   SilenceNotificationResponse
@@ -28,9 +29,16 @@ export const getNotificationsSummary = async ({
 }: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
 
+  const selectColumns = [
+    "*",
+    `person:person_id(${AVATAR_INFO})`,
+    `team:team_id(id,name,icon)`,
+    `created_by(${AVATAR_INFO})`
+  ].join(",");
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationRules[] | null>(
-      `/notifications_summary?select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})&order=created_at.desc${pagingParams}`,
+      `/notifications_summary?select=${selectColumns}&order=created_at.desc${pagingParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -41,8 +49,14 @@ export const getNotificationsSummary = async ({
 };
 
 export const getNotificationById = async (id: string) => {
+  const selectColumns = [
+    "*",
+    `person:person_id(${AVATAR_INFO})`,
+    `team:team_id(id,name,icon)`,
+    `created_by(${AVATAR_INFO})`
+  ].join(",");
   const res = await IncidentCommander.get<NotificationRules[] | null>(
-    `/notifications?id=eq.${id}&select=*,person:person_id(${AVATAR_INFO}),team:team_id(id,name,icon),created_by(${AVATAR_INFO})`
+    `/notifications?id=eq.${id}&select=${selectColumns}`
   );
   return res.data ? res.data?.[0] : undefined;
 };
@@ -56,12 +70,32 @@ export const silenceNotification = async (
 
 export const getNotificationSendHistory = async ({
   pageIndex,
-  pageSize
-}: NotificationQueryFilterOptions) => {
+  pageSize,
+  resourceType,
+  status
+}: NotificationQueryFilterOptions & {
+  status?: string;
+  resourceType?: string;
+}) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
+
+  const resourceTypeParam = resourceType
+    ? tristateOutputToQueryFilterParam(resourceType, "resource_type")
+    : "";
+
+  const statusParam = status
+    ? tristateOutputToQueryFilterParam(status, "status")
+    : "";
+
+  const selectColumns = [
+    "*"
+    // `person:person_id(${AVATAR_INFO})`
+  ].join(",");
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
-      `/notification_send_history?select=*,person:person_id(${AVATAR_INFO})&order=created_at.desc${pagingParams}`,
+      // currently, this isn't deployed to production
+      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -81,9 +115,18 @@ export const getNotificationSilences = async ({
   pageSize
 }: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
+
+  const selectColumns = [
+    "*",
+    "checks:check_id(id,name,type,status)",
+    "catalog:config_id(id,name,type,config_class)",
+    "component:component_id(id,name,icon)",
+    `createdBy:created_by(${AVATAR_INFO})`
+  ].join(",");
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSilenceItemApiResponse[] | null>(
-      `/notification_silences?select=*,checks:check_id(id,name,type,status),catalog:config_id(id,name,type,config_class),component:component_id(id,name,icon),createdBy:created_by(${AVATAR_INFO})&order=created_at.desc${pagingParams}`,
+      `/notification_silences?select=${selectColumns}&order=created_at.desc${pagingParams}&deleted_at=is.null`,
       {
         headers: {
           Prefer: "count=exact"
@@ -91,4 +134,10 @@ export const getNotificationSilences = async ({
       }
     )
   );
+};
+
+export const deleteNotificationSilence = async (id: string) => {
+  return IncidentCommander.patch(`/notification_silences?id=eq.${id}`, {
+    deleted_at: "now()"
+  });
 };
