@@ -1,24 +1,28 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import EditNotification from "./EditNotification";
+import EditNotificationRules from "./EditNotificationRules";
 import {
-  Notification,
   notificationMostCommonErrorAtom,
-  notificationsTableColumns
-} from "./notificationsTableColumns";
+  notificationsRulesTableColumns
+} from "./notificationsRulesTableColumns";
 
 type NotificationsTableProps = {
-  notifications: Notification[];
+  notifications: NotificationRules[];
   isLoading?: boolean;
   refresh?: () => void;
+  totalRecordCount: number;
+  pageCount: number;
 };
 
-export default function NotificationsTable({
+export default function NotificationsRulesTable({
   notifications,
   isLoading,
-  refresh = () => {}
+  refresh = () => {},
+  pageCount,
+  totalRecordCount
 }: NotificationsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNotificationId, setSelectedNotificationId] =
@@ -31,11 +35,14 @@ export default function NotificationsTable({
     mostCommonErrorNotification?.person?.name ??
     mostCommonErrorNotification?.team?.name;
 
-  const onSelectNotification = useCallback((notification: Notification) => {
-    const id = notification.id;
-    setSelectedNotificationId(id);
-    setIsModalOpen(true);
-  }, []);
+  const onSelectNotification = useCallback(
+    (notification: NotificationRules) => {
+      const id = notification.id;
+      setSelectedNotificationId(id);
+      setIsModalOpen(true);
+    },
+    []
+  );
 
   return (
     <>
@@ -52,12 +59,15 @@ export default function NotificationsTable({
       )}
       <MRTDataTable
         data={notifications}
-        columns={notificationsTableColumns}
+        columns={notificationsRulesTableColumns}
         isLoading={isLoading}
         onRowClick={onSelectNotification}
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        totalRowCount={totalRecordCount}
       />
       {selectedNotificationId && (
-        <EditNotification
+        <EditNotificationRules
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           notificationId={selectedNotificationId}

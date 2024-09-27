@@ -22,6 +22,11 @@ const config = {
         source: "/config/:path*",
         destination: "/catalog/:path*",
         permanent: true
+      },
+      {
+        source: "/settings/notifications/:path*",
+        destination: "/notifications/:path*",
+        permanent: true
       }
     ];
   },

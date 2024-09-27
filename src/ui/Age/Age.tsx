@@ -73,7 +73,7 @@ export default function Age({
         data-tooltip-id={`age-tooltip-${_from.local().to(_to)}`}
         className={clsx(className, "whitespace-nowrap")}
       >
-        {_from.local().to(_to)}
+        {_from.local().to(_to, !suffix)}
       </span>
       <Tooltip
         id={`age-tooltip-${_from.local().to(_to)}`}

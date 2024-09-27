@@ -40,7 +40,7 @@ export function CheckLink({
       className={className}
     >
       <HealthCheckStatus check={data} />
-      <Icon name={data.type} className="h-auto w-4" />
+      <Icon name={data.type} className="h-5 w-5" />
       <span className="flex-1 overflow-hidden text-ellipsis">{data.name}</span>
     </Link>
   );

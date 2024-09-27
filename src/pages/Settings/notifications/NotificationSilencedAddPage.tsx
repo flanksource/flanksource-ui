@@ -7,7 +7,7 @@ import {
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 
-export default function NotificationSilencePage() {
+export default function NotificationSilencedAddPage() {
   return (
     <>
       <Head prefix="Silence Notification" />
@@ -15,10 +15,13 @@ export default function NotificationSilencePage() {
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot link="/settings/notifications" key="breadcrumb-1">
+              <BreadcrumbRoot link="/notifications" key="breadcrumb">
                 Notifications
               </BreadcrumbRoot>,
-              <BreadcrumbChild key={"silence"}>Silence</BreadcrumbChild>
+              <BreadcrumbChild link="/notifications/silenced" key={"silence"}>
+                Silenced
+              </BreadcrumbChild>,
+              <BreadcrumbChild key={"add"}>Add</BreadcrumbChild>
             ]}
           />
         }

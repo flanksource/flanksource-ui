@@ -1,4 +1,4 @@
-import { notificationEvents } from "../../Notifications/notificationsTableColumns";
+import { notificationEvents } from "../../Notifications/Rules/notificationsRulesTableColumns";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 
 type FormikEventsDropdownProps = {

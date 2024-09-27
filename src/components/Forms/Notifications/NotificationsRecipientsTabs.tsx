@@ -1,7 +1,7 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
-import { Notification } from "../../Notifications/notificationsTableColumns";
 import FormikPeopleDropdown from "../Formik/FormikPeopleDropdown";
 import FormikTeamsDropdown from "../Formik/FormikTeamsDropdown";
 import NotificationConfigurationForm from "./NotificationConfigurationForm";
@@ -24,7 +24,7 @@ const subjectTabs = [
 ];
 
 export default function NotificationsRecipientsTabs() {
-  const { values, setFieldValue } = useFormikContext<Notification>();
+  const { values, setFieldValue } = useFormikContext<NotificationRules>();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     if (values.person_id) {

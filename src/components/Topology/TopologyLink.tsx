@@ -74,7 +74,7 @@ function TopologyLinkLocal({
   topology,
   viewType = "link",
   size = "xl",
-  className = "mr-1 h-5 object-center",
+  className = "mr-1 h-5 w-5 object-center",
   linkClassName = "my-auto flex flex-row items-center hover:text-gray-500"
 }: {
   topology?: Component | undefined | null;

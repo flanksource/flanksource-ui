@@ -1,22 +1,22 @@
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Form, Formik } from "formik";
-import { Button } from "../../ui/Buttons/Button";
-import FormikAutocompleteDropdown from "../Forms/Formik/FormikAutocompleteDropdown";
-import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
-import FormikNotificationEventsDropdown from "../Forms/Formik/FormikNotificationEventsDropdown";
-import FormikNotificationsTemplateField from "../Forms/Formik/FormikNotificationsTemplateField";
-import FormikTextInput from "../Forms/Formik/FormikTextInput";
-import NotificationsRecipientsTabs from "../Forms/Notifications/NotificationsRecipientsTabs";
-import DeleteResource from "../SchemaResourcePage/Delete/DeleteResource";
-import CanEditResource from "../Settings/CanEditResource";
-import { Notification } from "./notificationsTableColumns";
+import { Button } from "../../../ui/Buttons/Button";
+import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
+import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
+import FormikNotificationEventsDropdown from "../../Forms/Formik/FormikNotificationEventsDropdown";
+import FormikNotificationsTemplateField from "../../Forms/Formik/FormikNotificationsTemplateField";
+import FormikTextInput from "../../Forms/Formik/FormikTextInput";
+import NotificationsRecipientsTabs from "../../Forms/Notifications/NotificationsRecipientsTabs";
+import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
+import CanEditResource from "../../Settings/CanEditResource";
 
 type NotificationsFormProps = {
-  onSubmit: (notification: Partial<Notification>) => void;
-  notification?: Notification;
+  onSubmit: (notification: Partial<NotificationRules>) => void;
+  notification?: NotificationRules;
   onDeleted: () => void;
 };
 
-export default function NotificationsForm({
+export default function NotificationsRulesForm({
   onSubmit,
   notification,
   onDeleted = () => {}
@@ -33,7 +33,7 @@ export default function NotificationsForm({
           updated_at: undefined,
           ...(!notification?.id && { source: "UI" })
         }}
-        onSubmit={(values) => onSubmit(values as Partial<Notification>)}
+        onSubmit={(values) => onSubmit(values as Partial<NotificationRules>)}
         validateOnBlur
         validateOnChange
       >

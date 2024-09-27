@@ -6,13 +6,13 @@ import ConfigSummaryList from "@flanksource-ui/components/Configs/ConfigSummary/
 import useGroupBySearchParam from "@flanksource-ui/components/Configs/ConfigSummary/utils/useGroupBySearchParam";
 import ConfigsListFilters from "@flanksource-ui/components/Configs/ConfigsListFilters/ConfigsListFilters";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 

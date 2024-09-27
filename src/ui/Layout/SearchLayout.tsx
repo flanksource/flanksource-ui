@@ -1,3 +1,5 @@
+import { FaBell } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
 import { UserProfileDropdown } from "../../components/Users/UserProfile";
 import { RefreshButton } from "../Buttons/RefreshButton";
@@ -6,7 +8,7 @@ import { HelpDropdown } from "../MenuBar/HelpDropdown";
 interface IProps {
   children: React.ReactNode;
   contentClass?: string;
-  title: React.ReactNode;
+  title?: React.ReactNode;
   onRefresh?: () => void;
   loading?: boolean;
   extra?: React.ReactNode;
@@ -36,6 +38,13 @@ export function SearchLayout({
             {onRefresh && (
               <RefreshButton onClick={onRefresh} animate={loading} />
             )}
+            <Link
+              to={{
+                pathname: "/notifications"
+              }}
+            >
+              <FaBell className="cursor-pointer text-gray-500" size={20} />
+            </Link>
             <HelpDropdown />
             <UserProfileDropdown />
           </div>

@@ -1,10 +1,10 @@
-import { Notification } from "@flanksource-ui/components/Notifications/notificationsTableColumns";
+import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { useFormikContext } from "formik";
 import FormikConnectionField from "../Formik/FormikConnectionField";
 import FormikTextArea from "../Formik/FormikTextArea";
 
 export default function NotificationConfigurationForm() {
-  const { values } = useFormikContext<Notification>();
+  const { values } = useFormikContext<NotificationRules>();
   return (
     <div className="flex flex-col space-y-2">
       {values.source === "UI" ? (
