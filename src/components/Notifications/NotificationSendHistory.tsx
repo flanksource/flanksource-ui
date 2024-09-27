@@ -1,15 +1,10 @@
-import { ConfigItem } from "@flanksource-ui/api/types/configs";
-import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
-import { Topology } from "@flanksource-ui/api/types/topology";
 import { Age } from "@flanksource-ui/ui/Age";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useState } from "react";
-import { CheckLink } from "../Canary/HealthChecks/CheckLink";
-import ConfigLink from "../Configs/ConfigLink/ConfigLink";
-import { TopologyLink } from "../Topology/TopologyLink";
+import { useSearchParams } from "react-router-dom";
 import NotificationDetailsModal from "./NotificationDetailsModal";
+import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
@@ -39,10 +34,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
       header: "Resource",
       size: 300,
       Cell: ({ row }) => {
-        const resource = row.original.resource;
-
-        const resourceType = row.original.resource_type;
-
         return (
           <div
             onClick={(e) => {
@@ -51,23 +42,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
             }}
             className="flex flex-row items-center"
           >
-            {resourceType === "check" && (
-              <CheckLink
-                className="flex w-full flex-row items-center justify-between space-x-2 rounded-md hover:bg-gray-100"
-                check={resource as HealthCheck}
-              />
-            )}
-            {resourceType === "config" && (
-              <ConfigLink config={resource as ConfigItem} />
-            )}
-            {resourceType === "component" && (
-              <TopologyLink
-                topology={resource as Topology}
-                className="h-5 w-5 text-gray-600"
-                linkClassName="text-gray-600"
-                size="md"
-              />
-            )}
+            <NotificationResourceDisplay notification={row.original} />
           </div>
         );
       }
@@ -114,8 +89,10 @@ export default function NotificationSendHistoryList({
   pageCount,
   sendHistoryRowCount
 }: NotificationSendHistoryListProps) {
-  const [selectedNotification, setSelectedNotification] =
-    useState<NotificationSendHistoryApiResponse>();
+  const [searchParams, setSearchParam] = useSearchParams();
+
+  const id = searchParams.get("id") ?? undefined;
+  const isOpen = searchParams.has("id");
 
   return (
     <>
@@ -124,20 +101,22 @@ export default function NotificationSendHistoryList({
         columns={notificationSendHistoryColumns}
         isLoading={isLoading}
         onRowClick={(row) => {
-          setSelectedNotification(row);
+          searchParams.set("id", row.id);
+          setSearchParam(searchParams);
         }}
         manualPageCount={pageCount}
         totalRowCount={sendHistoryRowCount}
         enableServerSidePagination
         enableServerSideSorting
       />
-      {selectedNotification && (
+      {id && (
         <NotificationDetailsModal
-          isOpen={!!selectedNotification}
+          isOpen={isOpen}
           onClose={() => {
-            setSelectedNotification(undefined);
+            searchParams.delete("id");
+            setSearchParam(searchParams);
           }}
-          notification={selectedNotification}
+          id={id}
         />
       )}
     </>

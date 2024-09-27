@@ -1,46 +1,32 @@
-import { NotificationSendHistory } from "@flanksource-ui/api/types/notifications";
-import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
+import { getNotificationSendHistoryById } from "@flanksource-ui/api/services/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import NotificationDetails from "./NotificationSendHistory/NotificationDetails";
 
 type NotificationDetailsModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  notification: NotificationSendHistory;
+  id: string;
 };
 
 export default function NotificationDetailsModal({
   isOpen,
-  onClose,
-  notification
+  id,
+  onClose
 }: NotificationDetailsModalProps) {
-  const error = useMemo(() => {
-    if (!notification.error) {
-      return undefined;
-    }
-    try {
-      return JSON.stringify(JSON.parse(notification.error), null, 2);
-    } catch (e) {
-      return notification.error;
-    }
-  }, [notification]);
+  const { data: notification, isLoading } = useQuery({
+    queryKey: ["notifications_send_history_summary", id],
+    queryFn: () => getNotificationSendHistoryById(id)
+  });
 
-  if (!notification.body && !notification.error) {
+  if (isLoading || !notification) {
     return null;
   }
 
   return (
     <Modal open={isOpen} onClose={onClose} title={"Notification Details"}>
       <div className="flex flex-col justify-center overflow-y-auto p-4">
-        {notification.body && (
-          <div
-            className="w-full"
-            dangerouslySetInnerHTML={{
-              __html: notification.body
-            }}
-          ></div>
-        )}
-        {error && <JSONViewer format="json" code={error} />}
+        <NotificationDetails notification={notification} />
       </div>
     </Modal>
   );
