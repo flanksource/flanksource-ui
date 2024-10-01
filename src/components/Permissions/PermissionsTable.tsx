@@ -9,6 +9,7 @@ import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
+import { permissionsActionsList } from "./PermissionsView";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
@@ -77,9 +78,13 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
       const action = row.original.action;
       const deny = row.original.deny;
 
+      const actionLabel = permissionsActionsList.find(
+        (item) => item.value === action
+      )?.label;
+
       return (
         <div>
-          <span className="px-2">{action}</span>
+          <span className="px-2">{actionLabel ?? action}</span>
           {deny && <Badge text="deny" />}
         </div>
       );
