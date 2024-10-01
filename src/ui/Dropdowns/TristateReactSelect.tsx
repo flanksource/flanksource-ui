@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FaBan } from "react-icons/fa";
 import {
   MdOutlineKeyboardArrowDown,
@@ -42,8 +35,7 @@ declare module "react-select/dist/declarations/src/Select" {
     Group extends GroupBase<Option>
   > {
     toggleState?: TriStateToggleState;
-    setCurrenToggleState?: Dispatch<SetStateAction<TriStateToggleState>>;
-    isTagsDropdown?: boolean;
+    updateToggleState?: (key: string, value: string) => void;
   }
 }
 
@@ -104,58 +96,12 @@ function ReactSelectTriStateOptions({
   clearValue,
   ...props
 }: ReactSelectTriStateOptionsProps) {
-  const {
-    toggleState: currentToggleState = {},
-    setCurrenToggleState = () => {},
-    isTagsDropdown = false
-  } = selectProps;
+  const { toggleState: currentToggleState = {}, updateToggleState = () => {} } =
+    selectProps;
 
   const toggleValue = useMemo(
     () => currentToggleState[data.value!] || 0,
     [currentToggleState, data.value]
-  );
-
-  const onItemToggle = useCallback(
-    (key: string, value: string) => {
-      setCurrenToggleState((prev) => {
-        if (+value === 0) {
-          return {
-            ...Object.entries(prev)
-              .filter(([k, v]) => k !== key)
-              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
-          };
-        }
-        if (isTagsDropdown) {
-          // We don't reset the values if it's a tags dropdown, but same tag
-          // shouldn't be included and excluded at the same time.
-          return {
-            ...Object.entries(prev)
-              .filter(([k, v]) => {
-                const tagKey = k.split("____")[0];
-                console.log("tagKey", tagKey, k, v);
-                if (tagKey === key.split("____")[0]) {
-                  // if value is different,remove the value else keep it
-                  if (v !== +value) {
-                    return false;
-                  }
-                }
-                return true;
-              })
-              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-            [key]: +value
-          };
-        }
-        return {
-          // Reset all other values to 0 that don't have same value, and set the
-          // current value to the
-          ...Object.entries(prev)
-            .filter(([, v]) => v === +value)
-            .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-          [key]: +value
-        };
-      });
-    },
-    [isTagsDropdown, setCurrenToggleState]
   );
 
   return (
@@ -168,7 +114,7 @@ function ReactSelectTriStateOptions({
       <div className="flex min-w-min flex-row items-center gap-2 text-sm">
         <TristateToggle
           onChange={(value) => {
-            onItemToggle(data.value!, value);
+            updateToggleState(data.value!, value);
           }}
           value={toggleValue}
           label={undefined}
@@ -416,6 +362,48 @@ export function TristateReactSelectComponent({
     }
   }, [options, sortOptionsFunction, sortOptionsSelectedFirst.length, value]);
 
+  const onItemToggle = useCallback(
+    (key: string, value: string) => {
+      setToggleState((prev) => {
+        if (+value === 0) {
+          return {
+            ...Object.entries(prev)
+              .filter(([k, v]) => k !== key)
+              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
+          };
+        }
+        if (isTagsDropdown) {
+          // We don't reset the values if it's a tags dropdown, but same tag
+          // shouldn't be included and excluded at the same time.
+          return {
+            ...Object.entries(prev)
+              .filter(([k, v]) => {
+                const tagKey = k.split("____")[0];
+                if (tagKey === key.split("____")[0]) {
+                  // if value is different,remove the value else keep it
+                  if (v !== +value) {
+                    return false;
+                  }
+                }
+                return true;
+              })
+              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+            [key]: +value
+          };
+        }
+        return {
+          // Reset all other values to 0 that don't have same value, and set the
+          // current value to the
+          ...Object.entries(prev)
+            .filter(([, v]) => v === +value)
+            .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+          [key]: +value
+        };
+      });
+    },
+    [isTagsDropdown]
+  );
+
   return (
     <Select
       placeholder={label}
@@ -425,6 +413,15 @@ export function TristateReactSelectComponent({
       onMenuOpen={() =>
         setSortOptionsSelectedFirst(() => sortOptionsFunction(options))
       }
+      onChange={(value: any, options) => {
+        // At this point, this event is only triggered when the user selects an
+        // option, instead of when the toggle state changes, so we need to
+        // update the toggle state here.
+        if (value === null) {
+          return;
+        }
+        onItemToggle(value.value, "1");
+      }}
       menuPortalTarget={document.body}
       menuPosition={"fixed"}
       menuShouldBlockScroll={true}
@@ -471,7 +468,7 @@ export function TristateReactSelectComponent({
       }}
       // Pass the toggle state and the setter to the custom Option component
       toggleState={currentToggleState}
-      setCurrenToggleState={setToggleState}
+      updateToggleState={onItemToggle}
       isTagsDropdown={isTagsDropdown}
     />
   );
