@@ -21,8 +21,6 @@ export function FilterByCellValue({
 }: FilterByCellProps) {
   const [params, setParams] = useSearchParams();
 
-  console.log("FilterByCellValue", paramKey, filterValue, paramsToReset);
-
   const onClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, action: "include" | "exclude") => {
       e.preventDefault();
