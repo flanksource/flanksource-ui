@@ -9,6 +9,7 @@ import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
+import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
@@ -23,6 +24,11 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
       const playbook = row.original.playbook;
       const component = row.original.component;
       const connection = row.original.connection;
+      const object = row.original.object;
+
+      if (object) {
+        return permissionObjectList.find((o) => o.value === object)?.label;
+      }
 
       return (
         <div className="flex flex-col">
