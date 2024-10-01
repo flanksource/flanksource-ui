@@ -1,5 +1,8 @@
 import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import ChangeCountIcon, {
+  CountBar
+} from "@flanksource-ui/ui/Icons/ChangeCount";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
@@ -17,9 +20,6 @@ import ConfigListCostCell, {
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import ChangeCountIcon, {
-  CountBar
-} from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
@@ -114,7 +114,14 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: React.memo(ConfigListTagsCell),
+    cell: React.memo((props) => (
+      <ConfigListTagsCell
+        {...props}
+        hideGroupByView
+        enableFilterByTag
+        filterByTagParamKey="labels"
+      />
+    )),
     aggregatedCell: "",
     maxSize: 300,
     minSize: 100
