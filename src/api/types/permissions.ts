@@ -9,6 +9,7 @@ export type PermissionTable = {
   description: string;
   action: string;
   deny?: boolean;
+  object?: string;
   component_id?: string;
   config_id?: string;
   canary_id?: string;
