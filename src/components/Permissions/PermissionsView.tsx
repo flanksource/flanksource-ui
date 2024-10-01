@@ -10,8 +10,20 @@ import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/use
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Button } from "..";
+import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown";
 import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
 import PermissionsTable from "./PermissionsTable";
+
+export const permissionsActionsList: FormikSelectDropdownOption[] = [
+  { value: "ActionRead", label: "read" },
+  { value: "ActionUpdate", label: "update" },
+  { value: "ActionCreate", label: "create" },
+  { value: "ActionDelete", label: "delete" },
+  { value: "ActionAll", label: "*" },
+  { value: "ActionCRUD", label: "create,read,update,delete" },
+  { value: "ActionRun", label: "run" },
+  { value: "ActionApprove", label: "approve" }
+];
 
 type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
