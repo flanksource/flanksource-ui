@@ -46,7 +46,8 @@ export default function PermissionForm({
       data?.canary_id ||
       data?.canary_id ||
       data?.playbook_id ||
-      data?.connection_id
+      data?.connection_id ||
+      data?.object
     );
   }, [data]);
 
@@ -111,6 +112,7 @@ export default function PermissionForm({
             canary_id: data?.canary_id,
             playbook_id: data?.playbook_id,
             deny: data?.deny ?? false,
+            object: data?.object,
             description: data?.description,
             connection_id: data?.connection_id,
             created_at: data?.created_at,
