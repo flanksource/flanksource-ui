@@ -95,7 +95,9 @@ export function TristateToggle({
       >
         <button
           type="button"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             toggleState(-1);
           }}
           className={`flex h-full flex-1 items-center justify-center duration-100`}
@@ -107,7 +109,9 @@ export function TristateToggle({
           className={`flex h-full flex-1 items-center justify-center duration-100`}
           type="button"
           title={`Do not filter ${label?.label}`}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             toggleState(0);
           }}
         >
@@ -115,7 +119,9 @@ export function TristateToggle({
         </button>
         <button
           type="button"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             toggleState(1);
           }}
           className={`flex h-full flex-1 items-center justify-center duration-100`}

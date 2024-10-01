@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { ConfigItem } from "./index";
-import { ConfigDB } from "../../../api/axios";
-import { MOCK_DATA } from "./storybook-mock";
 import { ComponentStory } from "@storybook/react";
+import { useState } from "react";
+import { ConfigDB } from "../../../api/axios";
+import { ConfigItem } from "./index";
+import { MOCK_DATA } from "./storybook-mock";
 
 // @ts-expect-error
 ConfigDB.get = (url: string) => {
