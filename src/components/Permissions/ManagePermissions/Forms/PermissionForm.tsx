@@ -4,8 +4,8 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
+import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
-import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import {
   toastError,
@@ -22,6 +22,7 @@ import { Form, Formik } from "formik";
 import { useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { AuthorizationAccessCheck } from "../../AuthorizationAccessCheck";
+import { permissionsActionsList } from "../../PermissionsView";
 import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
@@ -145,7 +146,11 @@ export default function PermissionForm({
                 <FormikPermissionSelectResourceFields />
               )}
               <PermissionsSubjectControls />
-              <FormikTextInput name="action" label="Action" />
+              <FormikSelectDropdown
+                options={permissionsActionsList}
+                name="action"
+                label="Action"
+              />
               <FormikCheckbox name="deny" label="Is deny action" />
               <FormikTextArea name="description" label="Description" />
             </div>
