@@ -67,12 +67,19 @@ export type InviteUserPayload = {
   firstName: string;
   lastName: string;
   email: string;
+  role: string;
 };
 
-export const inviteUser = ({ firstName, lastName, email }: InviteUserPayload) =>
-  resolvePostGrestRequestWithPagination<{
-    id: string;
-  }>(Auth.post("/invite_user", { firstName, lastName, email }));
+export const inviteUser = ({
+  firstName,
+  lastName,
+  email,
+  role
+}: InviteUserPayload) => {
+  return Auth.post<{
+    link: string;
+  }>("/invite_user", { firstName, lastName, email, role });
+};
 
 export const getVersionInfo = () =>
   resolvePostGrestRequestWithPagination<VersionInfo>(

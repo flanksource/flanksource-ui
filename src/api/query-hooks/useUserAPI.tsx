@@ -1,6 +1,24 @@
 import { UserFormValue } from "@flanksource-ui/components/Users/UserForm";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { deleteUser, updateUser } from "../services/users";
+import { AxiosError } from "axios";
+import {
+  deleteUser,
+  inviteUser,
+  InviteUserPayload,
+  updateUser
+} from "../services/users";
+
+export function useInviteUser(
+  options: UseMutationOptions<any, AxiosError, InviteUserPayload>
+) {
+  return useMutation({
+    ...options,
+    mutationFn: async (user: UserFormValue) => {
+      const res = await inviteUser(user);
+      return res.data ?? undefined;
+    }
+  });
+}
 
 export function useDeleteUser(
   options: UseMutationOptions<

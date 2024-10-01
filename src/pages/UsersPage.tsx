@@ -1,19 +1,14 @@
 import useUpdateUser, {
-  useDeleteUser
+  useDeleteUser,
+  useInviteUser
 } from "@flanksource-ui/api/query-hooks/useUserAPI";
 import { RegisteredUser } from "@flanksource-ui/api/types/users";
-import UserForm, {
-  UserFormValue
-} from "@flanksource-ui/components/Users/UserForm";
+import UserForm from "@flanksource-ui/components/Users/UserForm";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ImUserPlus } from "react-icons/im";
-import {
-  getRegisteredUsers,
-  inviteUser,
-  updateUserRole
-} from "../api/services/users";
+import { getRegisteredUsers } from "../api/services/users";
 import { Modal } from "../components";
 import { AuthorizationAccessCheck } from "../components/Permissions/AuthorizationAccessCheck";
 import { toastError, toastSuccess } from "../components/Toast/toast";
@@ -41,32 +36,20 @@ export function UsersPage() {
     select: (data) => {
       return data.data || [];
     },
-    cacheTime: 0
+    cacheTime: 0,
+    staleTime: 0
   });
 
-  const inviteUserFunction = useCallback(
-    async (val: UserFormValue) => {
-      try {
-        await inviteUser({
-          firstName: val.firstName,
-          lastName: val.lastName,
-          email: val.email
-        });
-        const userId = users.find((item) => item.email === val.email)?.id;
-        if (userId) {
-          await updateUserRole(userId, [val.role]);
-          return;
-        }
-        const userName = `${val.firstName} ${val.lastName}`;
-        toastSuccess(`${userName} invited successfully`);
-        setIsOpen(false);
-        refetch();
-      } catch (ex) {
-        toastError(ex as any);
-      }
+  const { mutate: inviteUserFunction, isLoading: isInviting } = useInviteUser({
+    onSuccess: () => {
+      refetch();
+      toastSuccess(`user invited successfully`);
+      setIsOpen(false);
     },
-    [refetch, users]
-  );
+    onError: (error) => {
+      toastError(error.message);
+    }
+  });
 
   const { mutate: deleteUserFunction, isLoading: isDeleting } = useDeleteUser({
     onSuccess: () => {
@@ -159,6 +142,7 @@ export function UsersPage() {
               className="flex flex-col bg-white p-4"
               onSubmit={inviteUserFunction}
               onClose={() => setIsOpen(false)}
+              isSubmitting={isInviting}
             />
           </Modal>
 
