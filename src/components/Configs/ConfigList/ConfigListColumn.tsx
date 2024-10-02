@@ -1,15 +1,15 @@
 import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import ChangeCountIcon from "@flanksource-ui/ui/Icons/ChangeCount";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { IoChevronDown, IoChevronForward } from "react-icons/io5";
 import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
-import { ConfigAnalysis, ConfigItem } from "../../../api/types/configs";
+import { ConfigItem } from "../../../api/types/configs";
 import { TIME_BUCKETS, getTimeBucket } from "../../../utils/date";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
-import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
-import ConfigListAnalysisCell from "./Cells/ConfigListAnalysisCell";
+import { ConfigSummaryAnalysisCell } from "../ConfigSummary/ConfigSummaryList";
 import ConfigListChangeCell from "./Cells/ConfigListChangeCell";
 import ConfigListCostCell, {
   ConfigListCostAggregate
@@ -17,9 +17,6 @@ import ConfigListCostCell, {
 import ConfigListDateCell from "./Cells/ConfigListDateCell";
 import ConfigListNameCell from "./Cells/ConfigListNameCell";
 import ConfigListTagsCell from "./Cells/ConfigListTagsCell";
-import ChangeCountIcon, {
-  CountBar
-} from "@flanksource-ui/ui/Icons/ChangeCount";
 
 export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
@@ -114,7 +111,8 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: React.memo(ConfigListTagsCell),
+    // @ts-expect-error
+    cell: ConfigListTagsCell,
     aggregatedCell: "",
     maxSize: 300,
     minSize: 100
@@ -122,32 +120,9 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Analysis",
     accessorKey: "analysis",
-    cell: ConfigListAnalysisCell,
+    cell: ConfigSummaryAnalysisCell,
     aggregationFn: analysisAggregationFN,
-    aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
-      const data = getValue();
-      return (
-        <CountBar
-          iconClass="px-1  bg-zinc-100"
-          items={data.map(
-            (item: { count: number; analysis: ConfigAnalysis }) => {
-              return {
-                count: item.count,
-                icon: (
-                  <ConfigInsightsIcon
-                    size={20}
-                    analysis={{
-                      analysis_type: item.analysis.analysis_type,
-                      severity: item.analysis.severity
-                    }}
-                  />
-                )
-              };
-            }
-          )}
-        />
-      );
-    },
+    aggregatedCell: ConfigSummaryAnalysisCell,
     minSize: 50,
     maxSize: 100
   },
