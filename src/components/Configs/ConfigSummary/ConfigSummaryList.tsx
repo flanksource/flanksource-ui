@@ -70,9 +70,9 @@ function ConfigSummaryTypeCell({
   );
 }
 
-function ConfigSummaryAnalysisCell({
+export function ConfigSummaryAnalysisCell({
   getValue
-}: CellContext<ConfigSummary, unknown>) {
+}: Pick<CellContext<Pick<ConfigSummary, "analysis">, any>, "getValue">) {
   const value = getValue<ConfigSummary["analysis"]>();
   if (!value) {
     return null;
@@ -103,7 +103,7 @@ function ConfigSummaryAnalysisCell({
 
 function ConfigSummaryAnalysisAggregateCell({
   row
-}: CellContext<ConfigSummary, unknown>) {
+}: Pick<CellContext<Pick<ConfigSummary, "analysis">, unknown>, "row">) {
   const subRows = row.subRows;
 
   const value = subRows.reduce(
@@ -174,6 +174,7 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     header: "analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
+    // @ts-expect-error
     aggregatedCell: ConfigSummaryAnalysisAggregateCell,
     minSize: 30,
     maxSize: 100
