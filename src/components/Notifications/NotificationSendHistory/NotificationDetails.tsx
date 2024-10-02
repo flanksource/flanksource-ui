@@ -42,10 +42,12 @@ export default function NotificationDetails({
   return (
     <div className="flex flex-col gap-3 overflow-auto">
       <div className="grid grid-cols-4 gap-3">
-        <VerticalDescription
-          label="Resource"
-          value={<NotificationResourceDisplay notification={notification} />}
-        />
+        <div className="col-span-4">
+          <VerticalDescription
+            label="Resource"
+            value={<NotificationResourceDisplay notification={notification} />}
+          />
+        </div>
         <VerticalDescription
           label="Age"
           value={
