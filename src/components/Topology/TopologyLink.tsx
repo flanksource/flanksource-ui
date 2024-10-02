@@ -12,7 +12,7 @@ export function TopologyLink({
   linkClassName
 }: {
   topologyId?: string | undefined;
-  topology?: Topology;
+  topology?: Pick<Topology, "id" | "icon" | "name">;
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
   className?: string;
@@ -77,7 +77,7 @@ function TopologyLinkLocal({
   className = "mr-1 h-5 w-5 object-center",
   linkClassName = "my-auto flex flex-row items-center hover:text-gray-500"
 }: {
-  topology?: Component | undefined | null;
+  topology?: Pick<Component, "id" | "icon" | "name"> | undefined | null;
   viewType?: "link" | "label";
   size?: "xl" | "lg" | "md" | "sm" | "xs";
   className?: string;
