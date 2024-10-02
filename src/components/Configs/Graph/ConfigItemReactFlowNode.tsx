@@ -33,10 +33,7 @@ export function ConfigItemReactFlowNode({
     if (data.data.type === "intermediary") {
       return undefined;
     }
-    return data.data.config.changes?.reduce(
-      (acc, change) => acc + change.total,
-      0
-    );
+    return data.data.config.changes;
   }, [data]);
 
   if (data.data.type === "intermediary") {
