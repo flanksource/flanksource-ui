@@ -174,8 +174,10 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
     header: "analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
-    // @ts-expect-error
-    aggregatedCell: ConfigSummaryAnalysisAggregateCell,
+    aggregatedCell: (props) => (
+      // @ts-ignore for some reason the cell type is not being inferred correctly
+      <ConfigSummaryAnalysisAggregateCell {...props} />
+    ),
     minSize: 30,
     maxSize: 100
   },

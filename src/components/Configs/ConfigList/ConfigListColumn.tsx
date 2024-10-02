@@ -111,8 +111,10 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    // @ts-expect-error
-    cell: ConfigListTagsCell,
+    cell: (props) => (
+      // @ts-ignore vercel is not happy with this, but it works everywhere else fine
+      <ConfigListTagsCell row={props.row} getValue={props.getValue} />
+    ),
     aggregatedCell: "",
     maxSize: 300,
     minSize: 100
