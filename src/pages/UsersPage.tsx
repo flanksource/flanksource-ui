@@ -7,9 +7,10 @@ import UserForm from "@flanksource-ui/components/Users/UserForm";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
+import { FaCopy } from "react-icons/fa";
 import { ImUserPlus } from "react-icons/im";
 import { getRegisteredUsers } from "../api/services/users";
-import { Modal } from "../components";
+import { Button, Modal } from "../components";
 import { AuthorizationAccessCheck } from "../components/Permissions/AuthorizationAccessCheck";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/Users/UserList";
@@ -25,6 +26,7 @@ export function UsersPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editUser, setEditUser] = useState<RegisteredUser>();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [inviteLink, setInviteLink] = useState<string>();
 
   const {
     isLoading,
@@ -41,10 +43,10 @@ export function UsersPage() {
   });
 
   const { mutate: inviteUserFunction, isLoading: isInviting } = useInviteUser({
-    onSuccess: () => {
+    onSuccess: (data) => {
       refetch();
-      toastSuccess(`user invited successfully`);
       setIsOpen(false);
+      setInviteLink(data.link);
     },
     onError: (error) => {
       toastError(error.message);
@@ -145,6 +147,48 @@ export function UsersPage() {
               isSubmitting={isInviting}
             />
           </Modal>
+
+          {inviteLink && (
+            <Modal
+              title="Invite Link"
+              onClose={() => {
+                setInviteLink(undefined);
+              }}
+              open={!!inviteLink}
+              bodyClass=""
+            >
+              <div className="flex flex-col gap-2 bg-white p-4 text-sm">
+                <p>
+                  User has been invited successfully. Please share the link with
+                  the user.
+                </p>
+                <div className="relative flex flex-col space-y-4 py-3 text-blue-500">
+                  <Button
+                    className="btn-white absolute right-0 top-0 whitespace-pre-line bg-white text-black"
+                    onClick={() => {
+                      navigator.clipboard.writeText(inviteLink!);
+                      toastSuccess("Link copied to clipboard");
+                    }}
+                    title="Copy Invite Link"
+                  >
+                    <FaCopy />
+                  </Button>
+
+                  {inviteLink}
+                </div>
+                <div className="flex flex-row justify-end gap-2">
+                  <Button
+                    className="btn-white"
+                    onClick={() => {
+                      setInviteLink(undefined);
+                    }}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </Modal>
+          )}
 
           {editUser && (
             <Modal

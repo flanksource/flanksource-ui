@@ -9,7 +9,13 @@ import {
 } from "../services/users";
 
 export function useInviteUser(
-  options: UseMutationOptions<any, AxiosError, InviteUserPayload>
+  options: UseMutationOptions<
+    {
+      link: string;
+    },
+    AxiosError,
+    InviteUserPayload
+  >
 ) {
   return useMutation({
     ...options,
