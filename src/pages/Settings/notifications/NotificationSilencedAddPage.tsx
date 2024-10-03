@@ -19,7 +19,7 @@ export default function NotificationSilencedAddPage() {
                 Notifications
               </BreadcrumbRoot>,
               <BreadcrumbChild link="/notifications/silenced" key={"silence"}>
-                Silenced
+                Silences
               </BreadcrumbChild>,
               <BreadcrumbChild key={"add"}>Add</BreadcrumbChild>
             ]}
