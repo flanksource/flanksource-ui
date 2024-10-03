@@ -1,24 +1,16 @@
-import { CellContext } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { ConfigItem } from "../../../../api/types/configs";
 import ChangeCountIcon from "@flanksource-ui/ui/Icons/ChangeCount";
+import { CellContext } from "@tanstack/react-table";
+import { ConfigItem } from "../../../../api/types/configs";
 
 export default function ConfigListChangeCell({
   row,
   column
 }: CellContext<ConfigItem, any>) {
   const changes = row?.getValue<ConfigItem["changes"]>(column.id);
-  const totalChanges = useMemo(() => {
-    let total = 0;
-    (changes || []).forEach((change) => {
-      total += change.total || 0;
-    });
-    return total;
-  }, [changes]);
 
-  if (changes == null) {
+  if (!changes) {
     return null;
   }
 
-  return <ChangeCountIcon count={totalChanges} />;
+  return <ChangeCountIcon count={changes} />;
 }
