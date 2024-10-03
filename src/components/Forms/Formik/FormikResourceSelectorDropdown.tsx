@@ -191,6 +191,12 @@ export default function FormikResourceSelectorDropdown({
         isLoading={isLoading || isRefetching}
         className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         options={options}
+        noOptionsMessage={(input) => {
+          if (input.inputValue) {
+            return "No options found";
+          }
+          return "Start typing to search";
+        }}
         value={value}
         onChange={(value: any) => {
           field.onChange({
