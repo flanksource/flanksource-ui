@@ -20,6 +20,7 @@ import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { toastError } from "../Toast/toast";
 import { TopologyLink } from "../Topology/TopologyLink";
+import EditNotificationSilenceModal from "./SilenceNotificationForm/EditNotificationSilenceModal";
 
 function ActionMenu({ handleDelete }: { handleDelete: () => void }) {
   return withAuthorizationAccessCheck(
@@ -185,7 +186,6 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
 type NotificationSendHistoryListProps = {
   data: NotificationSilenceItemApiResponse[];
   isLoading: boolean;
-  onRowClick?: (row: NotificationSilenceItemApiResponse) => void;
   refresh?: () => void;
   pageCount: number;
   recordCount: number;
@@ -194,19 +194,34 @@ type NotificationSendHistoryListProps = {
 export default function SilenceNotificationsList({
   data,
   isLoading,
-  onRowClick = () => {},
   pageCount,
-  recordCount
+  recordCount,
+  refresh = () => {}
 }: NotificationSendHistoryListProps) {
+  const [selectedNotificationSilence, setSelectedNotificationSilence] =
+    useState<NotificationSilenceItemApiResponse>();
+
   return (
-    <MRTDataTable
-      data={data}
-      columns={silenceNotificationListColumns}
-      isLoading={isLoading}
-      onRowClick={onRowClick}
-      manualPageCount={pageCount}
-      enableServerSidePagination={true}
-      totalRowCount={recordCount}
-    />
+    <>
+      <MRTDataTable
+        data={data}
+        columns={silenceNotificationListColumns}
+        onRowClick={(row) => setSelectedNotificationSilence(row)}
+        isLoading={isLoading}
+        manualPageCount={pageCount}
+        enableServerSidePagination={true}
+        totalRowCount={recordCount}
+      />
+      {selectedNotificationSilence && (
+        <EditNotificationSilenceModal
+          isOpen={!!selectedNotificationSilence}
+          onClose={() => {
+            setSelectedNotificationSilence(undefined);
+            refresh();
+          }}
+          data={selectedNotificationSilence}
+        />
+      )}
+    </>
   );
 }

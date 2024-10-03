@@ -5,6 +5,7 @@ import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NotificationRules,
   NotificationSendHistoryApiResponse,
+  NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
   SilenceNotificationResponse
 } from "../types/notifications";
@@ -65,6 +66,16 @@ export const silenceNotification = async (
   data: SilenceNotificationResponse
 ) => {
   const res = await NotificationAPI.post("/silence", data);
+  return res.data;
+};
+
+export const updateNotificationSilence = async (
+  data: Omit<NotificationSilenceItem, "created_at">
+) => {
+  const res = await IncidentCommander.patch(
+    `/notification_silences?id=eq.${data.id}`,
+    data
+  );
   return res.data;
 };
 
