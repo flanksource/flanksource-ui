@@ -1,4 +1,5 @@
 import {
+  deleteNotificationSilence,
   silenceNotification,
   updateNotificationSilence
 } from "@flanksource-ui/api/services/notifications";
@@ -11,6 +12,7 @@ import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/Formik
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
@@ -21,12 +23,14 @@ type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
   footerClassName?: string;
   onSuccess?: (data: SilenceNotificationResponse) => void;
+  onCancel?: () => void;
 };
 
 export default function NotificationSilenceForm({
   data,
   footerClassName = "flex flex-row justify-end px-4",
-  onSuccess = () => {}
+  onSuccess = () => {},
+  onCancel = () => {}
 }: NotificationSilenceFormProps) {
   const [searchParam] = useSearchParams();
 
@@ -71,8 +75,21 @@ export default function NotificationSilenceForm({
     }
   });
 
+  const { mutate: deleteSilence, isLoading: isDeleting } = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await deleteNotificationSilence(id);
+      return res.data;
+    },
+    onSuccess,
+    onError: (error: AxiosError) => {
+      // do something
+      console.error(error);
+      toastError(error.message);
+    }
+  });
+
   return (
-    <div className="flex flex-1 flex-col gap-2">
+    <div className="flex flex-1 flex-col gap-2 overflow-auto">
       <Formik<Partial<SilenceNotificationRequest>>
         initialValues={initialValues}
         onSubmit={(v) => {
@@ -97,13 +114,36 @@ export default function NotificationSilenceForm({
             <FormikTextArea name="description" label="Reason" />
           </div>
           <div className={`${footerClassName}`}>
+            {data?.id && (
+              <>
+                <Button
+                  onClick={() => {
+                    onCancel();
+                  }}
+                  className="btn-secondary"
+                >
+                  Cancel
+                </Button>
+                <div className="flex-1" />
+                <Button
+                  onClick={() => deleteSilence(data.id)}
+                  className="btn-danger"
+                >
+                  {isDeleting && (
+                    <FaCircleNotch className="mr-2 animate-spin" />
+                  )}
+                  {isDeleting ? "Deleting" : "Delete"}
+                </Button>
+              </>
+            )}
+
             <button
               type="submit"
               className="btn btn-primary"
               disabled={isLoading}
             >
               {isLoading && <FaCircleNotch className="mr-2 animate-spin" />}
-              Submit
+              {data?.id ? "Update" : "Submit"}
             </button>
           </div>
         </Form>
