@@ -6,8 +6,11 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { useNavigate } from "react-router-dom";
 
 export default function NotificationSilencedAddPage() {
+  const navigate = useNavigate();
+
   return (
     <>
       <Head prefix="Silence Notification" />
@@ -29,7 +32,9 @@ export default function NotificationSilencedAddPage() {
       >
         <div className="mx-auto flex h-full max-w-screen-md flex-1 flex-col px-6 py-6 pb-0">
           <h3 className="text-xl font-semibold">Silence Notification</h3>
-          <NotificationSilenceForm />
+          <NotificationSilenceForm
+            onSuccess={() => navigate("/notifications/silences")}
+          />
         </div>
       </SearchLayout>
     </>

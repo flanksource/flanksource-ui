@@ -1,18 +1,34 @@
-import { silenceNotification } from "@flanksource-ui/api/services/notifications";
-import { SilenceNotificationResponse as SilenceNotificationRequest } from "@flanksource-ui/api/types/notifications";
+import {
+  silenceNotification,
+  updateNotificationSilence
+} from "@flanksource-ui/api/services/notifications";
+import {
+  SilenceNotificationResponse as SilenceNotificationRequest,
+  SilenceNotificationResponse
+} from "@flanksource-ui/api/types/notifications";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
 import { FaCircleNotch } from "react-icons/fa";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-export default function NotificationSilenceForm() {
+type NotificationSilenceFormProps = {
+  data?: SilenceNotificationRequest;
+  footerClassName?: string;
+  onSuccess?: (data: SilenceNotificationResponse) => void;
+};
+
+export default function NotificationSilenceForm({
+  data,
+  footerClassName = "flex flex-row justify-end px-4",
+  onSuccess = () => {}
+}: NotificationSilenceFormProps) {
   const [searchParam] = useSearchParams();
-  const navigate = useNavigate();
 
   const component_id = searchParam.get("component_id") ?? undefined;
   const config_id = searchParam.get("config_id") ?? undefined;
@@ -20,21 +36,38 @@ export default function NotificationSilenceForm() {
   const canary_id = searchParam.get("canary_id") ?? undefined;
 
   const initialValues: Partial<SilenceNotificationRequest> = {
-    component_id,
-    config_id,
-    check_id,
-    canary_id
+    ...data,
+    component_id: data?.component_id ?? component_id,
+    config_id: data?.config_id ?? config_id,
+    check_id: data?.check_id ?? check_id,
+    canary_id: data?.canary_id ?? canary_id
   };
 
   const { isLoading, mutate } = useMutation({
-    mutationFn: (data: SilenceNotificationRequest) => silenceNotification(data),
-    onSuccess: () => {
-      navigate("/notifications/silenced");
+    mutationFn: (data: SilenceNotificationRequest) => {
+      if (data.id) {
+        return updateNotificationSilence({
+          id: data.id,
+          updated_at: "now()",
+          source: data.source,
+          canary_id: data.canary_id,
+          check_id: data.check_id,
+          component_id: data.component_id,
+          config_id: data.config_id,
+          from: data.from,
+          until: data.until,
+          description: data.description,
+          recursive: data.recursive,
+          namespace: data.namespace ?? ""
+        });
+      }
+      return silenceNotification(data);
     },
-    onError: (error) => {
+    onSuccess,
+    onError: (error: AxiosError) => {
       // do something
       console.error(error);
-      toastError("Failed to silence notification");
+      toastError(error.message);
     }
   });
 
@@ -48,18 +81,22 @@ export default function NotificationSilenceForm() {
           } as SilenceNotificationRequest);
         }}
       >
-        <Form className="flex flex-1 flex-col gap-2 overflow-y-auto py-4">
-          <FormikNotificationResourceField />
-          <FormikCheckbox name="recursive" label="Recursive" />
-          <FormikDurationPicker
-            fieldNames={{
-              from: "from",
-              to: "until"
-            }}
-            label="Silence Duration"
-          />
-          <FormikTextArea name="description" label="Reason" />
-          <div className="flex justify-end">
+        <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
+          <div
+            className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
+          >
+            <FormikNotificationResourceField />
+            <FormikCheckbox name="recursive" label="Recursive" />
+            <FormikDurationPicker
+              fieldNames={{
+                from: "from",
+                to: "until"
+              }}
+              label="Silence Duration"
+            />
+            <FormikTextArea name="description" label="Reason" />
+          </div>
+          <div className={`${footerClassName}`}>
             <button
               type="submit"
               className="btn btn-primary"
