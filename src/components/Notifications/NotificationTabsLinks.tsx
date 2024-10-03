@@ -17,9 +17,9 @@ import { ErrorBoundary } from "../ErrorBoundary";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
 const tabLinks = [
-  { label: "Notifications", path: "/notifications" },
-  { label: "Rules", path: "/notifications/rules" },
-  { label: "Silences", path: "/notifications/silences" }
+  { label: "Notifications", path: "/notifications", key: "Notifications" },
+  { label: "Rules", path: "/notifications/rules", key: "Rules" },
+  { label: "Silences", path: "/notifications/silences", key: "Silences" }
 ];
 
 type NotificationTabsLinksProps = {
@@ -29,6 +29,7 @@ type NotificationTabsLinksProps = {
   isLoading?: boolean;
   className?: string;
   setIsModalOpen?: (isOpen: boolean) => void;
+  isAddSilence?: boolean;
 };
 
 export default function NotificationTabsLinks({
@@ -37,9 +38,10 @@ export default function NotificationTabsLinks({
   refresh = () => {},
   isLoading,
   className,
-  setIsModalOpen = () => {}
+  setIsModalOpen = () => {},
+  isAddSilence = false
 }: NotificationTabsLinksProps) {
-  const pageTitle = activeTab;
+  const pageTitle = isAddSilence ? "Add Notification Silence" : activeTab;
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
@@ -81,20 +83,31 @@ export default function NotificationTabsLinks({
                       Silences
                     </BreadcrumbChild>,
 
-                    <AuthorizationAccessCheck
-                      resource={tables.notifications}
-                      action="write"
-                      key="add-notifications"
-                    >
-                      <Link
-                        key="notifications-silenced-add"
-                        type="button"
-                        className=""
-                        to="/notifications/silences/add"
-                      >
-                        <AiFillPlusCircle size={32} className="text-blue-600" />
-                      </Link>
-                    </AuthorizationAccessCheck>
+                    ...(isAddSilence
+                      ? [
+                          <BreadcrumbChild key="silenced-notifications-add">
+                            Add
+                          </BreadcrumbChild>
+                        ]
+                      : [
+                          <AuthorizationAccessCheck
+                            resource={tables.notifications}
+                            action="write"
+                            key="add-notifications"
+                          >
+                            <Link
+                              key="notifications-silenced-add"
+                              type="button"
+                              className=""
+                              to="/notifications/silences/add"
+                            >
+                              <AiFillPlusCircle
+                                size={32}
+                                className="text-blue-600"
+                              />
+                            </Link>
+                          </AuthorizationAccessCheck>
+                        ])
                   ]
                 : [])
             ]}
