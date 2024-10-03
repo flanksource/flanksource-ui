@@ -155,7 +155,10 @@ export const getNotificationSilences = async ({
 };
 
 export const deleteNotificationSilence = async (id: string) => {
-  return IncidentCommander.patch(`/notification_silences?id=eq.${id}`, {
-    deleted_at: "now()"
-  });
+  return IncidentCommander.patch<NotificationSilenceItem>(
+    `/notification_silences?id=eq.${id}`,
+    {
+      deleted_at: "now()"
+    }
+  );
 };

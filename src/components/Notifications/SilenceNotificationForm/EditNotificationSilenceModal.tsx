@@ -25,6 +25,7 @@ export default function EditNotificationSilenceModal({
           data={data}
           footerClassName="bg-gray-100 p-4 flex flex-row justify-end gap-2"
           onSuccess={() => onClose()}
+          onCancel={onClose}
         />
       </div>
     </Modal>
