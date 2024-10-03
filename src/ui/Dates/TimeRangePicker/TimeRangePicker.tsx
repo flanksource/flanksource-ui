@@ -1,4 +1,5 @@
-import { Popover } from "@headlessui/react";
+import { autoUpdate, useFloating } from "@floating-ui/react";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import clsx from "clsx";
 import { useCallback, useMemo } from "react";
 import { FiClock } from "react-icons/fi";
@@ -24,6 +25,11 @@ export function TimeRangePicker({
   const currentRange = useMemo((): TimeRangeOption | undefined => {
     return value;
   }, [value]);
+
+  const { refs, floatingStyles } = useFloating({
+    whileElementsMounted: autoUpdate,
+    placement: "bottom-start"
+  });
 
   const updateDisplayValue = useMemo(() => {
     if (currentRange?.type === "absolute") {
@@ -143,7 +149,8 @@ export function TimeRangePicker({
         }
       `}</style>
       <Popover className={clsx("relative text-sm", className)}>
-        <Popover.Button
+        <PopoverButton
+          ref={refs.setReference}
           type="button"
           className="inline-flex w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         >
@@ -171,8 +178,11 @@ export function TimeRangePicker({
               </>
             );
           }}
-        </Popover.Button>
-        <Popover.Panel
+        </PopoverButton>
+        <PopoverPanel
+          portal
+          ref={refs.setFloating}
+          style={floatingStyles}
           className={`absolute z-50 flex origin-top-right flex-col divide-y divide-gray-100 rounded-md bg-slate-50 ring-1 ring-black ring-opacity-5 drop-shadow-xl focus:outline-none`}
         >
           {({ open, close }) => {
@@ -186,7 +196,7 @@ export function TimeRangePicker({
               />
             );
           }}
-        </Popover.Panel>
+        </PopoverPanel>
       </Popover>
     </>
   );
