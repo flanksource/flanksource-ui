@@ -8,24 +8,18 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
-import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useAtom } from "jotai";
-import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function ConfigChangesPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
-  const [params, setParams] = useSearchParams({
-    sortBy: "created_at",
-    sortDirection: "desc"
-  });
+  const [params] = useSearchParams({});
 
-  const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
 
   const { data, isLoading, error, isRefetching, refetch } =
@@ -44,30 +38,6 @@ export function ConfigChangesPage() {
 
   const totalChanges = data?.total ?? 0;
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
-
-  const pagination = useMemo(() => {
-    const pagination: PaginationOptions = {
-      setPagination: (updater) => {
-        const newParams =
-          typeof updater === "function"
-            ? updater({
-                pageIndex: parseInt(page) - 1,
-                pageSize: parseInt(pageSize)
-              })
-            : updater;
-        params.set("page", (newParams.pageIndex + 1).toString());
-        params.set("pageSize", newParams.pageSize.toString());
-        setParams(params);
-      },
-      pageIndex: parseInt(page) - 1,
-      pageSize: parseInt(pageSize),
-      pageCount: totalChangesPages,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    };
-    return pagination;
-  }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
   const errorMessage =
     typeof error === "string"
@@ -98,7 +68,7 @@ export function ConfigChangesPage() {
           refetch();
         }}
         loading={isLoading || isRefetching}
-        contentClass="p-0 h-full"
+        contentClass="p-0 h-full flex flex-col flex-1"
       >
         <ConfigPageTabs activeTab="Changes">
           {error ? (
@@ -109,7 +79,8 @@ export function ConfigChangesPage() {
               <ConfigChangeTable
                 data={changes}
                 isLoading={isLoading}
-                pagination={pagination}
+                totalRecords={totalChanges}
+                numberOfPages={totalChangesPages}
               />
             </>
           )}
