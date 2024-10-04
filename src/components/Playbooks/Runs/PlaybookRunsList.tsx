@@ -4,29 +4,29 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import { User } from "@flanksource-ui/api/types/users";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
-import { ColumnDef } from "@tanstack/react-table";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
 
-const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
+const playbookRunsTableColumns: MRT_ColumnDef<PlaybookRun>[] = [
   {
     header: "Name",
     accessorKey: "name",
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       return <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />;
     },
     size: 400
   },
   {
     header: "Resource",
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       const component = row.original.component;
       const componentId = row.original.component_id;
       const configId = row.original.config_id;
@@ -65,21 +65,21 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: ({ getValue }) => {
-      const status = getValue<PlaybookRunStatus>();
+    Cell: ({ cell }) => {
+      const status = cell.getValue<PlaybookRunStatus>();
       return <PlaybookStatusDescription status={status} />;
     }
   },
   {
     header: "Date",
     accessorKey: "start_time",
-    cell: DateCell,
+    Cell: MRTDateCell,
     sortingFn: "datetime"
   },
   {
     header: "Duration",
     accessorKey: "duration",
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       return (
         <FormatDuration
           startTime={row.original.start_time}
@@ -91,14 +91,14 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
   {
     header: "Created At",
     accessorKey: "created_at",
-    cell: DateCell,
+    Cell: MRTDateCell,
     sortingFn: "datetime"
   },
   {
     header: "Created By",
     accessorKey: "created_by",
-    cell: ({ getValue }) => {
-      const user = getValue<User>();
+    Cell: ({ cell }) => {
+      const user = cell.getValue<User>();
       return <Avatar user={user} circular />;
     }
   }
@@ -107,14 +107,15 @@ const playbookRunsTableColumns: ColumnDef<PlaybookRun>[] = [
 type Props = {
   data: PlaybookRun[];
   isLoading?: boolean;
-  pagination?: PaginationOptions;
-} & Omit<React.HTMLProps<HTMLDivElement>, "data">;
+  numberOfPages?: number;
+  totalRecords?: number;
+};
 
 export default function PlaybookRunsTable({
   data,
   isLoading,
-  className,
-  ...rest
+  numberOfPages,
+  totalRecords
 }: Props) {
   const navigate = useNavigate();
 
@@ -126,17 +127,16 @@ export default function PlaybookRunsTable({
   );
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-hidden" {...rest}>
-      <DataTable
-        stickyHead
+    <div className="flex flex-1 flex-col overflow-y-hidden">
+      <MRTDataTable
         columns={playbookRunsTableColumns}
         data={data}
-        tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
-        preferencesKey="connections-list"
-        savePreferences={false}
-        handleRowClick={(row) => onRowClick(row.original)}
-        className="overflow-x-hidden"
+        onRowClick={(row) => onRowClick(row)}
+        manualPageCount={numberOfPages}
+        totalRowCount={totalRecords}
+        enableServerSidePagination
+        enableServerSideSorting
       />
     </div>
   );

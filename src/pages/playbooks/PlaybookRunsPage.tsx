@@ -11,12 +11,13 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
@@ -31,12 +32,7 @@ export default function PlaybookRunsPage() {
   const { timeRangeAbsoluteValue: timeRange } = useTimeRangeParams(
     playbookRunsDefaultDateFilter
   );
-
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 150
-  });
-
+  const { pageIndex, pageSize } = useReactTablePaginationState();
   const {
     data,
     isLoading: isLoadingPlaybookRuns,
@@ -67,18 +63,6 @@ export default function PlaybookRunsPage() {
   const playbookRuns = data?.data;
   const totalEntries = data?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
-
-  const pagination = useMemo(() => {
-    return {
-      setPagination: setPageState,
-      pageIndex,
-      pageSize,
-      pageCount,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    };
-  }, [setPageState, pageIndex, pageSize, pageCount, isLoading]);
 
   return (
     <>
@@ -125,7 +109,7 @@ export default function PlaybookRunsPage() {
         contentClass="flex flex-col p-0 h-full overflow-y-hidden"
       >
         <TabbedLinks tabLinks={playbookRunsPageTabs}>
-          <div className={`mx-auto flex h-full max-w-screen-xl flex-col py-4`}>
+          <div className={`mx-auto flex h-full flex-col py-4`}>
             <div className="flex w-full flex-row justify-between gap-2 py-2">
               <PlaybookRunsFilterBar
                 isLoading={isLoading}
@@ -138,7 +122,8 @@ export default function PlaybookRunsPage() {
               <PlaybookRunsTable
                 data={playbookRuns ?? []}
                 isLoading={isLoadingPlaybookRuns}
-                pagination={pagination}
+                numberOfPages={pageCount}
+                totalRecords={totalEntries ?? 0}
               />
             </div>
           </div>
