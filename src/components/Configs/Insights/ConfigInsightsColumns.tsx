@@ -1,22 +1,20 @@
 import { ConfigAnalysis, ConfigItem } from "@flanksource-ui/api/types/configs";
-import { DateCell } from "@flanksource-ui/ui/DataTable/Cells/DateCells";
-import { ColumnDef } from "@tanstack/react-table";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { Link } from "react-router-dom";
 import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 import ConfigInsightsIcon from "./ConfigInsightsIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
 
-export const ConfigInsightsColumns: ColumnDef<
-  ConfigAnalysis & { config?: ConfigItem },
-  any
+export const ConfigInsightsColumns: MRT_ColumnDef<
+  ConfigAnalysis & { config?: ConfigItem }
 >[] = [
   {
     header: "Catalog",
     id: "catalog",
-    aggregatedCell: "",
     enableHiding: true,
     size: 100,
-    cell: ({ cell }) => {
+    Cell: ({ cell }) => {
       const config = cell.row.original.config;
 
       return (
@@ -32,10 +30,9 @@ export const ConfigInsightsColumns: ColumnDef<
   {
     header: "Type",
     id: "analysis_type",
-    aggregatedCell: "",
     accessorKey: "analysis_type",
     size: 50,
-    cell: ({ cell }) => {
+    Cell: ({ cell }) => {
       const data = cell.row.original;
 
       return (
@@ -52,14 +49,15 @@ export const ConfigInsightsColumns: ColumnDef<
   {
     header: "Analyzer",
     id: "analyzer",
-    aggregatedCell: "",
     accessorKey: "analyzer",
     size: 100,
     enableGrouping: true,
-    cell: ({ getValue }) => {
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string>();
+
       return (
         <span className="flex-1 overflow-hidden overflow-ellipsis">
-          {getValue<string>()}
+          {value}
         </span>
       );
     },
@@ -68,15 +66,16 @@ export const ConfigInsightsColumns: ColumnDef<
   {
     header: "Severity",
     id: "severity",
-    aggregatedCell: "",
     accessorKey: "severity",
     size: 50,
     enableSorting: false,
-    cell: ({ getValue }) => {
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string>();
+
       return (
         <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden overflow-ellipsis capitalize">
-          <ConfigInsightsSeverityIcons severity={getValue<string>()} />
-          <span>{getValue<string>()}</span>
+          <ConfigInsightsSeverityIcons severity={value} />
+          <span>{value}</span>
         </div>
       );
     }
@@ -84,7 +83,6 @@ export const ConfigInsightsColumns: ColumnDef<
   {
     header: "Status",
     id: "status",
-    aggregatedCell: "",
     accessorKey: "status",
     size: 50,
     enableSorting: false
@@ -92,17 +90,15 @@ export const ConfigInsightsColumns: ColumnDef<
   {
     header: "First Observed",
     id: "first_observed",
-    aggregatedCell: "",
     accessorKey: "first_observed",
     size: 50,
-    cell: DateCell
+    Cell: MRTDateCell
   },
   {
     header: "Last Observed",
     id: "last_observed",
-    aggregatedCell: "",
     accessorKey: "last_observed",
     size: 50,
-    cell: DateCell
+    Cell: MRTDateCell
   }
 ];
