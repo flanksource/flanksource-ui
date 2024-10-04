@@ -11,6 +11,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMemo } from "react";
@@ -22,6 +23,8 @@ export function ConfigListPage() {
     sortOrder: "asc",
     groupBy: "config_class,type"
   });
+
+  const { pageSize } = useReactTablePaginationState();
 
   const configType = searchParams.get("configType") ?? undefined;
   const search = searchParams.get("search") ?? undefined;
@@ -36,12 +39,14 @@ export function ConfigListPage() {
   const {
     data: allConfigs,
     isLoading: isLoadingConfigList,
-    refetch: refetchConfigList,
-    isRefetching
+    refetch: refetchConfigList
   } = useAllConfigsQuery({
     cacheTime: 0,
     enabled: !showConfigSummaryList
   });
+
+  const totalEntries = allConfigs?.totalEntries ?? 0;
+  const pageCount = Math.ceil(totalEntries / pageSize);
 
   const {
     isLoading: isLoadingSummary,
@@ -51,7 +56,9 @@ export function ConfigListPage() {
     enabled: showConfigSummaryList
   });
 
-  const isLoading = isLoadingConfigList || isLoadingSummary || isRefetching;
+  const isLoading =
+    (isLoadingConfigList && !showConfigSummaryList) ||
+    (isLoadingSummary && showConfigSummaryList);
 
   const refetch = showConfigSummaryList ? refetchSummary : refetchConfigList;
 
@@ -108,6 +115,9 @@ export function ConfigListPage() {
                     (g) => !["type", "config_class"].includes(g)
                   )?.[0]
                 }
+                totalRecords={totalEntries}
+                pageCount={pageCount}
+                expandAllRows
               />
             )}
           </div>

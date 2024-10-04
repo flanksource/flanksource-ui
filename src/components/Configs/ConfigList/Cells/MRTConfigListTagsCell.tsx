@@ -4,12 +4,15 @@ import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
-type MRTConfigListTagsCellProps<T extends Pick<ConfigItem, "tags" | "id">> =
-  Pick<MRTCellProps<T>, "cell" | "row"> & {
-    hideGroupByView?: boolean;
-    label?: string;
-    enableFilterByTag?: boolean;
-  };
+type MRTConfigListTagsCellProps<
+  T extends {
+    tags?: Record<string, any>;
+    id: string;
+  }
+> = MRTCellProps<T> & {
+  hideGroupByView?: boolean;
+  enableFilterByTag?: boolean;
+};
 
 export default function MRTConfigListTagsCell<
   T extends { tags?: Record<string, any>; id: string }
