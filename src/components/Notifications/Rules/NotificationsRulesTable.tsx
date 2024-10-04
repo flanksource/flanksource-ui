@@ -2,7 +2,8 @@ import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import EditNotificationRules from "./EditNotificationRules";
 import {
   notificationMostCommonErrorAtom,
@@ -24,9 +25,10 @@ export default function NotificationsRulesTable({
   pageCount,
   totalRecordCount
 }: NotificationsTableProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNotificationId, setSelectedNotificationId] =
-    useState<string>();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedNotificationId = searchParams.get("id");
+
   const [mostCommonErrorNotification, setMostCommonErrorNotification] = useAtom(
     notificationMostCommonErrorAtom
   );
@@ -38,10 +40,10 @@ export default function NotificationsRulesTable({
   const onSelectNotification = useCallback(
     (notification: NotificationRules) => {
       const id = notification.id;
-      setSelectedNotificationId(id);
-      setIsModalOpen(true);
+      searchParams.set("id", id);
+      setSearchParams(searchParams);
     },
-    []
+    [searchParams, setSearchParams]
   );
 
   return (
@@ -68,8 +70,11 @@ export default function NotificationsRulesTable({
       />
       {selectedNotificationId && (
         <EditNotificationRules
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          isModalOpen={!!selectedNotificationId}
+          setIsModalOpen={() => {
+            searchParams.delete("id");
+            setSearchParams(searchParams);
+          }}
           notificationId={selectedNotificationId}
           refresh={refresh}
         />
