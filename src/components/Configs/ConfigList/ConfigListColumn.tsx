@@ -1,11 +1,10 @@
 import { Status } from "@flanksource-ui/components/Status";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import ChangeCountIcon from "@flanksource-ui/ui/Icons/ChangeCount";
-import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
 import { IoChevronDown, IoChevronForward } from "react-icons/io5";
-import { ConfigAnalysisTypeItem } from "../../../api/services/configs";
 import { ConfigItem } from "../../../api/types/configs";
 import { TIME_BUCKETS, getTimeBucket } from "../../../utils/date";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
@@ -97,7 +96,6 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     id: "changes",
     cell: React.memo(ConfigListChangeCell),
     enableGrouping: true,
-    aggregationFn: changeAggregationFN,
     aggregatedCell: ({ getValue }: CellContext<ConfigItem, any>) => {
       const value = getValue();
       return <ChangeCountIcon count={value} />;
@@ -123,7 +121,6 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     header: "Analysis",
     accessorKey: "analysis",
     cell: ConfigSummaryAnalysisCell,
-    aggregationFn: analysisAggregationFN,
     aggregatedCell: ConfigSummaryAnalysisCell,
     minSize: 50,
     maxSize: 100
@@ -196,53 +193,6 @@ export const configListColumns: ColumnDef<ConfigItem, any>[] = [
     size: 180
   }
 ];
-
-function changeAggregationFN(
-  columnId: string,
-  leafRows: Row<ConfigItem>[],
-  childRows: Row<ConfigItem>[]
-) {
-  let sum = 0;
-  leafRows?.forEach((row) => {
-    const values = row.getValue<{ total: number }[]>(columnId);
-    if (values) {
-      sum += values.reduce((acc, val) => acc + val.total, 0);
-    }
-  });
-  return sum;
-}
-
-function analysisAggregationFN(
-  columnId: string,
-  leafRows: Row<ConfigItem>[],
-  childRows: Row<ConfigItem>[]
-) {
-  const result: Record<
-    string,
-    {
-      count: number;
-      data: ConfigAnalysisTypeItem;
-    }
-  > = {};
-  leafRows?.forEach((row) => {
-    const values = row.getValue<ConfigAnalysisTypeItem[]>(columnId) || [];
-    values.forEach((value) => {
-      result[value.analysis_type] = result[value.analysis_type] ?? {
-        count: 0,
-        data: value
-      };
-      result[value.analysis_type].count += 1;
-    });
-  });
-  const data = Object.keys(result).map((key) => {
-    return {
-      type: key,
-      count: result[key].count,
-      analysis: result[key].data
-    };
-  });
-  return data;
-}
 
 function changeColumnAccessorFN(row: any) {
   return getTimeBucket(row.updated_at);
