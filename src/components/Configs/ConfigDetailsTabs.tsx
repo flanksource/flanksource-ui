@@ -70,7 +70,7 @@ export function ConfigDetailsTabs({
         contentClass="p-0 h-full overflow-y-hidden"
       >
         <div className={`flex h-full flex-row`}>
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col overflow-x-auto">
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
