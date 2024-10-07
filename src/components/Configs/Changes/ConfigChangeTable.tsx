@@ -10,6 +10,7 @@ import { CellContext } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/table-core";
 import React, { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
+import ConfigListTagsCell from "../ConfigList/Cells/ConfigListTagsCell";
 import { ConfigSummaryAnalysisCell } from "../ConfigSummary/ConfigSummaryList";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
@@ -119,7 +120,9 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: ConfigSummaryAnalysisCell,
+    cell: React.memo((props) => (
+      <ConfigListTagsCell {...props} enableFilterByTag />
+    )),
     aggregatedCell: "",
     size: 100
   },
