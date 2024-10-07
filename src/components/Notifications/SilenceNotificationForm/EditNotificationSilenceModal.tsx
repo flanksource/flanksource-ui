@@ -5,13 +5,15 @@ import NotificationSilenceForm from "./NotificationSilenceForm";
 type EditNotificationSilenceModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onUpdate: () => void;
   data: SilenceNotificationResponse;
 };
 
 export default function EditNotificationSilenceModal({
   isOpen,
-  onClose,
-  data
+  onClose = () => {},
+  data,
+  onUpdate = () => {}
 }: EditNotificationSilenceModalProps) {
   return (
     <Modal
@@ -24,7 +26,7 @@ export default function EditNotificationSilenceModal({
         <NotificationSilenceForm
           data={data}
           footerClassName="bg-gray-100 p-4 flex flex-row justify-end gap-2"
-          onSuccess={() => onClose()}
+          onSuccess={onUpdate}
           onCancel={onClose}
         />
       </div>

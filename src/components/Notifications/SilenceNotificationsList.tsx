@@ -215,9 +215,12 @@ export default function SilenceNotificationsList({
       {selectedNotificationSilence && (
         <EditNotificationSilenceModal
           isOpen={!!selectedNotificationSilence}
-          onClose={() => {
+          onUpdate={() => {
             setSelectedNotificationSilence(undefined);
             refresh();
+          }}
+          onClose={() => {
+            setSelectedNotificationSilence(undefined);
           }}
           data={selectedNotificationSilence}
         />
