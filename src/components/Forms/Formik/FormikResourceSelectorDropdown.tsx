@@ -197,6 +197,7 @@ export default function FormikResourceSelectorDropdown({
           }
           return "Start typing to search";
         }}
+        isClearable
         value={value}
         onChange={(value: any) => {
           field.onChange({
@@ -204,7 +205,7 @@ export default function FormikResourceSelectorDropdown({
               name: field.name,
               value: Array.isArray(value)
                 ? value.map((item) => item.value)
-                : value.value
+                : value?.value
             }
           });
         }}
