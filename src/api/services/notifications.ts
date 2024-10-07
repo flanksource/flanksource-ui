@@ -159,6 +159,20 @@ export const getNotificationSilences = async ({
   );
 };
 
+export const getNotificationSilencesByID = async (id: string) => {
+  const selectColumns = ["*"].join(",");
+
+  const res = await IncidentCommander.get<NotificationSilenceItem[] | null>(
+    `/notification_silences?select=${selectColumns}&order=created_at.desc&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
+  );
+  return res.data?.[0] ?? undefined;
+};
+
 export const deleteNotificationSilence = async (id: string) => {
   return IncidentCommander.patch<NotificationSilenceItem>(
     `/notification_silences?id=eq.${id}`,
