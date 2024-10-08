@@ -1,5 +1,6 @@
 import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
+import { SortingState } from "@tanstack/react-table";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
@@ -150,7 +151,8 @@ export async function getPlaybookRuns({
   playbookId,
   status,
   starts,
-  ends
+  ends,
+  sort
 }: {
   componentId?: string;
   configId?: string;
@@ -160,6 +162,7 @@ export async function getPlaybookRuns({
   status?: string;
   starts?: string;
   ends?: string;
+  sort?: SortingState;
 }) {
   const componentParamString = componentId
     ? `&component_id=eq.${componentId}`
@@ -180,9 +183,14 @@ export async function getPlaybookRuns({
     ? `&playbook_id=eq.${playbookId}`
     : "";
 
+  const sortParams =
+    sort && sort.length > 0
+      ? `&order=${sort[0].id}.${sort[0].desc ? "desc" : "asc"}`
+      : "";
+
   const res = await resolvePostGrestRequestWithPagination(
     ConfigDB.get<PlaybookRun[] | null>(
-      `/playbook_runs?select=*,playbooks(id,name,title,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}${statusParamString}${dateFilter}`,
+      `/playbook_runs?select=*,playbooks(id,name,title,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}${statusParamString}${dateFilter}${sortParams}`,
       {
         headers: {
           Prefer: "count=exact"

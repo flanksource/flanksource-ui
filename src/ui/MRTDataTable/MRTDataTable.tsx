@@ -44,7 +44,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   onRowClick = () => {},
   isLoading = false,
   disablePagination = false,
-  enableServerSideSorting = false,
+  enableServerSideSorting = undefined,
   enableServerSidePagination = false,
   enableGrouping = false,
   manualPageCount,
@@ -75,6 +75,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     // of "onChange" to avoid re-rendering the table on every column resize.
     columnResizeMode: "onEnd",
     enableDensityToggle: false,
+    enableSorting: true,
     manualSorting: enableServerSideSorting,
     manualPagination: enableServerSidePagination,
     pageCount: manualPageCount,
