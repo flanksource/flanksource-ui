@@ -3,6 +3,7 @@ import {
   MantineReactTable,
   MRT_ColumnDef,
   MRT_Row,
+  MRT_TableInstance,
   useMantineReactTable
 } from "mantine-react-table";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
@@ -23,6 +24,10 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
    * pagination to determine the total number of pages.
    */
   totalRowCount?: number;
+  renderDetailPanel?: (props: {
+    row: MRT_Row<T>;
+    table: MRT_TableInstance<T>;
+  }) => React.ReactNode;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -35,7 +40,8 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   enableServerSidePagination = false,
   manualPageCount,
   totalRowCount,
-  hiddenColumns = []
+  hiddenColumns = [],
+  renderDetailPanel
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
@@ -104,7 +110,8 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     },
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
-    }
+    },
+    renderDetailPanel
   });
 
   return <MantineReactTable table={table} />;

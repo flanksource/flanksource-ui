@@ -117,8 +117,13 @@ export const getNotificationSendHistory = async ({
 };
 
 export const getNotificationSendHistoryById = async (id: string) => {
+  const selectColumns = [
+    "*"
+    // `notification:notification_id(*,notification_type)`
+  ].join(",");
+
   const res = await IncidentCommander.get<NotificationSendHistoryApiResponse[]>(
-    `/notification_send_history_summary?id=eq.${id}`
+    `/notification_send_history_summary?id=eq.${id}&select=${selectColumns}`
   );
   return res.data?.[0];
 };
@@ -152,6 +157,20 @@ export const getNotificationSilences = async ({
       }
     )
   );
+};
+
+export const getNotificationSilencesByID = async (id: string) => {
+  const selectColumns = ["*"].join(",");
+
+  const res = await IncidentCommander.get<NotificationSilenceItem[] | null>(
+    `/notification_silences?select=${selectColumns}&order=created_at.desc&id=eq.${id}`,
+    {
+      headers: {
+        Prefer: "count=exact"
+      }
+    }
+  );
+  return res.data?.[0] ?? undefined;
 };
 
 export const deleteNotificationSilence = async (id: string) => {

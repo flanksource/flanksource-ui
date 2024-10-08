@@ -6,6 +6,7 @@ import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescript
 import { formatDuration } from "@flanksource-ui/utils/date";
 import clsx from "clsx";
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import NotificationResourceDisplay from "../NotificationResourceDisplay";
 import { notificationSendHistoryStatus } from "../NotificationsStatusCell";
 
@@ -42,10 +43,12 @@ export default function NotificationDetails({
   return (
     <div className="flex flex-col gap-3 overflow-auto">
       <div className="grid grid-cols-4 gap-3">
-        <VerticalDescription
-          label="Resource"
-          value={<NotificationResourceDisplay notification={notification} />}
-        />
+        <div className="col-span-4">
+          <VerticalDescription
+            label="Resource"
+            value={<NotificationResourceDisplay notification={notification} />}
+          />
+        </div>
         <VerticalDescription
           label="Age"
           value={
@@ -91,6 +94,20 @@ export default function NotificationDetails({
         {readableTime && (
           <VerticalDescription label="Duration" value={readableTime} />
         )}
+
+        <div className="col-span-2">
+          <VerticalDescription
+            label="Notification Rule"
+            value={
+              <Link
+                className="text-blue-500 hover:cursor-pointer hover:underline"
+                to={`/notifications/rules?id=${notification.notification_id}`}
+              >
+                Notification Rule
+              </Link>
+            }
+          />
+        </div>
       </div>
 
       {notification.body && (

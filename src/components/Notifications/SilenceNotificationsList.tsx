@@ -1,4 +1,7 @@
-import { deleteNotificationSilence } from "@flanksource-ui/api/services/notifications";
+import {
+  deleteNotificationSilence,
+  getNotificationSilencesByID
+} from "@flanksource-ui/api/services/notifications";
 import { NotificationSilenceItemApiResponse } from "@flanksource-ui/api/types/notifications";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Age } from "@flanksource-ui/ui/Age";
@@ -10,11 +13,12 @@ import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import { BiRepeat } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
 import { CheckLink } from "../Canary/HealthChecks/CheckLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
@@ -198,15 +202,26 @@ export default function SilenceNotificationsList({
   recordCount,
   refresh = () => {}
 }: NotificationSendHistoryListProps) {
-  const [selectedNotificationSilence, setSelectedNotificationSilence] =
-    useState<NotificationSilenceItemApiResponse>();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedNotificationSilenceId = searchParams.get("id") ?? undefined;
+
+  const { data: selectedNotificationSilence } = useQuery({
+    queryKey: ["notification_silences", selectedNotificationSilenceId],
+    enabled: !!selectedNotificationSilenceId,
+    queryFn: async () =>
+      getNotificationSilencesByID(selectedNotificationSilenceId!)
+  });
 
   return (
     <>
       <MRTDataTable
         data={data}
         columns={silenceNotificationListColumns}
-        onRowClick={(row) => setSelectedNotificationSilence(row)}
+        onRowClick={(row) => {
+          searchParams.set("id", row.id);
+          setSearchParams(searchParams);
+        }}
         isLoading={isLoading}
         manualPageCount={pageCount}
         enableServerSidePagination={true}
@@ -215,9 +230,14 @@ export default function SilenceNotificationsList({
       {selectedNotificationSilence && (
         <EditNotificationSilenceModal
           isOpen={!!selectedNotificationSilence}
-          onClose={() => {
-            setSelectedNotificationSilence(undefined);
+          onUpdate={() => {
+            searchParams.delete("id");
+            setSearchParams(searchParams);
             refresh();
+          }}
+          onClose={() => {
+            searchParams.delete("id");
+            setSearchParams(searchParams);
           }}
           data={selectedNotificationSilence}
         />
