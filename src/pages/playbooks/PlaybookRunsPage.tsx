@@ -21,6 +21,7 @@ import { useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { useGetPlaybookSpecsDetails } from "../../api/query-hooks/playbooks";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 
 export default function PlaybookRunsPage() {
   const [isEditPlaybookFormOpen, setIsEditPlaybookFormOpen] = useState(false);
@@ -33,6 +34,7 @@ export default function PlaybookRunsPage() {
     playbookRunsDefaultDateFilter
   );
   const { pageIndex, pageSize } = useReactTablePaginationState();
+  const [sortState] = useReactTableSortState();
   const {
     data,
     isLoading: isLoadingPlaybookRuns,
@@ -40,7 +42,8 @@ export default function PlaybookRunsPage() {
   } = useQuery({
     queryKey: [
       "playbookRuns",
-      { pageIndex, pageSize, playbookId, playbookStatus, timeRange }
+      { pageIndex, pageSize, playbookId, playbookStatus, timeRange },
+      sortState
     ],
     queryFn: () =>
       getPlaybookRuns({
@@ -49,7 +52,8 @@ export default function PlaybookRunsPage() {
         playbookId,
         status: playbookStatus,
         starts: timeRange?.from ?? undefined,
-        ends: timeRange?.to ?? undefined
+        ends: timeRange?.to ?? undefined,
+        sort: sortState
       })
   });
 

@@ -1,3 +1,4 @@
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
 import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
 import {
@@ -7,10 +8,12 @@ import {
 } from "../schemaResources";
 
 export function useGetSettingsAllQuery(resourceInfo: SchemaApi) {
+  const [sortState] = useReactTableSortState();
+
   return useQuery<SchemaResourceWithJobStatus[], Error>(
-    ["settings", "all", resourceInfo],
+    ["settings", "all", resourceInfo, sortState],
     async () => {
-      const res = await getAll(resourceInfo);
+      const res = await getAll(resourceInfo, sortState);
       if (res.data.length === 0) {
         return [];
       }

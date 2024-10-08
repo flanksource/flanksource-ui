@@ -45,7 +45,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   onRowClick = () => {},
   isLoading = false,
   disablePagination = false,
-  enableServerSideSorting = false,
+  enableServerSideSorting = undefined,
   enableServerSidePagination = false,
   enableGrouping = false,
   manualPageCount,

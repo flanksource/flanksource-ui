@@ -1,6 +1,7 @@
 import { getIntegrationsWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
@@ -14,11 +15,12 @@ export default function IntegrationsPage() {
   const navigate = useNavigate();
 
   const { pageIndex, pageSize } = useReactTablePaginationState();
+  const [sortBy] = useReactTableSortState();
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
-    queryKey: ["integrations", { pageIndex, pageSize }],
+    queryKey: ["integrations", { pageIndex, pageSize }, sortBy],
     queryFn: () => {
-      return getIntegrationsWithJobStatus(pageIndex, pageSize);
+      return getIntegrationsWithJobStatus(pageIndex, pageSize, sortBy);
     },
     // disable cache
     staleTime: 0,
