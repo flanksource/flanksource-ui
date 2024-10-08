@@ -1,4 +1,8 @@
-import { VisibilityState } from "@tanstack/react-table";
+import {
+  GroupingState,
+  OnChangeFn,
+  VisibilityState
+} from "@tanstack/react-table";
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -28,6 +32,10 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
     row: MRT_Row<T>;
     table: MRT_TableInstance<T>;
   }) => React.ReactNode;
+  groupBy?: string[];
+  expandAllRows?: boolean;
+  enableGrouping?: boolean;
+  onGroupingChange?: OnChangeFn<GroupingState>;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -38,10 +46,14 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   disablePagination = false,
   enableServerSideSorting = false,
   enableServerSidePagination = false,
+  enableGrouping = false,
   manualPageCount,
   totalRowCount,
   hiddenColumns = [],
-  renderDetailPanel
+  renderDetailPanel,
+  groupBy = [],
+  expandAllRows = false,
+  onGroupingChange = () => {}
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
@@ -70,6 +82,10 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     autoResetPageIndex: false,
     onPaginationChange: setPageIndex,
     onSortingChange: setSortState,
+    onGroupingChange: onGroupingChange,
+    enableGrouping,
+    // Hide the group by toolbar alert banner
+    positionToolbarAlertBanner: "none",
     mantineTableBodyRowProps: ({ row }: { row: MRT_Row<T> }) => ({
       onClick: () => onRowClick(row.original),
       sx: { cursor: "pointer", maxHeight: "100%", overflowY: "auto" }
@@ -100,13 +116,15 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         pageIndex,
         pageSize
       },
-      sorting: sortState
-    },
-    initialState: {
+      sorting: sortState,
+      grouping: groupBy,
       columnVisibility: hiddenColumns.reduce((acc: VisibilityState, column) => {
         acc[column] = false;
         return acc;
       }, {})
+    },
+    initialState: {
+      expanded: expandAllRows ? true : undefined
     },
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
