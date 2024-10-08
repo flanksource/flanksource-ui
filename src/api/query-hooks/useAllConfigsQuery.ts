@@ -1,4 +1,5 @@
 import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -24,6 +25,7 @@ export const useAllConfigsQuery = ({
   const labels = searchParams.get("labels") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
   const health = searchParams.get("health") ?? undefined;
+  const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const query = useMemo(
     () =>
@@ -36,7 +38,9 @@ export const useAllConfigsQuery = ({
         includeAgents: true,
         labels: labels,
         health,
-        status
+        status,
+        pageIndex,
+        pageSize
       }),
     [
       search,
@@ -46,7 +50,9 @@ export const useAllConfigsQuery = ({
       hideDeletedConfigs,
       labels,
       health,
-      status
+      status,
+      pageIndex,
+      pageSize
     ]
   );
 
@@ -61,7 +67,9 @@ export const useAllConfigsQuery = ({
       true,
       labels,
       health,
-      status
+      status,
+      pageIndex,
+      pageSize
     ],
     () => {
       return getAllConfigsMatchingQuery(query);
