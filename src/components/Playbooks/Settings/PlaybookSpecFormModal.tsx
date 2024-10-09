@@ -1,7 +1,7 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import PermissionsView from "@flanksource-ui/components/Permissions/PermissionsView";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
+import FlatTabs from "@flanksource-ui/ui/Tabs/FlatTabs";
 import { useState } from "react";
 import PlaybookSpecModalTitle from "../PlaybookSpecModalTitle";
 import PlaybookSpecsForm from "./PlaybookSpecsForm";
@@ -37,35 +37,41 @@ export default function PlaybookSpecFormModal({
       helpLink="playbooks"
     >
       {playbook?.id ? (
-        <Tabs
+        <FlatTabs
           activeTab={activeTab}
-          onSelectTab={(label) => setActiveTab(label)}
-        >
-          <Tab label="Edit" value={"form"} className="flex flex-1 flex-col">
-            <PlaybookSpecsForm
-              onClose={onClose}
-              {...props}
-              playbook={playbook}
-            />
-          </Tab>
-
-          <Tab
-            label="Permissions"
-            value={"permissions"}
-            className="flex flex-1 flex-col"
-          >
-            <PermissionsView
-              hideResourceColumn
-              permissionRequest={{
-                playbookId: playbook.id
-              }}
-              showAddPermission
-              newPermissionData={{
-                playbook_id: playbook.id
-              }}
-            />
-          </Tab>
-        </Tabs>
+          setActiveTab={(label) => setActiveTab(label)}
+          tabs={[
+            {
+              label: "Edit Playbook Spec",
+              key: "form",
+              current: activeTab === "form",
+              content: (
+                <PlaybookSpecsForm
+                  onClose={onClose}
+                  {...props}
+                  playbook={playbook}
+                />
+              )
+            },
+            {
+              label: "Permissions",
+              key: "permissions",
+              current: activeTab === "permissions",
+              content: (
+                <PermissionsView
+                  hideResourceColumn
+                  permissionRequest={{
+                    playbookId: playbook.id
+                  }}
+                  showAddPermission
+                  newPermissionData={{
+                    playbook_id: playbook.id
+                  }}
+                />
+              )
+            }
+          ]}
+        />
       ) : (
         <PlaybookSpecsForm onClose={onClose} {...props} />
       )}
