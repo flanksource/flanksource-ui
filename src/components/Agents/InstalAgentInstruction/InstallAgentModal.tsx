@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
@@ -6,6 +6,7 @@ import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { AgentFormValues } from "../Add/AddAgentForm";
 import CLIInstallAgent from "./CLIInstallAgent";
 import FluxInstallAgent from "./FluxInstallAgent";
+import { useAgentsBaseURL } from "./useAgentsBaseURL";
 
 export function WarningBox() {
   return (
@@ -83,6 +84,14 @@ export function MoreInfoBox() {
   );
 }
 
+export type TemplateContextData = {
+  namespace?: string;
+  chart?: string;
+  repoName?: string;
+  values?: string[];
+  kubeValues?: string[];
+};
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -97,6 +106,45 @@ export default function InstallAgentModal({
   agentFormValues
 }: Props) {
   const [activeTab, setActiveTab] = useState<"cli" | "flux">("cli");
+  const baseUrl = useAgentsBaseURL();
+
+  const data = useMemo(() => {
+    const kubeOptions = agentFormValues?.kubernetes;
+    const pushTelemetry = agentFormValues?.pushTelemetry ?? undefined;
+
+    return {
+      chart: "mission-control-agent",
+      namespace: "mission-control-agent",
+      repoName: "flanksource",
+      // You can add more values here to be passed to the template for the
+      // values section of the HelmRelease
+      values: [
+        `upstream.createSecret=true`,
+        `upstream.host=${baseUrl}`,
+        `upstream.username=token`,
+        `upstream.password=${generatedAgent?.access_token}`,
+        `upstream.agentName=${agentFormValues?.name}`,
+        ...(pushTelemetry?.enabled
+          ? [
+              `pushTelemetry.enabled=true`,
+              `pushTelemetry.topologyName=${
+                pushTelemetry.topologyName
+              }-${agentFormValues?.name}`
+            ]
+          : [])
+      ],
+      // You can add more values here to be passed to the template for the
+      // kubeValues section of the HelmRelease
+      kubeValues: kubeOptions
+        ? [
+            `clusterName: "${agentFormValues?.name}"`,
+            `scraper.schedule: "${kubeOptions.schedule}"`
+          ]
+        : []
+    } satisfies TemplateContextData;
+  }, [agentFormValues, baseUrl, generatedAgent]);
+
+  console.log(JSON.stringify(data, null, 2));
 
   return (
     <Modal
@@ -116,10 +164,7 @@ export default function InstallAgentModal({
             onSelectTab={(v) => setActiveTab(v as any)}
           >
             <Tab className="flex flex-col gap-4 p-4" label="Flux" value="flux">
-              <FluxInstallAgent
-                generatedAgent={generatedAgent}
-                agentFormValues={agentFormValues}
-              />
+              <FluxInstallAgent data={data} />
               <WarningBox />
             </Tab>
             <Tab
@@ -127,10 +172,7 @@ export default function InstallAgentModal({
               label="Helm CLI"
               value="cli"
             >
-              <CLIInstallAgent
-                generatedAgent={generatedAgent}
-                agentFormValues={agentFormValues}
-              />
+              <CLIInstallAgent data={data} />
               <WarningBox />
             </Tab>
           </Tabs>

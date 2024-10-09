@@ -2,12 +2,6 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { AuthContext, FakeUser, Roles } from "../../../../context";
 import FluxInstallAgent from "../FluxInstallAgent";
 
-const testUser = {
-  id: "testid",
-  name: "testuser",
-  email: "testemail"
-};
-
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -16,6 +10,40 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 
 const writeText = jest.fn();
 
+const mockInput = {
+  chart: "mission-control-agent",
+  namespace: "mission-control-agent",
+  repoName: "flanksource",
+  values: [
+    "upstream.createSecret=true",
+    "upstream.host=http://localhost:3000",
+    "upstream.username=token",
+    "upstream.password=password",
+    "upstream.agentName=test-new-agent-instructions",
+    "pushTelemetry.enabled=true",
+    "pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions"
+  ]
+};
+
+const mockInputWithKubOptions = {
+  chart: "mission-control-agent",
+  namespace: "mission-control-agent",
+  repoName: "flanksource",
+  values: [
+    "upstream.createSecret=true",
+    "upstream.host=http://localhost:3000",
+    "upstream.username=token",
+    "upstream.password=password",
+    "upstream.agentName=test-new-agent-instructions",
+    "pushTelemetry.enabled=true",
+    "pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions"
+  ],
+  kubeValues: [
+    'clusterName: "test-new-agent-instructions"',
+    'scraper.schedule: "30m"'
+  ]
+};
+
 Object.assign(navigator, {
   clipboard: {
     writeText
@@ -23,12 +51,6 @@ Object.assign(navigator, {
 });
 
 describe("InstallAgentModal", () => {
-  const generatedAgent = {
-    id: "testid",
-    username: "testuser",
-    access_token: "testtoken"
-  };
-
   it("renders the Helm repository installation command", async () => {
     render(
       <AuthContext.Provider value={FakeUser([Roles.admin])}>
@@ -50,61 +72,7 @@ describe("InstallAgentModal", () => {
     await waitFor(() => {
       expect(writeText).toHaveBeenCalled();
     });
-    expect(writeText.mock["calls"][0][0]).toMatchInlineSnapshot(`
-      "apiVersion: v1
-      kind: Namespace
-      metadata:
-        name:  mission-control-agent
-      ---
-      apiVersion: source.toolkit.fluxcd.io/v1beta1
-      kind: HelmRepository
-      metadata:
-        name: flanksource
-        namespace: mission-control-agent
-      spec:
-        interval: 5m0s
-        url: https://flanksource.github.io/charts
-      ---
-      apiVersion: helm.toolkit.fluxcd.io/v2beta1
-      kind: HelmRelease
-      metadata:
-        name: mission-control
-        namespace: mission-control-agent
-      spec:
-        chart:
-          spec:
-            chart: mission-control-agent
-            sourceRef:
-              kind: HelmRepository
-              name: flanksource
-              namespace: mission-control-agent
-            interval: 1m
-        values:
-          upstream:
-            createSecret: true
-            host:  http://localhost
-            username: token
-            agentName: testname
-            password: testtoken
-      ---
-      apiVersion: helm.toolkit.fluxcd.io/v2beta1
-      kind: HelmRelease
-      metadata:
-        name: mission-control-kubernetes
-        namespace: mission-control-agent
-      spec:
-        chart:
-          spec:
-            chart: mission-control-kubernetes
-            sourceRef:
-              kind: HelmRepository
-              name: flanksource
-              namespace: mission-control-agent
-        values:
-          clusterName: "testname"
-          interval: ""
-        "
-    `);
+    expect(writeText.mock["calls"][0][0]).toMatchSnapshot();
   });
 
   it("renders the Helm repository installation command with kube command", async () => {
@@ -130,60 +98,6 @@ describe("InstallAgentModal", () => {
     await waitFor(() => {
       expect(writeText).toHaveBeenCalled();
     });
-    expect(writeText.mock["calls"][0][0]).toMatchInlineSnapshot(`
-      "apiVersion: v1
-      kind: Namespace
-      metadata:
-        name:  mission-control-agent
-      ---
-      apiVersion: source.toolkit.fluxcd.io/v1beta1
-      kind: HelmRepository
-      metadata:
-        name: flanksource
-        namespace: mission-control-agent
-      spec:
-        interval: 5m0s
-        url: https://flanksource.github.io/charts
-      ---
-      apiVersion: helm.toolkit.fluxcd.io/v2beta1
-      kind: HelmRelease
-      metadata:
-        name: mission-control
-        namespace: mission-control-agent
-      spec:
-        chart:
-          spec:
-            chart: mission-control-agent
-            sourceRef:
-              kind: HelmRepository
-              name: flanksource
-              namespace: mission-control-agent
-            interval: 1m
-        values:
-          upstream:
-            createSecret: true
-            host:  http://localhost
-            username: token
-            agentName: testname
-            password: testtoken
-      ---
-      apiVersion: helm.toolkit.fluxcd.io/v2beta1
-      kind: HelmRelease
-      metadata:
-        name: mission-control-kubernetes
-        namespace: mission-control-agent
-      spec:
-        chart:
-          spec:
-            chart: mission-control-kubernetes
-            sourceRef:
-              kind: HelmRepository
-              name: flanksource
-              namespace: mission-control-agent
-        values:
-          clusterName: "testname"
-          interval: ""
-        "
-    `);
+    expect(writeText.mock["calls"][0][0]).toMatchSnapshot();
   });
 });
