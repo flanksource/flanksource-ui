@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InstallAgentModal renders the Helm repository installation command 1`] = `
+"apiVersion: v1
+kind: Namespace
+metadata:
+  name:  mission-control-agent
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mission-control-agent
+  namespace: mission-control-agent
+spec:
+  chart:
+    spec:
+      chart: mission-control-agent
+      sourceRef:
+        kind: HelmRepository
+        name: flanksource
+        namespace: mission-control-agent
+      interval: 5m0s
+  values:
+    upstream.createSecret=true
+    upstream.host=http://localhost:3000
+    upstream.username=token
+    upstream.password=password
+    upstream.agentName=test-new-agent-instructions
+    pushTelemetry.enabled=true
+    pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
+
+  "
+`;
+
+exports[`InstallAgentModal renders the Helm repository installation command with kube command 1`] = `
+"apiVersion: v1
+kind: Namespace
+metadata:
+  name:  mission-control-agent
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mission-control-agent
+  namespace: mission-control-agent
+spec:
+  chart:
+    spec:
+      chart: mission-control-agent
+      sourceRef:
+        kind: HelmRepository
+        name: flanksource
+        namespace: mission-control-agent
+      interval: 5m0s
+  values:
+    upstream.createSecret=true
+    upstream.host=http://localhost:3000
+    upstream.username=token
+    upstream.password=password
+    upstream.agentName=test-new-agent-instructions
+    pushTelemetry.enabled=true
+    pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
+
+  "
+`;
