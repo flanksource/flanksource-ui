@@ -11,7 +11,6 @@ import { ColumnDef } from "@tanstack/table-core";
 import React, { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import ConfigListTagsCell from "../ConfigList/Cells/ConfigListTagsCell";
-import { ConfigSummaryAnalysisCell } from "../ConfigSummary/ConfigSummaryList";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
 export const paramsToReset = {
@@ -121,6 +120,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     header: "Tags",
     accessorKey: "tags",
     cell: React.memo((props) => (
+      // @ts-ignore - this should be fixed in a different PR
       <ConfigListTagsCell {...props} enableFilterByTag />
     )),
     aggregatedCell: "",
