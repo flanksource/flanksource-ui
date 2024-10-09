@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InstallAgentModal renders the Helm repository installation command 1`] = `
+"helm repo add flanksource https://flanksource.github.io/charts
+
+helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\
+  --set upstream.createSecret=true  \\ 
+  --set upstream.host=http://localhost:3000  \\ 
+  --set upstream.username=token  \\ 
+  --set upstream.password=password  \\ 
+  --set upstream.agentName=test-new-agent-instructions  \\ 
+  --set pushTelemetry.enabled=true  \\ 
+  --set pushTelemetry.topologyName=incident-commander.demo.aws.flanksource.com-test-new-agent-instructions  \\
+  --create-namespace 
+   
+"
+`;
+
+exports[`InstallAgentModal renders the Helm repository installation command with kube command 1`] = `
+"helm repo add flanksource https://flanksource.github.io/charts
+
+helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\
+  --set upstream.createSecret=true  \\ 
+  --set upstream.host=http://localhost:3000  \\ 
+  --set upstream.username=token  \\ 
+  --set upstream.password=password  \\ 
+  --set upstream.agentName=test-new-agent-instructions  \\ 
+  --set pushTelemetry.enabled=true  \\ 
+  --set pushTelemetry.topologyName=incident-commander.demo.aws.flanksource.com-test-new-agent-instructions  \\
+  --create-namespace 
+   
+
+helm install mc-agent-kubernetes flanksource/mc-agent-kubernetes -n "mission-control-agent" \\
+  --set clusterName=test-new-agent-instructions  \\ 
+  --set scraper.schedule=30m    
+"
+`;
