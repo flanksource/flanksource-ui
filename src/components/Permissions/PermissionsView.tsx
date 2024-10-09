@@ -67,7 +67,7 @@ export default function PermissionsView({
   }, [isLoading, setIsLoading]);
 
   const totalEntries = data?.totalEntries || 0;
-  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
+  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : 1;
   const permissions = data?.data || [];
 
   return (
