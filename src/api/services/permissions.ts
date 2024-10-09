@@ -76,7 +76,11 @@ export function fetchPermissions(
 
   const url = `/permissions?${queryParam}&select=${selectFields.join(",")}&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   return resolvePostGrestRequestWithPagination(
-    IncidentCommander.get<PermissionAPIResponse[]>(url)
+    IncidentCommander.get<PermissionAPIResponse[]>(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
   );
 }
 

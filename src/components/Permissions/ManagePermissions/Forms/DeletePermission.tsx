@@ -53,7 +53,7 @@ export default function DeletePermission({
       {isConfirmDialogOpen && (
         <ConfirmationPromptDialog
           title="Delete Permission"
-          description="Are you sure you want to permission?"
+          description="Are you sure you want to delete the permission?"
           onConfirm={onDeleteResource}
           isOpen={isConfirmDialogOpen}
           onClose={() => setIsConfirmDialogOpen(false)}

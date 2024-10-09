@@ -29,7 +29,7 @@ export default function FormikPermissionSelectResourceFields() {
   const { setFieldValue } = useFormikContext<Record<string, any>>();
 
   const [switchOption, setSwitchOption] = useState<
-    "Component" | "Catalog" | "Canary" | "Playbook" | "Connection" | "Object"
+    "Component" | "Catalog" | "Canary" | "Playbook" | "Connection" | "Global"
   >("Catalog");
 
   return (
@@ -43,7 +43,7 @@ export default function FormikPermissionSelectResourceFields() {
               "Component",
               "Connection",
               "Playbook",
-              "Object"
+              "Global"
             ]}
             className="w-auto"
             itemsClassName=""
@@ -89,7 +89,7 @@ export default function FormikPermissionSelectResourceFields() {
           <FormikConnectionField required name="connection_id" />
         )}
 
-        {switchOption === "Object" && (
+        {switchOption === "Global" && (
           <FormikSelectDropdown
             required
             name="object"
