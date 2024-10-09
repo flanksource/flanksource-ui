@@ -2,7 +2,6 @@
 
 exports[`InstallAgentModal renders the Helm repository installation command 1`] = `
 "helm repo add mission-control-agent flanksource/mission-control-agent
-
 helm repo update
 
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \\
@@ -13,14 +12,13 @@ helm install mc-agent flanksource/mission-control-agent -n "mission-control-agen
   --set upstream.agentName=test-new-agent-instructions \\
   --set pushTelemetry.enabled=true \\
   --set pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions \\
-  --create-namespace
+  --create-namespace \\
 
 "
 `;
 
 exports[`InstallAgentModal renders the Helm repository installation command with kube command 1`] = `
 "helm repo add mission-control-agent flanksource/mission-control-agent
-
 helm repo update
 
 helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \\
@@ -31,10 +29,13 @@ helm install mc-agent flanksource/mission-control-agent -n "mission-control-agen
   --set upstream.agentName=test-new-agent-instructions \\
   --set pushTelemetry.enabled=true \\
   --set pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions \\
-  --create-namespace
+  --create-namespace \\
 
-helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent"  \\
-  --set clusterName: "test-new-agent-instructions" \\
-  --set scraper.schedule: "30m" \\
+helm repo update
+
+helm install mc-agent flanksource/mc-agent-kubernetes -n "mission-control-agent" \\
+  --set clusterName=test-new-agent-instructions \\
+  --set scraper.schedule=30m \\
+
 "
 `;
