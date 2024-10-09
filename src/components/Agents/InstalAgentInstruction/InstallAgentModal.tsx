@@ -1,26 +1,12 @@
-import { useMemo, useState } from "react";
+import HelmInstallationSnippets, {
+  TemplateContextData
+} from "@flanksource-ui/ui/HelmSnippet/HelmInstallationSnippets";
+import { useMemo } from "react";
 import { GeneratedAgent } from "../../../api/services/agents";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
-import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { AgentFormValues } from "../Add/AddAgentForm";
-import CLIInstallAgent from "./CLIInstallAgent";
-import FluxInstallAgent from "./FluxInstallAgent";
 import { useAgentsBaseURL } from "./useAgentsBaseURL";
-
-export function WarningBox() {
-  return (
-    <div
-      className="relative rounded border border-yellow-200 bg-yellow-100 px-4 py-3 text-yellow-700"
-      role="alert"
-    >
-      <span className="block sm:inline">
-        Access token will be shown only once. Please copy it and store it
-        securely.
-      </span>
-    </div>
-  );
-}
 
 export function MoreInfoBox() {
   return (
@@ -84,14 +70,6 @@ export function MoreInfoBox() {
   );
 }
 
-export type TemplateContextData = {
-  namespace?: string;
-  chart?: string;
-  repoName?: string;
-  values?: string[];
-  kubeValues?: string[];
-};
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -105,7 +83,6 @@ export default function InstallAgentModal({
   generatedAgent,
   agentFormValues
 }: Props) {
-  const [activeTab, setActiveTab] = useState<"cli" | "flux">("cli");
   const baseUrl = useAgentsBaseURL();
 
   const data = useMemo(() => {
@@ -116,20 +93,40 @@ export default function InstallAgentModal({
       chart: "mission-control-agent",
       namespace: "mission-control-agent",
       repoName: "flanksource",
+      createNamespace: true,
       // You can add more values here to be passed to the template for the
       // values section of the HelmRelease
       values: [
-        `upstream.createSecret=true`,
-        `upstream.host=${baseUrl}`,
-        `upstream.username=token`,
-        `upstream.password=${generatedAgent?.access_token}`,
-        `upstream.agentName=${agentFormValues?.name}`,
+        {
+          key: "upstream.createSecret",
+          value: "true"
+        },
+        {
+          key: "upstream.host",
+          value: baseUrl
+        },
+        {
+          key: "upstream.username",
+          value: "token"
+        },
+        {
+          key: "upstream.password",
+          value: generatedAgent?.access_token
+        },
+        {
+          key: "upstream.agentName",
+          value: agentFormValues?.name
+        },
         ...(pushTelemetry?.enabled
           ? [
-              `pushTelemetry.enabled=true`,
-              `pushTelemetry.topologyName=${
-                pushTelemetry.topologyName
-              }-${agentFormValues?.name}`
+              {
+                key: "pushTelemetry.enabled",
+                value: "true"
+              },
+              {
+                key: "pushTelemetry.topologyName",
+                value: `${pushTelemetry.topologyName}`
+              }
             ]
           : [])
       ],
@@ -137,14 +134,18 @@ export default function InstallAgentModal({
       // kubeValues section of the HelmRelease
       kubeValues: kubeOptions
         ? [
-            `clusterName: "${agentFormValues?.name}"`,
-            `scraper.schedule: "${kubeOptions.schedule}"`
+            {
+              key: "clusterName",
+              value: agentFormValues?.name
+            },
+            {
+              key: "scraper.schedule",
+              value: kubeOptions.schedule
+            }
           ]
         : []
     } satisfies TemplateContextData;
   }, [agentFormValues, baseUrl, generatedAgent]);
-
-  console.log(JSON.stringify(data, null, 2));
 
   return (
     <Modal
@@ -159,23 +160,7 @@ export default function InstallAgentModal({
           Install the Mission Control agent using instructions below
         </h3>
         <div className="flex flex-col">
-          <Tabs
-            activeTab={activeTab}
-            onSelectTab={(v) => setActiveTab(v as any)}
-          >
-            <Tab className="flex flex-col gap-4 p-4" label="Flux" value="flux">
-              <FluxInstallAgent data={data} />
-              <WarningBox />
-            </Tab>
-            <Tab
-              className="flex flex-col gap-4 p-4"
-              label="Helm CLI"
-              value="cli"
-            >
-              <CLIInstallAgent data={data} />
-              <WarningBox />
-            </Tab>
-          </Tabs>
+          <HelmInstallationSnippets templateData={data} isWarningDisplayed />
         </div>
         <MoreInfoBox />
       </div>

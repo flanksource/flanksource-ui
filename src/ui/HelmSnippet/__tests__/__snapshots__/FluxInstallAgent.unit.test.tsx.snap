@@ -21,13 +21,13 @@ spec:
         namespace: mission-control-agent
       interval: 5m0s
   values:
-    upstream.createSecret=true
-    upstream.host=http://localhost:3000
-    upstream.username=token
-    upstream.password=password
-    upstream.agentName=test-new-agent-instructions
-    pushTelemetry.enabled=true
-    pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
+    upstream.createSecret: true
+    upstream.host: http://localhost:3000
+    upstream.username: token
+    upstream.password: password
+    upstream.agentName: test-new-agent-instructions
+    pushTelemetry.enabled: true
+    pushTelemetry.topologyName: https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
 
   "
 `;
@@ -53,13 +53,13 @@ spec:
         namespace: mission-control-agent
       interval: 5m0s
   values:
-    upstream.createSecret=true
-    upstream.host=http://localhost:3000
-    upstream.username=token
-    upstream.password=password
-    upstream.agentName=test-new-agent-instructions
-    pushTelemetry.enabled=true
-    pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
+    upstream.createSecret: true
+    upstream.host: http://localhost:3000
+    upstream.username: token
+    upstream.password: password
+    upstream.agentName: test-new-agent-instructions
+    pushTelemetry.enabled: true
+    pushTelemetry.topologyName: https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions
 
   "
 `;

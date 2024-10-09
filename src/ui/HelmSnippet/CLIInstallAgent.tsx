@@ -1,24 +1,45 @@
 import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
-import { TemplateContextData } from "./InstallAgentModal";
+import { TemplateContextData } from "./HelmInstallationSnippets";
 
 // This a  Handlebars template for the Helm command to install the agent and the
 // kubernetes agent if the user has enabled it.
-const helmCommand = `helm repo add {{ chart }} {{ repoName }}/{{ chart }}
+const helmCommand = `{{#if valueFile }}
+cat > values.yaml << EOF
+{{ valueFile }}
+EOF
 
+
+{{/if}}
+{{#if createRepo }}
+helm repo add {{ chart }} {{ repoName }}/{{ chart }}
+{{/if}}
 helm repo update
 
 helm install mc-agent flanksource/mission-control-agent -n "{{{ namespace }}}" \\
   {{#each values}}
-  --set {{{ this }}} \\
+  --set {{{ this.key }}}={{{ this.value }}} \\
   {{/each}}
-  --create-namespace
+{{#if createNamespace }}
+  --create-namespace \\
+{{/if}}
+{{#if valueFile }}
+  --set-file values.yaml \\
+{{/if }}
+{{#if args}}
+  {{#each args}}
+    {{ this }} \\
+  {{/each}}
+{{/if}}
+{{#if wait }}
+  --wait \\
+{{/if}}
 
 {{#if kubeValues }}
 helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "{{{ namespace }}}"  \\
   {{#each kubeValues}}
-  --set {{{ this }}} \\
+  --set {{{ this.key }}}={{{ this.value }}} \\
   {{/each}}
 {{/if}}
 `;

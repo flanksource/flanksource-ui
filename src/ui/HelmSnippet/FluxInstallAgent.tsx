@@ -1,15 +1,17 @@
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import Handlebars from "handlebars";
 import { useMemo } from "react";
-import { TemplateContextData } from "./InstallAgentModal";
+import { TemplateContextData } from "./HelmInstallationSnippets";
 
 // This a  Handlebars template for the HelmRelease to install the agent and the
 // kubernetes agent if the user has enabled it.
-const fluxTemplate = `apiVersion: v1
+const fluxTemplate = `{{#if createNamespace}}
+apiVersion: v1
 kind: Namespace
 metadata:
   name:  {{ namespace }}
 ---
+{{/if}}
 {{#if createRepository}}
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: HelmRepository
@@ -37,7 +39,7 @@ spec:
       interval: 5m0s
   values:
 {{#each values}}
-    {{{ this }}}
+    {{{ this.key }}}: {{{ this.value }}}
 {{/each}}
 
 {{#if kubeValues}}
@@ -56,8 +58,11 @@ spec:
         name: flanksource
         namespace: mission-control-agent
   values:
+  {{#if valueFile }}
+{{ valueFile }}
+  {{/if}}
   {{#each  kubeValues}} 
-    {{{ this }}}
+    {{{ this.key }}}: {{{ this.value }}}
   {{/each}}
 {{/if}}
   `;
@@ -70,7 +75,17 @@ type Props = {
 
 export default function FluxInstallAgent({ data }: Props) {
   const yaml = useMemo(() => {
-    return template(data, {});
+    console.log({ data });
+    return template(
+      {
+        ...data,
+        valueFile: data?.valueFile
+          ? // Indent the valueFile content
+            data?.valueFile?.replace(/^/gm, "    ")
+          : undefined
+      },
+      {}
+    );
   }, [data]);
 
   return (
