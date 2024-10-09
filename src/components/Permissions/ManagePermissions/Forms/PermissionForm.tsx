@@ -101,7 +101,7 @@ export default function PermissionForm({
       onClose={onClose}
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
-      helpLink="/installation/saas/agent"
+      helpLink="/reference/permissions"
     >
       <div className="flex flex-1 flex-col gap-2">
         <Formik<Partial<PermissionTable>>
@@ -153,7 +153,7 @@ export default function PermissionForm({
                 name="action"
                 label="Action"
               />
-              <FormikCheckbox name="deny" label="Is deny action" />
+              <FormikCheckbox name="deny" label="Deny" />
               <FormikTextArea name="description" label="Description" />
             </div>
             <CanEditResource
