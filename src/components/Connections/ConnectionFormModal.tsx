@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
+import FlatTabs from "@flanksource-ui/ui/Tabs/FlatTabs";
 import React, { useEffect, useState } from "react";
 import { Icon } from "../../ui/Icons/Icon";
 import { Modal } from "../../ui/Modal";
@@ -128,44 +128,46 @@ export default function ConnectionFormModal({
     >
       {type ? (
         formValue?.id ? (
-          <Tabs
+          <FlatTabs
             activeTab={activeTab}
-            onSelectTab={(label) => setActiveTab(label)}
-          >
-            <Tab
-              label="Edit Connection"
-              value={"form"}
-              className="flex flex-1 flex-col"
-            >
-              <ConnectionForm
-                handleBack={() => setConnectionType(undefined)}
-                connectionType={type}
-                onConnectionSubmit={onConnectionSubmit}
-                onConnectionDelete={onConnectionDelete}
-                formValue={formValue}
-                className={className}
-                isSubmitting={isSubmitting}
-                isDeleting={isDeleting}
-              />
-            </Tab>
-
-            <Tab
-              label="Permissions"
-              value={"permissions"}
-              className="flex flex-1 flex-col"
-            >
-              <PermissionsView
-                hideResourceColumn
-                permissionRequest={{
-                  connectionId: formValue.id
-                }}
-                showAddPermission
-                newPermissionData={{
-                  connection_id: formValue.id
-                }}
-              />
-            </Tab>
-          </Tabs>
+            setActiveTab={(label) => setActiveTab(label)}
+            tabs={[
+              {
+                label: "Edit",
+                key: "form",
+                current: activeTab === "form",
+                content: (
+                  <ConnectionForm
+                    handleBack={() => setConnectionType(undefined)}
+                    connectionType={type}
+                    onConnectionSubmit={onConnectionSubmit}
+                    onConnectionDelete={onConnectionDelete}
+                    formValue={formValue}
+                    className={className}
+                    isSubmitting={isSubmitting}
+                    isDeleting={isDeleting}
+                  />
+                )
+              },
+              {
+                label: "Permissions",
+                key: "permissions",
+                current: activeTab === "permissions",
+                content: (
+                  <PermissionsView
+                    hideResourceColumn
+                    permissionRequest={{
+                      connectionId: formValue.id
+                    }}
+                    showAddPermission
+                    newPermissionData={{
+                      connection_id: formValue.id
+                    }}
+                  />
+                )
+              }
+            ]}
+          />
         ) : (
           <ConnectionForm
             handleBack={() => setConnectionType(undefined)}
