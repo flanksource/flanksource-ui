@@ -8,13 +8,41 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn()
 }));
 
-describe("InstallAgentModal", () => {
-  const generatedAgent = {
-    id: "testid",
-    username: "testuser",
-    access_token: "testtoken"
-  };
+const mockInput = {
+  chart: "mission-control-agent",
+  namespace: "mission-control-agent",
+  repoName: "flanksource",
+  values: [
+    "upstream.createSecret=true",
+    "upstream.host=http://localhost:3000",
+    "upstream.username=token",
+    "upstream.password=password",
+    "upstream.agentName=test-new-agent-instructions",
+    "pushTelemetry.enabled=true",
+    "pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions"
+  ]
+};
 
+const mockInputWithKubOptions = {
+  chart: "mission-control-agent",
+  namespace: "mission-control-agent",
+  repoName: "flanksource",
+  values: [
+    "upstream.createSecret=true",
+    "upstream.host=http://localhost:3000",
+    "upstream.username=token",
+    "upstream.password=password",
+    "upstream.agentName=test-new-agent-instructions",
+    "pushTelemetry.enabled=true",
+    "pushTelemetry.topologyName=https://incident-commander.demo.aws.flanksource.com-test-new-agent-instructions"
+  ],
+  kubeValues: [
+    'clusterName: "test-new-agent-instructions"',
+    'scraper.schedule: "30m"'
+  ]
+};
+
+describe("InstallAgentModal", () => {
   it("renders the Helm repository installation command", () => {
     render(
       <AuthContext.Provider value={FakeUser([Roles.admin])}>
@@ -23,26 +51,12 @@ describe("InstallAgentModal", () => {
     );
     expect(
       screen.getByText(
-        "helm repo add flanksource https://flanksource.github.io/charts",
+        "helm repo add mission-control-agent flanksource/mission-control-agent",
         {
           exact: false
         }
       ).textContent
-    ).toMatchInlineSnapshot(`
-      "helm repo add flanksource https://flanksource.github.io/charts
-
-      helm repo update
-
-      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \\
-        --set upstream.createSecret=true \\
-        --set upstream.host=http://localhost \\
-        --set upstream.username=token \\
-        --set upstream.password=testtoken \\
-        --set upstream.agentName= \\
-        --create-namespace
-
-      "
-    `);
+    ).toMatchSnapshot();
   });
 
   it("renders the Helm repository installation command with kube command", () => {
@@ -63,28 +77,11 @@ describe("InstallAgentModal", () => {
     );
     expect(
       screen.getByText(
-        "helm repo add flanksource https://flanksource.github.io/charts",
+        "helm repo add mission-control-agent flanksource/mission-control-agent",
         {
           exact: false
         }
       ).textContent
-    ).toMatchInlineSnapshot(`
-      "helm repo add flanksource https://flanksource.github.io/charts
-
-      helm repo update
-
-      helm install mc-agent flanksource/mission-control-agent -n "mission-control-agent" \\
-        --set upstream.createSecret=true \\
-        --set upstream.host=http://localhost \\
-        --set upstream.username=token \\
-        --set upstream.password=testtoken \\
-        --set upstream.agentName=testname \\
-        --create-namespace
-
-      helm install mc-agent-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent"  \\
-        --set scraper.clusterName="testname" \\
-        --set scraper.interval="1m"
-      "
-    `);
+    ).toMatchSnapshot();
   });
 });
