@@ -19,7 +19,8 @@ export type SchemaResourceType = {
     | "Connections"
     | "Log Backends"
     | "Notifications"
-    | "Feature Flags";
+    | "Feature Flags"
+    | "Permissions";
   table:
     | "teams"
     | "incident_rules"
@@ -29,7 +30,8 @@ export type SchemaResourceType = {
     | "connections"
     | "logging_backends"
     | "notifications"
-    | "properties";
+    | "properties"
+    | "permissions";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;
