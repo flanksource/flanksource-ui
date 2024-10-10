@@ -107,7 +107,7 @@ export default function AgentForm({
             name: agent?.name ?? "",
             properties: agent?.properties ?? {},
             kubernetes: {
-              interval: "30m",
+              schedule: "30m",
               enabled: false
             },
             pushTelemetry: {
@@ -173,7 +173,7 @@ export default function AgentForm({
                           { label: "12h", value: "12h" },
                           { label: "24h", value: "24h" }
                         ]}
-                        name="kubernetes.interval"
+                        name="kubernetes.schedule"
                         label="Scrape Interval"
                         hintPosition="top"
                         hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
