@@ -81,6 +81,7 @@ export function ConnectionList({
         data={data}
         isLoading={isLoading}
         onRowClick={(row) => onRowClick(row)}
+        enableServerSideSorting
       />
     </div>
   );

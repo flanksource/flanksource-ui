@@ -1,9 +1,9 @@
-import { CellContext } from "@tanstack/react-table";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import React from "react";
 import { ConfigItem } from "../../../../api/types/configs";
 import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 
-function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
+function ConfigListNameCell({ row, cell }: MRTCellProps<ConfigItem>) {
   const configType = row.original.type;
 
   return (
@@ -14,7 +14,7 @@ function ConfigListNameCell({ row, getValue }: CellContext<ConfigItem, any>) {
       }}
     >
       <ConfigsTypeIcon config={{ type: configType }} showPrimaryIcon={false}>
-        <span>{getValue()}</span>
+        <span>{cell.getValue<string>()}</span>
       </ConfigsTypeIcon>
     </div>
   );

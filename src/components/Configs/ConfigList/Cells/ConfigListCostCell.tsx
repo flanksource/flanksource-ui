@@ -1,4 +1,5 @@
 import { CellContext, Row } from "@tanstack/react-table";
+import { MRT_Row } from "mantine-react-table";
 import {
   ConfigItem,
   ConfigSummary,
@@ -16,14 +17,19 @@ export default function ConfigListCostCell({
  * Recursively aggregate costs for a given row and its children, and its children's children, etc.
  *
  */
-const aggregatedCosts = (
-  rows: Row<ConfigItem>,
+export const aggregatedCosts = (
+  rows: Row<ConfigItem> | MRT_Row<ConfigItem>,
   data: Required<Costs>
 ): Required<Costs> => {
-  if (rows.subRows.length === 0) {
+  const subRows = rows.subRows;
+  if (!subRows) {
     return data;
   }
-  return rows.subRows.reduce((acc, row) => {
+  if (subRows.length === 0) {
+    return data;
+  }
+  // @ts-ignore
+  return subRows.reduce((acc, row) => {
     if (row.original) {
       acc.cost_total_30d! += row.original.cost_total_30d ?? 0;
       acc.cost_total_7d! += row.original.cost_total_7d ?? 0;

@@ -1,17 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import { getPlaybookRuns } from "@flanksource-ui/api/services/playbooks";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsList";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
 
 export function ConfigDetailsPlaybooksPage() {
   const { id } = useParams();
 
-  const [{ pageIndex, pageSize }, setPageState] = useState({
-    pageIndex: 0,
-    pageSize: 200
-  });
+  const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["playbookRuns", { pageIndex, pageSize, configId: id }],
@@ -27,18 +24,6 @@ export function ConfigDetailsPlaybooksPage() {
 
   const totalEntries = data?.totalEntries;
 
-  const pagination = useMemo(() => {
-    return {
-      setPagination: setPageState,
-      pageIndex,
-      pageSize,
-      pageCount: totalEntries ? Math.ceil(totalEntries / pageSize) : -1,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    };
-  }, [pageIndex, pageSize, totalEntries, isLoading]);
-
   return (
     <ConfigDetailsTabs
       pageTitlePrefix={"Config Playbooks"}
@@ -46,12 +31,15 @@ export function ConfigDetailsPlaybooksPage() {
       refetch={refetch}
       activeTabName="Playbooks"
     >
-      <div className={`flex h-full flex-1 flex-col space-y-2`}>
-        <div className="flex h-full flex-col overflow-y-hidden">
+      <div className={`flex h-full flex-1 flex-col space-y-2 overflow-auto`}>
+        <div className="flex h-full flex-col overflow-x-auto overflow-y-hidden">
           <PlaybookRunsTable
             data={playbookRuns ?? []}
             isLoading={isLoading}
-            pagination={pagination}
+            numberOfPages={
+              totalEntries ? Math.ceil(totalEntries / pageSize) : -1
+            }
+            totalRecords={totalEntries ?? 0}
           />
         </div>
       </div>

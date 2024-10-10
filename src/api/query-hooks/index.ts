@@ -19,6 +19,7 @@ import {
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import { LogsResponse, SearchLogsPayload, searchLogs } from "../services/logs";
+import { getPagingParams } from "../services/notifications";
 import {
   getComponentTeams,
   getHealthCheckSpecByID,
@@ -160,6 +161,8 @@ type ConfigListFilterQueryOptions = {
   labels?: string;
   health?: string;
   status?: string;
+  pageIndex?: number;
+  pageSize?: number;
 };
 
 export function prepareConfigListQuery({
@@ -172,7 +175,9 @@ export function prepareConfigListQuery({
   includeAgents = false,
   labels,
   health,
-  status
+  status,
+  pageIndex,
+  pageSize
 }: ConfigListFilterQueryOptions) {
   let query =
     "select=id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
@@ -219,6 +224,12 @@ export function prepareConfigListQuery({
   if (hideDeletedConfigs) {
     query = `${query}&deleted_at=is.null`;
   }
+  const pagingParams = getPagingParams({ pageIndex, pageSize });
+
+  if (pagingParams) {
+    query = `${query}${pagingParams}`;
+  }
+
   return query;
 }
 

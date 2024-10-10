@@ -74,13 +74,14 @@ export function ConfigDetailsChangesPage() {
       activeTabName="Changes"
     >
       <div className={`flex h-full flex-1 flex-col overflow-y-auto`}>
-        <div className="flex flex-1 flex-col items-start gap-2 overflow-y-auto">
+        <div className="flex w-full flex-1 flex-col items-start gap-2 overflow-y-auto">
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
-          <div className="flex flex-1 flex-col overflow-y-auto">
+          <div className="flex w-full flex-1 flex-col overflow-y-auto">
             <ConfigChangeTable
               data={changes}
               isLoading={isLoading}
-              pagination={pagination}
+              numberOfPages={totalChangesPages}
+              totalRecords={totalChanges}
             />
           </div>
         </div>

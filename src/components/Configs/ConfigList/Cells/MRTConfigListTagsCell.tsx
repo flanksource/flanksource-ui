@@ -1,29 +1,30 @@
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
-import { CellContext } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
-type ConfigListTagsCellProps<T extends Pick<ConfigItem, "tags" | "id">> = Pick<
-  CellContext<Pick<T, "tags" | "id">, any>,
-  "getValue" | "row"
-> & {
+type MRTConfigListTagsCellProps<
+  T extends {
+    tags?: Record<string, any>;
+    id: string;
+  }
+> = MRTCellProps<T> & {
   hideGroupByView?: boolean;
-  label?: string;
   enableFilterByTag?: boolean;
 };
 
-export default function ConfigListTagsCell<
-  T extends { tags?: Record<string, any>; id: string } 
+export default function MRTConfigListTagsCell<
+  T extends { tags?: Record<string, any>; id: string }
 >({
   row,
-  getValue,
+  cell,
   hideGroupByView = false,
   enableFilterByTag = false
-}: ConfigListTagsCellProps<T>): JSX.Element | null {
+}: MRTConfigListTagsCellProps<T>): JSX.Element | null {
   const [params, setParams] = useSearchParams();
 
-  const tagMap = getValue<ConfigItem["tags"]>() || {};
+  const tagMap = cell.getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
     .sort()
     .filter((key) => key !== "toString");

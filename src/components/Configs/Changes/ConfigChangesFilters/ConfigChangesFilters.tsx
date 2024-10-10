@@ -84,7 +84,7 @@ export function ConfigChangeFilters({
   }, [configType]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <FormikFilterForm
         paramsToReset={paramsToReset}
         filterFields={["configTypes", "changeType", "severity", "tags"]}

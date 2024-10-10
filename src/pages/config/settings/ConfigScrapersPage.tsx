@@ -11,6 +11,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useQuery } from "@tanstack/react-query";
@@ -23,10 +24,12 @@ export const catalogScraperResourceInfo = schemaResourceTypes.find(
 export default function ConfigScrapersPage() {
   const navigate = useNavigate();
 
+  const [sortState] = useReactTableSortState();
+
   const { data, refetch, isLoading, isRefetching } = useQuery({
-    queryKey: ["catalog", "catalog_scrapper"],
+    queryKey: ["catalog", "catalog_scrapper", sortState],
     queryFn: () => {
-      return getAll(catalogScraperResourceInfo);
+      return getAll(catalogScraperResourceInfo, sortState);
     },
     // disable cache
     staleTime: 0,
@@ -80,6 +83,7 @@ export default function ConfigScrapersPage() {
               table={"config_scrapers"}
               onRowClick={onRowClick}
               isLoading={isLoading}
+              enableServerSidePagination
             />
           </div>
         </ConfigPageTabs>
