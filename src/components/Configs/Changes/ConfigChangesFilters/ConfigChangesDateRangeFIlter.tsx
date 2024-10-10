@@ -8,8 +8,8 @@ type Props = {
 
 export const configChangesDefaultDateFilter: URLSearchParamsInit = {
   rangeType: "relative",
-  display: "2 days",
-  range: "now-2d"
+  display: "7 days",
+  range: "now-7d"
 };
 
 export default function ConfigChangesDateRangeFilter({

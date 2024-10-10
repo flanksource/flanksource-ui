@@ -1,5 +1,6 @@
 import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
+import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
@@ -9,6 +10,7 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
+import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
@@ -24,6 +26,12 @@ export function ConfigChangesPage() {
     sortBy: "created_at",
     sortDirection: "desc"
   });
+
+  const { getTimeRangeFromUrl } = useTimeRangeParams(
+    configChangesDefaultDateFilter
+  );
+
+  const timeRangeValue = getTimeRangeFromUrl();
 
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
@@ -100,7 +108,7 @@ export function ConfigChangesPage() {
         loading={isLoading || isRefetching}
         contentClass="p-0 h-full"
       >
-        <ConfigPageTabs activeTab="Changes">
+        <ConfigPageTabs activeTab="Changes" daysLabel={timeRangeValue?.display}>
           {error ? (
             <InfoMessage message={errorMessage} />
           ) : (

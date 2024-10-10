@@ -4,12 +4,14 @@ import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 type ConfigPageTabsProps = {
   activeTab: string;
+  daysLabel?: string;
   children: React.ReactNode;
 };
 
 export default function ConfigPageTabs({
   activeTab,
-  children
+  children,
+  daysLabel = "7 days"
 }: ConfigPageTabsProps) {
   const [searchParams] = useSearchParams();
 
@@ -25,7 +27,7 @@ export default function ConfigPageTabs({
         search: `${query}`
       },
       {
-        label: "Changes",
+        label: `Changes (${daysLabel})`,
         key: "Changes",
         path: `/catalog/changes`,
         search: `${query}`
@@ -42,7 +44,7 @@ export default function ConfigPageTabs({
         path: `/catalog/scrapers`
       }
     ];
-  }, [type]);
+  }, [daysLabel, type]);
 
   return (
     <div className={`flex h-full flex-row`}>
