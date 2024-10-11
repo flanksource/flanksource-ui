@@ -137,6 +137,7 @@ export default function PlaybookRunsTable({
         totalRowCount={totalRecords}
         enableServerSidePagination
         enableServerSideSorting
+        disableHiding
       />
     </div>
   );

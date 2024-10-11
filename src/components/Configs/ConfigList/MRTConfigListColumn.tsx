@@ -63,7 +63,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
             ) : (
               <>
                 {groupingValue ? (
-                  <span className="ml-2">{groupingValue} </span>
+                  <span className="ml-2">{groupingValue}</span>
                 ) : (
                   <span className="ml-2 text-gray-500">(none)</span>
                 )}

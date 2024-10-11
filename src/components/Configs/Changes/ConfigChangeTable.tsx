@@ -221,6 +221,7 @@ export function ConfigChangeTable({
         totalRowCount={totalRecords}
         manualPageCount={numberOfPages}
         enableServerSidePagination
+        disableHiding
         onRowClick={(row) => {
           setSelectedConfigChange(row);
           setModalIsOpen(true);

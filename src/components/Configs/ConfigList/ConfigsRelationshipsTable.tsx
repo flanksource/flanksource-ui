@@ -49,6 +49,7 @@ export default function ConfigsRelationshipsTable({
       totalRowCount={totalEntries}
       manualPageCount={pageCount}
       enableGrouping
+      disableHiding
     />
   );
 }

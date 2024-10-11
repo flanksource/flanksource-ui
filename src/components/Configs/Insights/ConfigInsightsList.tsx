@@ -62,6 +62,7 @@ export default function ConfigInsightsList({
           totalRowCount={totalEntries}
           manualPageCount={pageCount}
           columns={configInsightsColumns}
+          disableHiding
         />
       )}
 
