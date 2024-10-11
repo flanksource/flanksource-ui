@@ -179,6 +179,13 @@ export async function getPlaybookRuns({
   searchParams.append("offset", (pageIndex * pageSize).toString());
   searchParams.append("order", "created_at.desc");
 
+  if (starts && ends) {
+    searchParams.append(
+      "or",
+      `(and(start_time.gte.${starts},start_time.lte.${ends}),and(created_at.gte.${starts},created_at.lte.${ends}))`
+    );
+  }
+
   if (playbookId) {
     searchParams.append("playbook_id", `eq.${playbookId}`);
   }
