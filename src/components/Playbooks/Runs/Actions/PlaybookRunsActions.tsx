@@ -20,9 +20,13 @@ import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
+  refetch?: () => void;
 };
 
-export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
+export default function PlaybookRunsActions({
+  data,
+  refetch = () => {}
+}: PlaybookRunActionsProps) {
   const [selectedAction, setSelectedAction] = useState<
     PlaybookRunAction | undefined
   >(() => {
@@ -69,7 +73,15 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
 
           <VerticalDescription
             label="Status"
-            value={<PlaybookStatusDescription status={data.status} />}
+            value={
+              <PlaybookStatusDescription
+                status={data.status}
+                playbookTitle={data.playbooks?.title ?? data.playbooks?.name!}
+                showApproveButton
+                playbookRunId={data.id}
+                refetch={refetch}
+              />
+            }
           />
           <VerticalDescription
             label="Started"

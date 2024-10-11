@@ -219,3 +219,10 @@ export async function getPlaybookRuns({
   );
   return res;
 }
+
+export async function approvePlaybookRun(id: string) {
+  const res = await PlaybookAPI.post<{
+    message: string;
+  }>(`/run/approve/${id}`);
+  return res.data;
+}

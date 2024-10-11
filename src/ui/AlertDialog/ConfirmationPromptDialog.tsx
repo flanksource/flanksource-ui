@@ -1,13 +1,13 @@
 import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import { ComponentProps } from "react";
+import React, { ComponentProps } from "react";
 import { FaCircleNotch } from "react-icons/fa";
 
 type ConfirmationPromptDialogProps = {
   isOpen: boolean;
   title: string;
-  description: string;
+  description: React.ReactNode;
   onClose: () => void;
   onConfirm: () => void;
   yesLabel?: string;
