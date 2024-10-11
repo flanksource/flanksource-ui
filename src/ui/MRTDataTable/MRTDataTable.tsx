@@ -36,6 +36,7 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   expandAllRows?: boolean;
   enableGrouping?: boolean;
   onGroupingChange?: OnChangeFn<GroupingState>;
+  disableHiding?: boolean;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -53,7 +54,8 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   renderDetailPanel,
   groupBy = [],
   expandAllRows = false,
-  onGroupingChange = () => {}
+  onGroupingChange = () => {},
+  disableHiding = false
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
@@ -63,7 +65,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     columns: columns,
     enableGlobalFilter: false,
     enableFilters: false,
-    enableHiding: true,
+    enableHiding: !disableHiding,
     enableSelectAll: false,
     enableFullScreenToggle: false,
     layoutMode: "grid",
@@ -75,6 +77,9 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     // of "onChange" to avoid re-rendering the table on every column resize.
     columnResizeMode: "onEnd",
     enableDensityToggle: false,
+    enableSorting: true,
+    enableColumnOrdering: false,
+    enableColumnDragging: false,
     manualSorting: enableServerSideSorting,
     manualPagination: enableServerSidePagination,
     pageCount: manualPageCount,
@@ -128,6 +133,12 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     },
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
+    },
+    mantineExpandButtonProps: {
+      size: "xs"
+    },
+    mantineExpandAllButtonProps: {
+      size: "xs"
     },
     renderDetailPanel
   });
