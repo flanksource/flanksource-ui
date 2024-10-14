@@ -3,11 +3,14 @@ import {
   HealthCheck,
   HealthCheckStatus
 } from "@flanksource-ui/api/types/health";
+import { formatDateForTooltip } from "@flanksource-ui/ui/Age/Age";
 import { DataTable } from "@flanksource-ui/ui/DataTable";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
+import { Tooltip } from "react-tooltip";
 import { format } from "timeago.js";
 import { toastError } from "../../../Toast/toast";
 import { refreshCheckModalAtomTrigger } from "../../ChecksListing";
@@ -23,12 +26,19 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
   {
     header: "Age",
     id: "age",
-    cell: function AgeCell({
-      row,
-      getValue
-    }: CellContext<HealthCheckStatus, any>) {
+    cell: ({ row }) => {
       const status = row.original;
-      return <>{format(`${status.time} UTC`)}</>;
+      return (
+        <>
+          <span data-tooltip-id={`age-tooltip-${status.time}`}>
+            {format(`${status.time} UTC`)}
+          </span>
+          <Tooltip
+            id={`age-tooltip-${status.time}`}
+            content={formatDateForTooltip(dayjs(status.time))}
+          />
+        </>
+      );
     },
     aggregatedCell: "",
     accessorKey: "time"
