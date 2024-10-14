@@ -54,8 +54,7 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
       const status = row.original;
       return (
         <div className="overflow-x-hidden whitespace-normal">
-          {/* @ts-expect-error */}
-          <CanaryStatus className="" status={status} /> {status.message}{" "}
+          <CanaryStatus status={status} /> {status.message}
           {status.error &&
             status.error.split("\n").map((item, index) => (
               <React.Fragment key={index}>
