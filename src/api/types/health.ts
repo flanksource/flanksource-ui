@@ -72,6 +72,7 @@ export interface HealthCheckStatus {
   time: string;
   duration: number;
   error?: string;
+  message?: string;
 }
 
 export interface HealthCheckLatency {
