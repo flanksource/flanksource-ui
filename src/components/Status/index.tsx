@@ -53,7 +53,7 @@ export function Status({
   const color = getStatusColor(status, good, mixed);
 
   return (
-    <div className="flex flex-row items-center">
+    <div className="inline-flex flex-row items-center">
       <span
         className={`inline-block h-3 w-3 flex-shrink-0 rounded-full shadow-md ${className} ${color}`}
         aria-hidden="true"
