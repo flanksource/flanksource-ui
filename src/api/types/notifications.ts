@@ -38,6 +38,7 @@ export type NotificationRules = {
   sent?: number;
   most_common_error?: string;
   repeat_interval?: string;
+  error?: string;
 };
 
 export type SilenceNotificationResponse = {
