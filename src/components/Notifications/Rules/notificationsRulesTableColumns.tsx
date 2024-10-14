@@ -1,5 +1,6 @@
 import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { Modal } from "@flanksource-ui/ui/Modal";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
@@ -7,6 +8,7 @@ import { formatDuration } from "@flanksource-ui/utils/date";
 import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
@@ -181,8 +183,40 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       accessorKey: "title",
       Cell: ({ row, column }) => {
         const value = row.getValue<string>(column.id);
+        const error = row.original.error;
+
+        const [showError, setShowError] = useState(false);
+
         return (
-          <div className="w-full overflow-hidden text-ellipsis">{value}</div>
+          <div className="w-full overflow-hidden text-ellipsis">
+            {error && (
+              <>
+                <span
+                  data-tooltip-id={`error-tooltip-${row.original.id}`}
+                  data-tooltip-content={error}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowError(!showError);
+                  }}
+                >
+                  <FaExclamationTriangle className="mr-1 inline h-4 w-4 text-red-500" />
+                </span>
+                <Tooltip id={`error-tooltip-${row.original.id}`} />
+
+                <Modal
+                  open={showError}
+                  onClose={() => setShowError(false)}
+                  title={` ${value} Error Details`}
+                >
+                  <div className="flex flex-col p-4">
+                    <pre className="whitespace-pre-wrap text-sm">{error}</pre>
+                  </div>
+                </Modal>
+              </>
+            )}
+            {value}
+          </div>
         );
       }
     },
