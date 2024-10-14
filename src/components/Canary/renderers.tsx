@@ -120,13 +120,17 @@ export function Percentage({ val, upper, lower }: PercentageProps) {
   );
 }
 
-type TitleProps = {
+type CanaryCheckNameProps = {
   icon?: string;
   title: string;
   isDeleted?: boolean;
 };
 
-export function Title({ icon, title, isDeleted }: TitleProps) {
+export function CanaryCheckName({
+  icon,
+  title,
+  isDeleted
+}: CanaryCheckNameProps) {
   return (
     <>
       {icon && <Icon name={icon} className="h-6 w-auto" />}
