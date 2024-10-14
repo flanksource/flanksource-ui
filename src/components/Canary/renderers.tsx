@@ -131,10 +131,41 @@ export function CanaryCheckName({
   title,
   isDeleted
 }: CanaryCheckNameProps) {
+  const hasSlash = title.includes("/");
+
+  if (hasSlash) {
+    const parts = title.split("/");
+    return (
+      <>
+        {icon && <Icon name={icon} className="h-6 w-auto pr-1" />}
+        {parts.map((part, idx) => {
+          // if not last part
+          if (idx !== parts.length - 1) {
+            return (
+              <>
+                <span key={part} className="text-sm text-gray-500">
+                  {part}
+                </span>
+                <span className="text-light px-0.5 text-gray-500">/</span>
+              </>
+            );
+          }
+          // last part
+          return (
+            <span key={part} className="text-sm">
+              {part}
+            </span>
+          );
+        })}
+        {isDeleted && <TbTrash />}
+      </>
+    );
+  }
+
   return (
     <>
       {icon && <Icon name={icon} className="h-6 w-auto" />}
-      <span className="pl-1 text-sm">{title}</span> {isDeleted && <TbTrash />}
+      <span className="pl-1 text-sm">{title} </span> {isDeleted && <TbTrash />}
     </>
   );
 }
