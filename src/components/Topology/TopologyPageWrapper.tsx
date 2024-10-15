@@ -2,7 +2,6 @@ import { useComponentConfigRelationshipQuery } from "@flanksource-ui/api/query-h
 import useTopologyPageQuery from "@flanksource-ui/api/query-hooks/useTopologyPageQuery";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { SearchLayout } from "@flanksource-ui/components/Layout/SearchLayout";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { MergedTopologyConfigPage } from "@flanksource-ui/components/Topology/MergedTopologyConfigPage";
 import TopologySidebar from "@flanksource-ui/components/Topology/Sidebar/TopologySidebar";
@@ -18,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { ConfigTab } from "../Configs/ConfigDetailsTabs";
 import {
   getSortedTopology,
