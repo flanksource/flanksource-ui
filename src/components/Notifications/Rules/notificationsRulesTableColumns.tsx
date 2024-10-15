@@ -286,6 +286,16 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       }
     },
     {
+      header: "Wait For",
+      id: "wait_for",
+      accessorKey: "wait_for",
+      size: 130,
+      Cell: ({ row }) => {
+        const value = row.original.wait_for;
+        return value;
+      }
+    },
+    {
       header: "Created At",
       id: "created_at",
       accessorKey: "created_at",

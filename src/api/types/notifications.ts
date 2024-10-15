@@ -39,6 +39,7 @@ export type NotificationRules = {
   most_common_error?: string;
   repeat_interval?: string;
   error?: string;
+  wait_for?: number;
 };
 
 export type SilenceNotificationResponse = {
