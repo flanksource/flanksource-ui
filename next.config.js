@@ -27,6 +27,11 @@ const config = {
         source: "/settings/notifications/:path*",
         destination: "/notifications/:path*",
         permanent: true
+      },
+      {
+        source: "/notifications/silence",
+        destination: "/notifications/silences/add",
+        permanent: true
       }
     ];
   },
