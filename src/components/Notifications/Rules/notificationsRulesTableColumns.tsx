@@ -8,6 +8,7 @@ import { formatDuration } from "@flanksource-ui/utils/date";
 import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
@@ -193,7 +194,6 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
               <>
                 <span
                   data-tooltip-id={`error-tooltip-${row.original.id}`}
-                  data-tooltip-content={error}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -202,7 +202,15 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
                 >
                   <FaExclamationTriangle className="mr-1 inline h-4 w-4 text-red-500" />
                 </span>
-                <Tooltip id={`error-tooltip-${row.original.id}`} />
+                {createPortal(
+                  <Tooltip
+                    className="z-[9999999999]"
+                    id={`error-tooltip-${row.original.id}`}
+                  >
+                    <pre className="whitespace-pre-wrap text-sm">{error}</pre>
+                  </Tooltip>,
+                  document.body
+                )}
 
                 <Modal
                   open={showError}
@@ -259,11 +267,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
         return (
           <>
             <div
-              className="z-[99999999] w-full"
               data-tooltip-id="most-common-error-tooltip"
-              data-tooltip-content={
-                value > 0 ? notification.most_common_error : undefined
-              }
               onClick={(e) => {
                 if (notification.most_common_error) {
                   e.stopPropagation();
@@ -273,7 +277,18 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
             >
               {value}
             </div>
-            {value > 0 && <Tooltip id="most-common-error-tooltip" />}
+            {value > 0 &&
+              createPortal(
+                <Tooltip
+                  id="most-common-error-tooltip"
+                  className="z-[9999999999] max-w-[95vw]"
+                >
+                  <pre className="whitespace-pre-wrap text-sm">
+                    {notification.most_common_error}
+                  </pre>
+                </Tooltip>,
+                document.body
+              )}
           </>
         );
       }
