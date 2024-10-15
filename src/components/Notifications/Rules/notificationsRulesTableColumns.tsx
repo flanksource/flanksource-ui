@@ -116,48 +116,6 @@ export type UpdateNotificationRule = Omit<
 
 export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] =
   [
-    // {
-    //   header: "Recipients",
-    //   id: "recipients",
-    //   size: 150,
-    //   Cell: ({ cell }) => {
-    //     const person = cell.row.original.person;
-    //     const team = cell.row.original.team;
-    //     const custom_services = cell.row.original.custom_services;
-
-    //     return (
-    //       <div className="flex flex-wrap gap-2">
-    //         {person && (
-    //           <div className="flex max-w-full flex-wrap items-center gap-2">
-    //             <Avatar user={person} circular size="sm" /> {person.name}{" "}
-    //           </div>
-    //         )}
-
-    //         {team && (
-    //           <div className="flex max-w-full flex-wrap items-center gap-2">
-    //             <Icon className="inline-block h-6" name={team.icon} />{" "}
-    //             {team.name}{" "}
-    //           </div>
-    //         )}
-
-    //         {custom_services &&
-    //           custom_services.length > 0 &&
-    //           custom_services.map(({ connection, name }) => (
-    //             <div
-    //               className="flex flex-row items-center gap-2"
-    //               key={connection ?? name}
-    //             >
-    //               <Icon
-    //                 className="inline-block h-6"
-    //                 name={connection ?? name}
-    //               />
-    //               {name}
-    //             </div>
-    //           ))}
-    //       </div>
-    //     );
-    //   }
-    // },
     {
       header: "Events",
       id: "events",
