@@ -68,7 +68,8 @@ export default function NotificationsRulesForm({
                 label="Repeat Interval"
               />
               <FormikDurationNanosecondsField
-                fieldName="wait_for"
+                isClearable
+                name="wait_for"
                 label="Wait For"
               />
               <FormikNotificationsTemplateField name="template" />

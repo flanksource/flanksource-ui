@@ -1,85 +1,135 @@
-import { TextInput } from "@flanksource-ui/ui/FormControls/TextInput";
+import dayjs from "dayjs";
 import { useField } from "formik";
-import { useState } from "react";
-
-type DurationUnit = "nanoseconds" | "milliseconds" | "seconds" | "minutes";
-
-const units = ["nanoseconds", "milliseconds", "seconds", "minutes"] as const;
-
-const unitsMap = {
-  nanoseconds: 1,
-  milliseconds: 1000000,
-  seconds: 1000000000,
-  minutes: 60000000000
-} as const;
+import { useCallback, useMemo, useState } from "react";
+import CreatableSelect from "react-select/creatable";
 
 type FormikDurationNanosecondsFieldProps = {
-  fieldName: string;
-  className?: string;
+  name: string;
+  required?: boolean;
   label?: string;
+  hint?: string;
+  hintPosition?: "top" | "bottom";
+  isClearable?: boolean;
 };
-
 export default function FormikDurationNanosecondsField({
-  fieldName,
+  name,
+  required = false,
   label,
-  className = "flex flex-col py-2"
+  hint,
+  hintPosition = "bottom",
+  isClearable = true
 }: FormikDurationNanosecondsFieldProps) {
-  const [field] = useField<number>({
-    name: fieldName
+  const [isTouched, setIsTouched] = useState(false);
+
+  const [field, meta] = useField<string>({
+    name,
+    type: "text",
+    required,
+    validate: useCallback(
+      (value: string) => {
+        if (required && !value) {
+          return "This field is required";
+        }
+
+        // if value is less than 1 minute, show error
+        if (parseInt(value, 10) < 60 * 1e9) {
+          return "Duration must be greater than 1 minute";
+        }
+      },
+      [required]
+    )
   });
 
-  const value = field.value;
+  const value = useMemo(() => {
+    // we want to take nanoseconds and convert them to 1h, 1m, 1s
+    if (!field.value) {
+      return undefined;
+    }
 
-  console.log("value", value);
+    const duration = dayjs.duration(
+      parseInt(field.value, 10) / 1000000,
+      "milliseconds"
+    );
+    return `${duration.humanize()}`;
+  }, [field.value]);
 
-  const [unit, setUnit] = useState<DurationUnit>("nanoseconds");
+  const handleOnChange = (value?: string) => {
+    if (!value) {
+      field.onChange({
+        target: {
+          name: field.name,
+          value: ""
+        }
+      });
+      return;
+    }
+
+    // we want to take 1h, 1m, 1s and convert them to nanoseconds
+    let nanoseconds = 0;
+    if (value.includes("h")) {
+      nanoseconds = parseInt(value.replace("h", ""), 10) * 60 * 60 * 1e9;
+    } else if (value.includes("s")) {
+      nanoseconds = parseInt(value.replace("s", ""), 10) * 1e9;
+    } else if (value.includes("d")) {
+      nanoseconds = parseInt(value.replace("d", ""), 10) * 24 * 60 * 60 * 1e9;
+    } else if (value.includes("w")) {
+      nanoseconds =
+        parseInt(value.replace("w", ""), 10) * 7 * 24 * 60 * 60 * 1e9;
+    } else if (value.includes("m")) {
+      // 1m is 1 month
+      nanoseconds =
+        parseInt(value.replace("m", ""), 10) * 30 * 24 * 60 * 60 * 1e9;
+    }
+
+    field.onChange({
+      target: {
+        name: field.name,
+        value: nanoseconds
+      }
+    });
+  };
 
   return (
-    <div className={className}>
-      {label && <label className={`form-label`}>{label}</label>}
-      <div className="flex flex-row">
-        <TextInput
-          type="number"
-          name={fieldName}
-          className="flex-1 rounded-l-md rounded-r-none border-b border-l border-t"
-          onChange={(e) => {
-            const value = parseInt(e.target.value);
-            const multiplier = unitsMap[unit];
-            const nanoseconds = value * multiplier;
-            field.onChange({
-              target: {
-                name: fieldName,
-                value: nanoseconds
-              }
-            });
-          }}
-          id={fieldName}
-        />
-        <select
-          onChange={(e) => {
-            const previousMultiplier = unitsMap[unit];
-            setUnit(e.target.value as DurationUnit);
-
-            // Convert the value to the new unit
-            const multiplier = unitsMap[e.target.value as DurationUnit];
-            const updatedValue = value / previousMultiplier;
-            const nanoseconds = updatedValue * multiplier;
-            field.onChange({
-              target: {
-                name: fieldName,
-                value: nanoseconds
-              }
-            });
-          }}
-          className="w-1/5 rounded-r-md border-b border-r border-t border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-        >
-          {units.map((unit) => (
-            <option key={unit} value={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="flex flex-col">
+      {label && <label className="form-label mb-0">{label}</label>}
+      {hint && hintPosition === "top" && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
+      <CreatableSelect<{ label: string; value: string }>
+        className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        onChange={(value) => {
+          handleOnChange(value?.value ?? undefined);
+          setIsTouched(true);
+        }}
+        value={[{ label: value!, value: value! }]}
+        options={["1h", "2h", "3h", "6h", "1d", "1w", "1m"].map((value) => ({
+          label: value,
+          value
+        }))}
+        onBlur={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
+        onFocus={(event) => {
+          field.onBlur(event);
+          setIsTouched(true);
+        }}
+        name={field.name}
+        isClearable={isClearable}
+        isMulti={false}
+        menuPortalTarget={document.body}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 })
+        }}
+        menuPosition={"fixed"}
+        menuShouldBlockScroll={true}
+      />
+      {hint && hintPosition === "bottom" && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
+      {isTouched && meta.error ? (
+        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
+      ) : null}
     </div>
   );
 }
