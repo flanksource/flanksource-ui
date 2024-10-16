@@ -164,24 +164,46 @@ export async function getPlaybookRuns({
   ends?: string;
   sort?: SortingState;
 }) {
-  const componentParamString = componentId
-    ? `&component_id=eq.${componentId}`
-    : "";
+  const searchParams = new URLSearchParams();
 
-  const configParamString = configId ? `&config_id=eq.${configId}` : "";
+  if (componentId) {
+    searchParams.append("component_id", `eq.${componentId}`);
+  }
 
-  const statusParamString = status ? `&status=eq.${status}` : "";
+  if (configId) {
+    searchParams.append("config_id", `eq.${configId}`);
+  }
 
-  const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  if (status) {
+    searchParams.append("status", `eq.${status}`);
+  }
 
-  const dateFilter =
-    starts && ends
-      ? `&and=(start_time.gte.${starts},start_time.lte.${ends})`
-      : "";
+  searchParams.append("limit", pageSize.toString());
+  searchParams.append("offset", (pageIndex * pageSize).toString());
+  searchParams.append("order", "created_at.desc");
 
-  const playbookParamsString = playbookId
-    ? `&playbook_id=eq.${playbookId}`
-    : "";
+  if (starts && ends) {
+    searchParams.append(
+      "or",
+      `(and(start_time.gte.${starts},start_time.lte.${ends}),and(created_at.gte.${starts},created_at.lte.${ends}))`
+    );
+  }
+
+  if (playbookId) {
+    searchParams.append("playbook_id", `eq.${playbookId}`);
+  }
+
+  const select = [
+    "*",
+    "playbooks(id,name,title,spec,icon)",
+    "component:components(id,name,icon)",
+    "check:checks(id,name,icon)",
+    "config:config_items(id,name,type,config_class)"
+  ].join(",");
+
+  searchParams.append("select", select);
+
+  const queryString = searchParams.toString();
 
   const sortParams =
     sort && sort.length > 0
@@ -189,14 +211,11 @@ export async function getPlaybookRuns({
       : "";
 
   const res = await resolvePostGrestRequestWithPagination(
-    ConfigDB.get<PlaybookRun[] | null>(
-      `/playbook_runs?select=*,playbooks(id,name,title,spec,icon),component:components(id,name,icon),check:checks(id,name,icon),config:config_items(id,name,type,config_class)&&order=created_at.desc${playbookParamsString}${componentParamString}&${configParamString}${pagingParams}${statusParamString}${dateFilter}${sortParams}`,
-      {
-        headers: {
-          Prefer: "count=exact"
-        }
+    ConfigDB.get<PlaybookRun[] | null>(`/playbook_runs?${queryString}`, {
+      headers: {
+        Prefer: "count=exact"
       }
-    )
+    })
   );
   return res;
 }
