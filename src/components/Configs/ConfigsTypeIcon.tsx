@@ -49,7 +49,7 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden text-sm">
+    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden">
       <span className="flex flex-row items-center gap-1">
         {showPrimaryIcon && (
           <Icon
