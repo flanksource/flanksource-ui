@@ -1,8 +1,7 @@
-import { useConfigInsightsQuery } from "@flanksource-ui/api/query-hooks/useConfigAnalysisQuery";
+import useFetchConfigInsights from "@flanksource-ui/api/query-hooks/useFetchConfigInsights";
 import { ConfigAnalysis } from "@flanksource-ui/api/types/configs";
-import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
-import { useMemo, useState } from "react";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
 import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
@@ -21,47 +20,18 @@ export default function ConfigInsightsList({
   configId,
   columnsToHide = []
 }: Props) {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const [clickedInsightItem, setClickedInsightItem] =
     useState<ConfigAnalysis>();
   const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
     useState(false);
 
-  const status = params.get("status") ?? undefined;
-  const severity = params.get("severity") ?? undefined;
-  const type = params.get("type") ?? undefined;
-  const configType = params.get("configType") ?? undefined;
-  const analyzer = params.get("analyzer") ?? undefined;
-  const component = params.get("component") ?? undefined;
   const pageSize = +(params.get("pageSize") ?? 50);
-  const pageIndex = +(params.get("pageIndex") ?? 0);
 
   const { data, isLoading, refetch, isRefetching, error } =
-    useConfigInsightsQuery(
-      {
-        status,
-        severity: severity?.toLowerCase(),
-        type,
-        analyzer,
-        component,
-        configId,
-        configType
-      },
-      {
-        sortBy: params.get("sortBy") ?? undefined,
-        sortOrder: params.get("sortOrder") as "asc" | "desc" | undefined
-      },
-      {
-        pageIndex,
-        pageSize
-      },
-      {
-        keepPreviousData: true,
-        onSuccess: () => setIsLoading(false)
-      }
-    );
+    useFetchConfigInsights(setIsLoading, configId);
 
-  useMemo(() => {
+  useEffect(() => {
     setIsLoading(true);
     refetch();
     // we only want to trigger this effect when the triggerRefresh changes and
@@ -71,42 +41,8 @@ export default function ConfigInsightsList({
 
   const configInsights = data?.data ?? [];
 
-  const totalEntries = (data as any)?.totalEntries;
+  const totalEntries = data?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
-
-  const [sortBy, updateSortBy] = useReactTableSortState();
-
-  const pagination = useMemo(() => {
-    const pagination: PaginationOptions = {
-      setPagination: (updater) => {
-        const newParams =
-          typeof updater === "function"
-            ? updater({
-                pageIndex,
-                pageSize
-              })
-            : updater;
-        params.set("pageIndex", newParams.pageIndex.toString());
-        params.set("pageSize", newParams.pageSize.toString());
-        setParams(params);
-      },
-      pageIndex,
-      pageSize,
-      pageCount,
-      remote: true,
-      enable: true,
-      loading: isLoading || isRefetching
-    };
-    return pagination;
-  }, [
-    pageIndex,
-    pageSize,
-    pageCount,
-    isLoading,
-    isRefetching,
-    params,
-    setParams
-  ]);
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -114,20 +50,19 @@ export default function ConfigInsightsList({
       {error ? (
         <InfoMessage message={error.message} />
       ) : (
-        <DataTable
-          columns={configInsightsColumns}
+        <MRTDataTable
           data={configInsights}
-          isLoading={isLoading}
-          stickyHead
-          pagination={pagination}
+          isLoading={isLoading || isRefetching}
           hiddenColumns={columnsToHide}
-          handleRowClick={(row) => {
-            setClickedInsightItem(row.original);
+          onRowClick={(row) => {
+            setClickedInsightItem(row);
             setIsInsightDetailsModalOpen(true);
           }}
           enableServerSideSorting
-          tableSortByState={sortBy}
-          onTableSortByChanged={updateSortBy}
+          totalRowCount={totalEntries}
+          manualPageCount={pageCount}
+          columns={configInsightsColumns}
+          disableHiding
         />
       )}
 

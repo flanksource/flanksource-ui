@@ -1,5 +1,6 @@
 import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
+import { SortingState } from "@tanstack/react-table";
 import { ConfigDB, IncidentCommander, PlaybookAPI } from "../axios";
 import { GetPlaybooksToRunParams } from "../query-hooks/playbooks";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
@@ -150,7 +151,8 @@ export async function getPlaybookRuns({
   playbookId,
   status,
   starts,
-  ends
+  ends,
+  sort
 }: {
   componentId?: string;
   configId?: string;
@@ -160,6 +162,7 @@ export async function getPlaybookRuns({
   status?: string;
   starts?: string;
   ends?: string;
+  sort?: SortingState;
 }) {
   const searchParams = new URLSearchParams();
 
@@ -201,6 +204,11 @@ export async function getPlaybookRuns({
   searchParams.append("select", select);
 
   const queryString = searchParams.toString();
+
+  const sortParams =
+    sort && sort.length > 0
+      ? `&order=${sort[0].id}.${sort[0].desc ? "desc" : "asc"}`
+      : "";
 
   const res = await resolvePostGrestRequestWithPagination(
     ConfigDB.get<PlaybookRun[] | null>(`/playbook_runs?${queryString}`, {

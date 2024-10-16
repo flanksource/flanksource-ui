@@ -13,7 +13,7 @@ export type ConfigIconProps = {
 
 export default function ConfigsTypeIcon({
   config,
-  className = "w-5 h-5",
+  className = "w-4 h-4",
   showPrimaryIcon = true,
   showSecondaryIcon = true,
   showLabel = false,
@@ -49,7 +49,7 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden">
+    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden text-sm">
       <span className="flex flex-row items-center gap-1">
         {showPrimaryIcon && (
           <Icon

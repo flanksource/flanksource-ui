@@ -22,6 +22,7 @@ export default function IntegrationsList({
       columns={integrationsTableColumns}
       isLoading={isLoading}
       manualPageCount={pageCount}
+      enableServerSideSorting
     />
   );
 }

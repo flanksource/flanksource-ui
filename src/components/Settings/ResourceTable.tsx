@@ -303,6 +303,7 @@ export default function ResourceTable({
       columns={columnsDerived}
       onRowClick={onRowClick}
       isLoading={isLoading}
+      enableServerSideSorting
     />
   );
 }

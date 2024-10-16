@@ -9,6 +9,7 @@ import {
   SchemaApi,
   SchemaBackends
 } from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
+import { SortingState } from "@tanstack/react-table";
 import { AxiosResponse } from "axios";
 import { AVATAR_INFO } from "../constants";
 import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
@@ -85,10 +86,10 @@ const getTableName = (table: string) => {
   }
 };
 
-export const getAll = ({
-  table,
-  api
-}: SchemaApi): Promise<AxiosResponse<SchemaResourceWithJobStatus[]>> => {
+export const getAll = (
+  { table, api }: SchemaApi,
+  sort?: SortingState
+): Promise<AxiosResponse<SchemaResourceWithJobStatus[]>> => {
   const endpoint = getBackend(api);
   if (endpoint) {
     const tableName = getTableName(table);
@@ -100,8 +101,14 @@ export const getAll = ({
         table === "topologies" ? `,agent:agent_id(id,name,description)` : ""
       }`
     );
+
+    if (sort && sort?.length > 0) {
+      url.set("order", `${sort[0].id}.${sort[0].desc ? "desc" : "asc"}`);
+    } else {
+      url.set("order", "created_at.desc");
+    }
+
     url.set("deleted_at", "is.null");
-    url.set("order", "created_at.desc");
     url.set("limit", "100");
     return endpoint.get<SchemaResourceWithJobStatus[]>(
       `/${tableName}?${url.toString()}`
@@ -174,14 +181,20 @@ export async function getEventQueueStatus() {
 
 export async function getIntegrationsWithJobStatus(
   pageIndex: number,
-  pageSize: number
+  pageSize: number,
+  sortBy?: SortingState
 ) {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const sortParams =
+    sortBy && sortBy.length > 0
+      ? `&order=${sortBy[0].id}.${sortBy[0].desc ? "desc" : "asc"}`
+      : "";
 
   const res = await resolvePostGrestRequestWithPagination(
     CanaryCheckerDB.get<SchemaResourceWithJobStatus[] | null>(
       // todo: add back created_by
-      `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}`,
+      `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null${pagingParams}${sortParams}`,
       {
         headers: {
           Prefer: "count=exact"

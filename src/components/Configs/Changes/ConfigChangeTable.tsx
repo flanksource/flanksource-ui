@@ -2,16 +2,14 @@ import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetC
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { Age } from "@flanksource-ui/ui/Age";
-import { DataTable, PaginationOptions } from "@flanksource-ui/ui/DataTable";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
-import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { CellContext } from "@tanstack/react-table";
-import { ColumnDef } from "@tanstack/table-core";
-import React, { useState } from "react";
+import { MRT_ColumnDef } from "mantine-react-table";
+import { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
-import ConfigListTagsCell from "../ConfigList/Cells/ConfigListTagsCell";
-import { ConfigSummaryAnalysisCell } from "../ConfigSummary/ConfigSummaryList";
+import MRTConfigListTagsCell from "../ConfigList/Cells/MRTConfigListTagsCell";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
 export const paramsToReset = {
@@ -38,7 +36,7 @@ export function ConfigChangeDateCell({
   );
 }
 
-const configChangesColumn: ColumnDef<ConfigChange>[] = [
+const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
   {
     header: "Last Seen",
     id: "created_at",
@@ -48,7 +46,22 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
       cellClassName: "text-ellipsis overflow-hidden"
     },
     maxSize: 70,
-    cell: ConfigChangeDateCell
+    Cell: ({ cell, row, column }) => {
+      const dateString = row?.getValue<string>(column.id);
+      const firstObserved = row?.original.first_observed;
+      const count = row.original.count;
+
+      return (
+        <div className="text-xs">
+          <Age from={dateString} />
+          {(count || 1) > 1 && (
+            <span className="inline-block pl-1 text-gray-500">
+              (x{count} over <Age from={firstObserved} />)
+            </span>
+          )}
+        </div>
+      );
+    }
   },
   {
     header: "Catalog",
@@ -56,7 +69,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     accessorKey: "config_id",
     enableHiding: true,
     enableSorting: false,
-    cell: function ConfigLinkCell({ row }) {
+    Cell: ({ row }) => {
       const configId = row.original.config_id;
       return (
         <FilterByCellValue
@@ -77,7 +90,7 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Type",
     accessorKey: "change_type",
-    cell: function ConfigChangeTypeCell({ row, column }) {
+    Cell: function ConfigChangeTypeCell({ row, column }) {
       const changeType = row?.getValue(column.id) as string;
       return (
         <FilterByCellValue
@@ -103,8 +116,8 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
     },
     maxSize: 500,
     minSize: 250,
-    cell: ({ getValue }) => {
-      const summary = getValue<string>();
+    Cell: ({ cell }) => {
+      const summary = cell.getValue<string>();
 
       return (
         <FilterByCellValue
@@ -120,17 +133,14 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    cell: React.memo((props) => (
-      <ConfigListTagsCell {...props} enableFilterByTag />
-    )),
-    aggregatedCell: "",
+    Cell: (props) => <MRTConfigListTagsCell {...props} enableFilterByTag />,
     size: 100
   },
   {
     header: "Created By",
     size: 100,
     enableSorting: false,
-    cell: ({ row }) => {
+    Cell: ({ row }) => {
       const userID = row.original.created_by;
       if (userID) {
         return (
@@ -178,17 +188,15 @@ const configChangesColumn: ColumnDef<ConfigChange>[] = [
 type ConfigChangeTableProps = {
   data: ConfigChange[];
   isLoading?: boolean;
-  className?: string;
-  tableStyle?: React.CSSProperties;
-  pagination?: PaginationOptions;
+  totalRecords: number;
+  numberOfPages: number;
 };
 
 export function ConfigChangeTable({
   data,
   isLoading,
-  className = "table-auto table-fixed",
-  pagination,
-  tableStyle
+  totalRecords,
+  numberOfPages
 }: ConfigChangeTableProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
@@ -203,26 +211,19 @@ export function ConfigChangeTable({
       }
     );
 
-  const [sortBy, onTableSortByChanged] = useReactTableSortState();
-
   return (
     <>
-      <DataTable
-        className={className}
+      <MRTDataTable
         columns={configChangesColumn}
         data={data}
         isLoading={isLoading}
-        stickyHead
-        isVirtualized={false}
-        tableStyle={tableStyle}
-        pagination={pagination}
-        preferencesKey="config-change-history"
-        savePreferences={false}
         enableServerSideSorting
-        tableSortByState={sortBy}
-        onTableSortByChanged={onTableSortByChanged}
-        handleRowClick={(row) => {
-          setSelectedConfigChange(row.original);
+        totalRowCount={totalRecords}
+        manualPageCount={numberOfPages}
+        enableServerSidePagination
+        disableHiding
+        onRowClick={(row) => {
+          setSelectedConfigChange(row);
           setModalIsOpen(true);
         }}
       />

@@ -29,7 +29,13 @@ export const getAllConfigsMatchingQuery = (query: string) => {
   if (query) {
     url = `${url}&${query}`;
   }
-  return resolvePostGrestRequestWithPagination<ConfigItem[]>(ConfigDB.get(url));
+  return resolvePostGrestRequestWithPagination<ConfigItem[]>(
+    ConfigDB.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
 };
 
 export const getAllConfigsForSearchPurpose = async () => {
