@@ -34,6 +34,7 @@ import {
   SchemaResourceType,
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
+import { TopologyPageWrapper } from "./components/Topology/TopologyPageWrapper";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { useFeatureFlagsContext } from "./context/FeatureFlagsContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
@@ -262,15 +263,63 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       />
 
       <Route path="topology" element={sidebar}>
-        <Route
-          path=":id"
-          element={withAuthorizationAccessCheck(
-            <TopologyPage />,
-            tables.database,
-            "read",
-            true
-          )}
-        />
+        <Route path=":id">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <TopologyPage></TopologyPage>,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+
+          <Route
+            path="changes"
+            element={withAuthorizationAccessCheck(
+              <TopologyPageWrapper catalogTab="Changes" />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="insights"
+            element={withAuthorizationAccessCheck(
+              <TopologyPageWrapper catalogTab="Insights" />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="relationships"
+            element={withAuthorizationAccessCheck(
+              <TopologyPageWrapper catalogTab="Relationships" />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="playbooks"
+            element={withAuthorizationAccessCheck(
+              <TopologyPageWrapper catalogTab="Playbooks" />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="checks"
+            element={withAuthorizationAccessCheck(
+              <TopologyPageWrapper catalogTab="Checks" />,
+              tables.database,
+              "read"
+            )}
+          />
+        </Route>
+
         <Route
           index
           element={withAuthorizationAccessCheck(

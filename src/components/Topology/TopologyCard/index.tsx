@@ -37,7 +37,20 @@ export const StatusStyles: Record<keyof typeof ComponentHealth, string> = {
 interface IProps {
   size?: Size | string;
   topologyId?: string;
-  topology?: Topology;
+  topology?: Pick<
+    Topology,
+    | "summary"
+    | "is_leaf"
+    | "id"
+    | "properties"
+    | "components"
+    | "agent_id"
+    | "status"
+    | "status_reason"
+    | "text"
+    | "name"
+    | "icon"
+  >;
   selectionMode?: boolean;
   hideMenu?: boolean;
   // where to open new links
