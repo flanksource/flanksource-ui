@@ -77,7 +77,7 @@ export function ConfigChangeFilters({
 
   const arbitraryFilters = useConfigChangesArbitraryFilters();
 
-  const configType = params.get("configTypes") ?? undefined;
+  const configType = params.get("configType") ?? undefined;
 
   const defaultConfigType = useMemo(() => {
     return configType ? `${configType?.replaceAll("::", "__")}:1` : undefined;
@@ -86,7 +86,7 @@ export function ConfigChangeFilters({
   return (
     <div className="flex w-full flex-col gap-2">
       <FormikFilterForm
-        paramsToReset={paramsToReset}
+        paramsToReset={[...paramsToReset, "configType"]}
         filterFields={["configTypes", "changeType", "severity", "tags"]}
         defaultFieldValues={{
           ...(configType && { configTypes: defaultConfigType })
