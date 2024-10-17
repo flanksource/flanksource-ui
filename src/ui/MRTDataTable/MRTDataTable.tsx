@@ -99,7 +99,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
       sx: {
         flex: "1 1 0",
         display: "flex",
-        "flex-flow": "column"
+        flexFlow: "column"
       }
     }),
     enablePagination: !disablePagination,
