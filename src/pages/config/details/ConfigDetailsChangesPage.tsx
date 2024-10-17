@@ -1,10 +1,15 @@
 import { useGetConfigChangesByIDQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
+import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
+import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import ConfigChangesGraph from "@flanksource-ui/components/Configs/Changes/ConfigChangesGraph";
+import { useConfigChangesViewToggleState } from "@flanksource-ui/components/Configs/Changes/ConfigChangesViewToggle";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
+import { ConfigDetailChangeModal } from "@flanksource-ui/components/Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 export function ConfigDetailsChangesPage() {
@@ -16,10 +21,13 @@ export function ConfigDetailsChangesPage() {
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
 
-  const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
-    keepPreviousData: true,
-    enabled: !!id
-  });
+  const { data, isLoading, error, refetch, isRefetching } =
+    useGetConfigChangesByIDQuery({
+      keepPreviousData: true,
+      enabled: !!id
+    });
+
+  const view = useConfigChangesViewToggleState();
 
   const changes = (data?.changes ?? []).map((changes) => ({
     ...changes,
@@ -32,6 +40,18 @@ export function ConfigDetailsChangesPage() {
 
   const totalChanges = data?.total ?? 0;
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
+
+  const [selectedConfigChange, setSelectedConfigChange] =
+    useState<ConfigChange>();
+
+  const { data: configChange, isLoading: changeLoading } =
+    useGetConfigChangesById(
+      selectedConfigChange?.id!,
+      selectedConfigChange?.config_id!,
+      {
+        enabled: !!selectedConfigChange
+      }
+    );
 
   const pagination = useMemo(() => {
     const pagination: PaginationOptions = {
@@ -77,12 +97,35 @@ export function ConfigDetailsChangesPage() {
         <div className="flex w-full flex-1 flex-col items-start gap-2 overflow-y-auto">
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
           <div className="flex w-full flex-1 flex-col overflow-y-auto">
-            <ConfigChangeTable
-              data={changes}
-              isLoading={isLoading}
-              numberOfPages={totalChangesPages}
-              totalRecords={totalChanges}
-            />
+            {view === "Graph" ? (
+              <ConfigChangesGraph
+                changes={changes}
+                onItemClicked={(change) => {
+                  setSelectedConfigChange(change);
+                }}
+              />
+            ) : (
+              <ConfigChangeTable
+                data={changes}
+                isLoading={isLoading || isRefetching}
+                totalRecords={totalChanges}
+                numberOfPages={totalChangesPages}
+                onRowClick={(row) => setSelectedConfigChange(row)}
+              />
+            )}
+
+            {configChange && (
+              <ConfigDetailChangeModal
+                isLoading={changeLoading}
+                open={!!selectedConfigChange}
+                setOpen={(open) => {
+                  setSelectedConfigChange(
+                    open ? selectedConfigChange : undefined
+                  );
+                }}
+                changeDetails={configChange}
+              />
+            )}
           </div>
         </div>
       </div>
