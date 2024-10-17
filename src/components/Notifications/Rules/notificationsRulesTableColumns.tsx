@@ -97,7 +97,7 @@ export function StatusColumn({ cell }: MRTCellProps<NotificationRules>) {
         setIsModalOpen={setIsModalOpen}
         job={{
           details: cell.row.original.job_details,
-          name: cell.row.original.job_name ?? cell.row.original.title
+          name: cell.row.original.job_name ?? cell.row.original.name
         }}
       />
     </>
@@ -136,12 +136,12 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       }
     },
     {
-      header: "Title",
-      id: "title",
+      header: "Name",
+      id: "name",
       size: 150,
-      accessorKey: "title",
+      accessorKey: "name",
       Cell: ({ row, column }) => {
-        const value = row.getValue<string>(column.id);
+        const value = row.original.name;
         const error = row.original.error;
 
         const [showError, setShowError] = useState(false);
