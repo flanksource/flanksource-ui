@@ -96,7 +96,7 @@ export const enum ConnectionValueType {
 export type ConnectionType = {
   title: string;
   value: ConnectionValueType;
-  icon?: React.ReactNode | string | null;
+  icon?: JSX.Element | string | null;
   fields: ConnectionFormFields[];
   convertToFormSpecificValue?: (data: Record<string, string>) => Connection;
   preSubmitConverter?: (data: Record<string, string>) => object;

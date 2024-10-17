@@ -4,10 +4,11 @@ import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
-type ConfigListTagsCellProps<T extends Pick<ConfigItem, "tags" | "id">> = Pick<
-  CellContext<Pick<T, "tags" | "id">, any>,
-  "getValue" | "row"
-> & {
+type ConfigListTagsCellProps<
+  T extends {
+    tags?: Record<string, any>;
+  }
+> = Pick<CellContext<T, any>, "getValue" | "row"> & {
   hideGroupByView?: boolean;
   label?: string;
   enableFilterByTag?: boolean;

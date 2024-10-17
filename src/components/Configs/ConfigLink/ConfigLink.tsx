@@ -34,6 +34,10 @@ export default function ConfigLink({
 
   const data = config || configFromRequest;
 
+  // if (isLoading) {
+  //   return <TextSkeletonLoader className="h-5 w-24" />;
+  // }
+
   if (!data) {
     return null;
   }

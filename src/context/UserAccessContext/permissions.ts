@@ -18,7 +18,8 @@ export const tables = {
   integrations: "integrations",
   notifications: "notifications",
   playbooks: "playbooks",
-  playbook_runs: "playbook_runs"
+  playbook_runs: "playbook_runs",
+  permissions: "permissions"
 };
 
 export const permDefs = {
