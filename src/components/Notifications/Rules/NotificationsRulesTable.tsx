@@ -60,13 +60,14 @@ export default function NotificationsRulesTable({
         </Modal>
       )}
       <MRTDataTable
-        data={notifications}
+        data={notifications ?? []}
         columns={notificationsRulesTableColumns}
         isLoading={isLoading}
         onRowClick={onSelectNotification}
         enableServerSidePagination
         manualPageCount={pageCount}
         totalRowCount={totalRecordCount}
+        enableServerSideSorting
       />
       {selectedNotificationId && (
         <EditNotificationRules
