@@ -24,6 +24,22 @@ export function getPagingParams({
   return pagingParams;
 }
 
+export function appendPagingParamsToSearchParams(
+  params: URLSearchParams,
+  {
+    pageIndex,
+    pageSize
+  }: {
+    pageIndex?: number;
+    pageSize?: number;
+  }
+) {
+  if (pageIndex || pageSize) {
+    params.append("limit", pageSize!.toString());
+    params.append("offset", (pageIndex! * pageSize!).toString());
+  }
+}
+
 export const getNotificationsSummary = async ({
   pageIndex,
   pageSize,
