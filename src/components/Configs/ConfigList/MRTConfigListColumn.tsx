@@ -143,7 +143,13 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
     header: "Tags",
     accessorKey: "tags",
     enableColumnActions: false,
-    Cell: (props) => <MRTConfigListTagsCell {...props} />,
+    Cell: (props) => (
+      <MRTConfigListTagsCell
+        {...props}
+        enableFilterByTag
+        filterByTagParamKey="labels"
+      />
+    ),
     maxSize: 300,
     minSize: 100
   },

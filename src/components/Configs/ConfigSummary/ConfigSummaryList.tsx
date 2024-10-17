@@ -234,6 +234,7 @@ export default function ConfigSummaryList({
 
   const handleRowClick = useCallback(
     (row: Row<ConfigSummary>) => {
+      params.delete("labels");
       if (groupBy.includes("type")) {
         const { type } = row.original;
         params.set("configType", type);

@@ -19,7 +19,7 @@ import {
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
 import { LogsResponse, SearchLogsPayload, searchLogs } from "../services/logs";
-import { getPagingParams } from "../services/notifications";
+import { appendPagingParamsToSearchParams } from "../services/notifications";
 import {
   getComponentTeams,
   getHealthCheckSpecByID,
@@ -179,24 +179,34 @@ export function prepareConfigListQuery({
   pageIndex,
   pageSize
 }: ConfigListFilterQueryOptions) {
-  let query =
-    "select=id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis";
+  const query = new URLSearchParams({
+    select:
+      "id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d,changes,analysis"
+  });
+
   if (includeAgents) {
-    query = `${query},agent:agents(id,name)`;
+    query.append("select", "agent:agents(id,name)");
   }
+
   if (configType && configType !== "All") {
-    query = `${query}&type=eq.${configType}`;
+    query.append("type", `eq.${configType}`);
   }
+
   if (status && status !== "All") {
     const statusParam = tristateOutputToQueryFilterParam(status, "status");
-    query = `${query}${statusParam}`;
+    query.append("status", statusParam);
   }
+
   if (health) {
     const healthParam = tristateOutputToQueryFilterParam(health, "health");
-    query = `${query}${healthParam}`;
+    query.append("health", healthParam);
   }
+
   if (search) {
-    query = `${query}&or=(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`;
+    query.append(
+      "or",
+      `(name.ilike.*${search}*,type.ilike.*${search}*,description.ilike.*${search}*,namespace.ilike.*${search}*)`
+    );
   } else {
     const filterQueries: string[] = [];
     if (label && label !== "All") {
@@ -205,32 +215,35 @@ export function prepareConfigListQuery({
     }
     if (labels) {
       labels.split(",").forEach((label) => {
-        const [k, v] = label.split("__:__");
+        const [k, v] = label.split("____");
+        const [realValue, operand] = v.split(":");
+        const operator = parseInt(operand) === -1 ? "neq" : "eq";
         if (!isNull(v)) {
-          filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
+          filterQueries.push(
+            `labels->>${k}.${operator}.${encodeURIComponent(realValue)}`
+          );
         } else {
           filterQueries.push(`labels->>${k}=is.null`);
         }
       });
     }
     if (filterQueries.length) {
-      query = `${query}&${filterQueries.join("&")}`;
+      query.append("or", `(and(${filterQueries.join(",")}))`);
     }
   }
+
   if (sortBy && sortOrder) {
     const sortField = sortBy === "type" ? `${sortBy},name` : sortBy;
-    query = `${query}&order=${sortField}.${sortOrder}`;
+    query.append("order", `${sortField}.${sortOrder}`);
   }
+
   if (hideDeletedConfigs) {
-    query = `${query}&deleted_at=is.null`;
-  }
-  const pagingParams = getPagingParams({ pageIndex, pageSize });
-
-  if (pagingParams) {
-    query = `${query}${pagingParams}`;
+    query.append("deleted_at", "is.null");
   }
 
-  return query;
+  appendPagingParamsToSearchParams(query, { pageIndex, pageSize });
+
+  return query.toString();
 }
 
 export const useConfigNameQuery = (
