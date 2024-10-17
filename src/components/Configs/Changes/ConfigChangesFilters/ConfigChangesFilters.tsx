@@ -6,6 +6,7 @@ import { FaBan } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { useConfigChangesArbitraryFilters } from "../../../../hooks/useConfigChangesArbitraryFilters";
 import { paramsToReset } from "../ConfigChangeTable";
+import ConfigChangesViewToggle from "../ConfigChangesViewToggle";
 import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
@@ -98,6 +99,9 @@ export function ConfigChangeFilters({
           <ConfigChangeSeverity />
           <ConfigTagsDropdown />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
+          <div className="ml-auto flex flex-row gap-2">
+            <ConfigChangesViewToggle />
+          </div>
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">
