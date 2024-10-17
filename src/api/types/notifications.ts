@@ -6,7 +6,8 @@ import { Team, User } from "./users";
 
 export type NotificationRules = {
   id: string;
-  title: string;
+  name: string;
+  title?: string;
   events: string[];
   source?: "KubernetesCRD" | "ConfigFile" | "UI" | "Topology";
   template: string;
