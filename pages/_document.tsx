@@ -1,5 +1,4 @@
 import Document, { Head, Html, Main, NextScript } from "next/document";
-import React from "react";
 import { isCanaryUI } from "../src/context/Environment";
 
 export default class MyDocument extends Document {
@@ -16,7 +15,7 @@ export default class MyDocument extends Document {
           />
           <link
             rel="shortcut icon"
-            href={isCanaryUI ? "canary-checker.svg" : "favicon.svg"}
+            href={isCanaryUI ? "/canary-checker.svg" : "/favicon.svg"}
           />
         </Head>
         <body>
