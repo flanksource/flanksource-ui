@@ -1,6 +1,8 @@
 import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
+import ConfigChangesGraph from "@flanksource-ui/components/Configs/Changes/ConfigChangesGraph";
+import { useConfigChangesViewToggleState } from "@flanksource-ui/components/Configs/Changes/ConfigChangesViewToggle";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import {
@@ -21,6 +23,8 @@ export function ConfigChangesPage() {
   const [params] = useSearchParams({});
 
   const pageSize = params.get("pageSize") ?? "200";
+
+  const view = useConfigChangesViewToggleState();
 
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery({
@@ -76,12 +80,16 @@ export function ConfigChangesPage() {
           ) : (
             <>
               <ConfigChangeFilters paramsToReset={["page"]} />
-              <ConfigChangeTable
-                data={changes}
-                isLoading={isLoading}
-                totalRecords={totalChanges}
-                numberOfPages={totalChangesPages}
-              />
+              {view === "Graph" ? (
+                <ConfigChangesGraph changes={changes} />
+              ) : (
+                <ConfigChangeTable
+                  data={changes}
+                  isLoading={isLoading}
+                  totalRecords={totalChanges}
+                  numberOfPages={totalChangesPages}
+                />
+              )}
             </>
           )}
         </ConfigPageTabs>
