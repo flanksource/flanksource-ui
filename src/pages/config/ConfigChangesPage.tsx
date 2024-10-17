@@ -99,6 +99,7 @@ export function ConfigChangesPage() {
           ) : (
             <>
               <ConfigChangeFilters paramsToReset={["page"]} />
+
               <ConfigChangeTable
                 data={changes}
                 isLoading={isLoading || isRefetching}
