@@ -26,7 +26,9 @@ export function getPagingParams({
 
 export const getNotificationsSummary = async ({
   pageIndex,
-  pageSize
+  pageSize,
+  sortBy,
+  sortOrder
 }: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
 
@@ -37,9 +39,13 @@ export const getNotificationsSummary = async ({
     `created_by(${AVATAR_INFO})`
   ].join(",");
 
+  const sortParams = sortBy
+    ? `&order=${sortBy}.${sortOrder}`
+    : "&order=created_at.desc";
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationRules[] | null>(
-      `/notifications_summary?select=${selectColumns}&order=created_at.desc${pagingParams}`,
+      `/notifications_summary?select=${selectColumns}${sortParams}${pagingParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -131,11 +137,15 @@ export const getNotificationSendHistoryById = async (id: string) => {
 export type NotificationQueryFilterOptions = {
   pageIndex: number;
   pageSize: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 };
 
 export const getNotificationSilences = async ({
   pageIndex,
-  pageSize
+  pageSize,
+  sortBy,
+  sortOrder
 }: NotificationQueryFilterOptions) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
 
@@ -147,9 +157,11 @@ export const getNotificationSilences = async ({
     `createdBy:created_by(${AVATAR_INFO})`
   ].join(",");
 
+  const sortParams = sortBy ? `&order=${sortBy}.${sortOrder}` : "";
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSilenceItemApiResponse[] | null>(
-      `/notification_silences?select=${selectColumns}&order=created_at.desc${pagingParams}&deleted_at=is.null`,
+      `/notification_silences?select=${selectColumns}&order=created_at.desc${pagingParams}&deleted_at=is.null&${sortParams}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -224,8 +224,9 @@ export default function SilenceNotificationsList({
         }}
         isLoading={isLoading}
         manualPageCount={pageCount}
-        enableServerSidePagination={true}
+        enableServerSidePagination
         totalRowCount={recordCount}
+        enableServerSideSorting
       />
       {selectedNotificationSilence && (
         <EditNotificationSilenceModal

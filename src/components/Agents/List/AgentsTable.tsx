@@ -35,6 +35,7 @@ export default function AgentsTable({
           searchParams.set("id", agent.id!);
           setSearchParams(searchParams);
         }}
+        enableServerSideSorting
       />
       {agentId && (
         <AgentForm

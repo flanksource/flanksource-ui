@@ -1,5 +1,6 @@
 import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useState } from "react";
 import {
   useCreateNotification,
@@ -14,12 +15,15 @@ export default function NotificationRulesPage() {
   const [isOpen, setIsOpen] = useState(false);
 
   const { pageIndex, pageSize } = useReactTablePaginationState();
+  const [sortState] = useReactTableSortState();
 
   const { data, isLoading, refetch, isRefetching } =
     useNotificationsSummaryQuery(
       {
         pageIndex,
-        pageSize
+        pageSize,
+        sortBy: sortState[0]?.id,
+        sortOrder: sortState[0]?.desc ? "desc" : "asc"
       },
       {
         keepPreviousData: true

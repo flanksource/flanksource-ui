@@ -32,7 +32,10 @@ export default function useReactTableSortState(
 
   const updateSortByFn = useCallback(
     (newSortBy: Updater<SortingState>) => {
-      const sort = typeof newSortBy === "function" ? newSortBy([]) : newSortBy;
+      const sort =
+        typeof newSortBy === "function"
+          ? newSortBy([...tableSortByState])
+          : newSortBy;
       if (sort.length === 0) {
         searchParams.delete(sortByKey);
         searchParams.delete(sortOrderKey);
@@ -42,7 +45,7 @@ export default function useReactTableSortState(
       }
       setSearchParams(searchParams);
     },
-    [searchParams, setSearchParams, sortByKey, sortOrderKey]
+    [searchParams, setSearchParams, sortByKey, sortOrderKey, tableSortByState]
   );
 
   return [tableSortByState, updateSortByFn];
