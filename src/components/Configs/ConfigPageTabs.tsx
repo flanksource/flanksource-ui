@@ -1,20 +1,20 @@
+import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 type ConfigPageTabsProps = {
   activeTab: string;
   children: React.ReactNode;
+  configType?: string;
 };
 
 export default function ConfigPageTabs({
   activeTab,
-  children
+  children,
+  configType
 }: ConfigPageTabsProps) {
   const [searchParams] = useSearchParams();
-
-  const type = searchParams.get("configType") ?? undefined;
-
+  const type = searchParams.get("configType") ?? configType;
   const configTabsLists = useMemo(() => {
     const query = type ? `?configType=${type}` : "";
     return [

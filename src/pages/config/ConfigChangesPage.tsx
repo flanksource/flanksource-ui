@@ -2,6 +2,7 @@ import { useGetAllConfigsChangesQuery } from "@flanksource-ui/api/query-hooks/us
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
+import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import {
   BreadcrumbChild,
@@ -19,6 +20,14 @@ export function ConfigChangesPage() {
     refreshButtonClickedTrigger
   );
   const [params] = useSearchParams({});
+
+  const configTypes = params.get("configTypes") ?? undefined;
+  const configType =
+    // we want to show breadcrumb only if there is only one config type selected
+    // in the filter dropdown and not multiple
+    configTypes?.split(",").length === 1
+      ? configTypes.split(",")[0]?.split(":")?.[0].split("__").join("::")
+      : undefined;
 
   const pageSize = params.get("pageSize") ?? "200";
 
@@ -59,7 +68,21 @@ export function ConfigChangesPage() {
                 key="config-catalog-changes"
               >
                 Changes
-              </BreadcrumbChild>
+              </BreadcrumbChild>,
+              ...(configType
+                ? [
+                    <BreadcrumbChild
+                      link={`/catalog?configType=${configType}`}
+                      key={configType}
+                    >
+                      <ConfigsTypeIcon
+                        config={{ type: configType }}
+                        showSecondaryIcon
+                        showLabel
+                      />
+                    </BreadcrumbChild>
+                  ]
+                : [])
             ]}
           />
         }
@@ -70,7 +93,7 @@ export function ConfigChangesPage() {
         loading={isLoading || isRefetching}
         contentClass="p-0 h-full flex flex-col flex-1"
       >
-        <ConfigPageTabs activeTab="Changes">
+        <ConfigPageTabs activeTab="Changes" configType={configType}>
           {error ? (
             <InfoMessage message={errorMessage} />
           ) : (
