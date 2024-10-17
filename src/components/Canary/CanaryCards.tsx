@@ -1,7 +1,6 @@
-import React from "react";
-import { GetName } from "./data";
-import { Title, StatusList } from "./renderers";
 import { HealthCheck } from "../../api/types/health";
+import { GetName } from "./data";
+import { CanaryCheckName, StatusList } from "./renderers";
 
 type CanaryCardProps = {
   checks: HealthCheck[];
@@ -23,7 +22,10 @@ export function CanaryCards({ checks, onClick }: CanaryCardProps) {
           >
             <div className="flex-1 py-2 text-sm">
               <span className="truncate font-medium text-gray-900 hover:text-gray-600">
-                <Title title={GetName(check)} icon={check.icon || check.type} />
+                <CanaryCheckName
+                  title={GetName(check)}
+                  icon={check.icon || check.type}
+                />
               </span>
               <div className="float-right mr-2">
                 <StatusList check={check} />
