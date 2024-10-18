@@ -101,7 +101,7 @@ export function ConfigChangesPage() {
               <ConfigChangeFilters paramsToReset={["page"]} />
               <ConfigChangeTable
                 data={changes}
-                isLoading={isLoading}
+                isLoading={isLoading || isRefetching}
                 totalRecords={totalChanges}
                 numberOfPages={totalChangesPages}
               />

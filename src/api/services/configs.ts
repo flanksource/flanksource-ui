@@ -289,10 +289,14 @@ export async function getConfigsChanges({
   if (severity) {
     requestData.set("severity", severity);
   }
-  if (pageIndex && pageSize) {
+  if (pageIndex) {
     requestData.set("page", parseInt(pageIndex.toString()) + 1);
+  }
+
+  if (pageSize) {
     requestData.set("page_size", pageSize);
   }
+
   if (sortBy) {
     // for descending order, we need to add a "-" before the sortBy field
     requestData.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
