@@ -12,7 +12,8 @@ export type PlaybookRunStatus =
   | "completed"
   | "failed"
   | "pending"
-  | "waiting";
+  | "waiting"
+  | "pending_approval";
 
 export type PlaybookRunActionStatus =
   | "completed"
