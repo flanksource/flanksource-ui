@@ -216,8 +216,8 @@ export type GetConfigsRelatedChangesParams = {
   to?: string;
   configTypes?: string;
   configType?: string;
-  page?: string;
-  pageSize?: string;
+  pageSize?: number | string;
+  pageIndex?: number | string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   arbitraryFilter?: Record<string, string>;
@@ -238,7 +238,7 @@ export async function getConfigsChanges({
   to,
   configTypes,
   configType,
-  page,
+  pageIndex,
   pageSize,
   sortBy,
   sortOrder,
@@ -289,14 +289,17 @@ export async function getConfigsChanges({
   if (severity) {
     requestData.set("severity", severity);
   }
-  if (page && pageSize) {
-    requestData.set("page", parseInt(page));
-    requestData.set("page_size", parseInt(pageSize));
+  if (pageIndex && pageSize) {
+    requestData.set("page", parseInt(pageIndex.toString()) + 1);
+    requestData.set("page_size", pageSize);
   }
   if (sortBy) {
     // for descending order, we need to add a "-" before the sortBy field
     requestData.set("sort_by", `${sortOrder === "desc" ? "-" : ""}${sortBy}`);
+  } else {
+    requestData.set("sort_by", "-created_at");
   }
+
   if (tags) {
     const tagList = Object.entries(
       tags.reduce(

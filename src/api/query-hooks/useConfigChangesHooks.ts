@@ -1,6 +1,8 @@
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { useHideDeletedConfigChanges } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
 import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -50,11 +52,9 @@ export function useGetAllConfigsChangesQuery(
   const configType = params.get("configType") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;
-  const sortBy = params.get("sortBy") ?? undefined;
-  const sortDirection = params.get("sortDirection") ?? "desc";
+  const [sortBy] = useReactTableSortState();
   const configTypes = params.get("configTypes") ?? "all";
-  const page = params.get("page") ?? "1";
-  const pageSize = params.get("pageSize") ?? "200";
+  const { pageSize, pageIndex } = useReactTablePaginationState();
 
   const tags = useConfigChangesTagsFilter();
 
@@ -68,9 +68,9 @@ export function useGetAllConfigsChangesQuery(
     to,
     configTypes,
     configType,
-    sortBy,
-    sortOrder: sortDirection === "desc" ? "desc" : "asc",
-    page: page,
+    sortBy: sortBy[0]?.id,
+    sortOrder: sortBy[0]?.desc ? "desc" : "asc",
+    pageIndex: pageIndex,
     pageSize: pageSize,
     arbitraryFilter,
     tags
@@ -102,11 +102,9 @@ export function useGetConfigChangesByIDQuery(
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;
-  const sortBy = params.get("sortBy") ?? undefined;
-  const sortDirection = params.get("sortDirection") ?? "desc";
   const configTypes = params.get("configTypes") ?? "all";
-  const page = params.get("page") ?? "1";
-  const pageSize = params.get("pageSize") ?? "200";
+  const { pageIndex, pageSize } = useReactTablePaginationState();
+  const [sortBy] = useReactTableSortState();
   const upstream = params.get("upstream") === "true";
   const downstream = params.get("downstream") === "true";
   const all = upstream && downstream;
@@ -137,10 +135,10 @@ export function useGetConfigChangesByIDQuery(
     from,
     to,
     configTypes,
-    sortBy,
-    sortOrder: sortDirection === "desc" ? "desc" : "asc",
-    page: page,
-    pageSize: pageSize,
+    sortBy: sortBy[0]?.id,
+    sortOrder: sortBy[0]?.desc ? "desc" : "asc",
+    pageSize,
+    pageIndex,
     tags,
     arbitraryFilter
   } satisfies GetConfigsRelatedChangesParams;
