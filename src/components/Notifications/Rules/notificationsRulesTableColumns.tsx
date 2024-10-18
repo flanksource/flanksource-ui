@@ -5,6 +5,7 @@ import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { formatDuration } from "@flanksource-ui/utils/date";
+import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
@@ -283,6 +284,20 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       Cell: ({ row }) => {
         const value = row.original.repeat_interval;
         return value;
+      }
+    },
+    {
+      header: "Wait For",
+      id: "wait_for",
+      accessorKey: "wait_for",
+      size: 130,
+      Cell: ({ row }) => {
+        const value = row.original.wait_for;
+        if (!value) {
+          return null;
+        }
+        // Convert nanoseconds to date
+        return dayjs.duration(value / 1000000, "milliseconds").humanize(false);
       }
     },
     {
