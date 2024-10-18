@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Topology } from "../../../api/types/topology";
 import { Size } from "../../../types";
-import { TopologyCard } from "./index";
+import { TopologyCard } from "./TopologyCard";
 
 export default {
   title: "TopologyCard",
