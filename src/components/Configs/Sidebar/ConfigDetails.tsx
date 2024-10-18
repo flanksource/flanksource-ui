@@ -1,5 +1,6 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
+import { Topology } from "@flanksource-ui/api/types/topology";
 import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
@@ -17,9 +18,10 @@ import { formatConfigLabels } from "./Utils/formatConfigLabels";
 
 type Props = {
   configId: string;
+  topologyProperties?: Topology["properties"];
 };
 
-export function ConfigDetails({ configId }: Props) {
+export function ConfigDetails({ configId, topologyProperties }: Props) {
   const {
     data: configDetails,
     isLoading,
@@ -66,6 +68,15 @@ export function ConfigDetails({ configId }: Props) {
     () => formatProperties(configDetails),
     [configDetails]
   );
+
+  const formattedTopologyProperties = useMemo(() => {
+    if (topologyProperties) {
+      return formatProperties({
+        properties: topologyProperties
+      });
+    }
+    return undefined;
+  }, [topologyProperties]);
 
   const isLastScrappedMoreThan1Hour = useMemo(() => {
     if (!configDetails?.last_scraped_time) {
@@ -178,6 +189,10 @@ export function ConfigDetails({ configId }: Props) {
               }
             ]}
           />
+
+          {formattedTopologyProperties && (
+            <DisplayGroupedProperties items={formattedTopologyProperties} />
+          )}
 
           <DisplayDetailsRow
             items={[

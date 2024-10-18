@@ -5,8 +5,8 @@ import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm"
 import { StateOption } from "@flanksource-ui/components/ReactSelectDropdown";
 import { ComponentLabelsDropdown } from "@flanksource-ui/components/Topology/Dropdowns/ComponentLabelsDropdown";
 import { ComponentTypesDropdown } from "@flanksource-ui/components/Topology/Dropdowns/ComponentTypesDropdown";
-import { allOption } from "@flanksource-ui/pages/TopologyPage";
 import { useMemo } from "react";
+import { allOption } from "../TopologyPageWrapper";
 import TopologyPopOver from "../TopologyPopover";
 import { TopologySort } from "../TopologyPopover/topologySort";
 

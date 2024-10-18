@@ -1,28 +1,39 @@
 import clsx from "clsx";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+import { LegacyRef, useMemo } from "react";
 import { FaCog } from "react-icons/fa";
-
-import { CardWidth } from "../TopologyCard";
-
-import { LegacyRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
 import { Size } from "../../../types";
 import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import { Toggle } from "../../../ui/FormControls/Toggle";
+import { CardWidth } from "../TopologyCard";
 
-export function getCardWidth() {
-  let value: any = localStorage.getItem("topology_card_width");
-
-  if (!value?.trim()) {
-    return CardWidth[Size.extra_large];
+const topologyCardWidthAtom = atomWithStorage(
+  "topology_card_width",
+  CardWidth[Size.extra_large],
+  undefined,
+  {
+    getOnInit: true
   }
+);
 
-  value = parseInt(value, 10);
-  if (isNaN(value)) {
-    return CardWidth[Size.extra_large];
-  } else {
-    return `${value}px`;
-  }
+export function useTopologyCardWidth(): [string, (width: string) => void] {
+  const [topologyCardSize, setTopologyCardSize] = useAtom(
+    topologyCardWidthAtom
+  );
+
+  const value = useMemo(() => {
+    const v = parseInt(topologyCardSize, 10);
+    if (isNaN(v)) {
+      return CardWidth[Size.extra_large];
+    } else {
+      return `${v}px`;
+    }
+  }, [topologyCardSize]);
+
+  return [value, setTopologyCardSize];
 }
 
 export const TopologyPreference = ({

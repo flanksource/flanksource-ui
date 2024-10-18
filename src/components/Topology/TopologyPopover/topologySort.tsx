@@ -5,8 +5,8 @@ import { BsSortDown, BsSortUp } from "react-icons/bs";
 import { ValueType } from "../../../api/types/common";
 import { Topology } from "../../../api/types/topology";
 import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
-import { saveSortBy, saveSortOrder } from "../../../pages/TopologyPage";
 import { isDate } from "../../../utils/date";
+import { saveSortBy, saveSortOrder } from "../TopologyPageWrapper";
 
 const STATUS = {
   info: 4,

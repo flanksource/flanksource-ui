@@ -1,5 +1,6 @@
 import { Agent, Namespaced, Timestamped } from "../traits";
 import { CostsData, Severity, ValueType } from "./common";
+import { ConfigItem } from "./configs";
 import { HealthCheckSummary } from "./health";
 import { IncidentType } from "./incident";
 import { User } from "./users";
@@ -68,6 +69,8 @@ export interface Topology extends Component, CostsData, Agent {
   children?: string[];
   is_leaf?: boolean;
   description?: string;
+  config_id?: string;
+  configs?: Pick<ConfigItem, "name" | "id" | "type">[];
 }
 
 export type ComponentTeamItem = {
