@@ -45,14 +45,7 @@ describe("JobsHistoryTable", () => {
   it("renders the table with the correct column headers", () => {
     render(
       <MemoryRouter>
-        <JobsHistoryTable
-          jobs={data}
-          pageCount={1}
-          pageIndex={1}
-          pageSize={1}
-          sortBy={""}
-          sortOrder={""}
-        />
+        <JobsHistoryTable jobs={data} pageCount={1} />
       </MemoryRouter>
     );
     expect(
@@ -76,20 +69,13 @@ describe("JobsHistoryTable", () => {
   it("renders the table with the correct data cells", () => {
     render(
       <MemoryRouter>
-        <JobsHistoryTable
-          jobs={data}
-          pageCount={1}
-          pageIndex={1}
-          pageSize={1}
-          sortBy={""}
-          sortOrder={""}
-        />
+        <JobsHistoryTable jobs={data} pageCount={1} />
       </MemoryRouter>
     );
 
     expect(
       screen.getByRole("cell", {
-        name: /Job Name1/i
+        name: /Job Name 1/i
       })
     ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "2m3s" })).toBeInTheDocument();
@@ -98,7 +84,7 @@ describe("JobsHistoryTable", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("cell", { name: /Job Name2/i })
+      screen.getByRole("cell", { name: /Job Name 2/i })
     ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "10m54s" })).toBeInTheDocument();
     expect(
