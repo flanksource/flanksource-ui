@@ -1,4 +1,5 @@
 import { NotificationRules } from "@flanksource-ui/api/types/notifications";
+import FormikDurationNanosecondsField from "@flanksource-ui/components/Forms/Formik/FormikDurationNanosecondsField";
 import { Form, Formik } from "formik";
 import { Button } from "../../../ui/Buttons/Button";
 import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
@@ -66,6 +67,11 @@ export default function NotificationsRulesForm({
                 ]}
                 name="repeat_interval"
                 label="Repeat Interval"
+              />
+              <FormikDurationNanosecondsField
+                isClearable
+                name="wait_for"
+                label="Wait For"
               />
               <FormikNotificationsTemplateField name="template" />
               <FormikCodeEditor
