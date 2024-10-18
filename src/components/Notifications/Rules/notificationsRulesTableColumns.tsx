@@ -5,6 +5,7 @@ import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { formatDuration } from "@flanksource-ui/utils/date";
+import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
@@ -97,7 +98,7 @@ export function StatusColumn({ cell }: MRTCellProps<NotificationRules>) {
         setIsModalOpen={setIsModalOpen}
         job={{
           details: cell.row.original.job_details,
-          name: cell.row.original.job_name ?? cell.row.original.title
+          name: cell.row.original.job_name ?? cell.row.original.name
         }}
       />
     </>
@@ -116,48 +117,6 @@ export type UpdateNotificationRule = Omit<
 
 export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] =
   [
-    // {
-    //   header: "Recipients",
-    //   id: "recipients",
-    //   size: 150,
-    //   Cell: ({ cell }) => {
-    //     const person = cell.row.original.person;
-    //     const team = cell.row.original.team;
-    //     const custom_services = cell.row.original.custom_services;
-
-    //     return (
-    //       <div className="flex flex-wrap gap-2">
-    //         {person && (
-    //           <div className="flex max-w-full flex-wrap items-center gap-2">
-    //             <Avatar user={person} circular size="sm" /> {person.name}{" "}
-    //           </div>
-    //         )}
-
-    //         {team && (
-    //           <div className="flex max-w-full flex-wrap items-center gap-2">
-    //             <Icon className="inline-block h-6" name={team.icon} />{" "}
-    //             {team.name}{" "}
-    //           </div>
-    //         )}
-
-    //         {custom_services &&
-    //           custom_services.length > 0 &&
-    //           custom_services.map(({ connection, name }) => (
-    //             <div
-    //               className="flex flex-row items-center gap-2"
-    //               key={connection ?? name}
-    //             >
-    //               <Icon
-    //                 className="inline-block h-6"
-    //                 name={connection ?? name}
-    //               />
-    //               {name}
-    //             </div>
-    //           ))}
-    //       </div>
-    //     );
-    //   }
-    // },
     {
       header: "Events",
       id: "events",
@@ -178,12 +137,12 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       }
     },
     {
-      header: "Title",
-      id: "title",
+      header: "Name",
+      id: "name",
       size: 150,
-      accessorKey: "title",
+      accessorKey: "name",
       Cell: ({ row, column }) => {
-        const value = row.getValue<string>(column.id);
+        const value = row.original.name;
         const error = row.original.error;
 
         const [showError, setShowError] = useState(false);
@@ -325,6 +284,20 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       Cell: ({ row }) => {
         const value = row.original.repeat_interval;
         return value;
+      }
+    },
+    {
+      header: "Wait For",
+      id: "wait_for",
+      accessorKey: "wait_for",
+      size: 130,
+      Cell: ({ row }) => {
+        const value = row.original.wait_for;
+        if (!value) {
+          return null;
+        }
+        // Convert nanoseconds to date
+        return dayjs.duration(value / 1000000, "milliseconds").humanize(false);
       }
     },
     {
