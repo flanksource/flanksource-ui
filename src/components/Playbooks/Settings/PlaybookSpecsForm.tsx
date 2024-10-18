@@ -10,7 +10,6 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import { useUser } from "@flanksource-ui/context";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { Modal } from "@flanksource-ui/ui/Modal";
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
@@ -18,18 +17,15 @@ import { FaTrash } from "react-icons/fa";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { toastError, toastSuccess } from "../../Toast/toast";
-import PlaybookSpecModalTitle from "../PlaybookSpecModalTitle";
 
 type PlaybookSpecsFormProps = {
   playbook?: PlaybookSpec;
-  isOpen: boolean;
   onClose: () => void;
   refresh?: () => void;
 };
 
 export default function PlaybookSpecsForm({
   playbook,
-  isOpen,
   onClose,
   refresh = () => {}
 }: PlaybookSpecsFormProps) {
@@ -100,96 +96,79 @@ export default function PlaybookSpecsForm({
   });
 
   return (
-    <Modal
-      title={
-        <PlaybookSpecModalTitle
-          playbookSpec={playbook}
-          defaultTitle="Create Playbook Spec"
-        />
+    <Formik<NewPlaybookSpec | UpdatePlaybookSpec>
+      initialValues={
+        playbook ||
+        ({
+          title: "",
+          name: "",
+          source: "UI",
+          category: undefined,
+          spec: undefined,
+          created_by: user?.id
+        } satisfies NewPlaybookSpec)
       }
-      onClose={onClose}
-      open={isOpen}
-      size="full"
-      containerClassName="h-full overflow-auto"
-      bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
-      helpLink="playbooks"
-    >
-      <Formik<NewPlaybookSpec | UpdatePlaybookSpec>
-        initialValues={
-          playbook ||
-          ({
-            title: "",
-            name: "",
-            source: "UI",
-            category: undefined,
-            spec: undefined,
-            created_by: user?.id
-          } satisfies NewPlaybookSpec)
+      onSubmit={(value) => {
+        if (playbook?.id) {
+          updatePlaybook({
+            ...value,
+            // // we sync the title with the name field
+            // name: playbook.title,
+            id: playbook.id
+          });
+        } else {
+          createPlaybook({
+            ...value,
+            // we sync the title with the name field
+            name: value.title
+          });
         }
-        onSubmit={(value) => {
-          if (playbook?.id) {
-            updatePlaybook({
-              ...value,
-              // // we sync the title with the name field
-              // name: playbook.title,
-              id: playbook.id
-            });
-          } else {
-            createPlaybook({
-              ...value,
-              // we sync the title with the name field
-              name: value.title
-            });
-          }
-        }}
-      >
-        {({ handleSubmit }) => (
-          <Form
-            className="flex flex-1 flex-col overflow-y-auto"
-            onSubmit={handleSubmit}
-          >
-            <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
-              <div
-                className={clsx(
-                  "mb-2 flex flex-1 flex-col overflow-y-auto px-2"
-                )}
-              >
-                <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
-                  <FormikTextInput name="title" label="Title" required />
-                  <FormikCodeEditor
-                    fieldName="spec"
-                    label="Spec"
-                    format="yaml"
-                    className="flex flex-1 flex-col"
-                    jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
-                    required
-                    enableSpecUnwrap
-                  />
-                </div>
+      }}
+    >
+      {({ handleSubmit }) => (
+        <Form
+          className="flex flex-1 flex-col overflow-y-auto"
+          onSubmit={handleSubmit}
+        >
+          <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
+            <div
+              className={clsx("mb-2 flex flex-1 flex-col overflow-y-auto px-2")}
+            >
+              <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
+                <FormikTextInput name="title" label="Title" required />
+                <FormikCodeEditor
+                  fieldName="spec"
+                  label="Spec"
+                  format="yaml"
+                  className="flex flex-1 flex-col"
+                  jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
+                  required
+                  enableSpecUnwrap
+                />
               </div>
             </div>
-            <div className="flex items-center justify-between bg-gray-100 px-5 py-4">
-              {playbook?.id && (
-                <Button
-                  type="button"
-                  text={isDeleting ? "Deleting..." : "Delete"}
-                  icon={<FaTrash />}
-                  onClick={() => {
-                    deletePlaybook(playbook.id);
-                  }}
-                  className="btn-danger"
-                />
-              )}
-
+          </div>
+          <div className="flex items-center justify-between bg-gray-100 px-5 py-4">
+            {playbook?.id && (
               <Button
-                type="submit"
-                text={playbook?.id ? "Update" : "Save"}
-                className="btn-primary ml-auto"
+                type="button"
+                text={isDeleting ? "Deleting..." : "Delete"}
+                icon={<FaTrash />}
+                onClick={() => {
+                  deletePlaybook(playbook.id);
+                }}
+                className="btn-danger"
               />
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </Modal>
+            )}
+
+            <Button
+              type="submit"
+              text={playbook?.id ? "Update" : "Save"}
+              className="btn-primary ml-auto"
+            />
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 }

@@ -20,7 +20,8 @@ export const features = {
   "settings.organization_profile": "settings.organization_profile",
   "settings.notifications": "settings.notifications",
   "settings.playbooks": "settings.playbooks",
-  "settings.integrations": "settings.integrations"
+  "settings.integrations": "settings.integrations",
+  "settings.permissions": "settings.permissions"
 } as const;
 
 export const featureToParentMap = {

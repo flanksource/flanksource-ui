@@ -4,7 +4,7 @@ type BadgeProps = {
   text: React.ReactNode;
   value?: string;
   size?: "xs" | "sm" | "md";
-  color?: "blue" | "gray";
+  color?: "blue" | "gray" | "yellow";
   dot?: string;
   title?: string;
   className?: string;
@@ -29,7 +29,9 @@ export function Badge({
   const colorClass =
     color === "blue"
       ? "bg-blue-100 text-blue-800"
-      : "bg-gray-100 text-gray-700";
+      : color === "yellow"
+        ? "bg-yellow-100 text-yellow-800"
+        : "bg-gray-100 text-gray-700";
   const spanClassName =
     size === "sm" ? "text-sm px-1 py-0.5" : "text-xs px-1 py-0.5";
   const svgClassName =
