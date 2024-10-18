@@ -18,7 +18,10 @@ export type StatusLineData = {
   statuses: StatusInfo[];
 };
 
-export type StatusLineProps = React.HTMLProps<HTMLDivElement> & StatusLineData;
+export type StatusLineProps = React.HTMLProps<HTMLDivElement> &
+  StatusLineData & {
+    hideName?: boolean;
+  };
 
 interface RenderIconProps {
   icon: string | React.ReactNode;
@@ -73,6 +76,7 @@ export function StatusLine({
   url,
   statuses,
   className = "py-1",
+  hideName = false,
   ...rest
 }: StatusLineProps) {
   return (
@@ -80,24 +84,28 @@ export function StatusLine({
       className={clsx("flex flex-row items-center space-x-1", className)}
       {...rest}
     >
-      {icon && <RenderIcon icon={icon} />}
-      {url && (
-        <Link
-          title={label}
-          target={target || ""}
-          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
-          to={url}
-        >
-          {label}
-        </Link>
-      )}
-      {!url && (
-        <span
-          title={label}
-          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
-        >
-          {label}
-        </span>
+      {!hideName && (
+        <>
+          {icon && <RenderIcon icon={icon} />}
+          {url && (
+            <Link
+              title={label}
+              target={target || ""}
+              className="h-4 cursor-pointer overflow-hidden truncate text-xs"
+              to={url}
+            >
+              {label}
+            </Link>
+          )}
+          {!url && (
+            <span
+              title={label}
+              className="h-4 cursor-pointer overflow-hidden truncate text-xs"
+            >
+              {label}
+            </span>
+          )}
+        </>
       )}
       <div className="flex flex-row space-x-1.5">
         {statuses.map((status, index) => {

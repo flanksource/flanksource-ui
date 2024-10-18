@@ -13,6 +13,7 @@ import { CardMetrics } from "./CardMetrics";
 import TopologyCardStatuses from "./TopologCardStatuses";
 import TopologyCardPropertiesColumn from "./TopologyCardPropertiesColumn";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
+import TopologyItemHealthSummary from "./TopologyItemHealthSummary";
 
 export enum ComponentHealth {
   unhealthy = "unhealthy",
@@ -214,6 +215,7 @@ export function TopologyCard({
                   {topology.status_reason}
                 </div>
               )}
+              <TopologyItemHealthSummary topology={topology} />
             </div>
           </div>
         </div>
