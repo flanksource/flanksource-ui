@@ -10,9 +10,10 @@ import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import AgentName from "../../Agents/AgentName";
 import { CardMetrics } from "./CardMetrics";
-import TopologyCardStatuses from "./TopologCardStatuses";
+import TopologyCardStatuses from "./TopologyCardStatuses";
 import TopologyCardPropertiesColumn from "./TopologyCardPropertiesColumn";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
+import TopologyItemHealthSummary from "./TopologyItemHealthSummary";
 
 export enum ComponentHealth {
   unhealthy = "unhealthy",
@@ -214,6 +215,7 @@ export function TopologyCard({
                   {topology.status_reason}
                 </div>
               )}
+              <TopologyItemHealthSummary topology={topology} />
             </div>
           </div>
         </div>

@@ -169,7 +169,7 @@ function getTopologyHealthStatuses(topology: Topology) {
   return data;
 }
 
-function getTopologyHealthSummary(
+export function getTopologyHealthSummary(
   topology: Topology,
   viewType: "individual_level" | "children_level"
 ) {
@@ -206,7 +206,7 @@ function getTopologyHealthSummary(
   return data;
 }
 
-function topologiesHealthSummaries(topology: Topology) {
+export function topologiesHealthSummaries(topology: Topology) {
   return topology?.components
     ?.sort((a, b) => {
       // we want to move unhealthy components to the top, then warning, then healthy
@@ -277,15 +277,13 @@ export default function TopologyCardStatuses({
       return [];
     }
 
-    const healthSummary =
-      getTopologyHealthSummary(topology, "individual_level") ?? [];
     const healthChecks = getTopologyHealthStatuses(topology);
     const insights = insightStatuses(topology);
     const incidents = incidentsStatuses(topology) ?? [];
     const components = topologiesHealthSummaries(topology) ?? [];
 
     return (
-      [healthSummary, healthChecks, insights, ...incidents, ...components]
+      [healthChecks, insights, ...incidents, ...components]
         .filter((status) => status)
         //   remove empty statuses
         .filter((status) => status!.statuses.length > 0)
