@@ -83,6 +83,20 @@ export function tristateOutputToQueryFilterParam(
   return `&${key}.filter=${paramValue}`;
 }
 
+export function setTristateOutputToQueryFilterToURLSearchParam(
+  searchParams: URLSearchParams,
+  param: string | undefined,
+  key: string
+) {
+  if (param === undefined) {
+    return "";
+  }
+  const paramValue = tristateOutputToQueryParamValue(param);
+  if (paramValue) {
+    searchParams.set(`${key}.filter`, paramValue);
+  }
+}
+
 type TriStateToggleState = {
   [key: string]: number;
 };
