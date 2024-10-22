@@ -4,14 +4,19 @@ import {
   VisibilityState
 } from "@tanstack/react-table";
 import {
-  MantineReactTable,
   MRT_ColumnDef,
   MRT_Row,
   MRT_TableInstance,
   useMantineReactTable
 } from "mantine-react-table";
+import dynamic from "next/dynamic";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
+
+const MantineReactTable = dynamic(
+  () => import("mantine-react-table").then((mod) => mod.MantineReactTable),
+  { ssr: false }
+);
 
 type MRTDataTableProps<T extends Record<string, any> = {}> = {
   data: T[];
@@ -143,5 +148,6 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     renderDetailPanel
   });
 
+  // @ts-expect-error
   return <MantineReactTable table={table} />;
 }
