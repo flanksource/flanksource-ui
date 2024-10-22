@@ -14,6 +14,8 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
+import dayjs from "dayjs";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import { BiRepeat } from "react-icons/bi";
@@ -120,13 +122,18 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
         const component = row.original.component;
         const recursive = row.original.recursive;
 
+        const isExpired = dayjs(row.original.until).isBefore(dayjs());
+
         return (
           <div
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
             }}
-            className="flex flex-row items-center"
+            className={clsx(
+              "flex flex-row items-center",
+              isExpired && "line-through"
+            )}
           >
             {check && (
               <CheckLink
@@ -157,19 +164,41 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       Cell: ({ row }) => {
         const from = row.original.from;
         const until = row.original.until;
+        const isExpired = dayjs(until).isBefore(dayjs());
 
-        return <Age from={from} to={until} />;
+        return (
+          <Age
+            className={clsx(isExpired && "line-through")}
+            from={from}
+            to={until}
+          />
+        );
       }
     },
     {
       header: "Source",
       accessorKey: "source",
-      size: 100
+      size: 100,
+      Cell: ({ row }) => {
+        const source = row.original.source;
+        const isExpired = dayjs(row.original.until).isBefore(dayjs());
+        return (
+          <span className={clsx(isExpired && "line-through")}>{source}</span>
+        );
+      }
     },
     {
       header: "Reason",
       accessorKey: "description",
-      size: 400
+      size: 400,
+      Cell: ({ row }) => {
+        const isExpired = dayjs(row.original.until).isBefore(dayjs());
+        return (
+          <span className={clsx(isExpired && "line-through")}>
+            {row.original.description}
+          </span>
+        );
+      }
     },
     {
       header: "Created By",
