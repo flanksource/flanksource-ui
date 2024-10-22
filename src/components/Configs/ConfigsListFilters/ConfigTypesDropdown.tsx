@@ -2,11 +2,24 @@ import {
   ConfigTypeItem,
   getConfigsTypes
 } from "@flanksource-ui/api/services/configs";
-import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
+import {
+  GroupByOptions,
+  MultiSelectDropdown
+} from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
 import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
+
+function sortOptions(a: { label: string }, b: { label: string }) {
+  if (a.label === "All") {
+    return -1;
+  }
+  if (b.label === "All") {
+    return 1;
+  }
+  return a.label?.localeCompare(b.label);
+}
 
 type ConfigTypesDropdownProps = {
   label?: string;
@@ -24,7 +37,7 @@ export function ConfigTypesDropdown({
     getConfigsTypes,
     {
       select: useCallback((data: ConfigTypeItem[] | null) => {
-        return data?.map((d) => {
+        const res = data?.map((d) => {
           const label =
             d.type?.split("::").length === 1
               ? d.type
@@ -34,55 +47,41 @@ export function ConfigTypesDropdown({
                   .trim();
 
           return {
-            id: d.type,
             value: d.type,
-            description: label,
-            name: d.type,
+            label: label,
             icon: (
               <ConfigsTypeIcon
                 showPrimaryIcon={false}
                 config={{ type: d.type }}
               />
             )
-          };
+          } satisfies GroupByOptions;
         });
+        return [
+          {
+            value: "all",
+            label: "All"
+          } satisfies GroupByOptions,
+          ...(res || []).sort(sortOptions)
+        ];
       }, [])
     }
   );
 
-  function sortOptions(a: { name: string }, b: { name: string }) {
-    if (a.name === "All") {
-      return -1;
-    }
-    if (b.name === "All") {
-      return 1;
-    }
-    return a.name?.localeCompare(b.name);
-  }
-
-  const configItemsOptionsItems = useMemo(
-    () =>
-      [
-        {
-          id: "All",
-          name: "All",
-          description: "All",
-          value: "All"
-        },
-        ...(configTypeOptions || [])
-      ].sort(sortOptions),
-    [configTypeOptions]
-  );
+  console.log(field.value);
 
   return (
-    <ReactSelectDropdown
+    <MultiSelectDropdown
       isLoading={isLoading}
-      items={configItemsOptionsItems}
+      options={configTypeOptions as GroupByOptions[]}
       name="configType"
-      onChange={(value) => {
-        if (value && value !== "All") {
+      isMulti={false}
+      closeMenuOnSelect={true}
+      // @ts-ignore
+      onChange={(value: GroupByOptions) => {
+        if (value && value.value.toLowerCase() !== "all") {
           field.onChange({
-            target: { name: "configType", value: value }
+            target: { name: "configType", value: value.value }
           });
         } else {
           field.onChange({
@@ -90,13 +89,18 @@ export function ConfigTypesDropdown({
           });
         }
       }}
-      value={field.value ?? "All"}
-      className="w-auto max-w-[400px]"
-      dropDownClassNames="w-auto max-w-[400px] left-0"
-      hideControlBorder
-      prefix={
-        <div className="whitespace-nowrap text-xs text-gray-500">{label}</div>
+      value={
+        field.value
+          ? (configTypeOptions?.find(
+              (option) => option.value === field.value
+            ) ?? configTypeOptions?.find((option) => option.value === "all"))
+          : {
+              value: "all",
+              label: "All"
+            }
       }
+      className="w-auto max-w-[400px]"
+      label="Config Type"
     />
   );
 }

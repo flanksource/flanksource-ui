@@ -10,14 +10,13 @@ import {
   useState
 } from "react";
 import { Controller } from "react-hook-form";
-
+import CreatableSelect from "react-select/creatable";
 import Select, {
   SingleValue,
   StylesConfig,
   components,
   defaultTheme
-} from "react-select";
-import CreatableSelect from "react-select/creatable";
+} from "react-windowed-select";
 import { Avatar } from "../../ui/Avatar";
 
 const { colors } = defaultTheme;
@@ -232,6 +231,7 @@ export const ReactSelectDropdown = ({
                 }}
                 options={options}
                 placeholder={placeholder}
+                // @ts-expect-error
                 styles={selectStyles}
                 tabSelectsValue={false}
                 value={valueControlled}
@@ -279,9 +279,11 @@ export const ReactSelectDropdown = ({
           hideSelectedOptions={false}
           isClearable={false}
           menuIsOpen
+          // @ts-expect-error
           onChange={onSelectChange}
           options={options}
           placeholder={placeholder}
+          // @ts-expect-error
           styles={selectStyles}
           tabSelectsValue={false}
           value={value}
