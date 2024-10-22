@@ -1,4 +1,4 @@
-import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import { setTristateOutputToQueryFilterToURLSearchParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { isNull } from "lodash";
 import { toastError } from "../../components/Toast/toast";
@@ -193,13 +193,11 @@ export function prepareConfigListQuery({
   }
 
   if (status && status !== "All") {
-    const statusParam = tristateOutputToQueryFilterParam(status, "status");
-    query.append("status", statusParam);
+    setTristateOutputToQueryFilterToURLSearchParam(query, status, "status");
   }
 
   if (health) {
-    const healthParam = tristateOutputToQueryFilterParam(health, "health");
-    query.append("health", healthParam);
+    setTristateOutputToQueryFilterToURLSearchParam(query, health, "health");
   }
 
   if (search) {
