@@ -1,11 +1,11 @@
 import { autoUpdate, useFloating } from "@floating-ui/react";
-import { Popover } from "@headlessui/react";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { isArray } from "lodash";
 import React, { ComponentProps } from "react";
 import { createPortal } from "react-dom";
-import Select, { components } from "react-select";
+import Select, { components } from "react-windowed-select";
 
 export type GroupByOptions = {
   isTag?: boolean;
@@ -16,12 +16,13 @@ export type GroupByOptions = {
 
 type ConfigGroupByDropdownProps = Omit<
   ComponentProps<typeof Select>,
-  "components" | "defaultValue"
+  "components" | "defaultValue" | "windowThreshold"
 > & {
   label?: string;
   containerClassName?: string;
   dropDownClassNames?: string;
   defaultValue?: string;
+  closeMenuOnSelect?: boolean;
 };
 
 export function MultiSelectDropdown({
@@ -34,6 +35,8 @@ export function MultiSelectDropdown({
   dropDownClassNames = "w-auto max-w-[300px]",
   value,
   defaultValue,
+  closeMenuOnSelect = false,
+  onChange = () => {},
   ...props
 }: ConfigGroupByDropdownProps) {
   const { refs, floatingStyles } = useFloating({
@@ -43,9 +46,9 @@ export function MultiSelectDropdown({
 
   return (
     <Popover className="relative">
-      {({ open }) => (
+      {({ open, close }) => (
         <>
-          <Popover.Button ref={refs.setReference}>
+          <PopoverButton ref={refs.setReference}>
             <div className={containerClassName}>
               <div
                 className={clsx(
@@ -84,7 +87,7 @@ export function MultiSelectDropdown({
                         {(value as GroupByOptions)?.icon && (
                           <div>{(value as GroupByOptions).icon}</div>
                         )}
-                        {!(value as GroupByOptions) && (
+                        {(value as GroupByOptions) && (
                           <span className="block">
                             {(value as GroupByOptions).label?.toString()}
                           </span>
@@ -102,10 +105,10 @@ export function MultiSelectDropdown({
                 </span>
               </div>
             </div>
-          </Popover.Button>
+          </PopoverButton>
 
           {createPortal(
-            <Popover.Panel
+            <PopoverPanel
               ref={refs.setFloating}
               className={clsx(
                 "absolute flex flex-col rounded-sm bg-white shadow-lg"
@@ -118,6 +121,10 @@ export function MultiSelectDropdown({
                   isMulti={isMulti}
                   options={options}
                   value={value}
+                  onChange={(value, actionMeta) => {
+                    onChange(value, actionMeta);
+                    close();
+                  }}
                   {...props}
                   placeholder={"Search..."}
                   components={{
@@ -146,12 +153,14 @@ export function MultiSelectDropdown({
                       );
                     }
                   }}
+                  windowThreshold={0.5}
                   autoFocus
                   backspaceRemovesValue={false}
                   controlShouldRenderValue={false}
                   hideSelectedOptions={false}
                   menuIsOpen
                   tabSelectsValue={false}
+                  closeMenuOnSelect={closeMenuOnSelect}
                   styles={{
                     control: (provided) => ({
                       ...provided,
@@ -177,7 +186,7 @@ export function MultiSelectDropdown({
                   }}
                 />
               </div>
-            </Popover.Panel>,
+            </PopoverPanel>,
             document.body
           )}
         </>
