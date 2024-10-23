@@ -24,6 +24,10 @@ export const CardMetrics = ({
   labelClasses = "text-gray-600 font-semibold text-xs mb-0.5",
   metricsClasses = "font-bold text-xs leading-1.21rel flex flex-center justify-center"
 }: IProps) => {
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   return (
     <div className="flex flex-1 items-center justify-between divide-x rounded-b-8px">
       {items.map((item) => (

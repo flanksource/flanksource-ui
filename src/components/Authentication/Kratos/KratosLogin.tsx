@@ -157,7 +157,6 @@ const KratosLogin = () => {
     }
   }, [flow, submitFlow, credentials]);
 
-
   return (
     <div className="w-96">
       <ToasterWithCloseButton />
