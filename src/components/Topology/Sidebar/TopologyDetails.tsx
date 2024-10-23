@@ -1,3 +1,4 @@
+import { Status } from "@flanksource-ui/components/Status";
 import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -179,6 +180,29 @@ export default function TopologyDetails({
               : [])
           ]}
         />
+
+        {topology.health && (
+          <DisplayDetailsRow
+            items={[
+              {
+                label: "Status",
+                value: (
+                  <>
+                    <Status
+                      status={topology.health}
+                      statusText={topology.health}
+                    />
+                    {topology.status_reason && (
+                      <p className="ml-1 text-sm text-gray-600">
+                        {topology.status_reason}
+                      </p>
+                    )}
+                  </>
+                )
+              }
+            ]}
+          />
+        )}
 
         <DisplayGroupedProperties items={formattedProperties} />
 
