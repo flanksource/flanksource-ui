@@ -135,12 +135,13 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
       rowsPerPageOptions: ["50", "100", "200"]
     },
     mantineExpandButtonProps: {
-      size: "xs"
+      size: 20
     },
     mantineExpandAllButtonProps: {
-      size: "xs"
+      size: 20
     },
-    renderDetailPanel
+    renderDetailPanel,
+    displayColumnDefOptions: { "mrt-row-expand": { size: 5 } } //change width of actions column to 300px
   });
 
   return <MantineReactTable table={table} />;
