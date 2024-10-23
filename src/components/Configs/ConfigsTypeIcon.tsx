@@ -13,7 +13,7 @@ export type ConfigIconProps = {
 
 export default function ConfigsTypeIcon({
   config,
-  className = "w-4 h-4",
+  className = "w-4",
   showPrimaryIcon = true,
   showSecondaryIcon = true,
   showLabel = false,
