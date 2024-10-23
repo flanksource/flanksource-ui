@@ -1,11 +1,26 @@
 import { OnChangeFn, PaginationState } from "@tanstack/react-table";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 
-export default function useReactTablePaginationState() {
+const persistPageSizeAtom = atomWithStorage(
+  "persistPageSize",
+  "50",
+  undefined,
+  {
+    getOnInit: true
+  }
+);
+
+export default function useReactTablePaginationState(
+  persistToLocalStorage = true
+) {
+  const [pageSizeFromLocalStorage, setPageSize] = useAtom(persistPageSizeAtom);
+
   const [params, setParams] = useSearchParams({
     pageIndex: "0",
-    pageSize: "50"
+    pageSize: persistToLocalStorage ? pageSizeFromLocalStorage : "50"
   });
 
   const pageIndex = parseInt(params.get("pageIndex") ?? "0", 10);
@@ -23,8 +38,11 @@ export default function useReactTablePaginationState() {
       params.set("pageIndex", updated.pageIndex.toString());
       params.set("pageSize", updated.pageSize.toString());
       setParams(params);
+      if (persistToLocalStorage) {
+        setPageSize(updated.pageSize.toString());
+      }
     },
-    [pageIndex, pageSize, params, setParams]
+    [pageIndex, pageSize, params, persistToLocalStorage, setPageSize, setParams]
   );
 
   return {
