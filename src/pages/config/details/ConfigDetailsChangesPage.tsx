@@ -3,17 +3,16 @@ import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/Co
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { PaginationOptions } from "@flanksource-ui/ui/DataTable";
-import { useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
-  const [params, setParams] = useSearchParams({
+
+  const [params] = useSearchParams({
     sortBy: "created_at",
     sortDirection: "desc"
   });
-  const page = params.get("page") ?? "1";
+
   const pageSize = params.get("pageSize") ?? "200";
 
   const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
@@ -32,30 +31,6 @@ export function ConfigDetailsChangesPage() {
 
   const totalChanges = data?.total ?? 0;
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
-
-  const pagination = useMemo(() => {
-    const pagination: PaginationOptions = {
-      setPagination: (updater) => {
-        const newParams =
-          typeof updater === "function"
-            ? updater({
-                pageIndex: parseInt(page) - 1,
-                pageSize: parseInt(pageSize)
-              })
-            : updater;
-        params.set("page", (newParams.pageIndex + 1).toString());
-        params.set("pageSize", newParams.pageSize.toString());
-        setParams(params);
-      },
-      pageIndex: parseInt(page) - 1,
-      pageSize: parseInt(pageSize),
-      pageCount: totalChangesPages,
-      remote: true,
-      enable: true,
-      loading: isLoading
-    };
-    return pagination;
-  }, [page, pageSize, totalChangesPages, isLoading, params, setParams]);
 
   if (error) {
     const errorMessage =
