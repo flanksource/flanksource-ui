@@ -2,7 +2,7 @@ import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useComponentLabelsQuery } from "../../../api/query-hooks";
-import { allOption } from "../../../pages/TopologyPage";
+import { allOption } from "../TopologyPageWrapper";
 
 type ComponentLabelsDropdownProps = {
   name: string;

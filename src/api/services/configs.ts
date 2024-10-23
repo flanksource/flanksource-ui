@@ -11,6 +11,7 @@ import {
   ConfigChange,
   ConfigHealthCheckView,
   ConfigItem,
+  ConfigItemDetails,
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
@@ -144,7 +145,7 @@ export const getAllChanges = (
 };
 
 export const getConfig = (id: string) =>
-  resolvePostGrestRequestWithPagination<ConfigItem[]>(
+  resolvePostGrestRequestWithPagination<ConfigItemDetails[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*,config_scrapers(id,name)`)
   );
 

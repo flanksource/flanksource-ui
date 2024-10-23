@@ -1,12 +1,15 @@
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useParams } from "react-router-dom";
-import { ConfigItem } from "../../api/types/configs";
+import { ConfigItemDetails } from "../../api/types/configs";
 
-export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
+export function useConfigDetailsTabs(
+  countSummary?: ConfigItemDetails["summary"],
+  basePath: `/${string}` = "/catalog"
+) {
   const { id } = useParams<{ id: string }>();
 
   return [
-    { label: "Config", key: "Catalog", path: `/catalog/${id}` },
+    { label: "Config", key: "Catalog", path: `${basePath}/${id}` },
     {
       label: (
         <>
@@ -15,7 +18,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
         </>
       ),
       key: "Changes",
-      path: `/catalog/${id}/changes`
+      path: `${basePath}/${id}/changes`
     },
     {
       label: (
@@ -25,7 +28,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
         </>
       ),
       key: "Insights",
-      path: `/catalog/${id}/insights`
+      path: `${basePath}/${id}/insights`
     },
     {
       label: (
@@ -35,7 +38,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
         </>
       ),
       key: "Relationships",
-      path: `/catalog/${id}/relationships`
+      path: `${basePath}/${id}/relationships`
     },
     {
       label: (
@@ -45,7 +48,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
         </>
       ),
       key: "Playbooks",
-      path: `/catalog/${id}/playbooks`
+      path: `${basePath}/${id}/playbooks`
     },
     {
       label: (
@@ -55,7 +58,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
         </>
       ),
       key: "Checks",
-      path: `/catalog/${id}/checks`
+      path: `${basePath}/${id}/checks`
     }
   ];
 }
