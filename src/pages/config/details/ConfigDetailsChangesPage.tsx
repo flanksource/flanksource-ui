@@ -1,4 +1,6 @@
 import { useGetConfigChangesByIDQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
+import ConfigChangesGraph from "@flanksource-ui/components/Configs/Changes/ConfigChangesGraph";
+import { useConfigChangesViewToggleState } from "@flanksource-ui/components/Configs/Changes/ConfigChangesViewToggle";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
@@ -16,10 +18,13 @@ export function ConfigDetailsChangesPage() {
   const page = params.get("page") ?? "1";
   const pageSize = params.get("pageSize") ?? "200";
 
-  const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
-    keepPreviousData: true,
-    enabled: !!id
-  });
+  const { data, isLoading, error, refetch, isRefetching } =
+    useGetConfigChangesByIDQuery({
+      keepPreviousData: true,
+      enabled: !!id
+    });
+
+  const view = useConfigChangesViewToggleState();
 
   const changes = (data?.changes ?? []).map((changes) => ({
     ...changes,
@@ -77,12 +82,16 @@ export function ConfigDetailsChangesPage() {
         <div className="flex w-full flex-1 flex-col items-start gap-2 overflow-y-auto">
           <ConfigRelatedChangesFilters paramsToReset={["page"]} />
           <div className="flex w-full flex-1 flex-col overflow-y-auto">
-            <ConfigChangeTable
-              data={changes}
-              isLoading={isLoading}
-              numberOfPages={totalChangesPages}
-              totalRecords={totalChanges}
-            />
+            {view === "Graph" ? (
+              <ConfigChangesGraph changes={changes} />
+            ) : (
+              <ConfigChangeTable
+                data={changes}
+                isLoading={isLoading || isRefetching}
+                totalRecords={totalChanges}
+                numberOfPages={totalChangesPages}
+              />
+            )}
           </div>
         </div>
       </div>
