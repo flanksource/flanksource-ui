@@ -6,7 +6,13 @@ import dayjs from "dayjs";
 import { Status } from "../../Status";
 import { GetName } from "../data";
 import style from "../index.module.css";
-import { Duration, Percentage, StatusList, Title, empty } from "../renderers";
+import {
+  CanaryCheckName,
+  Duration,
+  empty,
+  Percentage,
+  StatusList
+} from "../renderers";
 import { removeNamespacePrefix } from "../utils";
 import {
   getHealthPercentageScore,
@@ -131,7 +137,7 @@ export function TitleCell({
         //   paddingLeft: `${row.depth * 1.1}rem`
         // }}
       >
-        <Title
+        <CanaryCheckName
           title={title}
           icon={rowValues.icon || rowValues.type}
           isDeleted={!!row.original.deleted_at}
