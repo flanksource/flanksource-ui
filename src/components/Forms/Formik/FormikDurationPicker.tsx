@@ -61,7 +61,6 @@ export default function FormikDurationPicker({
           value={value}
           placeholder={placeholder}
           onChange={(value) => {
-            console.log(value, "value");
             if (value.type === "absolute") {
               setFieldValue(from, value.from);
               setFieldValue(to, value.to);

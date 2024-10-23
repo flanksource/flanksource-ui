@@ -13,6 +13,7 @@ import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextAr
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Form, Formik } from "formik";
@@ -93,8 +94,21 @@ export default function NotificationSilenceForm({
       <Formik<Partial<SilenceNotificationRequest>>
         initialValues={initialValues}
         onSubmit={(v) => {
+          // Before submitting, we need to parse the date math expressions, if
+          // any are present in the from and until fields.
+          const { from, until } = v;
+          const fromTime = from?.includes("now")
+            ? parseDateMath(from, false)
+            : from;
+
+          const untilTime = until?.includes("now")
+            ? parseDateMath(until, false)
+            : until;
+
           return mutate({
-            ...v
+            ...v,
+            from: fromTime,
+            until: untilTime
           } as SilenceNotificationRequest);
         }}
       >
