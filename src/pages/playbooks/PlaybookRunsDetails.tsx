@@ -115,7 +115,7 @@ export default function PlaybookRunsDetailsPage() {
         <TabbedLinks activeTabName={`Runs`} tabLinks={playbookRunsPageTabs}>
           <div className={`mx-auto flex h-full flex-col p-4`}>
             {playbookRun ? (
-              <PlaybookRunsActions data={playbookRun} />
+              <PlaybookRunsActions data={playbookRun} refetch={refetch} />
             ) : (
               <CardsSkeletonLoader />
             )}
