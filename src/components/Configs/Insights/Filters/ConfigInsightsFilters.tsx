@@ -15,7 +15,7 @@ export function ConfigInsightsFilters({
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
-      filterFields={["type", "severity", "analyzer", "component"]}
+      filterFields={["type", "severity", "analyzer", "component", "configType"]}
     >
       <div className="mr-4 flex flex-row gap-4">
         <div className="flex items-center">

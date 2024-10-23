@@ -364,7 +364,9 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
         </div>
       </div>
       <div className="flex h-screen flex-1 flex-col overflow-auto bg-gray-50">
-        <Outlet />
+        <React.Suspense fallback={<FullPageSkeletonLoader />}>
+          <Outlet />
+        </React.Suspense>
       </div>
     </div>
   );
