@@ -1,4 +1,9 @@
 import {
+  PlaybookRunActionStatus,
+  PlaybookRunStatus
+} from "@flanksource-ui/api/types/playbooks";
+import { TbCircleDashedCheck } from "react-icons-v5/tb";
+import {
   BsCheckCircle,
   BsCircle,
   BsClock,
@@ -7,10 +12,6 @@ import {
   BsStopCircle,
   BsXCircle
 } from "react-icons/bs";
-import {
-  PlaybookRunActionStatus,
-  PlaybookRunStatus
-} from "../../api/types/playbooks";
 
 export const statusIconMap: Record<
   PlaybookRunStatus | PlaybookRunActionStatus,
@@ -29,7 +30,7 @@ export const statusIconMap: Record<
     <BsCircle className="inline h-5 w-auto object-center text-orange-500" />
   ),
   pending_approval: (
-    <BsCircle className="inline h-5 w-auto object-center pr-1 text-orange-500" />
+    <TbCircleDashedCheck className="inline h-5 w-auto object-center pr-1 text-orange-500" />
   ),
   waiting: (
     <BsCircle className="inline h-5 w-auto object-center text-orange-500" />
