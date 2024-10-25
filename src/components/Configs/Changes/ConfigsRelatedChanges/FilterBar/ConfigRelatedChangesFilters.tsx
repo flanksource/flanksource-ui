@@ -1,6 +1,6 @@
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import clsx from "clsx";
-import { useConfigChangesArbitraryFilters } from "../../../../../hooks/useConfigChangesArbitraryFilters";
 import { ChangesTypesDropdown } from "../../ConfigChangesFilters/ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "../../ConfigChangesFilters/ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChangesDateRangeFIlter";

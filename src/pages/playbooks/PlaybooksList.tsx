@@ -1,17 +1,20 @@
+import { useGetAllPlaybookSpecs } from "@flanksource-ui/api/query-hooks/playbooks";
+import ErrorPage from "@flanksource-ui/components/Errors/ErrorPage";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
+import PlaybookSpecsForm from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecsForm";
+import PlaybookSpecsList from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecsList";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/ui/BreadcrumbNav";
+import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { FaHome } from "react-icons/fa";
-import { useGetAllPlaybookSpecs } from "../../api/query-hooks/playbooks";
-import ErrorPage from "../../components/Errors/ErrorPage";
-import { playbookRunsPageTabs } from "../../components/Playbooks/Runs/PlaybookRunsPageTabs";
-import PlaybookSpecsForm from "../../components/Playbooks/Settings/PlaybookSpecsForm";
-import PlaybookSpecsList from "../../components/Playbooks/Settings/PlaybookSpecsList";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
-import { Head } from "../../ui/Head";
-import { SearchLayout } from "../../ui/Layout/SearchLayout";
-import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 
 export function PlaybooksListPage() {
   const [isOpen, setIsOpen] = useState(false);

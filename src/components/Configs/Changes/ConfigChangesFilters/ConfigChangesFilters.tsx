@@ -1,10 +1,10 @@
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import ClosableBadge from "@flanksource-ui/ui/Badge/ClosableBadge";
 import clsx from "clsx";
 import { useCallback, useMemo } from "react";
 import { FaBan } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import { useConfigChangesArbitraryFilters } from "../../../../hooks/useConfigChangesArbitraryFilters";
 import { paramsToReset } from "../ConfigChangeTable";
 import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
