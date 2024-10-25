@@ -1,10 +1,10 @@
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { mapValues, method } from "lodash";
 import { useMemo } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import { Button } from "../../ui/Buttons/Button";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import CanEditResource from "../Settings/CanEditResource";
 import { Connection } from "./ConnectionFormModal";

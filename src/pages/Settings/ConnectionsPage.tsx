@@ -1,24 +1,31 @@
-import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
-import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { AiFillPlusCircle } from "react-icons/ai";
 import {
   createResource,
   deleteResource,
   getAll,
   updateResource
-} from "../../api/schemaResources";
+} from "@flanksource-ui/api/schemaResources";
 import ConnectionFormModal, {
   Connection
-} from "../../components/Connections/ConnectionFormModal";
-import { ConnectionList } from "../../components/Connections/ConnectionsList";
-import { SchemaApi } from "../../components/SchemaResourcePage/resourceTypes";
-import { toastError, toastSuccess } from "../../components/Toast/toast";
-import { useUser } from "../../context";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
-import { Head } from "../../ui/Head";
-import { SearchLayout } from "../../ui/Layout/SearchLayout";
+} from "@flanksource-ui/components/Connections/ConnectionFormModal";
+import { ConnectionList } from "@flanksource-ui/components/Connections/ConnectionsList";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { SchemaApi } from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
+import {
+  toastError,
+  toastSuccess
+} from "@flanksource-ui/components/Toast/toast";
+import { useUser } from "@flanksource-ui/context";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import {
+  BreadcrumbNav,
+  BreadcrumbRoot
+} from "@flanksource-ui/ui/BreadcrumbNav";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
+import { Head } from "@flanksource-ui/ui/Head";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { AiFillPlusCircle } from "react-icons/ai";
 
 const connectionsSchemaConnection: SchemaApi = {
   table: "connections",
@@ -30,15 +37,16 @@ export function ConnectionsPage() {
   const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<Connection>();
+  const [sortState] = useReactTableSortState();
 
   const {
     isLoading: loading,
     data: connections,
     refetch
   } = useQuery({
-    queryKey: ["connections", "all"],
+    queryKey: ["connections", "all", sortState],
     queryFn: async () => {
-      const response = await getAll(connectionsSchemaConnection);
+      const response = await getAll(connectionsSchemaConnection, sortState);
       return (response.data ?? []) as unknown as Connection[];
     }
   });
