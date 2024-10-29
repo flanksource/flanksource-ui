@@ -35,7 +35,7 @@ export function ApprovePlaybookButton({
         }}
       >
         <BsCheck2 className="h-5 w-5" />
-        <span className="capitalize">Pending Approval</span>
+        <span >Approve</span>
       </Button>
       <ApprovePlaybookRunModal
         onClose={() => {
