@@ -5,7 +5,7 @@ import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUIS
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
-import { AuthContext } from "../../../context";
+import { AuthContext, createAuthorizer } from "../../../context";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
 import ErrorPage from "../../Errors/ErrorPage";
 import InstanceCreationInProgress from "./InstanceCreationInProgress";
@@ -69,7 +69,11 @@ export default function ClerkAuthContextProvider({
     <FeatureFlagsContextProvider>
       <AuthContext.Provider
         value={{
+          authorizer: createAuthorizer(payload),
+          isLoading,
           user: payload.user ?? (payload as any),
+          roles: payload.roles,
+          permissions: payload.permissions,
           backendUrl: backendURL as string,
           orgSlug: organization?.slug ?? undefined
         }}

@@ -1,5 +1,5 @@
 import { WhoamiResponse, whoami } from "@flanksource-ui/api/services/users";
-import { AuthContext } from "@flanksource-ui/context";
+import { AuthContext, createAuthorizer } from "@flanksource-ui/context";
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import FullPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FullPageSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +42,8 @@ export default function KratosAuthContextProvider({ children }: Props) {
   return (
     <AuthContext.Provider
       value={{
+        authorizer: createAuthorizer(payload),
+        isLoading,
         user: payload.user,
         backendUrl: backendURL,
         roles: payload.roles,

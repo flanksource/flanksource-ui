@@ -72,4 +72,5 @@ export function PlaybookStatusIcon({
         <BsSlashCircle className="inline h-5 w-auto object-center pr-1 text-gray-500" />
       );
   }
+  return null;
 }

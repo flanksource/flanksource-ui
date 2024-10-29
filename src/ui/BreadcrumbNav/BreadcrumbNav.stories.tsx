@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import { AiFillPlusCircle } from "react-icons/ai/";
+import { AiFillPlusCircle } from "react-icons/ai";
 import { BreadcrumbNav } from "./index";
 
 export default {

@@ -1,4 +1,4 @@
-import { AuthContext } from "@flanksource-ui/context";
+import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -63,15 +63,7 @@ describe("AgentForm", () => {
   it("renders the form with the correct title and fields", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <AgentForm
               isOpen={true}
@@ -92,15 +84,7 @@ describe("AgentForm", () => {
   it("renders the form with the correct title and fields when editing an agent", async () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <AgentForm
               id="123"
@@ -123,15 +107,7 @@ describe("AgentForm", () => {
     const agentData = { name: "New Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <AgentForm
               isOpen={true}
@@ -163,15 +139,7 @@ describe("AgentForm", () => {
     const agentData = { name: "Updated Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <AgentForm
               id="123"

@@ -1,9 +1,7 @@
 import { ReactElement, useCallback, useEffect, useState } from "react";
-import {
-  ActionType,
-  useUserAccessStateContext
-} from "../../context/UserAccessContext/UserAccessContext";
-import UnAuthorizedPage, { UnAuthorizedMessage } from "./UnAuhorizedPage";
+import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import UnauthorizedPage, { UnauthorizedMessage } from "./UnauthorizedPage";
+import { ActionType } from "@flanksource-ui/context";
 
 type AuthorizationAccessCheckProps = {
   resource: string | string[];
@@ -24,6 +22,7 @@ export function AuthorizationAccessCheck({
 
   const { hasAnyResourceAccess, roles, isLoading, isLoaded } =
     useUserAccessStateContext();
+
   const [hasAccess, setHasAccess] = useState(false);
 
   const checkAccess = useCallback(async () => {
@@ -50,10 +49,10 @@ export function AuthorizationAccessCheck({
   }
 
   if (hideNavbar) {
-    return <UnAuthorizedMessage />;
+    return <UnauthorizedMessage />;
   }
 
-  return <UnAuthorizedPage isLoading={isLoading} />;
+  return <UnauthorizedPage isLoading={isLoading || false} />;
 }
 
 export const withAuthorizationAccessCheck = (
