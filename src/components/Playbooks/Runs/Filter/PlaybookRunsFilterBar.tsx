@@ -6,11 +6,11 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { useState } from "react";
-import { FaEdit } from "react-icons/fa";
 import { URLSearchParamsInit } from "react-router-dom";
 import SubmitPlaybookRunForm from "../Submit/SubmitPlaybookRunForm";
 import PlaybookSpecsDropdown from "./PlaybookSpecsDropdown";
 import PlaybookStatusDropdown from "./PlaybookStatusDropdown";
+import { VscEdit, VscPlay } from "react-icons/vsc";
 
 export const playbookRunsDefaultDateFilter: URLSearchParamsInit = {
   rangeType: "relative",
@@ -60,13 +60,14 @@ export default function PlaybookRunsFilterBar({
         <>
           <div className="flex-1" />
           <AuthorizationAccessCheck
-            resource={tables.connections}
+            resource={tables.playbooks}
             action="write"
+            key="edit-playbook"
           >
             <Button
-              text="Edit Playbook"
+              text="Edit"
               className="btn-white min-w-max"
-              icon={<FaEdit />}
+              icon={<VscEdit />}
               disabled={isLoading}
               onClick={() => setIsEditPlaybookFormOpen(true)}
             />
@@ -76,10 +77,12 @@ export default function PlaybookRunsFilterBar({
             <>
               <Button
                 disabled={isLoading}
-                text="Run Playbook"
                 onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
                 className="btn-primary min-w-max"
-              />
+              >
+                <VscPlay />
+                Run
+              </Button>
               <AuthorizationAccessCheck
                 resource={tables.playbooks}
                 action="write"

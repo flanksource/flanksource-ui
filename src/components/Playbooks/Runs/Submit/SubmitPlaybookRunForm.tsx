@@ -135,16 +135,12 @@ export default function SubmitPlaybookRunForm({
                 {isResourceRequired && (
                   <div className="mb-4 mt-2 border-b border-gray-200" />
                 )}
-                <div className="mb-4 flex flex-col gap-2">
-                  <label className="form-label mb-4 text-lg">
-                    Playbook Parameters
-                  </label>
-                  <PlaybookRunParams
-                    isResourceRequired={isResourceRequired}
-                    playbook={playbook}
-                    isReRun={isReRun}
-                  />
-                </div>
+
+                <PlaybookRunParams
+                  isResourceRequired={isResourceRequired}
+                  playbook={playbook}
+                  isReRun={isReRun}
+                />
               </div>
 
               <div className="flex justify-end space-x-2 rounded-b bg-slate-50 p-4 ring-1 ring-black/5">

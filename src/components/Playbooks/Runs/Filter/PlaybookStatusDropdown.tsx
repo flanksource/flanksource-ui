@@ -1,40 +1,35 @@
 import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
-import { statusIconMap } from "../../../../ui/Icons/PlaybookStatusIcon";
 import { StateOption } from "../../../ReactSelectDropdown";
+import { PlaybookStatusIcon } from "@flanksource-ui/ui/Icons/PlaybookStatusIcon";
 
 const options: StateOption[] = [
   {
-    icon: statusIconMap["running"],
+    icon: <PlaybookStatusIcon status="running" animated={false} />,
     label: "Running",
     value: "running"
   },
   {
-    icon: statusIconMap["scheduled"],
+    icon: <PlaybookStatusIcon status="scheduled" animated={false} />,
     label: "Scheduled",
     value: "scheduled"
   },
   {
-    icon: statusIconMap["cancelled"],
+    icon: <PlaybookStatusIcon status="cancelled" animated={false} />,
     label: "Cancelled",
     value: "cancelled"
   },
   {
-    icon: statusIconMap["completed"],
+    icon: <PlaybookStatusIcon status="completed" animated={false} />,
     label: "Completed",
     value: "completed"
   },
   {
-    icon: statusIconMap["failed"],
+    icon: <PlaybookStatusIcon status="failed" animated={false} />,
     label: "Failed",
     value: "failed"
   },
   {
-    icon: statusIconMap["pending"],
-    label: "Pending",
-    value: "pending"
-  },
-  {
-    icon: statusIconMap["pending_approval"],
+    icon: <PlaybookStatusIcon status="pending_approval" animated={false} />,
     label: "Pending Approval",
     value: "pending_approval"
   }
