@@ -92,7 +92,7 @@ const config = {
     proxyTimeout: 1000 * 60 * 10,
     esmExternals: "loose"
   },
-  transpilePackages: ["monaco-editor", "@flanksource/icons"]
+  transpilePackages: ["monaco-editor"]
 };
 
 module.exports = withBundleAnalyzer(config);

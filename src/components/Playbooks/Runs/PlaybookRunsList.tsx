@@ -65,8 +65,9 @@ const playbookRunsTableColumns: MRT_ColumnDef<PlaybookRun>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    Cell: ({ cell }) => {
+    Cell: ({ cell, row }) => {
       const status = cell.getValue<PlaybookRunStatus>();
+
       return <PlaybookStatusDescription status={status} />;
     }
   },

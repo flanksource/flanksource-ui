@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
+import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
 import { getResourceForRun } from "../services";
 import ReRunPlaybookWithParamsButton from "../Submit/ReRunPlaybookWithParamsButton";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
@@ -20,9 +21,13 @@ import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
+  refetch?: () => void;
 };
 
-export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
+export default function PlaybookRunsActions({
+  data,
+  refetch = () => {}
+}: PlaybookRunActionsProps) {
   const [selectedAction, setSelectedAction] = useState<
     PlaybookRunAction | undefined
   >(() => {
@@ -118,14 +123,23 @@ export default function PlaybookRunsActions({ data }: PlaybookRunActionsProps) {
             />
           )}
         </div>
-        <div className="ml-auto flex h-auto flex-col">
-          <ReRunPlaybookWithParamsButton
-            playbook={data.playbooks!}
-            params={data.parameters}
-            checkId={data.check_id}
-            componentId={data.component_id}
-            configId={data.config_id}
-          />
+        <div className="ml-auto flex h-auto flex-col justify-center gap-2">
+          <div className="flex flex-row gap-2">
+            <ApprovePlaybookButton
+              playbookRunId={data.id}
+              playbookTitle={data.playbooks?.title ?? data.playbooks?.name!}
+              refetch={refetch}
+              status={data.status}
+            />
+
+            <ReRunPlaybookWithParamsButton
+              playbook={data.playbooks!}
+              params={data.parameters}
+              checkId={data.check_id}
+              componentId={data.component_id}
+              configId={data.config_id}
+            />
+          </div>
         </div>
       </div>
       <div className="flex h-full flex-col">

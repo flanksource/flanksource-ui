@@ -1,7 +1,7 @@
 import {
   PlaybookRunsStatusProps,
   PlaybookStatusIcon
-} from "../../../ui/Icons/PlaybookStatusIcon";
+} from "@flanksource-ui/ui/Icons/PlaybookStatusIcon";
 
 export function PlaybookStatusDescription({ status }: PlaybookRunsStatusProps) {
   return (

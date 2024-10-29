@@ -32,6 +32,11 @@ const options: StateOption[] = [
     icon: statusIconMap["pending"],
     label: "Pending",
     value: "pending"
+  },
+  {
+    icon: statusIconMap["pending_approval"],
+    label: "Pending Approval",
+    value: "pending_approval"
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
