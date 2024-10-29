@@ -92,13 +92,32 @@ export async function getPlaybookToRunForResource(
 }
 
 export async function getPlaybookRun(id: string) {
+  const select = [
+    "*",
+    `created_by(${AVATAR_INFO})`,
+    "playbooks(id,name,title,spec)",
+    "component:components(id,name,icon)",
+    "config:config_items(id,name,type,config_class)",
+    "check:checks(id,name,icon)",
+    `playbook_approvals(*, person_id(${AVATAR_INFO}), team_id(*))`
+  ].join(",");
+
   const res = await IncidentCommander.get<PlaybookRunWithActions[] | null>(
     // todo: use playbook names instead
-    `/playbook_runs?id=eq.${id}&select=*,created_by(${AVATAR_INFO}),playbooks(id,name,title,spec),component:components(id,name,icon),config:config_items(id,name,type,config_class),check:checks(id,name,icon)`
+    `/playbook_runs?id=eq.${id}&select=${select}`
   );
 
+  const actionsSelect = [
+    "id",
+    "name",
+    "status",
+    "start_time",
+    "end_time",
+    "scheduled_time"
+  ].join(",");
+
   const resActions = await IncidentCommander.get<PlaybookRunAction[] | null>(
-    `/playbook_run_actions?select=id,name,status,start_time,end_time,scheduled_time&order=start_time.asc&playbook_run_id=eq.${id}`
+    `/playbook_run_actions?select=${actionsSelect}&order=start_time.asc&playbook_run_id=eq.${id}`
   );
 
   const actions = resActions.data ?? [];

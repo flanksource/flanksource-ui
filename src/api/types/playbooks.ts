@@ -3,7 +3,7 @@ import { Agent, Avatar, CreatedAt } from "../traits";
 import { ConfigItem } from "./configs";
 import { HealthCheckSummary } from "./health";
 import { Topology } from "./topology";
-import { User } from "./users";
+import { Team, User } from "./users";
 
 export type PlaybookRunStatus =
   | "scheduled"
@@ -40,8 +40,17 @@ export type PlaybookRunAction = {
   error?: string;
 };
 
+export type PlaybookApproval = {
+  id: string;
+  run_id: string;
+  person_id?: User;
+  team_id?: Team;
+  created_at: string;
+};
+
 export interface PlaybookRunWithActions extends PlaybookRun {
   actions: PlaybookRunAction[];
+  playbook_approvals?: PlaybookApproval[];
 }
 
 export interface PlaybookRun extends CreatedAt, Avatar, Agent {

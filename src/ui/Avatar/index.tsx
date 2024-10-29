@@ -6,7 +6,7 @@ import { Tooltip } from "react-tooltip";
 import { User } from "../../api/types/users";
 
 interface IProps {
-  size?: "sm" | "lg" | "md";
+  size?: "sm" | "lg" | "md" | "xs";
   circular?: boolean;
   inline?: boolean;
   alt?: string;
@@ -14,6 +14,7 @@ interface IProps {
   imageProps?: React.ComponentPropsWithoutRef<"img">;
   containerProps?: React.ComponentPropsWithoutRef<"div">;
   unload?: boolean;
+  showName?: boolean;
 }
 
 export function Avatar({
@@ -24,9 +25,14 @@ export function Avatar({
   containerProps,
   imageProps,
   inline = false,
-  circular = true
+  circular = true,
+  showName = false
 }: IProps) {
   const [textSize, setTextSize] = useState(() => {
+    if (size === "xs") {
+      return "12px";
+    }
+
     if (size !== "sm") {
       return "16px";
     }
@@ -41,6 +47,8 @@ export function Avatar({
   });
   const sizeClass = useMemo(() => {
     switch (size) {
+      case "xs":
+        return "w-5 h-5 text-xs";
       case "sm":
         return "w-6 h-6 text-xs";
       case "lg":
@@ -123,6 +131,7 @@ export function Avatar({
           <BsFillPersonFill className="text-warmer-gray" />
         )}
       </div>
+      {showName && <span>{user?.name}</span>}
       <Tooltip id="user-name" />
     </>
   );
