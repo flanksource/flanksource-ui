@@ -235,7 +235,7 @@ export default function SilenceNotificationsList({
 
   const selectedNotificationSilenceId = searchParams.get("id") ?? undefined;
 
-  const { data: selectedNotificationSilence } = useQuery({
+  const { data: selectedNotificationSilence, refetch } = useQuery({
     queryKey: ["notification_silences", selectedNotificationSilenceId],
     enabled: !!selectedNotificationSilenceId,
     queryFn: async () =>
@@ -264,9 +264,11 @@ export default function SilenceNotificationsList({
             searchParams.delete("id");
             setSearchParams(searchParams);
             refresh();
+            refetch();
           }}
           onClose={() => {
             searchParams.delete("id");
+            refetch();
             setSearchParams(searchParams);
           }}
           data={selectedNotificationSilence}
