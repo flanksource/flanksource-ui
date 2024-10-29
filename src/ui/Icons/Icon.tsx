@@ -1,6 +1,7 @@
 import { IconType } from "@flanksource/icons";
 import { IconMap as Icons } from "@flanksource/icons/mi";
 import { isEmpty } from "lodash";
+import React from "react";
 import { useMemo } from "react";
 
 type IconMap = Record<string, string>;
@@ -14,10 +15,12 @@ export const aliases: IconMap = {
   "activemq-icon": "activemq",
   "aws-ec2-routetable": "aws-ec2-route-table",
   "aws-ecs-cluster": "aws-ecs",
+  "aws-ecs-service": "aws-ecs",
+  "aws-ecs-task": "aws-ecs",
   aks: "azure-aks",
   "aws-account": "aws",
   "aws-sns-topic": "aws-sns",
-  "aws-sqs-queue": "aws-queue",
+  "aws-sqs-queue": "aws-sqs",
   "aws-lambda-function": "aws-lambda",
   "aws-cloudformation-stack": "aws-cloudformation",
   "k8s-loggingbackend": "mission-control",
@@ -33,12 +36,28 @@ export const aliases: IconMap = {
   "aws-ec2-dhcpoptions": "settings",
   "aws-ec2-securitygroup": "aws-security-group",
   "ec2-securitygroup": "aws-security-group",
+  "aws-iam-user": "user",
+  "k8s-applicationset": "argo",
+  "aws-iam-role": "role",
+  "aws-iam-instanceprofile": "aws-iam-role",
+  "aws-ebs-volume": "aws-ebs",
+  "aws-eks-fargateprofile": "aws-fargate",
+  "aws-ecr-repository": "aws-ecr",
+  "k8s-ec2nodeclass": "aws-ec2",
+  "k8s-nodepool": "karpenter",
+  "k8s-rabbitmqcluster": "rabbitmq",
+  "k8s-scaledobject": "keda",
+  "k8s-nodeclaim": "karpenter",
+  "aws-ec2-vpc": "aws-vpc",
+  "aws-eks-cluster": "aws-eks",
+  "aws-route53-hostedzone": "aws-route53",
+  "aws-ec2-instance": "aws-ec2",
   "aws-ec2-subnet": "network",
   "k8s-volumeattachment": "k8s-vol",
   "aws-elasticloadbalancing-loadbalancer": "aws-elb",
   "aws-elasticloadbalancingv2-loadbalancer": "aws-alb",
   "aws-instance": "aws-ec2-instance",
-  "aws-region": "aws",
+  "aws-region": "datacenter",
   "aws-s3-bucket": "aws-s3",
   "aws-subnet": "network",
   "azure devops": "azure-devops",
@@ -139,7 +158,7 @@ export const aliases: IconMap = {
   // connection icons type aliases
   // deprecate: "trash",
   abort: "stop",
-  accept: "check",
+  accept: "checkmark",
   acknowledge: "check",
   activate: "toggle-on",
   add: "plus",
@@ -179,7 +198,6 @@ export const aliases: IconMap = {
   azuredevops: "azure-devops",
   backoff: "snail",
   backofflimitexceeded: "snail",
-  podcrashlooping: "error",
   bindgithubaccounttokentoapplication: "git",
   build: "console",
   buildsuggesters: "console",
@@ -388,7 +406,6 @@ export const aliases: IconMap = {
   mutatingwebhookconfiguration: "webhook",
   networkinterface: "network-card",
   new: "plus",
-  nodehasnodiskpressure: "check-database",
   nodehassufficientmemory: "ok",
   nodehassufficientpid: "ok",
   nodenotready: "broken-heart",
@@ -487,7 +504,6 @@ export const aliases: IconMap = {
   statefulset: "k8s-statefulset",
   stop: "stop",
   submit: "plus",
-  subscribe: "mail",
   succeeded: "check",
   Success: "check",
   success: "ok",
@@ -509,7 +525,6 @@ export const aliases: IconMap = {
   unmonitor: "stop",
   unpeer: "remove-link",
   unregister: "remove",
-  unsubscribe: "minus",
   untag: "remove-tag",
   update: "edit",
   updatecertificate: "certificate",
@@ -526,11 +541,40 @@ export const aliases: IconMap = {
   volumeresizefailed: "error-database",
   wait: "hourglass",
   waitingforapproval: "wait-for-approval",
-  wipe: "trash"
+  wipe: "trash",
+  healthcheckpassed: "heart",
+  healthunknown: "help",
+  upgradesucceeded: "ok",
+  healthcheckfailed: "broken-heart",
+  // initialized:
+  podcrashed: "dead",
+  podcrashlooping: "dead",
+  warning: "error",
+  // launched:
+  nodehasdiskpressure: "disk-error",
+  nodehasnodiskpressure: "ok",
+  nodehassufficientcpu: "ok",
+  subscribe: "add",
+  unsubscribe: "remove",
+  // nominated:
+  // exceededgraceperiod
+  dependencynotready: "hourglass",
+  "k8s-redisinstance": "redis",
+  oomkilled: "memory-error",
+  oomkilling: "memory-error",
+  updating: "hourglass"
 } as const;
 
 export var prefixes: IconMap = {
+  disruption: "stop",
+  garbage: "trash",
+  verified: "check",
+  cannot: "warning",
+  ready: "check",
+  notready: "broken-heart",
+  cilium: "cilium",
   pending: "hourglass",
+  invalid: "error",
   wait: "hourglass",
   abort: "stop",
   accept: "check",
@@ -658,7 +702,6 @@ export var prefixes: IconMap = {
   start: "start",
   stop: "stop",
   submit: "plus",
-  subscribe: "mail",
   succeeded: "check",
   Success: "check",
   suspend: "toggle-off",
@@ -676,7 +719,6 @@ export var prefixes: IconMap = {
   unmonitor: "stop",
   unpeer: "remove-link",
   unregister: "remove",
-  unsubscribe: "minus",
   untag: "remove-tag",
   update: "edit",
   upgrade: "upload",
@@ -805,7 +847,7 @@ export function findByName(name?: string): IconType | undefined {
   return icon;
 }
 
-const iconColorsClasssNamesMap = {
+const colorClassMap = {
   error: "fill-red-500",
   success: "fill-green-500",
   healthy: "fill-green-500",
@@ -829,6 +871,58 @@ export type IconProps = {
   iconWithColor?: string;
 };
 
+type IconCache = {
+  SVG?: IconType;
+  color?: string;
+};
+
+const cache: Record<string, IconCache> = {};
+
+function findIcon(
+  name: string,
+  secondary: string,
+  iconWithColor?: string
+): IconCache | undefined {
+  const key = `${name}-${secondary}-${iconWithColor}`;
+  if (cache[key]) {
+    return cache[key];
+  }
+  if (iconWithColor) {
+    const [icon, color] = iconWithColor.split(":");
+    if (icon) {
+      const iconType = findByName(icon);
+      if (iconType) {
+        let value = {
+          SVG: iconType,
+          color: colorClassMap[color as keyof typeof colorClassMap]
+        };
+        cache[key] = value;
+        return value;
+      }
+    }
+  }
+
+  if (!name && !secondary) {
+    return undefined;
+  }
+
+  if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
+    return undefined;
+  }
+
+  let iconType = findByName(name);
+  if (!iconType) {
+    iconType = findByName(secondary);
+  }
+
+  cache[key] = {
+    SVG: iconType
+  };
+
+  return {
+    SVG: iconType
+  };
+}
 export function Icon({
   name = "",
   secondary = "", // If icon by name is not found, try the secondary (fallthrough) name
@@ -838,59 +932,22 @@ export function Icon({
   iconWithColor,
   ...props
 }: IconProps) {
-  const IconSVG = useMemo(() => {
-    if (iconWithColor) {
-      const [icon] = iconWithColor.split(":");
-      if (icon) {
-        const iconType = findByName(icon);
-        if (iconType) {
-          return iconType;
-        }
-      }
-    }
-
-    if (!name && !secondary) {
-      return undefined;
-    }
-
-    if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
-      return undefined;
-    }
-
-    const iconType = findByName(name!);
-    if (iconType) {
-      return iconType;
-    }
-    const secondaryIcon = findByName(secondary);
-    return secondaryIcon;
-  }, [iconWithColor, name, secondary]);
-
-  const colorClassName = useMemo(() => {
-    if (iconWithColor) {
-      const [_, color] = iconWithColor.split(":");
-      if (color) {
-        return iconColorsClasssNamesMap[
-          color as keyof typeof iconColorsClasssNamesMap
-        ];
-      }
-    }
-    return "text-gray-700";
-  }, [iconWithColor]);
-
   if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={name} className={className} alt={alt} {...props} />;
   }
 
-  if (!IconSVG) {
+  const Icon = findIcon(name, secondary, iconWithColor);
+
+  if (!Icon || !Icon.SVG) {
     return null;
   }
 
   return (
     <>
       {prefix}{" "}
-      <IconSVG
-        className={`inline-block fill-current object-center ${className} ${colorClassName}`}
+      <Icon.SVG
+        className={`inline-block fill-current object-center ${className} ${Icon.color ?? ""}`}
         {...props}
       />
     </>
