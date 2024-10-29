@@ -169,7 +169,7 @@ export default function PlaybookRunsActions({
               ))}
             </div>
           </div>
-          <div className="flex h-full flex-1 flex-col overflow-hidden bg-gray-700 px-4 py-2 font-mono text-white">
+          <div className="flex h-full flex-1 flex-col overflow-hidden bg-black px-4 py-2 font-mono text-white">
             {selectedAction &&
               (selectedAction.id === "initialization" ? (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">

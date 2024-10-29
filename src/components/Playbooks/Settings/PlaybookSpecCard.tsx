@@ -12,6 +12,7 @@ import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
 import PlaybookCardMenu from "./PlaybookCardMenu";
 import PlaybookSpecsForm from "./PlaybookSpecsForm";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 
 type PlaybookSpecCardProps = {
   playbook: PlaybookNames;
@@ -54,11 +55,12 @@ export default function PlaybookSpecCard({
           <h3 className="flex-1 text-lg font-medium leading-6 text-gray-900">
             {/* For now, default to name, when title isn't there */}
             {playbook.title || playbook.name}
+            <Badge text={playbook.namespace} />
           </h3>
           <AuthorizationAccessCheck
             resource={tables.playbooks}
             action="write"
-            key="add-connection"
+            key="edit-playbook"
           >
             <PlaybookCardMenu
               onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}

@@ -100,7 +100,7 @@ export default function PlaybookResultsDropdownButton({
             ) : (
               <MdOutlineFileDownload className="inline" size={16} />
             )}
-            <span>Download logs</span>
+            <span className="pl-1">Download Logs</span>
           </MenuItem>
         </MenuItems>
       </Transition>

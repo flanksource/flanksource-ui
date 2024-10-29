@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { AiFillPlusCircle } from "react-icons/ai/";
+import { AiFillPlusCircle } from "react-icons/ai";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getIncidentsSummary } from "../../api/services/incident";
 import FilterIncidents from "../../components/Incidents/FilterIncidents/FilterIncidents";

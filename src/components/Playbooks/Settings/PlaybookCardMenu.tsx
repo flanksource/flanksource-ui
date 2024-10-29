@@ -7,6 +7,7 @@ import { IconButton } from "../../../ui/Buttons/IconButton";
 type PlaybookCardMenuDropdownProps = {
   onDeletePlaybook?: () => void;
   onEditPlaybook?: () => void;
+  onHistory?: () => void;
 };
 
 export default function PlaybookCardMenuDropdown({
