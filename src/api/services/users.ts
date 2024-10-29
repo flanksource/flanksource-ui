@@ -9,6 +9,7 @@ import {
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
 import { NewUser, PeopleRoles, RegisteredUser, User } from "../types/users";
+import { Permission } from "@flanksource-ui/context";
 
 export const getPerson = (id: string) =>
   resolvePostGrestRequestWithPagination<User[]>(
@@ -120,6 +121,8 @@ export type WhoamiResponse = {
   payload: {
     database: string;
     hostname: string;
+    roles: string[];
+    permissions: Permission[];
     user: User;
   };
 };

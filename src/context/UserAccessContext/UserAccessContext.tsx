@@ -17,12 +17,12 @@ export const Roles = {
 export const casbinAuthorizer = new Authorizer("manual");
 
 export type UserAccessState = {
-  refresh: () => Promise<unknown>;
+  refresh?: () => Promise<unknown>;
   isAdmin: boolean;
   isViewer: boolean;
   roles: string[];
-  isLoading: boolean;
-  isLoaded: boolean;
+  isLoading?: boolean;
+  isLoaded?: boolean;
   hasResourceAccess: (
     resourceName: string,
     action: ActionType
@@ -34,12 +34,9 @@ export type UserAccessState = {
 };
 
 const initialState: UserAccessState = {
-  refresh: () => Promise.resolve(),
   isAdmin: false,
-  isLoaded: false,
   isViewer: false,
   roles: [],
-  isLoading: false,
   hasResourceAccess: (resourceName, action) => Promise.resolve(false),
   hasAnyResourceAccess: (resourceNames, action) => Promise.resolve(false)
 };
@@ -51,11 +48,13 @@ export const UserAccessStateContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { user } = useUser();
+  const { user, roles, permissions } = useUser();
+  const _roles = roles || [];
 
-  const defineRulesFor = useCallback((roles: string[]) => {
+  const defineRulesFor = useCallback((roles?: string[]) => {
     const builtPerms: Record<string, any> = {};
-    roles.forEach((role) => {
+
+    _roles.forEach((role) => {
       const permissions = permDefs[role as keyof typeof permDefs] ?? {};
       Object.entries(permissions).forEach(([key, value]) => {
         builtPerms[key] = [...(builtPerms[key] || []), ...value];
@@ -64,20 +63,9 @@ export const UserAccessStateContextProvider = ({
     casbinAuthorizer.setPermission(builtPerms);
   }, []);
 
-  const { data, refetch, isLoading } = usePeopleRoles(user?.id);
+  const isAdmin = _roles.includes("admin");
 
-  const { roles, isLoaded } = data || {
-    roles: [],
-    isLoaded: false
-  };
-
-  const isAdmin = useMemo(() => {
-    return roles?.includes("admin");
-  }, [roles]);
-
-  const isViewer = useMemo(() => {
-    return roles?.includes("viewer");
-  }, [roles]);
+  const isViewer = _roles.includes("viewer");
 
   const hasResourceAccess = (resourceName: string, action: ActionType) => {
     defineRulesFor(roles);
@@ -95,14 +83,11 @@ export const UserAccessStateContextProvider = ({
   return (
     <UserAccessStateContext.Provider
       value={{
-        isLoading,
-        isLoaded,
-        refresh: async () => refetch(),
         hasResourceAccess,
         hasAnyResourceAccess,
         isViewer,
         isAdmin,
-        roles
+        roles: _roles
       }}
     >
       {children}

@@ -9,8 +9,8 @@ export function usePeopleRoles(userId?: string) {
       const roles = await fetchPeopleRoles([userId!]);
       return roles.data || [];
     },
-    cacheTime: 0,
-    staleTime: 0,
+    cacheTime: 600 * 1000,
+    staleTime: 3600 * 1000,
     enabled: !!userId,
     select: (data) => {
       const roles = data.find((item) => item.id === userId)?.roles || [];
