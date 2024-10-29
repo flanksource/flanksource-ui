@@ -41,7 +41,12 @@ export default function KratosAuthContextProvider({ children }: Props) {
 
   return (
     <AuthContext.Provider
-      value={{ user: payload.user, backendUrl: backendURL }}
+      value={{
+        user: payload.user,
+        backendUrl: backendURL,
+        roles: payload.roles,
+        permissions: payload.permissions
+      }}
     >
       {children}
     </AuthContext.Provider>
