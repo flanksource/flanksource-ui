@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { AuthContext } from "../../../../context";
+import { AuthContext, FakeUser, Roles } from "../../../../context";
 import FluxInstallAgent from "../FluxInstallAgent";
 
 const testUser = {
@@ -31,12 +31,7 @@ describe("InstallAgentModal", () => {
 
   it("renders the Helm repository installation command", async () => {
     render(
-      <AuthContext.Provider
-        value={{
-          user: testUser,
-          backendUrl: "https://testurl.com"
-        }}
-      >
+      <AuthContext.Provider value={FakeUser([Roles.admin])}>
         <FluxInstallAgent
           agentFormValues={{
             name: "testname",
@@ -114,12 +109,7 @@ describe("InstallAgentModal", () => {
 
   it("renders the Helm repository installation command with kube command", async () => {
     render(
-      <AuthContext.Provider
-        value={{
-          user: testUser,
-          backendUrl: "https://testurl.com"
-        }}
-      >
+      <AuthContext.Provider value={FakeUser([Roles.admin])}>
         <FluxInstallAgent
           generatedAgent={generatedAgent}
           agentFormValues={{

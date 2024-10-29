@@ -1,4 +1,4 @@
-import { AuthContext } from "@flanksource-ui/context";
+import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -48,7 +48,8 @@ const mockPlaybook: PlaybookSpec = {
     name: "Admin ",
     email: "",
     avatar: undefined
-  }
+  },
+  title: "Test Playbook"
 };
 
 const client = new QueryClient();
@@ -92,15 +93,7 @@ describe("PlaybookSpecCard", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter>
-          <AuthContext.Provider
-            value={{
-              user: {
-                id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-                email: "admin@local",
-                name: "John Doe"
-              }
-            }}
-          >
+          <AuthContext.Provider value={FakeUser([Roles.admin])}>
             {" "}
             <UserAccessStateContextProvider>
               <PlaybookSpecCard playbook={mockPlaybook} />
@@ -130,15 +123,7 @@ describe("PlaybookSpecCard", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={["/playbooks/runs"]}>
-          <AuthContext.Provider
-            value={{
-              user: {
-                id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-                email: "admin@local",
-                name: "John Doe"
-              }
-            }}
-          >
+          <AuthContext.Provider value={FakeUser([Roles.admin])}>
             <UserAccessStateContextProvider>
               <PlaybookSpecCard playbook={mockPlaybook} />
             </UserAccessStateContextProvider>
@@ -153,15 +138,7 @@ describe("PlaybookSpecCard", () => {
   it("opens the SubmitPlaybookRunForm when the Run button is clicked", async () => {
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <MemoryRouter>
               <PlaybookSpecCard playbook={mockPlaybook} />

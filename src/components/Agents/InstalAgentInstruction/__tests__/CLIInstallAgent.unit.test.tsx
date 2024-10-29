@@ -1,12 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { AuthContext } from "../../../../context";
+import { AuthContext, FakeUser, Roles } from "../../../../context";
 import InstallAgentModal from "../CLIInstallAgent";
-
-const testUser = {
-  id: "testid",
-  name: "testuser",
-  email: "testemail"
-};
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
@@ -23,12 +17,7 @@ describe("InstallAgentModal", () => {
 
   it("renders the Helm repository installation command", () => {
     render(
-      <AuthContext.Provider
-        value={{
-          user: testUser,
-          backendUrl: "https://testurl.com"
-        }}
-      >
+      <AuthContext.Provider value={FakeUser([Roles.admin])}>
         <InstallAgentModal generatedAgent={generatedAgent} />
       </AuthContext.Provider>
     );
@@ -58,12 +47,7 @@ describe("InstallAgentModal", () => {
 
   it("renders the Helm repository installation command with kube command", () => {
     render(
-      <AuthContext.Provider
-        value={{
-          user: testUser,
-          backendUrl: "https://testurl.com"
-        }}
-      >
+      <AuthContext.Provider value={FakeUser([Roles.admin])}>
         <InstallAgentModal
           generatedAgent={generatedAgent}
           agentFormValues={{

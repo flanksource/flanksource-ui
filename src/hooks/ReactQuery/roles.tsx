@@ -1,5 +1,5 @@
 import { fetchPeopleRoles } from "@flanksource-ui/api/services/users";
-import { Roles } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { Roles } from "@flanksource-ui/context";
 import { useQuery } from "@tanstack/react-query";
 
 export function usePeopleRoles(userId?: string) {

@@ -1,10 +1,11 @@
 import { RegisteredUser } from "@flanksource-ui/api/types/users";
-import { Roles } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import {} from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
+import { Roles } from "@flanksource-ui/context";
 
 export type UserFormValue = {
   id?: string;
@@ -22,8 +23,6 @@ export type InviteUserFormProps = {
   user?: RegisteredUser;
   isSubmitting?: boolean;
 };
-
-const allRoles = Object.keys(Roles);
 
 export default function UserForm({
   onSubmit,
@@ -146,11 +145,11 @@ export default function UserForm({
                 "inline-block w-full rounded-md border-gray-300 shadow-sm"
               )}
               {...register("role", {
-                required: "Please select any role"
+                required: "Please select a role"
               })}
             >
-              <option value="">select role</option>
-              {allRoles.map((role) => {
+              <option value="">Select role</option>
+              {Object.keys(Roles).map((role) => {
                 return <option key={role}>{role}</option>;
               })}
             </select>

@@ -1,8 +1,6 @@
 import { IconType } from "@flanksource/icons";
 import { IconMap as Icons } from "@flanksource/icons/mi";
 import { isEmpty } from "lodash";
-import React from "react";
-import { useMemo } from "react";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {

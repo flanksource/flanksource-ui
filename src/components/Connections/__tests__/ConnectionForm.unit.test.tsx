@@ -1,4 +1,4 @@
-import { AuthContext } from "@flanksource-ui/context";
+import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -64,15 +64,7 @@ describe("ConnectionForm", () => {
     const onConnectionSubmit = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -114,15 +106,7 @@ describe("ConnectionForm", () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -150,15 +134,7 @@ describe("ConnectionForm", () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -180,15 +156,7 @@ describe("ConnectionForm", () => {
     const handleBack = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={{
-            user: {
-              id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-              email: "admin@local",
-              name: "John Doe"
-            }
-          }}
-        >
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
