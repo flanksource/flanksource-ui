@@ -1,4 +1,3 @@
-import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
 import { Age } from "@flanksource-ui/ui/Age";
@@ -7,10 +6,8 @@ import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { CellContext } from "@tanstack/react-table";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import MRTConfigListTagsCell from "../ConfigList/Cells/MRTConfigListTagsCell";
-import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
 
 export const paramsToReset = {
   configChanges: ["pageIndex", "pageSize"]
@@ -190,53 +187,27 @@ type ConfigChangeTableProps = {
   isLoading?: boolean;
   totalRecords: number;
   numberOfPages: number;
+  onRowClick?: (row: ConfigChange) => void;
 };
 
 export function ConfigChangeTable({
   data,
   isLoading,
   totalRecords,
-  numberOfPages
+  numberOfPages,
+  onRowClick = () => {}
 }: ConfigChangeTableProps) {
-  const [selectedConfigChange, setSelectedConfigChange] =
-    useState<ConfigChange>();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const { data: configChange, isLoading: changeLoading } =
-    useGetConfigChangesById(
-      selectedConfigChange?.id!,
-      selectedConfigChange?.config_id!,
-      {
-        enabled: !!selectedConfigChange
-      }
-    );
-
   return (
-    <>
-      <MRTDataTable
-        columns={configChangesColumn}
-        data={data}
-        isLoading={isLoading}
-        enableServerSideSorting
-        totalRowCount={totalRecords}
-        manualPageCount={numberOfPages}
-        enableServerSidePagination
-        disableHiding
-        onRowClick={(row) => {
-          setSelectedConfigChange(row);
-          setModalIsOpen(true);
-        }}
-      />
-      {configChange && (
-        <ConfigDetailChangeModal
-          isLoading={changeLoading}
-          open={modalIsOpen}
-          setOpen={(open) => {
-            setModalIsOpen(open);
-          }}
-          changeDetails={configChange}
-        />
-      )}
-    </>
+    <MRTDataTable
+      columns={configChangesColumn}
+      data={data}
+      isLoading={isLoading}
+      enableServerSideSorting
+      totalRowCount={totalRecords}
+      manualPageCount={numberOfPages}
+      enableServerSidePagination
+      disableHiding
+      onRowClick={onRowClick}
+    />
   );
 }

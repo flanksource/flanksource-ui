@@ -8,6 +8,7 @@ import { FilterBadge } from "../../ConfigChangesFilters/ConfigChangesFilters";
 import { ConfigRelatedChangesToggles } from "../../ConfigChangesFilters/ConfigRelatedChangesToggles";
 import { ConfigTagsDropdown } from "../../ConfigChangesFilters/ConfigTagsDropdown";
 import ConfigTypesTristateDropdown from "../../ConfigChangesFilters/ConfigTypesTristateDropdown";
+import ConfigChangesViewToggle from "../../ConfigChangesViewToggle";
 import { ConfigChangesToggledDeletedItems } from "./ConfigChangesToggledDeletedItems";
 
 type ConfigChangeFiltersProps = {
@@ -22,12 +23,17 @@ export function ConfigRelatedChangesFilters({
   const arbitraryFilters = useConfigChangesArbitraryFilters();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex w-full flex-col gap-2">
       <FormikFilterForm
         paramsToReset={paramsToReset}
         filterFields={["configTypes", "changeType", "severity", "tags"]}
       >
-        <div className={clsx("flex flex-wrap items-center gap-2", className)}>
+        <div
+          className={clsx(
+            "flex w-full flex-wrap items-center gap-2",
+            className
+          )}
+        >
           <ConfigTypesTristateDropdown />
           <ChangesTypesDropdown />
           <ConfigChangeSeverity />
@@ -35,6 +41,9 @@ export function ConfigRelatedChangesFilters({
           <ConfigRelatedChangesToggles />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
           <ConfigChangesToggledDeletedItems />
+          <div className="ml-auto flex flex-row gap-2">
+            <ConfigChangesViewToggle />
+          </div>
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">
