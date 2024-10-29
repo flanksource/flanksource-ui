@@ -104,6 +104,7 @@ export type PlaybookSpec = {
 export type PlaybookNames = {
   id: string;
   name: string;
+  namespace?: string;
   title: string;
   icon?: string;
   category?: string;
@@ -122,6 +123,8 @@ export type PlaybookParamCommonFields = {
 type PlaybookParamListOptions = PlaybookParamCommonFields & {
   type: "list";
   properties?: {
+    className?: string;
+    colSpan?: number;
     // this is a list of options, e.g. a dropdown
     options: {
       label: string;
@@ -130,9 +133,22 @@ type PlaybookParamListOptions = PlaybookParamCommonFields & {
   };
 };
 
+type ParamProperties = {
+  className?: string;
+  colSpan?: number;
+};
+
 type PlaybookParamTextOptions = PlaybookParamCommonFields & {
-  type: "text";
-  properties?: {
+  type:
+    | "text"
+    | "password"
+    | "email"
+    | "url"
+    | "number"
+    | "bytes"
+    | "millicores"
+    | "dns1123";
+  properties?: ParamProperties & {
     // for multiline text, we can use this, to make it a textarea, otherwise
     // it's a single line input
     multiline?: boolean;
@@ -155,7 +171,7 @@ type PlaybookParamTextOptions = PlaybookParamCommonFields & {
 
 export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
   type: "code";
-  properties?: {
+  properties?: ParamProperties & {
     // We can have a single code type, then we can use this to determine the language
     // e.g. yaml, json, toml, etc.
     language?: string;
@@ -166,19 +182,19 @@ export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
 
 export type PlaybookParamCheckbox = PlaybookParamCommonFields & {
   type: "checkbox";
-  // no properties, just a checkbox
+  properties?: ParamProperties;
 };
 
 export type PlaybookParamComponentConfigCheck = PlaybookParamCommonFields & {
   type: "component" | "config" | "check";
-  properties?: {
+  properties?: ParamProperties & {
     filter: PlaybookResourceSelector[];
   };
 };
 
 export type PlaybookParamPeople = PlaybookParamCommonFields & {
   type: "people";
-  properties?: {
+  properties?: ParamProperties & {
     // filter by role
     role: string;
   };
@@ -186,9 +202,7 @@ export type PlaybookParamPeople = PlaybookParamCommonFields & {
 
 export type PlaybookParamTeam = PlaybookParamCommonFields & {
   type: "team";
-  properties?: {
-    // think about this one
-  };
+  properties?: ParamProperties;
 };
 
 export type PlaybookParam =
