@@ -630,7 +630,7 @@ export type ConfigChangesTypeItem = {
 
 export const getConfigsChangesTypesFilter = async () => {
   const res = await IncidentCommander.get<ConfigChangesTypeItem[] | null>(
-    `/change_types`
+    `/change_types?change_type=not.eq.`
   );
   return res.data;
 };
