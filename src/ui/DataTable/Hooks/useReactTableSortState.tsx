@@ -11,7 +11,8 @@ import { useSearchParams } from "react-router-dom";
  */
 export default function useReactTableSortState(
   sortByKey = "sortBy",
-  sortOrderKey = "sortOrder"
+  sortOrderKey = "sortOrder",
+  defaultSortBy?: string
 ): [SortingState, (newSortBy: Updater<SortingState>) => void] {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -20,6 +21,15 @@ export default function useReactTableSortState(
 
   const tableSortByState = useMemo(() => {
     if (!sortBy || !sortOrder) {
+      if (defaultSortBy) {
+        return [
+          {
+            id: defaultSortBy,
+            desc: false
+          }
+        ] as SortingState;
+      }
+
       return [];
     }
     return [
@@ -28,7 +38,7 @@ export default function useReactTableSortState(
         desc: sortOrder === "desc"
       }
     ] satisfies SortingState;
-  }, [sortBy, sortOrder]);
+  }, [defaultSortBy, sortBy, sortOrder]);
 
   const updateSortByFn = useCallback(
     (newSortBy: Updater<SortingState>) => {

@@ -1,19 +1,19 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { CellContext } from "@tanstack/react-table";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { BiLabel } from "react-icons/bi";
 
 export function ConfigSummaryVirtualColumnCell({
-  getValue,
   row,
   groupByTags,
-  columnId
-}: CellContext<ConfigSummary, any> & {
+  columnId,
+  cell
+}: MRTCellProps<ConfigSummary> & {
   groupByTags: string[];
   columnId: string;
 }) {
   const isTag = groupByTags.includes(columnId);
-  const value = getValue();
+  const value = cell.getValue<any>();
 
   return (
     <div

@@ -89,7 +89,6 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
   {
     header: "Status",
     accessorKey: "health",
-    minSize: 200,
     enableSorting: true,
     enableColumnActions: false,
     Cell: ({ cell, row }) => {
@@ -132,7 +131,6 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
 
       return <ChangeCountIcon count={value} />;
     },
-    size: 200,
     meta: {
       cellClassName: "overflow-hidden"
     },
@@ -148,8 +146,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
         enableFilterByTag
         filterByTagParamKey="labels"
       />
-    ),
-    minSize: 100
+    )
   },
   {
     header: "Analysis",
@@ -248,16 +245,16 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
     accessorKey: "deleted_at",
     enableColumnActions: false,
     Cell: MRTConfigListDateCell,
-    size: 90,
-    enableHiding: true
+    enableHiding: true,
+    maxSize: 100
   },
   {
     header: "Changed",
     enableColumnActions: false,
     accessorFn: changeColumnAccessorFN,
     id: "changed",
+    maxSize: 100
     // sortingFn: changeColumnSortingFN,
-    size: 180
   }
 ];
 

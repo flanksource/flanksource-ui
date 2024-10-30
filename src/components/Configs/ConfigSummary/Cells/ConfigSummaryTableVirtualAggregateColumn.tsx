@@ -1,15 +1,17 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { CellContext } from "@tanstack/react-table";
-import { IoChevronDown, IoChevronForward } from "react-icons/io5";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 
 export function ConfigSummaryTableVirtualAggregateColumn({
   row
-}: CellContext<ConfigSummary, any>) {
+}: Pick<MRTCellProps<ConfigSummary>, "row">) {
   if (row.getCanExpand()) {
     const groupingValue = row.getGroupingValue(row.groupingColumnId!) as string;
-    const count = row.subRows.reduce((acc, row) => acc + row.original.count, 0);
+    const count = row.subRows?.reduce(
+      (acc, row) => acc + row.original.count,
+      0
+    );
     return (
       <div
         className="flex flex-row items-center gap-1"
@@ -17,7 +19,6 @@ export function ConfigSummaryTableVirtualAggregateColumn({
           marginLeft: row.depth * 20
         }}
       >
-        {row.getIsExpanded() ? <IoChevronDown /> : <IoChevronForward />}
         {row.groupingColumnId === "type" ||
         row.groupingColumnId === "config_class" ? (
           <ConfigsTypeIcon

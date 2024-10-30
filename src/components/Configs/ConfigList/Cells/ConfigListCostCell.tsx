@@ -1,3 +1,4 @@
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { CellContext, Row } from "@tanstack/react-table";
 import { MRT_Row } from "mantine-react-table";
 import {
@@ -9,7 +10,7 @@ import ConfigCostValue from "../../ConfigCosts/ConfigCostValue";
 
 export default function ConfigListCostCell({
   row
-}: CellContext<ConfigItem, any> | CellContext<ConfigSummary, any>) {
+}: MRTCellProps<ConfigItem> | MRTCellProps<ConfigSummary>) {
   return <ConfigCostValue config={row.original} popover={false} />;
 }
 /**

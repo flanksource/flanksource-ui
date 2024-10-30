@@ -37,6 +37,8 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   enableGrouping?: boolean;
   onGroupingChange?: OnChangeFn<GroupingState>;
   disableHiding?: boolean;
+  manualGrouping?: boolean;
+  defaultSortBy?: string;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -55,10 +57,16 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   groupBy = [],
   expandAllRows = false,
   onGroupingChange = () => {},
-  disableHiding = false
+  disableHiding = false,
+  manualGrouping = false,
+  defaultSortBy
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
-  const [sortState, setSortState] = useReactTableSortState();
+  const [sortState, setSortState] = useReactTableSortState(
+    undefined,
+    undefined,
+    defaultSortBy
+  );
 
   const table = useMantineReactTable({
     data: data,
@@ -80,6 +88,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableSorting: true,
     enableColumnOrdering: false,
     enableColumnDragging: false,
+    manualGrouping,
     manualSorting: enableServerSideSorting,
     manualPagination: enableServerSidePagination,
     pageCount: manualPageCount,
@@ -129,7 +138,8 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
       }, {})
     },
     initialState: {
-      expanded: expandAllRows ? true : undefined
+      expanded: expandAllRows ? true : undefined,
+      sorting: sortState
     },
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
@@ -140,8 +150,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     mantineExpandAllButtonProps: {
       size: 20
     },
-    renderDetailPanel,
-    displayColumnDefOptions: { "mrt-row-expand": { size: 5 } } //change width of actions column to 300px
+    renderDetailPanel
   });
 
   return <MantineReactTable table={table} />;

@@ -1,12 +1,14 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { DataTable } from "@flanksource-ui/ui/DataTable";
 import ChangeCount, { CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
-import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { CellContext } from "@tanstack/react-table";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
-import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
+import { MRTConfigListDateCell } from "../ConfigList/Cells/ConfigListDateCell";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
 import {
@@ -33,11 +35,8 @@ export function getConfigStatusColor(health?: ConfigSummary["health"]) {
   return "bg-gray-500/40";
 }
 
-function ConfigSummaryTypeCell({
-  getValue,
-  row
-}: CellContext<ConfigSummary, unknown>) {
-  const configType = getValue<ConfigSummary["type"]>();
+function ConfigSummaryTypeCell({ cell, row }: MRTCellProps<ConfigSummary>) {
+  const configType = cell.getValue<ConfigSummary["type"]>();
 
   const configCount = row.original.count;
 
@@ -52,12 +51,7 @@ function ConfigSummaryTypeCell({
   }, [configType]);
 
   return (
-    <span
-      className="flex flex-nowrap gap-1"
-      style={{
-        marginLeft: row.depth * 20
-      }}
-    >
+    <span className="flex flex-nowrap gap-1">
       <ConfigSummaryFavoriteButton configSummary={row.original}>
         <ConfigsTypeIcon config={{ type: configType }}>
           <div className="flex flex-row items-center gap-1">
@@ -71,9 +65,9 @@ function ConfigSummaryTypeCell({
 }
 
 export function ConfigSummaryAnalysisCell({
-  getValue
-}: Pick<CellContext<Pick<ConfigSummary, "analysis">, any>, "getValue">) {
-  const value = getValue<ConfigSummary["analysis"]>();
+  cell
+}: Pick<MRTCellProps<ConfigSummary>, "cell">) {
+  const value = cell.getValue<ConfigSummary["analysis"]>();
   if (!value) {
     return null;
   }
@@ -142,69 +136,80 @@ function ConfigSummaryAnalysisAggregateCell({
   );
 }
 
-const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
+const configSummaryColumns: MRT_ColumnDef<ConfigSummary>[] = [
   {
     header: "changes",
     accessorKey: "changes",
-    aggregatedCell: ({ getValue }) => {
-      const value = getValue();
+    enableGrouping: false,
+    enableHiding: false,
+    AggregatedCell: ({ cell }) => {
+      const value = cell.getValue<ConfigSummary["changes"]>();
       if (!value) {
         return null;
       }
       return <ChangeCount count={value} />;
     },
-    cell: ({ getValue }: CellContext<ConfigSummary, any>) => {
-      const value = getValue();
+    Cell: ({ cell }) => {
+      const value = cell.getValue<ConfigSummary["changes"]>();
       if (!value) {
         return null;
       }
       return <ChangeCount count={value} />;
-    },
-    size: 40
+    }
+    // size: 100
   },
   {
     header: "Health",
     accessorKey: "health",
-    minSize: 50,
-    maxSize: 100,
-    cell: ConfigSummaryHealthCell,
-    aggregatedCell: ConfigSummaryHealthAggregateCell
+    enableGrouping: false,
+    enableHiding: false,
+    // minSize: 50,
+    // maxSize: 100,
+    Cell: ConfigSummaryHealthCell,
+    AggregatedCell: ConfigSummaryHealthAggregateCell
   },
   {
     header: "analysis",
     accessorKey: "analysis",
-    cell: ConfigSummaryAnalysisCell,
-    aggregatedCell: (props) => (
+    enableGrouping: false,
+    enableHiding: false,
+    Cell: ConfigSummaryAnalysisCell,
+    AggregatedCell: (props) => (
       // @ts-ignore for some reason the cell type is not being inferred correctly
       <ConfigSummaryAnalysisAggregateCell {...props} />
-    ),
-    minSize: 30,
-    maxSize: 100
+    )
+    // minSize: 30,
+    // maxSize: 100
   },
   {
-    header: () => <div title="Cost">Cost (30d)</div>,
+    header: "Cost (30d)",
     accessorKey: "cost_total_30d",
-    cell: ConfigListCostCell,
-    maxSize: 60
+    enableGrouping: false,
+    enableHiding: false,
+    Cell: ConfigListCostCell
+    // maxSize: 60
   },
   {
     header: "Created",
     accessorKey: "created_at",
-    cell: ConfigListDateCell<ConfigSummary>,
-    aggregatedCell: "",
-    maxSize: 40
+    enableGrouping: false,
+    enableHiding: false,
+    Cell: MRTConfigListDateCell<ConfigSummary>
+    // maxSize: 40
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
-    cell: ConfigListDateCell<ConfigSummary>,
-    aggregatedCell: "",
-    maxSize: 40
+    enableGrouping: false,
+    enableHiding: false,
+    Cell: MRTConfigListDateCell<ConfigSummary>
+    // maxSize: 40
   },
   {
     header: "Is Favorite",
     accessorKey: "isFavorite",
-    enableHiding: true
+    enableHiding: true,
+    id: "favorite"
   }
 ];
 
@@ -233,10 +238,10 @@ export default function ConfigSummaryList({
   }, [params]);
 
   const handleRowClick = useCallback(
-    (row: Row<ConfigSummary>) => {
+    (configSummary: ConfigSummary) => {
       params.delete("labels");
       if (groupBy.includes("type")) {
-        const { type } = row.original;
+        const { type } = configSummary;
         params.set("configType", type);
       }
       const tags = groupBy
@@ -247,12 +252,12 @@ export default function ConfigSummaryList({
             column !== "status" &&
             column !== "config_class"
         )
-        .filter((column) => row.original[column as keyof ConfigSummary]);
+        .filter((column) => configSummary[column as keyof ConfigSummary]);
       if (tags.length > 0) {
         const tagsParam = tags
           .map((column) => {
             return `${column}__:__${
-              row.original[column as keyof ConfigSummary]
+              configSummary[column as keyof ConfigSummary]
             }`;
           })
           .join(",");
@@ -269,10 +274,11 @@ export default function ConfigSummaryList({
       return {
         header: column.toLocaleUpperCase(),
         accessorKey: column,
-        maxSize: 250,
-        minSize: 100,
-        aggregatedCell: ConfigSummaryTableVirtualAggregateColumn,
-        cell:
+        enableGrouping: false,
+        enableHiding: false,
+        size: 400,
+        AggregatedCell: ConfigSummaryTableVirtualAggregateColumn,
+        Cell:
           column === "type"
             ? ConfigSummaryTypeCell
             : (props) => (
@@ -282,7 +288,7 @@ export default function ConfigSummaryList({
                   columnId={column}
                 />
               )
-      } satisfies ColumnDef<ConfigSummary>;
+      } satisfies MRT_ColumnDef<ConfigSummary>;
     });
     return [...newColumns, ...configSummaryColumns];
   }, [groupBy, groupByTags]);
@@ -291,31 +297,24 @@ export default function ConfigSummaryList({
   // isFavorite column
   const hiddenColumns = useMemo(() => {
     const list = groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : [];
-    return [...list, "isFavorite"];
+    return [...list, "favorite"];
   }, [groupBy]);
 
   return (
-    <DataTable
-      stickyHead
+    <MRTDataTable
       columns={virtualColumns}
       data={data}
       // when grouping, remove the last column from the groupBy
       groupBy={
         groupBy.length > 1 ? groupBy.slice(0, groupBy.length - 1) : undefined
       }
-      tableSortByState={[
-        {
-          desc: false,
-          id: "isFavorite"
-        }
-      ]}
       hiddenColumns={hiddenColumns}
-      handleRowClick={handleRowClick}
-      tableStyle={{ borderSpacing: "0" }}
+      onRowClick={handleRowClick}
       isLoading={isLoading}
-      className="max-w-full table-auto table-fixed overflow-x-auto"
-      savePreferences={false}
       expandAllRows={groupBy[0] === "config_class"}
+      enableGrouping
+      disablePagination
+      defaultSortBy="favorite"
     />
   );
 }
