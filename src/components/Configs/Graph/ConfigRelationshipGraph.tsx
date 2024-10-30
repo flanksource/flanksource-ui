@@ -1,9 +1,17 @@
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
-import { RelationshipGraph } from "@flanksource-ui/ui/Graphs/RelationshipGraph";
+import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { Edge, Node } from "reactflow";
 import { useConfigGraphDirectionToggleValue } from "../ConfigsListFilters/ConfigGraphDirectionToggle";
 import { prepareConfigsForGraph } from "./formatConfigsForGraph";
+
+const RelationshipGraph = dynamic(
+  () =>
+    import("@flanksource-ui/ui/Graphs/RelationshipGraph").then(
+      (mod) => mod.RelationshipGraph
+    ),
+  { ssr: false }
+);
 
 export type ConfigGraphNodes = {
   nodeId: string;
