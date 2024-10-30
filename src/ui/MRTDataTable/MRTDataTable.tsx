@@ -16,7 +16,7 @@ import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
 type MRTDataTableProps<T extends Record<string, any> = {}> = {
   data: T[];
   columns: MRT_ColumnDef<T>[];
-  onRowClick: (row: T) => void;
+  onRowClick?: (row: T) => void;
   isLoading?: boolean;
   disablePagination?: boolean;
   enableServerSideSorting?: boolean;
