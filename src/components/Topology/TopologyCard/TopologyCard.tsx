@@ -9,9 +9,10 @@ import { isEmpty } from "lodash";
 import { MouseEventHandler, useMemo } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import AgentName from "../../Agents/AgentName";
+import { useTopologyHidePropertiesPreference } from "../TopologyPopover/TopologyHideProperties";
 import { CardMetrics } from "./CardMetrics";
-import TopologyCardStatuses from "./TopologyCardStatuses";
 import TopologyCardPropertiesColumn from "./TopologyCardPropertiesColumn";
+import TopologyCardStatuses from "./TopologyCardStatuses";
 import { TopologyDropdownMenu } from "./TopologyDropdownMenu";
 import TopologyItemHealthSummary from "./TopologyItemHealthSummary";
 
@@ -58,6 +59,7 @@ export function TopologyCard({
 }: IProps) {
   const [searchParams] = useSearchParams();
   const { id: parentId } = useParams();
+  const [hideTopologyProperties] = useTopologyHidePropertiesPreference();
 
   const { data } = useQuery({
     queryKey: ["topology", topologyId],
@@ -155,12 +157,19 @@ export function TopologyCard({
     if (metricsInFooter && heading.length > 0) {
       return false;
     }
-    if (isAnalyticsPanelEmpty && isPropertiesPanelEmpty) {
+    if (
+      isAnalyticsPanelEmpty &&
+      // if there are no properties to show, we don't need to show the second
+      // panel and if the properties panel is hidden, we don't need to show the
+      // footer panel
+      (isPropertiesPanelEmpty || hideTopologyProperties)
+    ) {
       return true;
     }
     return false;
   }, [
     heading.length,
+    hideTopologyProperties,
     isAnalyticsPanelEmpty,
     isPropertiesPanelEmpty,
     metricsInFooter
@@ -251,10 +260,12 @@ export function TopologyCard({
             </div>
           ) : (
             <>
-              <TopologyCardPropertiesColumn
-                displayTwoColumns={isAnalyticsPanelEmpty}
-                properties={properties}
-              />
+              {!isPropertiesPanelEmpty && (
+                <TopologyCardPropertiesColumn
+                  displayTwoColumns={isAnalyticsPanelEmpty}
+                  properties={properties}
+                />
+              )}
               <TopologyCardStatuses
                 topology={topology}
                 isPropertiesPanelEmpty={isPropertiesPanelEmpty}
