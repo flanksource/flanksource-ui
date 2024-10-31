@@ -11,6 +11,7 @@ import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
 import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
+import { BsBan } from "react-icons/bs";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
@@ -90,8 +91,15 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
 
       return (
         <div>
-          <span className="px-2">{actionLabel ?? action}</span>
-          {deny && <Badge text="deny" />}
+          <span>
+            {actionLabel ?? action}
+            {deny && (
+              <BsBan
+                color="red"
+                className="inline-block h-4 w-auto fill-current object-center pl-1"
+              />
+            )}
+          </span>
         </div>
       );
     }

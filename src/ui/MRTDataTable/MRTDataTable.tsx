@@ -7,16 +7,12 @@ import {
   MRT_ColumnDef,
   MRT_Row,
   MRT_TableInstance,
-  useMantineReactTable
+  useMantineReactTable,
+  MantineReactTable,
+  MRT_TableOptions
 } from "mantine-react-table";
-import dynamic from "next/dynamic";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
-
-const MantineReactTable = dynamic(
-  () => import("mantine-react-table").then((mod) => mod.MantineReactTable),
-  { ssr: false }
-);
 
 type MRTDataTableProps<T extends Record<string, any> = {}> = {
   data: T[];
@@ -50,7 +46,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   onRowClick = () => {},
   isLoading = false,
   disablePagination = false,
-  enableServerSideSorting = undefined,
+  enableServerSideSorting = false,
   enableServerSidePagination = false,
   enableGrouping = false,
   manualPageCount,
@@ -65,7 +61,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
 
-  const table = useMantineReactTable({
+  const options = {
     data: data,
     columns: columns,
     enableGlobalFilter: false,
@@ -74,6 +70,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableSelectAll: false,
     enableFullScreenToggle: false,
     layoutMode: "grid",
+    enableTopToolbar: false,
     enableColumnResizing: true,
     enableStickyHeader: true,
     enableTableFooter: true,
@@ -108,7 +105,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
       }
     }),
     enablePagination: !disablePagination,
-    enableExpandAll: true,
+    enableExpandAll: enableGrouping,
     mantineTableContainerProps: {
       sx: {
         flex: "1 1 0"
@@ -133,9 +130,11 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         return acc;
       }, {})
     },
-    initialState: {
-      expanded: expandAllRows ? true : undefined
-    },
+    initialState: expandAllRows
+      ? {
+          expanded: true
+        }
+      : undefined,
     mantinePaginationProps: {
       rowsPerPageOptions: ["50", "100", "200"]
     },
@@ -145,8 +144,11 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     mantineExpandAllButtonProps: {
       size: "xs"
     },
+
     renderDetailPanel
-  });
+  } as MRT_TableOptions;
+
+  const table = useMantineReactTable(options);
 
   // @ts-expect-error
   return <MantineReactTable table={table} />;
