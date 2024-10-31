@@ -128,7 +128,7 @@ export interface ConfigAnalysis extends Analysis, CreatedAt, Avatar {
 export type ConfigSummary = {
   type: string;
   analysis?: Record<string, any>;
-  changes?: string;
+  changes?: number;
   count: number;
   health: {
     healthy: number;

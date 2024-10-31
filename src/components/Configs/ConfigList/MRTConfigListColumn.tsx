@@ -38,8 +38,8 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
         </div>
       );
     },
-    minSize: 200,
-    size: 270,
+    minSize: 300,
+    size: 400,
     enableGrouping: true,
     enableSorting: true,
     enableHiding: false,
@@ -78,7 +78,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
   {
     header: "Type",
     accessorKey: "type",
-    size: 170,
+    size: 250,
     enableSorting: true,
     enableHiding: true,
     enableColumnActions: false,
@@ -89,8 +89,6 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
   {
     header: "Status",
     accessorKey: "health",
-    minSize: 100,
-    maxSize: 180,
     enableSorting: true,
     enableColumnActions: false,
     Cell: ({ cell, row }) => {
@@ -133,7 +131,6 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
 
       return <ChangeCountIcon count={value} />;
     },
-    size: 70,
     meta: {
       cellClassName: "overflow-hidden"
     },
@@ -149,9 +146,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
         enableFilterByTag
         filterByTagParamKey="labels"
       />
-    ),
-    maxSize: 300,
-    minSize: 100
+    )
   },
   {
     header: "Analysis",
@@ -212,9 +207,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
           />
         </div>
       );
-    },
-    minSize: 50,
-    maxSize: 100
+    }
   },
   {
     header: "Cost",
@@ -231,38 +224,37 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
     },
     Cell: ({ row }) => {
       return <ConfigCostValue config={row.original} popover={false} />;
-    },
-    maxSize: 60
+    }
   },
   {
     header: "Created",
     accessorKey: "created_at",
     enableColumnActions: false,
     Cell: MRTConfigListDateCell,
-    maxSize: 70
+    maxSize: 100
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
     enableColumnActions: false,
     Cell: MRTConfigListDateCell,
-    maxSize: 70
+    maxSize: 100
   },
   {
     header: "Deleted At",
     accessorKey: "deleted_at",
     enableColumnActions: false,
     Cell: MRTConfigListDateCell,
-    size: 90,
-    enableHiding: true
+    enableHiding: true,
+    maxSize: 100
   },
   {
     header: "Changed",
     enableColumnActions: false,
     accessorFn: changeColumnAccessorFN,
     id: "changed",
+    maxSize: 100
     // sortingFn: changeColumnSortingFN,
-    size: 180
   }
 ];
 

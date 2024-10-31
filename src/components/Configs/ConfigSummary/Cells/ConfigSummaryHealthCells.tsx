@@ -1,22 +1,22 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
 
-import { CellContext } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getConfigStatusColor } from "../ConfigSummaryList";
 import {
   Count,
   CountBar,
   OrderByColor
 } from "@flanksource-ui/ui/Icons/ChangeCount";
+import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getConfigStatusColor } from "../ConfigSummaryList";
 
 export function ConfigSummaryHealthCell({
-  getValue,
+  cell,
   row
-}: CellContext<ConfigSummary, any>) {
+}: MRTCellProps<ConfigSummary>) {
   const [searchParams] = useSearchParams();
 
-  const value = getValue<ConfigSummary["health"]>();
+  const value = cell.getValue<ConfigSummary["health"]>();
   const type = row.original.type;
   const groupBy = searchParams.get("groupBy");
 
@@ -59,8 +59,8 @@ export function ConfigSummaryHealthCell({
 
 export function ConfigSummaryHealthAggregateCell({
   row
-}: CellContext<ConfigSummary, any>) {
-  const value = row.subRows.reduce(
+}: Pick<MRTCellProps<ConfigSummary>, "row">) {
+  const value = row.subRows?.reduce(
     (acc, row) => {
       const health = row.original.health;
       if (health) {
