@@ -81,7 +81,7 @@ export function StatusLine({
 }: StatusLineProps) {
   return (
     <div
-      className={clsx("flex flex-row items-center space-x-1", className)}
+      className={clsx("flex flex-row items-center space-x-0.5", className)}
       {...rest}
     >
       {!hideName && (
@@ -107,7 +107,7 @@ export function StatusLine({
           )}
         </>
       )}
-      <div className="flex flex-row space-x-1">
+      <div className="flex flex-row space-x-0.5 text-xs">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;
         })}
