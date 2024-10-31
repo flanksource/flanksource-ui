@@ -144,12 +144,10 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     mantineExpandAllButtonProps: {
       size: "xs"
     },
-
     renderDetailPanel
   } as MRT_TableOptions;
 
   const table = useMantineReactTable(options);
 
-  // @ts-expect-error
   return <MantineReactTable table={table} />;
 }
