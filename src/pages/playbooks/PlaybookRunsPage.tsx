@@ -5,8 +5,8 @@ import PlaybookRunsFilterBar, {
 } from "@flanksource-ui/components/Playbooks/Runs/Filter/PlaybookRunsFilterBar";
 import PlaybookRunsTable from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsList";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
+import PlaybookSpecFormModal from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecFormModal";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
-import PlaybookSpecsForm from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecsForm";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -133,7 +133,7 @@ export default function PlaybookRunsPage() {
           </div>
         </TabbedLinks>
         {playbook && (
-          <PlaybookSpecsForm
+          <PlaybookSpecFormModal
             isOpen={isEditPlaybookFormOpen}
             onClose={() => {
               setIsEditPlaybookFormOpen(false);
