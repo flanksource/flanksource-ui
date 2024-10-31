@@ -21,8 +21,8 @@ export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "ActionDelete", label: "delete" },
   { value: "ActionAll", label: "*" },
   { value: "ActionCRUD", label: "create,read,update,delete" },
-  { value: "ActionRun", label: "run" },
-  { value: "ActionApprove", label: "approve" }
+  { value: "ActionRun", label: "playbook:run" },
+  { value: "ActionApprove", label: "playbook:approve" }
 ];
 
 type PermissionsViewProps = {
