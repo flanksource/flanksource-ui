@@ -418,19 +418,20 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="topology" element={sidebar}>
         <Route
-          path=":id"
-          element={withAuthorizationAccessCheck(
-            <TopologyCardPage />,
-            tables.topologies,
-            "read",
-            true
-          )}
-        />
-        <Route
           index
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
             tables.database,
+            "read",
+            true
+          )}
+        />
+
+        <Route
+          path=":id"
+          element={withAuthorizationAccessCheck(
+            <TopologyPage />,
+            tables.topologies,
             "read",
             true
           )}
