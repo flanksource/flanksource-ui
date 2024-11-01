@@ -291,12 +291,12 @@ export type SettingsNavigationItems = {
   submenu: (
     | (SchemaResourceType & { href: string })
     | {
-      name: string;
-      href: string;
-      icon: React.ComponentType<{ className: string }>;
-      featureName: string;
-      resourceName: string;
-    }
+        name: string;
+        href: string;
+        icon: React.ComponentType<{ className: string }>;
+        featureName: string;
+        resourceName: string;
+      }
   )[];
 };
 
@@ -322,14 +322,14 @@ const settingsNav: SettingsNavigationItems = {
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
       : [
-        {
-          name: "Users",
-          href: "/settings/users",
-          icon: HiUser,
-          featureName: features["settings.users"],
-          resourceName: tables.identities
-        }
-      ]),
+          {
+            name: "Users",
+            href: "/settings/users",
+            icon: HiUser,
+            featureName: features["settings.users"],
+            resourceName: tables.identities
+          }
+        ]),
     ...schemaResourceTypes
       // remove catalog_scraper from settings
       .filter((resource) => resource.table !== "config_scrapers")
@@ -647,7 +647,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                       resourceInfo={x as SchemaResourceType & { href: string }}
                     />,
                     tables[
-                    (x as SchemaResourceType).table as keyof typeof tables
+                      (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
                     "read",
                     true
@@ -659,7 +659,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                   element={withAuthorizationAccessCheck(
                     <SchemaResource resourceInfo={x as SchemaResourceType} />,
                     tables[
-                    (x as SchemaResourceType).table as keyof typeof tables
+                      (x as SchemaResourceType).table as keyof typeof tables
                     ] ?? tables.database,
                     "read",
                     true
