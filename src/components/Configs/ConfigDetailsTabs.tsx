@@ -1,4 +1,3 @@
-import useNavigateToPreviousVisitedCatalogTab from "@flanksource-ui/hooks/useNavigateToPreviousVisitedCatalogTab";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import clsx from "clsx";
 import { useAtom } from "jotai";
@@ -37,8 +36,6 @@ export function ConfigDetailsTabs({
   className = "p-2"
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
-
-  useNavigateToPreviousVisitedCatalogTab();
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
