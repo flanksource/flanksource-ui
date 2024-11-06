@@ -11,8 +11,8 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
 import PlaybookCardMenu from "./PlaybookCardMenu";
-import PlaybookSpecsForm from "./PlaybookSpecsForm";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import PlaybookSpecFormModal from "./PlaybookSpecFormModal";
 
 type PlaybookSpecCardProps = {
   playbook: PlaybookNames;
@@ -93,7 +93,7 @@ export default function PlaybookSpecCard({
       </div>
 
       {playbookSpec && (
-        <PlaybookSpecsForm
+        <PlaybookSpecFormModal
           isOpen={isEditPlaybookFormOpen}
           onClose={() => {
             setIsEditPlaybookFormOpen(false);

@@ -1,4 +1,5 @@
 import {
+  PlaybookApproval,
   PlaybookRunAction,
   PlaybookRunWithActions
 } from "@flanksource-ui/api/types/playbooks";
@@ -16,6 +17,8 @@ import ReRunPlaybookWithParamsButton from "../Submit/ReRunPlaybookWithParamsButt
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
 import PlaybookRunActionFetch from "./PlaybookRunActionFetch";
 import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
+import PlaybookRunsApprovalActionItem from "./PlaybookRunsApprovalActionItem";
+import PlaybookRunsApprovalActionsResults from "./PlaybookRunsApprovalActionsResults";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
 
@@ -29,10 +32,21 @@ export default function PlaybookRunsActions({
   refetch = () => {}
 }: PlaybookRunActionsProps) {
   const [selectedAction, setSelectedAction] = useState<
-    PlaybookRunAction | undefined
+    | {
+        type: "Action";
+        data?: PlaybookRunAction;
+      }
+    | {
+        type: "Approval";
+        data: PlaybookApproval;
+      }
+    | undefined
   >(() => {
     // show the last action by default
-    return data.actions.at(-1);
+    return {
+      type: "Action",
+      data: data.actions.at(-1)
+    };
   });
 
   const resource = getResourceForRun(data);
@@ -151,41 +165,85 @@ export default function PlaybookRunsActions({
             <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
               {initializationAction && (
                 <PlaybookRunsActionItem
-                  isSelected={selectedAction?.id === initializationAction.id}
+                  isSelected={
+                    selectedAction?.type === "Action" &&
+                    selectedAction.data?.id === initializationAction.id
+                  }
                   key={initializationAction.id}
                   action={initializationAction}
-                  onClick={() => setSelectedAction(initializationAction)}
+                  onClick={() =>
+                    setSelectedAction({
+                      type: "Action",
+                      data: initializationAction
+                    })
+                  }
                   stepNumber={0}
                 />
               )}
+              {data.playbook_approvals &&
+                data.playbook_approvals.length === 1 && (
+                  <PlaybookRunsApprovalActionItem
+                    isSelected={selectedAction?.type === "Approval"}
+                    key={data.playbook_approvals[0].id}
+                    approval={data.playbook_approvals[0]}
+                    onClick={() =>
+                      setSelectedAction({
+                        type: "Approval",
+                        data: data.playbook_approvals?.[0]!
+                      })
+                    }
+                  />
+                )}
               {data.actions.map((action, index) => (
                 <PlaybookRunsActionItem
-                  isSelected={selectedAction?.id === action.id}
+                  isSelected={
+                    selectedAction?.type === "Action" &&
+                    selectedAction.data?.id === action.id
+                  }
                   key={action.id}
                   action={action}
-                  onClick={() => setSelectedAction(action)}
-                  stepNumber={index + 1}
+                  onClick={() =>
+                    setSelectedAction({
+                      data: action,
+                      type: "Action"
+                    })
+                  }
+                  stepNumber={index + (data.playbook_approvals ? 2 : 1)}
                 />
               ))}
             </div>
           </div>
           <div className="flex h-full flex-1 flex-col overflow-hidden bg-black px-4 py-2 font-mono text-white">
             {selectedAction &&
-              (selectedAction.id === "initialization" ? (
+              selectedAction.type === "Action" &&
+              selectedAction.data?.id === "initialization" && (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
                   <PlaybooksRunActionsResults
-                    action={selectedAction}
+                    action={selectedAction.data}
                     playbook={data.playbooks!}
                   />
                 </div>
-              ) : (
+              )}
+
+            {selectedAction &&
+              selectedAction.type === "Action" &&
+              selectedAction.data?.id !== "initialization" && (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
                   <PlaybookRunActionFetch
-                    playbookRunActionId={selectedAction.id}
+                    playbookRunActionId={selectedAction.data?.id!}
                     playbook={data.playbooks!}
                   />
                 </div>
-              ))}
+              )}
+
+            {selectedAction && selectedAction.type === "Approval" && (
+              <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
+                <PlaybookRunsApprovalActionsResults
+                  approval={selectedAction.data}
+                  playbook={data.playbooks!}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

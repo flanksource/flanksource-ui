@@ -44,6 +44,7 @@ export function ChangesTypesDropdown({ searchParamKey = "changeType" }: Props) {
       options={configItemsOptionsItems}
       isLoading={isLoading}
       value={field.value}
+      minMenuWidth="20rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({

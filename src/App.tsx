@@ -1,6 +1,7 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "jotai";
+import dynamic from "next/dynamic";
 import React, { ReactNode, useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
@@ -12,6 +13,7 @@ import {
   MdOutlineIntegrationInstructions,
   MdOutlineSupportAgent
 } from "react-icons/md";
+import { RiShieldUserFill } from "react-icons/ri";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -21,14 +23,9 @@ import {
   useLocation
 } from "react-router-dom";
 import { Canary, Icon } from "./components";
-import AgentsPage from "./components/Agents/AgentPage";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import EditIntegrationPage from "./components/Integrations/EditIntegrationPage";
-import IntegrationsPage from "./components/Integrations/IntegrationsPage";
-import JobsHistorySettingsPage from "./components/JobsHistory/JobsHistorySettingsPage";
 import { withAuthorizationAccessCheck } from "./components/Permissions/AuthorizationAccessCheck";
-import { SchemaResourcePage } from "./components/SchemaResourcePage";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
   SchemaResourceType,
@@ -40,36 +37,8 @@ import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
-import {
-  ConfigChangesPage,
-  ConfigDetailsChangesPage,
-  ConfigDetailsPage,
-  ConfigListPage,
-  IncidentDetailsPage,
-  IncidentListPage,
-  LogsPage,
-  TopologyPage
-} from "./pages";
-import { ConnectionsPage } from "./pages/Settings/ConnectionsPage";
-import { EventQueueStatusPage } from "./pages/Settings/EventQueueStatus";
-import { FeatureFlagsPage } from "./pages/Settings/FeatureFlagsPage";
-import NotificationSilencedAddPage from "./pages/Settings/notifications/NotificationSilencedAddPage";
-import NotificationsPage from "./pages/Settings/notifications/NotificationsPage";
-import NotificationRulesPage from "./pages/Settings/notifications/NotificationsRulesPage";
-import NotificationsSilencedPage from "./pages/Settings/notifications/NotificationsSilencedPage";
-import { TopologyCardPage } from "./pages/TopologyCard";
-import { UsersPage } from "./pages/UsersPage";
-import { ConfigInsightsPage } from "./pages/config/ConfigInsightsList";
-import { ConfigDetailsChecksPage } from "./pages/config/details/ConfigDetailsChecksPage";
-import { ConfigDetailsInsightsPage } from "./pages/config/details/ConfigDetailsInsightsPage";
-import { ConfigDetailsPlaybooksPage } from "./pages/config/details/ConfigDetailsPlaybooks";
-import { ConfigDetailsRelationshipsPage } from "./pages/config/details/ConfigDetailsRelationshipsPage";
-import ConfigScrapersEditPage from "./pages/config/settings/ConfigScrapersEditPage";
-import ConfigScrapersPage from "./pages/config/settings/ConfigScrapersPage";
-import { HealthPage } from "./pages/health";
-import PlaybookRunsDetailsPage from "./pages/playbooks/PlaybookRunsDetails";
-import PlaybookRunsPage from "./pages/playbooks/PlaybookRunsPage";
-import { PlaybooksListPage } from "./pages/playbooks/PlaybooksList";
+
+import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { features } from "./services/permissions/features";
 import { Head } from "./ui/Head";
 import { LogsIcon } from "./ui/Icons/LogsIcon";
@@ -78,6 +47,185 @@ import { SidebarLayout } from "./ui/Layout/SidebarLayout";
 import FullPageSkeletonLoader from "./ui/SkeletonLoader/FullPageSkeletonLoader";
 import { ToasterWithCloseButton } from "./ui/ToasterWithCloseButton";
 import { stringSortHelper } from "./utils/common";
+
+const TopologyPage = dynamic(
+  import("@flanksource-ui/pages/TopologyPage").then((mod) => mod.TopologyPage)
+);
+
+const TopologyCardPage = dynamic(
+  import("@flanksource-ui/pages/TopologyCard").then(
+    (mod) => mod.TopologyCardPage
+  )
+);
+
+const IncidentDetailsPage = dynamic(
+  import("@flanksource-ui/pages/incident/IncidentDetails").then(
+    (mod) => mod.IncidentDetailsPage
+  )
+);
+
+const IncidentListPage = dynamic(
+  import("@flanksource-ui/pages/incident/IncidentListPage").then(
+    (mod) => mod.IncidentListPage
+  )
+);
+
+const ConfigListPage = dynamic(
+  import("@flanksource-ui/pages/config/ConfigList").then(
+    (mod) => mod.ConfigListPage
+  )
+);
+
+const ConfigDetailsPage = dynamic(
+  import("@flanksource-ui/pages/config/details/ConfigDetailsPage").then(
+    (mod) => mod.ConfigDetailsPage
+  )
+);
+
+const ConfigDetailsChangesPage = dynamic(
+  import("@flanksource-ui/pages/config/details/ConfigDetailsChangesPage").then(
+    (mod) => mod.ConfigDetailsChangesPage
+  )
+);
+
+const PlaybooksListPage = dynamic(
+  import("@flanksource-ui/pages/playbooks/PlaybooksList").then(
+    (mod) => mod.PlaybooksListPage
+  )
+);
+
+const LogsPage = dynamic(
+  import("@flanksource-ui/pages/LogsPage").then((mod) => mod.LogsPage)
+);
+
+const ConfigChangesPage = dynamic(
+  import("@flanksource-ui/pages/config/ConfigChangesPage").then(
+    (mod) => mod.ConfigChangesPage
+  )
+);
+
+const PlaybookRunsPage = dynamic(
+  import("@flanksource-ui/pages/playbooks/PlaybookRunsPage").then(
+    (mod) => mod.default
+  )
+);
+
+const PlaybookRunsDetailsPage = dynamic(
+  import("@flanksource-ui/pages/playbooks/PlaybookRunsDetails").then(
+    (mod) => mod.default
+  )
+);
+
+const ConfigInsightsPage = dynamic(
+  import("@flanksource-ui/pages/config/ConfigInsightsList").then(
+    (mod) => mod.ConfigInsightsPage
+  )
+);
+
+const HealthPage = dynamic(
+  import("@flanksource-ui/pages/health").then((mod) => mod.HealthPage)
+);
+
+const ConnectionsPage = dynamic(() =>
+  import("@flanksource-ui/pages/Settings/ConnectionsPage").then(
+    (m) => m.ConnectionsPage
+  )
+);
+
+const EventQueueStatusPage = dynamic(() =>
+  import("@flanksource-ui/pages/Settings/EventQueueStatus").then(
+    (m) => m.EventQueueStatusPage
+  )
+);
+
+const FeatureFlagsPage = dynamic(() =>
+  import("@flanksource-ui/pages/Settings/FeatureFlagsPage").then(
+    (m) => m.FeatureFlagsPage
+  )
+);
+
+const NotificationSilencedAddPage = dynamic(
+  () =>
+    import(
+      "@flanksource-ui/pages/Settings/notifications/NotificationSilencedAddPage"
+    )
+);
+
+const NotificationsPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/notifications/NotificationsPage")
+);
+
+const NotificationRulesPage = dynamic(
+  () =>
+    import(
+      "@flanksource-ui/pages/Settings/notifications/NotificationsRulesPage"
+    )
+);
+
+const NotificationsSilencedPage = dynamic(
+  () =>
+    import(
+      "@flanksource-ui/pages/Settings/notifications/NotificationsSilencedPage"
+    )
+);
+
+const UsersPage = dynamic(() =>
+  import("@flanksource-ui/pages/UsersPage").then((m) => m.UsersPage)
+);
+
+const ConfigDetailsChecksPage = dynamic(() =>
+  import("@flanksource-ui/pages/config/details/ConfigDetailsChecksPage").then(
+    (m) => m.ConfigDetailsChecksPage
+  )
+);
+
+const ConfigDetailsInsightsPage = dynamic(() =>
+  import("@flanksource-ui/pages/config/details/ConfigDetailsInsightsPage").then(
+    (m) => m.ConfigDetailsInsightsPage
+  )
+);
+
+const ConfigDetailsPlaybooksPage = dynamic(() =>
+  import("@flanksource-ui/pages/config/details/ConfigDetailsPlaybooks").then(
+    (m) => m.ConfigDetailsPlaybooksPage
+  )
+);
+
+const ConfigDetailsRelationshipsPage = dynamic(() =>
+  import(
+    "@flanksource-ui/pages/config/details/ConfigDetailsRelationshipsPage"
+  ).then((mod) => mod.ConfigDetailsRelationshipsPage)
+);
+
+const ConfigScrapersEditPage = dynamic(
+  () => import("@flanksource-ui/pages/config/settings/ConfigScrapersEditPage")
+);
+
+const ConfigScrapersPage = dynamic(
+  () => import("@flanksource-ui/pages/config/settings/ConfigScrapersPage")
+);
+
+const EditIntegrationPage = dynamic(
+  () => import("./components/Integrations/EditIntegrationPage")
+);
+
+const IntegrationsPage = dynamic(
+  () => import("./components/Integrations/IntegrationsPage")
+);
+
+const JobsHistorySettingsPage = dynamic(
+  () => import("./components/JobsHistory/JobsHistorySettingsPage")
+);
+
+const AgentsPage = dynamic(
+  () => import("@flanksource-ui/components/Agents/AgentPage")
+);
+
+const SchemaResourcePage = dynamic(() =>
+  import("@flanksource-ui/components/SchemaResourcePage").then(
+    (mod) => mod.SchemaResourcePage
+  )
+);
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -163,6 +311,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: BsLink,
       featureName: features["settings.connections"],
       resourceName: tables.connections
+    },
+    {
+      name: "Permissions",
+      href: "/settings/permissions",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.permissions
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -263,7 +418,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="topology" element={sidebar}>
         <Route
-          path=":id"
+          index
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
             tables.database,
@@ -271,11 +426,12 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
+
         <Route
-          index
+          path=":id"
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
-            tables.database,
+            tables.topologies,
             "read",
             true
           )}
@@ -395,6 +551,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             tables.connections,
             "read",
             true
+          )}
+        />
+        <Route
+          path="permissions"
+          element={withAuthorizationAccessCheck(
+            <PermissionsPage />,
+            tables.permissions,
+            "read"
           )}
         />
         <Route
