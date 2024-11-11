@@ -15,11 +15,27 @@ import { Link } from "react-router-dom";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
+import { BsBell, BsBellSlash, BsBraces } from "react-icons/bs";
 
 const tabLinks = [
-  { label: "Notifications", path: "/notifications", key: "Notifications" },
-  { label: "Rules", path: "/notifications/rules", key: "Rules" },
-  { label: "Silences", path: "/notifications/silences", key: "Silences" }
+  {
+    label: "Notifications",
+    path: "/notifications",
+    key: "Notifications",
+    icon: <BsBell />
+  },
+  {
+    label: "Rules",
+    path: "/notifications/rules",
+    key: "Rules",
+    icon: <BsBraces />
+  },
+  {
+    label: "Silences",
+    path: "/notifications/silences",
+    key: "Silences",
+    icon: <BsBellSlash />
+  }
 ];
 
 type NotificationTabsLinksProps = {
