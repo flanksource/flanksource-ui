@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 
 type BreadcrumbNavProps = {
   list: Array<string | React.ReactNode | { to: string; title: string }>;
+  children?: React.ReactNode;
 };
 
-export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
+export function BreadcrumbNav({ list, children }: BreadcrumbNavProps) {
   const navs = list
     .map((nav, i) => {
       let comp = null;
@@ -54,7 +55,12 @@ export function BreadcrumbNav({ list }: BreadcrumbNavProps) {
     .flat()
     .slice(0, -1);
 
-  return <div className="flex flex-shrink-0 items-center">{navs}</div>;
+  return (
+    <div className="flex flex-shrink-0 items-center">
+      {navs}
+      {children}
+    </div>
+  );
 }
 
 type BreadcrumbRootProps = {

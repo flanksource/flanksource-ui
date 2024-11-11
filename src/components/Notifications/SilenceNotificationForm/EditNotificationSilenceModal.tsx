@@ -16,12 +16,7 @@ export default function EditNotificationSilenceModal({
   onUpdate = () => {}
 }: EditNotificationSilenceModalProps) {
   return (
-    <Modal
-      open={isOpen}
-      onClose={onClose}
-      title="Edit Notification Silence"
-      size="medium"
-    >
+    <Modal open={isOpen} onClose={onClose} title="Edit Silence" size="medium">
       <div className="flex flex-col gap-4">
         <NotificationSilenceForm
           data={data}
