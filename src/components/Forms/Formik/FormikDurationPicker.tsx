@@ -6,24 +6,28 @@ import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker/TimeRa
 import dayjs from "dayjs";
 import { useFormikContext } from "formik";
 import { useMemo } from "react";
+import { FormikTextInputProps } from "./FormikTextInput";
+import clsx from "clsx";
+import { Label } from "@flanksource-ui/ui/FormControls/Label";
 
 type FormikDurationPickerProps = {
   fieldNames: {
     from: string;
     to: string;
   };
-  label: string;
-  className?: string;
   placeholder?: string;
-};
+} & Omit<FormikTextInputProps, "name">;
 
 export default function FormikDurationPicker({
   fieldNames: { from, to },
   label,
   placeholder = "Select duration",
-  className = "flex flex-col py-2"
+  className = "flex flex-col py-2",
+  required,
+  hint,
+  hintPosition = "bottom"
 }: FormikDurationPickerProps) {
-  const { values, setFieldValue } =
+  const { values, setFieldValue, errors } =
     useFormikContext<Record<string, string | undefined>>();
 
   const value = useMemo(() => {
@@ -53,11 +57,14 @@ export default function FormikDurationPicker({
     } satisfies TimeRangeOption;
   }, [from, to, values]);
 
+  const hasError = errors[from] || errors[to];
+
   return (
     <div className={className}>
-      {label && <label className={`form-label`}>{label}</label>}
+      <Label label={label} required={required} />
       <div className="flex w-full flex-col">
         <TimeRangePicker
+          required={required}
           value={value}
           placeholder={placeholder}
           onChange={(value) => {
@@ -71,7 +78,21 @@ export default function FormikDurationPicker({
           }}
           showFutureTimeRanges
           className="w-full"
+          buttonClassName={clsx(
+            hasError && "border-red-500  hover:bg-gray-50 "
+          )}
         />
+
+        {errors[from] ? (
+          <p className="w-full py-1 text-sm text-red-500">{errors[from]}</p>
+        ) : null}
+
+        {errors[to] ? (
+          <p className="w-full py-1 text-sm text-red-500">{errors[to]}</p>
+        ) : null}
+        {hint && hintPosition === "bottom" && (
+          <p className="py-1 text-sm text-gray-500">{hint}</p>
+        )}
       </div>
     </div>
   );

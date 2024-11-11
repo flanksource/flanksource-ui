@@ -13,6 +13,7 @@ type TimeRangePickerType = Omit<
 > & {
   value?: TimeRangeOption;
   onChange: (val: TimeRangeOption) => void;
+  buttonClassName?: string;
   showFutureTimeRanges?: boolean;
 };
 
@@ -20,6 +21,7 @@ export function TimeRangePicker({
   onChange = () => {},
   value,
   className = "w-fit",
+  buttonClassName = " border-gray-300 hover:bg-gray-50",
   showFutureTimeRanges = false
 }: TimeRangePickerType) {
   const currentRange = useMemo((): TimeRangeOption | undefined => {
@@ -46,6 +48,7 @@ export function TimeRangePicker({
   );
 
   return (
+    // @ts-ignore
     <>
       <style global jsx>{`
         /*calendar*/
@@ -152,7 +155,10 @@ export function TimeRangePicker({
         <PopoverButton
           ref={refs.setReference}
           type="button"
-          className="inline-flex w-full rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          className={clsx(
+            "inline-flex w-full rounded-md border bg-white px-2 py-2 text-sm font-medium text-gray-700 shadow-sm",
+            buttonClassName
+          )}
         >
           {({ open }) => {
             return (

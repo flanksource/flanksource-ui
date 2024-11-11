@@ -33,6 +33,7 @@ export interface IModalProps {
   helpLink?: string;
   bodyClass?: string;
   childClassName?: string;
+  titleHeaderClass?: string;
   footerClassName?: string;
   actions?: React.ReactNode[];
   open: boolean;
@@ -127,6 +128,7 @@ export function Modal({
   title,
   showExpand = true,
   titleClass,
+  titleHeaderClass = "bg-gray-100 px-4 py-4 font-semibold",
   bodyClass = "flex flex-col flex-1 overflow-y-auto",
   footerClassName = "flex my-2 px-8 justify-end",
   actions,
@@ -188,13 +190,13 @@ export function Modal({
             sizeClass.height
           )}
         >
-          <div className="item-center flex justify-between gap-2 rounded-t-lg bg-gray-100 px-4 py-4">
-            <h1
-              className={clsx(
-                "flex-1 overflow-x-auto text-lg font-semibold",
-                titleClass
-              )}
-            >
+          <div
+            className={clsx(
+              "item-center flex justify-between gap-2 rounded-t-lg",
+              titleHeaderClass
+            )}
+          >
+            <h1 className={clsx("flex-1 overflow-x-auto text-lg", titleClass)}>
               {title}
             </h1>
             {/*
