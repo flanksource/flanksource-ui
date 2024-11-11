@@ -2,7 +2,7 @@ import { useField } from "formik";
 import React from "react";
 import { TextInput } from "../../../ui/FormControls/TextInput";
 
-type FormikTextInputProps = {
+export type FormikTextInputProps = {
   name: string;
   required?: boolean;
   label?: string;

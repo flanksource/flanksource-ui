@@ -10,6 +10,7 @@ type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
   tabLinks: {
     label: React.ReactNode;
     path: string;
+    icon?: React.ReactNode;
     search?: string;
     key?: string;
   }[];
@@ -36,7 +37,7 @@ export default function TabbedLinks({
         aria-label="Tabs"
         {...rest}
       >
-        {tabLinks.map(({ label, path, key, search }) => (
+        {tabLinks.map(({ label, path, key, search, icon }) => (
           <NavLink
             className={({ isActive }) =>
               clsx(
@@ -53,7 +54,9 @@ export default function TabbedLinks({
             }}
             end
           >
-            {label}
+            <div className="flex flex-row items-center space-x-1">
+              {icon} <span>{label}</span>
+            </div>
           </NavLink>
         ))}
       </div>
