@@ -74,7 +74,7 @@ export default function NotificationSilenceForm({
     onSuccess
   });
 
-  const { mutate: deleteSilence, isLoading: isDeleting } = useMutation({
+  const { mutate: deleteSilence } = useMutation({
     mutationFn: async (id: string) => {
       const res = await deleteNotificationSilence(id);
       return res.data;
@@ -106,6 +106,7 @@ export default function NotificationSilenceForm({
 
   const submit = (
     v: Partial<SilenceNotificationRequest>,
+    // @ts-ignore
     formik: FormikBag
   ) => {
     // Before submitting, we need to parse the date math expressions, if

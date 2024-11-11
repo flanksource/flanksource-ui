@@ -79,7 +79,7 @@ describe("DeleteAgentButton", () => {
     expect(
       await screen.findByText("Are you sure you want to delete agent?")
     ).toBeInTheDocument();
-    const confirmButton = screen.getByTestId("confirm-button");
+    const confirmButton = screen.getByTestId("confirm-button-Delete");
     userEvent.click(confirmButton);
     await waitFor(() => {
       expect(onDeleted).toHaveBeenCalled();
