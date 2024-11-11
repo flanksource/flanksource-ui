@@ -13,10 +13,12 @@ import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextAr
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
 import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
+import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Form, Formik } from "formik";
+import { Formik, Form, FormikBag } from "formik";
 import { FaCircleNotch } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 
@@ -53,6 +55,7 @@ export default function NotificationSilenceForm({
       if (data.id) {
         return updateNotificationSilence({
           id: data.id,
+          filter: data.filter,
           updated_at: "now()",
           source: data.source,
           canary_id: data.canary_id,
@@ -68,12 +71,7 @@ export default function NotificationSilenceForm({
       }
       return silenceNotification(data);
     },
-    onSuccess,
-    onError: (error: AxiosError) => {
-      // do something
-      console.error(error);
-      toastError(error.message);
-    }
+    onSuccess
   });
 
   const { mutate: deleteSilence, isLoading: isDeleting } = useMutation({
@@ -89,78 +87,135 @@ export default function NotificationSilenceForm({
     }
   });
 
+  const validate = (v: Partial<SilenceNotificationRequest>) => {
+    const errors: { [key: string]: string } = {};
+    if (
+      v.canary_id == null &&
+      v.check_id == null &&
+      v.component_id == null &&
+      v.config_id == null &&
+      v.filter == null
+    ) {
+      errors.form = "Must specify either a resource and/or a filter";
+    }
+    if (v.until == null) {
+      errors.until = "Must specify a silence duration";
+    }
+    return errors;
+  };
+
+  const submit = (
+    v: Partial<SilenceNotificationRequest>,
+    formik: FormikBag
+  ) => {
+    // Before submitting, we need to parse the date math expressions, if
+    // any are present in the from and until fields.
+    const { from, until } = v;
+    const fromTime = from?.includes("now") ? parseDateMath(from, false) : from;
+
+    const untilTime = until?.includes("now")
+      ? parseDateMath(until, false)
+      : until;
+
+    return mutate(
+      {
+        ...v,
+        from: fromTime,
+        until: untilTime
+      } as SilenceNotificationRequest,
+      {
+        onError(error) {
+          // @ts-ignore
+          formik.setErrors({ form: error });
+        }
+      }
+    );
+  };
+
   return (
+    // @ts-ignore
     <div className="flex flex-1 flex-col gap-2 overflow-auto">
       <Formik<Partial<SilenceNotificationRequest>>
         initialValues={initialValues}
-        onSubmit={(v) => {
-          // Before submitting, we need to parse the date math expressions, if
-          // any are present in the from and until fields.
-          const { from, until } = v;
-          const fromTime = from?.includes("now")
-            ? parseDateMath(from, false)
-            : from;
-
-          const untilTime = until?.includes("now")
-            ? parseDateMath(until, false)
-            : until;
-
-          return mutate({
-            ...v,
-            from: fromTime,
-            until: untilTime
-          } as SilenceNotificationRequest);
-        }}
+        validateOnChange={false}
+        validateOnBlur={true}
+        validate={validate}
+        onSubmit={submit}
       >
-        <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-          <div
-            className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
-          >
-            <FormikNotificationResourceField />
-            <FormikCheckbox name="recursive" label="Recursive" />
-            <FormikDurationPicker
-              fieldNames={{
-                from: "from",
-                to: "until"
-              }}
-              label="Silence Duration"
-            />
-            <FormikTextArea name="description" label="Reason" />
-          </div>
-          <div className={`${footerClassName}`}>
-            {data?.id && (
-              <>
-                <Button
-                  onClick={() => {
-                    onCancel();
-                  }}
-                  className="btn-secondary"
-                >
-                  Cancel
-                </Button>
-                <div className="flex-1" />
-                <Button
-                  onClick={() => deleteSilence(data.id)}
-                  className="btn-danger"
-                >
-                  {isDeleting && (
-                    <FaCircleNotch className="mr-2 animate-spin" />
-                  )}
-                  {isDeleting ? "Deleting" : "Delete"}
-                </Button>
-              </>
-            )}
+        {({ errors }) => {
+          return (
+            <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
+              <div
+                className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
+              >
+                <FormikNotificationResourceField />
 
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isLoading}
-            >
-              {isLoading && <FaCircleNotch className="mr-2 animate-spin" />}
-              {data?.id ? "Update" : "Submit"}
-            </button>
-          </div>
-        </Form>
+                <FormikCheckbox
+                  checkboxStyle="toggle"
+                  name="recursive"
+                  label="Recursive"
+                  hint="When selected, the silence will apply to all children of the item"
+                />
+
+                <FormikDurationPicker
+                  required
+                  hint="Duration for which the silence will apply for, after which notifications will begin firing again"
+                  fieldNames={{
+                    from: "from",
+                    to: "until"
+                  }}
+                  label="Duration"
+                />
+
+                <FormikTextArea
+                  name="filter"
+                  label="Filter"
+                  hint="CEL expression for the silence to match against"
+                />
+
+                <FormikTextArea name="description" label="Reason" />
+                <ErrorMessage
+                  message={
+                    // @ts-ignore
+                    errors.form
+                  }
+                />
+              </div>
+              <div className={`${footerClassName}`}>
+                {data?.id && (
+                  <>
+                    <DeleteButton
+                      title="Delete Silence"
+                      description="Are you sure you want to delete this silence?"
+                      yesLabel="Delete"
+                      onConfirm={() => deleteSilence(data.id)}
+                    />
+
+                    <div className="flex-1" />
+
+                    <Button
+                      onClick={() => {
+                        onCancel();
+                      }}
+                      className="btn-secondary"
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading && <FaCircleNotch className="mr-2 animate-spin" />}
+                  {data?.id ? "Update" : "Submit"}
+                </button>
+              </div>
+            </Form>
+          );
+        }}
       </Formik>
     </div>
   );

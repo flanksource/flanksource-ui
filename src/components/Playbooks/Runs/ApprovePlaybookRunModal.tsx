@@ -35,6 +35,7 @@ export default function ApprovePlaybookRunModal({
 
   return (
     <ConfirmationPromptDialog
+      confirmationStyle="approve"
       title={`Approve Playbook ${playbookTitle} Run`}
       description={<p>Are you sure you want to approve this playbook run?</p>}
       onConfirm={() => approve(playbookRunId)}

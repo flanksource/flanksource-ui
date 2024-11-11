@@ -1,4 +1,5 @@
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
+import { Label } from "@flanksource-ui/ui/FormControls/Label";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useMemo, useState } from "react";
@@ -56,7 +57,7 @@ export default function FormikNotificationResourceField() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className={`form-label`}>Resource</label>
+      <Label label="Resource" required={true} />
       <div>
         <div className="flex w-full flex-row">
           <Switch
@@ -96,16 +97,9 @@ export default function FormikNotificationResourceField() {
         </div>
 
         <FormikResourceSelectorDropdown
-          required
           name={fieldName.name}
           checkResourceSelector={
-            switchOption === "Check"
-              ? [
-                  {
-                    id: check_id
-                  }
-                ]
-              : undefined
+            switchOption === "Check" ? [{ id: check_id }] : undefined
           }
           componentResourceSelector={
             switchOption === "Component"
