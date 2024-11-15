@@ -15,12 +15,12 @@ import {
 import { GenerateAgent, GeneratedAgent } from "../../../api/services/agents";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
-import FormikAutocompleteDropdown from "../../Forms/Formik/FormikAutocompleteDropdown";
 import FormikKeyValueMapField from "../../Forms/Formik/FormikKeyValueMapField";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import { Agent } from "../AgentPage";
 import DeleteAgentButton from "../DeleteAgentButton";
+import FormikScheduleField from "@flanksource-ui/components/Forms/Formik/FormikScheduleField";
 
 export type AgentFormValues = GenerateAgent & {
   kubernetes?: Record<string, any>;
@@ -158,21 +158,8 @@ export default function AgentForm({
                       hint="Scrapes built-in and custom resource definitions and creates catalog items and a topology from Cluster --> Namespace --> Pod"
                     />
                     {Boolean(values.kubernetes?.enabled) === true && (
-                      <FormikAutocompleteDropdown
-                        options={[
-                          { label: "1m", value: "1m" },
-                          { label: "5m", value: "5m" },
-                          { label: "10m", value: "10m" },
-                          {
-                            label: "30m",
-                            value: "30m"
-                          },
-                          { label: "1h", value: "1h" },
-                          { label: "2h", value: "2h" },
-                          { label: "6h", value: "6h" },
-                          { label: "12h", value: "12h" },
-                          { label: "24h", value: "24h" }
-                        ]}
+                      <FormikScheduleField
+                        type="scraper"
                         name="kubernetes.schedule"
                         label="Scrape Interval"
                         hintPosition="top"

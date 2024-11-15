@@ -30,8 +30,8 @@ helm install mission-control-agent flanksource/mission-control-agent -n "mission
   --create-namespace 
    
 
-helm install mc-agent-kubernetes flanksource/mc-agent-kubernetes -n "mission-control-agent" \\
-  --set clusterName=test-new-agent-instructions  \\ 
-  --set scraper.schedule=30m    
+helm install mission-control-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent" \\
+  --set clusterName=test-new-agent-instructions2  \\ 
+  --set scraper.schedule=@every 31m    
 "
 `;

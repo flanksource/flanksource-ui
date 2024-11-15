@@ -2,7 +2,7 @@ import { useField } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
-type FormikSelectDropdownProps = {
+export type FormikSelectDropdownProps = {
   name: string;
   required?: boolean;
   label?: string;
