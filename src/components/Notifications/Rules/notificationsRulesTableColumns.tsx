@@ -1,23 +1,15 @@
 import { NotificationRules } from "@flanksource-ui/api/types/notifications";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { Modal } from "@flanksource-ui/ui/Modal";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { formatDuration } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
-import { atom, useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
-import { createPortal } from "react-dom";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
-
-export const notificationMostCommonErrorAtom = atom<
-  NotificationRules | undefined
->(undefined);
+import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 
 export const notificationEvents = [
   // Source: mission-control/api/event.go
@@ -140,52 +132,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Name",
       id: "name",
       size: 150,
-      accessorKey: "name",
-      Cell: ({ row, column }) => {
-        const value = row.original.name;
-        const error = row.original.error;
-
-        const [showError, setShowError] = useState(false);
-
-        return (
-          <div className="w-full overflow-hidden text-ellipsis">
-            {error && (
-              <>
-                <span
-                  data-tooltip-id={`error-tooltip-${row.original.id}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setShowError(!showError);
-                  }}
-                >
-                  <FaExclamationTriangle className="mr-1 inline h-4 w-4 text-red-500" />
-                </span>
-                {createPortal(
-                  <Tooltip
-                    className="z-[9999999999]"
-                    id={`error-tooltip-${row.original.id}`}
-                  >
-                    <pre className="whitespace-pre-wrap text-sm">{error}</pre>
-                  </Tooltip>,
-                  document.body
-                )}
-
-                <Modal
-                  open={showError}
-                  onClose={() => setShowError(false)}
-                  title={` ${value} Error Details`}
-                >
-                  <div className="flex flex-col p-4">
-                    <pre className="whitespace-pre-wrap text-sm">{error}</pre>
-                  </div>
-                </Modal>
-              </>
-            )}
-            {value}
-          </div>
-        );
-      }
+      accessorKey: "name"
     },
     {
       header: "Filter",
@@ -193,9 +140,14 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       size: 100,
       accessorKey: "filter",
       Cell: ({ row, column }) => {
-        const value = row.getValue<string>(column.id);
+        const value = row.original.filter;
+        const error = row.original.error;
+
         return (
-          <div className="w-full overflow-hidden text-ellipsis">{value}</div>
+          <div className="flex flex-row overflow-hidden text-ellipsis">
+            <ErrorMessage message={error} tooltip={true} />
+            {value}
+          </div>
         );
       }
     },
@@ -210,45 +162,11 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       id: "failed",
       accessorKey: "failed",
       size: 70,
-      Cell: ({ column, row }) => {
-        const value = row.getValue<number>(column.id);
-        const notification = row.original;
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [, setMostCommonErrorNotification] = useAtom(
-          notificationMostCommonErrorAtom
-        );
-
-        if (!value) {
-          return null;
-        }
-
+      Cell: ({ row }) => {
         return (
-          <>
-            <div
-              data-tooltip-id="most-common-error-tooltip"
-              onClick={(e) => {
-                if (notification.most_common_error) {
-                  e.stopPropagation();
-                  setMostCommonErrorNotification(notification);
-                }
-              }}
-            >
-              {value}
-            </div>
-            {value > 0 &&
-              createPortal(
-                <Tooltip
-                  id="most-common-error-tooltip"
-                  className="z-[9999999999] max-w-[95vw]"
-                >
-                  <pre className="whitespace-pre-wrap text-sm">
-                    {notification.most_common_error}
-                  </pre>
-                </Tooltip>,
-                document.body
-              )}
-          </>
+          <ErrorMessage message={row.original.most_common_error} tooltip={true}>
+            {row.original.failed}
+          </ErrorMessage>
         );
       }
     },

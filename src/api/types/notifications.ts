@@ -55,6 +55,7 @@ export type SilenceNotificationResponse = {
   description?: string;
   recursive?: boolean;
   namespace?: string;
+  error?: string;
   source?: "source1" | "source2" | "source3";
 };
 
@@ -87,6 +88,7 @@ export type NotificationSilenceItem = {
   namespace: string;
   description?: string;
   filter?: string;
+  error?: string;
   from: string;
   until: string;
   recursive?: boolean;

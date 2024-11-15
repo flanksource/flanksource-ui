@@ -14,6 +14,7 @@ import { CheckLink } from "../Canary/HealthChecks/CheckLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { TopologyLink } from "../Topology/TopologyLink";
 import EditNotificationSilenceModal from "./SilenceNotificationForm/EditNotificationSilenceModal";
+import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 
 const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiResponse>[] =
   [
@@ -85,7 +86,15 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
     {
       header: "Filter",
       accessorKey: "filter",
-      size: 100
+      size: 100,
+      Cell: ({ row }) => {
+        return (
+          <span className="flex flex-row space-x-1">
+            <ErrorMessage message={row.original.error} tooltip={true} />
+            <span>{row.original.filter}</span>
+          </span>
+        );
+      }
     },
     {
       header: "Reason",
