@@ -1,20 +1,51 @@
 import clsx from "clsx";
+import { useId } from "react";
+import { createPortal } from "react-dom";
+import { AiFillWarning } from "react-icons/ai";
+import { Tooltip } from "react-tooltip";
 
 export default function ErrorMessage({
   message,
-  style = "error"
+  style = "error",
+  tooltip = false,
+  className = "h-full items-center pl-2 text-center",
+  children
 }: {
   message?: string;
+  className?: string;
   style?: "error" | "success";
+  tooltip?: boolean;
+  children?: React.ReactNode;
 }) {
-  if (!message || message === "") {
-    return null;
-  }
+  const id = useId();
 
   // @ts-ignore
   let data = message?.response?.data;
   if (data) {
     message = data?.error || data?.message || message;
+  }
+  if (!message || message === "") {
+    return null;
+  }
+
+  if (tooltip) {
+    return (
+      <>
+        <div className="flex flex-row space-x-1">
+          <AiFillWarning
+            data-tooltip-id={id}
+            className="h-5 w-5 text-red-500"
+          />
+          {children}
+        </div>
+        {createPortal(
+          <Tooltip id={id} className="z-[9999999999] max-w-[95vw]">
+            <pre className="whitespace-pre-wrap text-sm">{message}</pre>
+          </Tooltip>,
+          document.body
+        )}
+      </>
+    );
   }
 
   return (
@@ -59,7 +90,7 @@ export default function ErrorMessage({
           ></path>
         </svg>
       )}
-      <div className="flex h-full items-center pl-2 text-center">
+      <div className={clsx("flex", className)}>
         <h3
           className={clsx(
             "text-sm",

@@ -20,6 +20,7 @@ describe("InstallAgentModal", () => {
   it("renders the Helm repository installation command", async () => {
     render(<FluxSnippet data={[mockInput]} />);
 
+    writeText.mockClear();
     const btn = screen.getByTitle(/Copy to clipboard/i);
 
     fireEvent.click(btn);
@@ -33,7 +34,7 @@ describe("InstallAgentModal", () => {
   it("renders the Helm repository installation command with kube command", async () => {
     render(<FluxSnippet data={mockInputWithKubOptions} />);
     const btn = screen.getByTitle(/Copy to clipboard/i);
-
+    writeText.mockClear();
     fireEvent.click(btn);
 
     await waitFor(() => {

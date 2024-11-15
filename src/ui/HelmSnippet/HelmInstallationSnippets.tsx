@@ -24,10 +24,7 @@ export type ChartData = {
   chartUrl?: string;
   repoName?: string;
   releaseName: string;
-  values?: {
-    key: string;
-    value?: string;
-  }[];
+  values?: Record<string, any>;
   args?: string[];
   createRepo?: boolean;
   wait?: boolean;

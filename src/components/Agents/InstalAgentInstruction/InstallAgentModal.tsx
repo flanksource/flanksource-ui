@@ -99,42 +99,23 @@ export default function InstallAgentModal({
         updateHelmRepo: true,
         releaseName: "mc-agent",
         chartUrl: "https://flanksource.github.io/charts",
-        // You can add more values here to be passed to the template for the
-        // values section of the HelmRelease
-        values: [
-          {
-            key: "upstream.createSecret",
-            value: "true"
-          },
-          {
-            key: "upstream.host",
-            value: baseUrl
-          },
-          {
-            key: "upstream.username",
-            value: "token"
-          },
-          {
-            key: "upstream.password",
-            value: generatedAgent?.access_token
-          },
-          {
-            key: "upstream.agentName",
-            value: agentFormValues?.name
+        values: {
+          upstream: {
+            createSecret: "true",
+            host: baseUrl,
+            username: "token",
+            password: generatedAgent?.access_token,
+            agentName: agentFormValues?.name
           },
           ...(pushTelemetry?.enabled
-            ? [
-                {
-                  key: "pushTelemetry.enabled",
-                  value: "true"
-                },
-                {
-                  key: "pushTelemetry.topologyName",
-                  value: `${pushTelemetry.topologyName}`
+            ? {
+                pushTelemetry: {
+                  enabled: "true",
+                  topologyName: pushTelemetry.topologyName
                 }
-              ]
-            : [])
-        ]
+              }
+            : {})
+        }
       },
       ...(kubeOptions?.enabled
         ? [
@@ -143,16 +124,12 @@ export default function InstallAgentModal({
               namespace: "mission-control-agent",
               repoName: "flanksource",
               releaseName: "mc-agent-kubernetes",
-              values: [
-                {
-                  key: "clusterName",
-                  value: agentFormValues?.name
-                },
-                {
-                  key: "scraper.schedule",
-                  value: kubeOptions.schedule
+              values: {
+                clusterName: agentFormValues?.name,
+                scraper: {
+                  schedule: kubeOptions.schedule
                 }
-              ]
+              }
             }
           ]
         : [])

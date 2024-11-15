@@ -1,4 +1,6 @@
-import FormikAutocompleteDropdown from "./FormikAutocompleteDropdown";
+import FormikAutocompleteDropdown, {
+  FormikSelectDropdownProps
+} from "./FormikAutocompleteDropdown";
 
 const types = {
   short: [
@@ -29,6 +31,34 @@ const types = {
     {
       label: "@every 4h",
       value: "@every 4h"
+    }
+  ],
+
+  scraper: [
+    {
+      label: "@every 15m",
+      value: "@every 15m"
+    },
+    {
+      label: "@every 30m",
+      value: "@every 30m"
+    },
+    {
+      label: "@hourly",
+      value: "@hourly"
+    },
+    {
+      label: "@every 2h",
+      value: "@every 2h"
+    },
+    {
+      label: "@every 4h",
+      value: "@every 4h"
+    },
+
+    {
+      label: "@daily",
+      value: "@daily"
     }
   ],
   medium: [
@@ -119,25 +149,19 @@ const types = {
 };
 
 type Props = {
-  name: string;
   type?: keyof typeof types;
-  hint?: string;
-  value?: string;
-};
+} & Omit<FormikSelectDropdownProps, "options">;
 
 export default function FormikScheduleField({
-  name,
-  hint,
+  label = "Schedule",
   type = "default",
-  value
+  ...props
 }: Props) {
   return (
     <FormikAutocompleteDropdown
-      name={name}
-      label="Schedule"
-      hint={hint}
-      required
+      label={label}
       options={types[type]}
+      {...props}
     />
   );
 }

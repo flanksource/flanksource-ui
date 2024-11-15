@@ -21,7 +21,7 @@ helm repo update
 
 helm install {{{ this.chart }}} {{{ this.repoName }}}/{{{ this.chart }}} -n "{{{ this.namespace }}}" \\
   {{#each this.values}}
-  --set {{{ this.key }}}={{{ this.value }}} {{#unless @last}} \\ \n{{/unless}}{{/each}}{{#if this.createNamespace }} \\
+  --set {{{ @key }}}={{{ this }}} {{#unless @last}} \\ \n{{/unless}}{{/each}}{{#if this.createNamespace }} \\
   --create-namespace {{#if this.valueFile }} \\ {{/if}}
 {{/if}} {{#if this.valueFile }} \\
   --set-file values.yaml {{#if this.args}} \\ {{/if}}
@@ -42,19 +42,33 @@ type Props = {
   data: ChartData[];
 };
 
+// @ts-ignore
+export function flattenObj(obj, parent, res = {}) {
+  for (let key in obj) {
+    let propName = parent ? parent + "." + key : key;
+    if (typeof obj[key] == "object") {
+      flattenObj(obj[key], propName, res);
+    } else {
+      // @ts-ignore
+      res[propName] = obj[key];
+    }
+  }
+  return res;
+}
+
 export default function CLIInstallAgent({ data }: Props) {
   const helmCommandTemplate = useMemo(() => {
-    return template(
-      {
-        charts: data.map((chart) => {
-          return {
-            ...chart,
-            chartUrl: chart.chartUrl ?? "https://flanksource.github.io/charts"
-          };
-        })
-      },
-      {}
-    );
+    let ctx = {
+      charts: data.map((chart) => {
+        return {
+          ...chart,
+          chartUrl: chart.chartUrl ?? "https://flanksource.github.io/charts",
+          // @ts-ignore
+          values: flattenObj(chart.values)
+        };
+      })
+    };
+    return template(ctx);
   }, [data]);
 
   return (
