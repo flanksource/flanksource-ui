@@ -19,6 +19,7 @@ import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Formik, Form, FormikBag } from "formik";
+import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 
@@ -118,6 +119,8 @@ export default function NotificationSilenceForm({
       ? parseDateMath(until, false)
       : until;
 
+    v = omit(v, "error");
+
     return mutate(
       {
         ...v,
@@ -172,6 +175,10 @@ export default function NotificationSilenceForm({
                   name="filter"
                   label="Filter"
                   hint="CEL expression for the silence to match against"
+                />
+                <ErrorMessage
+                  message={data?.error}
+                  className="h-full pl-2 align-top"
                 />
 
                 <FormikTextArea name="description" label="Reason" />

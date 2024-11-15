@@ -10,6 +10,8 @@ import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import NotificationsRecipientsTabs from "../../Forms/Notifications/NotificationsRecipientsTabs";
 import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 import CanEditResource from "../../Settings/CanEditResource";
+import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
+import { omit } from "lodash";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;
@@ -34,7 +36,11 @@ export default function NotificationsRulesForm({
           updated_at: undefined,
           ...(!notification?.id && { source: "UI" })
         }}
-        onSubmit={(values) => onSubmit(values as Partial<NotificationRules>)}
+        onSubmit={(values) =>
+          onSubmit(
+            omit(values, "most_common_error") as Partial<NotificationRules>
+          )
+        }
         validateOnBlur
         validateOnChange
       >
@@ -53,6 +59,11 @@ export default function NotificationsRulesForm({
                 required
               />
               <FormikTextInput name="filter" label="Filter" />
+              <ErrorMessage
+                message={notification?.most_common_error}
+                className="h-full pl-2 align-top"
+              />
+
               <NotificationsRecipientsTabs />
               <FormikAutocompleteDropdown
                 isClearable
