@@ -34,8 +34,7 @@ export default function KubernetesConfigsFormEditor({
       />
 
       <FormikScheduleField
-        type="medium"
-        value="@every 30m"
+        type="scraper"
         name={`${name}.schedule`}
         hint="Schedule at which to perform a full import, if Watch is enabled can be set to a longer window"
       />
