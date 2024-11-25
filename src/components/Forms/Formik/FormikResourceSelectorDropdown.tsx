@@ -55,23 +55,31 @@ export default function FormikResourceSelectorDropdown({
   const resourceSelector: SearchResourcesRequest = useMemo(
     () => ({
       checks: checkResourceSelector
-        ? [...checkResourceSelector.map((r) => ({ ...r, search: searchText }))]
+        ? [
+            ...checkResourceSelector.map((r) => ({
+              ...r,
+              agent: "all",
+              search: searchText
+            }))
+          ]
         : undefined,
       components: componentResourceSelector
         ? [
-          ...componentResourceSelector.map((r) => ({
-            ...r,
-            search: searchText
-          }))
-        ]
+            ...componentResourceSelector.map((r) => ({
+              ...r,
+              agent: "all",
+              search: searchText
+            }))
+          ]
         : undefined,
       configs: configResourceSelector
         ? [
-          ...configResourceSelector.map((r) => ({
-            ...r,
-            search: searchText
-          }))
-        ]
+            ...configResourceSelector.map((r) => ({
+              ...r,
+              agent: "all",
+              search: searchText
+            }))
+          ]
         : undefined
     }),
     [
