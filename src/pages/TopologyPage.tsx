@@ -4,7 +4,7 @@ import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import TopologySidebar from "@flanksource-ui/components/Topology/Sidebar/TopologySidebar";
 import { TopologyBreadcrumbs } from "@flanksource-ui/components/Topology/TopologyBreadcrumbs";
-import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
+import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
 import { getCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import { Head } from "@flanksource-ui/ui/Head";

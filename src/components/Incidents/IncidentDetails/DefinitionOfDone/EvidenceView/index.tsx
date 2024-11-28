@@ -5,18 +5,18 @@ import {
 } from "@flanksource-ui/api/query-hooks";
 import { getCanaries } from "@flanksource-ui/api/services/topology";
 import { Evidence, EvidenceType } from "@flanksource-ui/api/types/evidence";
+import { CardMetrics } from "@flanksource-ui/components/Topology/TopologyCard/CardMetrics";
+import { StatusStyles } from "@flanksource-ui/components/Topology/TopologyCard/TopologyCard";
 import { Size, ViewType } from "@flanksource-ui/types";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { BsFillCircleFill, BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { ConfigIcon } from "../../../../../ui/Icons/ConfigIcon";
-import { Icon } from "../../../../../ui/Icons/Icon";
-import { StatusStyles } from "../../../../Topology/TopologyCard";
-import { CardMetrics } from "../../../../Topology/TopologyCard/CardMetrics";
 import {
   ConfigAnalysisEvidence,
   ConfigChangeEvidence
