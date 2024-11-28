@@ -1,8 +1,8 @@
+import { useComponentLabelsQuery } from "@flanksource-ui/api/query-hooks";
 import FormikFilterSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikFilterSelectDropdown";
+import { allOption } from "@flanksource-ui/pages/TopologyPage";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { useComponentLabelsQuery } from "../../../api/query-hooks";
-import { allOption } from "../../../pages/TopologyPage";
 
 type ComponentLabelsDropdownProps = {
   name: string;

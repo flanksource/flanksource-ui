@@ -18,7 +18,7 @@ import { TopologyLink } from "../TopologyLink";
 import { formatProperties } from "./Utils/formatProperties";
 
 type Props = {
-  topology?: Topology;
+  topology?: Omit<Topology, "configs">;
   refererId?: string;
   isCollapsed?: boolean;
   onCollapsedStateChange?: (isClosed: boolean) => void;
