@@ -38,7 +38,7 @@ export const UserAccessStateContextProvider = ({
 
   const isAdmin = roles.includes("admin");
 
-  const isViewer = roles.includes("viewer");
+  const isViewer = roles.includes("viewer") || roles.includes("user");
 
   return (
     <UserAccessStateContext.Provider
