@@ -40,6 +40,7 @@
     "@types/react-mentions": "^4.1.8",
     "@types/testing-library__jest-dom": "^5.14.5",
     "@types/testing-library__react": "^10.2.0",
+    "allotment": "^1.20.2",
     "ansi-to-html": "^0.7.2",
     "autoprefixer": "^10.4.20",
     "axios": "^1.6.2",
