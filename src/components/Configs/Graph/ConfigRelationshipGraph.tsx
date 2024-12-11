@@ -47,9 +47,16 @@ export function ConfigRelationshipGraph({ configs }: ConfigGraphProps) {
   const direction = useConfigGraphDirectionToggleValue();
 
   const edges: Edge<ConfigGraphNodes>[] = useMemo(() => {
+    const nodeIDs = new Set(configsForGraph.map((c) => c.nodeId));
+
     const e: Edge<ConfigGraphNodes>[] = [];
     configsForGraph.forEach((config) => {
       config.related_ids?.forEach((related_id) => {
+        if (!nodeIDs.has(related_id)) {
+          // we should only be rendering edges for configs that were returned.
+          return;
+        }
+
         e.push({
           id: `${config.nodeId}-related-to-${related_id}`,
           source: config.nodeId,
