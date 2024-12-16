@@ -38,7 +38,6 @@ type ConfigGraphProps = {
 };
 
 export function ConfigRelationshipGraph({ configs }: ConfigGraphProps) {
-  // Extract this to an outside function and write tests for it
   const configsForGraph = useMemo(
     () => prepareConfigsForGraph(configs),
     [configs]
@@ -48,36 +47,39 @@ export function ConfigRelationshipGraph({ configs }: ConfigGraphProps) {
 
   const edges: Edge<ConfigGraphNodes>[] = useMemo(() => {
     const nodeIDs = new Set(configsForGraph.map((c) => c.nodeId));
+    const processedEdges = new Set<string>();
 
-    const e: Edge<ConfigGraphNodes>[] = [];
-    configsForGraph.forEach((config) => {
-      config.related_ids?.forEach((related_id) => {
-        if (!nodeIDs.has(related_id)) {
-          // we should only be rendering edges for configs that were returned.
-          return;
-        }
+    return configsForGraph.flatMap((config) =>
+      (config.related_ids ?? [])
+        .filter(
+          (related_id) =>
+            nodeIDs.has(related_id) &&
+            config.nodeId !== related_id &&
+            !processedEdges.has(`${config.nodeId}-${related_id}`)
+        )
+        .map((related_id) => {
+          const edgeKey = `${config.nodeId}-${related_id}`;
+          processedEdges.add(edgeKey);
 
-        e.push({
-          id: `${config.nodeId}-related-to-${related_id}`,
-          source: config.nodeId,
-          target: related_id
-        } satisfies Edge);
-      });
-    });
-    return e;
+          return {
+            id: `${config.nodeId}-related-to-${related_id}`,
+            source: config.nodeId,
+            target: related_id
+          } satisfies Edge;
+        })
+    );
   }, [configsForGraph]);
 
-  const nodes: Node<ConfigGraphNodes>[] = useMemo(() => {
-    // break this down by config types
-    return configsForGraph.map((config) => {
-      return {
+  const nodes: Node<ConfigGraphNodes>[] = useMemo(
+    () =>
+      configsForGraph.map((config) => ({
         id: `${config.nodeId}`,
         type: config.data.type === "config" ? "configNode" : "intermediaryNode",
         data: config,
         position: { x: 0, y: 0 }
-      } satisfies Node<ConfigGraphNodes>;
-    });
-  }, [configsForGraph]);
+      })),
+    [configsForGraph]
+  );
 
   if (nodes.length === 0) {
     return null;
