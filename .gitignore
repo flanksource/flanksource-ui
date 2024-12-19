@@ -48,3 +48,6 @@ middleware.ts
 /blob-report/
 /playwright/.cache/
 .bin/
+
+.envrc
+default.nix

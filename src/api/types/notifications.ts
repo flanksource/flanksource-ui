@@ -68,6 +68,7 @@ export type NotificationSendHistory = {
   first_observed: string;
   source_event: string;
   resource_id: string;
+  playbook_run_id?: string;
   person_id?: string | undefined;
   error?: string | undefined;
   duration_millis?: number | undefined;
