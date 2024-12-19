@@ -136,6 +136,16 @@ export default function PlaybookRunsActions({
               }
             />
           )}
+          {data.notification_send_id && (
+            <VerticalDescription
+              label="Trigger by notification"
+              value={
+                <Link to={`/notifications?id=${data.notification_send_id}`}>
+                  {"Link"}
+                </Link>
+              }
+            />
+          )}
         </div>
         <div className="ml-auto flex h-auto flex-col justify-center gap-2">
           <div className="flex flex-row gap-2">

@@ -6,6 +6,7 @@ import { Team, User } from "./users";
 
 export type NotificationRules = {
   id: string;
+  namespace?: string;
   name: string;
   title?: string;
   events: string[];
