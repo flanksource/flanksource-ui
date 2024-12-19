@@ -15,14 +15,14 @@ import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
 import PermissionsTable from "./PermissionsTable";
 
 export const permissionsActionsList: FormikSelectDropdownOption[] = [
-  { value: "ActionRead", label: "read" },
-  { value: "ActionUpdate", label: "update" },
-  { value: "ActionCreate", label: "create" },
-  { value: "ActionDelete", label: "delete" },
-  { value: "ActionAll", label: "*" },
-  { value: "ActionCRUD", label: "create,read,update,delete" },
-  { value: "ActionRun", label: "playbook:run" },
-  { value: "ActionApprove", label: "playbook:approve" }
+  { value: "read", label: "read" },
+  { value: "update", label: "update" },
+  { value: "create", label: "create" },
+  { value: "delete", label: "delete" },
+  { value: "*", label: "*" },
+  { value: "create,read,update,delete", label: "create,read,update,delete" },
+  { value: "playbook:run", label: "playbook:run" },
+  { value: "playbook:approve", label: "playbook:approve" }
 ];
 
 type PermissionsViewProps = {

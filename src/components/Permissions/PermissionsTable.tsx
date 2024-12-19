@@ -55,6 +55,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
     Cell: ({ row }) => {
       const team = row.original.team;
       const person = row.original.person;
+      const notification = row.original.notification;
 
       if (person) {
         return (
@@ -70,6 +71,15 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
           <div className="flex flex-row items-center gap-2">
             <Icon name={team.icon} className="h-5 w-5 text-gray-600" />
             <span>{team.name}</span>
+          </div>
+        );
+      }
+
+      console.log("what");
+      if (notification) {
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <span>{"notification/" + notification.name}</span>
           </div>
         );
       }

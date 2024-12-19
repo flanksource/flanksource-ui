@@ -3,6 +3,7 @@ import { ConfigItem } from "./configs";
 import { PlaybookSpec } from "./playbooks";
 import { Topology } from "./topology";
 import { Team, User } from "./users";
+import { NotificationRules } from "./notifications";
 
 export type PermissionTable = {
   id: string;
@@ -36,6 +37,7 @@ export type PermissionAPIResponse = PermissionTable & {
   playbook: Pick<PlaybookSpec, "id" | "name" | "icon" | "title">;
   team: Pick<Team, "id" | "name" | "icon">;
   connection: Pick<Connection, "id" | "name" | "type">;
+  notification: Pick<NotificationRules, "id" | "name">;
   person: User;
   createdBy: User;
 };
