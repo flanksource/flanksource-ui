@@ -9,6 +9,7 @@ export const Roles = {
   admin: "admin",
   editor: "editor",
   viewer: "viewer",
+  user: "user",
   commander: "commander",
   responder: "responder"
 };
