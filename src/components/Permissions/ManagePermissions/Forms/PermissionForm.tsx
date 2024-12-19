@@ -120,6 +120,7 @@ export default function PermissionForm({
             updated_at: data?.updated_at,
             updated_by: data?.updated_by,
             id: data?.id,
+            notification_id: data?.notification_id,
             person_id: data?.person_id,
             team_id: data?.team_id,
             until: data?.until,
