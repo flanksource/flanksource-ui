@@ -69,7 +69,7 @@ export function fetchPermissions(
     "team:team_id(id, name, icon)",
     `person:person_id(${AVATAR_INFO})`,
     `createdBy:created_by(${AVATAR_INFO})`,
-    `notification:notification_id(id,name)`,
+    `notification:notification_id(id,name,namespace)`,
     `connection:connection_id(id,name,type)`
   ];
 

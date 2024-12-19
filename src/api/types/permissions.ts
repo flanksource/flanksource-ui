@@ -18,6 +18,7 @@ export type PermissionTable = {
   created_by: string;
   connection_id?: string;
   person_id?: string;
+  notification_id?: string;
   team_id?: string;
   updated_by: string;
   created_at: string;
@@ -37,7 +38,7 @@ export type PermissionAPIResponse = PermissionTable & {
   playbook: Pick<PlaybookSpec, "id" | "name" | "icon" | "title">;
   team: Pick<Team, "id" | "name" | "icon">;
   connection: Pick<Connection, "id" | "name" | "type">;
-  notification: Pick<NotificationRules, "id" | "name">;
+  notification: Pick<NotificationRules, "id" | "name" | "namespace">;
   person: User;
   createdBy: User;
 };

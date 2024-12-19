@@ -12,6 +12,7 @@ import { TopologyLink } from "../Topology/TopologyLink";
 import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
@@ -75,11 +76,19 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
         );
       }
 
-      console.log("what");
       if (notification) {
         return (
           <div className="flex flex-row items-center gap-2">
-            <span>{"notification/" + notification.name}</span>
+            <span>
+              <Link
+                className="link"
+                to="/notifications/rules?id=f488a83b-ee27-40c9-932e-3da77f02a5b9"
+              >
+                {"notification: " +
+                  (notification.namespace ? notification.namespace + "/" : "") +
+                  notification.name}
+              </Link>
+            </span>
           </div>
         );
       }
