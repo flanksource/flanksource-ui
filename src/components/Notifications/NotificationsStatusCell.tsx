@@ -1,6 +1,6 @@
 import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
-import { FaBan, FaBellSlash, FaDotCircle } from "react-icons/fa";
+import { FaBellSlash, FaDotCircle } from "react-icons/fa";
 
 export const notificationSendHistoryStatus = {
   sent: {
@@ -15,17 +15,35 @@ export const notificationSendHistoryStatus = {
     value: "error",
     id: "error"
   },
+  sending: {
+    label: "Sending",
+    Icon: <FaDotCircle className="fill-gray-600" />,
+    value: "sending",
+    id: "sending"
+  },
   pending: {
     label: "Pending",
     Icon: <FaDotCircle className="fill-gray-600" />,
     value: "pending",
     id: "pending"
   },
-  cancelled: {
-    label: "Cancelled",
-    Icon: <FaBan className="fill-red-600" />,
-    value: "cancelled",
-    id: "cancelled"
+  pending_playbook_run: {
+    label: "Pending Playbook Run",
+    Icon: <FaDotCircle className="fill-gray-600" />,
+    value: "pending_playbook_run",
+    id: "pending_playbook_run"
+  },
+  pending_playbook_completion: {
+    label: "Playbook In Progress",
+    Icon: <FaDotCircle className="fill-gray-600" />,
+    value: "pending_playbook_completion",
+    id: "pending_playbook_completion"
+  },
+  "evaluating-waitfor": {
+    label: "Evaluating WaitFor",
+    Icon: <FaDotCircle className="fill-gray-600" />,
+    value: "evaluating-waitfor",
+    id: "evaluating-waitfor"
   },
   "repeat-interval": {
     label: "Repeated",
@@ -38,6 +56,12 @@ export const notificationSendHistoryStatus = {
     Icon: <FaBellSlash className="fill-gray-600" />,
     value: "silenced",
     id: "silenced"
+  },
+  skipped: {
+    label: "Skipped",
+    Icon: <FaBellSlash className="fill-gray-600" />,
+    value: "skipped",
+    id: "skipped"
   }
 };
 

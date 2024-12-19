@@ -64,6 +64,7 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   check_id?: string;
   config_id?: string;
   component_id?: string;
+  notification_send_id?: string;
   parameters?: Record<string, unknown>;
   /* relationships */
   playbooks?: PlaybookSpec;

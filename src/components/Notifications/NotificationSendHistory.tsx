@@ -12,7 +12,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
     {
       header: "Age",
       accessorKey: "created_at",
-      size: 100,
+      size: 40,
       Cell: ({ row }) => {
         const dateString = row.original.created_at;
         const count = row.original.count;
@@ -32,7 +32,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
     },
     {
       header: "Resource",
-      size: 300,
+      size: 250,
       Cell: ({ row }) => {
         return (
           <div
@@ -58,6 +58,23 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
       Cell: ({ row }) => {
         const sourceEvent = row.original.source_event;
         return <span>{sourceEvent}</span>;
+      }
+    },
+    {
+      header: "Recipient",
+      size: 200,
+      Cell: ({ row }) => {
+        const { playbook_run_id, person_id } = row.original;
+
+        const recipient = playbook_run_id
+          ? `playbook/${playbook_run_id}`
+          : person_id
+            ? `person/${person_id}`
+            : "";
+
+        // TODO: use a proper component.
+        // show connection recipient but the backend doesn't currently store that.
+        return <span>{recipient}</span>;
       }
     }
     // {

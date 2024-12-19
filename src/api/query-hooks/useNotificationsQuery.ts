@@ -32,6 +32,22 @@ export function useNotificationsSummaryQuery(
   );
 }
 
+export function useGetAllNotifications() {
+  return useQuery<NotificationRules[], Error>(
+    ["notifications", "all"],
+    async () => {
+      const filter: NotificationQueryFilterOptions = {
+        pageIndex: 0,
+        pageSize: 1000,
+        sortBy: "name",
+        sortOrder: "asc"
+      };
+      const response = await getNotificationsSummary(filter);
+      return response.data ?? [];
+    }
+  );
+}
+
 export function useGetNotificationsByIDQuery(
   id: string,
   options?: UseQueryOptions<NotificationRules | undefined, Error>

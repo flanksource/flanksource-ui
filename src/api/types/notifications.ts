@@ -6,6 +6,7 @@ import { Team, User } from "./users";
 
 export type NotificationRules = {
   id: string;
+  namespace?: string;
   name: string;
   title?: string;
   events: string[];
@@ -68,6 +69,7 @@ export type NotificationSendHistory = {
   first_observed: string;
   source_event: string;
   resource_id: string;
+  playbook_run_id?: string;
   person_id?: string | undefined;
   error?: string | undefined;
   duration_millis?: number | undefined;
