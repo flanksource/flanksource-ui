@@ -95,6 +95,7 @@ export default function PlaybookParamsFieldsRenderer({
         />
       );
     case "text":
+    default:
       if (params.properties?.multiline) {
         return (
           <FormikTextArea
@@ -150,10 +151,6 @@ export default function PlaybookParamsFieldsRenderer({
           name={`params.${fieldName}`}
           required={required}
         />
-      );
-    default:
-      return (
-        <FormikTextInput name={`params.${fieldName}`} required={required} />
       );
   }
 }
