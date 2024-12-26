@@ -15,6 +15,7 @@ import {
 export type Connection = {
   altID?: string;
   authMethod?: string;
+  model?: string;
   bucket?: string;
   certificate?: string;
   channel?: string;

@@ -4,6 +4,9 @@ import { isEmpty } from "lodash";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
+  anthropic: "anthropic",
+  openai: "openai",
+  ollama: "ollama",
   aws_s3: "aws-s3",
   kubernetes_resource: "k8s",
   generic_webhook: "webhook",
@@ -115,7 +118,9 @@ export const aliases: IconMap = {
   "elasticloadbalancing-loadbalancer": "aws-elb",
   fluentbit: "fluentd",
   "google chat": "google-chat",
-  "google cloud": "gcp",
+  "google cloud": "google-cloud",
+  google_cloud: "google-cloud",
+  gcs: "google-cloud",
   "iam-instanceprofile": "server",
   "iam-role": "shield",
   "iam-user": "user",
@@ -142,7 +147,6 @@ export const aliases: IconMap = {
   "k8s-servicemonitor": "prometheus",
   "k8s-tigerastatus": "calico",
   "k8s-topology": "mission-control",
-  gcs: "gcsbucket",
   kubernetes: "k8s",
   "mssql-database": "sqlserver",
   mssql: "sqlserver",

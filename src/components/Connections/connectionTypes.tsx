@@ -47,6 +47,9 @@ export type ConnectionFormFields = {
 };
 
 export const enum ConnectionValueType {
+  Anthropic = "anthropic",
+  Ollama = "ollama",
+  OpenAI = "openai",
   AWS = "aws",
   AWS_S3 = "s3",
   Azure = "azure",
@@ -123,6 +126,134 @@ export const commonConnectionFormFields: ConnectionFormFields[] = [
 ];
 
 export const connectionTypes: ConnectionType[] = [
+  {
+    title: "Anthropic",
+    icon: "anthropic",
+    value: ConnectionValueType.Anthropic,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Model",
+        key: "model",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Base URL",
+        hint: "appropriate when using a proxy",
+        key: "url",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        model: data?.properties?.model
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        properties: {
+          model: data.model
+        }
+      };
+    }
+  },
+  {
+    title: "OpenAI",
+    icon: "openai",
+    value: ConnectionValueType.OpenAI,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "URL",
+        key: "url",
+        hint: "appropriate when using a proxy",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Model",
+        key: "model",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        model: data?.properties?.model
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        properties: {
+          model: data.model
+        }
+      };
+    }
+  },
+  {
+    title: "Ollama",
+    icon: "ollama",
+    value: ConnectionValueType.Ollama,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "URL",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Model",
+        key: "model",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        model: data?.properties?.model
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        password: data.password,
+        properties: {
+          model: data.model
+        }
+      };
+    }
+  },
   {
     title: "Postgres",
     icon: "postgres",
