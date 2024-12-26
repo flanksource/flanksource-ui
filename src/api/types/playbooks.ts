@@ -34,6 +34,8 @@ export type PlaybookRunAction = {
   result?: {
     stdout?: string;
     logs?: string;
+    markdown?: string;
+    slack?: string;
     stderr?: string;
     [key: string]: unknown;
   };

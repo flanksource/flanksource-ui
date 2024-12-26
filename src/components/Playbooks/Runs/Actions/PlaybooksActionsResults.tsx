@@ -1,6 +1,7 @@
 import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
 import Linkify from "linkify-react";
+import markdownit from "markdown-it";
 import { Opts } from "linkifyjs";
 import { useMemo } from "react";
 import {
@@ -103,6 +104,39 @@ function DisplayLogs({
   );
 }
 
+function DisplayMarkdown({
+  md,
+  className
+}: {
+  md?: string;
+  className?: string;
+}) {
+  const html = useMemo(() => {
+    if (!md) {
+      return null;
+    }
+
+    const renderer = markdownit({
+      html: true,
+      linkify: true
+    });
+    return renderer.render(md);
+  }, [md]);
+
+  if (!html) {
+    return null;
+  }
+
+  return (
+    <pre
+      className={className}
+      dangerouslySetInnerHTML={{
+        __html: html
+      }}
+    />
+  );
+}
+
 type Props = {
   action: Pick<
     PlaybookRunAction,
@@ -126,11 +160,12 @@ export default function PlaybooksRunActionsResults({
   return (
     <div className="relative flex h-full w-full flex-col">
       {action.error && <pre className={className}>{action.error}</pre>}
-      {result?.stderr || result?.stdout || result?.logs ? (
+      {result?.stderr || result?.stdout || result?.logs || result?.markdown ? (
         <div className={`flex flex-col gap-2 ${className}`}>
           <DisplayStdout className={className} stdout={result?.stdout} />
           <DisplayStderr className={className} stderr={result?.stderr} />
           <DisplayLogs className={className} logs={result?.logs} />
+          <DisplayMarkdown className={className} md={result?.markdown} />
         </div>
       ) : (
         <pre className={className}>
