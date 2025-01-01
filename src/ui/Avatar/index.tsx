@@ -132,7 +132,8 @@ export function Avatar({
         )}
       </div>
       {showName && <span>{user?.name}</span>}
-      <Tooltip id="user-name" />
+
+      <Tooltip id="user-name" className="z-50" />
     </>
   );
 }
