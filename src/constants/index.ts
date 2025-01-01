@@ -14,7 +14,7 @@ export const NodePodPropToLabelMap = {
   ip: "IP"
 } as const;
 
-export const AVATAR_INFO = `id,name,avatar`;
+export const AVATAR_INFO = `id,name,avatar,email`;
 
 export const SortOrders = {
   asc: "asc",
