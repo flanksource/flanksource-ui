@@ -39,7 +39,7 @@ export function Avatar({
     return "14px";
   });
   const srcList = user?.avatar;
-  const fallbackInitials = user?.name || "?";
+  const fallbackInitials = user?.name?.trim() || user?.email || "?";
 
   const { src, isLoading } = useImage({
     srcList: (Array.isArray(srcList) ? srcList : [srcList]).filter(Boolean),
@@ -103,7 +103,7 @@ export function Avatar({
           circular ? "rounded-full" : "rounded-md"
         )}
         data-tooltip-id="user-name"
-        data-tooltip-content={user?.name}
+        data-tooltip-content={user?.name?.trim() || user?.email || "?"}
       >
         {srcList && src ? (
           <img
