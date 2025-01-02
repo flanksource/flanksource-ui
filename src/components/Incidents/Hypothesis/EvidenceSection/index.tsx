@@ -17,7 +17,7 @@ import { ConfigDetailsChanges } from "@flanksource-ui/components/Configs/Changes
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { ConfigAnalysisLink } from "@flanksource-ui/components/Configs/Insights/ConfigAnalysisLink/ConfigAnalysisLink";
 import { LogsTable } from "@flanksource-ui/components/Logs/Table/LogsTable";
-import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
+import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard/TopologyCard";
 import { Size, ViewType } from "@flanksource-ui/types";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";

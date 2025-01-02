@@ -19,7 +19,6 @@ export const CustomScroll = ({
 }: CustomScrollProps) => {
   const items = React.Children.toArray(children);
   const [showMore, setShowMore] = useState(false);
-  const [hasScroll, setHasScroll] = useState(false);
 
   useEffect(() => {
     setShowMore(minChildCount < items.length);
@@ -35,11 +34,7 @@ export const CustomScroll = ({
 
   return (
     <div
-      className={clsx(
-        "relative overflow-hidden",
-        className,
-        hasScroll && !showMore ? "hover:overflow-y-scroll" : ""
-      )}
+      className={clsx("relative overflow-y-auto", className)}
       style={{ ...style, maxHeight, height: "min-content" }}
       {...rest}
     >
@@ -50,10 +45,9 @@ export const CustomScroll = ({
         <div
           onClick={() => {
             setShowMore(false);
-            setHasScroll(true);
           }}
           className={clsx(
-            "bottom-0 m-auto w-full hover:underline",
+            "bottom-0 col-span-2 m-auto w-full hover:underline",
             showMoreClass
           )}
         >
