@@ -1,14 +1,10 @@
+import { Property as PropertyD } from "@flanksource-ui/api/types/topology";
 import clsx from "clsx";
 import { Icon } from "../../../ui/Icons/Icon";
 import { FormatProperty } from "./FormatProperty";
 
 interface IProps {
-  items: {
-    name: string;
-    color?: string;
-    label?: string;
-    icon?: string;
-  }[];
+  items: PropertyD[];
   row?: boolean;
   labelClasses?: string;
   metricsClasses?: string;

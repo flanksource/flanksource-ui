@@ -1,6 +1,8 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
 import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
+import { Property } from "@flanksource-ui/api/types/topology";
 import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
+import { CardMetrics } from "@flanksource-ui/components/Topology/TopologyCard/CardMetrics";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
 import dayjs from "dayjs";
@@ -17,9 +19,10 @@ import { formatConfigLabels } from "./Utils/formatConfigLabels";
 
 type Props = {
   configId: string;
+  topologyProperties?: Property[];
 };
 
-export function ConfigDetails({ configId }: Props) {
+export function ConfigDetails({ configId, topologyProperties }: Props) {
   const {
     data: configDetails,
     isLoading,
@@ -67,6 +70,22 @@ export function ConfigDetails({ configId }: Props) {
     [configDetails]
   );
 
+  const formattedTopologyProperties = useMemo(() => {
+    if (topologyProperties) {
+      return formatProperties({
+        properties: topologyProperties.filter((property) => !property.headline)
+      });
+    }
+    return undefined;
+  }, [topologyProperties]);
+
+  const headlinedTopologyProperties = useMemo(() => {
+    if (topologyProperties) {
+      return topologyProperties.filter((property) => property.headline);
+    }
+    return undefined;
+  }, [topologyProperties]);
+
   const isLastScrappedMoreThan1Hour = useMemo(() => {
     if (!configDetails?.last_scraped_time) {
       return false;
@@ -84,6 +103,12 @@ export function ConfigDetails({ configId }: Props) {
         <TextSkeletonLoader />
       ) : configDetails && !error ? (
         <>
+          {headlinedTopologyProperties &&
+            headlinedTopologyProperties.length > 0 && (
+              <div className="flex w-min flex-row gap-2 py-2">
+                <CardMetrics items={headlinedTopologyProperties} />
+              </div>
+            )}
           <DisplayDetailsRow
             items={[
               {
@@ -178,6 +203,10 @@ export function ConfigDetails({ configId }: Props) {
               }
             ]}
           />
+
+          {formattedTopologyProperties && (
+            <DisplayGroupedProperties items={formattedTopologyProperties} />
+          )}
 
           <DisplayDetailsRow
             items={[
