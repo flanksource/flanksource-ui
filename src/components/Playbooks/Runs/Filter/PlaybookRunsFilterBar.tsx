@@ -5,8 +5,8 @@ import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { TimeRangePicker } from "@flanksource-ui/ui/Dates/TimeRangePicker";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
-import { useState } from "react";
-import { URLSearchParamsInit } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
 import SubmitPlaybookRunForm from "../Submit/SubmitPlaybookRunForm";
 import PlaybookSpecsDropdown from "./PlaybookSpecsDropdown";
 import PlaybookStatusDropdown from "./PlaybookStatusDropdown";
@@ -36,8 +36,35 @@ export default function PlaybookRunsFilterBar({
   );
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const range = getTimeRangeFromUrl();
+
+  const configID = searchParams.get("config_id") ?? undefined;
+  let playbookParameters: Record<string, string> = {};
+  searchParams.forEach((val, key) => {
+    if (key.startsWith("params.")) {
+      const k = key.replace("params.", "");
+      playbookParameters[k] = val;
+    }
+  });
+
+  useEffect(() => {
+    const shouldOpenRunForm = searchParams.get("run") === "true";
+    if (shouldOpenRunForm) {
+      setIsSubmitPlaybookRunFormOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleCloseRunForm = () => {
+    setIsSubmitPlaybookRunFormOpen(false);
+    searchParams.delete("run");
+    setSearchParams(searchParams);
+  };
+
+  const handleOpenRunForm = () => {
+    searchParams.set("run", "true");
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="flex w-full flex-row gap-2">
@@ -77,7 +104,7 @@ export default function PlaybookRunsFilterBar({
             <>
               <Button
                 disabled={isLoading}
-                onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
+                onClick={handleOpenRunForm}
                 className="btn-primary min-w-max"
               >
                 <VscPlay />
@@ -89,7 +116,10 @@ export default function PlaybookRunsFilterBar({
               >
                 <SubmitPlaybookRunForm
                   isOpen={isSubmitPlaybookRunFormOpen}
-                  onClose={() => setIsSubmitPlaybookRunFormOpen(false)}
+                  configId={configID}
+                  overrideParams={configID !== ""}
+                  params={playbookParameters}
+                  onClose={handleCloseRunForm}
                   playbook={playbookSpec}
                 />
               </AuthorizationAccessCheck>

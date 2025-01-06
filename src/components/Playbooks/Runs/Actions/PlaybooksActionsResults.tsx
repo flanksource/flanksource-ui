@@ -160,12 +160,22 @@ export default function PlaybooksRunActionsResults({
   return (
     <div className="relative flex h-full w-full flex-col">
       {action.error && <pre className={className}>{action.error}</pre>}
-      {result?.stderr || result?.stdout || result?.logs || result?.markdown ? (
+      {result?.stderr ||
+      result?.stdout ||
+      result?.logs ||
+      result?.slack ||
+      result?.recommendedPlaybooks ||
+      result?.markdown ? (
         <div className={`flex flex-col gap-2 ${className}`}>
           <DisplayStdout className={className} stdout={result?.stdout} />
           <DisplayStderr className={className} stderr={result?.stderr} />
           <DisplayLogs className={className} logs={result?.logs} />
           <DisplayMarkdown className={className} md={result?.markdown} />
+          <DisplayLogs
+            className={className}
+            logs={result?.recommendedPlaybooks}
+          />
+          <DisplayLogs className={className} logs={result?.slack} />
         </div>
       ) : (
         <pre className={className}>
