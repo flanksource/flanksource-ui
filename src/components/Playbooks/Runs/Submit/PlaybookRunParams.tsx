@@ -35,13 +35,13 @@ function parseCodeDefaultValue(parameter: PlaybookParam) {
 type PlaybookRunParamsProps = {
   isResourceRequired: boolean;
   playbook: Pick<PlaybookSpec, "spec">;
-  isReRun: boolean;
+  overrideParams: boolean;
 };
 
 export default function PlaybookRunParams({
   isResourceRequired = false,
   playbook,
-  isReRun = false
+  overrideParams = false
 }: PlaybookRunParamsProps) {
   const [, setModalSize] = useAtom(submitPlaybookRunFormModalSizesAtom);
 
@@ -95,13 +95,13 @@ export default function PlaybookRunParams({
         // We don't want to override form values if they are already set by user
         // action, like for instance when re-running a playbook with the same
         // parameters, we don't want to set the default values again
-        if (param.default !== undefined && !isReRun) {
+        if (param.default !== undefined && !overrideParams) {
           const defaultValue = parseCodeDefaultValue(param);
           setFieldValue(`params.${param.name}`, defaultValue);
         }
       });
     }
-  }, [data, isReRun, setFieldValue]);
+  }, [data, overrideParams, setFieldValue]);
 
   // if no resource is selected, show a message and hide the parameters
   if (!componentId && !configId && !checkId && isResourceRequired) {
