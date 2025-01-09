@@ -26,6 +26,10 @@ export type PlaybookRunActionStatus =
 export type PlaybookRunAction = {
   id: string;
   name: string;
+  agent?: {
+    id: string;
+    name: string;
+  };
   status: PlaybookRunActionStatus;
   playbook_run_id: string;
   start_time: string;

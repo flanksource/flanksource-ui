@@ -113,6 +113,7 @@ export async function getPlaybookRun(id: string) {
     "status",
     "start_time",
     "end_time",
+    "agent:agent_id(id,name)",
     "scheduled_time"
   ].join(",");
 
@@ -184,7 +185,7 @@ export async function getPlaybookRuns({
   sort?: SortingState;
 }) {
   const searchParams = new URLSearchParams();
-  searchParams.append("parent_id", "is.null");
+  // searchParams.append("parent_id", "is.null");
 
   if (componentId) {
     searchParams.append("component_id", `eq.${componentId}`);

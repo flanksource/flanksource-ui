@@ -209,6 +209,7 @@ export default function PlaybookRunsActions({
                 )}
               {data.actions.map((action, index) => (
                 <PlaybookRunsActionItem
+                  agent={action?.agent?.name}
                   isSelected={
                     selectedAction?.type === "Action" &&
                     selectedAction.data?.id === action.id
