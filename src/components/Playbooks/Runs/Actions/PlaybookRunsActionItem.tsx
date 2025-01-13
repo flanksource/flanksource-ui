@@ -5,8 +5,10 @@ import dayjs from "dayjs";
 import { Tooltip } from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
 import { PlaybookStatusIcon } from "../../../../ui/Icons/PlaybookStatusIcon";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 
 type PlaybookRunsActionItemProps = {
+  agent?: string;
   action: Pick<
     PlaybookRunAction,
     "status" | "name" | "start_time" | "end_time" | "id" | "scheduled_time"
@@ -19,6 +21,7 @@ type PlaybookRunsActionItemProps = {
 export default function PlaybookRunsActionItem({
   action,
   onClick = () => {},
+  agent,
   isSelected = false,
   stepNumber
 }: PlaybookRunsActionItemProps) {
@@ -43,10 +46,15 @@ export default function PlaybookRunsActionItem({
         <div className="flex flex-col">
           <div className="flex flex-row gap-2 text-sm text-gray-600">
             <PlaybookStatusIcon status={action.status} />
-            {action.name || `Step ${stepNumber}`}
+            <div className="flex flex-col">
+              <div className="flex flex-row flex-wrap items-center gap-2">
+                {action.name || `Step ${stepNumber}`}
+                {agent && <Badge text={agent} />}
+              </div>
+            </div>
           </div>
-          <div className={`flex flex-row items-center gap-1 text-xs`}></div>
         </div>
+
         <div className="flex flex-row gap-2">
           <div className="text-sm text-gray-600">
             {action.status === "sleeping" ? (

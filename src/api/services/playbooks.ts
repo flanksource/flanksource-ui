@@ -113,6 +113,7 @@ export async function getPlaybookRun(id: string) {
     "status",
     "start_time",
     "end_time",
+    "agent:agent_id(id,name)",
     "scheduled_time"
   ].join(",");
 
@@ -184,6 +185,7 @@ export async function getPlaybookRuns({
   sort?: SortingState;
 }) {
   const searchParams = new URLSearchParams();
+  // searchParams.append("parent_id", "is.null");
 
   if (componentId) {
     searchParams.append("component_id", `eq.${componentId}`);
@@ -214,6 +216,7 @@ export async function getPlaybookRuns({
 
   const select = [
     "*",
+    "created_by(id,name,avatar)",
     "playbooks(id,name,title,spec,icon)",
     "component:components(id,name,icon)",
     "check:checks(id,name,icon)",
@@ -223,11 +226,6 @@ export async function getPlaybookRuns({
   searchParams.append("select", select);
 
   const queryString = searchParams.toString();
-
-  const sortParams =
-    sort && sort.length > 0
-      ? `&order=${sort[0].id}.${sort[0].desc ? "desc" : "asc"}`
-      : "";
 
   const res = await resolvePostGrestRequestWithPagination(
     ConfigDB.get<PlaybookRun[] | null>(`/playbook_runs?${queryString}`, {
