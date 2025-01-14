@@ -81,12 +81,10 @@ export default function PlaybookSpecCard({
             }}
             className="btn-white"
           />
-          <AuthorizationAccessCheck resource={tables.playbooks} action="write">
-            <Button
-              text="Run"
-              onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
-            />
-          </AuthorizationAccessCheck>
+          <Button
+            text="Run"
+            onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
+          />
         </div>
       </div>
 
