@@ -75,7 +75,7 @@ export function fetchPermissions(
 
   const { pageSize, pageIndex } = pagination;
 
-  const url = `/permissions?${queryParam}&select=${selectFields.join(",")}&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  const url = `/permissions?${queryParam}&select=${selectFields.join(",")}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<PermissionAPIResponse[]>(url, {
       headers: {
