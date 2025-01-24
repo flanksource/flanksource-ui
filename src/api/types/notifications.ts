@@ -87,6 +87,7 @@ export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
 
 export type NotificationSilenceItem = {
   id: string;
+  name: string;
   namespace: string;
   description?: string;
   filter?: string;

@@ -19,6 +19,43 @@ import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiResponse>[] =
   [
     {
+      header: "Name",
+      size: 100,
+      Cell: ({ row }) => {
+        return (
+          <span className="flex flex-row space-x-1">
+            <span>{row.original.name}</span>
+            <ErrorMessage message={row.original.error} tooltip={true} />
+          </span>
+        );
+      }
+    },
+    {
+      header: "Reason",
+      accessorKey: "description",
+      size: 250
+    },
+    {
+      header: "Duration",
+      size: 50,
+      Cell: ({ row }) => {
+        const from = row.original.from;
+        const until = row.original.until;
+        const isExpired = dayjs(until).isBefore(dayjs());
+
+        return (
+          <span>
+            <Age
+              className={clsx(isExpired && "line-through")}
+              from={from}
+              to={until}
+            ></Age>
+            {isExpired && <span className="pl-1 text-red-500">Expired</span>}
+          </span>
+        );
+      }
+    },
+    {
       header: "Resource",
       size: 150,
       Cell: ({ row }) => {
@@ -58,48 +95,9 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       }
     },
     {
-      header: "Duration",
-      size: 50,
-      Cell: ({ row }) => {
-        const from = row.original.from;
-        const until = row.original.until;
-        const isExpired = dayjs(until).isBefore(dayjs());
-
-        return (
-          <span>
-            <Age
-              className={clsx(isExpired && "line-through")}
-              from={from}
-              to={until}
-            ></Age>
-            {isExpired && <span className="pl-1 text-red-500">Expired</span>}
-          </span>
-        );
-      }
-    },
-    {
       header: "Source",
       accessorKey: "source",
       size: 50
-    },
-
-    {
-      header: "Filter",
-      accessorKey: "filter",
-      size: 100,
-      Cell: ({ row }) => {
-        return (
-          <span className="flex flex-row space-x-1">
-            <ErrorMessage message={row.original.error} tooltip={true} />
-            <span>{row.original.filter}</span>
-          </span>
-        );
-      }
-    },
-    {
-      header: "Reason",
-      accessorKey: "description",
-      size: 200
     },
     {
       header: "Created By",
