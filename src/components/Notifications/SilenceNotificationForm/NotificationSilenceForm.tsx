@@ -9,6 +9,7 @@ import {
 } from "@flanksource-ui/api/types/notifications";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
+import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
@@ -45,6 +46,7 @@ export default function NotificationSilenceForm({
 
   const initialValues: Partial<SilenceNotificationRequest> = {
     ...data,
+    name: data?.name,
     component_id: data?.component_id ?? component_id,
     config_id: data?.config_id ?? config_id,
     check_id: data?.check_id ?? check_id,
@@ -56,6 +58,7 @@ export default function NotificationSilenceForm({
       if (data.id) {
         return updateNotificationSilence({
           id: data.id,
+          name: data.name,
           filter: data.filter,
           updated_at: "now()",
           source: data.source,
@@ -90,6 +93,10 @@ export default function NotificationSilenceForm({
 
   const validate = (v: Partial<SilenceNotificationRequest>) => {
     const errors: { [key: string]: string } = {};
+    console.log("hi");
+    if (!v.name) {
+      errors.name = "Must specify a unique name";
+    }
     if (
       v.canary_id == null &&
       v.check_id == null &&
@@ -152,6 +159,8 @@ export default function NotificationSilenceForm({
               <div
                 className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
               >
+                <FormikTextInput required name="name" label="Name" />
+
                 <FormikNotificationResourceField />
 
                 <FormikCheckbox
@@ -176,6 +185,7 @@ export default function NotificationSilenceForm({
                   label="Filter"
                   hint="CEL expression for the silence to match against"
                 />
+
                 <ErrorMessage
                   message={data?.error}
                   className="h-full pl-2 align-top"

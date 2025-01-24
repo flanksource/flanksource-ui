@@ -46,6 +46,7 @@ export type NotificationRules = {
 
 export type SilenceNotificationResponse = {
   id: string;
+  name: string;
   filter?: string;
   component_id?: string;
   config_id?: string;
