@@ -93,7 +93,6 @@ export default function NotificationSilenceForm({
 
   const validate = (v: Partial<SilenceNotificationRequest>) => {
     const errors: { [key: string]: string } = {};
-    console.log("hi");
     if (!v.name) {
       errors.name = "Must specify a unique name";
     }

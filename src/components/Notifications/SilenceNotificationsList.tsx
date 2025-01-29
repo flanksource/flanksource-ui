@@ -25,7 +25,6 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
         return (
           <span className="flex flex-row space-x-1">
             <span>{row.original.name}</span>
-            <ErrorMessage message={row.original.error} tooltip={true} />
           </span>
         );
       }
@@ -56,9 +55,29 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       }
     },
     {
-      header: "Resource",
-      size: 150,
+      header: "Resource or the filter", // acts as a tooltip
+      Header: () => {
+        return <span>Target</span>;
+      },
+      size: 200,
       Cell: ({ row }) => {
+        const { filter, error } = row.original;
+        if (filter) {
+          return (
+            <div className="flex flex-col space-y-1 text-gray-600">
+              <div className="flex items-center space-x-1">
+                <ErrorMessage message={error} tooltip={true} />
+                <span
+                  className="truncate font-mono text-sm"
+                  title={filter} // Provides full text on hover
+                >
+                  {filter}
+                </span>
+              </div>
+            </div>
+          );
+        }
+
         const check = row.original.checks;
         const catalog = row.original.catalog;
         const component = row.original.component;
