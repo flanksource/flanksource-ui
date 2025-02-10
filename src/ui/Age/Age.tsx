@@ -13,15 +13,18 @@ dayjs.extend(LocalizedFormat);
 type AgeProps = {
   className?: string;
   from?: Date | string;
-  to?: Date | string;
+  to?: Date | string | null;
   suffix?: boolean;
+  // duration handles null "to" time differently.
+  displayType?: "age" | "duration";
 };
 
 export default function Age({
   className = "",
   from,
   to,
-  suffix = false
+  suffix = false,
+  displayType = "age"
 }: AgeProps) {
   if (isEmpty(from)) {
     return null;
@@ -36,7 +39,9 @@ export default function Age({
           data-tooltip-id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
           className={className}
         >
-          {_from.local().fromNow(!suffix)}
+          {displayType === "duration"
+            ? "Indefinitely"
+            : _from.local().fromNow(!suffix)}
         </span>
         <Tooltip
           id={`age-tooltip-${_from.local().fromNow(!suffix)}`}

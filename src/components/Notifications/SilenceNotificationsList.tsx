@@ -48,6 +48,7 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
               className={clsx(isExpired && "line-through")}
               from={from}
               to={until}
+              displayType={"duration"}
             ></Age>
             {isExpired && <span className="pl-1 text-red-500">Expired</span>}
           </span>

@@ -53,7 +53,7 @@ export type SilenceNotificationResponse = {
   check_id?: string;
   canary_id?: string;
   from: string;
-  until: string;
+  until: string | null;
   description?: string;
   recursive?: boolean;
   namespace?: string;
@@ -94,7 +94,7 @@ export type NotificationSilenceItem = {
   filter?: string;
   error?: string;
   from: string;
-  until: string;
+  until: string | null;
   recursive?: boolean;
   config_id?: string;
   check_id?: string;

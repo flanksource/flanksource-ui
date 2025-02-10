@@ -94,6 +94,10 @@ export const silenceNotification = async (
 export const updateNotificationSilence = async (
   data: Omit<NotificationSilenceItem, "created_at">
 ) => {
+  if (data.until === "indefinitely") {
+    data["until"] = null;
+  }
+
   const res = await IncidentCommander.patch(
     `/notification_silences?id=eq.${data.id}`,
     data
