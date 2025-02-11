@@ -12,6 +12,7 @@ import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 import CanEditResource from "../../Settings/CanEditResource";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { omit } from "lodash";
+import FormikNotificationGroupByDropdown from "@flanksource-ui/components/Forms/Formik/FormikNotificationGroupByDropdown";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;
@@ -61,6 +62,12 @@ export default function NotificationsRulesForm({
               <ErrorMessage
                 message={notification?.most_common_error}
                 className="h-full pl-2 align-top"
+              />
+
+              <FormikNotificationGroupByDropdown
+                name="group_by"
+                label="Group By"
+                hint="Notifications are grouped by these set of keys and only one per group is sent within the specified repeat interval."
               />
 
               <NotificationsRecipientsTabs />
