@@ -18,11 +18,6 @@ import {
 export const getAllConfigs = () =>
   resolvePostGrestRequestWithPagination<ConfigItem[]>(ConfigDB.get(`/configs`));
 
-export const getConfigsTagsAndLabelsKeys = async () => {
-  const res = await ConfigDB.get<{ key: string }[]>("/config_tags_labels_keys");
-  return res.data ?? [];
-};
-
 export const getConfigsTags = async () => {
   const res =
     await ConfigDB.get<{ key: string; value: string }[]>("/config_tags");

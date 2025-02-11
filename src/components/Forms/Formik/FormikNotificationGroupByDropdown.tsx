@@ -1,4 +1,8 @@
-import { useGetAllConfigTagsAndLabels } from "@flanksource-ui/api/query-hooks/useAllConfigsQuery";
+import {
+  useGetAllComponentLabelsKeys,
+  useGetAllConfigTagsAndLabelsKeys,
+  useGetAllCheckLabelsKeys
+} from "@flanksource-ui/api/query-hooks/useLabelTagKeys";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 import { useMemo } from "react";
 
@@ -16,23 +20,38 @@ export default function FormikNotificationGroupByDropdown({
   required = false,
   hint
 }: FormikNotificationGroupByDropdownProps) {
-  const { data: tagsAndLabels, isLoading } = useGetAllConfigTagsAndLabels();
+  const { data: configTagsAndLabels, isLoading: isConfigLoading } =
+    useGetAllConfigTagsAndLabelsKeys();
+
+  const { data: componentLabels, isLoading: isComponentLoading } =
+    useGetAllComponentLabelsKeys();
+
+  const { data: checkLabels, isLoading: isCheckLoading } =
+    useGetAllCheckLabelsKeys();
+
+  const isLoading = isConfigLoading || isComponentLoading || isCheckLoading;
 
   const options = useMemo(() => {
-    const dynamicOptions =
-      tagsAndLabels?.map((tagLabel) => ({
-        label: tagLabel.key,
-        value: tagLabel.key
-      })) || [];
-
     const staticOptions = [
       { label: "type", value: "type" },
       { label: "description", value: "description" },
       { label: "status_reason", value: "status_reason" }
     ];
 
-    return [...staticOptions, ...dynamicOptions];
-  }, [tagsAndLabels]);
+    const dynamicOptions = [
+      ...(configTagsAndLabels ?? []),
+      ...(componentLabels ?? []),
+      ...(checkLabels ?? [])
+    ].map(({ key }) => ({ label: key, value: key }));
+
+    const uniqueOptions = Array.from(
+      new Map(
+        [...staticOptions, ...dynamicOptions].map((opt) => [opt.value, opt])
+      ).values()
+    );
+
+    return uniqueOptions;
+  }, [configTagsAndLabels, componentLabels, checkLabels]);
 
   return (
     <FormikSelectDropdown

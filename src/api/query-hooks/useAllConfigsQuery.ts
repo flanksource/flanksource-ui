@@ -4,10 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { defaultStaleTime, prepareConfigListQuery } from ".";
-import {
-  getAllConfigsMatchingQuery,
-  getConfigsTagsAndLabelsKeys
-} from "../services/configs";
+import { getAllConfigsMatchingQuery } from "../services/configs";
 
 export const useAllConfigsQuery = ({
   enabled = true,
@@ -84,13 +81,3 @@ export const useAllConfigsQuery = ({
     }
   );
 };
-
-export function useGetAllConfigTagsAndLabels() {
-  return useQuery<{ key: string }[], Error>(
-    ["config_tags_labels_keys"],
-    async () => {
-      const response = await getConfigsTagsAndLabelsKeys();
-      return response ?? [];
-    }
-  );
-}
