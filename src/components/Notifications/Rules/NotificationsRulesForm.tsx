@@ -52,7 +52,6 @@ export default function NotificationsRulesForm({
           >
             <div className="flex flex-col gap-4 overflow-y-auto p-4">
               <FormikTextInput name="name" label="Name" />
-              <FormikTextInput name="title" label="Title" />
               <FormikNotificationEventsDropdown
                 name="events"
                 label="Events"
@@ -83,6 +82,18 @@ export default function NotificationsRulesForm({
                 isClearable
                 name="wait_for"
                 label="Wait For"
+              />
+              <FormikDurationNanosecondsField
+                isClearable
+                name="wait_for_eval_period"
+                label="Wait For Eval Period"
+                hint="An additional delay after Wait For period to evaluate healths of Kubernetes configs"
+              />
+              <FormikTextInput
+                name="title"
+                label="Title"
+                hint="The title of the notification that's sent out"
+                hintPosition="top"
               />
               <FormikNotificationsTemplateField name="template" />
               <FormikCodeEditor
