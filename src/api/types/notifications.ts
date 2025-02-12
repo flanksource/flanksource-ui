@@ -59,6 +59,7 @@ export type SilenceNotificationResponse = {
   namespace?: string;
   error?: string;
   source?: "source1" | "source2" | "source3";
+  parent_config?: string;
 };
 
 export type NotificationSendHistory = {

@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { getAConfigRelationships } from "../services/configs";
 import { ConfigItem } from "../types/configs";
 
-export default function useConfigRelationshipsQuery(id: string | undefined) {
+export function useConfigRelationshipsQuery(id: string | undefined) {
   const [searchParams] = useSearchParams();
   const hideDeleted = useHideDeletedConfigs();
   const tag = searchParams.get("tag") ?? undefined;
@@ -80,5 +80,21 @@ export default function useConfigRelationshipsQuery(id: string | undefined) {
     enabled: id !== undefined,
     keepPreviousData: true,
     select: (data) => transformConfigRelationships(data ?? [])
+  });
+}
+
+export function useConfigHardParents(id: string) {
+  return useQuery({
+    queryKey: ["config", "relationships", id],
+    queryFn: () =>
+      getAConfigRelationships({
+        configId: id!,
+        type_filter: "incoming",
+        hideDeleted: true,
+        relation: "hard"
+      }),
+    enabled: id !== undefined,
+    keepPreviousData: true,
+    select: (data) => data ?? []
   });
 }

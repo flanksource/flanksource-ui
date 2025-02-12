@@ -127,6 +127,11 @@ export default function NotificationSilenceForm({
 
     v = omit(v, "error");
 
+    if (v.parent_config) {
+      v.config_id = v.parent_config;
+      delete v.parent_config;
+    }
+
     return mutate(
       {
         ...v,
