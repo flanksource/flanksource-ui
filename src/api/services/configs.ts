@@ -419,6 +419,10 @@ export const getAConfigRelationships = async ({
   health,
   status
 }: GetAConfigRelationshipsParams) => {
+  if (configId === "") {
+    return null;
+  }
+
   const searchParams = new URLSearchParams();
   searchParams.append("config_id", configId);
   searchParams.append("include_deleted_configs", `${!hideDeleted}`);

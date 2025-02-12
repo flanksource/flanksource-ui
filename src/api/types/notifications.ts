@@ -59,7 +59,6 @@ export type SilenceNotificationResponse = {
   namespace?: string;
   error?: string;
   source?: "KubernetesCRD" | "UI";
-  parent_config?: string;
 };
 
 export type NotificationSendHistory = {

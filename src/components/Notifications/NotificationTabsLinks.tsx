@@ -111,17 +111,17 @@ export default function NotificationTabsLinks({
                             action="write"
                             key="add-notifications"
                           >
-                            <Link
-                              key="notifications-silenced-add"
+                            <button
+                              key="notifications-add"
                               type="button"
                               className=""
-                              to="/notifications/silences/add"
+                              onClick={() => setIsModalOpen(true)}
                             >
                               <AiFillPlusCircle
                                 size={32}
                                 className="text-blue-600"
                               />
-                            </Link>
+                            </button>
                           </AuthorizationAccessCheck>
                         ])
                   ]

@@ -7,11 +7,9 @@ import {
   SilenceNotificationResponse as SilenceNotificationRequest,
   SilenceNotificationResponse
 } from "@flanksource-ui/api/types/notifications";
-import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
-import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationResourceField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
@@ -23,6 +21,7 @@ import { Formik, Form, FormikBag } from "formik";
 import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import FormikNotificationDirectResourceField from "./FormikNotificationDirectResourceField";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -31,7 +30,7 @@ type NotificationSilenceFormProps = {
   onCancel?: () => void;
 };
 
-export default function NotificationSilenceForm({
+export default function NotificationSilenceDirectForm({
   data,
   footerClassName = "flex flex-row justify-end px-4",
   onSuccess = () => {},
@@ -160,13 +159,8 @@ export default function NotificationSilenceForm({
               >
                 <FormikTextInput required name="name" label="Name" />
 
-                <FormikNotificationResourceField />
-
-                <FormikCheckbox
-                  checkboxStyle="toggle"
-                  name="recursive"
-                  label="Recursive"
-                  hint="When selected, the silence will apply to all children of the item"
+                <FormikNotificationDirectResourceField
+                  prepopulatedConfigID={config_id}
                 />
 
                 <FormikDurationPicker

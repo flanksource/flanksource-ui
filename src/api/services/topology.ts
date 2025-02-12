@@ -216,7 +216,11 @@ export const getTopologyNameByID = (topologyID: string) => {
 };
 
 export const getTopologyByID = async (topologyID: string) => {
-  return IncidentCommander.get<Topology[]>(`/components?id=eq.${topologyID}`);
+  if (topologyID === "") {
+    return null;
+  }
+
+  return IncidentCommander.get<Component[]>(`/components?id=eq.${topologyID}`);
 };
 
 export const getTopologyComponentLabels = () => {
