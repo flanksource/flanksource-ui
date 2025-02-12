@@ -15,6 +15,7 @@ import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { TopologyLink } from "../Topology/TopologyLink";
 import EditNotificationSilenceModal from "./SilenceNotificationForm/EditNotificationSilenceModal";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 
 const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiResponse>[] =
   [
@@ -24,37 +25,15 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       Cell: ({ row }) => {
         return (
           <span className="flex flex-row space-x-1">
-            <span>{row.original.name}</span>
+            <span>
+              {row.original.name}
+              {row.original.source === "KubernetesCRD" && <Icon name="k8s" />}
+            </span>
           </span>
         );
       }
     },
-    {
-      header: "Reason",
-      accessorKey: "description",
-      size: 250
-    },
-    {
-      header: "Duration",
-      size: 50,
-      Cell: ({ row }) => {
-        const from = row.original.from;
-        const until = row.original.until;
-        const isExpired = dayjs(until).isBefore(dayjs());
 
-        return (
-          <span>
-            <Age
-              className={clsx(isExpired && "line-through")}
-              from={from}
-              to={until}
-              displayType={"duration"}
-            ></Age>
-            {isExpired && <span className="pl-1 text-red-500">Expired</span>}
-          </span>
-        );
-      }
-    },
     {
       header: "Resource or the filter", // acts as a tooltip
       Header: () => {
@@ -115,9 +94,29 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       }
     },
     {
-      header: "Source",
-      accessorKey: "source",
-      size: 50
+      header: "Expires At",
+      size: 100,
+      Cell: ({ row }) => {
+        const until = row.original.until;
+        if (!until) {
+          return <span>Never</span>;
+        }
+
+        const isExpired = dayjs(until).isBefore(dayjs());
+        const expiresAt = dayjs(until);
+
+        return (
+          <span>
+            {expiresAt.format("MMMM D, YYYY hh:mm A")}
+            {isExpired && <span className="pl-1 text-red-500">(Expired)</span>}
+          </span>
+        );
+      }
+    },
+    {
+      header: "Reason",
+      accessorKey: "description",
+      size: 200
     },
     {
       header: "Created By",

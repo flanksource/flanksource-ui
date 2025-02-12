@@ -58,7 +58,7 @@ export type SilenceNotificationResponse = {
   recursive?: boolean;
   namespace?: string;
   error?: string;
-  source?: "source1" | "source2" | "source3";
+  source?: "KubernetesCRD" | "UI";
   parent_config?: string;
 };
 
@@ -101,7 +101,7 @@ export type NotificationSilenceItem = {
   check_id?: string;
   canary_id?: string;
   component_id?: string;
-  source?: "source1" | "source2" | "source3";
+  source?: "KubernetesCRD" | "UI";
   created_by?: string;
   created_at: string;
   updated_at: string;

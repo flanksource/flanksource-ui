@@ -15,16 +15,13 @@ type AgeProps = {
   from?: Date | string;
   to?: Date | string | null;
   suffix?: boolean;
-  // duration handles null "to" time differently.
-  displayType?: "age" | "duration";
 };
 
 export default function Age({
   className = "",
   from,
   to,
-  suffix = false,
-  displayType = "age"
+  suffix = false
 }: AgeProps) {
   if (isEmpty(from)) {
     return null;
@@ -39,9 +36,7 @@ export default function Age({
           data-tooltip-id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
           className={className}
         >
-          {displayType === "duration"
-            ? "Indefinitely"
-            : _from.local().fromNow(!suffix)}
+          {_from.local().fromNow(!suffix)}
         </span>
         <Tooltip
           id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
