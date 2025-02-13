@@ -56,7 +56,12 @@ export default function NotificationsSilencedPage() {
         title="Create Notification Silence"
         bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       >
-        <NotificationSilenceForm />
+        <NotificationSilenceForm
+          onSuccess={() => {
+            setIsOpen(false);
+            refetch();
+          }}
+        />
       </Modal>
     </>
   );

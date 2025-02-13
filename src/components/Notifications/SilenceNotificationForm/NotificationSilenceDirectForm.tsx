@@ -22,6 +22,7 @@ import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import FormikNotificationDirectResourceField from "./FormikNotificationDirectResourceField";
+import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -100,9 +101,11 @@ export default function NotificationSilenceDirectForm({
       v.check_id == null &&
       v.component_id == null &&
       v.config_id == null &&
-      v.filter == null
+      v.filter == null &&
+      v.selectors == null
     ) {
-      errors.form = "Must specify either a resource and/or a filter";
+      errors.form =
+        "You must specify at least one of the following: a resource, a filter, or selectors";
     }
     if (v.until == null) {
       errors.until = "Must specify a silence duration";
@@ -176,7 +179,15 @@ export default function NotificationSilenceDirectForm({
                 <FormikTextArea
                   name="filter"
                   label="Filter"
-                  hint="CEL expression for the silence to match against"
+                  hint="Notifications for resources matching this CEL expression will be silenced"
+                />
+
+                <FormikCodeEditor
+                  fieldName="selectors"
+                  format={"yaml"}
+                  label="Selectors"
+                  lines={10}
+                  hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
                 />
 
                 <ErrorMessage

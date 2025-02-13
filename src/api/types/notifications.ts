@@ -48,6 +48,7 @@ export type SilenceNotificationResponse = {
   id: string;
   name: string;
   filter?: string;
+  selectors?: string;
   component_id?: string;
   config_id?: string;
   check_id?: string;
