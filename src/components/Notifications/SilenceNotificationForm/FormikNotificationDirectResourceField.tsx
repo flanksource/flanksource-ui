@@ -11,11 +11,13 @@ type FormikNotificationResourceFieldProps = {
 };
 
 type RadioItem = {
-  id: string;
+  // input field value
+  value: string;
+
   name: string;
   badge?: string;
   path?: string;
-  type: string;
+  type?: string;
   recursive?: boolean;
   selected?: boolean;
   radioItemType: "resource" | "Kind" | "Tag";
@@ -48,7 +50,7 @@ export default function FormikNotificationDirectResourceField({
   if (config_id) {
     hardParents?.forEach((parent) => {
       const radioItem: RadioItem = {
-        id: parent.id,
+        value: parent.id,
         name: parent.name,
         type: parent.type,
         radioItemType: "resource",
@@ -68,7 +70,7 @@ export default function FormikNotificationDirectResourceField({
 
       if (!seenAttributes.has(parent.type)) {
         attributesRadioItems.push({
-          id: parent.type,
+          value: parent.type,
           name: parent.type,
           type: parent.type,
           radioItemType: "Kind",
@@ -80,14 +82,13 @@ export default function FormikNotificationDirectResourceField({
       }
 
       for (const tag in parent.tags) {
-        const tagDisplay = `${tag}: ${parent.tags[tag]}`;
+        const tagDisplay = `${tag}=${parent.tags[tag]}`;
+
         if (!seenAttributes.has(tagDisplay)) {
           attributesRadioItems.push({
-            id: tagDisplay,
+            value: tagDisplay,
             name: tagDisplay,
-            type: "",
             radioItemType: "Tag",
-            badge: "Tag",
             form_field: "selectors"
           });
 
@@ -98,7 +99,7 @@ export default function FormikNotificationDirectResourceField({
   } else if (component_id && components) {
     const component = components[0] || {};
     resourcesRadioItems.push({
-      id: component_id,
+      value: component_id,
       name: component.name,
       form_field: "component_id",
       type: component.type || "",
@@ -108,7 +109,7 @@ export default function FormikNotificationDirectResourceField({
   } else if (check_id && healthChecks) {
     const check = healthChecks[0];
     resourcesRadioItems.push({
-      id: check_id,
+      value: check_id,
       name: check.name,
       form_field: "check_id",
       type: check.type,
@@ -117,18 +118,17 @@ export default function FormikNotificationDirectResourceField({
     });
   } else if (canary_id) {
     resourcesRadioItems.push({
-      id: canary_id,
+      value: canary_id,
       name: "Canary",
       radioItemType: "resource",
       form_field: "canary_id",
-      selected: true,
-      type: "Canary"
+      selected: true
     });
   }
 
   const onResourceSelect = (radioItem: RadioItem) => {
     return () => {
-      setFieldValue(radioItem.form_field, radioItem.id);
+      setFieldValue(radioItem.form_field, radioItem.value);
       if (!radioItem.selected) {
         // only set recursive if it isn't the pre-selected item
         setFieldValue("recursive", true);
@@ -136,17 +136,25 @@ export default function FormikNotificationDirectResourceField({
     };
   };
 
-  const onAttributeSelect = (radioItem: RadioItem) => {
-    return () => {
-      if (radioItem.radioItemType === "Kind") {
-        setFieldValue(radioItem.form_field, [{ types: [radioItem.type] }]);
-      } else if (radioItem.radioItemType === "Tag") {
-        const [tag, value] = radioItem.name.split(": ");
-        setFieldValue(radioItem.form_field, [
-          { tagSelector: `${tag}=${value}` }
-        ]);
+  const onAttributeSelect = () => {
+    const checkboxes = document.querySelectorAll<HTMLInputElement>(
+      'input[name="resource_attributes"]:checked'
+    );
+
+    const selectors = Array.from(checkboxes).map((checkbox) => {
+      if (checkbox.value.includes("=")) {
+        return {
+          tagSelector: checkbox.value
+        };
       }
-    };
+
+      // It's a kind
+      return {
+        types: [checkbox.value]
+      };
+    });
+
+    setFieldValue("selectors", selectors);
   };
 
   return (
@@ -158,7 +166,7 @@ export default function FormikNotificationDirectResourceField({
             .sort((a, b) => (a.path?.length ?? 0) - (b.path?.length ?? 0)) // higher level first in the list
             .map((radioItem) => (
               <label
-                key={radioItem.id}
+                key={radioItem.value}
                 title={radioItem.name}
                 aria-label={radioItem.name}
                 aria-description={radioItem.type || ""}
@@ -168,7 +176,7 @@ export default function FormikNotificationDirectResourceField({
                 <input
                   defaultValue={radioItem.name}
                   defaultChecked={radioItem.selected}
-                  value={radioItem.id}
+                  value={radioItem.value}
                   name="resource"
                   type="radio"
                   className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
@@ -198,19 +206,19 @@ export default function FormikNotificationDirectResourceField({
             .sort((a, b) => a.radioItemType.length - b.radioItemType.length) // group by kind and tags
             .map((radioItem) => (
               <label
-                key={radioItem.id}
+                key={radioItem.value}
                 title={radioItem.name}
                 aria-label={radioItem.name}
                 aria-description={radioItem.type || ""}
-                onChange={onAttributeSelect(radioItem)}
                 className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
               >
                 <input
                   defaultValue={radioItem.name}
                   defaultChecked={radioItem.selected}
-                  value={radioItem.id}
+                  value={radioItem.value}
                   name="resource_attributes"
-                  type="radio"
+                  type="checkbox"
+                  onChange={onAttributeSelect}
                   className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
                 />
                 <span className="ml-3 flex flex-col">
@@ -220,8 +228,19 @@ export default function FormikNotificationDirectResourceField({
                         name={radioItem.type}
                         className={"flex h-auto w-6 flex-row"}
                       ></Icon>
-                      <span>{radioItem.name}</span>
-                      {radioItem.badge && <Badge text={radioItem.badge} />}
+                      {radioItem.radioItemType === "Tag" ? (
+                        <span className="space-x-1 text-sm">
+                          <span className="text-gray-600">
+                            {radioItem.value.split("=")[0]}:
+                          </span>
+                          <span>{radioItem.value.split("=")[1]}</span>
+                        </span>
+                      ) : (
+                        <>
+                          <span>{radioItem.name}</span>
+                          {radioItem.badge && <Badge text={radioItem.badge} />}
+                        </>
+                      )}
                     </div>
                   </span>
                 </span>

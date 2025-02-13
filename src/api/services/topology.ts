@@ -22,6 +22,7 @@ import {
   ComponentTemplateItem,
   Topology
 } from "../types/topology";
+import { AxiosResponse } from "axios";
 
 interface IParam {
   id?: string;
@@ -217,10 +218,10 @@ export const getTopologyNameByID = (topologyID: string) => {
 
 export const getTopologyByID = async (topologyID: string) => {
   if (topologyID === "") {
-    return null;
+    return Promise.resolve({ data: [] }); // Ensure consistent return type
   }
 
-  return IncidentCommander.get<Component[]>(`/components?id=eq.${topologyID}`);
+  return IncidentCommander.get<Topology[]>(`/components?id=eq.${topologyID}`);
 };
 
 export const getTopologyComponentLabels = () => {

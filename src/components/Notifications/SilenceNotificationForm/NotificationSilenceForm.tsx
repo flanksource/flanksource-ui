@@ -184,7 +184,6 @@ export default function NotificationSilenceForm({
                   fieldName="selectors"
                   format={"yaml"}
                   label="Selectors"
-                  lines={10}
                   hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
                 />
 

@@ -187,6 +187,7 @@ export default function NotificationSilenceDirectForm({
                   format={"yaml"}
                   label="Selectors"
                   lines={10}
+                  className="flex h-auto flex-col" // Override height
                   hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
                 />
 

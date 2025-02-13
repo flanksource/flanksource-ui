@@ -1,6 +1,5 @@
 import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
 import { NotificationSilenceItemApiResponse } from "@flanksource-ui/api/types/notifications";
-import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
