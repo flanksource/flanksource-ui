@@ -4,6 +4,11 @@ import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBounda
 import { UserProfileDropdown } from "../../components/Users/UserProfile";
 import { RefreshButton } from "../Buttons/RefreshButton";
 import { HelpDropdown } from "../MenuBar/HelpDropdown";
+import PreferencePopOver from "@flanksource-ui/ui/Layout/Preference";
+import { CardWidth } from "@flanksource-ui/components/Topology/TopologyCard";
+import { Size } from "@flanksource-ui/types";
+import { atomWithStorage } from "jotai/utils";
+import { useAtom } from "jotai";
 
 interface IProps {
   children: React.ReactNode;
@@ -15,6 +20,15 @@ interface IProps {
   extraClassName?: string;
 }
 
+export const cardPreferenceAtom = atomWithStorage<string>(
+  "topology_card_width",
+  CardWidth[Size.extra_large],
+  undefined,
+  {
+    getOnInit: true
+  }
+);
+
 export function SearchLayout({
   children,
   contentClass,
@@ -24,6 +38,8 @@ export function SearchLayout({
   loading,
   onRefresh
 }: IProps) {
+  const [topologyCardSize, setTopologyCardSize] = useAtom(cardPreferenceAtom);
+
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden">
       <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white py-3 shadow">
@@ -45,6 +61,12 @@ export function SearchLayout({
             >
               <FaBell className="cursor-pointer text-gray-500" size={20} />
             </Link>
+
+            <PreferencePopOver
+              cardSize={topologyCardSize}
+              setTopologyCardSize={setTopologyCardSize}
+            />
+
             <HelpDropdown />
             <UserProfileDropdown />
           </div>

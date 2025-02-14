@@ -1,31 +1,43 @@
 import clsx from "clsx";
+
+import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
+import { Size } from "@flanksource-ui/types";
 import { FaCog } from "react-icons/fa";
-
-import { CardWidth } from "../TopologyCard";
-
 import { LegacyRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
-import { Size } from "../../../types";
-import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
-import { Toggle } from "../../../ui/FormControls/Toggle";
+import { useOnMouseActivity } from "@flanksource-ui/hooks/useMouseActivity";
+import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
+import { Toggle } from "@flanksource-ui/components";
 
-export function getCardWidth() {
-  let value: any = localStorage.getItem("topology_card_width");
+export type SetURLSearchParams = (
+  nextInit?:
+    | URLSearchParamsInit
+    | ((prev: URLSearchParams) => URLSearchParamsInit),
+  navigateOpts?: NavigateOptions
+) => void;
 
-  if (!value?.trim()) {
-    return CardWidth[Size.extra_large];
-  }
+type PreferencePopOverProps = {
+  cardSize: string;
+  setTopologyCardSize: (width: string) => void;
+};
 
-  value = parseInt(value, 10);
-  if (isNaN(value)) {
-    return CardWidth[Size.extra_large];
-  } else {
-    return `${value}px`;
-  }
+export default function PreferencePopOver({
+  cardSize,
+  setTopologyCardSize
+}: PreferencePopOverProps) {
+  const setCardWidth = (width: string) => {
+    setTopologyCardSize(`${width}px`);
+    localStorage.setItem("topology_card_width", `${width}px`);
+  };
+
+  return (
+    <div className="relative flex items-center pt-5 sm:flex md:self-center md:pt-0">
+      <Preference cardSize={cardSize} setCardWidth={setCardWidth} />
+    </div>
+  );
 }
 
-export const TopologyPreference = ({
+export const Preference = ({
   title = "Preferences",
   cardSize,
   setCardWidth

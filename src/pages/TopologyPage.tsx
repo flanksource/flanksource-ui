@@ -6,14 +6,16 @@ import TopologySidebar from "@flanksource-ui/components/Topology/Sidebar/Topolog
 import { TopologyBreadcrumbs } from "@flanksource-ui/components/Topology/TopologyBreadcrumbs";
 import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
-import { getCardWidth } from "@flanksource-ui/components/Topology/TopologyPopover/topologyPreference";
 import { Head } from "@flanksource-ui/ui/Head";
-import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import {
+  cardPreferenceAtom,
+  SearchLayout
+} from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar";
 import {
@@ -72,9 +74,7 @@ export function TopologyPage() {
     sortOrder: "desc"
   });
 
-  const [topologyCardSize, setTopologyCardSize] = useState(() =>
-    getCardWidth()
-  );
+  const [topologyCardSize] = useAtom(cardPreferenceAtom);
 
   const selectedLabel = searchParams.get("labels") ?? "All";
   const team = searchParams.get("team") ?? "All";
@@ -220,12 +220,7 @@ export function TopologyPage() {
       >
         <div className="flex h-full flex-row overflow-y-auto py-2">
           <div className="flex h-full flex-1 flex-col overflow-y-auto">
-            <TopologyFilterBar
-              data={data}
-              setTopologyCardSize={setTopologyCardSize}
-              topologyCardSize={topologyCardSize}
-              sortLabels={sortLabels ?? []}
-            />
+            <TopologyFilterBar data={data} sortLabels={sortLabels ?? []} />
             {isLoading && !topology?.length ? (
               <CardsSkeletonLoader />
             ) : (

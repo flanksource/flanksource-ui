@@ -7,13 +7,10 @@ import { ComponentLabelsDropdown } from "@flanksource-ui/components/Topology/Dro
 import { ComponentTypesDropdown } from "@flanksource-ui/components/Topology/Dropdowns/ComponentTypesDropdown";
 import { allOption } from "@flanksource-ui/pages/TopologyPage";
 import { useMemo } from "react";
-import TopologyPopOver from "../TopologyPopover";
 import { TopologySort } from "../TopologyPopover/topologySort";
 
 type TopologyFilterBarProps = {
   data?: GetTopologyApiResponse;
-  topologyCardSize: string;
-  setTopologyCardSize: (size: string) => void;
   sortLabels: {
     id: number;
     value: string;
@@ -24,8 +21,6 @@ type TopologyFilterBarProps = {
 
 export default function TopologyFilterBar({
   data,
-  topologyCardSize,
-  setTopologyCardSize,
   sortLabels
 }: TopologyFilterBarProps) {
   // todo: add team and inspect the shape of the data
@@ -129,11 +124,6 @@ export default function TopologyFilterBar({
             <TopologySort sortLabels={sortLabels} />
           </div>
         </div>
-
-        <TopologyPopOver
-          size={topologyCardSize}
-          setSize={setTopologyCardSize}
-        />
       </div>
     </FormikFilterForm>
   );
