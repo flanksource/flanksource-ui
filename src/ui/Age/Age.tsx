@@ -13,7 +13,7 @@ dayjs.extend(LocalizedFormat);
 type AgeProps = {
   className?: string;
   from?: Date | string;
-  to?: Date | string;
+  to?: Date | string | null;
   suffix?: boolean;
 };
 

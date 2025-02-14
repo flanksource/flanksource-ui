@@ -46,18 +46,20 @@ export type NotificationRules = {
 
 export type SilenceNotificationResponse = {
   id: string;
+  name: string;
   filter?: string;
+  selectors?: string;
   component_id?: string;
   config_id?: string;
   check_id?: string;
   canary_id?: string;
   from: string;
-  until: string;
+  until: string | null;
   description?: string;
   recursive?: boolean;
   namespace?: string;
   error?: string;
-  source?: "source1" | "source2" | "source3";
+  source?: "KubernetesCRD" | "UI";
 };
 
 export type NotificationSendHistory = {
@@ -87,18 +89,19 @@ export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
 
 export type NotificationSilenceItem = {
   id: string;
+  name: string;
   namespace: string;
   description?: string;
   filter?: string;
   error?: string;
   from: string;
-  until: string;
+  until: string | null;
   recursive?: boolean;
   config_id?: string;
   check_id?: string;
   canary_id?: string;
   component_id?: string;
-  source?: "source1" | "source2" | "source3";
+  source?: "KubernetesCRD" | "UI";
   created_by?: string;
   created_at: string;
   updated_at: string;

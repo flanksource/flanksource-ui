@@ -4,8 +4,13 @@ import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/use
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
 import NotificationTabsLinks from "../../../components/Notifications/NotificationTabsLinks";
+import { Modal } from "@flanksource-ui/components";
+import { useState } from "react";
+import NotificationSilenceForm from "@flanksource-ui/components/Notifications/SilenceNotificationForm/NotificationSilenceForm";
 
 export default function NotificationsSilencedPage() {
+  const [isOpen, setIsOpen] = useState(false);
+
   const { pageIndex, pageSize } = useReactTablePaginationState();
   const [sortState] = useReactTableSortState();
 
@@ -28,20 +33,36 @@ export default function NotificationsSilencedPage() {
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   return (
-    <NotificationTabsLinks
-      activeTab={"Silences"}
-      refresh={refetch}
-      isLoading={isLoading || isRefetching}
-    >
-      <div className="flex h-full w-full flex-1 flex-col p-3">
-        <SilenceNotificationsList
-          data={notifications ?? []}
-          isLoading={isLoading || isRefetching}
-          refresh={refetch}
-          pageCount={pageCount}
-          recordCount={totalEntries ?? 0}
+    <>
+      <NotificationTabsLinks
+        activeTab={"Silences"}
+        refresh={refetch}
+        isLoading={isLoading || isRefetching}
+        setIsModalOpen={setIsOpen}
+      >
+        <div className="flex h-full w-full flex-1 flex-col p-3">
+          <SilenceNotificationsList
+            data={notifications ?? []}
+            isLoading={isLoading || isRefetching}
+            refresh={refetch}
+            pageCount={pageCount}
+            recordCount={totalEntries ?? 0}
+          />
+        </div>
+      </NotificationTabsLinks>
+      <Modal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Create Notification Silence"
+        bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+      >
+        <NotificationSilenceForm
+          onSuccess={() => {
+            setIsOpen(false);
+            refetch();
+          }}
         />
-      </div>
-    </NotificationTabsLinks>
+      </Modal>
+    </>
   );
 }

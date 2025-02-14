@@ -37,6 +37,11 @@ export function TimeRangePicker({
     if (currentRange?.type === "absolute") {
       return `${currentRange.from} - ${currentRange.to}`;
     }
+
+    if (!currentRange?.display) {
+      return "Indefinitely";
+    }
+
     return currentRange?.display;
   }, [currentRange]);
 

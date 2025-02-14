@@ -1,6 +1,5 @@
 import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
 import { NotificationSilenceItemApiResponse } from "@flanksource-ui/api/types/notifications";
-import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
@@ -15,13 +14,49 @@ import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { TopologyLink } from "../Topology/TopologyLink";
 import EditNotificationSilenceModal from "./SilenceNotificationForm/EditNotificationSilenceModal";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 
 const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiResponse>[] =
   [
     {
-      header: "Resource",
-      size: 150,
+      header: "Name",
+      size: 100,
       Cell: ({ row }) => {
+        return (
+          <span className="flex flex-row space-x-1">
+            <span>
+              {row.original.name}
+              {row.original.source === "KubernetesCRD" && <Icon name="k8s" />}
+            </span>
+          </span>
+        );
+      }
+    },
+
+    {
+      header: "Resource or the filter", // acts as a tooltip
+      Header: () => {
+        return <span>Target</span>;
+      },
+      size: 200,
+      Cell: ({ row }) => {
+        const { filter, error } = row.original;
+        if (filter) {
+          return (
+            <div className="flex flex-col space-y-1 text-gray-600">
+              <div className="flex items-center space-x-1">
+                <ErrorMessage message={error} tooltip={true} />
+                <span
+                  className="truncate font-mono text-sm"
+                  title={filter} // Provides full text on hover
+                >
+                  {filter}
+                </span>
+              </div>
+            </div>
+          );
+        }
+
         const check = row.original.checks;
         const catalog = row.original.catalog;
         const component = row.original.component;
@@ -58,40 +93,21 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
       }
     },
     {
-      header: "Duration",
-      size: 50,
+      header: "Expires At",
+      size: 100,
       Cell: ({ row }) => {
-        const from = row.original.from;
         const until = row.original.until;
+        if (!until) {
+          return <span>Never</span>;
+        }
+
         const isExpired = dayjs(until).isBefore(dayjs());
+        const expiresAt = dayjs(until);
 
         return (
           <span>
-            <Age
-              className={clsx(isExpired && "line-through")}
-              from={from}
-              to={until}
-            ></Age>
-            {isExpired && <span className="pl-1 text-red-500">Expired</span>}
-          </span>
-        );
-      }
-    },
-    {
-      header: "Source",
-      accessorKey: "source",
-      size: 50
-    },
-
-    {
-      header: "Filter",
-      accessorKey: "filter",
-      size: 100,
-      Cell: ({ row }) => {
-        return (
-          <span className="flex flex-row space-x-1">
-            <ErrorMessage message={row.original.error} tooltip={true} />
-            <span>{row.original.filter}</span>
+            {expiresAt.format("MMMM D, YYYY hh:mm A")}
+            {isExpired && <span className="pl-1 text-red-500">(Expired)</span>}
           </span>
         );
       }

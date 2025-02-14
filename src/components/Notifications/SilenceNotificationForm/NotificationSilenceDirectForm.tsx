@@ -7,11 +7,9 @@ import {
   SilenceNotificationResponse as SilenceNotificationRequest,
   SilenceNotificationResponse
 } from "@flanksource-ui/api/types/notifications";
-import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
-import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationResourceField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
@@ -22,6 +20,8 @@ import { AxiosError } from "axios";
 import { Formik, Form, FormikBag } from "formik";
 import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+import FormikNotificationDirectResourceField from "./FormikNotificationDirectResourceField";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
 
 type NotificationSilenceFormProps = {
@@ -31,19 +31,26 @@ type NotificationSilenceFormProps = {
   onCancel?: () => void;
 };
 
-export default function NotificationSilenceForm({
+export default function NotificationSilenceDirectForm({
   data,
   footerClassName = "flex flex-row justify-end px-4",
   onSuccess = () => {},
   onCancel = () => {}
 }: NotificationSilenceFormProps) {
+  const [searchParam] = useSearchParams();
+
+  const component_id = searchParam.get("component_id") ?? undefined;
+  const config_id = searchParam.get("config_id") ?? undefined;
+  const check_id = searchParam.get("check_id") ?? undefined;
+  const canary_id = searchParam.get("canary_id") ?? undefined;
+
   const initialValues: Partial<SilenceNotificationRequest> = {
     ...data,
     name: data?.name,
-    component_id: data?.component_id,
-    config_id: data?.config_id,
-    check_id: data?.check_id,
-    canary_id: data?.canary_id
+    component_id: data?.component_id ?? component_id,
+    config_id: data?.config_id ?? config_id,
+    check_id: data?.check_id ?? check_id,
+    canary_id: data?.canary_id ?? canary_id
   };
 
   const { isLoading, mutate } = useMutation({
@@ -94,8 +101,8 @@ export default function NotificationSilenceForm({
       v.check_id == null &&
       v.component_id == null &&
       v.config_id == null &&
-      v.selectors == null &&
-      v.filter == null
+      v.filter == null &&
+      v.selectors == null
     ) {
       errors.form =
         "You must specify at least one of the following: a resource, a filter, or selectors";
@@ -155,13 +162,8 @@ export default function NotificationSilenceForm({
               >
                 <FormikTextInput required name="name" label="Name" />
 
-                <FormikNotificationResourceField />
-
-                <FormikCheckbox
-                  checkboxStyle="toggle"
-                  name="recursive"
-                  label="Recursive"
-                  hint="When selected, the silence will apply to all children of the item"
+                <FormikNotificationDirectResourceField
+                  prepopulatedConfigID={config_id}
                 />
 
                 <FormikDurationPicker
@@ -184,6 +186,8 @@ export default function NotificationSilenceForm({
                   fieldName="selectors"
                   format={"yaml"}
                   label="Selectors"
+                  lines={10}
+                  className="flex h-auto flex-col" // Override height
                   hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
                 />
 

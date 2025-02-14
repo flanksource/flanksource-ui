@@ -122,6 +122,11 @@ export const rangeOptionsCategories: RangeOptionsCategory[] = [
     options: [
       {
         type: "relative",
+        display: "Indefinitely",
+        range: "indefinitely"
+      },
+      {
+        type: "relative",
         display: "5 minutes",
         range: "now+5m"
       },

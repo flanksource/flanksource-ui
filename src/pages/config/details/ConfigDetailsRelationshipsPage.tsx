@@ -1,5 +1,5 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
-import useConfigRelationshipsQuery from "@flanksource-ui/api/query-hooks/useConfigRelationshipsQuery";
+import { useConfigRelationshipsQuery } from "@flanksource-ui/api/query-hooks/useConfigRelationshipsQuery";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import ConfigsRelationshipsTable from "@flanksource-ui/components/Configs/ConfigList/ConfigsRelationshipsTable";
 import ConfigRelationshipFilterBar from "@flanksource-ui/components/Configs/ConfigRelationshipFilterBar";
