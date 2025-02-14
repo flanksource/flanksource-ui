@@ -19,6 +19,25 @@ export const datetimePreferenceAtom =
     }
   );
 
+export enum DisplayTimezonePreference {
+  Browser = "Browser",
+  UTC = "UTC",
+  LosAngeles = "America/Los_Angeles",
+  SouthAfrica = "Africa/Johannesburg",
+  India = "Asia/Kolkata",
+  Nepal = "Asia/Kathmandu"
+}
+
+export const displayTimezonePreferenceAtom =
+  atomWithStorage<DisplayTimezonePreference>(
+    "display_timezone_preference",
+    DisplayTimezonePreference.Browser,
+    undefined,
+    {
+      getOnInit: true
+    }
+  );
+
 export const cardPreferenceAtom = atomWithStorage<string>(
   "topology_card_width",
   CardWidth[Size.extra_large],

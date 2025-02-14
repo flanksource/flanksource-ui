@@ -1,31 +1,41 @@
 import clsx from "clsx";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
+import TimezonePlugin from "dayjs/plugin/timezone";
 import { Tooltip } from "react-tooltip";
 import { isEmpty } from "../../utils/date";
 import {
   datetimePreferenceAtom,
-  DateTimePreferenceOptions
+  displayTimezonePreferenceAtom,
+  DateTimePreferenceOptions,
+  DisplayTimezonePreference
 } from "@flanksource-ui/store/preference.state";
 import { useAtomValue } from "jotai";
 
 dayjs.extend(LocalizedFormat);
+dayjs.extend(TimezonePlugin);
 
 type AgeProps = {
   className?: string;
   from?: Date | string;
   to?: Date | string | null;
   suffix?: boolean;
+  dateTimePreferenceOverride?: DateTimePreferenceOptions;
 };
 
 export default function Age({
   className = "",
   from,
   to,
-  suffix = false
+  suffix = false,
+  dateTimePreferenceOverride = undefined
 }: AgeProps) {
   // TODO: Do we need to memoize this ...
-  const datetimePreference = useAtomValue(datetimePreferenceAtom);
+  let datetimePreference = useAtomValue(datetimePreferenceAtom);
+  const displayTimezonePreference = useAtomValue(displayTimezonePreferenceAtom);
+  if (dateTimePreferenceOverride) {
+    datetimePreference = dateTimePreferenceOverride;
+  }
 
   if (isEmpty(from)) {
     return null;
@@ -34,7 +44,12 @@ export default function Age({
   const _from = dayjs(from);
 
   if (isEmpty(to)) {
-    const formattedDate = formatDayjs(_from, datetimePreference, suffix);
+    const formattedDate = formatDayjs(
+      _from,
+      displayTimezonePreference,
+      datetimePreference,
+      suffix
+    );
     return (
       <>
         <span
@@ -45,7 +60,7 @@ export default function Age({
         </span>
         <Tooltip
           id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
-          content={formatDateForTooltip(_from)}
+          content={formatDateForTooltip(_from, displayTimezonePreference)}
         />
       </>
     );
@@ -66,7 +81,7 @@ export default function Age({
         </span>
         <Tooltip
           id={`age-tooltip-${duration.asMilliseconds()}`}
-          content={`${formatDateForTooltip(_from)}`}
+          content={`${formatDateForTooltip(_from, displayTimezonePreference)}`}
         />
       </>
     );
@@ -82,21 +97,36 @@ export default function Age({
       </span>
       <Tooltip
         id={`age-tooltip-${_from.local().to(_to)}`}
-        content={`${formatDateForTooltip(_from)} - ${formatDateForTooltip(_to)}`}
+        content={`${formatDateForTooltip(_from, displayTimezonePreference)} - ${formatDateForTooltip(_to, displayTimezonePreference)}`}
       />
     </>
   );
 }
 
-export function formatDateForTooltip(datetime: dayjs.Dayjs) {
-  return formatDayjs(datetime, DateTimePreferenceOptions.Timestamp, false);
+export function formatDateForTooltip(
+  datetime: dayjs.Dayjs,
+  displayTimezone: DisplayTimezonePreference = DisplayTimezonePreference.Browser
+) {
+  return formatDayjs(
+    datetime,
+    displayTimezone,
+    DateTimePreferenceOptions.Timestamp,
+    false
+  );
 }
 
 function formatDayjs(
   datetime: dayjs.Dayjs,
+  displayTimezone: DisplayTimezonePreference,
   datetimePreference: DateTimePreferenceOptions,
   suffix: boolean
 ) {
+  if (displayTimezone === DisplayTimezonePreference.Browser) {
+    datetime = datetime.local();
+  } else {
+    datetime = datetime.tz(displayTimezone);
+  }
+
   switch (datetimePreference) {
     case DateTimePreferenceOptions.Short:
       return datetime.fromNow(!suffix);
@@ -113,7 +143,10 @@ function formatDayjs(
       }
 
     case DateTimePreferenceOptions.Full:
-      return datetime.format("MMM D HH:mm:ss.SSS");
+      if (datetime.isSame(dayjs(), "year")) {
+        return datetime.format("MMM D HH:mm");
+      }
+      return datetime.format("MMM D YYYY HH:mm:ss.SSS");
 
     case DateTimePreferenceOptions.Timestamp:
       return datetime.format("YYYY-MM-DD HH:mm:ss.SSS Z");

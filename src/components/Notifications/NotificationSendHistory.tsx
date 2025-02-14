@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
+import { DateTimePreferenceOptions } from "@flanksource-ui/store/preference.state";
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
   [
@@ -23,7 +24,12 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
             <Age from={dateString} />
             {(count || 1) > 1 && (
               <span className="inline-block pl-1 text-gray-500">
-                (x{count} over <Age from={firstObserved} />)
+                (x{count} over{" "}
+                <Age
+                  dateTimePreferenceOverride={DateTimePreferenceOptions.Short}
+                  from={firstObserved}
+                />
+                )
               </span>
             )}
           </div>

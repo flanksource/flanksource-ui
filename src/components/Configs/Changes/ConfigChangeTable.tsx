@@ -11,6 +11,7 @@ import { useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import MRTConfigListTagsCell from "../ConfigList/Cells/MRTConfigListTagsCell";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
+import { DateTimePreferenceOptions } from "@flanksource-ui/store/preference.state";
 
 export const paramsToReset = {
   configChanges: ["pageIndex", "pageSize"]
@@ -29,7 +30,12 @@ export function ConfigChangeDateCell({
       <Age from={dateString} />
       {(count || 1) > 1 && (
         <span className="inline-block pl-1 text-gray-500">
-          (x{count} over <Age from={firstObserved} />)
+          (x{count} over{" "}
+          <Age
+            dateTimePreferenceOverride={DateTimePreferenceOptions.Short}
+            from={firstObserved}
+          />
+          )
         </span>
       )}
     </div>
@@ -53,10 +59,15 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
 
       return (
         <div className="text-xs">
-          <Age from={dateString} />
+          <Age from={dateString} suffix={true} />
           {(count || 1) > 1 && (
             <span className="inline-block pl-1 text-gray-500">
-              (x{count} over <Age from={firstObserved} />)
+              (x{count} over{" "}
+              <Age
+                dateTimePreferenceOverride={DateTimePreferenceOptions.Short}
+                from={firstObserved}
+              />
+              )
             </span>
           )}
         </div>
