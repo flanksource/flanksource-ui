@@ -13,6 +13,7 @@ type Props = {
   label?: string;
   disabled?: boolean;
   hint?: string;
+  labelClassName?: string;
 } & Omit<React.ComponentProps<typeof Switch>, "value" | "onChange">;
 
 export function Toggle({
@@ -22,6 +23,7 @@ export function Toggle({
   help,
   onChange = () => {},
   hint,
+  labelClassName = "min-w-min text-wrap text-sm font-medium text-gray-700",
   ...props
 }: Props) {
   return (
@@ -45,9 +47,7 @@ export function Toggle({
       </Switch>
 
       <Switch.Label as="span" className="ml-2">
-        <span className="min-w-min text-wrap text-sm font-medium text-gray-700">
-          {label}
-        </span>
+        <span className={labelClassName}>{label}</span>
         <span className="text-sm text-gray-500">{help}</span>
       </Switch.Label>
 

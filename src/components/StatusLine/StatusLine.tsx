@@ -18,17 +18,26 @@ export type StatusLineData = {
   statuses: StatusInfo[];
 };
 
-export type StatusLineProps = React.HTMLProps<HTMLDivElement> & StatusLineData;
+export type StatusLineProps = React.HTMLProps<HTMLDivElement> &
+  StatusLineData & {
+    hideName?: boolean;
+  };
 
-const renderIcon = (icon: string | React.ReactNode) => {
+interface RenderIconProps {
+  icon: string | React.ReactNode;
+}
+
+const RenderIcon: React.FC<RenderIconProps> = ({ icon }) => {
   if (!icon) {
     return null;
   }
   if (typeof icon === "object") {
-    return icon;
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>{icon}</>;
   } else if (typeof icon === "string") {
-    return <Icon name={icon} className="h-4 w-4" />;
+    return <Icon name={icon} className="h-4 w-4 min-w-max" />;
   }
+  return null;
 };
 
 const StatusInfoEntry = ({
@@ -46,14 +55,14 @@ const StatusInfoEntry = ({
         to={statusInfo.url}
         target={target || ""}
       >
-        {statusInfo.icon && renderIcon(statusInfo.icon)}
+        {statusInfo.icon && <RenderIcon icon={statusInfo.icon} />}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </Link>
     );
   } else {
     return (
       <span className="inline-flex cursor-pointer space-x-1">
-        {statusInfo.icon && renderIcon(statusInfo.icon)}
+        {statusInfo.icon && <RenderIcon icon={statusInfo.icon} />}
         <Chip text={statusInfo.label} color={statusInfo.color} />
       </span>
     );
@@ -66,34 +75,39 @@ export function StatusLine({
   label,
   url,
   statuses,
-  className = "py-1",
+  className = "py-0.5",
+  hideName = false,
   ...rest
 }: StatusLineProps) {
   return (
     <div
-      className={clsx("flex flex-row items-center space-x-1", className)}
+      className={clsx("flex flex-row items-center space-x-0.5", className)}
       {...rest}
     >
-      {icon && renderIcon(icon)}
-      {url && (
-        <Link
-          title={label}
-          target={target || ""}
-          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
-          to={url}
-        >
-          {label}
-        </Link>
+      {!hideName && (
+        <>
+          {icon && <RenderIcon icon={icon} />}
+          {url && (
+            <Link
+              title={label}
+              target={target || ""}
+              className="h-4 cursor-pointer overflow-hidden truncate text-xs"
+              to={url}
+            >
+              {label}
+            </Link>
+          )}
+          {!url && (
+            <span
+              title={label}
+              className="h-4 cursor-pointer overflow-hidden truncate text-xs"
+            >
+              {label}
+            </span>
+          )}
+        </>
       )}
-      {!url && (
-        <span
-          title={label}
-          className="h-4 cursor-pointer overflow-hidden truncate text-xs"
-        >
-          {label}
-        </span>
-      )}
-      <div className="flex flex-row space-x-1.5">
+      <div className="flex flex-row space-x-0.5 text-xs">
         {statuses.map((status, index) => {
           return <StatusInfoEntry statusInfo={status} key={index} />;
         })}

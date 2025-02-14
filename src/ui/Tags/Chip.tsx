@@ -30,7 +30,7 @@ export function Chip({ text, color, children, className, ...props }: Props) {
     <Tag
       className={clsx(
         getBackgroundColorClass(color),
-        "min-w-8 break-all rounded-4px text-center align-baseline text-2xs font-bold"
+        "min-w-8 break-all rounded-4px text-center align-baseline text-2xsi font-semibold"
       )}
       {...props}
     >

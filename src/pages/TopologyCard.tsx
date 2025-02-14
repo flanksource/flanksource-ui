@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getTopology } from "../api/services/topology";
 import { InfoMessage } from "../components/InfoMessage";
-import { TopologyCard } from "../components/Topology/TopologyCard";
+import { TopologyCard } from "../components/Topology/TopologyCard/TopologyCard";
 import { Head } from "../ui/Head";
 
 export function TopologyCardPage() {

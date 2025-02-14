@@ -1,14 +1,13 @@
+import { useOnMouseActivity } from "@flanksource-ui/hooks/useMouseActivity";
+import { Size } from "@flanksource-ui/types";
+import { ClickableSvg } from "@flanksource-ui/ui/ClickableSvg/ClickableSvg";
+import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import clsx from "clsx";
-import { FaCog } from "react-icons/fa";
-
-import { CardWidth } from "../TopologyCard";
-
 import { LegacyRef } from "react";
+import { FaCog } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import { useOnMouseActivity } from "../../../hooks/useMouseActivity";
-import { Size } from "../../../types";
-import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
-import { Toggle } from "../../../ui/FormControls/Toggle";
+import { CardWidth } from "../TopologyCard/TopologyCard";
+import TopologyHideProperties from "./TopologyHideProperties";
 
 export function getCardWidth() {
   let value: any = localStorage.getItem("topology_card_width");
@@ -105,15 +104,10 @@ export const TopologyPreference = ({
           </div>
           <div className="py-1" role="none">
             <div className="flex items-center px-4 py-3">
-              <label
-                htmlFor="topology-card-width-slider"
-                className="mr-3 inline-block text-xs text-gray-700"
-              >
-                Show hidden components:
-              </label>
               <Toggle
+                labelClassName="text-sm font-medium text-gray-700"
                 className="inline-flex items-center"
-                label=""
+                label="Show hidden components"
                 value={showHiddenComponents}
                 onChange={(val) => {
                   const newValue = val ? "yes" : "no";
@@ -125,6 +119,7 @@ export const TopologyPreference = ({
               />
             </div>
           </div>
+          <TopologyHideProperties />
           <div className="py-1" role="none">
             <div className="flex items-center px-4 py-4">
               <label
