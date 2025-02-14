@@ -68,8 +68,6 @@ export function ConfigTypesDropdown({
     }
   );
 
-  console.log(field.value);
-
   return (
     <MultiSelectDropdown
       isLoading={isLoading}

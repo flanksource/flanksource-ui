@@ -1,5 +1,3 @@
-import { CardWidth } from "@flanksource-ui/components/Topology/TopologyCard";
-import { Size } from "@flanksource-ui/types";
 import { atomWithStorage } from "jotai/utils";
 
 export enum DateTimePreferenceOptions {
@@ -19,28 +17,18 @@ export const datetimePreferenceAtom =
     }
   );
 
-export enum DisplayTimezonePreference {
-  Browser = "Browser",
-  UTC = "UTC",
-  LosAngeles = "America/Los_Angeles",
-  SouthAfrica = "Africa/Johannesburg",
-  India = "Asia/Kolkata",
-  Nepal = "Asia/Kathmandu"
-}
-
-export const displayTimezonePreferenceAtom =
-  atomWithStorage<DisplayTimezonePreference>(
-    "display_timezone_preference",
-    DisplayTimezonePreference.Browser,
-    undefined,
-    {
-      getOnInit: true
-    }
-  );
+export const displayTimezonePreferenceAtom = atomWithStorage<string>(
+  "display_timezone_preference",
+  "Browser",
+  undefined,
+  {
+    getOnInit: true
+  }
+);
 
 export const cardPreferenceAtom = atomWithStorage<string>(
   "topology_card_width",
-  CardWidth[Size.extra_large],
+  "554px",
   undefined,
   {
     getOnInit: true

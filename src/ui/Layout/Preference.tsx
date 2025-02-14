@@ -11,10 +11,12 @@ import { Toggle } from "@flanksource-ui/components";
 import {
   datetimePreferenceAtom,
   DateTimePreferenceOptions,
-  displayTimezonePreferenceAtom,
-  DisplayTimezonePreference
+  displayTimezonePreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtom } from "jotai";
+import SelectDropdown, {
+  SelectDropdownOption
+} from "../Dropdowns/SelectDropdown";
 
 export type SetURLSearchParams = (
   nextInit?:
@@ -27,6 +29,11 @@ type PreferencePopOverProps = {
   cardSize: string;
   setTopologyCardSize: (width: string) => void;
 };
+
+// @ts-ignore
+const timezones: string[] = Intl.supportedValuesOf("timeZone");
+timezones.unshift("Browser");
+const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export default function PreferencePopOver({
   cardSize,
@@ -48,7 +55,7 @@ const DateTimePreferenceRadioOptions = [
   { value: DateTimePreferenceOptions.Short, hint: "1h" },
   {
     value: DateTimePreferenceOptions.Medium,
-    hint: "10:30, Mon 10:30, Jan 1 10:30, Jan 2 2025 10:30"
+    hint: "Mon 10:30"
   },
   { value: DateTimePreferenceOptions.Full, hint: "Jan 1 10:30:01.999" },
   {
@@ -85,14 +92,12 @@ export const Preference = ({
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") !== "no";
 
-  // const opt: GroupByOptions[] = Object.entries(DisplayTimezonePreference).map(
-  //   ([_, val]) => {
-  //     return {
-  //       label: val,
-  //       value: val
-  //     };
-  //   }
-  // );
+  const timezoneOptions: SelectDropdownOption[] = timezones.map((tz) => {
+    return {
+      label: tz === "Browser" ? `Browser (${browserTz})` : tz,
+      value: tz
+    };
+  });
 
   return (
     <>
@@ -229,8 +234,8 @@ export const Preference = ({
                     />
 
                     <span className="group relative ml-2">
-                      <span className="text-sm">{option.value}</span>
-                      <span className="absolute left-full top-0 hidden whitespace-nowrap pl-1 pt-0.5 text-xs text-gray-500 group-hover:inline-block">
+                      <span className="text-sm">{option.value}</span> &nbsp;
+                      <span className="text-xs text-gray-500">
                         {option.hint}
                       </span>
                     </span>
@@ -240,49 +245,27 @@ export const Preference = ({
             </div>
           </div>
 
-          {/* Timezone selection */}
-          <div className="py-1" role="none">
+          <div className="py-1">
             <div className="px-4 py-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Timezone:
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="dateTimePreference"
+              >
+                Timezone: &nbsp;
               </label>
-              <div className="relative mt-3">
-                <select
-                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-100 focus:border-blue-500 focus:ring focus:ring-blue-200"
-                  onChange={(e) =>
-                    setDisplayTimezonePreference(
-                      e.target.value as DisplayTimezonePreference
-                    )
-                  }
-                >
-                  {Object.entries(DisplayTimezonePreference).map(([_, val]) => (
-                    <option
-                      key={val}
-                      value={val}
-                      selected={displayTimezonePreference === val}
-                      className="bg-white text-gray-700 hover:bg-blue-700 hover:text-white"
-                    >
-                      {val}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
 
-          {/* <div className="py-1">
-            <div className="px-4 py-4">
-              <MultiSelectDropdown
-                options={opt}
+              <SelectDropdown
+                options={timezoneOptions}
                 isMulti={false}
-                label="Timezone"
-                closeMenuOnSelect={true}
-                // @ts-ignore
-                onChange={(value: GroupByOptions) => {}}
+                defaultInputValue={displayTimezonePreference}
+                value={displayTimezonePreference}
+                closeMenuOnSelect={false}
                 className="w-auto max-w-[400px]"
+                // @ts-ignore
+                onChange={(opt: string) => setDisplayTimezonePreference(opt)}
               />
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </>

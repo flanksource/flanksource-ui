@@ -7,8 +7,7 @@ import { isEmpty } from "../../utils/date";
 import {
   datetimePreferenceAtom,
   displayTimezonePreferenceAtom,
-  DateTimePreferenceOptions,
-  DisplayTimezonePreference
+  DateTimePreferenceOptions
 } from "@flanksource-ui/store/preference.state";
 import { useAtomValue } from "jotai";
 
@@ -58,10 +57,13 @@ export default function Age({
         >
           {formattedDate}
         </span>
-        <Tooltip
-          id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
-          content={formatDateForTooltip(_from, displayTimezonePreference)}
-        />
+
+        {datetimePreference !== DateTimePreferenceOptions.Timestamp && (
+          <Tooltip
+            id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
+            content={formatDateForTooltip(_from, displayTimezonePreference)}
+          />
+        )}
       </>
     );
   }
@@ -105,7 +107,7 @@ export default function Age({
 
 export function formatDateForTooltip(
   datetime: dayjs.Dayjs,
-  displayTimezone: DisplayTimezonePreference = DisplayTimezonePreference.Browser
+  displayTimezone: string = "Browser"
 ) {
   return formatDayjs(
     datetime,
@@ -117,11 +119,11 @@ export function formatDateForTooltip(
 
 function formatDayjs(
   datetime: dayjs.Dayjs,
-  displayTimezone: DisplayTimezonePreference,
+  displayTimezone: string,
   datetimePreference: DateTimePreferenceOptions,
   suffix: boolean
 ) {
-  if (displayTimezone === DisplayTimezonePreference.Browser) {
+  if (displayTimezone === "Browser") {
     datetime = datetime.local();
   } else {
     datetime = datetime.tz(displayTimezone);
@@ -149,6 +151,6 @@ function formatDayjs(
       return datetime.format("MMM D YYYY HH:mm:ss.SSS");
 
     case DateTimePreferenceOptions.Timestamp:
-      return datetime.format("YYYY-MM-DD HH:mm:ss.SSS Z");
+      return datetime.format("YYYY-MM-DD HH:mm:ss.SSS");
   }
 }
