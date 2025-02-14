@@ -1,14 +1,14 @@
 import { FaBell } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
-import { UserProfileDropdown } from "../../components/Users/UserProfile";
-import { RefreshButton } from "../Buttons/RefreshButton";
-import { HelpDropdown } from "../MenuBar/HelpDropdown";
-import PreferencePopOver from "@flanksource-ui/ui/Layout/Preference";
-import { CardWidth } from "@flanksource-ui/components/Topology/TopologyCard";
-import { Size } from "@flanksource-ui/types";
-import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai";
+
+import { cardPreferenceAtom } from "@flanksource-ui/store/preference.state";
+
+import { HelpDropdown } from "../MenuBar/HelpDropdown";
+import { RefreshButton } from "../Buttons/RefreshButton";
+import { UserProfileDropdown } from "../../components/Users/UserProfile";
+import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
+import PreferencePopOver from "./Preference";
 
 interface IProps {
   children: React.ReactNode;
@@ -19,15 +19,6 @@ interface IProps {
   extra?: React.ReactNode;
   extraClassName?: string;
 }
-
-export const cardPreferenceAtom = atomWithStorage<string>(
-  "topology_card_width",
-  CardWidth[Size.extra_large],
-  undefined,
-  {
-    getOnInit: true
-  }
-);
 
 export function SearchLayout({
   children,

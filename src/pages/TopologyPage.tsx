@@ -7,10 +7,7 @@ import { TopologyBreadcrumbs } from "@flanksource-ui/components/Topology/Topolog
 import { TopologyCard } from "@flanksource-ui/components/Topology/TopologyCard";
 import TopologyFilterBar from "@flanksource-ui/components/Topology/TopologyPage/TopologyFilterBar";
 import { Head } from "@flanksource-ui/ui/Head";
-import {
-  cardPreferenceAtom,
-  SearchLayout
-} from "@flanksource-ui/ui/Layout/SearchLayout";
+import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import CardsSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/CardsSkeletonLoader";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQuery } from "@tanstack/react-query";
@@ -22,6 +19,7 @@ import {
   getSortLabels,
   getSortedTopology
 } from "../components/Topology/TopologyPopover/topologySort";
+import { cardPreferenceAtom } from "@flanksource-ui/store/preference.state";
 
 export const allOption = {
   All: {

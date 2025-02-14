@@ -8,6 +8,11 @@ import { useSearchParams } from "react-router-dom";
 import { useOnMouseActivity } from "@flanksource-ui/hooks/useMouseActivity";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { Toggle } from "@flanksource-ui/components";
+import {
+  datetimePreferenceAtom,
+  DateTimePreferenceOptions
+} from "@flanksource-ui/store/preference.state";
+import { useAtom } from "jotai";
 
 export type SetURLSearchParams = (
   nextInit?:
@@ -37,6 +42,19 @@ export default function PreferencePopOver({
   );
 }
 
+const DateTimePreferenceRadioOptions = [
+  { value: DateTimePreferenceOptions.Short, hint: "1h" },
+  {
+    value: DateTimePreferenceOptions.Medium,
+    hint: "10:30, Mon 10:30, Jan 1 10:30, Jan 2 2025 10:30"
+  },
+  { value: DateTimePreferenceOptions.Full, hint: "Jan 1 10:30:01.999" },
+  {
+    value: DateTimePreferenceOptions.Timestamp,
+    hint: "2025-01-01 10:30:01.999"
+  }
+];
+
 export const Preference = ({
   title = "Preferences",
   cardSize,
@@ -47,6 +65,10 @@ export const Preference = ({
   setCardWidth: (width: string) => void;
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [dateTimePreference, setDateTimePreference] = useAtom(
+    datetimePreferenceAtom
+  );
 
   const {
     ref: popoverRef,
@@ -115,17 +137,20 @@ export const Preference = ({
               <span className="font-bold text-gray-700">{title}</span>
             </div>
           </div>
+
+          {/* Hidden components */}
           <div className="py-1" role="none">
             <div className="flex items-center px-4 py-3">
               <label
-                htmlFor="topology-card-width-slider"
-                className="mr-3 inline-block text-xs text-gray-700"
+                htmlFor="showHiddenComponents"
+                className="block text-sm font-medium text-gray-700"
               >
-                Show hidden components:
+                Show hidden components: &nbsp;
               </label>
               <Toggle
                 className="inline-flex items-center"
                 label=""
+                name="showHiddenComponents"
                 value={showHiddenComponents}
                 onChange={(val) => {
                   const newValue = val ? "yes" : "no";
@@ -137,13 +162,15 @@ export const Preference = ({
               />
             </div>
           </div>
+
+          {/* Topology Card Width */}
           <div className="py-1" role="none">
             <div className="flex items-center px-4 py-4">
               <label
                 htmlFor="topology-card-width-slider"
-                className="mr-3 text-xs text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
-                Card Width:
+                Card Width: &nbsp;
               </label>
               <input
                 step={2}
@@ -155,6 +182,46 @@ export const Preference = ({
                 onChange={(e) => setCardWidth(e.target.value)}
                 className="h-5 w-64 cursor-pointer rounded-lg"
               />
+            </div>
+          </div>
+
+          {/* Date time preference */}
+          <div className="py-1" role="none">
+            <div className="px-4 py-4">
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="dateTimePreference"
+              >
+                Date/Time Format: &nbsp;
+              </label>
+              <div className="mt-3 flex flex-col gap-2">
+                {DateTimePreferenceRadioOptions.map((option) => (
+                  <label
+                    key={option.hint}
+                    className={`flex cursor-pointer items-center rounded-lg border px-3 py-2 text-sm font-medium shadow-sm transition-colors ${
+                      dateTimePreference === option.value
+                        ? "border-blue-500 bg-blue-100 text-blue-700"
+                        : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="dateTimePreference"
+                      value={option.value}
+                      checked={dateTimePreference === option.value}
+                      onChange={() => setDateTimePreference(option.value)}
+                      className="hidden"
+                    />
+
+                    <span className="group relative ml-2">
+                      <span className="text-sm">{option.value}</span>
+                      <span className="absolute left-full top-0 hidden whitespace-nowrap pl-1 pt-0.5 text-xs text-gray-500 group-hover:inline-block">
+                        {option.hint}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         </div>

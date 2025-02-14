@@ -45,7 +45,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 70,
+    maxSize: 160,
     Cell: ({ cell, row, column }) => {
       const dateString = row?.getValue<string>(column.id);
       const firstObserved = row?.original.first_observed;
