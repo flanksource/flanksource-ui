@@ -1,5 +1,6 @@
 import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
 import { HealthCheckSummary } from "./health";
+import { Topology } from "./topology";
 
 export interface ConfigChange extends CreatedAt {
   id: string;
@@ -70,13 +71,6 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     id: string;
     name: string;
   };
-  summary?: {
-    relationships?: number;
-    analysis?: number;
-    changes?: number;
-    playbook_runs?: number;
-    checks?: number;
-  };
   properties?: {
     icon: string;
     name: string;
@@ -86,6 +80,17 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     }[];
   }[];
   last_scraped_time?: string;
+}
+
+export interface ConfigItemDetails extends ConfigItem {
+  summary?: {
+    relationships?: number;
+    analysis?: number;
+    changes?: number;
+    playbook_runs?: number;
+    checks?: number;
+  };
+  components?: Topology[];
 }
 
 export interface ConfigItemGraphData extends ConfigItem {
