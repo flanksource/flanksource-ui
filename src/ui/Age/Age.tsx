@@ -6,8 +6,7 @@ import { Tooltip } from "react-tooltip";
 import { isEmpty } from "../../utils/date";
 import {
   datetimePreferenceAtom,
-  displayTimezonePreferenceAtom,
-  DateTimePreferenceOptions
+  displayTimezonePreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtomValue } from "jotai";
 
@@ -19,7 +18,7 @@ type AgeProps = {
   from?: Date | string;
   to?: Date | string | null;
   suffix?: boolean;
-  dateTimePreferenceOverride?: DateTimePreferenceOptions;
+  format?: "short" | "medium" | "full" | "timestamp";
 };
 
 export default function Age({
@@ -27,13 +26,13 @@ export default function Age({
   from,
   to,
   suffix = false,
-  dateTimePreferenceOverride = undefined
+  format = undefined
 }: AgeProps) {
   // TODO: Do we need to memoize this ...
   let datetimePreference = useAtomValue(datetimePreferenceAtom);
   const displayTimezonePreference = useAtomValue(displayTimezonePreferenceAtom);
-  if (dateTimePreferenceOverride) {
-    datetimePreference = dateTimePreferenceOverride;
+  if (format) {
+    datetimePreference = format;
   }
 
   if (isEmpty(from)) {
@@ -58,7 +57,7 @@ export default function Age({
           {formattedDate}
         </span>
 
-        {datetimePreference !== DateTimePreferenceOptions.Timestamp && (
+        {datetimePreference !== "timestamp" && (
           <Tooltip
             id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
             content={formatDateForTooltip(_from, displayTimezonePreference)}
@@ -109,18 +108,13 @@ export function formatDateForTooltip(
   datetime: dayjs.Dayjs,
   displayTimezone: string = "Browser"
 ) {
-  return formatDayjs(
-    datetime,
-    displayTimezone,
-    DateTimePreferenceOptions.Timestamp,
-    false
-  );
+  return formatDayjs(datetime, displayTimezone, "timestamp", false);
 }
 
 function formatDayjs(
   datetime: dayjs.Dayjs,
   displayTimezone: string,
-  datetimePreference: DateTimePreferenceOptions,
+  datetimePreference: "short" | "medium" | "full" | "timestamp",
   suffix: boolean
 ) {
   if (displayTimezone === "Browser") {
@@ -130,27 +124,28 @@ function formatDayjs(
   }
 
   switch (datetimePreference) {
-    case DateTimePreferenceOptions.Short:
+    case "short":
       return datetime.fromNow(!suffix);
 
-    case DateTimePreferenceOptions.Medium:
+    case "medium":
       if (datetime.isSame(dayjs(), "day")) {
-        return datetime.local().format("HH:mm");
+        return datetime.local().format("HH:mm:ss");
       } else if (datetime.isSame(dayjs(), "week")) {
-        return datetime.format("ddd HH:mm");
+        return datetime.format("ddd HH:mm:ss");
       } else if (datetime.isSame(dayjs(), "year")) {
         return datetime.format("MMM D HH:mm");
       } else {
         return datetime.format("MMM D YYYY HH:mm");
       }
 
-    case DateTimePreferenceOptions.Full:
+    case "full":
       if (datetime.isSame(dayjs(), "year")) {
-        return datetime.format("MMM D HH:mm");
+        return datetime.format("MMM D HH:mm:ss");
       }
-      return datetime.format("MMM D YYYY HH:mm:ss.SSS");
 
-    case DateTimePreferenceOptions.Timestamp:
+      return datetime.format("MMM D YYYY HH:mm:ss");
+
+    case "timestamp":
       return datetime.format("YYYY-MM-DD HH:mm:ss.SSS");
   }
 }

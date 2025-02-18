@@ -10,7 +10,6 @@ import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { Toggle } from "@flanksource-ui/components";
 import {
   datetimePreferenceAtom,
-  DateTimePreferenceOptions,
   displayTimezonePreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtom } from "jotai";
@@ -51,17 +50,14 @@ export default function PreferencePopOver({
   );
 }
 
-const DateTimePreferenceRadioOptions = [
-  { value: DateTimePreferenceOptions.Short, hint: "1h" },
-  {
-    value: DateTimePreferenceOptions.Medium,
-    hint: "Mon 10:30"
-  },
-  { value: DateTimePreferenceOptions.Full, hint: "Jan 1 10:30:01.999" },
-  {
-    value: DateTimePreferenceOptions.Timestamp,
-    hint: "2025-01-01 10:30:01.999"
-  }
+const DateTimePreferenceRadioOptions: {
+  value: "short" | "medium" | "full" | "timestamp";
+  hint: string;
+}[] = [
+  { value: "short", hint: "1h" },
+  { value: "medium", hint: "Mon 10:30" },
+  { value: "full", hint: "Jan 1 10:30:01.999" },
+  { value: "timestamp", hint: "2025-01-01 10:30:01.999" }
 ];
 
 export const Preference = ({
