@@ -1,4 +1,7 @@
 import clsx from "clsx";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 import { Size } from "@flanksource-ui/types";
@@ -29,10 +32,24 @@ type PreferencePopOverProps = {
   setTopologyCardSize: (width: string) => void;
 };
 
-// @ts-ignore
-const timezones: string[] = Intl.supportedValuesOf("timeZone");
-timezones.unshift("Browser");
-const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const timezones: { name: string; offset: string }[] = (Intl as any)
+  .supportedValuesOf("timeZone")
+  .map((tz: string) => ({
+    name: tz,
+    offset: dayjs().tz(tz).format("Z")
+  }));
+
+timezones.unshift({ name: "Browser", offset: dayjs().format("Z") });
+
+// Sort timezones by offset
+timezones.sort((a, b) => {
+  if (a.name === "Browser") return -1;
+  if (b.name === "Browser") return 1;
+  return a.offset.localeCompare(b.offset);
+});
 
 export default function PreferencePopOver({
   cardSize,
@@ -89,9 +106,10 @@ export const Preference = ({
     searchParams.get("showHiddenComponents") !== "no";
 
   const timezoneOptions: SelectDropdownOption[] = timezones.map((tz) => {
+    const label = `${tz.name} (${tz.offset})`;
     return {
-      label: tz === "Browser" ? `Browser (${browserTz})` : tz,
-      value: tz
+      label: label,
+      value: tz.name
     };
   });
 
