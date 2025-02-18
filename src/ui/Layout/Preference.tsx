@@ -16,9 +16,7 @@ import {
   displayTimezonePreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtom } from "jotai";
-import SelectDropdown, {
-  SelectDropdownOption
-} from "../Dropdowns/SelectDropdown";
+import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
 
 export type SetURLSearchParams = (
   nextInit?:
@@ -72,7 +70,7 @@ const DateTimePreferenceRadioOptions: {
   hint: string;
 }[] = [
   { value: "short", hint: "1h" },
-  { value: "medium", hint: "Mon 10:30" },
+  { value: "medium", hint: "Mon 10:30:45" },
   { value: "full", hint: "Jan 1 10:30:01.999" },
   { value: "timestamp", hint: "2025-01-01 10:30:01.999" }
 ];
@@ -105,13 +103,13 @@ export const Preference = ({
   const showHiddenComponents =
     searchParams.get("showHiddenComponents") !== "no";
 
-  const timezoneOptions: SelectDropdownOption[] = timezones.map((tz) => {
-    const label = `${tz.name} (${tz.offset})`;
-    return {
-      label: label,
-      value: tz.name
-    };
-  });
+  const timezoneOptions: Record<string, { label: string; value: string }> =
+    Object.fromEntries(
+      timezones.map((tz) => {
+        const label = `${tz.name} (${tz.offset})`;
+        return [tz.name, { label, value: tz.name }];
+      })
+    );
 
   return (
     <>
@@ -268,15 +266,18 @@ export const Preference = ({
                 Timezone: &nbsp;
               </label>
 
-              <SelectDropdown
-                options={timezoneOptions}
+              <ReactSelectDropdown
+                items={timezoneOptions}
+                name="timezone"
                 isMulti={false}
-                defaultInputValue={displayTimezonePreference}
                 value={displayTimezonePreference}
-                closeMenuOnSelect={false}
-                className="w-auto max-w-[400px]"
-                // @ts-ignore
-                onChange={(opt: string) => setDisplayTimezonePreference(opt)}
+                className="w-full"
+                dropDownClassNames="w-full"
+                onChange={(opt?: string) => {
+                  if (opt) {
+                    setDisplayTimezonePreference(opt);
+                  }
+                }}
               />
             </div>
           </div>
