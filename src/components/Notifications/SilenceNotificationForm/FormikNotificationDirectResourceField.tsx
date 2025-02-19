@@ -34,7 +34,8 @@ type RadioItem = {
 export default function FormikNotificationDirectResourceField({
   prepopulatedConfigID = ""
 }: FormikNotificationResourceFieldProps) {
-  const { values, setFieldValue } = useFormikContext<Record<string, any>>();
+  const { values, setFieldValue, errors, setErrors } =
+    useFormikContext<Record<string, any>>();
   const { component_id, config_id, check_id, canary_id } = values;
 
   const { data: components } = useComponentDetail(component_id || "");
@@ -96,6 +97,16 @@ export default function FormikNotificationDirectResourceField({
         }
       }
     });
+
+    const allResourceOpt: RadioItem = {
+      value: "all",
+      name: "All",
+      radioItemType: "resource",
+      form_field: "config_id",
+      path: "",
+      recursive: false
+    };
+    resourcesRadioItems.push(allResourceOpt);
   } else if (component_id && components) {
     const component = components[0] || {};
     resourcesRadioItems.push({
@@ -137,6 +148,8 @@ export default function FormikNotificationDirectResourceField({
   };
 
   const onAttributeSelect = () => {
+    setErrors({});
+
     const checkboxes = document.querySelectorAll<HTMLInputElement>(
       'input[name="resource_attributes"]:checked'
     );
@@ -200,7 +213,9 @@ export default function FormikNotificationDirectResourceField({
       {attributesRadioItems.length > 0 && (
         <Label label="Attributes" required={false} />
       )}
-      <div>
+      <div
+        className={`rounded-md ${errors.attributes ? "border-2 border-red-500 bg-red-50" : ""}`}
+      >
         {attributesRadioItems &&
           attributesRadioItems
             .sort((a, b) => a.radioItemType.length - b.radioItemType.length) // group by kind and tags

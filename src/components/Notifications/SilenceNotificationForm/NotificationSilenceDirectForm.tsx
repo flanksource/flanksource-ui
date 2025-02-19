@@ -120,9 +120,21 @@ export default function NotificationSilenceDirectForm({
   ) => {
     // Before submitting, we need to parse the date math expressions, if
     // any are present in the from and until fields.
-    let { from, until } = v;
+    let { from, until, config_id } = v;
     if (until === "indefinitely") {
       until = null;
+    }
+
+    if (config_id === "all") {
+      config_id = undefined;
+    }
+
+    if (!config_id && v.selectors?.length === 0) {
+      formik.setErrors({
+        form: "When all resources are selected, an attribute is needed",
+        attributes: "required"
+      });
+      return;
     }
 
     const fromTime = from?.includes("now") ? parseDateMath(from, false) : from;
@@ -137,7 +149,8 @@ export default function NotificationSilenceDirectForm({
       {
         ...v,
         from: fromTime,
-        until: untilTime
+        until: untilTime,
+        config_id: config_id
       } as SilenceNotificationRequest,
       {
         onError(error) {
