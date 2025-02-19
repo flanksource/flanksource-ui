@@ -1,9 +1,14 @@
 import { FaBell } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
-import { UserProfileDropdown } from "../../components/Users/UserProfile";
-import { RefreshButton } from "../Buttons/RefreshButton";
+import { useAtom } from "jotai";
+
+import { cardPreferenceAtom } from "@flanksource-ui/store/preference.state";
+
 import { HelpDropdown } from "../MenuBar/HelpDropdown";
+import { RefreshButton } from "../Buttons/RefreshButton";
+import { UserProfileDropdown } from "../../components/Users/UserProfile";
+import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
+import PreferencePopOver from "./Preference";
 
 interface IProps {
   children: React.ReactNode;
@@ -24,6 +29,8 @@ export function SearchLayout({
   loading,
   onRefresh
 }: IProps) {
+  const [topologyCardSize, setTopologyCardSize] = useAtom(cardPreferenceAtom);
+
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden">
       <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white py-3 shadow">
@@ -45,6 +52,12 @@ export function SearchLayout({
             >
               <FaBell className="cursor-pointer text-gray-500" size={20} />
             </Link>
+
+            <PreferencePopOver
+              cardSize={topologyCardSize}
+              setTopologyCardSize={setTopologyCardSize}
+            />
+
             <HelpDropdown />
             <UserProfileDropdown />
           </div>

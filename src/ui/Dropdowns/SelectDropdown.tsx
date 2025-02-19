@@ -2,12 +2,14 @@ import clsx from "clsx";
 import { ComponentProps } from "react";
 import Select, { components } from "react-select";
 
+export type SelectDropdownOption<TValue = string> = {
+  label: string;
+  value: TValue;
+  icon?: React.ReactNode;
+};
+
 type SelectDropdownProps<TValue = string> = {
-  options: {
-    label: string;
-    value: TValue;
-    icon?: React.ReactNode;
-  }[];
+  options: SelectDropdownOption[];
   value?: TValue;
   onChange: (value: TValue) => void;
 } & Omit<ComponentProps<Select>, "onChange" | "value" | "options">;

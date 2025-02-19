@@ -29,7 +29,7 @@ export function ConfigChangeDateCell({
       <Age from={dateString} />
       {(count || 1) > 1 && (
         <span className="inline-block pl-1 text-gray-500">
-          (x{count} over <Age from={firstObserved} />)
+          (x{count} over <Age format={"short"} from={firstObserved} />)
         </span>
       )}
     </div>
@@ -45,7 +45,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
-    maxSize: 70,
+    maxSize: 160,
     Cell: ({ cell, row, column }) => {
       const dateString = row?.getValue<string>(column.id);
       const firstObserved = row?.original.first_observed;
@@ -53,10 +53,10 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
 
       return (
         <div className="text-xs">
-          <Age from={dateString} />
+          <Age from={dateString} suffix={true} />
           {(count || 1) > 1 && (
             <span className="inline-block pl-1 text-gray-500">
-              (x{count} over <Age from={firstObserved} />)
+              (x{count} over <Age format={"short"} from={firstObserved} />)
             </span>
           )}
         </div>

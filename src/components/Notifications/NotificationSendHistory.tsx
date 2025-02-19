@@ -23,7 +23,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
             <Age from={dateString} />
             {(count || 1) > 1 && (
               <span className="inline-block pl-1 text-gray-500">
-                (x{count} over <Age from={firstObserved} />)
+                (x{count} over <Age format={"short"} from={firstObserved} />)
               </span>
             )}
           </div>
