@@ -71,7 +71,7 @@ export default function FormikNotificationDirectResourceField({
       if (!seenAttributes.has(parent.type)) {
         attributesRadioItems.push({
           value: parent.type,
-          name: parent.type,
+          name: parent.type.replace("Kubernetes::", ""),
           type: parent.type,
           radioItemType: "Kind",
           badges: ["Kind"],
