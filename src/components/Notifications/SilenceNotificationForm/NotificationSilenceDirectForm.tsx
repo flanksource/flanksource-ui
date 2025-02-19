@@ -120,7 +120,11 @@ export default function NotificationSilenceDirectForm({
   ) => {
     // Before submitting, we need to parse the date math expressions, if
     // any are present in the from and until fields.
-    const { from, until } = v;
+    let { from, until } = v;
+    if (until === "indefinitely") {
+      until = null;
+    }
+
     const fromTime = from?.includes("now") ? parseDateMath(from, false) : from;
 
     const untilTime = until?.includes("now")
