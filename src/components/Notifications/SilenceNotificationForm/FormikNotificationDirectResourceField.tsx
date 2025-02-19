@@ -15,7 +15,7 @@ type RadioItem = {
   value: string;
 
   name: string;
-  badge?: string;
+  badges?: string[];
   path?: string;
   type?: string;
   recursive?: boolean;
@@ -56,13 +56,13 @@ export default function FormikNotificationDirectResourceField({
         radioItemType: "resource",
         form_field: "config_id",
         path: parent.path || "",
-        badge: "Recursive",
+        badges: [parent.type, "Recursive"],
         recursive: true
       };
 
       if (parent.id === prepopulatedConfigID) {
         radioItem.recursive = false;
-        radioItem.badge = undefined;
+        radioItem.badges = [parent.type];
         radioItem.selected = true;
       }
 
@@ -74,7 +74,7 @@ export default function FormikNotificationDirectResourceField({
           name: parent.type,
           type: parent.type,
           radioItemType: "Kind",
-          badge: "Kind",
+          badges: ["Kind"],
           form_field: "selectors"
         });
 
@@ -189,7 +189,7 @@ export default function FormikNotificationDirectResourceField({
                         className={"flex h-auto w-6 flex-row"}
                       ></Icon>
                       <span>{radioItem.name}</span>
-                      {radioItem.badge && <Badge text={radioItem.badge} />}
+                      {radioItem.badges?.map((b) => <Badge key={b} text={b} />)}
                     </div>
                   </span>
                 </span>
@@ -238,7 +238,9 @@ export default function FormikNotificationDirectResourceField({
                       ) : (
                         <>
                           <span>{radioItem.name}</span>
-                          {radioItem.badge && <Badge text={radioItem.badge} />}
+                          {radioItem.badges?.map((b) => (
+                            <Badge key={b} text={b} />
+                          ))}
                         </>
                       )}
                     </div>
