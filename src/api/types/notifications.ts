@@ -16,6 +16,7 @@ export type NotificationRules = {
   properties?: Record<string, any>;
   person_id?: string;
   team_id?: string;
+  playbook_id?: string;
   custom_services?: {
     name: string;
     filters?: string;

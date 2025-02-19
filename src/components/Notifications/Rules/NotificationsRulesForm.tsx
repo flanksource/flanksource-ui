@@ -12,6 +12,7 @@ import DeleteResource from "../../SchemaResourcePage/Delete/DeleteResource";
 import CanEditResource from "../../Settings/CanEditResource";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { omit } from "lodash";
+import FormikNotificationGroupByDropdown from "@flanksource-ui/components/Forms/Formik/FormikNotificationGroupByDropdown";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;
@@ -52,7 +53,6 @@ export default function NotificationsRulesForm({
           >
             <div className="flex flex-col gap-4 overflow-y-auto p-4">
               <FormikTextInput name="name" label="Name" />
-              <FormikTextInput name="title" label="Title" />
               <FormikNotificationEventsDropdown
                 name="events"
                 label="Events"
@@ -62,6 +62,12 @@ export default function NotificationsRulesForm({
               <ErrorMessage
                 message={notification?.most_common_error}
                 className="h-full pl-2 align-top"
+              />
+
+              <FormikNotificationGroupByDropdown
+                name="group_by"
+                label="Group By"
+                hint="Notifications are grouped by these set of keys and only one per group is sent within the specified repeat interval."
               />
 
               <NotificationsRecipientsTabs />
@@ -83,6 +89,18 @@ export default function NotificationsRulesForm({
                 isClearable
                 name="wait_for"
                 label="Wait For"
+              />
+              <FormikDurationNanosecondsField
+                isClearable
+                name="wait_for_eval_period"
+                label="Wait For Eval Period"
+                hint="An additional delay after Wait For period to evaluate healths of Kubernetes configs"
+              />
+              <FormikTextInput
+                name="title"
+                label="Title"
+                hint="The title of the notification that's sent out"
+                hintPosition="top"
               />
               <FormikNotificationsTemplateField name="template" />
               <FormikCodeEditor

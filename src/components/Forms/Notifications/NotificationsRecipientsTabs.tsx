@@ -5,8 +5,9 @@ import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import FormikPeopleDropdown from "../Formik/FormikPeopleDropdown";
 import FormikTeamsDropdown from "../Formik/FormikTeamsDropdown";
 import NotificationConfigurationForm from "./NotificationConfigurationForm";
+import FormikPlaybooksDropdown from "../Formik/FormikPlaybooksDropdown";
 
-type ActiveTab = "Person" | "Team" | "Others";
+type ActiveTab = "Person" | "Team" | "Others" | "Playbook";
 
 const subjectTabs = [
   {
@@ -20,6 +21,10 @@ const subjectTabs = [
   {
     label: "Others",
     value: "Others"
+  },
+  {
+    label: "Playbook",
+    value: "Playbook"
   }
 ];
 
@@ -36,6 +41,9 @@ export default function NotificationsRecipientsTabs() {
     if (values.custom_services) {
       return "Others";
     }
+    if (values.playbook_id) {
+      return "Playbook";
+    }
     return "Person";
   });
 
@@ -49,6 +57,9 @@ export default function NotificationsRecipientsTabs() {
     }
     if (activeTab !== "Others") {
       setFieldValue("custom_services", undefined);
+    }
+    if (activeTab !== "Playbook") {
+      setFieldValue("playbook_id", undefined);
     }
   }, [activeTab, setFieldValue, values]);
 
@@ -73,6 +84,8 @@ export default function NotificationsRecipientsTabs() {
                   <FormikPeopleDropdown name={"person_id"} />
                 ) : activeTab === "Team" ? (
                   <FormikTeamsDropdown name={"team_id"} />
+                ) : activeTab === "Playbook" ? (
+                  <FormikPlaybooksDropdown name={"playbook_id"} />
                 ) : (
                   <NotificationConfigurationForm />
                 )}
