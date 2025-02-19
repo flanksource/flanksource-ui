@@ -171,7 +171,7 @@ export default function FormikNotificationDirectResourceField({
                 aria-label={radioItem.name}
                 aria-description={radioItem.type || ""}
                 onChange={onResourceSelect(radioItem)}
-                className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
+                className="group flex cursor-pointer border border-gray-200 p-2 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
               >
                 <input
                   defaultValue={radioItem.name}
@@ -181,7 +181,7 @@ export default function FormikNotificationDirectResourceField({
                   type="radio"
                   className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
                 />
-                <span className="ml-3 flex flex-col">
+                <span className="ml-2 flex flex-col">
                   <span className="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">
                     <div className="flex flex-row items-center gap-2">
                       <Icon
@@ -210,7 +210,7 @@ export default function FormikNotificationDirectResourceField({
                 title={checkboxItem.name}
                 aria-label={checkboxItem.name}
                 aria-description={checkboxItem.type || ""}
-                className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
+                className="group flex cursor-pointer border border-gray-200 p-2 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
               >
                 <input
                   defaultValue={checkboxItem.name}
@@ -221,7 +221,7 @@ export default function FormikNotificationDirectResourceField({
                   onChange={onAttributeSelect}
                   className="checkbox cursor-pointer"
                 />
-                <span className="ml-3 flex flex-col">
+                <span className="ml-2 flex flex-col">
                   <span className="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">
                     <div className="flex flex-row items-center gap-2">
                       <Icon
