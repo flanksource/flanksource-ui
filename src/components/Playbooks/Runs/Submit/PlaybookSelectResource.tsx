@@ -1,6 +1,9 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
+import HelpLink from "@flanksource-ui/ui/Buttons/HelpLink";
+import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { useMemo } from "react";
+import { Tooltip } from "react-tooltip";
 
 type PlaybookSelectResourceProps = {
   playbook: Pick<PlaybookSpec, "spec">;
@@ -46,7 +49,18 @@ export default function PlaybookSelectResource({
         <div className="w-36">
           <label htmlFor={`config_id`} className="form-label mb-0 py-4">
             {resourceSelectorLabel?.label}
+            <HelpLink
+              link="reference/resource-selector#search"
+              title=""
+              className="ml-1"
+              iconID="help-resource-selector"
+            />
           </label>
+          <Tooltip
+            className="z-50"
+            anchorSelect="#help-resource-selector"
+            content="eg: name=grafana type=Kubernetes::Deployment or health=healthy,unhealthy"
+          />
         </div>
         <div className="flex flex-1 flex-col">
           <FormikResourceSelectorDropdown
