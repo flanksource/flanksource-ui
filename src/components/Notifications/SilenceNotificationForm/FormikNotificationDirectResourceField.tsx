@@ -15,7 +15,7 @@ type RadioItem = {
   value: string;
 
   name: string;
-  badge?: string;
+  badges?: string[];
   path?: string;
   type?: string;
   recursive?: boolean;
@@ -34,7 +34,8 @@ type RadioItem = {
 export default function FormikNotificationDirectResourceField({
   prepopulatedConfigID = ""
 }: FormikNotificationResourceFieldProps) {
-  const { values, setFieldValue } = useFormikContext<Record<string, any>>();
+  const { values, setFieldValue, errors, setErrors } =
+    useFormikContext<Record<string, any>>();
   const { component_id, config_id, check_id, canary_id } = values;
 
   const { data: components } = useComponentDetail(component_id || "");
@@ -56,13 +57,13 @@ export default function FormikNotificationDirectResourceField({
         radioItemType: "resource",
         form_field: "config_id",
         path: parent.path || "",
-        badge: "Recursive",
+        badges: [parent.type, "Recursive"],
         recursive: true
       };
 
       if (parent.id === prepopulatedConfigID) {
         radioItem.recursive = false;
-        radioItem.badge = undefined;
+        radioItem.badges = [parent.type];
         radioItem.selected = true;
       }
 
@@ -71,10 +72,10 @@ export default function FormikNotificationDirectResourceField({
       if (!seenAttributes.has(parent.type)) {
         attributesRadioItems.push({
           value: parent.type,
-          name: parent.type,
+          name: parent.type.replace("Kubernetes::", ""),
           type: parent.type,
           radioItemType: "Kind",
-          badge: "Kind",
+          badges: ["Kind"],
           form_field: "selectors"
         });
 
@@ -96,6 +97,16 @@ export default function FormikNotificationDirectResourceField({
         }
       }
     });
+
+    const allResourceOpt: RadioItem = {
+      value: "all",
+      name: "All",
+      radioItemType: "resource",
+      form_field: "config_id",
+      path: "",
+      recursive: false
+    };
+    resourcesRadioItems.push(allResourceOpt);
   } else if (component_id && components) {
     const component = components[0] || {};
     resourcesRadioItems.push({
@@ -137,6 +148,8 @@ export default function FormikNotificationDirectResourceField({
   };
 
   const onAttributeSelect = () => {
+    setErrors({});
+
     const checkboxes = document.querySelectorAll<HTMLInputElement>(
       'input[name="resource_attributes"]:checked'
     );
@@ -171,7 +184,7 @@ export default function FormikNotificationDirectResourceField({
                 aria-label={radioItem.name}
                 aria-description={radioItem.type || ""}
                 onChange={onResourceSelect(radioItem)}
-                className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
+                className="group flex cursor-pointer border border-gray-200 p-2 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
               >
                 <input
                   defaultValue={radioItem.name}
@@ -181,7 +194,7 @@ export default function FormikNotificationDirectResourceField({
                   type="radio"
                   className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
                 />
-                <span className="ml-3 flex flex-col">
+                <span className="ml-2 flex flex-col">
                   <span className="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">
                     <div className="flex flex-row items-center gap-2">
                       <Icon
@@ -189,7 +202,7 @@ export default function FormikNotificationDirectResourceField({
                         className={"flex h-auto w-6 flex-row"}
                       ></Icon>
                       <span>{radioItem.name}</span>
-                      {radioItem.badge && <Badge text={radioItem.badge} />}
+                      {radioItem.badges?.map((b) => <Badge key={b} text={b} />)}
                     </div>
                   </span>
                 </span>
@@ -200,45 +213,49 @@ export default function FormikNotificationDirectResourceField({
       {attributesRadioItems.length > 0 && (
         <Label label="Attributes" required={false} />
       )}
-      <div>
+      <div
+        className={`rounded-md ${errors.attributes ? "border-2 border-red-500 bg-red-50" : ""}`}
+      >
         {attributesRadioItems &&
           attributesRadioItems
             .sort((a, b) => a.radioItemType.length - b.radioItemType.length) // group by kind and tags
-            .map((radioItem) => (
+            .map((checkboxItem) => (
               <label
-                key={radioItem.value}
-                title={radioItem.name}
-                aria-label={radioItem.name}
-                aria-description={radioItem.type || ""}
-                className="group flex cursor-pointer border border-gray-200 p-4 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
+                key={checkboxItem.value}
+                title={checkboxItem.name}
+                aria-label={checkboxItem.name}
+                aria-description={checkboxItem.type || ""}
+                className="group flex cursor-pointer border border-gray-200 p-2 first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md focus:outline-none has-[:checked]:relative has-[:checked]:border-indigo-200 has-[:checked]:bg-indigo-50"
               >
                 <input
-                  defaultValue={radioItem.name}
-                  defaultChecked={radioItem.selected}
-                  value={radioItem.value}
+                  defaultValue={checkboxItem.name}
+                  defaultChecked={checkboxItem.selected}
+                  value={checkboxItem.value}
                   name="resource_attributes"
                   type="checkbox"
                   onChange={onAttributeSelect}
-                  className="relative mt-0.5 size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden"
+                  className="checkbox cursor-pointer"
                 />
-                <span className="ml-3 flex flex-col">
+                <span className="ml-2 flex flex-col">
                   <span className="block text-sm font-medium text-gray-900 group-has-[:checked]:text-indigo-900">
                     <div className="flex flex-row items-center gap-2">
                       <Icon
-                        name={radioItem.type}
+                        name={checkboxItem.type}
                         className={"flex h-auto w-6 flex-row"}
                       ></Icon>
-                      {radioItem.radioItemType === "Tag" ? (
+                      {checkboxItem.radioItemType === "Tag" ? (
                         <span className="space-x-1 text-sm">
                           <span className="text-gray-600">
-                            {radioItem.value.split("=")[0]}:
+                            {checkboxItem.value.split("=")[0]}:
                           </span>
-                          <span>{radioItem.value.split("=")[1]}</span>
+                          <span>{checkboxItem.value.split("=")[1]}</span>
                         </span>
                       ) : (
                         <>
-                          <span>{radioItem.name}</span>
-                          {radioItem.badge && <Badge text={radioItem.badge} />}
+                          <span>{checkboxItem.name}</span>
+                          {checkboxItem.badges?.map((b) => (
+                            <Badge key={b} text={b} />
+                          ))}
                         </>
                       )}
                     </div>
