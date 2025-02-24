@@ -12,12 +12,13 @@ import { debounce } from "lodash";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Select, { components, InputActionMeta } from "react-windowed-select";
 import { FormikSelectDropdownOption } from "./FormikSelectDropdown";
+import HelpLink from "@flanksource-ui/ui/Buttons/HelpLink";
 
 type FormikConfigsDropdownProps = {
   name: string;
   label?: string;
   required?: boolean;
-  hint?: string;
+  hintLink?: boolean;
   configResourceSelector?: PlaybookResourceSelector[];
   componentResourceSelector?: PlaybookResourceSelector[];
   checkResourceSelector?: PlaybookResourceSelector[];
@@ -28,7 +29,7 @@ export default function FormikResourceSelectorDropdown({
   name,
   label,
   required = false,
-  hint,
+  hintLink = true,
   configResourceSelector,
   componentResourceSelector,
   checkResourceSelector,
@@ -259,7 +260,19 @@ export default function FormikResourceSelectorDropdown({
         }}
         windowThreshold={20}
       />
-      {hint && <p className="text-sm text-gray-500">{hint}</p>}
+      <p className="text-sm text-gray-500">
+        {
+          "Filter the list using queries e.g: name=grafana type=Kubernetes::Deployment or health=healthy,unhealthy"
+        }
+        {hintLink && (
+          <HelpLink
+            link="reference/resource-selector#search"
+            title=""
+            className="ml-1"
+            iconID="help-resource-selector"
+          />
+        )}
+      </p>
       {isTouched && meta.error ? (
         <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}

@@ -1,5 +1,6 @@
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
+import HelpLink from "@flanksource-ui/ui/Buttons/HelpLink";
 import { useMemo } from "react";
 
 type PlaybookSelectResourceProps = {
@@ -44,12 +45,19 @@ export default function PlaybookSelectResource({
       <label className="form-label mb-0 text-lg">Resource</label>
       <div className="flex flex-row gap-2">
         <div className="w-36">
-          <label htmlFor={`config_id`} className="form-label mb-0 py-4">
+          <label htmlFor="config_id" className="form-label mb-0 py-4">
             {resourceSelectorLabel?.label}
+            <HelpLink
+              link="reference/resource-selector#search"
+              title=""
+              className="ml-1"
+              iconID="help-resource-selector"
+            />
           </label>
         </div>
         <div className="flex flex-1 flex-col">
           <FormikResourceSelectorDropdown
+            hintLink={false}
             name={resourceSelectorLabel!.fieldName}
             checkResourceSelector={checkResourceSelector}
             componentResourceSelector={componentResourceSelector}
