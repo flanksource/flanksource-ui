@@ -74,5 +74,13 @@ export const permDefs = {
       )
     ],
     write: []
+  },
+  guest: {
+    read: [
+      ...Object.values(tables).filter(
+        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
+      )
+    ],
+    write: []
   }
 };
