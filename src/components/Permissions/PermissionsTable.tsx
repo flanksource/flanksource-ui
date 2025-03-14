@@ -22,12 +22,15 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
       const { team, group, person, subject, notification } = row.original;
       const { tags, agents } = row.original;
       const rlsFilter = [];
-      if (Object.keys(tags).length > 0) {
+
+      if (tags && Object.keys(tags).length > 0) {
         rlsFilter.push(tags);
       }
-      if (agents?.length > 0) {
+
+      if (agents && agents.length > 0) {
         rlsFilter.push({ agents: agents });
       }
+
       const rlsPayload = rlsFilter.length > 0 ? JSON.stringify(rlsFilter) : "";
 
       if (group) {

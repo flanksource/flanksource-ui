@@ -44,6 +44,6 @@ export type PermissionAPIResponse = PermissionTable & {
   subject: string;
   person: User;
   createdBy: User;
-  tags: Record<string, string>;
-  agents: string[];
+  tags: Record<string, string> | null;
+  agents: string[] | null;
 };
