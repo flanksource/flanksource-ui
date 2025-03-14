@@ -47,7 +47,7 @@ export default function PermissionsView({
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: [
-      "permissions",
+      "permissions_summary",
       permissionRequest,
       {
         pageIndex,

@@ -1,4 +1,3 @@
-import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionAPIResponse, PermissionTable } from "../types/permissions";
@@ -59,23 +58,11 @@ export function fetchPermissions(
   }
 ) {
   const queryParam = composeQueryParamForFetchPermissions(input);
-  const selectFields = [
-    "*",
-    // "checks:check_id(id, name, status, type)",
-    "catalog:config_id(id, name, type, config_class)",
-    "component:component_id(id, name, icon)",
-    "canary:canary_id(id, name)",
-    "playbook:playbook_id(id, title, name, icon)",
-    "team:team_id(id, name, icon)",
-    `person:person_id(${AVATAR_INFO})`,
-    `createdBy:created_by(${AVATAR_INFO})`,
-    `notification:notification_id(id,name,namespace)`,
-    `connection:connection_id(id,name,type)`
-  ];
+  const selectFields = ["*"];
 
   const { pageSize, pageIndex } = pagination;
 
-  const url = `/permissions?${queryParam}&select=${selectFields.join(",")}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  const url = `/permissions_summary?${queryParam}&select=${selectFields.join(",")}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<PermissionAPIResponse[]>(url, {
       headers: {

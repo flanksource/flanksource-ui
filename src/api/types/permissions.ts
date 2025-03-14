@@ -11,6 +11,7 @@ export type PermissionTable = {
   action: string;
   deny?: boolean;
   object?: string;
+  object_selector?: Record<string, any>[];
   component_id?: string;
   config_id?: string;
   canary_id?: string;
@@ -39,6 +40,10 @@ export type PermissionAPIResponse = PermissionTable & {
   team: Pick<Team, "id" | "name" | "icon">;
   connection: Pick<Connection, "id" | "name" | "type">;
   notification: Pick<NotificationRules, "id" | "name" | "namespace">;
+  group: any;
+  subject: string;
   person: User;
   createdBy: User;
+  tags: Record<string, string> | null;
+  agents: string[] | null;
 };
