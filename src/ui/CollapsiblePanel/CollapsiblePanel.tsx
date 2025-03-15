@@ -7,11 +7,11 @@ import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 type Props = React.HTMLProps<HTMLDivElement> & {
   Header: React.ReactNode;
   children: React.ReactNode;
-  isClosed?: boolean;
   childrenClassName?: string;
   dataCount?: number;
   isCollapsed?: boolean;
   onCollapsedStateChange?: (isClosed: boolean) => void;
+  iconClassName?: string;
 };
 
 export default function CollapsiblePanel({
@@ -22,6 +22,7 @@ export default function CollapsiblePanel({
   childrenClassName = "overflow-y-auto",
   dataCount,
   onCollapsedStateChange = () => {},
+  iconClassName = "h-6 w-6",
   ...props
 }: Props) {
   const [isOpen, setIsOpen] = useState(!isCollapsed);
@@ -57,7 +58,7 @@ export default function CollapsiblePanel({
               "rotate-180": !isOpen
             })}
           >
-            <IoChevronUpOutline className="h-6 w-6" />
+            <IoChevronUpOutline className={iconClassName} />
           </ClickableSvg>
         </div>
       </div>
