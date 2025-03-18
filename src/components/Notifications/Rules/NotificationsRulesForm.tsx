@@ -171,7 +171,8 @@ export default function NotificationsRulesForm({
                 fieldName="properties"
                 label="Properties"
                 className="flex h-32 flex-col"
-                format="json"
+                lines={5}
+                format="yaml"
               />
             </div>
             <div className="flex flex-row rounded-b-md bg-gray-100 p-4">
