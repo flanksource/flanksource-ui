@@ -1,8 +1,8 @@
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useCallback, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { mrtConfigListColumns } from "./MRTConfigListColumn";
 
 export interface Props {
@@ -28,8 +28,6 @@ export default function ConfigsTable({
     sortBy: "type",
     sortOrder: "asc"
   });
-
-  const navigate = useNavigate();
 
   const groupByUserInput = queryParams.get("groupBy") ?? undefined;
 
@@ -71,16 +69,6 @@ export default function ConfigsTable({
     }));
   }, [data, groupByColumns]);
 
-  const handleRowClick = useCallback(
-    (config: ConfigItem) => {
-      const id = config.id;
-      if (id) {
-        navigate(`/catalog/${id}`);
-      }
-    },
-    [navigate]
-  );
-
   const virtualColumns = useMemo(() => {
     const virtualColumn: MRT_ColumnDef<ConfigItem>[] = groupByColumns.map(
       (column) => {
@@ -109,7 +97,6 @@ export default function ConfigsTable({
       isLoading={isLoading}
       groupBy={groupByColumns}
       hiddenColumns={hiddenColumns}
-      onRowClick={handleRowClick}
       expandAllRows={expandAllRows}
       enableServerSidePagination
       enableServerSideSorting
