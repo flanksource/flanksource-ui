@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 export default function ClerkRegistration() {
   const { query } = useRouter();
 
-  const redirectUrl = query.redirectUrl ? query.return_to : undefined;
+  const returnTo = query.return_to as string;
 
   return (
     <div className="flex w-full flex-col px-3 text-center">
@@ -15,7 +15,7 @@ export default function ClerkRegistration() {
             routing="path"
             signInUrl="/login"
             signInForceRedirectUrl={
-              redirectUrl ? `/?return_to=${redirectUrl}` : undefined
+              returnTo ? `/?return_to=${returnTo}` : undefined
             }
           />
         </div>
