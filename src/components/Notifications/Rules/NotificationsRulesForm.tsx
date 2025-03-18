@@ -13,6 +13,9 @@ import CanEditResource from "../../Settings/CanEditResource";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { omit } from "lodash";
 import FormikNotificationGroupByDropdown from "@flanksource-ui/components/Forms/Formik/FormikNotificationGroupByDropdown";
+import FormikNotificationInhibitionsField from "@flanksource-ui/components/Forms/Formik/FormikNotificationInhibitionsField";
+import { parse as parseYaml } from "yaml";
+import { User } from "@flanksource-ui/api/types/users";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;
@@ -25,6 +28,52 @@ export default function NotificationsRulesForm({
   notification,
   onDeleted = () => {}
 }: NotificationsFormProps) {
+  const validate = (values: Partial<NotificationRules>) => {
+    const errors: any = {};
+
+    // Validate inhibitions if present
+    if (values.inhibitions?.length) {
+      const inhibitionErrors: any[] = [];
+      values.inhibitions.forEach((inhibition, index) => {
+        const inhibitionError: any = {};
+
+        // Validate 'to' field
+        try {
+          const toValue =
+            typeof inhibition.to === "string"
+              ? parseYaml(inhibition.to)
+              : inhibition.to;
+          if (!Array.isArray(toValue)) {
+            inhibitionError.to = "Must be an array of resource types";
+          } else if (!toValue.every((item) => typeof item === "string")) {
+            inhibitionError.to = "All items must be strings";
+          } else if (toValue.length === 0) {
+            inhibitionError.to = "At least one resource type is required";
+          }
+        } catch (e) {
+          inhibitionError.to =
+            "Invalid YAML format. Must be an array of resource types";
+        }
+
+        // Validate 'from' field
+        if (!inhibition.from) {
+          inhibitionError.from = "From resource type is required";
+        }
+
+        // Add errors if any were found
+        if (Object.keys(inhibitionError).length > 0) {
+          inhibitionErrors[index] = inhibitionError;
+        }
+      });
+
+      if (inhibitionErrors.length > 0) {
+        errors.inhibitions = inhibitionErrors;
+      }
+    }
+
+    return errors;
+  };
+
   return (
     <div className="flex h-full flex-col gap-2 overflow-y-auto">
       <Formik
@@ -32,16 +81,30 @@ export default function NotificationsRulesForm({
           ...notification,
           person: undefined,
           team: undefined,
-          created_by: notification?.created_by?.id,
+          created_by: notification?.created_by
+            ? ({
+                id: notification.created_by.id,
+                name: notification.created_by.name,
+                email: notification.created_by.email,
+                roles: notification.created_by.roles
+              } as User)
+            : undefined,
           created_at: undefined,
           updated_at: undefined,
           ...(!notification?.id && { source: "UI" })
         }}
         onSubmit={(values) =>
           onSubmit(
-            omit(values, "most_common_error") as Partial<NotificationRules>
+            omit(
+              {
+                ...values,
+                created_by: values.created_by?.id
+              },
+              "most_common_error"
+            ) as Partial<NotificationRules>
           )
         }
+        validate={validate}
         validateOnBlur
         validateOnChange
       >
@@ -103,6 +166,7 @@ export default function NotificationsRulesForm({
                 hintPosition="top"
               />
               <FormikNotificationsTemplateField name="template" />
+              <FormikNotificationInhibitionsField name="inhibitions" />
               <FormikCodeEditor
                 fieldName="properties"
                 label="Properties"
