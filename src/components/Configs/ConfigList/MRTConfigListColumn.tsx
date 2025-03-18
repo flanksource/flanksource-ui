@@ -13,14 +13,16 @@ import ConfigInsightsIcon from "../Insights/ConfigInsightsIcon";
 import { aggregatedCosts } from "./Cells/ConfigListCostCell";
 import { MRTConfigListDateCell } from "./Cells/ConfigListDateCell";
 import MRTConfigListTagsCell from "./Cells/MRTConfigListTagsCell";
+import { Link } from "react-router-dom";
 
 export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
   {
     header: "Name",
     accessorKey: "name",
     enableColumnActions: false,
-    Cell: ({ row, cell }) => {
-      const configType = row.original.type;
+    Cell: ({ row }) => {
+      const { type: configType, id: configId, name: configName } = row.original;
+      const linkUrl = `/catalog/${configId}`;
 
       return (
         <div
@@ -33,7 +35,9 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
             config={{ type: configType }}
             showPrimaryIcon={false}
           >
-            <span>{cell.getValue<ConfigItem["name"]>()}</span>
+            <Link to={linkUrl}>
+              <span>{configName}</span>
+            </Link>
           </ConfigsTypeIcon>
         </div>
       );
