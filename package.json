@@ -1,6 +1,6 @@
 {
   "name": "@flanksource/flanksource-ui",
-  "version": "1.0.847",
+  "version": "1.0.848",
   "private": false,
   "files": [
     "build",
