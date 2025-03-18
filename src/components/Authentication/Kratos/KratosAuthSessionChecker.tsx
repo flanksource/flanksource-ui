@@ -27,7 +27,7 @@ export default function KratosAuthSessionChecker({
         const { data } = await ory.toSession();
         setSession(data);
       } catch (err) {
-        const url = window.location.pathname;
+        const url = encodeURIComponent(window.location.href);
         switch ((err as AxiosError).response?.status) {
           case 403:
             push(`/login?aal=aal2&return_to=${url}`);
