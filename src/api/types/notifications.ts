@@ -74,6 +74,7 @@ export type NotificationSendHistory = {
   resource_id: string;
   playbook_run_id?: string;
   person_id?: string | undefined;
+  connection_id?: string | undefined;
   error?: string | undefined;
   duration_millis?: number | undefined;
   created_at: string;
