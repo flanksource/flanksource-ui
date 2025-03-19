@@ -80,7 +80,7 @@ export function NotificationStatusCell({
     ];
 
   if (!statusConfig) {
-    return status;
+    return <span>{status}</span>;
   }
 
   return (
