@@ -7,6 +7,8 @@ import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
+import { Tooltip } from "react-tooltip";
+import { FaArrowDown } from "react-icons/fa";
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
   [
@@ -51,7 +53,27 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
     {
       header: "Status",
       size: 100,
-      Cell: NotificationStatusCell
+      Cell: ({ row }) => {
+        const parentID = row.original.parent_id;
+        return (
+          <div className="flex items-center gap-2">
+            <NotificationStatusCell row={row} />
+            {parentID && (
+              <>
+                <FaArrowDown
+                  className="h-3 w-3 text-gray-400"
+                  data-tooltip-id="retry-tooltip"
+                />
+                <Tooltip
+                  id="retry-tooltip"
+                  content="Fallback notification"
+                  className="z-[9999]"
+                />
+              </>
+            )}
+          </div>
+        );
+      }
     },
     {
       header: "Event",
