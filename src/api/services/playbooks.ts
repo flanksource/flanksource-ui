@@ -243,3 +243,10 @@ export async function approvePlaybookRun(id: string) {
   }>(`/run/approve/${id}`);
   return res.data;
 }
+
+export async function cancelPlaybookRun(id: string) {
+  const res = await PlaybookAPI.post<{
+    message: string;
+  }>(`/run/cancel/${id}`);
+  return res.data;
+}
