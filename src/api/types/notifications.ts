@@ -3,6 +3,7 @@ import { ConfigItem } from "./configs";
 import { HealthCheck } from "./health";
 import { Topology } from "./topology";
 import { Team, User } from "./users";
+import { PlaybookRunStatus } from "./playbooks";
 
 export type NotificationRules = {
   id: string;
@@ -83,6 +84,12 @@ export type NotificationSendHistory = {
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
   resource_type: "component" | "config" | "check" | "canary";
+  playbook_run: {
+    id: string;
+    status: PlaybookRunStatus;
+    playbook_name: string;
+    playbook_id: string;
+  };
   resource:
     | Pick<HealthCheck, "id" | "name" | "type" | "status">
     | Pick<ConfigItem, "id" | "name" | "type" | "config_class">
