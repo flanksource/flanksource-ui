@@ -87,7 +87,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
       header: "Recipient",
       size: 200,
       Cell: ({ row }) => {
-        const { playbook_run_id, person_id, connection_id } = row.original;
+        const { playbook_run, person_id, connection_id } = row.original;
         return (
           <div
             onClick={(e) => {
@@ -96,7 +96,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
             }}
           >
             <NotificationRecipientLink
-              playbook_run_id={playbook_run_id}
+              playbook_run={playbook_run}
               person_id={person_id}
               connection_id={connection_id}
             />
