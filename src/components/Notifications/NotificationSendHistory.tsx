@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
+import NotificationRecipientLink from "./NotificationRecipientLink";
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
   [
@@ -65,16 +66,19 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
       size: 200,
       Cell: ({ row }) => {
         const { playbook_run_id, person_id } = row.original;
-
-        const recipient = playbook_run_id
-          ? `playbook/${playbook_run_id}`
-          : person_id
-            ? `person/${person_id}`
-            : "";
-
-        // TODO: use a proper component.
-        // show connection recipient but the backend doesn't currently store that.
-        return <span>{recipient}</span>;
+        return (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+          >
+            <NotificationRecipientLink
+              playbook_run_id={playbook_run_id}
+              person_id={person_id}
+            />
+          </div>
+        );
       }
     }
     // {
