@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
+import { CancelPlaybookButton } from "../CancelPlaybookButton";
 import { getResourceForRun } from "../services";
 import ReRunPlaybookWithParamsButton from "../Submit/ReRunPlaybookWithParamsButton";
 import { PlaybookStatusDescription } from "./../PlaybookRunsStatus";
@@ -153,6 +154,13 @@ export default function PlaybookRunsActions({
         <div className="ml-auto flex h-auto flex-col justify-center gap-2">
           <div className="flex flex-row gap-2">
             <ApprovePlaybookButton
+              playbookRunId={data.id}
+              playbookTitle={data.playbooks?.title ?? data.playbooks?.name!}
+              refetch={refetch}
+              status={data.status}
+            />
+
+            <CancelPlaybookButton
               playbookRunId={data.id}
               playbookTitle={data.playbooks?.title ?? data.playbooks?.name!}
               refetch={refetch}
