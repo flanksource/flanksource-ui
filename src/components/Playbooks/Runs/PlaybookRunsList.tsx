@@ -14,6 +14,8 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import PlaybookSpecIcon from "../Settings/PlaybookSpecIcon";
 import { PlaybookStatusDescription } from "./PlaybookRunsStatus";
+import { Tooltip } from "react-tooltip";
+import { FaReply } from "react-icons/fa";
 
 const playbookRunsTableColumns: MRT_ColumnDef<PlaybookRun>[] = [
   {
@@ -66,7 +68,28 @@ const playbookRunsTableColumns: MRT_ColumnDef<PlaybookRun>[] = [
     header: "Status",
     accessorKey: "status",
     Cell: ({ cell, row }) => {
+      const { parent_id: parentID } = row.original;
       const status = cell.getValue<PlaybookRunStatus>();
+      if (parentID) {
+        return (
+          <div className="flex items-center gap-1">
+            <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />
+            {parentID && (
+              <>
+                <FaReply
+                  className="h-3 w-3 text-gray-400"
+                  data-tooltip-id="retry-tooltip"
+                />
+                <Tooltip
+                  id="retry-tooltip"
+                  content="Child run"
+                  className="z-[9999]"
+                />
+              </>
+            )}
+          </div>
+        );
+      }
 
       return <PlaybookStatusDescription status={status} />;
     }
