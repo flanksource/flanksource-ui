@@ -7,6 +7,8 @@ type TabItemProps = {
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onSelectTab: () => void;
   activeTab: string;
+  hoverable?: boolean;
+  icon?: React.ReactNode;
 };
 
 function TabItem({
@@ -14,7 +16,9 @@ function TabItem({
   value,
   onClick,
   onSelectTab,
-  activeTab
+  activeTab,
+  icon,
+  hoverable = true
 }: TabItemProps) {
   return (
     <div
@@ -27,10 +31,12 @@ function TabItem({
         value === activeTab
           ? "border-b-0 bg-white text-gray-900"
           : "border-0 border-b text-gray-500",
-        "cursor-pointer rounded-t-md border border-gray-300 px-4 py-2 text-sm font-medium hover:text-gray-900"
+        "cursor-pointer rounded-t-md border border-gray-300 px-4 py-2 text-sm font-medium",
+        hoverable && "hover:text-gray-900"
       )}
     >
-      {label}
+      {icon && <span className="mr-2 inline-block align-middle">{icon}</span>}
+      <span className="inline-block align-middle">{label}</span>
     </div>
   );
 }
@@ -38,6 +44,7 @@ function TabItem({
 type TabProps = {
   label: string;
   value: string;
+  icon?: React.ReactNode;
 } & React.HTMLProps<HTMLDivElement>;
 
 export function Tab({ children, ...props }: TabProps) {
@@ -49,6 +56,7 @@ type TabsProps<Tabs extends string> = React.HTMLProps<HTMLDivElement> & {
   activeTab: Tabs;
   onSelectTab: (label: Tabs) => void;
   contentClassName?: string;
+  hoverable?: boolean;
 };
 
 export function Tabs<Tabs extends string = string>({
@@ -57,6 +65,7 @@ export function Tabs<Tabs extends string = string>({
   children,
   className,
   contentClassName = "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300",
+  hoverable = true,
   ...rest
 }: TabsProps<Tabs>) {
   const tabs = useMemo(() => {
@@ -72,6 +81,7 @@ export function Tabs<Tabs extends string = string>({
       return {
         label,
         value,
+        icon: child?.props?.icon,
         onSelectTab: onSelectTabFn,
         props: child?.props,
         content: child
@@ -79,6 +89,7 @@ export function Tabs<Tabs extends string = string>({
     }) satisfies {
       label: string;
       value: string;
+      icon?: React.ReactNode;
       onSelectTab: () => void;
       props: TabProps;
       content: React.ReactElement<TabProps>;
@@ -101,9 +112,11 @@ export function Tabs<Tabs extends string = string>({
             key={tab.label}
             label={tab.label!}
             value={tab.value!}
+            icon={tab.icon}
             onSelectTab={tab.onSelectTab}
             activeTab={activeTab}
             onClick={tab.props?.onClick!}
+            hoverable={hoverable}
           />
         ))}
         {/* Add a phantom div to fill border */}
