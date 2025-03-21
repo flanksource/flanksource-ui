@@ -7,6 +7,7 @@ import {
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import {
   getAllPlaybookNames,
+  getChildPlaybookRuns,
   getPlaybookSpec,
   getPlaybookSpecsByIDs,
   getPlaybookToRunForResource,
@@ -14,6 +15,7 @@ import {
 } from "../services/playbooks";
 import {
   PlaybookNames,
+  PlaybookRunWithActions,
   PlaybookSpec,
   RunnablePlaybook
 } from "../types/playbooks";
@@ -131,4 +133,18 @@ export function useSubmitPlaybookRunMutation(
     },
     ...options
   });
+}
+
+export function useGetChildPlaybookRuns(
+  parentId: string,
+  options: UseQueryOptions<PlaybookRunWithActions[], Error> = {}
+) {
+  return useQuery<PlaybookRunWithActions[], Error>(
+    ["playbookRuns", "children", parentId],
+    () => getChildPlaybookRuns(parentId),
+    {
+      enabled: !!parentId,
+      ...options
+    }
+  );
 }
