@@ -158,13 +158,26 @@ export default function PlaybooksRunActionsResults({
   const availableTabs = useMemo(() => {
     if (!result) return [];
 
-    return Object.keys(result)
-      .filter((key) => result[key]) // Only include keys with content
+    const tabs = Object.keys(result)
+      .filter((key) => result[key])
       .map((key) => ({
-        label: key.charAt(0).toUpperCase() + key.slice(1), // Convert to title case
+        label: key.charAt(0).toUpperCase() + key.slice(1),
         value: key,
         hasContent: !!result[key]
       }));
+
+    const priorityOrder: Record<string, number> = {
+      stdout: 0, // always the first tab (if present)
+      stderr: 1
+    };
+
+    tabs.sort((a, b) => {
+      const priorityA = priorityOrder[a.value.toLowerCase()] ?? 999;
+      const priorityB = priorityOrder[b.value.toLowerCase()] ?? 999;
+      return priorityA - priorityB;
+    });
+
+    return tabs;
   }, [result]);
 
   useMemo(() => {
@@ -193,11 +206,14 @@ export default function PlaybooksRunActionsResults({
         onSelectTab={(tab) => setActiveTab(tab as string)}
         contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-300 p-4"
       >
-        {availableTabs.map((tab) => (
-          <Tab key={tab.value} label={tab.label} value={tab.value}>
-            {renderTabContent(tab.value, result?.[tab.value], className)}
-          </Tab>
-        ))}
+        {availableTabs.map((tab) => {
+          const label = tab.label === "Args" ? "Script" : tab.label;
+          return (
+            <Tab key={tab.value} label={label} value={tab.value}>
+              {renderTabContent(tab.value, result?.[tab.value], className)}
+            </Tab>
+          );
+        })}
       </Tabs>
       <PlaybookResultsDropdownButton action={action} playbook={playbook} />
     </div>
@@ -226,6 +242,14 @@ function renderTabContent(key: string, content: any, className: string) {
         </pre>
       );
     case "args":
+      var args = content as string[];
+      return (
+        <pre className={className}>
+          <Linkify as="p" options={options}>
+            {args.join(" ").replace(/^bash -c /, "$ ")}
+          </Linkify>
+        </pre>
+      );
     case "headers":
       return (
         <pre className={className}>
