@@ -104,19 +104,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
         );
       }
     }
-    // {
-    //   header: "Body",
-    //   size: 400,
-    //   Cell: ({ row }) => {
-    //     const body = row.original.body;
-    //     return <span>{body}</span>;
-    //   }
-    // }
-    // {
-    //   header: "First Observed",
-    //   Cell: MRTDateCell,
-    //   accessorKey: "first_observed"
-    // }
   ];
 
 type NotificationSendHistoryListProps = {
