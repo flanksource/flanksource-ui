@@ -6,6 +6,7 @@ import { Tooltip } from "react-tooltip";
 import { PlaybookRunAction } from "../../../../api/types/playbooks";
 import { PlaybookStatusIcon } from "../../../../ui/Icons/PlaybookStatusIcon";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { TbCornerDownRight } from "react-icons/tb";
 
 type PlaybookRunsActionItemProps = {
   agent?: string;
@@ -16,6 +17,7 @@ type PlaybookRunsActionItemProps = {
   onClick?: () => void;
   isSelected?: boolean;
   stepNumber: number;
+  isChild?: boolean;
 };
 
 export default function PlaybookRunsActionItem({
@@ -23,10 +25,22 @@ export default function PlaybookRunsActionItem({
   onClick = () => {},
   agent,
   isSelected = false,
+  isChild = false,
   stepNumber
 }: PlaybookRunsActionItemProps) {
   return (
-    <>
+    <div className="flex flex-row items-center">
+      {isChild && (
+        <>
+          <TbCornerDownRight
+            data-tooltip-id="child-run-tooltip"
+            data-tooltip-content="Child Run"
+            className="mr-1 flex-shrink-0 text-gray-500"
+            size={16}
+          />
+          <Tooltip id="child-run-tooltip" />
+        </>
+      )}
       <div
         data-tooltip-id={action.id}
         role="button"
@@ -37,7 +51,7 @@ export default function PlaybookRunsActionItem({
         }}
         key={action.id}
         className={clsx(
-          `flex flex-row items-center justify-between rounded border border-gray-200 px-4 py-2 hover:bg-gray-200`,
+          `flex flex-grow flex-row items-center justify-between rounded border border-gray-200 px-4 py-2 hover:bg-gray-200`,
           isSelected ? "bg-gray-200" : "bg-white",
           action.status === "skipped" ? "cursor-not-allowed" : "cursor-pointer"
         )}
@@ -78,6 +92,6 @@ export default function PlaybookRunsActionItem({
         </div>
       </div>
       <Tooltip id={action.id} />
-    </>
+    </div>
   );
 }

@@ -42,6 +42,7 @@ export type PlaybookRunAction = {
     recommendedPlaybooks?: string;
     slack?: string;
     stderr?: string;
+    json?: string;
     [key: string]: unknown;
   };
   error?: string;
@@ -78,6 +79,7 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   component?: Pick<Topology, "id" | "name" | "icon">;
   check?: HealthCheckSummary;
   config?: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
+  parent_id?: string;
 }
 
 export type PlaybookResourceSelector = {
