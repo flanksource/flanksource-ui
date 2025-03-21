@@ -22,6 +22,7 @@ import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
 import PlaybookRunsApprovalActionItem from "./PlaybookRunsApprovalActionItem";
 import PlaybookRunsApprovalActionsResults from "./PlaybookRunsApprovalActionsResults";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
+import ViewPlaybookSpecModal from "./ViewPlaybookSpecModal";
 import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
 
 type PlaybookRunActionsProps = {
@@ -52,6 +53,8 @@ export default function PlaybookRunsActions({
       playbook: data.playbooks!
     };
   });
+
+  const [isSpecModalOpen, setIsSpecModalOpen] = useState(false);
 
   const resource = getResourceForRun(data);
 
@@ -87,6 +90,22 @@ export default function PlaybookRunsActions({
                 </Link>
                 <ShowPlaybookRunsParams data={data} />
               </>
+            }
+          />
+
+          <VerticalDescription
+            label="Spec"
+            value={
+              <Link
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                to="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsSpecModalOpen(true);
+                }}
+              >
+                View
+              </Link>
             }
           />
 
@@ -279,6 +298,13 @@ export default function PlaybookRunsActions({
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <ViewPlaybookSpecModal
+        data={data}
+        isModalOpen={isSpecModalOpen}
+        setIsModalOpen={setIsSpecModalOpen}
+      />
     </div>
   );
 }
