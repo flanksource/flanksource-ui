@@ -79,7 +79,7 @@ export default function PlaybookResultsDropdownButton({
 
   return (
     <Menu as="div">
-      <MenuButton className="absolute right-5 top-5 z-[99999] text-lg">
+      <MenuButton className="absolute right-5 top-1 z-[99999] text-lg">
         <FaCog className="h-5 w-5" />
       </MenuButton>
 

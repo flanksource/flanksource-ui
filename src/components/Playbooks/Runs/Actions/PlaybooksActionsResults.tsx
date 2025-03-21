@@ -3,12 +3,13 @@ import linkifyHtml from "linkify-html";
 import Linkify from "linkify-react";
 import markdownit from "markdown-it";
 import { Opts } from "linkifyjs";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   PlaybookRunAction,
   PlaybookSpec
 } from "../../../../api/types/playbooks";
 import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
+import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -152,40 +153,88 @@ export default function PlaybooksRunActionsResults({
   playbook
 }: Props) {
   const { result, error } = action;
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  const availableTabs = useMemo(() => {
+    if (!result) return [];
+
+    return Object.keys(result)
+      .filter((key) => result[key]) // Only include keys with content
+      .map((key) => ({
+        label: key.charAt(0).toUpperCase() + key.slice(1), // Convert to title case
+        value: key,
+        hasContent: !!result[key]
+      }));
+  }, [result]);
+
+  useMemo(() => {
+    if (availableTabs.length > 0 && !activeTab) {
+      setActiveTab(availableTabs[0].value);
+    }
+  }, [availableTabs, activeTab]);
 
   if (!result && !error) {
     return <>No result</>;
   }
 
+  if (error) {
+    return (
+      <div className="relative flex h-full w-full flex-col">
+        <pre className={className}>{error}</pre>
+        <PlaybookResultsDropdownButton action={action} playbook={playbook} />
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col">
-      {action.error && <pre className={className}>{action.error}</pre>}
-      {result?.stderr ||
-      result?.stdout ||
-      result?.logs ||
-      result?.slack ||
-      result?.recommendedPlaybooks ||
-      result?.markdown ? (
-        <div className={`flex flex-col gap-2 ${className}`}>
-          <DisplayStdout className={className} stdout={result?.stdout} />
-          <DisplayStderr className={className} stderr={result?.stderr} />
-          <DisplayLogs className={className} logs={result?.logs} />
-          <DisplayMarkdown className={className} md={result?.markdown} />
-          <DisplayLogs
-            className={className}
-            logs={result?.recommendedPlaybooks}
-          />
-          <DisplayLogs className={className} logs={result?.slack} />
-        </div>
-      ) : (
-        <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(result, null, 2)}
-          </Linkify>
-        </pre>
-      )}
-
+      <Tabs
+        activeTab={activeTab || "empty"}
+        onSelectTab={(tab) => setActiveTab(tab as string)}
+        contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-300 p-4"
+      >
+        {availableTabs.map((tab) => (
+          <Tab key={tab.value} label={tab.label} value={tab.value}>
+            {renderTabContent(tab.value, result?.[tab.value], className)}
+          </Tab>
+        ))}
+      </Tabs>
       <PlaybookResultsDropdownButton action={action} playbook={playbook} />
     </div>
   );
+}
+
+// Helper function to render the appropriate content based on the key
+function renderTabContent(key: string, content: any, className: string) {
+  if (!content) return null;
+
+  switch (key.toLowerCase()) {
+    case "stdout":
+      return <DisplayStdout className={className} stdout={content} />;
+    case "stderr":
+      return <DisplayStderr className={className} stderr={content} />;
+    case "logs":
+      return <DisplayLogs className={className} logs={content} />;
+    case "recommendedplaybooks":
+    case "slack":
+    case "json":
+      return (
+        <pre className={className}>
+          <Linkify as="p" options={options}>
+            {JSON.stringify(JSON.parse(content), null, 2)}
+          </Linkify>
+        </pre>
+      );
+    case "args":
+    case "headers":
+      return (
+        <pre className={className}>
+          <Linkify as="p" options={options}>
+            {JSON.stringify(content, null, 2)}
+          </Linkify>
+        </pre>
+      );
+    default:
+      return <DisplayMarkdown className={className} md={content} />;
+  }
 }

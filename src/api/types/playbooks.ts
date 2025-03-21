@@ -42,6 +42,7 @@ export type PlaybookRunAction = {
     recommendedPlaybooks?: string;
     slack?: string;
     stderr?: string;
+    json?: string;
     [key: string]: unknown;
   };
   error?: string;
