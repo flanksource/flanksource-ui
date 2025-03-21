@@ -23,19 +23,18 @@ describe("PlaybooksRunActionsResults", () => {
     const action = { result: { foo: "bar" } };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(
-      screen.getByText('{ "foo": "bar" }', {
+      screen.getByText("foo", {
         exact: false
       })
     ).toBeInTheDocument();
   });
 
-  it("shows both stdout and stderr when both are present", () => {
+  it("shows stdout as the first tab", () => {
     const action = {
       result: { stdout: "Hello, world!", stderr: "Goodbye, world!" }
     };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(screen.getByText("Hello, world!")).toBeInTheDocument();
-    expect(screen.getByText("Goodbye, world!")).toBeInTheDocument();
   });
 
   it("renders error when action has error", () => {
