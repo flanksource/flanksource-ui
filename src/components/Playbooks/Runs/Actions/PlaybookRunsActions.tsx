@@ -23,8 +23,6 @@ import PlaybookRunsApprovalActionItem from "./PlaybookRunsApprovalActionItem";
 import PlaybookRunsApprovalActionsResults from "./PlaybookRunsApprovalActionsResults";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
-import { useGetChildPlaybookRuns } from "@flanksource-ui/api/query-hooks/playbooks";
-import { Loading } from "@flanksource-ui/ui/Loading";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
@@ -54,9 +52,6 @@ export default function PlaybookRunsActions({
       playbook: data.playbooks!
     };
   });
-
-  const { data: childRuns, isLoading: isLoadingChildRuns } =
-    useGetChildPlaybookRuns(data.id);
 
   const resource = getResourceForRun(data);
 
@@ -194,134 +189,59 @@ export default function PlaybookRunsActions({
             </div>
 
             <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
-              {/* Parent Playbook Actions */}
-              <div className="mb-4 space-y-2">
-                {initializationAction && (
-                  <PlaybookRunsActionItem
-                    isSelected={
-                      selectedAction?.type === "Action" &&
-                      selectedAction.data?.id === initializationAction.id
-                    }
-                    key={initializationAction.id}
-                    action={initializationAction}
+              {initializationAction && (
+                <PlaybookRunsActionItem
+                  isSelected={
+                    selectedAction?.type === "Action" &&
+                    selectedAction.data?.id === initializationAction.id
+                  }
+                  key={initializationAction.id}
+                  action={initializationAction}
+                  onClick={() =>
+                    setSelectedAction({
+                      type: "Action",
+                      data: initializationAction,
+                      playbook: data.playbooks!
+                    })
+                  }
+                  stepNumber={0}
+                />
+              )}
+
+              {data.playbook_approvals &&
+                data.playbook_approvals.length === 1 && (
+                  <PlaybookRunsApprovalActionItem
+                    isSelected={selectedAction?.type === "Approval"}
+                    key={data.playbook_approvals[0].id}
+                    approval={data.playbook_approvals[0]}
                     onClick={() =>
                       setSelectedAction({
-                        type: "Action",
-                        data: initializationAction,
-                        playbook: data.playbooks!
+                        type: "Approval",
+                        data: data.playbook_approvals?.[0]!
                       })
                     }
-                    stepNumber={0}
                   />
                 )}
 
-                {data.playbook_approvals &&
-                  data.playbook_approvals.length === 1 && (
-                    <PlaybookRunsApprovalActionItem
-                      isSelected={selectedAction?.type === "Approval"}
-                      key={data.playbook_approvals[0].id}
-                      approval={data.playbook_approvals[0]}
-                      onClick={() =>
-                        setSelectedAction({
-                          type: "Approval",
-                          data: data.playbook_approvals?.[0]!
-                        })
-                      }
-                    />
-                  )}
-
-                {data.actions.map((action, index) => (
-                  <PlaybookRunsActionItem
-                    agent={action?.agent?.name}
-                    isSelected={
-                      selectedAction?.type === "Action" &&
-                      selectedAction.data?.id === action.id
-                    }
-                    key={action.id}
-                    action={action}
-                    onClick={() =>
-                      setSelectedAction({
-                        type: "Action",
-                        data: action,
-                        playbook: data.playbooks!
-                      })
-                    }
-                    stepNumber={index + (data.playbook_approvals ? 2 : 1)}
-                  />
-                ))}
-              </div>
-
-              {/* Child Playbooks Section */}
-              {(isLoadingChildRuns || (childRuns && childRuns.length > 0)) && (
-                <div className="mt-4">
-                  <div className="mb-4 border-t border-gray-200 pt-4">
-                    <div className="font-semibold text-gray-600">
-                      Child Playbooks
-                    </div>
-                  </div>
-
-                  {isLoadingChildRuns && (
-                    <div className="flex items-center justify-center py-2">
-                      <Loading text="Loading child runs..." />
-                    </div>
-                  )}
-
-                  {childRuns?.map((childRun) => (
-                    <div key={childRun.id} className="mb-4">
-                      <div className="mb-2 flex items-center gap-2 pb-2">
-                        <PlaybookSpecIcon
-                          playbook={childRun.playbooks!}
-                          showLabel
-                        />
-
-                        <Link
-                          className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-700"
-                          to={`/playbooks/runs/${childRun.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                            />
-                          </svg>
-                        </Link>
-                      </div>
-
-                      <div className="space-y-1">
-                        {childRun.actions.map((action, index) => (
-                          <PlaybookRunsActionItem
-                            agent={action?.agent?.name}
-                            isSelected={
-                              selectedAction?.type === "Action" &&
-                              selectedAction.data?.id === action.id
-                            }
-                            key={action.id}
-                            action={action}
-                            onClick={() =>
-                              setSelectedAction({
-                                type: "Action",
-                                data: action,
-                                playbook: childRun.playbooks!
-                              })
-                            }
-                            stepNumber={index + 1}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              {data.actions.map((action, index) => (
+                <PlaybookRunsActionItem
+                  agent={action?.agent?.name}
+                  isSelected={
+                    selectedAction?.type === "Action" &&
+                    selectedAction.data?.id === action.id
+                  }
+                  key={action.id}
+                  action={action}
+                  onClick={() =>
+                    setSelectedAction({
+                      type: "Action",
+                      data: action,
+                      playbook: data.playbooks!
+                    })
+                  }
+                  stepNumber={index + (data.playbook_approvals ? 2 : 1)}
+                />
+              ))}
             </div>
           </div>
 

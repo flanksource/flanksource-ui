@@ -107,21 +107,11 @@ export async function getPlaybookRun(id: string) {
     `/playbook_runs?id=eq.${id}&select=${select}`
   );
 
-  const actionsSelect = [
-    "id",
-    "name",
-    "status",
-    "start_time",
-    "end_time",
-    "agent:agent_id(id,name)",
-    "scheduled_time"
-  ].join(",");
-
   const resActions = await IncidentCommander.get<PlaybookRunAction[] | null>(
-    `/playbook_run_actions?select=${actionsSelect}&order=start_time.asc&playbook_run_id=eq.${id}`
+    `/rpc/get_playbook_run_actions?run_id=${id}`
   );
 
-  const actions = resActions.data ?? [];
+  const actions = resActions.data || [];
 
   if (res.data?.[0] === undefined) {
     return undefined;
