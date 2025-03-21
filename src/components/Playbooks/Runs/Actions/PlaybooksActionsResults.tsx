@@ -1,7 +1,6 @@
 import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
 import Linkify from "linkify-react";
-import markdownit from "markdown-it";
 import { Opts } from "linkifyjs";
 import { useMemo, useState } from "react";
 import {
@@ -10,6 +9,8 @@ import {
 } from "../../../../api/types/playbooks";
 import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
+import blockKitToMarkdown from "@flanksource-ui/utils/slack";
+import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -90,39 +91,6 @@ function DisplayLogs({
     }
     return linkifyHtml(convert.toHtml(logs), options);
   }, [logs]);
-
-  if (!html) {
-    return null;
-  }
-
-  return (
-    <pre
-      className={className}
-      dangerouslySetInnerHTML={{
-        __html: html
-      }}
-    />
-  );
-}
-
-function DisplayMarkdown({
-  md,
-  className
-}: {
-  md?: string;
-  className?: string;
-}) {
-  const html = useMemo(() => {
-    if (!md) {
-      return null;
-    }
-
-    const renderer = markdownit({
-      html: true,
-      linkify: true
-    });
-    return renderer.render(md);
-  }, [md]);
 
   if (!html) {
     return null;
@@ -233,6 +201,12 @@ function renderTabContent(key: string, content: any, className: string) {
       return <DisplayLogs className={className} logs={content} />;
     case "recommendedplaybooks":
     case "slack":
+      return (
+        <DisplayMarkdown
+          className={className}
+          md={blockKitToMarkdown(JSON.parse(content))}
+        />
+      );
     case "json":
       return (
         <pre className={className}>

@@ -9,6 +9,8 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import NotificationResourceDisplay from "../NotificationResourceDisplay";
 import { notificationSendHistoryStatus } from "../NotificationsStatusCell";
+import blockKitToMarkdown, { SlackMessage } from "@flanksource-ui/utils/slack";
+import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 
 type NotificationDetailsProps = {
   notification: NotificationSendHistoryApiResponse;
@@ -39,6 +41,12 @@ export default function NotificationDetails({
   const readableTime = notification.duration_millis
     ? formatDuration(notification.duration_millis)
     : undefined;
+
+  let slackBody = undefined;
+  if (notification.body?.startsWith("[{")) {
+    const parsed = JSON.parse(notification.body) as SlackMessage[];
+    slackBody = blockKitToMarkdown(parsed[0]);
+  }
 
   return (
     <div className="flex flex-col gap-3 overflow-auto">
@@ -113,11 +121,18 @@ export default function NotificationDetails({
       {notification.body && (
         <div className="flex flex-col gap-2">
           <label className="truncate text-sm text-gray-500">Body:</label>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: notification.body
-            }}
-          ></div>
+          {notification.body.startsWith("[{") ? (
+            <DisplayMarkdown
+              md={slackBody}
+              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+            />
+          ) : (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: notification.body
+              }}
+            ></div>
+          )}
         </div>
       )}
 
