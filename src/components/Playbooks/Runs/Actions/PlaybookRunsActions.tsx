@@ -230,6 +230,7 @@ export default function PlaybookRunsActions({
                     selectedAction?.type === "Action" &&
                     selectedAction.data?.id === action.id
                   }
+                  isChild={action.playbook_run_id !== data.id}
                   key={action.id}
                   action={action}
                   onClick={() =>
