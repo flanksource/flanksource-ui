@@ -23,6 +23,17 @@ export type PlaybookRunActionStatus =
   | "skipped"
   | "sleeping";
 
+export type PlaybookArtifact = {
+  id: string;
+  filename: string;
+  path: string;
+  content_type: string;
+  checksum: string;
+  size: number;
+  playbook_run_action_id: string;
+  created_at: string;
+};
+
 export type PlaybookRunAction = {
   id: string;
   name: string;
@@ -46,6 +57,7 @@ export type PlaybookRunAction = {
     [key: string]: unknown;
   };
   error?: string;
+  artifacts?: PlaybookArtifact[];
 };
 
 export type PlaybookApproval = {
