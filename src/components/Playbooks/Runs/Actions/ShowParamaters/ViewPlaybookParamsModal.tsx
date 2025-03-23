@@ -59,7 +59,7 @@ export default function ViewPlaybookParamsModal({
     <Modal
       open={isModalOpen}
       onClose={() => setIsModalOpen(false)}
-      title={`Parameters for ${data.playbooks?.name}`}
+      title={`Run parameters`}
     >
       <div className="flex flex-col gap-2 p-4">
         {playbookParamsSpecs.map((paramSpec, index) => {
