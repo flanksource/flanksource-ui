@@ -8,8 +8,11 @@ import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
+import { Menu } from "@flanksource-ui/ui/Menu";
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
+import { VscFileCode } from "react-icons/vsc";
+import { FaCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
@@ -22,7 +25,8 @@ import PlaybookRunsActionItem from "./PlaybookRunsActionItem";
 import PlaybookRunsApprovalActionItem from "./PlaybookRunsApprovalActionItem";
 import PlaybookRunsApprovalActionsResults from "./PlaybookRunsApprovalActionsResults";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
-import ShowPlaybookRunsParams from "./ShowParamaters/ShowPlaybookRunsParams";
+import ViewPlaybookSpecModal from "./ViewPlaybookSpecModal";
+import ViewPlaybookParamsModal from "./ShowParamaters/ViewPlaybookParamsModal";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
@@ -53,6 +57,9 @@ export default function PlaybookRunsActions({
     };
   });
 
+  const [isSpecModalOpen, setIsSpecModalOpen] = useState(false);
+  const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
+
   const resource = getResourceForRun(data);
 
   // if the playbook run failed, create an action for the initialization step
@@ -78,15 +85,12 @@ export default function PlaybookRunsActions({
           <VerticalDescription
             label="Playbook"
             value={
-              <>
-                <Link
-                  className="link"
-                  to={`/playbooks/runs?playbook=${data.playbook_id}`}
-                >
-                  <PlaybookSpecIcon playbook={data.playbooks!} showLabel />
-                </Link>
-                <ShowPlaybookRunsParams data={data} />
-              </>
+              <Link
+                className="link"
+                to={`/playbooks/runs?playbook=${data.playbook_id}`}
+              >
+                <PlaybookSpecIcon playbook={data.playbooks!} showLabel />
+              </Link>
             }
           />
 
@@ -155,7 +159,7 @@ export default function PlaybookRunsActions({
           )}
         </div>
         <div className="ml-auto flex h-auto flex-col justify-center gap-2">
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2">
             <ApprovePlaybookButton
               playbookRunId={data.id}
               playbookTitle={data.playbooks?.title ?? data.playbooks?.name!}
@@ -177,6 +181,54 @@ export default function PlaybookRunsActions({
               componentId={data.component_id}
               configId={data.config_id}
             />
+
+            <Menu>
+              <Menu.VerticalIconButton />
+              <Menu.Items style={{ zIndex: 100 }}>
+                <Menu.Item>
+                  <div
+                    className="flex w-full cursor-pointer items-center gap-2"
+                    onClick={() => {
+                      setIsSpecModalOpen(true);
+                    }}
+                  >
+                    <VscFileCode size={16} />
+                    <span>Spec</span>
+                  </div>
+                </Menu.Item>
+                <Menu.Item>
+                  <div
+                    className={`flex w-full items-center gap-2 ${
+                      !data.parameters ||
+                      Object.keys(data.parameters).length === 0
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer"
+                    }`}
+                    onClick={() => {
+                      if (
+                        data.parameters &&
+                        Object.keys(data.parameters).length > 0
+                      ) {
+                        setIsParamsModalOpen(true);
+                      }
+                    }}
+                    title={
+                      !data.parameters ||
+                      Object.keys(data.parameters).length === 0
+                        ? "No parameters available"
+                        : ""
+                    }
+                  >
+                    <FaCog size={16} />
+                    <span>Parameters</span>
+                    {(!data.parameters ||
+                      Object.keys(data.parameters).length === 0) && (
+                      <span className="text-gray-600">(none)</span>
+                    )}
+                  </div>
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
           </div>
         </div>
       </div>
@@ -279,6 +331,18 @@ export default function PlaybookRunsActions({
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <ViewPlaybookSpecModal
+        data={data}
+        isModalOpen={isSpecModalOpen}
+        setIsModalOpen={setIsSpecModalOpen}
+      />
+      <ViewPlaybookParamsModal
+        data={data}
+        isModalOpen={isParamsModalOpen}
+        setIsModalOpen={setIsParamsModalOpen}
+      />
     </div>
   );
 }
