@@ -162,7 +162,6 @@ function processMrkdwn(text: string): string {
  * Process a text object from BlockKit
  */
 function processTextObject(textObj: TextObject | string | undefined): string {
-  console.log("textObj", textObj);
   if (!textObj) return "";
 
   if (typeof textObj === "string") return textObj;
