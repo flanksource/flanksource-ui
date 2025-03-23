@@ -3,14 +3,21 @@ import linkifyHtml from "linkify-html";
 import Linkify from "linkify-react";
 import { Opts } from "linkifyjs";
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   PlaybookRunAction,
-  PlaybookSpec
+  PlaybookSpec,
+  PlaybookArtifact
 } from "../../../../api/types/playbooks";
 import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import blockKitToMarkdown from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
+import { downloadArtifact } from "../../../../api/services/artifacts";
+import { TbFileDescription } from "react-icons/tb";
+import { formatBytes } from "@flanksource-ui/utils/common";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { IoMdDownload } from "react-icons/io";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -109,10 +116,17 @@ function DisplayLogs({
 type Props = {
   action: Pick<
     PlaybookRunAction,
-    "result" | "error" | "id" | "playbook_run_id" | "start_time"
+    "result" | "error" | "id" | "playbook_run_id" | "start_time" | "artifacts"
   >;
   className?: string;
   playbook: Pick<PlaybookSpec, "name">;
+};
+
+type PlaybookActionTab = {
+  label: string;
+  value: string;
+  isArtifact?: boolean;
+  content: any;
 };
 
 export default function PlaybooksRunActionsResults({
@@ -120,23 +134,35 @@ export default function PlaybooksRunActionsResults({
   className = "whitespace-pre-wrap break-all",
   playbook
 }: Props) {
-  const { result, error } = action;
+  const { result, error, artifacts } = action;
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const availableTabs = useMemo(() => {
     if (!result) return [];
 
-    const tabs = Object.keys(result)
+    const tabs: PlaybookActionTab[] = Object.keys(result)
       .filter((key) => result[key])
       .map((key) => ({
         label: key.charAt(0).toUpperCase() + key.slice(1),
         value: key,
-        hasContent: !!result[key]
+        content: result[key]
       }));
+
+    if (artifacts && artifacts.length > 0) {
+      for (const artifact of artifacts) {
+        tabs.push({
+          label: `${artifact.filename} (${formatBytes(artifact.size)})`,
+          value: artifact.id,
+          isArtifact: true,
+          content: artifact
+        });
+      }
+    }
 
     const priorityOrder: Record<string, number> = {
       stdout: 0, // always the first tab (if present)
-      stderr: 1
+      stderr: 1,
+      artifacts: 1000 // artifacts at the end
     };
 
     tabs.sort((a, b) => {
@@ -146,7 +172,7 @@ export default function PlaybooksRunActionsResults({
     });
 
     return tabs;
-  }, [result]);
+  }, [result, artifacts]);
 
   useMemo(() => {
     if (availableTabs.length > 0 && !activeTab) {
@@ -172,13 +198,25 @@ export default function PlaybooksRunActionsResults({
       <Tabs
         activeTab={activeTab || "empty"}
         onSelectTab={(tab) => setActiveTab(tab as string)}
+        hoverable={false}
         contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-300 p-4"
       >
         {availableTabs.map((tab) => {
           const label = tab.label === "Args" ? "Script" : tab.label;
           return (
-            <Tab key={tab.value} label={label} value={tab.value}>
-              {renderTabContent(tab.value, result?.[tab.value], className)}
+            <Tab
+              key={tab.value}
+              label={label}
+              value={tab.value}
+              icon={
+                tab.isArtifact ? (
+                  <TbFileDescription className="text-lg" />
+                ) : undefined
+              }
+            >
+              {tab.isArtifact
+                ? renderTabContent("artifacts", tab.content, className)
+                : renderTabContent(tab.value, result?.[tab.value], className)}
             </Tab>
           );
         })}
@@ -232,7 +270,93 @@ function renderTabContent(key: string, content: any, className: string) {
           </Linkify>
         </pre>
       );
+    case "artifacts":
+      const artifact = content as PlaybookArtifact;
+      return <ArtifactContent artifact={artifact} className={className} />;
     default:
       return <DisplayMarkdown className={className} md={content} />;
+  }
+}
+
+function ArtifactContent({
+  artifact,
+  className
+}: {
+  artifact: PlaybookArtifact;
+  className?: string;
+}) {
+  const [error, setError] = useState<string | null>(null);
+
+  const maxFileSize = 1048576; // 1MB
+  const isSmallFile = artifact.size < maxFileSize;
+
+  const {
+    data: artifactContent,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ["artifact", artifact.id],
+    queryFn: () => downloadArtifact(artifact.id),
+    enabled: isSmallFile, // Only fetch if it's a small file
+    staleTime: Infinity, // Artifacts don't change once created
+    cacheTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
+    retry: 1, // Only retry once on failure
+    onError: (err) => {
+      console.error("Error downloading artifact:", err);
+      setError("Failed to download artifact");
+    }
+  });
+
+  const downloadURL = `/api/artifacts/download/${artifact.id}`;
+
+  return (
+    <div className="flex h-full w-full flex-col">
+      <div className="flex-1 overflow-y-auto">{renderArtifactContent()}</div>
+    </div>
+  );
+
+  function renderArtifactContent() {
+    if (!isSmallFile) {
+      return (
+        <div className="py-8 text-center text-gray-500">
+          <p className="mb-4">File is too large to preview</p>
+          <Button
+            onClick={() => {
+              window.open(downloadURL, "_blank");
+            }}
+          >
+            <IoMdDownload className="mr-2" />
+            Download
+          </Button>
+        </div>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-500"></div>
+          <span className="ml-2">Loading... </span>
+        </div>
+      );
+    }
+
+    if (error || isError) {
+      return (
+        <div className="text-center text-red-500">
+          {error || "Failed to download artifact"}
+        </div>
+      );
+    }
+
+    if (artifactContent) {
+      return <DisplayMarkdown className={className} md={artifactContent} />;
+    }
+
+    return (
+      <div className="py-8 text-center text-gray-500">
+        Loading file content...
+      </div>
+    );
   }
 }

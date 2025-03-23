@@ -14,6 +14,7 @@ import { useMemo, useState } from "react";
 import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { FaFileAlt } from "react-icons/fa";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
 import { CancelPlaybookButton } from "../CancelPlaybookButton";
@@ -77,6 +78,13 @@ export default function PlaybookRunsActions({
       } satisfies PlaybookRunAction;
     }
   }, [data.end_time, data.error, data.id, data.start_time, data.status]);
+
+  const totalArtifacts = data.actions.reduce((acc, action) => {
+    if (action.artifacts && action.artifacts.length > 0) {
+      return acc + action.artifacts.length;
+    }
+    return acc;
+  }, 0);
 
   return (
     <div className="flex flex-1 flex-col gap-2 pl-2">
@@ -154,6 +162,17 @@ export default function PlaybookRunsActions({
                 >
                   {"Notification"}
                 </Link>
+              }
+            />
+          )}
+          {totalArtifacts > 0 && (
+            <VerticalDescription
+              label="Artifacts"
+              value={
+                <div className="flex items-center">
+                  <FaFileAlt className="mr-1 text-gray-500" />
+                  <span>{totalArtifacts}</span>
+                </div>
               }
             />
           )}

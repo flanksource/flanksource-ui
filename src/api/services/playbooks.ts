@@ -124,7 +124,7 @@ export async function getPlaybookRun(id: string) {
 
 export async function getPlaybookRunActionById(id: string) {
   const res = await IncidentCommander.get<PlaybookRunAction[] | null>(
-    `/playbook_run_actions?id=eq.${id}&select=*`
+    `/playbook_run_actions?id=eq.${id}&select=*,artifacts:artifacts(*)::jsonb`
   );
   return res.data?.[0] ?? undefined;
 }
