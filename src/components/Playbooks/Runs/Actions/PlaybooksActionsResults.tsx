@@ -274,7 +274,17 @@ function renderTabContent(key: string, content: any, className: string) {
       const artifact = content as PlaybookArtifact;
       return <ArtifactContent artifact={artifact} className={className} />;
     default:
-      return <DisplayMarkdown className={className} md={content} />;
+      if (typeof content === "string") {
+        return <DisplayMarkdown className={className} md={content} />;
+      }
+
+      return (
+        <pre className={className}>
+          <Linkify as="p" options={options}>
+            {JSON.stringify(content, null, 2)}
+          </Linkify>
+        </pre>
+      );
   }
 }
 
