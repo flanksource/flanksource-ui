@@ -20,6 +20,9 @@ jobs:
           driver: cloud
           endpoint: "flanksource/node"
           install: true
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Build
         uses: docker/build-push-action@v6
@@ -27,6 +30,6 @@ jobs:
           APP_DEPLOYMENT: CANARY_CHECKER
           WITHOUT_AUTH: "true"
         with:
-          platforms: linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: false
           tags: flanksource/canary-checker-ui:ci
