@@ -1,7 +1,7 @@
 name: Docker build
 on:
   pull_request: {}
-    
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -21,13 +21,12 @@ jobs:
           endpoint: "flanksource/node"
           install: true
 
-      - name: Docker build
+      - name: Build
+        uses: docker/build-push-action@v6
         env:
           APP_DEPLOYMENT: CANARY_CHECKER
           WITHOUT_AUTH: "true"
-        run: |
-          docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            --build-arg APP_DEPLOYMENT \
-            --build-arg WITHOUT_AUTH \
-            .
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: flanksource/canary-checker-ui:ci
