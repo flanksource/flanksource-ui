@@ -1,6 +1,5 @@
 import FormikSearchInputClearable from "@flanksource-ui/components/Forms/Formik/FormikSearchInputClearable";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
-import { ConfigListToggledDeletedItems } from "../ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGroupByDropdown from "./ConfigGroupByDropdown";
 import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
@@ -35,8 +34,6 @@ export default function ConfigsListFilters() {
           name="search"
           placeholder="Search for configs"
         />
-
-        <ConfigListToggledDeletedItems />
       </div>
     </FormikFilterForm>
   );

@@ -1,14 +1,14 @@
 import { ConfigRelationKey } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
-import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getAConfigRelationships } from "../services/configs";
 import { ConfigItem } from "../types/configs";
+import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 
 export function useConfigRelationshipsQuery(id: string | undefined) {
   const [searchParams] = useSearchParams();
-  const hideDeleted = useHideDeletedConfigs();
+  const showDeletedConfigs = useShowDeletedConfigs();
   const tag = searchParams.get("tag") ?? undefined;
   const incoming = searchParams.get("incoming") === "true";
   const outgoing = searchParams.get("outgoing") === "true";
@@ -57,7 +57,7 @@ export function useConfigRelationshipsQuery(id: string | undefined) {
       "config",
       "relationships",
       id,
-      hideDeleted,
+      showDeletedConfigs,
       tag,
       configTypes,
       relationshipType,
@@ -72,7 +72,7 @@ export function useConfigRelationshipsQuery(id: string | undefined) {
         configId: id!,
         type_filter: relationshipType ?? "outgoing",
         configTypes: configTypes,
-        hideDeleted: hideDeleted,
+        hideDeleted: !showDeletedConfigs,
         relation: relation,
         status,
         health

@@ -1,4 +1,3 @@
-import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import { configTypesFavorites } from "@flanksource-ui/components/Configs/ConfigSummary/ConfigSummaryTypeFavorite";
 import useGroupBySearchParam from "@flanksource-ui/components/Configs/ConfigSummary/utils/useGroupBySearchParam";
 import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
@@ -8,6 +7,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ConfigSummaryRequest, getConfigsSummary } from "../services/configs";
 import { ConfigSummary } from "../types/configs";
+import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 
 export function useLabelFiltersFromParams() {
   const [searchParams] = useSearchParams();
@@ -34,7 +34,7 @@ export function useConfigSummaryQuery({
     sortOrder: "asc",
     groupBy: "config_class,type"
   });
-  const hideDeletedConfigs = useHideDeletedConfigs();
+  const showDeletedConfigs = useShowDeletedConfigs();
   const status = searchParams.get("status") ?? undefined;
   const health = searchParams.get("health") ?? undefined;
 
@@ -47,7 +47,7 @@ export function useConfigSummaryQuery({
   const req: ConfigSummaryRequest = {
     // group by config_class is always done on the frontend
     groupBy: groupBy?.filter((g) => g !== "config_class") || undefined,
-    deleted: !hideDeletedConfigs,
+    deleted: showDeletedConfigs,
     filter: filterSummaryByLabel,
     health: health ? tristateOutputToQueryParamValue(health) : undefined,
     status: status ? tristateOutputToQueryParamValue(status) : undefined,

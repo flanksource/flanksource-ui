@@ -1,7 +1,6 @@
 import FormikFilterForm from "../Forms/FormikFilterForm";
 import ConfigTypesTristateDropdown from "./Changes/ConfigChangesFilters/ConfigTypesTristateDropdown";
 import { ConfigRelationshipToggles } from "./Changes/ConfigsRelatedChanges/FilterBar/ConfigRelationshipToggles";
-import { ConfigListToggledDeletedItems } from "./ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import ConfigGraphTableToggle from "./ConfigsListFilters/ConfigGraphTableToggle";
 import { ConfigHealthyDropdown } from "./ConfigsListFilters/ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigsListFilters/ConfigLabelsDropdown";
@@ -25,7 +24,6 @@ export default function ConfigRelationshipFilterBar() {
         <ConfigHealthyDropdown />
         <ConfigStatusDropdown />
         <ConfigRelationshipToggles />
-        <ConfigListToggledDeletedItems />
         <ConfigGraphTableToggle />
       </div>
     </FormikFilterForm>

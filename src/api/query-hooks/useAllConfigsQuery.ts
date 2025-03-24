@@ -1,10 +1,10 @@
-import { useHideDeletedConfigs } from "@flanksource-ui/components/Configs/ConfigListToggledDeletedItems/ConfigListToggledDeletedItems";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { defaultStaleTime, prepareConfigListQuery } from ".";
 import { getAllConfigsMatchingQuery } from "../services/configs";
+import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 
 export const useAllConfigsQuery = ({
   enabled = true,
@@ -17,7 +17,7 @@ export const useAllConfigsQuery = ({
     groupBy: "type"
   });
 
-  const hideDeletedConfigs = useHideDeletedConfigs();
+  const showDeletedConfigs = useShowDeletedConfigs();
   const search = searchParams.get("search") ?? undefined;
   const sortBy = searchParams.get("sortBy");
   const sortOrder = searchParams.get("sortOrder");
@@ -34,7 +34,7 @@ export const useAllConfigsQuery = ({
         configType,
         sortBy,
         sortOrder,
-        hideDeletedConfigs,
+        showDeletedConfigs,
         includeAgents: true,
         labels: labels,
         health,
@@ -47,7 +47,7 @@ export const useAllConfigsQuery = ({
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs,
+      showDeletedConfigs,
       labels,
       health,
       status,
@@ -63,7 +63,7 @@ export const useAllConfigsQuery = ({
       configType,
       sortBy,
       sortOrder,
-      hideDeletedConfigs,
+      showDeletedConfigs,
       true,
       labels,
       health,

@@ -1,5 +1,5 @@
 import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
-import { useHideDeletedConfigChanges } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigChangesToggledDeletedItems";
+import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
@@ -41,7 +41,7 @@ export function useGetAllConfigsChangesQuery(
     keepPreviousData: true
   }
 ) {
-  const hideDeletedConfigChanges = useHideDeletedConfigChanges();
+  const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [params] = useSearchParams({
     sortBy: "created_at",
@@ -55,13 +55,11 @@ export function useGetAllConfigsChangesQuery(
   const [sortBy] = useReactTableSortState();
   const configTypes = params.get("configTypes") ?? "all";
   const { pageSize, pageIndex } = useReactTablePaginationState();
-
   const tags = useConfigChangesTagsFilter();
-
   const arbitraryFilter = useConfigChangesArbitraryFilters();
 
   const props = {
-    include_deleted_configs: !hideDeletedConfigChanges,
+    include_deleted_configs: showChangesFromDeletedConfigs,
     changeType,
     severity,
     from,
@@ -90,7 +88,7 @@ export function useGetConfigChangesByIDQuery(
   }
 ) {
   const { id } = useParams();
-  const hideDeletedConfigChanges = useHideDeletedConfigChanges();
+  const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
   const [params] = useSearchParams({
     downstream: "true",
@@ -129,7 +127,7 @@ export function useGetConfigChangesByIDQuery(
   const props = {
     id,
     type_filter: relationshipType,
-    include_deleted_configs: hideDeletedConfigChanges,
+    include_deleted_configs: showChangesFromDeletedConfigs,
     changeType: change_type,
     severity,
     from,
