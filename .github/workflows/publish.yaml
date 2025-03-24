@@ -41,6 +41,9 @@ jobs:
 
       - name: Set up Docker Buildx # must be executed before a step that contains platforms
         uses: docker/setup-buildx-action@v3
+        with:
+          driver: cloud
+          endpoint: flanksource/node
 
       - name: Publish canary-checker-ui to Registry
         uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
@@ -92,7 +95,7 @@ jobs:
           APP_DEPLOYMENT: CANARY_CHECKER
           WITHOUT_AUTH: "true"
         run: |
-          docker buildx create --use
+          docker buildx create --use --driver cloud flanksource/node
           docker buildx build --platform linux/amd64,linux/arm64 \
             --build-arg APP_DEPLOYMENT \
             --build-arg WITHOUT_AUTH \
@@ -109,7 +112,7 @@ jobs:
           APP_DEPLOYMENT: "INCIDENT_MANAGER"
           WITHOUT_AUTH: "false"
         run: |
-          docker buildx create --use
+          docker buildx create --use --driver cloud flanksource/node
           docker buildx build --platform linux/amd64,linux/arm64 \
             --build-arg APP_DEPLOYMENT \
             --build-arg WITHOUT_AUTH \
