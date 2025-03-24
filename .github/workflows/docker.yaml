@@ -1,0 +1,56 @@
+name: Docker build
+on:
+  pull_request: {}
+    
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+
+      - name: Set up Docker Buildx # must be executed before a step that contains platforms
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: cloud
+          endpoint: flanksource/node
+          install: true
+
+      - name: Publish canary-checker-ui to Registry
+        uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
+        env:
+          APP_DEPLOYMENT: CANARY_CHECKER
+          WITHOUT_AUTH: "true"
+        with:
+          name: flanksource/canary-checker-ui
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          buildargs: APP_DEPLOYMENT,WITHOUT_AUTH
+          snapshot: true
+          tags: "latest,v${{ needs.semantic-release.outputs.release-version }}"
+          platforms: linux/amd64,linux/arm64
+
+      - name: Publish incident-manager-ui to Registry
+        uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
+        env:
+          APP_DEPLOYMENT: "INCIDENT_MANAGER"
+          WITHOUT_AUTH: "false"
+        with:
+          name: flanksource/incident-manager-ui
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          buildargs: APP_DEPLOYMENT,WITHOUT_AUTH
+          snapshot: true
+          no_push: true
+          tags: "latest,v${{ needs.semantic-release.outputs.release-version }}"
+          platforms: linux/amd64,linux/arm64
+
+      - name: Docker build
+        env:
+          APP_DEPLOYMENT: CANARY_CHECKER
+          WITHOUT_AUTH: "true"
+        run: |
+          docker buildx create --use --driver cloud flanksource/node
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            --build-arg APP_DEPLOYMENT \
+            --build-arg WITHOUT_AUTH \
+            .
