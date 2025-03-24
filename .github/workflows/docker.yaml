@@ -27,6 +27,6 @@ jobs:
           APP_DEPLOYMENT: CANARY_CHECKER
           WITHOUT_AUTH: "true"
         with:
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: false
           tags: flanksource/canary-checker-ui:ci
