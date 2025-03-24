@@ -14,6 +14,7 @@ import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import { formatConfigLabels } from "./Utils/formatConfigLabels";
+import { MdOutlineSupportAgent } from "react-icons/md";
 
 type Props = {
   configId: string;
@@ -151,7 +152,6 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
-
           <DisplayDetailsRow
             items={[
               {
@@ -178,7 +178,6 @@ export function ConfigDetails({ configId }: Props) {
               }
             ]}
           />
-
           <DisplayDetailsRow
             items={[
               {
@@ -199,6 +198,27 @@ export function ConfigDetails({ configId }: Props) {
                         </span>
                       )}
                   </>
+                )
+              }
+            ]}
+          />
+
+          <DisplayDetailsRow
+            items={[
+              {
+                label: "Agent",
+                value: (
+                  <div className="flex items-center">
+                    <Link
+                      to={`/settings/agents?id=${configDetails.agent_id}`}
+                      className="flex items-center text-blue-500 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MdOutlineSupportAgent className="mr-1 text-gray-600" />
+                      {configDetails.agent_name}
+                    </Link>
+                  </div>
                 )
               }
             ]}
