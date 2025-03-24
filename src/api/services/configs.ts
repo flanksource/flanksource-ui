@@ -143,8 +143,12 @@ export const getAllChanges = (
   );
 };
 
+type ConfigDetail = ConfigItem & {
+  agent_name: string;
+};
+
 export const getConfig = (id: string) =>
-  resolvePostGrestRequestWithPagination<ConfigItem[]>(
+  resolvePostGrestRequestWithPagination<ConfigDetail[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*,config_scrapers(id,name)`)
   );
 
