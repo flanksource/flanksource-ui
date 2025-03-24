@@ -10,10 +10,6 @@ jobs:
 
       - name: Set up Docker Buildx # must be executed before a step that contains platforms
         uses: docker/setup-buildx-action@v3
-        with:
-          driver: cloud
-          endpoint: flanksource/node
-          install: true
 
       - name: Publish canary-checker-ui to Registry
         uses: elgohr/Publish-Docker-Github-Action@eb53b3ec07136a6ebaed78d8135806da64f7c7e2 # v5
