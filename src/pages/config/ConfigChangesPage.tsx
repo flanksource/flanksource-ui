@@ -41,7 +41,8 @@ export function ConfigChangesPage() {
     config: {
       id: changes.config_id!,
       type: changes.type!,
-      name: changes.name!
+      name: changes.name!,
+      deleted_at: changes.deleted_at
     }
   }));
 

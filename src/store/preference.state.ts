@@ -1,3 +1,4 @@
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 export const datetimePreferenceAtom = atomWithStorage<
@@ -23,3 +24,17 @@ export const cardPreferenceAtom = atomWithStorage<string>(
     getOnInit: true
   }
 );
+
+export const showDeletedItemsPreferenceAtom = atomWithStorage<"yes" | "no">(
+  "show_deleted_items_preference",
+  "no",
+  undefined,
+  {
+    getOnInit: true
+  }
+);
+
+export function useShowDeletedConfigs() {
+  const [showDeletedItems] = useAtom(showDeletedItemsPreferenceAtom);
+  return showDeletedItems === "yes";
+}

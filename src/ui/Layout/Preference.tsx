@@ -13,7 +13,8 @@ import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 import { Toggle } from "@flanksource-ui/components";
 import {
   datetimePreferenceAtom,
-  displayTimezonePreferenceAtom
+  displayTimezonePreferenceAtom,
+  showDeletedItemsPreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtom } from "jotai";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
@@ -93,6 +94,9 @@ export const Preference = ({
   const [displayTimezonePreference, setDisplayTimezonePreference] = useAtom(
     displayTimezonePreferenceAtom
   );
+
+  const [showDeletedConfigsPreference, setShowDeletedConfigsPreference] =
+    useAtom(showDeletedItemsPreferenceAtom);
 
   const {
     ref: popoverRef,
@@ -190,6 +194,26 @@ export const Preference = ({
                     ...Object.fromEntries(searchParams),
                     showHiddenComponents: newValue
                   });
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="py-1" role="none">
+            <div className="flex items-center px-4 py-3">
+              <label
+                htmlFor="showDeletedConfigs"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Show deleted configs: &nbsp;
+              </label>
+              <Toggle
+                className="inline-flex items-center"
+                label=""
+                name="showDeletedConfigs"
+                value={showDeletedConfigsPreference === "yes"}
+                onChange={(val) => {
+                  setShowDeletedConfigsPreference(val ? "yes" : "no");
                 }}
               />
             </div>

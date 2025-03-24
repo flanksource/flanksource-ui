@@ -1,14 +1,19 @@
-import { getConfigsByID } from "@flanksource-ui/api/services/configs";
-import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
-import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
+import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
+import dayjs from "dayjs";
+
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import { ConfigItem } from "../../../api/types/configs";
+import { FaTrash } from "react-icons/fa";
+import { formatDateForTooltip } from "@flanksource-ui/ui/Age/Age";
+import { getConfigsByID } from "@flanksource-ui/api/services/configs";
 import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
-import { ConfigItem } from "../../../api/types/configs";
-import ConfigsTypeIcon, { ConfigIconProps } from "../ConfigsTypeIcon";
+import { Tooltip } from "react-tooltip";
+import { useQuery } from "@tanstack/react-query";
 
 type ConfigLinkProps = ConfigIconProps & {
-  config?: Pick<ConfigItem, "type" | "name" | "id"> | undefined;
+  config?: Pick<ConfigItem, "type" | "name" | "id" | "deleted_at"> | undefined;
   configId?: string;
   className?: string;
   configTypeSecondary?: string;
@@ -58,15 +63,42 @@ export default function ConfigLink({
         >
           <span className="flex-1 overflow-hidden text-ellipsis">
             {data.name}
+            {data.deleted_at && (
+              <FaTrash
+                data-tooltip-id={`deleted-${data.id}`}
+                className="ml-1 inline text-red-500"
+              />
+            )}
           </span>
         </ConfigsTypeIcon>
+        {data.deleted_at && (
+          <Tooltip
+            id={`deleted-${data.id}`}
+            content={`Deleted: ${formatDateForTooltip(dayjs(data.deleted_at))}`}
+          />
+        )}
       </Link>
     );
   }
+
   return (
     <div className={clsx("flex flex-row gap-1", className)}>
       <ConfigIcon config={data} />
-      <span className="overflow-hidden text-ellipsis text-sm">{data.name}</span>
+      <span className="overflow-hidden text-ellipsis text-sm">
+        {data.name}
+        {data.deleted_at && (
+          <FaTrash
+            data-tooltip-id={`deleted-label-${data.id}`}
+            className="ml-1 inline text-red-500"
+          />
+        )}
+      </span>
+      {data.deleted_at && (
+        <Tooltip
+          id={`deleted-label-${data.id}`}
+          content={`Deleted: ${formatDateForTooltip(dayjs(data.deleted_at))}`}
+        />
+      )}
     </div>
   );
 }

@@ -154,7 +154,7 @@ type ConfigListFilterQueryOptions = {
   search?: string | null;
   configType?: string | null;
   label?: string | null;
-  hideDeletedConfigs?: boolean;
+  showDeletedConfigs?: boolean;
   sortBy?: string | null;
   sortOrder?: string | null;
   includeAgents?: boolean;
@@ -171,7 +171,7 @@ export function prepareConfigListQuery({
   label,
   sortBy,
   sortOrder,
-  hideDeletedConfigs,
+  showDeletedConfigs,
   includeAgents = false,
   labels,
   health,
@@ -235,7 +235,7 @@ export function prepareConfigListQuery({
     query.append("order", `${sortField}.${sortOrder}`);
   }
 
-  if (hideDeletedConfigs) {
+  if (!showDeletedConfigs) {
     query.append("deleted_at", "is.null");
   }
 

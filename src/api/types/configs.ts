@@ -5,6 +5,7 @@ export interface ConfigChange extends CreatedAt {
   id: string;
   config_id: string;
   external_change_id: string;
+  deleted_at?: string; // deleted at timestamp of the config (not the change)
   change_type: string;
   severity?: string;
   source: string;
@@ -48,6 +49,7 @@ export function isCostsEmpty(costs: Costs) {
 export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   id: string;
   name: string;
+  deleted_at?: string;
   status?: string;
   external_id?: string;
   config_class?: string;
