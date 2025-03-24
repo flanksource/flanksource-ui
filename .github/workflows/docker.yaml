@@ -1,10 +1,12 @@
 name: Docker build
 on:
-  pull_request: {}
+  pull_request:
+    types: [labeled]
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.labels[0].name == 'docker' }}
     steps:
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
