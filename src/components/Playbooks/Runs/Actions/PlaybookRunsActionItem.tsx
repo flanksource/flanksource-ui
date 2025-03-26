@@ -62,7 +62,9 @@ export default function PlaybookRunsActionItem({
             <PlaybookStatusIcon status={action.status} />
             <div className="flex flex-col">
               <div className="flex flex-row flex-wrap items-center gap-2">
-                {action.name || `Step ${stepNumber}`}
+                <span className="max-w-[180px] truncate">
+                  {action.name || `Step ${stepNumber}`}
+                </span>
                 {agent && <Badge text={agent} />}
               </div>
             </div>

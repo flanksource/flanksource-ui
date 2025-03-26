@@ -1,6 +1,6 @@
 import { PrismTheme } from "prism-react-renderer";
 
-let theme = {
+const lightTheme = {
   plain: {
     color: "##002b5c",
     backgroundColor: "#fffff"
@@ -75,4 +75,79 @@ let theme = {
   ]
 } as PrismTheme;
 
-export default theme;
+const darkTheme = {
+  plain: {
+    color: "##002b5c",
+    backgroundColor: "#fffff"
+  },
+  styles: [
+    {
+      types: ["comment", "prolog", "doctype", "cdata"],
+      style: {
+        color: "#8b949e",
+        fontStyle: "italic"
+      }
+    },
+    {
+      types: ["namespace"],
+      style: {
+        opacity: 0.7
+      }
+    },
+    {
+      types: ["string", "attr-value", "plain"],
+      style: {
+        color: "#79c0ff"
+      }
+    },
+    {
+      types: ["punctuation", "operator"],
+      style: {
+        color: "#e1e4e8"
+      }
+    },
+    {
+      types: [
+        "entity",
+        "url",
+        "symbol",
+        "number",
+        "boolean",
+        "variable",
+        "constant",
+        "property",
+        "regex",
+        "inserted"
+      ],
+      style: {
+        color: "#79c0ff"
+      }
+    },
+    {
+      types: ["atrule", "keyword", "attr-name", "selector"],
+      style: {
+        color: "#4ade80"
+      }
+    },
+    {
+      types: ["function", "deleted", "tag"],
+      style: {
+        color: "#d73a49"
+      }
+    },
+    {
+      types: ["function-variable"],
+      style: {
+        color: "#6f42c1"
+      }
+    },
+    {
+      types: ["tag", "selector", "keyword"],
+      style: {
+        color: "#00009f"
+      }
+    }
+  ]
+} as PrismTheme;
+
+export { lightTheme, darkTheme };

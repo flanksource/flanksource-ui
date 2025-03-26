@@ -14,10 +14,13 @@ import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import blockKitToMarkdown from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 import { downloadArtifact } from "../../../../api/services/artifacts";
-import { TbFileDescription } from "react-icons/tb";
+import { TbAlertCircle, TbFileDescription } from "react-icons/tb";
 import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
+import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
+import path from "path";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -124,8 +127,7 @@ type Props = {
 
 type PlaybookActionTab = {
   label: string;
-  value: string;
-  isArtifact?: boolean;
+  type?: "artifact" | "error";
   content: any;
 };
 
@@ -138,60 +140,71 @@ export default function PlaybooksRunActionsResults({
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const availableTabs = useMemo(() => {
-    if (!result) return [];
+    const tabs: PlaybookActionTab[] = [];
+    if (result) {
+      for (const key of Object.keys(result)) {
+        if (result[key]) {
+          const tab: PlaybookActionTab = {
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+            content: result[key]
+          };
 
-    const tabs: PlaybookActionTab[] = Object.keys(result)
-      .filter((key) => result[key])
-      .map((key) => ({
-        label: key.charAt(0).toUpperCase() + key.slice(1),
-        value: key,
-        content: result[key]
-      }));
+          if (key === "error") {
+            tab.type = "error";
+          }
+
+          tabs.push(tab);
+        }
+      }
+    }
+
+    if (error) {
+      const hasErrorTab = tabs.some((tab) => tab.label === "Error");
+      if (!hasErrorTab) {
+        tabs.push({
+          label: "Error",
+          type: "error",
+          content: error
+        });
+      }
+    }
 
     if (artifacts && artifacts.length > 0) {
       for (const artifact of artifacts) {
+        const filename = path.basename(artifact.path);
         tabs.push({
-          label: `${artifact.filename} (${formatBytes(artifact.size)})`,
-          value: artifact.id,
-          isArtifact: true,
+          label: `${filename} (${formatBytes(artifact.size)})`,
+          type: "artifact",
           content: artifact
         });
       }
     }
 
     const priorityOrder: Record<string, number> = {
-      logs: 0,
-      stdout: 0, // always the first tab (if present)
-      stderr: 1,
+      error: 0,
+      logs: 1,
+      stdout: 1,
+      stderr: 2,
       artifacts: 1000 // artifacts at the end
     };
 
     tabs.sort((a, b) => {
-      const priorityA = priorityOrder[a.value.toLowerCase()] ?? 999;
-      const priorityB = priorityOrder[b.value.toLowerCase()] ?? 999;
+      const priorityA = priorityOrder[a.label.toLowerCase()] ?? 999;
+      const priorityB = priorityOrder[b.label.toLowerCase()] ?? 999;
       return priorityA - priorityB;
     });
 
     return tabs;
-  }, [result, artifacts]);
+  }, [result, error, artifacts]);
 
   useMemo(() => {
     if (availableTabs.length > 0 && !activeTab) {
-      setActiveTab(availableTabs[0].value);
+      setActiveTab(availableTabs[0].label);
     }
   }, [availableTabs, activeTab]);
 
-  if (!result && !error) {
+  if (availableTabs.length === 0) {
     return <>No result</>;
-  }
-
-  if (error) {
-    return (
-      <div className="relative flex h-full w-full flex-col">
-        <pre className={className}>{error}</pre>
-        <PlaybookResultsDropdownButton action={action} playbook={playbook} />
-      </div>
-    );
   }
 
   return (
@@ -206,18 +219,18 @@ export default function PlaybooksRunActionsResults({
           const label = tab.label === "Args" ? "Script" : tab.label;
           return (
             <Tab
-              key={tab.value}
+              key={tab.label}
               label={label}
-              value={tab.value}
+              value={tab.label}
               icon={
-                tab.isArtifact ? (
+                tab.type === "artifact" ? (
                   <TbFileDescription className="text-lg" />
+                ) : tab.type === "error" ? (
+                  <TbAlertCircle className="text-lg" />
                 ) : undefined
               }
             >
-              {tab.isArtifact
-                ? renderTabContent("artifacts", tab.content, className)
-                : renderTabContent(tab.value, result?.[tab.value], className)}
+              {renderTabContent(tab, className)}
             </Tab>
           );
         })}
@@ -228,10 +241,16 @@ export default function PlaybooksRunActionsResults({
 }
 
 // Helper function to render the appropriate content based on the key
-function renderTabContent(key: string, content: any, className: string) {
+function renderTabContent(tab: PlaybookActionTab, className: string) {
+  const { label, content } = tab;
   if (!content) return null;
 
-  switch (key.toLowerCase()) {
+  if (tab.type === "artifact") {
+    const artifact = content as PlaybookArtifact;
+    return <ArtifactContent artifact={artifact} className={className} />;
+  }
+
+  switch (label.toLowerCase()) {
     case "stdout":
       return <DisplayStdout className={className} stdout={content} />;
     case "stderr":
@@ -249,9 +268,13 @@ function renderTabContent(key: string, content: any, className: string) {
     case "json":
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(JSON.parse(content), null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(JSON.parse(content), null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
     case "args":
@@ -266,24 +289,45 @@ function renderTabContent(key: string, content: any, className: string) {
     case "headers":
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(content, null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(content, null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
-    case "artifacts":
-      const artifact = content as PlaybookArtifact;
-      return <ArtifactContent artifact={artifact} className={className} />;
     default:
       if (typeof content === "string") {
-        return <DisplayMarkdown className={className} md={content} />;
+        try {
+          JSON.parse(content); // just try to parse the content to see if it's valid json
+
+          return (
+            <pre className={className}>
+              <JSONViewer
+                format="json"
+                code={content}
+                showLineNo
+                convertToYaml
+                theme={darkTheme}
+              />
+            </pre>
+          );
+        } catch (e) {
+          return <DisplayMarkdown className={className} md={content} />;
+        }
       }
 
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(content, null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(content, null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
   }
