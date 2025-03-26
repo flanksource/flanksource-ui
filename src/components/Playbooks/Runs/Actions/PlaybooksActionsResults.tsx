@@ -1,15 +1,14 @@
 import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
-import Linkify from "linkify-react";
 import { Opts } from "linkifyjs";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   PlaybookRunAction,
   PlaybookSpec,
   PlaybookArtifact
 } from "../../../../api/types/playbooks";
-import PlaybookResultsDropdownButton from "./PlaybookResultsDropdownButton";
+import TabContentDownloadButton from "./PlaybookResultsDropdownButton";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import blockKitToMarkdown from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
@@ -32,61 +31,6 @@ const options = {
 } satisfies Opts;
 
 const convert = new Convert();
-
-function DisplayStdout({
-  stdout,
-  className
-}: {
-  stdout?: string;
-  className?: string;
-}) {
-  const html = useMemo(() => {
-    if (!stdout) {
-      return null;
-    }
-    return linkifyHtml(convert.toHtml(stdout), options);
-  }, [stdout]);
-
-  if (!html) {
-    return null;
-  }
-  return (
-    <pre
-      className={className}
-      dangerouslySetInnerHTML={{
-        __html: html
-      }}
-    />
-  );
-}
-
-function DisplayStderr({
-  stderr,
-  className
-}: {
-  stderr?: string;
-  className?: string;
-}) {
-  const html = useMemo(() => {
-    if (!stderr) {
-      return null;
-    }
-    return linkifyHtml(convert.toHtml(stderr), options);
-  }, [stderr]);
-
-  if (!html) {
-    return null;
-  }
-
-  return (
-    <pre
-      className={` ${className}`}
-      dangerouslySetInnerHTML={{
-        __html: html
-      }}
-    />
-  );
-}
 
 function DisplayLogs({
   logs,
@@ -129,15 +73,16 @@ type PlaybookActionTab = {
   label: string;
   type?: "artifact" | "error";
   content: any;
+  displayContentType: "md" | "yaml" | "text/plain";
 };
 
 export default function PlaybooksRunActionsResults({
   action,
-  className = "whitespace-pre-wrap break-all",
-  playbook
+  className = "whitespace-pre-wrap break-all"
 }: Props) {
   const { result, error, artifacts } = action;
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const activeTabContentRef = useRef<HTMLDivElement>(null);
 
   const availableTabs = useMemo(() => {
     const tabs: PlaybookActionTab[] = [];
@@ -146,8 +91,38 @@ export default function PlaybooksRunActionsResults({
         if (result[key]) {
           const tab: PlaybookActionTab = {
             label: key.charAt(0).toUpperCase() + key.slice(1),
-            content: result[key]
+            content: result[key],
+            displayContentType: "text/plain"
           };
+
+          // Pre-process the content for certain types
+          switch (key.toLowerCase()) {
+            case "slack":
+            case "recommendedplaybooks":
+              tab.content = blockKitToMarkdown(JSON.parse(tab.content));
+              tab.displayContentType = "md";
+              break;
+
+            case "args":
+              tab.content = tab.content.join(" ").replace(/^bash -c /, "$ ");
+              tab.displayContentType = "text/plain";
+              break;
+
+            case "headers":
+              tab.content = JSON.stringify(tab.content, null, 2);
+              tab.displayContentType = "yaml";
+              break;
+
+            case "json":
+              tab.displayContentType = "yaml";
+              break;
+
+            default:
+              if (typeof result[key] === "object") {
+                tab.content = JSON.stringify(result[key], null, 2);
+                tab.displayContentType = "yaml";
+              }
+          }
 
           if (key === "error") {
             tab.type = "error";
@@ -164,7 +139,8 @@ export default function PlaybooksRunActionsResults({
         tabs.push({
           label: "Error",
           type: "error",
-          content: error
+          content: error,
+          displayContentType: "text/plain"
         });
       }
     }
@@ -175,7 +151,11 @@ export default function PlaybooksRunActionsResults({
         tabs.push({
           label: `${filename} (${formatBytes(artifact.size)})`,
           type: "artifact",
-          content: artifact
+          content: artifact,
+          displayContentType: artifact.content_type as
+            | "md"
+            | "yaml"
+            | "text/plain"
         });
       }
     }
@@ -230,19 +210,29 @@ export default function PlaybooksRunActionsResults({
                 ) : undefined
               }
             >
-              {renderTabContent(tab, className)}
+              <div ref={activeTabContentRef}>
+                {renderTabContent(tab, className)}
+              </div>
             </Tab>
           );
         })}
       </Tabs>
-      <PlaybookResultsDropdownButton action={action} playbook={playbook} />
+
+      <TabContentDownloadButton
+        activeTab={activeTab || ""}
+        contentType={
+          availableTabs.find((tab) => tab.label === activeTab)
+            ?.displayContentType
+        }
+        activeTabContentRef={activeTabContentRef}
+      />
     </div>
   );
 }
 
 // Helper function to render the appropriate content based on the key
 function renderTabContent(tab: PlaybookActionTab, className: string) {
-  const { label, content } = tab;
+  const { content } = tab;
   if (!content) return null;
 
   if (tab.type === "artifact") {
@@ -250,85 +240,25 @@ function renderTabContent(tab: PlaybookActionTab, className: string) {
     return <ArtifactContent artifact={artifact} className={className} />;
   }
 
-  switch (label.toLowerCase()) {
-    case "stdout":
-      return <DisplayStdout className={className} stdout={content} />;
-    case "stderr":
-      return <DisplayStderr className={className} stderr={content} />;
-    case "logs":
+  switch (tab.displayContentType) {
+    case "text/plain":
       return <DisplayLogs className={className} logs={content} />;
-    case "recommendedplaybooks":
-    case "slack":
-      return (
-        <DisplayMarkdown
-          className={className}
-          md={blockKitToMarkdown(JSON.parse(content))}
-        />
-      );
-    case "json":
+    case "md":
+      return <DisplayMarkdown className={className} md={content} />;
+    case "yaml":
       return (
         <pre className={className}>
           <JSONViewer
             format="json"
-            code={JSON.stringify(JSON.parse(content), null, 2)}
-            showLineNo
-            convertToYaml
-            theme={darkTheme}
-          />
-        </pre>
-      );
-    case "args":
-      var args = content as string[];
-      return (
-        <pre className={className}>
-          <Linkify as="p" options={options}>
-            {args.join(" ").replace(/^bash -c /, "$ ")}
-          </Linkify>
-        </pre>
-      );
-    case "headers":
-      return (
-        <pre className={className}>
-          <JSONViewer
-            format="json"
-            code={JSON.stringify(content, null, 2)}
-            showLineNo
+            code={content}
             convertToYaml
             theme={darkTheme}
           />
         </pre>
       );
     default:
-      if (typeof content === "string") {
-        try {
-          JSON.parse(content); // just try to parse the content to see if it's valid json
-
-          return (
-            <pre className={className}>
-              <JSONViewer
-                format="json"
-                code={content}
-                showLineNo
-                convertToYaml
-                theme={darkTheme}
-              />
-            </pre>
-          );
-        } catch (e) {
-          return <DisplayMarkdown className={className} md={content} />;
-        }
-      }
-
-      return (
-        <pre className={className}>
-          <JSONViewer
-            format="json"
-            code={JSON.stringify(content, null, 2)}
-            showLineNo
-            convertToYaml
-            theme={darkTheme}
-          />
-        </pre>
+      throw new Error(
+        `Unknown display content type for tab ${tab.label}: ${tab.displayContentType}`
       );
   }
 }
