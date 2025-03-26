@@ -160,6 +160,7 @@ export default function PlaybooksRunActionsResults({
     }
 
     const priorityOrder: Record<string, number> = {
+      logs: 0,
       stdout: 0, // always the first tab (if present)
       stderr: 1,
       artifacts: 1000 // artifacts at the end
