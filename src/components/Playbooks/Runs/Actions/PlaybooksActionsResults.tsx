@@ -20,6 +20,7 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
+import path from "path";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -170,8 +171,9 @@ export default function PlaybooksRunActionsResults({
 
     if (artifacts && artifacts.length > 0) {
       for (const artifact of artifacts) {
+        const filename = path.basename(artifact.path);
         tabs.push({
-          label: `${artifact.filename} (${formatBytes(artifact.size)})`,
+          label: `${filename} (${formatBytes(artifact.size)})`,
           type: "artifact",
           content: artifact
         });
