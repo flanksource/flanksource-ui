@@ -1,18 +1,5 @@
-import {
-  PlaybookRunAction,
-  PlaybookSpec
-} from "@flanksource-ui/api/types/playbooks";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition
-} from "@headlessui/react";
-import { Fragment, useCallback, useState } from "react";
+import { useCallback } from "react";
 import toast from "react-hot-toast";
-import { FaCog } from "react-icons/fa";
-import { ImSpinner } from "react-icons/im";
 import { MdOutlineFileDownload } from "react-icons/md";
 import stripAnsi from "strip-ansi";
 
@@ -23,87 +10,38 @@ function downloadFile(content: string, filename: string, contentType: string) {
   a.href = URL.createObjectURL(file);
   a.download = filename;
   a.click();
-  toast.success("Downloaded logs");
 }
 
 type Props = {
-  action: Pick<
-    PlaybookRunAction,
-    "result" | "id" | "playbook_run_id" | "error" | "start_time"
-  >;
-  playbook?: Pick<PlaybookSpec, "name">;
+  activeTab: string;
+  activeTabContentRef: React.RefObject<HTMLDivElement>;
+  contentType?: "md" | "yaml" | "text/plain";
 };
 
-export default function PlaybookResultsDropdownButton({
-  action,
-  playbook
+export default function TabContentDownloadButton({
+  activeTab,
+  activeTabContentRef,
+  contentType = "text/plain"
 }: Props) {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const fileName = `${playbook?.name}-${action.start_time}`;
-
-  const onDownloadLogs = useCallback(() => {
-    setIsDownloading(true);
-    if (action.error) {
-      downloadFile(action.error, `${fileName}.log`, "text/plain");
-      setIsDownloading(false);
+  const fileName = `${activeTab}.${contentType}`;
+  const onDownloadLogs = useCallback(async () => {
+    const tabContent = activeTabContentRef.current;
+    if (!tabContent) {
+      toast.error("No content available to download");
       return;
     }
 
-    if (action.result?.stdout || action.result?.stdout || action.result?.logs) {
-      let results = "";
-      if (action.result?.stdout) {
-        results = action.result.stdout + "\n";
-      }
-      if (action.result?.stderr) {
-        results += action.result.stderr + "\n";
-      }
-      if (action.result?.logs) {
-        results += action.result.logs + "\n";
-      }
-
-      downloadFile(results, `${fileName}.log`, "text/plain");
-      setIsDownloading(false);
-      return;
-    }
-
-    try {
-      const logs = JSON.stringify(action.result, null, 2);
-      downloadFile(logs, `${fileName}.json`, "text/json");
-    } catch (e) {
-      toast.error("Failed to download logs");
-    }
-
-    setIsDownloading(false);
-    return;
-  }, [action.error, action.result, fileName]);
+    const content = tabContent.innerText;
+    downloadFile(content, fileName, contentType);
+  }, [fileName, activeTabContentRef, contentType]);
 
   return (
-    <Menu as="div">
-      <MenuButton className="absolute right-5 top-1 z-[9] text-lg">
-        <FaCog className="h-5 w-5" />
-      </MenuButton>
-
-      {/* @ts-ignore */}
-      <Transition
-        as={Fragment as any}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <MenuItems className="menu-items" portal anchor="bottom end">
-          <MenuItem as="button" className="menu-item" onClick={onDownloadLogs}>
-            {isDownloading ? (
-              <ImSpinner className="inline animate-spin" size={16} />
-            ) : (
-              <MdOutlineFileDownload className="inline" size={16} />
-            )}
-            <span className="pl-1">Download Logs</span>
-          </MenuItem>
-        </MenuItems>
-      </Transition>
-    </Menu>
+    <button
+      className="absolute right-5 top-1 z-[9] flex items-center text-lg"
+      onClick={onDownloadLogs}
+    >
+      <MdOutlineFileDownload className="h-5 w-5" />
+      <span className="pl-1 text-sm">Download </span>
+    </button>
   );
 }
