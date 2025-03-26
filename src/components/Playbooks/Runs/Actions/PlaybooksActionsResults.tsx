@@ -18,6 +18,8 @@ import { TbFileDescription } from "react-icons/tb";
 import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
+import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -249,9 +251,13 @@ function renderTabContent(key: string, content: any, className: string) {
     case "json":
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(JSON.parse(content), null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(JSON.parse(content), null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
     case "args":
@@ -266,9 +272,13 @@ function renderTabContent(key: string, content: any, className: string) {
     case "headers":
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(content, null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(content, null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
     case "artifacts":
@@ -276,14 +286,33 @@ function renderTabContent(key: string, content: any, className: string) {
       return <ArtifactContent artifact={artifact} className={className} />;
     default:
       if (typeof content === "string") {
-        return <DisplayMarkdown className={className} md={content} />;
+        try {
+          JSON.parse(content);
+          return (
+            <pre className={className}>
+              <JSONViewer
+                format="json"
+                code={content}
+                showLineNo
+                convertToYaml
+                theme={darkTheme}
+              />
+            </pre>
+          );
+        } catch (e) {
+          return <DisplayMarkdown className={className} md={content} />;
+        }
       }
 
       return (
         <pre className={className}>
-          <Linkify as="p" options={options}>
-            {JSON.stringify(content, null, 2)}
-          </Linkify>
+          <JSONViewer
+            format="json"
+            code={JSON.stringify(content, null, 2)}
+            showLineNo
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
   }

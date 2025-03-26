@@ -1,10 +1,14 @@
-import Highlight, { Language, defaultProps } from "prism-react-renderer";
+import Highlight, {
+  Language,
+  PrismTheme,
+  defaultProps
+} from "prism-react-renderer";
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { Button } from "../Buttons/Button";
-import theme from "./JSONViewerTheme";
+import { lightTheme } from "./JSONViewerTheme";
 
 type RenderProps = Parameters<
   ComponentProps<typeof Highlight>["children"]
@@ -58,6 +62,7 @@ type JSONViewerProps = {
   showLineNo?: boolean;
   onClick?: (idx: any) => void;
   selections?: Record<string, boolean>;
+  theme?: PrismTheme;
   /**
    *
    * Convert the content to yaml format
@@ -74,7 +79,8 @@ export function JSONViewer({
   selections,
   onClick = () => {},
   convertToYaml = false,
-  hideCopyButton = false
+  hideCopyButton = false,
+  theme = lightTheme
 }: JSONViewerProps) {
   // convert JSON object to YAML string
   const codeForHighlight = useMemo(() => {
