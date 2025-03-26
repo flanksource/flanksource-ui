@@ -64,59 +64,33 @@ jobs:
           driver: cloud
           endpoint: flanksource/node
 
-      - name: Build & Push Canary Checker UI to Docker Hub
+      - name: Build & Push Canary Checker UI to Docker Hub and ECR Public
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: flanksource/canary-checker-ui:latest,flanksource/canary-checker-ui:v${{ needs.semantic-release.outputs.release-version }}
+          tags: |
+            flanksource/canary-checker-ui:latest
+            flanksource/canary-checker-ui:v${{ needs.semantic-release.outputs.release-version }}
+            ${{ steps.login-ecr-public.outputs.registry }}/k4y9r6y5/canary-checker-ui:latest
+            ${{ steps.login-ecr-public.outputs.registry }}/k4y9r6y5/canary-checker-ui:v${{ needs.semantic-release.outputs.release-version }}
           build-args: |
             APP_DEPLOYMENT=CANARY_CHECKER
             WITHOUT_AUTH=true
 
-      - name: Build & Push Incident Manager UI to Docker Hub
+      - name: Build & Push Incident Manager UI to Docker Hub and ECR Public
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: flanksource/incident-manager-ui:latest,flanksource/incident-manager-ui:v${{ needs.semantic-release.outputs.release-version }}
+          tags: |
+            flanksource/incident-manager-ui:latest
+            flanksource/incident-manager-ui:v${{ needs.semantic-release.outputs.release-version }}
+            ${{ steps.login-ecr-public.outputs.registry }}/k4y9r6y5/incident-manager-ui:latest
+            ${{ steps.login-ecr-public.outputs.registry }}/k4y9r6y5/incident-manager-ui:v${{ needs.semantic-release.outputs.release-version }}
           build-args: |
             APP_DEPLOYMENT=INCIDENT_MANAGER
             WITHOUT_AUTH=false
-
-      - name: Publish canary-checker-ui to ECR Public
-        env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: k4y9r6y5
-          REPOSITORY: canary-checker-ui
-          IMAGE_TAG: "v${{ needs.semantic-release.outputs.release-version }}"
-          APP_DEPLOYMENT: CANARY_CHECKER
-          WITHOUT_AUTH: "true"
-        run: |
-          docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            --build-arg APP_DEPLOYMENT \
-            --build-arg WITHOUT_AUTH \
-            -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG \
-            --push \
-            .
-
-      - name: Publish incident-manager-ui to ECR Public
-        env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: k4y9r6y5
-          REPOSITORY: incident-manager-ui
-          IMAGE_TAG: "v${{ needs.semantic-release.outputs.release-version }}"
-          APP_DEPLOYMENT: "INCIDENT_MANAGER"
-          WITHOUT_AUTH: "false"
-        run: |
-          docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            --build-arg APP_DEPLOYMENT \
-            --build-arg WITHOUT_AUTH \
-            -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG \
-            --push \
-            .
 
   helm:
     runs-on: ubuntu-latest
