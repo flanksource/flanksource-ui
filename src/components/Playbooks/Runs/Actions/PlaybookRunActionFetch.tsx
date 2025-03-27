@@ -8,15 +8,16 @@ import { getPlaybookRunActionById } from "../../../../api/services/playbooks";
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 
 type Props = {
+  playbook: PlaybookSpec;
   playbookRunActionId: string;
-  playbook: Pick<PlaybookSpec, "name">;
 };
 
 export default function PlaybookRunActionFetch({
-  playbookRunActionId,
-  playbook
+  playbook,
+  playbookRunActionId
 }: Props) {
   const [refreshTrigger] = useAtom(refreshButtonClickedTrigger);
+  console.log({ playbook });
 
   const {
     data: action,
@@ -24,7 +25,8 @@ export default function PlaybookRunActionFetch({
     refetch
   } = useQuery({
     queryKey: ["playbookRunAction", playbookRunActionId],
-    queryFn: () => getPlaybookRunActionById(playbookRunActionId),
+    queryFn: () =>
+      getPlaybookRunActionById(playbookRunActionId, playbook.spec!),
     enabled: !!playbookRunActionId,
     staleTime: 0,
     cacheTime: 0,
@@ -52,5 +54,5 @@ export default function PlaybookRunActionFetch({
     );
   }
 
-  return <PlaybooksRunActionsResults action={action} playbook={playbook} />;
+  return <PlaybooksRunActionsResults action={action} />;
 }

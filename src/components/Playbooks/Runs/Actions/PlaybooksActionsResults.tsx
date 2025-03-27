@@ -4,9 +4,8 @@ import { Opts } from "linkifyjs";
 import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  PlaybookRunAction,
-  PlaybookSpec,
-  PlaybookArtifact
+  PlaybookArtifact,
+  CategorizedPlaybookRunAction
 } from "../../../../api/types/playbooks";
 import TabContentDownloadButton from "./PlaybookResultsDropdownButton";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
@@ -61,12 +60,8 @@ function DisplayLogs({
 }
 
 type Props = {
-  action: Pick<
-    PlaybookRunAction,
-    "result" | "error" | "id" | "playbook_run_id" | "start_time" | "artifacts"
-  >;
+  action: CategorizedPlaybookRunAction;
   className?: string;
-  playbook: Pick<PlaybookSpec, "name">;
 };
 
 type PlaybookActionTab = {
@@ -87,6 +82,26 @@ export default function PlaybooksRunActionsResults({
   const availableTabs = useMemo(() => {
     const tabs: PlaybookActionTab[] = [];
     if (result) {
+      // Result pre-processing based on action type
+      switch (action.type) {
+        case "notification":
+          delete result["title"];
+          break;
+
+        case "exec":
+          delete result["path"];
+          break;
+
+        case "ai":
+          result["ai"] = result["json"];
+          delete result["json"];
+          delete result["recommendedPlaybooks"];
+          break;
+
+        default:
+          break;
+      }
+
       for (const key of Object.keys(result)) {
         if (result[key]) {
           const tab: PlaybookActionTab = {
@@ -114,6 +129,7 @@ export default function PlaybooksRunActionsResults({
               break;
 
             case "json":
+            case "ai":
               tab.displayContentType = "yaml";
               break;
 

@@ -13,10 +13,9 @@ const Template: StoryFn<ComponentProps<typeof PlaybooksRunActionsResults>> = (
 
 export const NoResult = Template.bind({});
 NoResult.args = {
-  playbook: {
-    name: "My Playbook"
-  },
   action: {
+    name: "My Action",
+    status: "completed",
     id: "1",
     playbook_run_id: "1",
     start_time: "2021-10-01T00:00:00Z"
@@ -25,10 +24,9 @@ NoResult.args = {
 
 export const Stdout = Template.bind({});
 Stdout.args = {
-  playbook: {
-    name: "My Playbook"
-  },
   action: {
+    name: "My Action",
+    status: "completed",
     id: "1",
     playbook_run_id: "1",
     start_time: "2021-10-01T00:00:00Z",
@@ -40,10 +38,9 @@ Stdout.args = {
 
 export const Result = Template.bind({});
 Result.args = {
-  playbook: {
-    name: "My Playbook"
-  },
   action: {
+    name: "My Action",
+    status: "completed",
     id: "1",
     start_time: "2021-10-01T00:00:00Z",
     playbook_run_id: "1",
@@ -56,10 +53,9 @@ Result.args = {
 
 export const EmptyResult = Template.bind({});
 EmptyResult.args = {
-  playbook: {
-    name: "My Playbook"
-  },
   action: {
+    name: "My Action",
+    status: "completed",
     id: "1",
     start_time: "2021-10-01T00:00:00Z",
     playbook_run_id: "1",
@@ -69,10 +65,9 @@ EmptyResult.args = {
 
 export const UndefinedResult = Template.bind({});
 UndefinedResult.args = {
-  playbook: {
-    name: "My Playbook"
-  },
   action: {
+    name: "My Action",
+    status: "completed",
     id: "1",
     start_time: "2021-10-01T00:00:00Z",
     playbook_run_id: "1",

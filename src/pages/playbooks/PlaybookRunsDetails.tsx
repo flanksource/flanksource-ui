@@ -1,4 +1,4 @@
-import { getPlaybookRun } from "@flanksource-ui/api/services/playbooks";
+import { getPlaybookRunWithActions } from "@flanksource-ui/api/services/playbooks";
 import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
@@ -32,7 +32,7 @@ export default function PlaybookRunsDetailsPage() {
     refetch
   } = useQuery({
     queryKey: ["playbookRuns", id],
-    queryFn: () => getPlaybookRun(id!),
+    queryFn: () => getPlaybookRunWithActions(id!),
     enabled: !!id,
     staleTime: 0,
     cacheTime: 0,

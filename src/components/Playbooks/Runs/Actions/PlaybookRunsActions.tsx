@@ -1,4 +1,5 @@
 import {
+  CategorizedPlaybookRunAction,
   PlaybookApproval,
   PlaybookRunAction,
   PlaybookRunWithActions,
@@ -41,8 +42,8 @@ export default function PlaybookRunsActions({
   const [selectedAction, setSelectedAction] = useState<
     | {
         type: "Action";
-        data?: PlaybookRunAction;
-        playbook: Pick<PlaybookSpec, "name">;
+        data?: CategorizedPlaybookRunAction;
+        playbook: PlaybookSpec;
       }
     | {
         type: "Approval";
@@ -75,7 +76,7 @@ export default function PlaybookRunsActions({
         status: "failed",
         playbook_run_id: data.id,
         error: data.error
-      } satisfies PlaybookRunAction;
+      } satisfies CategorizedPlaybookRunAction;
     }
   }, [data.end_time, data.error, data.id, data.start_time, data.status]);
 
@@ -322,10 +323,7 @@ export default function PlaybookRunsActions({
             {selectedAction?.type === "Action" &&
               selectedAction.data?.id === "initialization" && (
                 <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
-                  <PlaybooksRunActionsResults
-                    action={selectedAction.data}
-                    playbook={selectedAction.playbook}
-                  />
+                  <PlaybooksRunActionsResults action={selectedAction.data} />
                 </div>
               )}
 
