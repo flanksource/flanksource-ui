@@ -46,19 +46,23 @@ export type PlaybookRunAction = {
   start_time: string;
   scheduled_time?: string;
   end_time?: string;
-  result?: {
-    stdout?: string;
-    logs?: string;
-    markdown?: string;
-    recommendedPlaybooks?: string;
-    slack?: string;
-    stderr?: string;
-    json?: string;
-    [key: string]: unknown;
-  };
+  result?: any;
   error?: string;
   artifacts?: PlaybookArtifact[];
 };
+
+export interface CategorizedPlaybookRunAction extends PlaybookRunAction {
+  type?:
+    | "ai"
+    | "notification"
+    | "exec"
+    | "gitops"
+    | "github"
+    | "azureDevopsPipeline"
+    | "http"
+    | "sql"
+    | "pod";
+}
 
 export type PlaybookApproval = {
   id: string;
@@ -69,7 +73,7 @@ export type PlaybookApproval = {
 };
 
 export interface PlaybookRunWithActions extends PlaybookRun {
-  actions: PlaybookRunAction[];
+  actions: CategorizedPlaybookRunAction[];
   playbook_approvals?: PlaybookApproval[];
 }
 
@@ -79,6 +83,7 @@ export interface PlaybookRun extends CreatedAt, Avatar, Agent {
   status: PlaybookRunStatus;
   error?: string;
   start_time: string;
+  spec: Playbook;
   scheduled_time?: string;
   end_time?: string;
   check_id?: string;
@@ -108,6 +113,32 @@ export type PlaybookResourceSelector = {
   search?: string;
 };
 
+export interface PlaybookAction {
+  name: string;
+
+  // Action type specific fields
+  ai?: any;
+  exec?: any;
+  gitops?: any;
+  github?: any;
+  azureDevopsPipeline?: any;
+  http?: any;
+  sql?: any;
+  pod?: any;
+  notification?: any;
+}
+
+export type Playbook = {
+  actions: PlaybookAction[];
+  configs?: PlaybookResourceSelector[];
+  components?: PlaybookResourceSelector[];
+  checks?: PlaybookResourceSelector[];
+  icons?: string;
+  parameters?: PlaybookParam[];
+  description?: string;
+  [key: string]: any;
+};
+
 export type PlaybookSpec = {
   id: string;
   name: string;
@@ -116,16 +147,7 @@ export type PlaybookSpec = {
   icon?: string;
   created_by?: User;
   category?: string;
-  spec?: {
-    actions?: Record<string, any>[];
-    configs?: PlaybookResourceSelector[];
-    components?: PlaybookResourceSelector[];
-    checks?: PlaybookResourceSelector[];
-    icons?: string;
-    parameters?: PlaybookParam[];
-    description?: string;
-    [key: string]: any;
-  };
+  spec?: Playbook;
   source: "KubernetesCRD" | "ConfigFile" | "UI";
   created_at: string;
   updated_at: string;

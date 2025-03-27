@@ -10,10 +10,12 @@ import {
   PlaybookParam,
   PlaybookRun,
   PlaybookRunAction,
+  CategorizedPlaybookRunAction,
   PlaybookRunWithActions,
   PlaybookSpec,
   RunnablePlaybook,
-  UpdatePlaybookSpec
+  UpdatePlaybookSpec,
+  Playbook
 } from "../types/playbooks";
 
 export async function getAllPlaybooksSpecs() {
@@ -91,7 +93,7 @@ export async function getPlaybookToRunForResource(
   return res.data ?? [];
 }
 
-export async function getPlaybookRun(id: string) {
+export async function getPlaybookRunWithActions(id: string) {
   const select = [
     "*",
     `created_by(${AVATAR_INFO})`,
@@ -102,31 +104,61 @@ export async function getPlaybookRun(id: string) {
     `playbook_approvals(*, person_id(${AVATAR_INFO}), team_id(*))`
   ].join(",");
 
-  const res = await IncidentCommander.get<PlaybookRunWithActions[] | null>(
+  const { data } = await IncidentCommander.get<PlaybookRun[] | null>(
     // todo: use playbook names instead
     `/playbook_runs?id=eq.${id}&select=${select}`
   );
+  if (!data || data.length === 0 || data?.[0] === undefined) {
+    return undefined;
+  }
+  const run = data[0];
 
   const resActions = await IncidentCommander.get<PlaybookRunAction[] | null>(
     `/rpc/get_playbook_run_actions?run_id=${id}`
   );
 
-  const actions = resActions.data || [];
-
-  if (res.data?.[0] === undefined) {
-    return undefined;
-  }
+  const actions: CategorizedPlaybookRunAction[] = resActions.data || [];
   return {
-    ...res.data?.[0],
-    actions
+    ...run,
+    actions: actions
   } satisfies PlaybookRunWithActions;
 }
 
-export async function getPlaybookRunActionById(id: string) {
-  const res = await IncidentCommander.get<PlaybookRunAction[] | null>(
-    `/playbook_run_actions?id=eq.${id}&select=*,artifacts:artifacts(*)::jsonb`
+export async function getPlaybookRunActionById(id: string, playbook: Playbook) {
+  const { data: action } = await IncidentCommander.get<
+    PlaybookRunAction[] | null
+  >(
+    `/playbook_run_actions?id=eq.${id}&select=*,artifacts:artifacts(*)::jsonb,playbook_run:playbook_runs(spec)`
   );
-  return res.data?.[0] ?? undefined;
+  if (!action || action.length === 0) {
+    return undefined;
+  }
+
+  const actionSpec = playbook.actions.find((a) => a.name === action[0].name);
+  const actionType = actionSpec?.ai
+    ? "ai"
+    : actionSpec?.notification
+      ? "notification"
+      : actionSpec?.exec
+        ? "exec"
+        : actionSpec?.gitops
+          ? "gitops"
+          : actionSpec?.github
+            ? "github"
+            : actionSpec?.azureDevopsPipeline
+              ? "azureDevopsPipeline"
+              : actionSpec?.http
+                ? "http"
+                : actionSpec?.sql
+                  ? "sql"
+                  : actionSpec?.pod
+                    ? "pod"
+                    : "exec";
+
+  return {
+    ...action[0],
+    type: actionType
+  } satisfies CategorizedPlaybookRunAction;
 }
 
 type getPlaybookParamsParams = {

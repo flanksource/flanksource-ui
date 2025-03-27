@@ -44,12 +44,18 @@ describe("PlaybookRunsActions", () => {
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",
+      spec: {
+        actions: []
+      },
       playbooks: {
         name: "Test Playbook",
         id: "1",
+        title: "Test Playbook",
         source: "UI",
         created_at: "2022-01-01T00:00:00Z",
-        spec: {},
+        spec: {
+          actions: []
+        },
         updated_at: "2022-01-01T00:00:00Z"
       },
       status: "completed",
@@ -79,12 +85,18 @@ describe("PlaybookRunsActions", () => {
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",
+      spec: {
+        actions: []
+      },
       playbooks: {
         name: "Test Playbook",
         id: "1",
+        title: "Test Playbook",
         source: "UI",
         created_at: "2022-01-01T00:00:00Z",
-        spec: {},
+        spec: {
+          actions: []
+        },
         updated_at: "2022-01-01T00:00:00Z"
       },
       status: "completed",
@@ -139,12 +151,18 @@ describe("PlaybookRunsActions", () => {
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",
+      spec: {
+        actions: []
+      },
       playbooks: {
         name: "Test Playbook",
         id: "1",
+        title: "Test Playbook",
         source: "UI",
         created_at: "2022-01-01T00:00:00Z",
-        spec: {},
+        spec: {
+          actions: []
+        },
         updated_at: "2022-01-01T00:00:00Z"
       },
       error: "some error",
