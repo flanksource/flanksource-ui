@@ -11,9 +11,15 @@ import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+
+type ConfigLinkItem = Pick<
+  ConfigItem,
+  "type" | "name" | "id" | "health" | "status" | "deleted_at"
+>;
 
 type ConfigLinkProps = ConfigIconProps & {
-  config?: Pick<ConfigItem, "type" | "name" | "id" | "deleted_at"> | undefined;
+  config?: ConfigLinkItem;
   configId?: string;
   className?: string;
   configTypeSecondary?: string;
@@ -55,6 +61,7 @@ export default function ConfigLink({
         }}
         className={clsx("flex flex-row gap-2", className)}
       >
+        <ConfigHealth health={data.health} />
         <ConfigsTypeIcon
           config={data}
           showLabel={showLabel}
@@ -62,7 +69,8 @@ export default function ConfigLink({
           showSecondaryIcon={showSecondaryIcon}
         >
           <span className="flex-1 overflow-hidden text-ellipsis">
-            {data.name}
+            {data.name}{" "}
+            {data.status && <Badge color="gray" size="xs" text={data.status} />}
             {data.deleted_at && (
               <FaTrash
                 data-tooltip-id={`deleted-${data.id}`}
@@ -83,9 +91,11 @@ export default function ConfigLink({
 
   return (
     <div className={clsx("flex flex-row gap-1", className)}>
+      <ConfigHealth health={data.health!} />
       <ConfigIcon config={data} />
       <span className="overflow-hidden text-ellipsis text-sm">
-        {data.name}
+        {data.name}{" "}
+        {data.status && <Badge color="gray" size="xs" text={data.status} />}
         {data.deleted_at && (
           <FaTrash
             data-tooltip-id={`deleted-label-${data.id}`}
@@ -100,5 +110,26 @@ export default function ConfigLink({
         />
       )}
     </div>
+  );
+}
+
+type ConfigHealthProps = {
+  health?: "healthy" | "unhealthy" | "warning" | "unknown";
+};
+
+export function ConfigHealth({ health }: ConfigHealthProps) {
+  let color = "bg-gray-400";
+  if (health === "healthy") {
+    color = "bg-green-400";
+  } else if (health === "unhealthy") {
+    color = "bg-red-400";
+  } else if (health === "warning") {
+    color = "bg-yellow-400";
+  }
+
+  return (
+    <span
+      className={`inline-block h-3 w-3 flex-shrink-0 rounded-full shadow-md ${color} my-auto self-center`}
+    />
   );
 }
