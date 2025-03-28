@@ -62,7 +62,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   allTags?: Record<string, any>;
   config?: Record<string, any>;
   description?: string | null;
-  health?: "healthy" | "unhealthy" | "warn" | "unknown";
+  health?: "healthy" | "unhealthy" | "warning" | "unknown";
   related_ids?: string[];
   agent?: {
     id: string;
