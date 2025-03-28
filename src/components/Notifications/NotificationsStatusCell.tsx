@@ -1,5 +1,6 @@
 import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
+import { BiMerge } from "react-icons/bi";
 import { FaBellSlash, FaDotCircle } from "react-icons/fa";
 
 export const notificationSendHistoryStatus = {
@@ -62,6 +63,12 @@ export const notificationSendHistoryStatus = {
     Icon: <FaBellSlash className="fill-gray-600" />,
     value: "skipped",
     id: "skipped"
+  },
+  inhibited: {
+    label: "Inhibited",
+    Icon: <BiMerge className="fill-gray-600" />,
+    value: "inhibited",
+    id: "inhibited"
   }
 };
 
