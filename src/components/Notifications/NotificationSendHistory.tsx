@@ -9,8 +9,13 @@ import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
 import { Tooltip } from "react-tooltip";
 import { FaArrowDown } from "react-icons/fa";
+import { useMemo } from "react";
 
-const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiResponse>[] =
+type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
+  subRows?: NotificationSendHistoryApiResponse[];
+};
+
+const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithSubRows>[] =
   [
     {
       header: "Age",
@@ -54,23 +59,9 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryApiRe
       header: "Status",
       size: 100,
       Cell: ({ row }) => {
-        const parentID = row.original.parent_id;
         return (
           <div className="flex items-center gap-2">
             <NotificationStatusCell row={row} />
-            {parentID && (
-              <>
-                <FaArrowDown
-                  className="h-3 w-3 text-gray-400"
-                  data-tooltip-id="retry-tooltip"
-                />
-                <Tooltip
-                  id="retry-tooltip"
-                  content="Fallback notification"
-                  className="z-[9999]"
-                />
-              </>
-            )}
           </div>
         );
       }
@@ -125,12 +116,29 @@ export default function NotificationSendHistoryList({
   const id = searchParams.get("id") ?? undefined;
   const isOpen = searchParams.has("id");
 
+  const heirarchicalData = useMemo(() => {
+    const child = data.filter((row) => row.parent_id);
+
+    return data
+      .filter((row) => !row.parent_id)
+      .map((row) => {
+        const children = child.filter((child) => child.parent_id === row.id);
+        const rowWithSubRows: NotificationSendHistoryWithSubRows = {
+          ...row,
+          subRows: children
+        };
+        return rowWithSubRows;
+      });
+  }, [data]);
+
   return (
     <>
       <MRTDataTable
-        data={data}
+        data={heirarchicalData}
         columns={notificationSendHistoryColumns}
         isLoading={isLoading}
+        enableExpanding={true}
+        enableGrouping={true}
         onRowClick={(row) => {
           searchParams.set("id", row.id);
           setSearchParam(searchParams);
