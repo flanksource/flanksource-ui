@@ -62,6 +62,12 @@ export const notificationSendHistoryStatus = {
     Icon: <FaBellSlash className="fill-gray-600" />,
     value: "skipped",
     id: "skipped"
+  },
+  inhibited: {
+    label: "Inhibited",
+    Icon: <FaDotCircle className="fill-gray-600" />,
+    value: "inhibited",
+    id: "inhibited"
   }
 };
 
