@@ -12,6 +12,7 @@ export default function NotificationsPage() {
   const [searchParams] = useSearchParams();
   const resourceType = searchParams.get("resource_type") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
+  const search = searchParams.get("search") ?? undefined;
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: [
@@ -19,14 +20,16 @@ export default function NotificationsPage() {
       pageIndex,
       pageSize,
       status,
-      resourceType
+      resourceType,
+      search
     ],
     queryFn: () =>
       getNotificationSendHistory({
         pageIndex,
         pageSize,
         status,
-        resourceType
+        resourceType,
+        search
       }),
     keepPreviousData: true,
     staleTime: 0,

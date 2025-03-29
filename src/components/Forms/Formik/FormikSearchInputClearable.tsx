@@ -11,7 +11,7 @@ type FormikSearchInputClearableProps = {
 export default function FormikSearchInputClearable({
   name,
   required = false,
-  className = "flex flex-col w-80",
+  className = "w-80",
   type = "text",
   ...props
 }: FormikSearchInputClearableProps) {
@@ -38,6 +38,7 @@ export default function FormikSearchInputClearable({
   return (
     <TextInputClearable
       {...props}
+      className={className}
       defaultValue={field.value}
       onChange={onChange}
     />

@@ -109,10 +109,12 @@ export const getNotificationSendHistory = async ({
   pageIndex,
   pageSize,
   resourceType,
-  status
+  status,
+  search
 }: NotificationQueryFilterOptions & {
   status?: string;
   resourceType?: string;
+  search?: string;
 }) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
 
@@ -129,10 +131,11 @@ export const getNotificationSendHistory = async ({
     // `person:person_id(${AVATAR_INFO})`
   ].join(",");
 
+  const searchFilter = search ? `&resource->>name.filter=${search}` : "";
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
-      // currently, this isn't deployed to production
-      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}`,
+      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}`,
       {
         headers: {
           Prefer: "count=exact"
