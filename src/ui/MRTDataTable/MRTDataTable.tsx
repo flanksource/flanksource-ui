@@ -16,6 +16,7 @@ import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
 
 type MRTDataTableProps<T extends Record<string, any> = {}> = {
   data: T[];
+  enableExpanding?: boolean;
   columns: MRT_ColumnDef<T>[];
   onRowClick?: (row: T) => void;
   isLoading?: boolean;
@@ -55,6 +56,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   renderDetailPanel,
   groupBy = [],
   expandAllRows = false,
+  enableExpanding = false,
   onGroupingChange = () => {},
   disableHiding = false
 }: MRTDataTableProps<T>) {
@@ -67,6 +69,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableGlobalFilter: false,
     enableFilters: false,
     enableHiding: !disableHiding,
+    enableExpanding: enableExpanding,
     enableSelectAll: false,
     enableFullScreenToggle: false,
     layoutMode: "grid",
