@@ -3,6 +3,7 @@ import {
   BsCheckCircle,
   BsCircle,
   BsClock,
+  BsHourglassSplit,
   BsSlashCircle,
   BsStopCircle,
   BsXCircle
@@ -42,6 +43,7 @@ export function PlaybookStatusIcon({
       return (
         <TbCircleDashedCheck className="inline h-5 w-auto object-center pr-1 text-orange-500" />
       );
+
     case "waiting":
       return (
         <BsCircle className="inline h-5 w-auto object-center pr-1 text-orange-500" />
@@ -57,6 +59,7 @@ export function PlaybookStatusIcon({
           className="inline h-[20px] w-auto object-center py-[1px] pr-1"
         />
       );
+
     case "scheduled":
       return (
         <BsClock className="inline h-5 w-auto object-center pr-1 text-gray-500" />
@@ -71,6 +74,17 @@ export function PlaybookStatusIcon({
       return (
         <BsSlashCircle className="inline h-5 w-auto object-center pr-1 text-gray-500" />
       );
+
+    case "timed_out":
+      return (
+        <BsClock className="inline h-5 w-auto object-center pr-1 text-red-500" />
+      );
+
+    case "waiting_children":
+      return (
+        <BsHourglassSplit className="inline h-5 w-auto object-center pr-1 text-orange-500" />
+      );
   }
+
   return null;
 }

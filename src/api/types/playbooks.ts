@@ -13,7 +13,8 @@ export type PlaybookRunStatus =
   | "failed"
   | "pending"
   | "waiting"
-  | "pending_approval";
+  | "pending_approval"
+  | "timed_out";
 
 export type PlaybookRunActionStatus =
   | "completed"
@@ -21,6 +22,7 @@ export type PlaybookRunActionStatus =
   | "running"
   | "scheduled"
   | "skipped"
+  | "waiting_children"
   | "sleeping";
 
 export type PlaybookArtifact = {

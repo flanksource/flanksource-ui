@@ -32,6 +32,11 @@ const options: StateOption[] = [
     icon: <PlaybookStatusIcon status="pending_approval" animated={false} />,
     label: "Pending Approval",
     value: "pending_approval"
+  },
+  {
+    icon: <PlaybookStatusIcon status="timed_out" animated={false} />,
+    label: "Timed Out",
+    value: "timed_out"
   }
 ].sort((a, b) => a.label.localeCompare(b.label));
 
