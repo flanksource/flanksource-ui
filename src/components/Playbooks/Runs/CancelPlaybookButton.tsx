@@ -20,7 +20,7 @@ export function CancelPlaybookButton({
 }: CancelPlaybookButtonProps) {
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const terminalStatuses = ["cancelled", "completed", "failed"];
+  const terminalStatuses = ["cancelled", "completed", "failed", "timed_out"];
   if (terminalStatuses.includes(status)) {
     return null;
   }
