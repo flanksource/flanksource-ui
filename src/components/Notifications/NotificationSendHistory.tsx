@@ -9,6 +9,11 @@ import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
 import { useMemo } from "react";
 import { TbCornerDownRight } from "react-icons/tb";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
+import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
+import { Component, Topology } from "@flanksource-ui/api/types/topology";
+import { HealthState } from "@flanksource-ui/context/HealthPageContext";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -41,7 +46,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       header: "Resource",
       size: 250,
       Cell: ({ row }) => {
-        const parentId = row.original.parent_id;
         return (
           <div
             onClick={(e) => {
@@ -57,6 +61,43 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     },
     {
       header: "Status",
+      Header: () => <span title="Status of the resource">Status</span>,
+      size: 100,
+      Cell: ({ row }) => {
+        const resource = row.original.resource;
+        const resourceType = row.original.resource_type;
+        return (
+          <>
+            {resourceType === "check" && (
+              <>
+                <HealthIndicator health={(resource as HealthCheck).status} />
+                <span className="ml-2 capitalize">
+                  {(resource as HealthCheck).status}
+                </span>
+              </>
+            )}
+            {resourceType === "config" && (
+              <>
+                <HealthIndicator health={(resource as ConfigItem).health} />
+                <span className="ml-2">
+                  {(resource as ConfigItem).status || "Unknown"}
+                </span>
+              </>
+            )}
+            {resourceType === "component" && (
+              <>
+                <HealthIndicator health={(resource as Topology).health} />
+                <span className="ml-2">
+                  {(resource as Topology).status || "Unknown"}
+                </span>
+              </>
+            )}
+          </>
+        );
+      }
+    },
+    {
+      header: "Notification",
       size: 100,
       Cell: ({ row }) => {
         return (

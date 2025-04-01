@@ -42,7 +42,7 @@ export interface Topology extends Component, CostsData, Agent {
   labels?: Record<string, string>;
   path?: string;
   text?: string;
-  health?: string;
+  health?: "healthy" | "unhealthy" | "warning" | "unknown";
   status?: string;
   status_reason?: string;
   hidden?: boolean;

@@ -26,6 +26,7 @@ export default function NotificationResourceDisplay({
         <CheckLink
           className="flex w-full flex-row items-center justify-between space-x-2 rounded-md hover:bg-gray-100"
           check={resource as HealthCheck}
+          showHealthIndicator={false}
         />
       )}
       {resourceType === "config" && (
