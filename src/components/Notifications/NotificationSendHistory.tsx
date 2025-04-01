@@ -7,9 +7,8 @@ import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
-import { Tooltip } from "react-tooltip";
-import { FaArrowDown } from "react-icons/fa";
 import { useMemo } from "react";
+import { TbCornerDownRight } from "react-icons/tb";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -20,7 +19,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     {
       header: "Age",
       accessorKey: "created_at",
-      size: 40,
+      size: 50,
       Cell: ({ row }) => {
         const dateString = row.original.created_at;
         const count = row.original.count;
@@ -42,6 +41,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       header: "Resource",
       size: 250,
       Cell: ({ row }) => {
+        const parentId = row.original.parent_id;
         return (
           <div
             onClick={(e) => {
@@ -139,6 +139,38 @@ export default function NotificationSendHistoryList({
         isLoading={isLoading}
         enableExpanding={true}
         enableGrouping={true}
+        displayColumnDefOptions={{
+          "mrt-row-expand": {
+            size: 2,
+            Cell: ({ row }) => {
+              const parentId = row.original.parent_id;
+              if (parentId) {
+                return (
+                  <TbCornerDownRight
+                    className="-ml-4 flex-shrink-0 text-gray-500"
+                    size={16}
+                  />
+                );
+              }
+
+              if (row.original.subRows?.length) {
+                return (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      row.getToggleExpandedHandler()();
+                    }}
+                    className={`mrt-table-expand-button ${row.getIsExpanded() ? "rotate-0" : "-rotate-90"} transition-transform`}
+                  >
+                    ▼
+                  </button>
+                );
+              }
+
+              return <span>{parentId}</span>;
+            }
+          }
+        }}
         onRowClick={(row) => {
           searchParams.set("id", row.id);
           setSearchParam(searchParams);

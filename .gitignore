@@ -9,7 +9,7 @@ node_modules
 dist/
 # testing
 /coverage
-
+.cursor/
 # production
 /build
 

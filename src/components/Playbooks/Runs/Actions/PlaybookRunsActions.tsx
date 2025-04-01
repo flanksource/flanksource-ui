@@ -1,7 +1,6 @@
 import {
   CategorizedPlaybookRunAction,
   PlaybookApproval,
-  PlaybookRunAction,
   PlaybookRunWithActions,
   PlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";

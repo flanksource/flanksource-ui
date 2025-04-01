@@ -39,6 +39,12 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   enableGrouping?: boolean;
   onGroupingChange?: OnChangeFn<GroupingState>;
   disableHiding?: boolean;
+  mantineTableBodyRowProps?: {
+    style?: Record<string, any>;
+  };
+  displayColumnDefOptions?: {
+    "mrt-row-expand"?: Partial<MRT_ColumnDef<T>>;
+  };
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -58,7 +64,9 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   expandAllRows = false,
   enableExpanding = false,
   onGroupingChange = () => {},
-  disableHiding = false
+  disableHiding = false,
+  mantineTableBodyRowProps,
+  displayColumnDefOptions
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
   const [sortState, setSortState] = useReactTableSortState();
@@ -96,9 +104,17 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableGrouping,
     // Hide the group by toolbar alert banner
     positionToolbarAlertBanner: "none",
+    displayColumnDefOptions: {
+      "mrt-row-expand": {
+        size: 100,
+        ...displayColumnDefOptions?.["mrt-row-expand"]
+      },
+      ...displayColumnDefOptions
+    },
     mantineTableBodyRowProps: ({ row }: { row: MRT_Row<T> }) => ({
       onClick: () => onRowClick(row.original),
-      sx: { cursor: "pointer", maxHeight: "100%", overflowY: "auto" }
+      sx: { cursor: "pointer", maxHeight: "100%", overflowY: "auto" },
+      ...mantineTableBodyRowProps
     }),
     mantinePaperProps: () => ({
       sx: {
