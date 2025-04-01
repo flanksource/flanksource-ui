@@ -9,12 +9,14 @@ type CheckLinkProps = {
   check?: Pick<HealthCheckSummary, "type" | "name" | "id" | "status">;
   checkId?: string;
   className?: string;
+  showHealthIndicator?: boolean;
 };
 
 export function CheckLink({
   check,
   checkId,
-  className = "flex w-full flex-row items-center justify-between space-x-2 rounded-md p-2 hover:bg-gray-100"
+  className = "flex w-full flex-row items-center justify-between space-x-2 rounded-md p-2 hover:bg-gray-100",
+  showHealthIndicator = true
 }: CheckLinkProps) {
   const { data } = useQuery(["check", checkId, check], () => {
     if (check) {
@@ -39,7 +41,7 @@ export function CheckLink({
       }}
       className={className}
     >
-      <HealthCheckStatus check={data} />
+      {showHealthIndicator && <HealthCheckStatus check={data} />}
       <Icon name={data.type} className="h-5 w-5" />
       <span className="flex-1 overflow-hidden text-ellipsis">{data.name}</span>
     </Link>

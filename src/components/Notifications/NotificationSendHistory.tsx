@@ -11,6 +11,9 @@ import { useMemo } from "react";
 import { TbCornerDownRight } from "react-icons/tb";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
+import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
+import { Component, Topology } from "@flanksource-ui/api/types/topology";
+import { HealthState } from "@flanksource-ui/context/HealthPageContext";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -43,7 +46,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       header: "Resource",
       size: 250,
       Cell: ({ row }) => {
-        const parentId = row.original.parent_id;
         return (
           <div
             onClick={(e) => {
@@ -67,13 +69,28 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
         return (
           <>
             {resourceType === "check" && (
-              <span>{(resource as HealthCheck).status}</span>
+              <>
+                <HealthIndicator health={(resource as HealthCheck).status} />
+                <span className="ml-2 capitalize">
+                  {(resource as HealthCheck).status}
+                </span>
+              </>
             )}
             {resourceType === "config" && (
-              <span>{(resource as ConfigItem).status}</span>
+              <>
+                <HealthIndicator health={(resource as ConfigItem).health} />
+                <span className="ml-2">
+                  {(resource as ConfigItem).status || "Unknown"}
+                </span>
+              </>
             )}
             {resourceType === "component" && (
-              <span>(resource as Topology).status</span>
+              <>
+                <HealthIndicator health={(resource as Topology).health} />
+                <span className="ml-2">
+                  {(resource as Topology).status || "Unknown"}
+                </span>
+              </>
             )}
           </>
         );

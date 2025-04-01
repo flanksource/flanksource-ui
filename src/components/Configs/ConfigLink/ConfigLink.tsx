@@ -11,7 +11,6 @@ import { HTMLAttributeAnchorTarget } from "react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 
 type ConfigLinkItem = Pick<
   ConfigItem,
@@ -61,7 +60,6 @@ export default function ConfigLink({
         }}
         className={clsx("flex flex-row gap-2", className)}
       >
-        <ConfigHealth health={data.health} />
         <ConfigsTypeIcon
           config={data}
           showLabel={showLabel}
@@ -90,7 +88,6 @@ export default function ConfigLink({
 
   return (
     <div className={clsx("flex flex-row gap-1", className)}>
-      <ConfigHealth health={data.health!} />
       <ConfigIcon config={data} />
       <span className="overflow-hidden text-ellipsis text-sm">
         {data.name}{" "}
@@ -115,7 +112,7 @@ type ConfigHealthProps = {
   health?: "healthy" | "unhealthy" | "warning" | "unknown";
 };
 
-export function ConfigHealth({ health }: ConfigHealthProps) {
+export function HealthIndicator({ health }: ConfigHealthProps) {
   let color = "bg-gray-400";
   if (health === "healthy") {
     color = "bg-green-400";
