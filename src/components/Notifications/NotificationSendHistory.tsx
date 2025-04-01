@@ -9,6 +9,8 @@ import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
 import { useMemo } from "react";
 import { TbCornerDownRight } from "react-icons/tb";
+import { HealthCheck } from "@flanksource-ui/api/types/health";
+import { ConfigItem } from "@flanksource-ui/api/types/configs";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -57,6 +59,28 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     },
     {
       header: "Status",
+      Header: () => <span title="Status of the resource">Status</span>,
+      size: 100,
+      Cell: ({ row }) => {
+        const resource = row.original.resource;
+        const resourceType = row.original.resource_type;
+        return (
+          <>
+            {resourceType === "check" && (
+              <span>{(resource as HealthCheck).status}</span>
+            )}
+            {resourceType === "config" && (
+              <span>{(resource as ConfigItem).status}</span>
+            )}
+            {resourceType === "component" && (
+              <span>(resource as Topology).status</span>
+            )}
+          </>
+        );
+      }
+    },
+    {
+      header: "Notification",
       size: 100,
       Cell: ({ row }) => {
         return (

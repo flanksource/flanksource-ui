@@ -70,7 +70,6 @@ export default function ConfigLink({
         >
           <span className="flex-1 overflow-hidden text-ellipsis">
             {data.name}{" "}
-            {data.status && <Badge color="gray" size="xs" text={data.status} />}
             {data.deleted_at && (
               <FaTrash
                 data-tooltip-id={`deleted-${data.id}`}
@@ -95,7 +94,6 @@ export default function ConfigLink({
       <ConfigIcon config={data} />
       <span className="overflow-hidden text-ellipsis text-sm">
         {data.name}{" "}
-        {data.status && <Badge color="gray" size="xs" text={data.status} />}
         {data.deleted_at && (
           <FaTrash
             data-tooltip-id={`deleted-label-${data.id}`}
