@@ -8,13 +8,16 @@ export default function NotificationFilterBar() {
     <FormikFilterForm
       paramsToReset={["pageIndex", "pageSize"]}
       filterFields={["status", "resource_type", "search"]}
+      defaultFieldValues={{
+        status: "skipped:-1,silenced:-1"
+      }}
     >
       <div className="flex flex-row gap-2 py-3">
         <NotificationStatusDropdown />
         <NotificationResourceTypeDropdown />
         <FormikSearchInputClearable
           name="search"
-          placeholder="Search by resources"
+          placeholder="Search by resource name"
         />
       </div>
     </FormikFilterForm>
