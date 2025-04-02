@@ -12,8 +12,8 @@ import { TbCornerDownRight } from "react-icons/tb";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
-import { Component, Topology } from "@flanksource-ui/api/types/topology";
-import { HealthState } from "@flanksource-ui/context/HealthPageContext";
+import { Topology } from "@flanksource-ui/api/types/topology";
+import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -24,7 +24,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     {
       header: "Age",
       accessorKey: "created_at",
-      size: 50,
+      size: 70,
       Cell: ({ row }) => {
         const dateString = row.original.created_at;
         const count = row.original.count;
@@ -98,12 +98,17 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     },
     {
       header: "Notification",
-      size: 100,
+      size: 60,
       Cell: ({ row }) => {
         return (
-          <div className="flex items-center gap-2">
-            <NotificationStatusCell row={row} />
-          </div>
+          <FilterByCellValue
+            paramKey={"status"}
+            filterValue={row.original.status || ""}
+          >
+            <div className="flex items-center gap-2">
+              <NotificationStatusCell row={row} />
+            </div>
+          </FilterByCellValue>
         );
       }
     },
@@ -112,7 +117,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       size: 100,
       Cell: ({ row }) => {
         const sourceEvent = row.original.source_event;
-        return <span>{sourceEvent}</span>;
+        return <span className="font-mono text-gray-800">{sourceEvent}</span>;
       }
     },
     {
