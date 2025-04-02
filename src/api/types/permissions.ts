@@ -11,6 +11,8 @@ export type PermissionTable = {
   action: string;
   deny?: boolean;
   object?: string;
+  subject?: string;
+  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
   object_selector?: Record<string, any>[];
   component_id?: string;
   config_id?: string;
