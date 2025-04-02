@@ -11,6 +11,8 @@ export type FetchPermissionsInput = {
   canaryId?: string;
   playbookId?: string;
   connectionId?: string;
+  subject?: string;
+  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -21,7 +23,9 @@ function composeQueryParamForFetchPermissions({
   checkId,
   canaryId,
   playbookId,
-  connectionId
+  connectionId,
+  subject,
+  subject_type
 }: FetchPermissionsInput) {
   if (componentId) {
     return `component_id=eq.${componentId}`;
@@ -46,6 +50,12 @@ function composeQueryParamForFetchPermissions({
   }
   if (connectionId) {
     return `connection_id=eq.${connectionId}`;
+  }
+  if (subject) {
+    return `subject=eq.${subject}`;
+  }
+  if (subject_type) {
+    return `subject_type=eq.${subject_type}`;
   }
   return "";
 }

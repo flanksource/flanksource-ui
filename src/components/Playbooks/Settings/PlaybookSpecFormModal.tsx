@@ -61,11 +61,13 @@ export default function PlaybookSpecFormModal({
                 <PermissionsView
                   hideResourceColumn
                   permissionRequest={{
-                    playbookId: playbook.id
+                    subject: playbook.id,
+                    subject_type: "playbook"
                   }}
                   showAddPermission
                   newPermissionData={{
-                    playbook_id: playbook.id
+                    subject: playbook.id,
+                    subject_type: "playbook"
                   }}
                 />
               )
