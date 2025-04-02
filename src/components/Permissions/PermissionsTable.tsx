@@ -17,9 +17,10 @@ import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
     header: "Subject",
-    size: 120,
+    size: 100,
     Cell: ({ row }) => {
-      const { team, group, person, subject, notification } = row.original;
+      const { team, group, person, subject, notification, playbook } =
+        row.original;
       const { tags, agents } = row.original;
       const rlsFilter = [];
 
@@ -78,6 +79,25 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
                 {"notification: " +
                   (notification.namespace ? notification.namespace + "/" : "") +
                   notification.name}
+              </Link>
+            </span>
+            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
+          </div>
+        );
+      }
+
+      if (playbook) {
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <span>
+              <Link
+                className="link"
+                to={`/playbooks/runs?playbook=${playbook.id}`}
+              >
+                <span className="inline-flex items-center gap-1">
+                  {"playbook: "}
+                  <PlaybookSpecIcon playbook={playbook} showLabel />
+                </span>
               </Link>
             </span>
             {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
@@ -169,19 +189,19 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
     id: "description",
     header: "Description",
-    size: 150,
+    size: 200,
     accessorFn: (row) => row.description
   },
   {
     id: "updated",
-    size: 50,
+    size: 40,
     header: "Updated",
     accessorFn: (row) => row.updated_at,
     Cell: MRTDateCell
   },
   {
     id: "created",
-    size: 50,
+    size: 40,
     header: "Created",
     accessorFn: (row) => row.created_at,
     Cell: MRTDateCell

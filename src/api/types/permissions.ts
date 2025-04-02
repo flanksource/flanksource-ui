@@ -38,7 +38,7 @@ export type PermissionAPIResponse = PermissionTable & {
     id: string;
     name: string;
   };
-  playbook: Pick<PlaybookSpec, "id" | "name" | "icon" | "title">;
+  playbook: Pick<PlaybookSpec, "id" | "name" | "namespace" | "icon" | "title">;
   team: Pick<Team, "id" | "name" | "icon">;
   connection: Pick<Connection, "id" | "name" | "type">;
   notification: Pick<NotificationRules, "id" | "name" | "namespace">;

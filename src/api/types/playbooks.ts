@@ -144,6 +144,7 @@ export type Playbook = {
 export type PlaybookSpec = {
   id: string;
   name: string;
+  namespace?: string;
   title: string;
   description?: string;
   icon?: string;
