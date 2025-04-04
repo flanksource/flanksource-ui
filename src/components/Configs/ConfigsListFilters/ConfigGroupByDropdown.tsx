@@ -3,6 +3,7 @@ import {
   GroupByOptions,
   MultiSelectDropdown
 } from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
+import { NonWindowedMultiSelectDropdown } from "@flanksource-ui/ui/Dropdowns/MultiSelectNonWindowDropdown";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { BiLabel, BiStats } from "react-icons/bi";
@@ -151,7 +152,7 @@ export default function ConfigGroupByDropdown({
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <MultiSelectDropdown
+      <NonWindowedMultiSelectDropdown
         options={options}
         isLoading={isLoading}
         value={value}
