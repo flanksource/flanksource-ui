@@ -9,9 +9,12 @@ node_modules
 dist/
 # testing
 /coverage
-.cursor/
 # production
 /build
+
+# AI
+.cursor/
+.aider*
 
 # misc
 .DS_Store
