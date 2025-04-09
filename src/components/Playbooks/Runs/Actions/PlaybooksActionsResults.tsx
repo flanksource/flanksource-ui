@@ -88,6 +88,16 @@ export default function PlaybooksRunActionsResults({
           delete result["title"];
           break;
 
+        case "http":
+          result["response"] = {
+            code: result["code"],
+            headers: result["headers"]
+          };
+          delete result["code"];
+          delete result["headers"];
+
+          break;
+
         case "exec":
           delete result["path"];
           break;
