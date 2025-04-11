@@ -68,10 +68,22 @@ export type NotificationSendHistory = {
   id: string;
   notification_id: string;
   body?: string | undefined;
-  status?: string | null;
+  status?:
+    | "attempting_fallback"
+    | "error"
+    | "evaluating-waitfor"
+    | "inhibited"
+    | "pending_playbook_completion"
+    | "pending_playbook_run"
+    | "pending"
+    | "repeat-interval"
+    | "sent"
+    | "silenced"
+    | "skipped";
   count: number;
   first_observed: string;
   source_event: string;
+  silenced_by?: string;
   resource_id: string;
   playbook_run_id?: string;
   person_id?: string | undefined;

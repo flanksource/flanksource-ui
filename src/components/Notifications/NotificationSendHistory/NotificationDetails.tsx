@@ -11,6 +11,8 @@ import NotificationResourceDisplay from "../NotificationResourceDisplay";
 import { notificationSendHistoryStatus } from "../NotificationsStatusCell";
 import blockKitToMarkdown, { SlackMessage } from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
+import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
+import { useQuery } from "@tanstack/react-query";
 
 type NotificationDetailsProps = {
   notification: NotificationSendHistoryApiResponse;
@@ -48,6 +50,12 @@ export default function NotificationDetails({
     slackBody = blockKitToMarkdown(parsed[0]);
   }
 
+  const { data: silencer } = useQuery({
+    queryKey: ["notification_silence", notification.silenced_by],
+    enabled: !!notification.silenced_by,
+    queryFn: () => getNotificationSilencesByID(notification.silenced_by!)
+  });
+
   return (
     <div className="flex flex-col gap-3 overflow-auto">
       <div className="grid grid-cols-4 gap-3">
@@ -57,6 +65,7 @@ export default function NotificationDetails({
             value={<NotificationResourceDisplay notification={notification} />}
           />
         </div>
+
         <VerticalDescription
           label="Age"
           value={
@@ -71,6 +80,7 @@ export default function NotificationDetails({
             </span>
           }
         />
+
         <VerticalDescription
           label="Recipient"
           value={
@@ -81,6 +91,7 @@ export default function NotificationDetails({
             )
           }
         />
+
         {statusConfig && (
           <VerticalDescription
             label="Status"
@@ -92,6 +103,7 @@ export default function NotificationDetails({
             }
           />
         )}
+
         {notification.source_event && (
           <VerticalDescription
             label="Event"
@@ -103,19 +115,31 @@ export default function NotificationDetails({
           <VerticalDescription label="Duration" value={readableTime} />
         )}
 
-        <div className="col-span-2">
+        <VerticalDescription
+          label="Notification Rule"
+          value={
+            <Link
+              className="text-blue-500 hover:cursor-pointer hover:underline"
+              to={`/notifications/rules?id=${notification.notification_id}`}
+            >
+              Notification Rule
+            </Link>
+          }
+        />
+
+        {silencer && (
           <VerticalDescription
-            label="Notification Rule"
+            label="Silenced By"
             value={
               <Link
                 className="text-blue-500 hover:cursor-pointer hover:underline"
-                to={`/notifications/rules?id=${notification.notification_id}`}
+                to={`/notifications/silences?id=${notification.silenced_by}`}
               >
-                Notification Rule
+                {silencer?.name}
               </Link>
             }
           />
-        </div>
+        )}
       </div>
 
       {notification.body && (
