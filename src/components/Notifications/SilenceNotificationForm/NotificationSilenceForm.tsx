@@ -100,9 +100,6 @@ export default function NotificationSilenceForm({
       errors.form =
         "You must specify at least one of the following: a resource, a filter, or selectors";
     }
-    if (v.until == null) {
-      errors.until = "Must specify a silence duration";
-    }
     return errors;
   };
 
