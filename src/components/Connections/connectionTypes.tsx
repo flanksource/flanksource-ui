@@ -818,10 +818,6 @@ export const connectionTypes: ConnectionType[] = [
               key: "kubeconfig"
             },
             {
-              label: "Connection URL",
-              key: "connection"
-            },
-            {
               label: "EKS",
               key: "eks"
             },
@@ -845,14 +841,6 @@ export const connectionTypes: ConnectionType[] = [
         variant: variants.large,
         required: false,
         hint: "Source for kubeconfig"
-      },
-      // Connection URL option
-      {
-        label: "Connection URL",
-        key: "connection",
-        type: ConnectionsFieldTypes.input,
-        required: false,
-        hint: "The connection URL to use"
       },
       // EKS Connection options
       {
@@ -972,7 +960,6 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         connectionMethod: data?.properties?.connectionMethod || "kubeconfig",
         kubeconfig: data?.properties?.kubeconfig,
-        connection: data?.properties?.connection,
         
         // EKS fields
         eksCluster: data?.properties?.eksCluster,
@@ -1006,10 +993,6 @@ export const connectionTypes: ConnectionType[] = [
       
       if (connectionMethod === "kubeconfig" && data.kubeconfig) {
         properties.kubeconfig = data.kubeconfig;
-      }
-      
-      if (connectionMethod === "connection" && data.connection) {
-        properties.connection = data.connection;
       }
       
       if (connectionMethod === "eks") {
