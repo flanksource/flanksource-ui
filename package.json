@@ -218,7 +218,9 @@
   "resolutions": {
     "@svgr/webpack": "6.2.1",
     "react-refresh": "0.11.0",
-    "postcss": "^8"
+    "postcss": "^8",
+    "@clerk/shared": "^1.0.0",
+    "@clerk/types": "^3.0.0"
   },
   "msw": {
     "workerDirectory": "public"
