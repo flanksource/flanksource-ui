@@ -842,7 +842,7 @@ export const connectionTypes: ConnectionType[] = [
         variant: variants.large,
         required: false,
         hint: "Source for kubeconfig",
-        condition: (data) => data.connectionMethod === "kubeconfig"
+        condition: (data: Record<string, any>) => data.connectionMethod === "kubeconfig"
       },
       // EKS Connection options
       {
@@ -851,7 +851,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the EKS cluster",
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Connection URL",
@@ -859,21 +859,21 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "The connection URL to use for EKS, mutually exclusive with access key and secret key",
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Access Key",
         key: "eksAccessKey",
         type: ConnectionsFieldTypes.EnvVarSource,
         required: false,
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Secret Key",
         key: "eksSecretKey",
         type: ConnectionsFieldTypes.EnvVarSource,
         required: false,
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Region",
@@ -881,7 +881,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "The AWS region",
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Endpoint",
@@ -889,14 +889,14 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Custom AWS Endpoint to use",
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
         label: "Skip TLS Verify",
         key: "eksSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
         hint: "Skip TLS verify when connecting to AWS",
-        condition: (data) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       // GKE Connection options
       {
@@ -905,7 +905,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the GKE cluster",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Project",
@@ -913,7 +913,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the GCP project",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Zone",
@@ -921,7 +921,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the GCP zone",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Connection URL",
@@ -929,7 +929,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "The connection URL to use for GKE, mutually exclusive with credentials",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Credentials",
@@ -938,7 +938,7 @@ export const connectionTypes: ConnectionType[] = [
         variant: variants.large,
         required: false,
         hint: "The credentials to use for authentication",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Endpoint",
@@ -946,14 +946,14 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Custom GCP Endpoint to use",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       {
         label: "Skip TLS Verify",
         key: "gkeSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
         hint: "Skip TLS verification when connecting to GCP",
-        condition: (data) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
       // CNRM Connection options
       {
@@ -962,7 +962,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the cluster resource",
-        condition: (data) => data.connectionMethod === "cnrm"
+        condition: (data: Record<string, any>) => data.connectionMethod === "cnrm"
       },
       {
         label: "Cluster Resource Namespace",
@@ -970,7 +970,7 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Namespace of the cluster resource",
-        condition: (data) => data.connectionMethod === "cnrm"
+        condition: (data: Record<string, any>) => data.connectionMethod === "cnrm"
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
