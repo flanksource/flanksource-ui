@@ -662,7 +662,7 @@ export const connectionTypes: ConnectionType[] = [
     convertToFormSpecificValue: (data: Record<string, any>) => {
       return {
         ...data,
-        port: data.properties?.port ?? 4
+        port: data?.properties?.port ?? 4
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -956,41 +956,18 @@ export const connectionTypes: ConnectionType[] = [
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
-      const connectionData: Connection = {
+      // Create a base Connection object with standard fields
+      const connection: Connection = {
         ...data,
         name: data.name,
+        namespace: data.namespace,
         type: ConnectionValueType.Kubernetes
       };
       
-      // Custom properties
-      if (data?.properties) {
-        connectionData.connectionMethod = data.properties.connectionMethod || "kubeconfig";
-        connectionData.kubeconfig = data.properties.kubeconfig;
-        
-        // EKS fields
-        connectionData.eksCluster = data.properties.eksCluster;
-        connectionData.eksConnection = data.properties.eksConnection;
-        connectionData.eksAccessKey = data.properties.eksAccessKey;
-        connectionData.eksSecretKey = data.properties.eksSecretKey;
-        connectionData.eksRegion = data.properties.eksRegion;
-        connectionData.eksEndpoint = data.properties.eksEndpoint;
-        connectionData.eksSkipTLSVerify = data.properties.eksSkipTLSVerify === true;
-        
-        // GKE fields
-        connectionData.gkeCluster = data.properties.gkeCluster;
-        connectionData.gkeProject = data.properties.gkeProject;
-        connectionData.gkeZone = data.properties.gkeZone;
-        connectionData.gkeConnection = data.properties.gkeConnection;
-        connectionData.gkeCredentials = data.properties.gkeCredentials;
-        connectionData.gkeEndpoint = data.properties.gkeEndpoint;
-        connectionData.gkeSkipTLSVerify = data.properties.gkeSkipTLSVerify === true;
-        
-        // CNRM fields
-        connectionData.cnrmClusterResource = data.properties.cnrmClusterResource;
-        connectionData.cnrmClusterResourceNamespace = data.properties.cnrmClusterResourceNamespace;
-      }
-
-      return connectionData;
+      // Properties are already in data.properties, so no need to restructure them
+      // Just pass the data through as is
+      
+      return connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       const connectionMethod = data.connectionMethod || "kubeconfig";
