@@ -44,6 +44,7 @@ export type ConnectionFormFields = {
     key: string;
     fields: Omit<ConnectionFormFields, "options">[];
   }[];
+  condition?: (data: Record<string, any>) => boolean;
 };
 
 export const enum ConnectionValueType {
@@ -840,119 +841,136 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
         required: false,
-        hint: "Source for kubeconfig"
+        hint: "Source for kubeconfig",
+        condition: (data) => data.connectionMethod === "kubeconfig"
       },
       // EKS Connection options
       {
-        label: "EKS Cluster Name",
+        label: "Cluster Name",
         key: "eksCluster",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Name of the EKS cluster"
+        hint: "Name of the EKS cluster",
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Connection URL",
+        label: "Connection URL",
         key: "eksConnection",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "The connection URL to use for EKS, mutually exclusive with access key and secret key"
+        hint: "The connection URL to use for EKS, mutually exclusive with access key and secret key",
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Access Key",
+        label: "Access Key",
         key: "eksAccessKey",
         type: ConnectionsFieldTypes.EnvVarSource,
-        required: false
+        required: false,
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Secret Key",
+        label: "Secret Key",
         key: "eksSecretKey",
         type: ConnectionsFieldTypes.EnvVarSource,
-        required: false
+        required: false,
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Region",
+        label: "Region",
         key: "eksRegion",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "The AWS region"
+        hint: "The AWS region",
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Endpoint",
+        label: "Endpoint",
         key: "eksEndpoint",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Custom AWS Endpoint to use"
+        hint: "Custom AWS Endpoint to use",
+        condition: (data) => data.connectionMethod === "eks"
       },
       {
-        label: "EKS Skip TLS Verify",
+        label: "Skip TLS Verify",
         key: "eksSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
-        hint: "Skip TLS verify when connecting to AWS"
+        hint: "Skip TLS verify when connecting to AWS",
+        condition: (data) => data.connectionMethod === "eks"
       },
       // GKE Connection options
       {
-        label: "GKE Cluster Name",
+        label: "Cluster Name",
         key: "gkeCluster",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Name of the GKE cluster"
+        hint: "Name of the GKE cluster",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Project",
+        label: "Project",
         key: "gkeProject",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Name of the GCP project"
+        hint: "Name of the GCP project",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Zone",
+        label: "Zone",
         key: "gkeZone",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Name of the GCP zone"
+        hint: "Name of the GCP zone",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Connection URL",
+        label: "Connection URL",
         key: "gkeConnection",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "The connection URL to use for GKE, mutually exclusive with credentials"
+        hint: "The connection URL to use for GKE, mutually exclusive with credentials",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Credentials",
+        label: "Credentials",
         key: "gkeCredentials",
         type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
         required: false,
-        hint: "The credentials to use for authentication"
+        hint: "The credentials to use for authentication",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Endpoint",
+        label: "Endpoint",
         key: "gkeEndpoint",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Custom GCP Endpoint to use"
+        hint: "Custom GCP Endpoint to use",
+        condition: (data) => data.connectionMethod === "gke"
       },
       {
-        label: "GKE Skip TLS Verify",
+        label: "Skip TLS Verify",
         key: "gkeSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
-        hint: "Skip TLS verification when connecting to GCP"
+        hint: "Skip TLS verification when connecting to GCP",
+        condition: (data) => data.connectionMethod === "gke"
       },
       // CNRM Connection options
       {
-        label: "CNRM Cluster Resource",
+        label: "Cluster Resource",
         key: "cnrmClusterResource",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Name of the cluster resource"
+        hint: "Name of the cluster resource",
+        condition: (data) => data.connectionMethod === "cnrm"
       },
       {
-        label: "CNRM Cluster Resource Namespace",
+        label: "Cluster Resource Namespace",
         key: "cnrmClusterResourceNamespace",
         type: ConnectionsFieldTypes.input,
         required: false,
-        hint: "Namespace of the cluster resource"
+        hint: "Namespace of the cluster resource",
+        condition: (data) => data.connectionMethod === "cnrm"
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
