@@ -807,13 +807,253 @@ export const connectionTypes: ConnectionType[] = [
     fields: [
       ...commonConnectionFormFields,
       {
-        label: "Certificate",
-        key: "certificate",
+        label: "Connection Method",
+        key: "connectionMethod",
+        type: ConnectionsFieldTypes.SwitchField,
+        default: "kubeconfig",
+        switchFieldProps: {
+          options: [
+            {
+              label: "Kubeconfig",
+              key: "kubeconfig"
+            },
+            {
+              label: "Connection URL",
+              key: "connection"
+            },
+            {
+              label: "EKS",
+              key: "eks"
+            },
+            {
+              label: "GKE",
+              key: "gke"
+            },
+            {
+              label: "CNRM",
+              key: "cnrm"
+            }
+          ]
+        },
+        required: true
+      },
+      // Kubeconfig option
+      {
+        label: "Kubeconfig",
+        key: "kubeconfig",
         type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
+        required: false,
+        hint: "Source for kubeconfig"
+      },
+      // Connection URL option
+      {
+        label: "Connection URL",
+        key: "connection",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "The connection URL to use"
+      },
+      // EKS Connection options
+      {
+        label: "EKS Cluster Name",
+        key: "eksCluster",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Name of the EKS cluster"
+      },
+      {
+        label: "EKS Connection URL",
+        key: "eksConnection",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "The connection URL to use for EKS, mutually exclusive with access key and secret key"
+      },
+      {
+        label: "EKS Access Key",
+        key: "eksAccessKey",
+        type: ConnectionsFieldTypes.EnvVarSource,
         required: false
+      },
+      {
+        label: "EKS Secret Key",
+        key: "eksSecretKey",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "EKS Region",
+        key: "eksRegion",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "The AWS region"
+      },
+      {
+        label: "EKS Endpoint",
+        key: "eksEndpoint",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Custom AWS Endpoint to use"
+      },
+      {
+        label: "EKS Skip TLS Verify",
+        key: "eksSkipTLSVerify",
+        type: ConnectionsFieldTypes.checkbox,
+        hint: "Skip TLS verify when connecting to AWS"
+      },
+      // GKE Connection options
+      {
+        label: "GKE Cluster Name",
+        key: "gkeCluster",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Name of the GKE cluster"
+      },
+      {
+        label: "GKE Project",
+        key: "gkeProject",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Name of the GCP project"
+      },
+      {
+        label: "GKE Zone",
+        key: "gkeZone",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Name of the GCP zone"
+      },
+      {
+        label: "GKE Connection URL",
+        key: "gkeConnection",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "The connection URL to use for GKE, mutually exclusive with credentials"
+      },
+      {
+        label: "GKE Credentials",
+        key: "gkeCredentials",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        variant: variants.large,
+        required: false,
+        hint: "The credentials to use for authentication"
+      },
+      {
+        label: "GKE Endpoint",
+        key: "gkeEndpoint",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Custom GCP Endpoint to use"
+      },
+      {
+        label: "GKE Skip TLS Verify",
+        key: "gkeSkipTLSVerify",
+        type: ConnectionsFieldTypes.checkbox,
+        hint: "Skip TLS verification when connecting to GCP"
+      },
+      // CNRM Connection options
+      {
+        label: "CNRM Cluster Resource",
+        key: "cnrmClusterResource",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Name of the cluster resource"
+      },
+      {
+        label: "CNRM Cluster Resource Namespace",
+        key: "cnrmClusterResourceNamespace",
+        type: ConnectionsFieldTypes.input,
+        required: false,
+        hint: "Namespace of the cluster resource"
       }
-    ]
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        connectionMethod: data?.properties?.connectionMethod || "kubeconfig",
+        kubeconfig: data?.properties?.kubeconfig,
+        connection: data?.properties?.connection,
+        
+        // EKS fields
+        eksCluster: data?.properties?.eksCluster,
+        eksConnection: data?.properties?.eksConnection,
+        eksAccessKey: data?.properties?.eksAccessKey,
+        eksSecretKey: data?.properties?.eksSecretKey,
+        eksRegion: data?.properties?.eksRegion,
+        eksEndpoint: data?.properties?.eksEndpoint,
+        eksSkipTLSVerify: data?.properties?.eksSkipTLSVerify === true,
+        
+        // GKE fields
+        gkeCluster: data?.properties?.gkeCluster,
+        gkeProject: data?.properties?.gkeProject,
+        gkeZone: data?.properties?.gkeZone,
+        gkeConnection: data?.properties?.gkeConnection,
+        gkeCredentials: data?.properties?.gkeCredentials,
+        gkeEndpoint: data?.properties?.gkeEndpoint,
+        gkeSkipTLSVerify: data?.properties?.gkeSkipTLSVerify === true,
+        
+        // CNRM fields
+        cnrmClusterResource: data?.properties?.cnrmClusterResource,
+        cnrmClusterResourceNamespace: data?.properties?.cnrmClusterResourceNamespace
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      const connectionMethod = data.connectionMethod || "kubeconfig";
+      
+      const properties: Record<string, any> = {
+        connectionMethod
+      };
+      
+      if (connectionMethod === "kubeconfig" && data.kubeconfig) {
+        properties.kubeconfig = data.kubeconfig;
+      }
+      
+      if (connectionMethod === "connection" && data.connection) {
+        properties.connection = data.connection;
+      }
+      
+      if (connectionMethod === "eks") {
+        properties.eksCluster = data.eksCluster;
+        properties.eksConnection = data.eksConnection;
+        properties.eksAccessKey = data.eksAccessKey;
+        properties.eksSecretKey = data.eksSecretKey;
+        properties.eksRegion = data.eksRegion;
+        properties.eksEndpoint = data.eksEndpoint;
+        properties.eksSkipTLSVerify = data.eksSkipTLSVerify;
+      }
+      
+      if (connectionMethod === "gke") {
+        properties.gkeCluster = data.gkeCluster;
+        properties.gkeProject = data.gkeProject;
+        properties.gkeZone = data.gkeZone;
+        properties.gkeConnection = data.gkeConnection;
+        properties.gkeCredentials = data.gkeCredentials;
+        properties.gkeEndpoint = data.gkeEndpoint;
+        properties.gkeSkipTLSVerify = data.gkeSkipTLSVerify;
+      }
+      
+      if (connectionMethod === "cnrm") {
+        properties.cnrmClusterResource = data.cnrmClusterResource;
+        properties.cnrmClusterResourceNamespace = data.cnrmClusterResourceNamespace;
+        
+        // If CNRM is using GKE, include those fields
+        if (data.gkeCluster) {
+          properties.gkeCluster = data.gkeCluster;
+          properties.gkeProject = data.gkeProject;
+          properties.gkeZone = data.gkeZone;
+          properties.gkeConnection = data.gkeConnection;
+          properties.gkeCredentials = data.gkeCredentials;
+          properties.gkeEndpoint = data.gkeEndpoint;
+          properties.gkeSkipTLSVerify = data.gkeSkipTLSVerify;
+        }
+      }
+      
+      return {
+        name: data.name,
+        namespace: data.namespace,
+        properties
+      };
+    }
   },
   {
     title: "Azure Devops",
