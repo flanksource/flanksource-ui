@@ -1016,7 +1016,7 @@ export const connectionTypes: ConnectionType[] = [
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
-      // Create a base Connection object with standard fields
+      // Create a base connection object with standard fields
       const connection: Connection = {
         ...data,
         name: data.name,
@@ -1024,89 +1024,93 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionValueType.Kubernetes
       };
       
-      // Set the form values based on properties
-      if (data.properties) {
-        // Set connectionMethod 
-        if (data.properties.connectionMethod) {
-          connection.connectionMethod = data.properties.connectionMethod;
-        }
-        
-        // Set kubeconfig fields
-        if (data.properties.kubeconfig) {
-          connection.kubeconfig = data.properties.kubeconfig;
-        }
-        
-        // Set EKS fields
-        if (data.properties.eksAwsConnection) {
-          connection.eksUseExistingConnection = true;
-          connection.eksAwsConnection = data.properties.eksAwsConnection;
-        }
-        
-        if (data.properties.eksCluster) {
-          connection.eksCluster = data.properties.eksCluster;
-        }
-        
-        if (data.properties.eksRegion) {
-          connection.eksRegion = data.properties.eksRegion;
-        }
-        
-        if (data.properties.eksAccessKey) {
-          connection.eksAccessKey = data.properties.eksAccessKey;
-        }
-        
-        if (data.properties.eksSecretKey) {
-          connection.eksSecretKey = data.properties.eksSecretKey;
-        }
-        
-        if (data.properties.eksEndpoint) {
-          connection.eksEndpoint = data.properties.eksEndpoint;
-        }
-        
-        if (data.properties.eksSkipTLSVerify) {
-          connection.eksSkipTLSVerify = data.properties.eksSkipTLSVerify;
-        }
-        
-        // Set GKE fields
-        if (data.properties.gkeGcpConnection) {
-          connection.gkeUseExistingConnection = true;
-          connection.gkeGcpConnection = data.properties.gkeGcpConnection;
-        }
-        
-        if (data.properties.gkeCluster) {
-          connection.gkeCluster = data.properties.gkeCluster;
-        }
-        
-        if (data.properties.gkeProject) {
-          connection.gkeProject = data.properties.gkeProject;
-        }
-        
-        if (data.properties.gkeZone) {
-          connection.gkeZone = data.properties.gkeZone;
-        }
-        
-        if (data.properties.gkeCredentials) {
-          connection.gkeCredentials = data.properties.gkeCredentials;
-        }
-        
-        if (data.properties.gkeEndpoint) {
-          connection.gkeEndpoint = data.properties.gkeEndpoint;
-        }
-        
-        if (data.properties.gkeSkipTLSVerify) {
-          connection.gkeSkipTLSVerify = data.properties.gkeSkipTLSVerify;
-        }
-        
-        // Set CNRM fields
-        if (data.properties.cnrmClusterResource) {
-          connection.cnrmClusterResource = data.properties.cnrmClusterResource;
-        }
-        
-        if (data.properties.cnrmClusterResourceNamespace) {
-          connection.cnrmClusterResourceNamespace = data.properties.cnrmClusterResourceNamespace;
-        }
+      // Create a form values object to store all the Kubernetes-specific fields
+      const formValues: Record<string, any> = {};
+      
+      // Set connection method from properties
+      if (data.properties?.connectionMethod) {
+        formValues.connectionMethod = data.properties.connectionMethod;
       }
       
-      return connection;
+      // Handle kubeconfig
+      if (data.properties?.kubeconfig) {
+        formValues.kubeconfig = data.properties.kubeconfig;
+      }
+      
+      // Handle EKS configuration
+      if (data.properties?.eksAwsConnection) {
+        formValues.eksUseExistingConnection = true;
+        formValues.eksAwsConnection = data.properties.eksAwsConnection;
+      }
+      
+      if (data.properties?.eksCluster) {
+        formValues.eksCluster = data.properties.eksCluster;
+      }
+      
+      if (data.properties?.eksRegion) {
+        formValues.eksRegion = data.properties.eksRegion;
+      }
+      
+      if (data.properties?.eksAccessKey) {
+        formValues.eksAccessKey = data.properties.eksAccessKey;
+      }
+      
+      if (data.properties?.eksSecretKey) {
+        formValues.eksSecretKey = data.properties.eksSecretKey;
+      }
+      
+      if (data.properties?.eksEndpoint) {
+        formValues.eksEndpoint = data.properties.eksEndpoint;
+      }
+      
+      if (data.properties?.eksSkipTLSVerify) {
+        formValues.eksSkipTLSVerify = data.properties.eksSkipTLSVerify;
+      }
+      
+      // Handle GKE configuration
+      if (data.properties?.gkeGcpConnection) {
+        formValues.gkeUseExistingConnection = true;
+        formValues.gkeGcpConnection = data.properties.gkeGcpConnection;
+      }
+      
+      if (data.properties?.gkeCluster) {
+        formValues.gkeCluster = data.properties.gkeCluster;
+      }
+      
+      if (data.properties?.gkeProject) {
+        formValues.gkeProject = data.properties.gkeProject;
+      }
+      
+      if (data.properties?.gkeZone) {
+        formValues.gkeZone = data.properties.gkeZone;
+      }
+      
+      if (data.properties?.gkeCredentials) {
+        formValues.gkeCredentials = data.properties.gkeCredentials;
+      }
+      
+      if (data.properties?.gkeEndpoint) {
+        formValues.gkeEndpoint = data.properties.gkeEndpoint;
+      }
+      
+      if (data.properties?.gkeSkipTLSVerify) {
+        formValues.gkeSkipTLSVerify = data.properties.gkeSkipTLSVerify;
+      }
+      
+      // Handle CNRM configuration
+      if (data.properties?.cnrmClusterResource) {
+        formValues.cnrmClusterResource = data.properties.cnrmClusterResource;
+      }
+      
+      if (data.properties?.cnrmClusterResourceNamespace) {
+        formValues.cnrmClusterResourceNamespace = data.properties.cnrmClusterResourceNamespace;
+      }
+      
+      // Merge the form values with the connection
+      return {
+        ...connection,
+        ...formValues
+      };
     },
     preSubmitConverter: (data: Record<string, string>) => {
       const connectionMethod = data.connectionMethod || "kubeconfig";
