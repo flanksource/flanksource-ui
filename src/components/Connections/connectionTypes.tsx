@@ -11,7 +11,8 @@ const enum ConnectionsFieldTypes {
   SwitchField = "SwitchField",
   ConnectionSwitch = "ConnectionSwitch",
   Authentication = "authentication",
-  GroupField = "GroupField"
+  GroupField = "GroupField",
+  ConnectionSelect = "ConnectionSelect"
 }
 
 type Variant = "small" | "large";
@@ -45,6 +46,8 @@ export type ConnectionFormFields = {
     fields: Omit<ConnectionFormFields, "options">[];
   }[];
   condition?: (data: Record<string, any>) => boolean;
+  connectionType?: ConnectionValueType;
+  dependsOn?: string;
 };
 
 export const enum ConnectionValueType {
@@ -844,35 +847,31 @@ export const connectionTypes: ConnectionType[] = [
         hint: "Source for kubeconfig",
         condition: (data: Record<string, any>) => data.connectionMethod === "kubeconfig"
       },
-      // EKS Connection options
+      
+      // EKS Connection options - Use existing AWS connection
+      {
+        label: "Use Existing AWS Connection",
+        key: "eksUseExistingConnection",
+        type: ConnectionsFieldTypes.checkbox,
+        hint: "Use an existing AWS connection instead of configuring credentials directly",
+        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
+      },
+      {
+        label: "AWS Connection",
+        key: "eksAwsConnection",
+        type: ConnectionsFieldTypes.ConnectionSelect,
+        connectionType: ConnectionValueType.AWS,
+        required: false,
+        hint: "Select an existing AWS connection to use with EKS",
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "eks" && data.eksUseExistingConnection === true
+      },
       {
         label: "Cluster Name",
         key: "eksCluster",
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Name of the EKS cluster",
-        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
-      },
-      {
-        label: "Connection URL",
-        key: "eksConnection",
-        type: ConnectionsFieldTypes.input,
-        required: false,
-        hint: "The connection URL to use for EKS, mutually exclusive with access key and secret key",
-        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
-      },
-      {
-        label: "Access Key",
-        key: "eksAccessKey",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        required: false,
-        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
-      },
-      {
-        label: "Secret Key",
-        key: "eksSecretKey",
-        type: ConnectionsFieldTypes.EnvVarSource,
-        required: false,
         condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
       {
@@ -883,22 +882,64 @@ export const connectionTypes: ConnectionType[] = [
         hint: "The AWS region",
         condition: (data: Record<string, any>) => data.connectionMethod === "eks"
       },
+      
+      // EKS Manual configuration options
+      {
+        label: "Access Key",
+        key: "eksAccessKey",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false,
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "eks" && 
+          (!data.eksUseExistingConnection || data.eksUseExistingConnection === false)
+      },
+      {
+        label: "Secret Key",
+        key: "eksSecretKey",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false,
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "eks" && 
+          (!data.eksUseExistingConnection || data.eksUseExistingConnection === false)
+      },
       {
         label: "Endpoint",
         key: "eksEndpoint",
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Custom AWS Endpoint to use",
-        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "eks" && 
+          (!data.eksUseExistingConnection || data.eksUseExistingConnection === false)
       },
       {
         label: "Skip TLS Verify",
         key: "eksSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
         hint: "Skip TLS verify when connecting to AWS",
-        condition: (data: Record<string, any>) => data.connectionMethod === "eks"
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "eks" && 
+          (!data.eksUseExistingConnection || data.eksUseExistingConnection === false)
       },
-      // GKE Connection options
+      
+      // GKE Connection options - Use existing GCP connection
+      {
+        label: "Use Existing Google Cloud Connection",
+        key: "gkeUseExistingConnection",
+        type: ConnectionsFieldTypes.checkbox,
+        hint: "Use an existing Google Cloud connection instead of configuring credentials directly",
+        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
+      },
+      {
+        label: "Google Cloud Connection",
+        key: "gkeGcpConnection",
+        type: ConnectionsFieldTypes.ConnectionSelect,
+        connectionType: ConnectionValueType.GCP,
+        required: false,
+        hint: "Select an existing Google Cloud connection to use with GKE",
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "gke" && data.gkeUseExistingConnection === true
+      },
       {
         label: "Cluster Name",
         key: "gkeCluster",
@@ -923,14 +964,8 @@ export const connectionTypes: ConnectionType[] = [
         hint: "Name of the GCP zone",
         condition: (data: Record<string, any>) => data.connectionMethod === "gke"
       },
-      {
-        label: "Connection URL",
-        key: "gkeConnection",
-        type: ConnectionsFieldTypes.input,
-        required: false,
-        hint: "The connection URL to use for GKE, mutually exclusive with credentials",
-        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
-      },
+      
+      // GKE Manual configuration options
       {
         label: "Credentials",
         key: "gkeCredentials",
@@ -938,7 +973,9 @@ export const connectionTypes: ConnectionType[] = [
         variant: variants.large,
         required: false,
         hint: "The credentials to use for authentication",
-        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "gke" && 
+          (!data.gkeUseExistingConnection || data.gkeUseExistingConnection === false)
       },
       {
         label: "Endpoint",
@@ -946,15 +983,20 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.input,
         required: false,
         hint: "Custom GCP Endpoint to use",
-        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "gke" && 
+          (!data.gkeUseExistingConnection || data.gkeUseExistingConnection === false)
       },
       {
         label: "Skip TLS Verify",
         key: "gkeSkipTLSVerify",
         type: ConnectionsFieldTypes.checkbox,
         hint: "Skip TLS verification when connecting to GCP",
-        condition: (data: Record<string, any>) => data.connectionMethod === "gke"
+        condition: (data: Record<string, any>) => 
+          data.connectionMethod === "gke" && 
+          (!data.gkeUseExistingConnection || data.gkeUseExistingConnection === false)
       },
+      
       // CNRM Connection options
       {
         label: "Cluster Resource",
@@ -982,8 +1024,87 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionValueType.Kubernetes
       };
       
-      // Properties are already in data.properties, so no need to restructure them
-      // Just pass the data through as is
+      // Set the form values based on properties
+      if (data.properties) {
+        // Set connectionMethod 
+        if (data.properties.connectionMethod) {
+          connection.connectionMethod = data.properties.connectionMethod;
+        }
+        
+        // Set kubeconfig fields
+        if (data.properties.kubeconfig) {
+          connection.kubeconfig = data.properties.kubeconfig;
+        }
+        
+        // Set EKS fields
+        if (data.properties.eksAwsConnection) {
+          connection.eksUseExistingConnection = true;
+          connection.eksAwsConnection = data.properties.eksAwsConnection;
+        }
+        
+        if (data.properties.eksCluster) {
+          connection.eksCluster = data.properties.eksCluster;
+        }
+        
+        if (data.properties.eksRegion) {
+          connection.eksRegion = data.properties.eksRegion;
+        }
+        
+        if (data.properties.eksAccessKey) {
+          connection.eksAccessKey = data.properties.eksAccessKey;
+        }
+        
+        if (data.properties.eksSecretKey) {
+          connection.eksSecretKey = data.properties.eksSecretKey;
+        }
+        
+        if (data.properties.eksEndpoint) {
+          connection.eksEndpoint = data.properties.eksEndpoint;
+        }
+        
+        if (data.properties.eksSkipTLSVerify) {
+          connection.eksSkipTLSVerify = data.properties.eksSkipTLSVerify;
+        }
+        
+        // Set GKE fields
+        if (data.properties.gkeGcpConnection) {
+          connection.gkeUseExistingConnection = true;
+          connection.gkeGcpConnection = data.properties.gkeGcpConnection;
+        }
+        
+        if (data.properties.gkeCluster) {
+          connection.gkeCluster = data.properties.gkeCluster;
+        }
+        
+        if (data.properties.gkeProject) {
+          connection.gkeProject = data.properties.gkeProject;
+        }
+        
+        if (data.properties.gkeZone) {
+          connection.gkeZone = data.properties.gkeZone;
+        }
+        
+        if (data.properties.gkeCredentials) {
+          connection.gkeCredentials = data.properties.gkeCredentials;
+        }
+        
+        if (data.properties.gkeEndpoint) {
+          connection.gkeEndpoint = data.properties.gkeEndpoint;
+        }
+        
+        if (data.properties.gkeSkipTLSVerify) {
+          connection.gkeSkipTLSVerify = data.properties.gkeSkipTLSVerify;
+        }
+        
+        // Set CNRM fields
+        if (data.properties.cnrmClusterResource) {
+          connection.cnrmClusterResource = data.properties.cnrmClusterResource;
+        }
+        
+        if (data.properties.cnrmClusterResourceNamespace) {
+          connection.cnrmClusterResourceNamespace = data.properties.cnrmClusterResourceNamespace;
+        }
+      }
       
       return connection;
     },
@@ -1000,38 +1121,39 @@ export const connectionTypes: ConnectionType[] = [
       
       if (connectionMethod === "eks") {
         properties.eksCluster = data.eksCluster;
-        properties.eksConnection = data.eksConnection;
-        properties.eksAccessKey = data.eksAccessKey;
-        properties.eksSecretKey = data.eksSecretKey;
         properties.eksRegion = data.eksRegion;
-        properties.eksEndpoint = data.eksEndpoint;
-        properties.eksSkipTLSVerify = data.eksSkipTLSVerify;
+        
+        // Handle existing connection
+        if (data.eksUseExistingConnection === "true" && data.eksAwsConnection) {
+          properties.eksUseExistingConnection = true;
+          properties.eksAwsConnection = data.eksAwsConnection;
+        } else {
+          properties.eksAccessKey = data.eksAccessKey;
+          properties.eksSecretKey = data.eksSecretKey;
+          properties.eksEndpoint = data.eksEndpoint;
+          properties.eksSkipTLSVerify = data.eksSkipTLSVerify;
+        }
       }
       
       if (connectionMethod === "gke") {
         properties.gkeCluster = data.gkeCluster;
         properties.gkeProject = data.gkeProject;
         properties.gkeZone = data.gkeZone;
-        properties.gkeConnection = data.gkeConnection;
-        properties.gkeCredentials = data.gkeCredentials;
-        properties.gkeEndpoint = data.gkeEndpoint;
-        properties.gkeSkipTLSVerify = data.gkeSkipTLSVerify;
+        
+        // Handle existing connection
+        if (data.gkeUseExistingConnection === "true" && data.gkeGcpConnection) {
+          properties.gkeUseExistingConnection = true;
+          properties.gkeGcpConnection = data.gkeGcpConnection;
+        } else {
+          properties.gkeCredentials = data.gkeCredentials;
+          properties.gkeEndpoint = data.gkeEndpoint;
+          properties.gkeSkipTLSVerify = data.gkeSkipTLSVerify;
+        }
       }
       
       if (connectionMethod === "cnrm") {
         properties.cnrmClusterResource = data.cnrmClusterResource;
         properties.cnrmClusterResourceNamespace = data.cnrmClusterResourceNamespace;
-        
-        // If CNRM is using GKE, include those fields
-        if (data.gkeCluster) {
-          properties.gkeCluster = data.gkeCluster;
-          properties.gkeProject = data.gkeProject;
-          properties.gkeZone = data.gkeZone;
-          properties.gkeConnection = data.gkeConnection;
-          properties.gkeCredentials = data.gkeCredentials;
-          properties.gkeEndpoint = data.gkeEndpoint;
-          properties.gkeSkipTLSVerify = data.gkeSkipTLSVerify;
-        }
       }
       
       return {
