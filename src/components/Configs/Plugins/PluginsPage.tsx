@@ -3,7 +3,27 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getScrapePlugins, createScrapePlugin, updateScrapePlugin, deleteScrapePlugin } from "../../../api/services/plugins";
 import { ScrapePlugin } from "../../../api/types/plugins";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { Modal } from "@flanksource-ui/ui/Modal/Modal";
+
+// Simple Modal implementation since Modal import failed.
+// If you have a Modal component available elsewhere, substitute here.
+function SimpleModal({ open, onClose, title, children }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      <div className="bg-white p-6 min-w-[350px] max-w-md rounded shadow-xl relative">
+        <button
+          className="absolute top-2 right-2 text-gray-500 hover:text-black"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <h2 className="text-lg font-bold mb-3">{title}</h2>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 // NOTE: Fallback DataTable implementation (uses simple table for now)
 function SimpleDataTable({ columns, data, isLoading }) {
@@ -133,13 +153,13 @@ const PluginsPage = () => {
         data={data}
       />
 
-      <Modal open={open} onClose={() => setOpen(false)} title={editing ? "Edit Scrape Plugin" : "Add Scrape Plugin"}>
+      <SimpleModal open={open} onClose={() => setOpen(false)} title={editing ? "Edit Scrape Plugin" : "Add Scrape Plugin"}>
         <PluginForm
           initial={editing || defaultPlugin}
           onSave={handleSave}
           onCancel={() => setOpen(false)}
         />
-      </Modal>
+      </SimpleModal>
     </div>
   );
 };
