@@ -1,11 +1,45 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getScrapePlugins, createScrapePlugin, updateScrapePlugin, deleteScrapePlugin } from "../../../api/services/plugins";
 import { ScrapePlugin } from "../../../api/types/plugins";
-import DataTable from "@flanksource-ui/ui/DataTable/DataTable";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { useState } from "react";
 import { Modal } from "@flanksource-ui/ui/Modal/Modal";
+
+// NOTE: Fallback DataTable implementation (uses simple table for now)
+function SimpleDataTable({ columns, data, isLoading }) {
+  return (
+    <div className="overflow-auto">
+      <table className="min-w-full bg-white border">
+        <thead>
+          <tr>
+            {columns.map((col, idx) => (
+              <th key={idx} className="p-2 border-b text-left font-semibold">{col.header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
+            <tr><td colSpan={columns.length} className="text-center p-2">Loading...</td></tr>
+          ) : (
+            data.length === 0 ? (
+              <tr><td colSpan={columns.length} className="text-center p-2">No plugins found.</td></tr>
+            ) : (
+              data.map((row, ridx) => (
+                <tr key={row.id || ridx}>
+                  {columns.map((col, cidx) =>
+                    <td key={cidx} className="p-2 border-b">
+                      {col.cell ? col.cell({ row }) : row[col.accessorKey]}
+                    </td>
+                  )}
+                </tr>
+              ))
+            )
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 const columns = [
   { header: "Name", accessorKey: "name" },
@@ -82,7 +116,7 @@ const PluginsPage = () => {
         <Button onClick={() => { setEditing(null); setOpen(true); }}>Add Plugin</Button>
       </div>
 
-      <DataTable
+      <SimpleDataTable
         isLoading={isLoading}
         columns={[
           ...columns,
@@ -90,14 +124,13 @@ const PluginsPage = () => {
             header: "Actions",
             cell: ({ row }) => (
               <div className="flex gap-2">
-                <Button size="xs" variant="ghost" onClick={() => handleEdit(row.original)}>Edit</Button>
-                <Button size="xs" variant="danger" onClick={() => handleDelete(row.original)}>Delete</Button>
+                <Button size="xs" variant="ghost" onClick={() => handleEdit(row)}>Edit</Button>
+                <Button size="xs" variant="danger" onClick={() => handleDelete(row)}>Delete</Button>
               </div>
             ),
           }
         ]}
         data={data}
-        getRowId={row => row.id}
       />
 
       <Modal open={open} onClose={() => setOpen(false)} title={editing ? "Edit Scrape Plugin" : "Add Scrape Plugin"}>
