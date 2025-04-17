@@ -150,8 +150,8 @@ const PluginsPage = () => {
             header: "Actions",
             cell: ({ row }: { row: ScrapePlugin }) => (
               <div className="flex gap-2">
-                <Button size="xs" variant="ghost" onClick={() => handleEdit(row)}>Edit</Button>
-                <Button size="xs" variant="danger" onClick={() => handleDelete(row)}>Delete</Button>
+                <Button size="xs" onClick={() => handleEdit(row)}>Edit</Button>
+                <Button size="xs" onClick={() => handleDelete(row)}>Delete</Button>
               </div>
             ),
           }
@@ -221,7 +221,7 @@ function PluginForm({ initial, onSave, onCancel }: PluginFormProps) {
         />
       </label>
       <div className="flex gap-2 justify-end">
-        <Button type="button" onClick={onCancel} variant="secondary">Cancel</Button>
+        <Button type="button" onClick={onCancel}>Cancel</Button>
         <Button type="submit">{plugin.id ? "Update" : "Create"}</Button>
       </div>
     </form>
