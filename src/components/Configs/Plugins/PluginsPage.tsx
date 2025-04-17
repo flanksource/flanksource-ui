@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getScrapePlugins, createScrapePlugin, updateScrapePlugin, deleteScrapePlugin } from "../../../api/services/plugins";
 import { ScrapePlugin } from "../../../api/types/plugins";
@@ -6,7 +6,13 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 
 // Simple Modal implementation since Modal import failed.
 // If you have a Modal component available elsewhere, substitute here.
-function SimpleModal({ open, onClose, title, children }) {
+interface SimpleModalProps {
+  open: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  children: ReactNode;
+}
+function SimpleModal({ open, onClose, title, children }: SimpleModalProps) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -26,7 +32,7 @@ function SimpleModal({ open, onClose, title, children }) {
 }
 
 // NOTE: Fallback DataTable implementation (uses simple table for now)
-function SimpleDataTable({ columns, data, isLoading }) {
+function SimpleDataTable({ columns, data, isLoading }: { columns: any[]; data: any[]; isLoading: boolean }) {
   return (
     <div className="overflow-auto">
       <table className="min-w-full bg-white border">
@@ -142,7 +148,7 @@ const PluginsPage = () => {
           ...columns,
           {
             header: "Actions",
-            cell: ({ row }) => (
+            cell: ({ row }: { row: ScrapePlugin }) => (
               <div className="flex gap-2">
                 <Button size="xs" variant="ghost" onClick={() => handleEdit(row)}>Edit</Button>
                 <Button size="xs" variant="danger" onClick={() => handleDelete(row)}>Delete</Button>
