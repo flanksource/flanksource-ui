@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import ConfigPage from "../../components/Configs/ConfigList";
+import ConfigList from "../../components/Configs/ConfigList";
 import ChangesPage from "../../components/Configs/Changes";
 import InsightsPage from "../../components/Configs/Insights";
 import ScrapersPage from "../../components/Configs/Scrapers";
@@ -15,7 +15,7 @@ export default function CatalogRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<ConfigPageTabs activeTab="Catalog"><ConfigPage /></ConfigPageTabs>} />
+      <Route path="/" element={<ConfigPageTabs activeTab="Catalog"><ConfigList /></ConfigPageTabs>} />
       <Route path="changes" element={<ConfigPageTabs activeTab="Changes"><ChangesPage /></ConfigPageTabs>} />
       <Route path="insights" element={<ConfigPageTabs activeTab="Insights"><InsightsPage /></ConfigPageTabs>} />
       <Route path="scrapers" element={<ConfigPageTabs activeTab="Scrapers"><ScrapersPage /></ConfigPageTabs>} />
