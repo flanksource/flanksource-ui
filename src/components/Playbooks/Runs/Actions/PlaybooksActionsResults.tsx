@@ -82,6 +82,15 @@ export default function PlaybooksRunActionsResults({
   const availableTabs = useMemo(() => {
     const tabs: PlaybookActionTab[] = [];
     if (result) {
+      // AI action can have a cost
+      let actionCost = 0;
+      if (action.type === "ai" && result["generationInfo"]) {
+        actionCost = (result["generationInfo"] as { cost: number }[]).reduce(
+          (acc, info) => acc + info.cost,
+          0
+        );
+      }
+
       // Result pre-processing based on action type
       switch (action.type) {
         case "notification":
@@ -103,9 +112,11 @@ export default function PlaybooksRunActionsResults({
           break;
 
         case "ai":
-          result["ai"] = result["json"];
+          result["AI"] = result["json"];
           delete result["json"];
           delete result["recommendedPlaybooks"];
+          delete result["generationInfo"];
+
           break;
 
         default:
@@ -119,6 +130,10 @@ export default function PlaybooksRunActionsResults({
             content: result[key],
             displayContentType: "text/plain"
           };
+
+          if (actionCost) {
+            tab.label = `${tab.label} ($${actionCost.toFixed(2)})`;
+          }
 
           // Pre-process the content for certain types
           switch (key.toLowerCase()) {
@@ -201,7 +216,7 @@ export default function PlaybooksRunActionsResults({
     });
 
     return tabs;
-  }, [result, error, artifacts]);
+  }, [result, error, artifacts, action.type]);
 
   useMemo(() => {
     if (availableTabs.length > 0 && !activeTab) {
