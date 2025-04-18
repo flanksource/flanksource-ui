@@ -15,6 +15,7 @@ import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
+import { Tooltip } from "react-tooltip";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
 import { CancelPlaybookButton } from "../CancelPlaybookButton";
@@ -85,6 +86,38 @@ export default function PlaybookRunsActions({
     }
     return acc;
   }, 0);
+
+  const { runCost, totalInputTokens, totalOutputTokens } = useMemo(() => {
+    let cost = 0;
+    let inputTokens = 0;
+    let outputTokens = 0;
+
+    data.actions.forEach((action) => {
+      if (!action.result) {
+        return;
+      }
+
+      const generationInfo = action.result["generationInfo"] as {
+        cost: number;
+        inputTokens: number;
+        outputTokens: number;
+      }[];
+
+      if (generationInfo) {
+        generationInfo.forEach((info) => {
+          cost += info.cost;
+          inputTokens += info.inputTokens;
+          outputTokens += info.outputTokens;
+        });
+      }
+    });
+
+    return {
+      runCost: cost,
+      totalInputTokens: inputTokens,
+      totalOutputTokens: outputTokens
+    };
+  }, [data.actions]);
 
   return (
     <div className="flex flex-1 flex-col gap-2 pl-2">
@@ -256,7 +289,18 @@ export default function PlaybookRunsActions({
         <div className="flex h-full flex-row">
           <div className="flex h-full w-[15rem] flex-col border-gray-200 pr-2 lg:w-[20rem]">
             <div className="mb-2 ml-[-25px] mr-[-15px] flex flex-row items-center justify-between border-t border-gray-200 py-2 pl-[25px]">
-              <div className="font-semibold text-gray-600">Actions</div>
+              <div className="font-semibold text-gray-600">
+                Actions{" "}
+                {runCost !== 0 && (
+                  <span
+                    data-tooltip-id="action-cost-tooltip"
+                    data-tooltip-content={`${(totalInputTokens + totalOutputTokens).toLocaleString()} tokens (${totalInputTokens.toLocaleString()} input + ${totalOutputTokens.toLocaleString()} output)`}
+                    className="font-mono text-sm text-gray-500"
+                  >
+                    (${runCost.toFixed(2)})
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
@@ -347,6 +391,9 @@ export default function PlaybookRunsActions({
           </div>
         </div>
       </div>
+
+      {/* Tooltips */}
+      <Tooltip id="action-cost-tooltip" />
 
       {/* Modals */}
       <ViewPlaybookSpecModal
