@@ -93,7 +93,11 @@ export async function getPlaybookToRunForResource(
   return res.data ?? [];
 }
 
-export async function getPlaybookRunWithActions(id: string) {
+/*
+ * getPlaybookRunsWithActions returns the playbook run along with the child runs
+ * and the actions.
+ */
+export async function getPlaybookRunsWithActions(id: string) {
   const select = [
     "*",
     `created_by(${AVATAR_INFO})`,
@@ -105,13 +109,14 @@ export async function getPlaybookRunWithActions(id: string) {
   ].join(",");
 
   const { data } = await IncidentCommander.get<PlaybookRun[] | null>(
-    // todo: use playbook names instead
-    `/playbook_runs?id=eq.${id}&select=${select}`
+    `/playbook_runs?or=(id.eq.${id},parent_id.eq.${id})&select=${select}`
   );
   if (!data || data.length === 0 || data?.[0] === undefined) {
     return undefined;
   }
-  const run = data[0];
+
+  const run = data.find((r) => r.id === id)!;
+  const childRuns = data.filter((r) => r.parent_id === id);
 
   const resActions = await IncidentCommander.get<PlaybookRunAction[] | null>(
     `/rpc/get_playbook_run_actions?run_id=${id}`
@@ -120,7 +125,8 @@ export async function getPlaybookRunWithActions(id: string) {
   const actions: CategorizedPlaybookRunAction[] = resActions.data || [];
   return {
     ...run,
-    actions: actions
+    actions: actions,
+    childRuns: childRuns
   } satisfies PlaybookRunWithActions;
 }
 

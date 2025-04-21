@@ -1,4 +1,4 @@
-import { getPlaybookRunWithActions } from "@flanksource-ui/api/services/playbooks";
+import { getPlaybookRunsWithActions } from "@flanksource-ui/api/services/playbooks";
 import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
@@ -27,12 +27,12 @@ export default function PlaybookRunsDetailsPage() {
   const [, setRefreshTrigger] = useAtom(refreshButtonClickedTrigger);
 
   const {
-    data: playbookRun,
+    data: playbookRunsWithActions,
     isLoading,
     refetch
   } = useQuery({
     queryKey: ["playbookRuns", id],
-    queryFn: () => getPlaybookRunWithActions(id!),
+    queryFn: () => getPlaybookRunsWithActions(id!),
     enabled: !!id,
     staleTime: 0,
     cacheTime: 0,
@@ -64,42 +64,44 @@ export default function PlaybookRunsDetailsPage() {
               <BreadcrumbRoot key={"/playbooks/runs"} link="/playbooks/runs">
                 <FaHome className="text-black" />
               </BreadcrumbRoot>,
-              ...(playbookRun?.playbooks
+              ...(playbookRunsWithActions?.playbooks
                 ? [
                     <BreadcrumbChild
-                      key={`/playbooks/${playbookRun?.playbooks.id}`}
-                      link={`/playbooks/runs?playbook=${playbookRun?.playbooks.id}`}
+                      key={`/playbooks/${playbookRunsWithActions?.playbooks.id}`}
+                      link={`/playbooks/runs?playbook=${playbookRunsWithActions?.playbooks.id}`}
                     >
                       <PlaybookSpecIcon
-                        playbook={playbookRun?.playbooks}
+                        playbook={playbookRunsWithActions?.playbooks}
                         showLabel
                       />
                     </BreadcrumbChild>
                   ]
                 : []),
 
-              <BreadcrumbChild key={playbookRun?.start_time}>
+              <BreadcrumbChild key={playbookRunsWithActions?.start_time}>
                 <span className="flex flex-row items-center gap-2">
-                  {playbookRun?.config ? (
+                  {playbookRunsWithActions?.config ? (
                     <ConfigLink
-                      config={playbookRun.config}
+                      config={playbookRunsWithActions.config}
                       showPrimaryIcon={false}
                       className=""
                     />
                   ) : null}
-                  {playbookRun?.component ? (
+                  {playbookRunsWithActions?.component ? (
                     <TopologyLink
-                      topology={playbookRun.component}
+                      topology={playbookRunsWithActions.component}
                       className=""
                       linkClassName=""
                       size="md"
                     />
                   ) : null}
-                  {playbookRun?.check ? (
-                    <CheckLink check={playbookRun.check} />
+                  {playbookRunsWithActions?.check ? (
+                    <CheckLink check={playbookRunsWithActions.check} />
                   ) : null}
 
-                  <PlaybookStatusIcon status={playbookRun?.status!} />
+                  <PlaybookStatusIcon
+                    status={playbookRunsWithActions?.status!}
+                  />
                 </span>
               </BreadcrumbChild>
             ]}
@@ -114,8 +116,11 @@ export default function PlaybookRunsDetailsPage() {
       >
         <TabbedLinks activeTabName={`Runs`} tabLinks={playbookRunsPageTabs}>
           <div className={`mx-auto flex h-full flex-col p-4`}>
-            {playbookRun ? (
-              <PlaybookRunsActions data={playbookRun} refetch={refetch} />
+            {playbookRunsWithActions ? (
+              <PlaybookRunsActions
+                data={playbookRunsWithActions}
+                refetch={refetch}
+              />
             ) : (
               <CardsSkeletonLoader />
             )}

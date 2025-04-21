@@ -2,7 +2,8 @@ import {
   CategorizedPlaybookRunAction,
   PlaybookApproval,
   PlaybookRunWithActions,
-  PlaybookSpec
+  PlaybookSpec,
+  PlaybookRun
 } from "@flanksource-ui/api/types/playbooks";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
@@ -13,6 +14,7 @@ import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
+import { BiError } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
@@ -29,6 +31,7 @@ import PlaybookRunsApprovalActionsResults from "./PlaybookRunsApprovalActionsRes
 import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 import ViewPlaybookSpecModal from "./ViewPlaybookSpecModal";
 import ViewPlaybookParamsModal from "./ShowParamaters/ViewPlaybookParamsModal";
+import FailedChildRunComponent from "./FailedChildRunComponent";
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
@@ -48,6 +51,10 @@ export default function PlaybookRunsActions({
     | {
         type: "Approval";
         data: PlaybookApproval;
+      }
+    | {
+        type: "FailedChildRun";
+        data: PlaybookRun;
       }
     | undefined
   >(() => {
@@ -323,6 +330,26 @@ export default function PlaybookRunsActions({
                 />
               )}
 
+              {data.childRuns
+                ?.filter((run) => run.status === "failed")
+                .map((run, index) => (
+                  <FailedChildRunComponent
+                    key={run.id}
+                    run={run}
+                    isSelected={
+                      selectedAction?.type === "FailedChildRun" &&
+                      selectedAction.data.id === run.id
+                    }
+                    onClick={() =>
+                      setSelectedAction({
+                        type: "FailedChildRun",
+                        data: run
+                      })
+                    }
+                    stepNumber={index + 1}
+                  />
+                ))}
+
               {data.playbook_approvals &&
                 data.playbook_approvals.length === 1 && (
                   <PlaybookRunsApprovalActionItem
@@ -386,6 +413,16 @@ export default function PlaybookRunsActions({
                   approval={selectedAction.data}
                   playbook={data.playbooks!}
                 />
+              </div>
+            )}
+
+            {selectedAction?.type === "FailedChildRun" && (
+              <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden whitespace-pre-wrap break-all">
+                <div className="flex flex-col gap-2">
+                  <pre className="whitespace-pre-wrap break-all text-red-400">
+                    {selectedAction.data.error}
+                  </pre>
+                </div>
               </div>
             )}
           </div>
