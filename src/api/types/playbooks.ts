@@ -75,6 +75,7 @@ export type PlaybookApproval = {
 };
 
 export interface PlaybookRunWithActions extends PlaybookRun {
+  childRuns?: PlaybookRun[];
   actions: CategorizedPlaybookRunAction[];
   playbook_approvals?: PlaybookApproval[];
 }
