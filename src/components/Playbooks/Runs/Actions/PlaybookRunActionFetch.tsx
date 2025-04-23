@@ -17,7 +17,6 @@ export default function PlaybookRunActionFetch({
   playbookRunActionId
 }: Props) {
   const [refreshTrigger] = useAtom(refreshButtonClickedTrigger);
-  console.log({ playbook });
 
   const {
     data: action,

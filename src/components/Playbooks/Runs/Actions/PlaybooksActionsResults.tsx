@@ -19,6 +19,7 @@ import { IoMdDownload } from "react-icons/io";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import path from "path";
+import { LogsTable } from "@flanksource-ui/components/Logs/Table/LogsTable";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -68,7 +69,13 @@ type PlaybookActionTab = {
   label: string;
   type?: "artifact" | "error";
   content: any;
-  displayContentType: "md" | "yaml" | "text/plain";
+  displayContentType:
+    | "md"
+    | "markdown"
+    | "yaml"
+    | "json"
+    | "text/plain"
+    | "application/json";
 };
 
 export default function PlaybooksRunActionsResults({
@@ -281,12 +288,27 @@ function renderTabContent(tab: PlaybookActionTab, className: string) {
     return <ArtifactContent artifact={artifact} className={className} />;
   }
 
-  switch (tab.displayContentType) {
+  return renderContent(tab.label, tab.displayContentType, content, className);
+}
+
+function renderContent(
+  title: string,
+  contentType: string,
+  content: any,
+  className?: string
+) {
+  switch (contentType) {
     case "text/plain":
-      return <DisplayLogs className={className} logs={content} />;
+      return <DisplayLogs className={className} logs={String(content)} />;
+
     case "md":
+    case "markdown":
       return <DisplayMarkdown className={className} md={content} />;
+
     case "yaml":
+    case "application/yaml":
+    case "json":
+    case "application/json":
       return (
         <pre className={className}>
           <JSONViewer
@@ -297,9 +319,19 @@ function renderTabContent(tab: PlaybookActionTab, className: string) {
           />
         </pre>
       );
+
+    case "application/log+json":
+      return (
+        <LogsTable
+          variant="comfortable"
+          logs={JSON.parse(content)}
+          componentId={""}
+        />
+      );
+
     default:
       throw new Error(
-        `Unknown display content type for tab ${tab.label}: ${tab.displayContentType}`
+        `Unknown display content type for tab ${title}: ${contentType}`
       );
   }
 }
@@ -376,7 +408,12 @@ function ArtifactContent({
     }
 
     if (artifactContent) {
-      return <DisplayMarkdown className={className} md={artifactContent} />;
+      return renderContent(
+        artifact.filename,
+        artifact.content_type,
+        artifactContent,
+        className
+      );
     }
 
     return (

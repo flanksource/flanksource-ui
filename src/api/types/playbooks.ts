@@ -63,6 +63,7 @@ export interface CategorizedPlaybookRunAction extends PlaybookRunAction {
     | "azureDevopsPipeline"
     | "http"
     | "sql"
+    | "logs"
     | "pod";
 }
 
@@ -128,6 +129,7 @@ export interface PlaybookAction {
   http?: any;
   sql?: any;
   pod?: any;
+  logs?: any;
   notification?: any;
 }
 

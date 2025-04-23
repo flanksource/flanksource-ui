@@ -140,6 +140,7 @@ export async function getPlaybookRunActionById(id: string, playbook: Playbook) {
     return undefined;
   }
 
+  // TODO: This doesn't work for actions from a different playbook (child playbooks)
   const actionSpec = playbook.actions.find((a) => a.name === action[0].name);
   const actionType = actionSpec?.ai
     ? "ai"
@@ -159,7 +160,9 @@ export async function getPlaybookRunActionById(id: string, playbook: Playbook) {
                   ? "sql"
                   : actionSpec?.pod
                     ? "pod"
-                    : "exec";
+                    : actionSpec?.logs
+                      ? "logs"
+                      : "exec";
 
   return {
     ...action[0],
