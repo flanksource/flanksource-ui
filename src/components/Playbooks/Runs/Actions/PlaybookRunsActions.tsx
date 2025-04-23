@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
-import { BiError } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";

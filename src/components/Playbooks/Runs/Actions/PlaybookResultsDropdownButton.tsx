@@ -15,7 +15,13 @@ function downloadFile(content: string, filename: string, contentType: string) {
 type Props = {
   activeTab: string;
   activeTabContentRef: React.RefObject<HTMLDivElement>;
-  contentType?: "md" | "yaml" | "text/plain";
+  contentType?:
+    | "md"
+    | "yaml"
+    | "json"
+    | "text/plain"
+    | "application/json"
+    | "markdown";
 };
 
 export default function TabContentDownloadButton({
