@@ -326,6 +326,7 @@ function renderContent(
           variant="comfortable"
           logs={JSON.parse(content)}
           componentId={""}
+          theme="dark"
         />
       );
 
