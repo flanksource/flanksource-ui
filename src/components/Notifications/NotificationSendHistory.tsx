@@ -163,17 +163,38 @@ export default function NotificationSendHistoryList({
   const isOpen = searchParams.has("id");
 
   const heirarchicalData = useMemo(() => {
-    const child = data.filter((row) => row.parent_id);
+    // The latest send history for each group
+    const groupLeader: Record<string, string> = {};
+    for (const row of data) {
+      if (row.group_id && !groupLeader[row.group_id]) {
+        groupLeader[row.group_id] = row.id;
+      }
+    }
 
-    return data
+    // send histories in the same group should be grouped together
+    const histories = data.map((row) => {
+      if (row.parent_id || !row.group_id) {
+        return { ...row };
+      }
+
+      if (!groupLeader[row.group_id] || groupLeader[row.group_id] === row.id) {
+        return { ...row };
+      }
+
+      return {
+        ...row,
+        parent_id: groupLeader[row.group_id]
+      };
+    });
+
+    return histories
       .filter((row) => !row.parent_id)
       .map((row) => {
-        const children = child.filter((child) => child.parent_id === row.id);
-        const rowWithSubRows: NotificationSendHistoryWithSubRows = {
+        const children = histories.filter((c) => c.parent_id === row.id);
+        return {
           ...row,
           subRows: children
         };
-        return rowWithSubRows;
       });
   }, [data]);
 
