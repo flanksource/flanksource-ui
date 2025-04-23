@@ -28,7 +28,6 @@ type SizeTypes = {
 
 type LogsTableProps = {
   logs: LogItem[];
-  actions?: Record<string, any>;
   variant?: "comfortable" | "compact";
   viewOnly?: boolean;
   isLoading?: boolean;
@@ -39,17 +38,18 @@ type LogsTableProps = {
     Message?: SizeTypes;
     Labels?: SizeTypes;
   };
+  theme?: "dark" | "light";
 };
 
 export function LogsTable({
   logs,
-  actions = [],
   variant,
   viewOnly,
   isLoading = false,
   areQueryParamsEmpty = false,
   componentId,
-  columnSizes
+  columnSizes,
+  theme = "light"
 }: LogsTableProps) {
   const [lines, setLines] = useState<LogItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -237,19 +237,23 @@ export function LogsTable({
       ? totalSize - (virtualRows?.[virtualRows.length - 1]?.end || 0)
       : 0;
 
+  const backgroundColor = theme === "dark" ? "bg-black" : "bg-white";
+  const textColor = theme === "dark" ? "#4ade80" : "black";
+
   return (
     <div
       ref={tableContainerRef}
-      className="flex flex-1 flex-col overflow-y-auto"
+      className={`flex flex-1 flex-col overflow-y-auto ${backgroundColor}`}
     >
       <div className="block w-full pb-6">
         <table
           className={clsx(
             "w-full table-fixed",
+            backgroundColor,
             variant === "comfortable" ? "comfortable-table" : "compact-table"
           )}
         >
-          <thead className="sticky top-0 bg-white font-bold">
+          <thead className={`sticky top-0 ${backgroundColor}`}>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
                 <tr key={headerGroup.id}>
@@ -257,6 +261,7 @@ export function LogsTable({
                     <th
                       key={header.id}
                       style={{
+                        color: textColor,
                         width: determineColumnWidth(header.id)
                       }}
                       className={`group relative overflow-hidden`}
@@ -297,6 +302,7 @@ export function LogsTable({
                     <td
                       key={cell.id}
                       style={{
+                        color: textColor,
                         width: cell.column.getSize()
                       }}
                     >
