@@ -71,11 +71,11 @@ type PlaybookActionTab = {
   contentSize?: string;
   content: any;
   displayContentType:
-    | "md"
-    | "markdown"
-    | "yaml"
-    | "json"
+    | "text/markdown"
+    | "text/x-shellscript"
     | "text/plain"
+    | "application/yaml"
+    | "application/log+json"
     | "application/json";
 };
 
@@ -152,28 +152,28 @@ export default function PlaybooksRunActionsResults({
             case "slack":
             case "recommendedplaybooks":
               tab.content = blockKitToMarkdown(JSON.parse(tab.content));
-              tab.displayContentType = "md";
+              tab.displayContentType = "text/markdown";
               break;
 
             case "script":
               tab.content = tab.content.join(" ").replace(/^bash -c /, "$ ");
-              tab.displayContentType = "text/plain";
+              tab.displayContentType = "text/x-shellscript";
               break;
 
             case "headers":
               tab.content = JSON.stringify(tab.content, null, 2);
-              tab.displayContentType = "yaml";
+              tab.displayContentType = "application/yaml";
               break;
 
             case "json":
             case "ai":
-              tab.displayContentType = "yaml";
+              tab.displayContentType = "application/yaml";
               break;
 
             default:
               if (typeof result[key] === "object") {
                 tab.content = JSON.stringify(result[key], null, 2);
-                tab.displayContentType = "yaml";
+                tab.displayContentType = "application/yaml";
               }
           }
 
@@ -207,9 +207,12 @@ export default function PlaybooksRunActionsResults({
           type: "artifact",
           content: artifact,
           displayContentType: artifact.content_type as
-            | "md"
-            | "yaml"
+            | "text/markdown"
+            | "text/x-shellscript"
             | "text/plain"
+            | "application/yaml"
+            | "application/log+json"
+            | "application/json"
         });
       }
     }
@@ -309,15 +312,13 @@ function renderContent(
 ) {
   switch (contentType) {
     case "text/plain":
+    case "text/x-shellscript":
       return <DisplayLogs className={className} logs={String(content)} />;
 
-    case "md":
-    case "markdown":
+    case "text/markdown":
       return <DisplayMarkdown className={className} md={content} />;
 
-    case "yaml":
     case "application/yaml":
-    case "json":
     case "application/json":
       return (
         <pre className={className}>

@@ -8,7 +8,7 @@ function downloadFile(content: string, filename: string, contentType: string) {
   const strippedContent = stripAnsi(content);
   const file = new Blob([strippedContent], { type: contentType });
   a.href = URL.createObjectURL(file);
-  a.download = filename;
+  a.download = filename.toLowerCase();
   a.click();
 }
 
@@ -16,12 +16,12 @@ type Props = {
   activeTab: string;
   activeTabContentRef: React.RefObject<HTMLDivElement>;
   contentType?:
-    | "md"
-    | "yaml"
-    | "json"
+    | "text/markdown"
+    | "text/x-shellscript"
     | "text/plain"
-    | "application/json"
-    | "markdown";
+    | "application/yaml"
+    | "application/log+json"
+    | "application/json";
 };
 
 export default function TabContentDownloadButton({
@@ -29,7 +29,12 @@ export default function TabContentDownloadButton({
   activeTabContentRef,
   contentType = "text/plain"
 }: Props) {
-  const fileName = activeTab;
+  // Artifacts already have a filename with the extension
+  // Other tabs don't.
+  const fileName = activeTab.includes(".")
+    ? activeTab
+    : `${activeTab}.${getContentTypeExtension(contentType)}`;
+
   const onDownloadLogs = useCallback(async () => {
     const tabContent = activeTabContentRef.current;
     if (!tabContent) {
@@ -50,4 +55,23 @@ export default function TabContentDownloadButton({
       <span className="pl-1 text-sm">Download </span>
     </button>
   );
+}
+
+function getContentTypeExtension(contentType: string) {
+  switch (contentType) {
+    case "text/markdown":
+      return "md";
+    case "text/x-shellscript":
+      return "sh";
+    case "text/plain":
+      return "txt";
+    case "application/yaml":
+      return "yaml";
+    case "application/log+json":
+      return "log.json";
+    case "application/json":
+      return "json";
+    default:
+      return "txt";
+  }
 }
