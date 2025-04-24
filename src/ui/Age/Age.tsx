@@ -111,7 +111,7 @@ export function formatDateForTooltip(
   return formatDayjs(datetime, displayTimezone, "timestamp", false);
 }
 
-function formatDayjs(
+export function formatDayjs(
   datetime: dayjs.Dayjs,
   displayTimezone: string,
   datetimePreference: "short" | "medium" | "full" | "timestamp",

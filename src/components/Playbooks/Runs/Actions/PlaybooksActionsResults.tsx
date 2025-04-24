@@ -335,9 +335,10 @@ function renderContent(
       return (
         <LogsTable
           variant="comfortable"
-          logs={JSON.parse(content)}
+          logs={JSON.parse(content) || []}
           componentId={""}
           theme="dark"
+          hideCheckbox
         />
       );
 
