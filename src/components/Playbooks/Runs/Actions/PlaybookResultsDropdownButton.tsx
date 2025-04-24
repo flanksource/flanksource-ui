@@ -29,7 +29,7 @@ export default function TabContentDownloadButton({
   activeTabContentRef,
   contentType = "text/plain"
 }: Props) {
-  const fileName = `${activeTab}.${contentType}`;
+  const fileName = activeTab;
   const onDownloadLogs = useCallback(async () => {
     const tabContent = activeTabContentRef.current;
     if (!tabContent) {

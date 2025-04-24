@@ -68,6 +68,7 @@ type Props = {
 type PlaybookActionTab = {
   label: string;
   type?: "artifact" | "error";
+  contentSize?: string;
   content: any;
   displayContentType:
     | "md"
@@ -116,6 +117,10 @@ export default function PlaybooksRunActionsResults({
 
         case "exec":
           delete result["path"];
+
+          // Rename args to script
+          result["script"] = result["args"];
+          delete result["args"];
           break;
 
         case "ai":
@@ -150,7 +155,7 @@ export default function PlaybooksRunActionsResults({
               tab.displayContentType = "md";
               break;
 
-            case "args":
+            case "script":
               tab.content = tab.content.join(" ").replace(/^bash -c /, "$ ");
               tab.displayContentType = "text/plain";
               break;
@@ -197,7 +202,8 @@ export default function PlaybooksRunActionsResults({
       for (const artifact of artifacts) {
         const filename = path.basename(artifact.path);
         tabs.push({
-          label: `${filename} (${formatBytes(artifact.size)})`,
+          label: filename,
+          contentSize: formatBytes(artifact.size),
           type: "artifact",
           content: artifact,
           displayContentType: artifact.content_type as
@@ -244,7 +250,11 @@ export default function PlaybooksRunActionsResults({
         contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-300 p-4"
       >
         {availableTabs.map((tab) => {
-          const label = tab.label === "Args" ? "Script" : tab.label;
+          let label = tab.label;
+          if (tab.contentSize) {
+            label = `${label} (${tab.contentSize})`;
+          }
+
           return (
             <Tab
               key={tab.label}
