@@ -32,6 +32,7 @@ type LogsTableProps = {
   viewOnly?: boolean;
   isLoading?: boolean;
   areQueryParamsEmpty?: boolean;
+  hideCheckbox?: boolean;
   componentId?: string;
   columnSizes?: {
     Time?: SizeTypes;
@@ -49,7 +50,8 @@ export function LogsTable({
   areQueryParamsEmpty = false,
   componentId,
   columnSizes,
-  theme = "light"
+  theme = "light",
+  hideCheckbox = false
 }: LogsTableProps) {
   const [lines, setLines] = useState<LogItem[]>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -101,6 +103,7 @@ export function LogsTable({
             <LogsTableTimestampCell
               cell={cell}
               variant={variant}
+              hideCheckbox={hideCheckbox}
               viewOnly={viewOnly}
               className="break-word flex flex-row text-left"
             />
@@ -173,6 +176,7 @@ export function LogsTable({
       variant,
       viewOnly,
       lines,
+      hideCheckbox,
       componentId
     ]
   );
