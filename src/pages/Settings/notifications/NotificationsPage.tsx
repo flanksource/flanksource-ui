@@ -1,10 +1,10 @@
-import { getNotificationSendHistory } from "@flanksource-ui/api/services/notifications";
-import NotificationSendHistoryList from "@flanksource-ui/components/Notifications/NotificationSendHistory";
+import { getNotificationSendHistorySummary } from "@flanksource-ui/api/services/notifications";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import NotificationFilterBar from "../../../components/Notifications/Filters/NotificationFilterBar";
 import NotificationTabsLinks from "../../../components/Notifications/NotificationTabsLinks";
+import NotificationSendHistorySummaryList from "@flanksource-ui/components/Notifications/NotificationSendHistorySummary";
 
 export default function NotificationsPage() {
   const { pageIndex, pageSize } = useReactTablePaginationState();
@@ -23,22 +23,20 @@ export default function NotificationsPage() {
       resourceType,
       search
     ],
-    queryFn: () =>
-      getNotificationSendHistory({
+    queryFn: async () => {
+      const res = await getNotificationSendHistorySummary({
         pageIndex,
         pageSize,
         status,
         resourceType,
         search
-      }),
+      });
+      return res;
+    },
     keepPreviousData: true,
     staleTime: 0,
     cacheTime: 0
   });
-
-  const notifications = data?.data ?? [];
-  const totalEntries = data?.totalEntries ?? 0;
-  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
   return (
     <NotificationTabsLinks
@@ -48,11 +46,17 @@ export default function NotificationsPage() {
     >
       <div className="flex h-full w-full flex-1 flex-col p-3">
         <NotificationFilterBar />
-        <NotificationSendHistoryList
+        {/* <NotificationSendHistoryList
           data={notifications ?? []}
           isLoading={isLoading || isRefetching}
           pageCount={pageCount}
           sendHistoryRowCount={totalEntries}
+        /> */}
+        <NotificationSendHistorySummaryList
+          data={data ?? []}
+          isLoading={isLoading || isRefetching}
+          pageCount={1}
+          sendHistoryRowCount={1}
         />
       </div>
     </NotificationTabsLinks>

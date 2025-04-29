@@ -1,10 +1,11 @@
 import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
-import { IncidentCommander, NotificationAPI } from "../axios";
+import { apiBase, IncidentCommander, NotificationAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NotificationRules,
   NotificationSendHistoryApiResponse,
+  NotificationSendHistorySummary,
   NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
   SilenceNotificationResponse
@@ -69,6 +70,45 @@ export const getNotificationsSummary = async ({
       }
     )
   );
+};
+
+export const getNotificationSendHistorySummary = async ({
+  pageIndex,
+  pageSize,
+  resourceType,
+  status,
+  search
+}: NotificationQueryFilterOptions & {
+  status?: string;
+  resourceType?: string;
+  search?: string;
+}) => {
+  const payload: { status?: string } = {};
+
+  if (status) {
+    // Convert the single status string to an array
+    payload.status = status
+      .split(",")
+      .map((s) => {
+        if (s.endsWith(":-1")) {
+          return `!${s.slice(0, -3)}`;
+        }
+
+        return s;
+      })
+      .join(",");
+  }
+
+  const res = await apiBase.post<NotificationSendHistorySummary[]>(
+    `/notification/summary`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  return res.data;
 };
 
 export const getNotificationById = async (id: string) => {

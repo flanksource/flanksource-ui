@@ -94,6 +94,20 @@ export type NotificationSendHistory = {
   parent_id?: string;
 };
 
+export type NotificationSendHistorySummary = {
+  resource: any;
+  notification_id: string;
+  created_at: string;
+  count: number;
+  resource_type: "component" | "config" | "check" | "canary";
+  first_observed: string;
+  last_seen: string;
+  total: number;
+  sent: number;
+  error: number;
+  suppressed: number;
+};
+
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
   resource_type: "component" | "config" | "check" | "canary";
   playbook_run: {
