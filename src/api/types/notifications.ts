@@ -95,10 +95,20 @@ export type NotificationSendHistory = {
 };
 
 export type NotificationSendHistorySummary = {
-  resource: any;
+  resource: {
+    id: string;
+    name: string;
+    type: string;
+    health: "healthy" | "unhealthy" | "warning" | "unknown";
+    status: string;
+    config_class?: string;
+  };
+  // health at event
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  // status at event
+  resource_status: string;
   notification_id: string;
   created_at: string;
-  count: number;
   resource_type: "component" | "config" | "check" | "canary";
   first_observed: string;
   last_seen: string;

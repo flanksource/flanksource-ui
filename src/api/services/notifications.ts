@@ -1,4 +1,7 @@
-import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import {
+  tristateOutputToQueryFilterParam,
+  tristateOutputToQueryParamValue
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
 import { apiBase, IncidentCommander, NotificationAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
@@ -72,6 +75,12 @@ export const getNotificationsSummary = async ({
   );
 };
 
+type NotificationSendHistorySummaryRequest = {
+  status?: string;
+  resourceType?: string;
+  search?: string;
+};
+
 export const getNotificationSendHistorySummary = async ({
   pageIndex,
   pageSize,
@@ -83,20 +92,16 @@ export const getNotificationSendHistorySummary = async ({
   resourceType?: string;
   search?: string;
 }) => {
-  const payload: { status?: string } = {};
+  const payload: NotificationSendHistorySummaryRequest = {
+    search: search
+  };
 
   if (status) {
-    // Convert the single status string to an array
-    payload.status = status
-      .split(",")
-      .map((s) => {
-        if (s.endsWith(":-1")) {
-          return `!${s.slice(0, -3)}`;
-        }
+    payload.status = tristateOutputToQueryParamValue(status);
+  }
 
-        return s;
-      })
-      .join(",");
+  if (resourceType) {
+    payload.resourceType = tristateOutputToQueryParamValue(resourceType);
   }
 
   const res = await apiBase.post<NotificationSendHistorySummary[]>(
@@ -108,6 +113,7 @@ export const getNotificationSendHistorySummary = async ({
       }
     }
   );
+
   return res.data;
 };
 
