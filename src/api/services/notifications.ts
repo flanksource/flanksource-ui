@@ -79,6 +79,7 @@ type NotificationSendHistorySummaryRequest = {
   status?: string;
   resourceType?: string;
   search?: string;
+  includeDeletedResources?: boolean;
 };
 
 export const getNotificationSendHistorySummary = async ({
@@ -86,14 +87,17 @@ export const getNotificationSendHistorySummary = async ({
   pageSize,
   resourceType,
   status,
-  search
+  search,
+  includeDeletedResources
 }: NotificationQueryFilterOptions & {
   status?: string;
   resourceType?: string;
   search?: string;
+  includeDeletedResources?: boolean;
 }) => {
   const payload: NotificationSendHistorySummaryRequest = {
-    search: search
+    search: search,
+    includeDeletedResources: includeDeletedResources
   };
 
   if (status) {

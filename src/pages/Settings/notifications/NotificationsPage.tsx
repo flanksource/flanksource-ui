@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import NotificationFilterBar from "../../../components/Notifications/Filters/NotificationFilterBar";
 import NotificationTabsLinks from "../../../components/Notifications/NotificationTabsLinks";
 import NotificationSendHistorySummaryList from "@flanksource-ui/components/Notifications/NotificationSendHistorySummary";
+import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 
 export default function NotificationsPage() {
   const { pageIndex, pageSize } = useReactTablePaginationState();
@@ -14,6 +15,8 @@ export default function NotificationsPage() {
   const status = searchParams.get("status") ?? undefined;
   const search = searchParams.get("search") ?? undefined;
 
+  const includeDeletedResources = useShowDeletedConfigs();
+
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: [
       "notifications_send_history_summary",
@@ -21,7 +24,8 @@ export default function NotificationsPage() {
       pageSize,
       status,
       resourceType,
-      search
+      search,
+      includeDeletedResources
     ],
     queryFn: async () => {
       const res = await getNotificationSendHistorySummary({
@@ -29,7 +33,8 @@ export default function NotificationsPage() {
         pageSize,
         status,
         resourceType,
-        search
+        search,
+        includeDeletedResources
       });
       return res;
     },
