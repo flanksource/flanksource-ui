@@ -119,6 +119,8 @@ export type NotificationSendHistorySummary = {
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
   resource_type: "component" | "config" | "check" | "canary";
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_status: string;
   playbook_run: {
     id: string;
     status: PlaybookRunStatus;
@@ -126,9 +128,14 @@ export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
     playbook_id: string;
   };
   resource:
-    | Pick<HealthCheck, "id" | "name" | "type" | "status">
-    | Pick<ConfigItem, "id" | "name" | "type" | "config_class">
-    | Pick<Topology, "id" | "name" | "icon">;
+    | (Pick<HealthCheck, "id" | "name" | "type" | "status"> & {
+        health: "healthy" | "unhealthy" | "warning" | "unknown";
+      })
+    | Pick<
+        ConfigItem,
+        "id" | "name" | "type" | "health" | "status" | "config_class"
+      >
+    | Pick<Topology, "id" | "name" | "icon" | "health" | "status">;
   person: User;
 };
 

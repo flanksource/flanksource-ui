@@ -37,7 +37,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
   [
     {
       header: "Last Seen",
-      size: 70,
+      size: 130,
       Cell: ({ row }) => {
         const dateString = row.original.last_seen;
         const count = row.original.total;
