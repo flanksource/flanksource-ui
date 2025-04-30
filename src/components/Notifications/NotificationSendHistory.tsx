@@ -2,7 +2,7 @@ import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/no
 import { Age } from "@flanksource-ui/ui/Age";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
@@ -174,7 +174,6 @@ export default function NotificationSendHistoryList({
   sendHistoryRowCount
 }: NotificationSendHistoryListProps) {
   const [searchParams, setSearchParam] = useSearchParams();
-  const navigate = useNavigate();
 
   const id = searchParams.get("id");
   const isOpen = searchParams.has("id");
@@ -187,9 +186,8 @@ export default function NotificationSendHistoryList({
         isLoading={isLoading}
         enableGrouping={true}
         onRowClick={(row: NotificationSendHistoryWithSubRows) => {
-          const resourceId = row.resource_id;
-          const resourceType = row.resource_type;
-          navigate(`/notifications/resource/${resourceType}/${resourceId}`);
+          searchParams.set("id", row.id);
+          setSearchParam(searchParams);
         }}
         manualPageCount={pageCount}
         totalRowCount={sendHistoryRowCount}

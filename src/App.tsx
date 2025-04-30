@@ -530,7 +530,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
 
         <Route
-          path="resource/:resourceType/:resourceId"
+          path="resource/:resourceId"
           element={withAuthorizationAccessCheck(
             <ResourceNotificationsPage />,
             tables.database,

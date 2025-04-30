@@ -40,15 +40,14 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
       size: 130,
       Cell: ({ row }) => {
         const dateString = row.original.last_seen;
-        const count = row.original.total;
         const firstObserved = row.original.first_observed;
 
         return (
           <div className="text-xs">
             <Age from={dateString} />
-            {(count || 1) > 1 && (
+            {row.original.total > 1 && (
               <span className="inline-block pl-1 text-gray-500">
-                (x{count} over <Age format={"short"} from={firstObserved} />)
+                (over <Age format={"short"} from={firstObserved} />)
               </span>
             )}
           </div>
@@ -145,10 +144,7 @@ export default function NotificationSendHistorySummaryList({
         enableGrouping={true}
         onRowClick={(row) => {
           const resourceId = row.resource?.id;
-          const resourceType = row.resource_type;
-          if (resourceId && resourceType) {
-            navigate(`/notifications/resource/${resourceType}/${resourceId}`);
-          }
+          navigate(`/notifications/resource/${resourceId}`);
         }}
         manualPageCount={pageCount}
         totalRowCount={sendHistoryRowCount}
