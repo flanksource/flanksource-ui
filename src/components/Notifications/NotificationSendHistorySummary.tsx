@@ -24,22 +24,9 @@ type NotificationSendHistorySummaryProps = {
 function ResourceHealthStatusCell({
   row
 }: Pick<MRTCellProps<NotificationSendHistorySummary>, "row">) {
-  const { resource_health, resource_status } = row.original;
   const { health, status } = row.original.resource;
-
-  const healthStatusChanged =
-    resource_health !== health || resource_status !== status;
-
   return (
     <div>
-      {resource_health && resource_status && healthStatusChanged && (
-        <>
-          <HealthIndicator health={resource_health} />
-          <span className="ml-2">{resource_status || "Unknown"}</span>
-          {" ➜ "}
-        </>
-      )}
-
       <HealthIndicator health={health} />
       <span className="ml-2">{status || "Unknown"}</span>
     </div>
@@ -72,7 +59,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
       header: "Resource",
       size: 250,
       Cell: ({ row }) => {
-        row.original.resource_type = "config";
         const total = row.original.total;
         return (
           <div
@@ -93,6 +79,14 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
       header: "Health/Status",
       size: 250,
       Cell: ResourceHealthStatusCell
+    },
+    {
+      header: "Title",
+      size: 250,
+      Cell: ({ row }) => {
+        const description = row.original.resource_health_description;
+        return <span>{description}</span>;
+      }
     },
     {
       header: "Statistics",

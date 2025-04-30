@@ -103,10 +103,9 @@ export type NotificationSendHistorySummary = {
     status: string;
     config_class?: string;
   };
-  // health at event
   resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
-  // status at event
   resource_status: string;
+  resource_health_description: string;
   notification_id: string;
   created_at: string;
   resource_type: "component" | "config" | "check" | "canary";
