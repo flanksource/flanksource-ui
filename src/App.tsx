@@ -227,6 +227,13 @@ const SchemaResourcePage = dynamic(() =>
   )
 );
 
+const ResourceNotificationsPage = dynamic(
+  () =>
+    import(
+      "@flanksource-ui/pages/Settings/notifications/ResourceNotificationsPage"
+    )
+);
+
 const isDevelopment = process.env.NODE_ENV === "development";
 
 export type NavigationItems = {
@@ -416,10 +423,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         )}
       />
 
-      <Route
-        path="/view/health"
-        element={<HealthPage url={CANARY_API} />}
-      />
+      <Route path="/view/health" element={<HealthPage url={CANARY_API} />} />
 
       <Route path="topology" element={sidebar}>
         <Route
@@ -519,6 +523,16 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="rules"
           element={withAuthorizationAccessCheck(
             <NotificationRulesPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+
+        <Route
+          path="resource/:resourceType/:resourceId"
+          element={withAuthorizationAccessCheck(
+            <ResourceNotificationsPage />,
             tables.database,
             "read",
             true

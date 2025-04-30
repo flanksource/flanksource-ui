@@ -160,9 +160,11 @@ export const getNotificationSendHistory = async ({
   pageSize,
   resourceType,
   status,
+  resourceID,
   search
 }: NotificationQueryFilterOptions & {
   status?: string;
+  resourceID?: string;
   resourceType?: string;
   search?: string;
 }) => {
@@ -183,9 +185,11 @@ export const getNotificationSendHistory = async ({
 
   const searchFilter = search ? `&resource->>name.filter=${search}` : "";
 
+  const resourceIDFilter = resourceID ? `&resource_id=eq.${resourceID}` : "";
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
-      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}`,
+      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}${resourceIDFilter}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -51,12 +51,6 @@ export default function NotificationsPage() {
     >
       <div className="flex h-full w-full flex-1 flex-col p-3">
         <NotificationFilterBar />
-        {/* <NotificationSendHistoryList
-          data={notifications ?? []}
-          isLoading={isLoading || isRefetching}
-          pageCount={pageCount}
-          sendHistoryRowCount={totalEntries}
-        /> */}
         <NotificationSendHistorySummaryList
           data={data ?? []}
           isLoading={isLoading || isRefetching}
