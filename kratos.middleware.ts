@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { edgeConfig } from "@ory/integrations/next";
-import cookieParser from "cookie";
 import { Configuration, FrontendApi } from "@ory/kratos-client-fetch";
 
 export default async function kratosMiddleware(request: NextRequest) {
@@ -40,15 +39,18 @@ export default async function kratosMiddleware(request: NextRequest) {
         }
       });
 
-      const cookiesToSet = successFlow.raw.headers.get("set-cookie");
-      if (cookiesToSet) {
-        const cookies = parseCookies(cookiesToSet);
-        for (const key in cookies) {
-          request.cookies.set(key, cookies[key]);
-        }
+      const setCookies = successFlow.raw.headers.get("set-cookie");
+      if (!setCookies) {
+        throw new Error("No set-cookie header found");
       }
 
-      const response = NextResponse.next({ request: request });
+      // Create a redirect response to the original URL without the token parameter
+      const url = new URL(request.url);
+      url.searchParams.delete("token");
+
+      const response = NextResponse.redirect(url.toString());
+      response.headers.set("set-cookie", setCookies);
+
       return response;
     } catch (error) {
       console.error("Login failed:", error);
@@ -57,27 +59,6 @@ export default async function kratosMiddleware(request: NextRequest) {
   }
 
   return NextResponse.next();
-}
-
-// parseCookies converts cookies in Set-Cookie format into a request cookie format.
-function parseCookies(cookies: string): Record<string, string> {
-  const headers: Record<string, string> = {};
-
-  const parsed = cookieParser.parse(cookies);
-  for (const key in parsed) {
-    if (key.startsWith("SameSite")) {
-      // This extracts the ory_kratos_session cookie.
-      const value = parsed[key].replace("Lax,", "").trim();
-      const splits = value.split("=");
-      headers[splits[0]] = splits[1];
-    }
-
-    if (key.startsWith("csrf_token_")) {
-      headers[key] = parsed[key];
-    }
-  }
-
-  return headers;
 }
 
 // cookieFetch keeps track of the cookies during the login flow.
