@@ -48,7 +48,14 @@ export default function NotificationDetails({
   if (notification.body?.startsWith("[{")) {
     const parsed = JSON.parse(notification.body) as SlackMessage[];
     slackBody = blockKitToMarkdown(parsed[0]);
+  } else if (notification.body?.startsWith('{"blocks"')) {
+    const parsed = JSON.parse(notification.body) as SlackMessage;
+    slackBody = blockKitToMarkdown(parsed);
   }
+
+  const isSlackMessage =
+    notification.body?.startsWith("[{") ||
+    notification.body?.startsWith('{"blocks"');
 
   const { data: silencer } = useQuery({
     queryKey: ["notification_silence", notification.silenced_by],
@@ -145,7 +152,7 @@ export default function NotificationDetails({
       {notification.body && (
         <div className="flex flex-col gap-2">
           <label className="truncate text-sm text-gray-500">Body:</label>
-          {notification.body.startsWith("[{") ? (
+          {isSlackMessage ? (
             <DisplayMarkdown
               md={slackBody}
               className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
