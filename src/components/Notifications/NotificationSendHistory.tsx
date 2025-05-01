@@ -23,7 +23,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     {
       header: "Age",
       accessorKey: "created_at",
-      size: 70,
+      size: 130,
       Cell: ({ row }) => {
         const dateString = row.original.created_at;
         const count = row.original.count;
@@ -43,7 +43,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     },
     {
       header: "Resource",
-      size: 250,
+      size: 150,
       Cell: ({ row }) => {
         return (
           <div
@@ -59,7 +59,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       }
     },
     {
-      header: "Status",
+      header: "Health/Status",
       Header: () => <span title="Status of the resource">Status</span>,
       size: 100,
       Cell: ({ row }) => {
@@ -129,16 +129,20 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       }
     },
     {
-      header: "Event",
-      size: 100,
+      header: "Title",
+      size: 300,
       Cell: ({ row }) => {
-        const sourceEvent = row.original.source_event;
-        return <span className="font-mono text-gray-800">{sourceEvent}</span>;
+        const healthDescription = row.original.resource_health_description;
+        return (
+          <span className="inline-block max-w-[180ch] truncate">
+            {healthDescription}
+          </span>
+        );
       }
     },
     {
       header: "Recipient",
-      size: 200,
+      size: 150,
       Cell: ({ row }) => {
         const { playbook_run, person_id, connection_id } = row.original;
         return (

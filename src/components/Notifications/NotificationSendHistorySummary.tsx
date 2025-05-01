@@ -56,7 +56,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
     },
     {
       header: "Resource",
-      size: 250,
+      size: 150,
       Cell: ({ row }) => {
         const total = row.original.total;
         return (
@@ -76,12 +76,12 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
     },
     {
       header: "Health/Status",
-      size: 250,
+      size: 100,
       Cell: ResourceHealthStatusCell
     },
     {
       header: "Title",
-      size: 250,
+      size: 300,
       Cell: ({ row }) => {
         const description = row.original.resource_health_description;
         return <span>{description}</span>;

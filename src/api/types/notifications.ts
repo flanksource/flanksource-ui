@@ -92,6 +92,9 @@ export type NotificationSendHistory = {
   duration_millis?: number | undefined;
   created_at: string;
   parent_id?: string;
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_status: string;
+  resource_health_description: string;
 };
 
 export type NotificationSendHistorySummary = {
