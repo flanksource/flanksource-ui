@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { edgeConfig } from "@ory/integrations/next";
-
+import cookieParser from "cookie";
 import { Configuration, FrontendApi } from "@ory/kratos-client-fetch";
 
 export default async function kratosMiddleware(request: NextRequest) {
@@ -40,17 +40,35 @@ export default async function kratosMiddleware(request: NextRequest) {
           password: password
         }
       });
-      console.log(
-        `session token: ${successFlow.raw.headers.get("set-cookie")}`
-      );
 
-      request.headers.set("cookie", successFlow.raw.headers.get("set-cookie")!);
+      const setCookie = successFlow.raw.headers.get("set-cookie");
+      if (setCookie) {
+        const parts: string[] = [];
 
-      // Create response with the session cookie
-      const response = NextResponse.next();
+        const parsed = cookieParser.parse(setCookie);
+        for (const key in parsed) {
+          if (key.startsWith("SameSite")) {
+            const value = parsed[key].replace("Lax,", "").trim();
+            const pp = value.split("=")
+            console.log(`setting cookie ${pp[0]}`, pp[1])
+            request.cookies.set(pp[0], pp[1]);
+            parts.push(value);
+          }
 
-      // The session cookie will be automatically set by Kratos
-      // We just need to ensure it's included in the response
+          if (key.startsWith("csrf_token_")) {
+            parts.push(`${key}=${parsed[key]}`);
+            console.log(`setting cookie ${key}`, parsed[key])
+            request.cookies.set(key, parsed[key]);
+          }
+        }
+
+        parts.sort()
+      }
+
+      const response = NextResponse.next({request: request});
+      // if (setCookie) {
+      //   response.headers.set("cookie", setCookie);
+      // }
       return response;
     } catch (error) {
       console.error("Login failed:", error);
