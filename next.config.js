@@ -2,6 +2,9 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true"
 });
 
+// Initialize Sentry for frontend error tracking
+const { withSentryConfig } = require("@sentry/nextjs");
+
 /**
  * @type {import('next').NextConfig}
  */
@@ -93,7 +96,35 @@ const config = {
     esmExternals: "loose",
     optimizePackageImports: ["@flanksource/icons"]
   },
-  transpilePackages: ["monaco-editor"]
+  transpilePackages: ["monaco-editor"],
+  sentry: {
+    // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
+    // for client-side builds. (This will be the default starting in
+    // `@sentry/nextjs` version 8.0.0.) See:
+    // https://webpack.js.org/configuration/devtool/
+    //
+    // You can also use `hidden-nosources-source-map` to hide the source maps
+    // completely, but still get stack traces.
+    hideSourceMaps: true,
+    
+    // This option will automatically add release information to your
+    // Sentry events.
+    autoInstrumentServerFunctions: true,
+  }
 };
 
-module.exports = withBundleAnalyzer(config);
+// Make sure adding Sentry options is the last code to run before exporting
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, org, project, authToken, configFile, stripPrefix,
+  //   urlPrefix, include, ignore
+  silent: true, // Suppresses all logs
+};
+
+// Export modified config - first with bundle analyzer, then with Sentry
+module.exports = withSentryConfig(
+  withBundleAnalyzer(config),
+  sentryWebpackPluginOptions
+);

@@ -21,6 +21,7 @@
     "@next/bundle-analyzer": "^14.2.5",
     "@ory/client": "^1.2.11",
     "@ory/integrations": "^1.1.5",
+    "@sentry/nextjs": "^7.101.1",
     "@storybook/client-api": "^7.6.17",
     "@storybook/theming": "^7.6.17",
     "@tailwindcss/forms": "^0.5.2",
@@ -104,7 +105,7 @@
     "yup": "^0.32.11"
   },
   "dependecyComments": {
-    "@headlessui/react": "We are using insiders version to use `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve.",
+    "@headlressui/react": "We are using insiders version to headlessui/react, for the `by` property on `Combobox`. Without `by`, selected item logic was difficult to achieve.",
     "@tanstack/react-query-devtools": "React Query Devtools are only included in bundles when process.env.NODE_ENV === 'development', so we don't have to exclude it from production build. Check it's docs."
   },
   "proxy": "https://incident-commander.canary.lab.flanksource.com",
