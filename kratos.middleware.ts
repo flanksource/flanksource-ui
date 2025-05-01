@@ -10,14 +10,13 @@ export default async function kratosMiddleware(request: NextRequest) {
     const decodedToken = Buffer.from(token, "base64url").toString("utf-8");
     const [username, password] = decodedToken.split(":");
 
-    // Initialize Kratos client
-    const kratos = new FrontendApi(
-      new Configuration({
-        basePath: "http://localhost:3000/api/.ory",
-        headers: { Accept: "application/json" },
-        fetchApi: cookieFetch()
-      })
-    );
+    const frontendConfig = new Configuration({
+      // basePath: "http://localhost:3000/api/.ory",
+      basePath: edgeConfig.basePath,
+      headers: { Accept: "application/json" },
+      fetchApi: cookieFetch()
+    });
+    const kratos = new FrontendApi(frontendConfig);
 
     try {
       const flow = await kratos.createBrowserLoginFlow({});
@@ -41,34 +40,15 @@ export default async function kratosMiddleware(request: NextRequest) {
         }
       });
 
-      const setCookie = successFlow.raw.headers.get("set-cookie");
-      if (setCookie) {
-        const parts: string[] = [];
-
-        const parsed = cookieParser.parse(setCookie);
-        for (const key in parsed) {
-          if (key.startsWith("SameSite")) {
-            const value = parsed[key].replace("Lax,", "").trim();
-            const pp = value.split("=")
-            console.log(`setting cookie ${pp[0]}`, pp[1])
-            request.cookies.set(pp[0], pp[1]);
-            parts.push(value);
-          }
-
-          if (key.startsWith("csrf_token_")) {
-            parts.push(`${key}=${parsed[key]}`);
-            console.log(`setting cookie ${key}`, parsed[key])
-            request.cookies.set(key, parsed[key]);
-          }
+      const cookiesToSet = successFlow.raw.headers.get("set-cookie");
+      if (cookiesToSet) {
+        const cookies = parseCookies(cookiesToSet);
+        for (const key in cookies) {
+          request.cookies.set(key, cookies[key]);
         }
-
-        parts.sort()
       }
 
-      const response = NextResponse.next({request: request});
-      // if (setCookie) {
-      //   response.headers.set("cookie", setCookie);
-      // }
+      const response = NextResponse.next({ request: request });
       return response;
     } catch (error) {
       console.error("Login failed:", error);
@@ -79,25 +59,45 @@ export default async function kratosMiddleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// cookie-jar.ts
-export function cookieFetch() {
-  let jar = ""; // holds latest Set-Cookie header(s)
+// parseCookies converts cookies in Set-Cookie format into a request cookie format.
+function parseCookies(cookies: string): Record<string, string> {
+  const headers: Record<string, string> = {};
+
+  const parsed = cookieParser.parse(cookies);
+  for (const key in parsed) {
+    if (key.startsWith("SameSite")) {
+      // This extracts the ory_kratos_session cookie.
+      const value = parsed[key].replace("Lax,", "").trim();
+      const splits = value.split("=");
+      headers[splits[0]] = splits[1];
+    }
+
+    if (key.startsWith("csrf_token_")) {
+      headers[key] = parsed[key];
+    }
+  }
+
+  return headers;
+}
+
+// cookieFetch keeps track of the cookies during the login flow.
+// We need this as we're using BrowserFlow on the server side.
+// Only browser flow returns the cookies in the response.
+function cookieFetch() {
+  let jar = "";
 
   return async (input: RequestInfo, init: RequestInit = {}) => {
-    // ―― outbound: attach cookie we have ——————————————
     const headers = new Headers(init.headers ?? {});
     if (jar) headers.set("cookie", jar);
 
-    // call the real fetch
     const res = await fetch(input, {
       ...init,
       headers,
       credentials: "include"
     });
 
-    // ―― inbound: remember new cookies ————————————————
     const set = res.headers.get("set-cookie");
-    if (set) jar = set; // (add logic if you need a full jar)
+    if (set) jar = set;
 
     return res;
   };
