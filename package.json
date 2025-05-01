@@ -21,6 +21,7 @@
     "@next/bundle-analyzer": "^14.2.5",
     "@ory/client": "^1.2.11",
     "@ory/integrations": "^1.1.5",
+    "@ory/kratos-client-fetch": "^1.3.8",
     "@storybook/client-api": "^7.6.17",
     "@storybook/theming": "^7.6.17",
     "@tailwindcss/forms": "^0.5.2",
@@ -117,11 +118,11 @@
     ]
   },
   "scripts": {
-    "dev": "rm -f middleware.ts && cross-env next dev",
-    "dev:canary": "rm -f middleware.ts && cross-env NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER next dev",
+    "dev": "cp kratos.middleware.ts middleware.ts && cross-env next dev",
+    "dev:canary": "cp kratos.middleware.ts middleware.ts && cross-env NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER next dev",
     "dev:clerk": "cp clerk.middleware.ts middleware.ts && cross-env next dev",
     "start": "cross-env next start",
-    "build": "node -v && rm -f middleware.ts && cross-env NODE_ENV=production next build",
+    "build": "node -v && cp kratos.middleware.ts middleware.ts && cross-env NODE_ENV=production next build",
     "build:clerk": "node -v && cp clerk.middleware.ts middleware.ts && cross-env NODE_ENV=production next build",
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "jest --watch",
