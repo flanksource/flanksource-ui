@@ -222,7 +222,8 @@ export default function PlaybooksRunActionsResults({
       logs: 1,
       stdout: 1,
       stderr: 2,
-      artifacts: 1000 // artifacts at the end
+      artifacts: 1000, // artifacts at the end,
+      metadata: 1001 // logs metadata
     };
 
     tabs.sort((a, b) => {

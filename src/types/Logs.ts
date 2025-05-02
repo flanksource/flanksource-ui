@@ -2,7 +2,9 @@ type LogItem = {
   labels?: Record<string, string>;
   message: string;
   timestamp: string;
-  firstObserved: string;
+  count?: number;
+  firstObserved?: string;
+  lastObserved?: string;
 };
 
 export default LogItem;
