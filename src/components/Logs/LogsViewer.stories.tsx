@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { LogsViewer } from "./index";
+import LogItem from "@flanksource-ui/types/Logs";
 
 export default {
   title: "LogsViewer",
@@ -7,7 +8,7 @@ export default {
   decorators: [(Story) => <Story />]
 } as ComponentMeta<typeof LogsViewer>;
 
-const logsExample = [
+const logsExample: LogItem[] = [
   {
     timestamp: "2022-04-14T11:49:12.705934543Z",
     message:
