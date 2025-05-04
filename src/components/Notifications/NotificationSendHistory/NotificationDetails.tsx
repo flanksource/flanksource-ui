@@ -69,7 +69,12 @@ export default function NotificationDetails({
         <div className="col-span-4">
           <VerticalDescription
             label="Resource"
-            value={<NotificationResourceDisplay notification={notification} />}
+            value={
+              <NotificationResourceDisplay
+                resource={notification.resource}
+                resourceType={notification.resource_type}
+              />
+            }
           />
         </div>
 

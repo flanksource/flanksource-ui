@@ -53,7 +53,10 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
             }}
             className="flex flex-row items-center"
           >
-            <NotificationResourceDisplay notification={row.original} />
+            <NotificationResourceDisplay
+              resource={row.original.resource}
+              resourceType={row.original.resource_type}
+            />
           </div>
         );
       }

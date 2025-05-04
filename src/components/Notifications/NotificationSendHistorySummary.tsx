@@ -24,7 +24,12 @@ type NotificationSendHistorySummaryProps = {
 function ResourceHealthStatusCell({
   row
 }: Pick<MRTCellProps<NotificationSendHistorySummary>, "row">) {
-  const { health, status } = row.original.resource;
+  const resource = row.original.resource;
+  if (!resource) {
+    return <span>Deleted</span>;
+  }
+
+  const { health, status } = resource;
   return (
     <div>
       <HealthIndicator health={health} />
@@ -67,7 +72,10 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
             }}
             className="flex flex-row items-center"
           >
-            <NotificationResourceDisplay notification={row.original} />
+            <NotificationResourceDisplay
+              resource={row.original.resource}
+              resourceType={row.original.resource_type}
+            />
             &nbsp;
             <Badge color="blue" size="sm" text={total}></Badge>
           </div>

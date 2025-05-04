@@ -1,24 +1,23 @@
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
-import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
+import { NotificationSendHistoryResource } from "@flanksource-ui/api/types/notifications";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import { CheckLink } from "../Canary/HealthChecks/CheckLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import { TopologyLink } from "../Topology/TopologyLink";
 
 type NotificationResourceDisplayProps = {
-  notification: Pick<
-    NotificationSendHistoryApiResponse,
-    "resource" | "resource_type"
-  >;
+  resource?: NotificationSendHistoryResource;
+  resourceType?: "config" | "check" | "component";
 };
 
 export default function NotificationResourceDisplay({
-  notification
+  resource,
+  resourceType
 }: NotificationResourceDisplayProps) {
-  const resource = notification.resource;
-
-  const resourceType = notification.resource_type;
+  if (!resource) {
+    return <span>Unknown</span>;
+  }
 
   return (
     <>
