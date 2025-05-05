@@ -43,6 +43,9 @@ export default function NotificationsPage() {
     cacheTime: 0
   });
 
+  const totalEntries = data?.total;
+  const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
+
   return (
     <NotificationTabsLinks
       activeTab={"Notifications"}
@@ -52,10 +55,10 @@ export default function NotificationsPage() {
       <div className="flex h-full w-full flex-1 flex-col p-3">
         <NotificationFilterBar />
         <NotificationSendHistorySummaryList
-          data={data ?? []}
+          data={data?.results ?? []}
           isLoading={isLoading || isRefetching}
-          pageCount={1}
-          sendHistoryRowCount={1}
+          pageCount={pageCount}
+          sendHistoryRowCount={totalEntries ?? 0}
         />
       </div>
     </NotificationTabsLinks>

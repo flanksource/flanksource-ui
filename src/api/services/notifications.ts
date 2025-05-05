@@ -80,6 +80,13 @@ type NotificationSendHistorySummaryRequest = {
   resourceType?: string;
   search?: string;
   includeDeletedResources?: boolean;
+  pageIndex?: number;
+  pageSize?: number;
+};
+
+type NotificationSendHistorySummaryResponse = {
+  total: number;
+  results: NotificationSendHistorySummary[];
 };
 
 export const getNotificationSendHistorySummary = async ({
@@ -97,7 +104,9 @@ export const getNotificationSendHistorySummary = async ({
 }) => {
   const payload: NotificationSendHistorySummaryRequest = {
     search: search,
-    includeDeletedResources: includeDeletedResources
+    includeDeletedResources: includeDeletedResources,
+    pageIndex: pageIndex,
+    pageSize: pageSize
   };
 
   if (status) {
@@ -108,7 +117,7 @@ export const getNotificationSendHistorySummary = async ({
     payload.resourceType = tristateOutputToQueryParamValue(resourceType);
   }
 
-  const res = await apiBase.post<NotificationSendHistorySummary[]>(
+  const res = await apiBase.post<NotificationSendHistorySummaryResponse>(
     `/notification/summary`,
     payload,
     {
