@@ -298,7 +298,7 @@ export default function PlaybookRunsActions({
             <div className="mb-2 ml-[-25px] mr-[-15px] flex flex-row items-center justify-between border-t border-gray-200 py-2 pl-[25px]">
               <div className="font-semibold text-gray-600">
                 Actions{" "}
-                {runCost !== 0 && (
+                {(totalInputTokens > 0 || totalOutputTokens > 0) && (
                   <span
                     data-tooltip-id="action-cost-tooltip"
                     data-tooltip-content={`${(totalInputTokens + totalOutputTokens).toLocaleString()} tokens (${totalInputTokens.toLocaleString()} input + ${totalOutputTokens.toLocaleString()} output)`}
