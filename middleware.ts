@@ -9,12 +9,14 @@ export default async function kratosMiddleware(request: NextRequest) {
     const decodedToken = Buffer.from(token, "base64url").toString("utf-8");
     const [username, password] = decodedToken.split(":");
 
+    const backendURL = process.env.BACKEND_URL || "http://localhost:3000/";
+    const backendBasePath = new URL(edgeConfig.basePath, backendURL).toString();
     const frontendConfig = new Configuration({
-      // basePath: "http://localhost:3000/api/.ory",
-      basePath: edgeConfig.basePath,
+      basePath: backendBasePath,
       headers: { Accept: "application/json" },
       fetchApi: cookieFetch()
     });
+
     const kratos = new FrontendApi(frontendConfig);
 
     try {
