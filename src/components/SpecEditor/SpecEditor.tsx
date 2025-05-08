@@ -66,7 +66,6 @@ export default function SpecEditor({
   onBack,
   onDeleted = () => {}
 }: SpecEditorProps) {
-  console.log({ onBack });
   const [, setModalHelpLink] = useAtom(modalHelpLinkAtom);
   const [, setIntegrationsModalSubTitle] = useAtom(integrationsModalSubTitle);
 

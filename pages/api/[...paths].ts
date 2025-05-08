@@ -63,14 +63,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("Proxying request to backend");
   const target = await getTargetURL(req);
 
   if (!target) {
     return res.status(500).json({ error: "Missing target" });
   }
-
-  console.log(`Proxying to ${target}`);
 
   return httpProxyMiddleware(req, res, {
     target: target!,
