@@ -49,8 +49,6 @@ export default function HelmCLIAddIntegrationCommand({
 }: Props) {
   const flags = yamlObjectToCliFlags(formValues.chartValues);
 
-  console.log(chartValues);
-
   const helmInstallationCommand = template({
     name: formValues.name,
     namespace: formValues.namespace,

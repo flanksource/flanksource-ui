@@ -27,7 +27,6 @@ export function LogsTableTimestampCell({
 }: LogsTableTimestampCellProps) {
   let datetimePreference = useAtomValue(datetimePreferenceAtom);
   const displayTimezonePreference = useAtomValue(displayTimezonePreferenceAtom);
-  console.log(row.original.firstObserved);
 
   return (
     <div className={className}>
