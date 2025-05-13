@@ -70,6 +70,7 @@ type PlaybookActionTab = {
   type?: "artifact" | "error";
   contentSize?: string;
   content: any;
+  artifactID?: string;
   displayContentType:
     | "text/markdown"
     | "text/x-shellscript"
@@ -204,6 +205,7 @@ export default function PlaybooksRunActionsResults({
         tabs.push({
           label: filename,
           contentSize: formatBytes(artifact.size),
+          artifactID: artifact.id,
           type: "artifact",
           content: artifact,
           displayContentType: artifact.content_type as
@@ -282,6 +284,9 @@ export default function PlaybooksRunActionsResults({
 
       <TabContentDownloadButton
         activeTab={activeTab || ""}
+        artifactID={
+          availableTabs.find((tab) => tab.label === activeTab)?.artifactID
+        }
         contentType={
           availableTabs.find((tab) => tab.label === activeTab)
             ?.displayContentType

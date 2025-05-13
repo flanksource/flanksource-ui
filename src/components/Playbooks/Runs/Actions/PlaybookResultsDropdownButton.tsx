@@ -15,6 +15,7 @@ function downloadFile(content: string, filename: string, contentType: string) {
 type Props = {
   activeTab: string;
   activeTabContentRef: React.RefObject<HTMLDivElement>;
+  artifactID?: string;
   contentType?:
     | "text/markdown"
     | "text/x-shellscript"
@@ -24,9 +25,11 @@ type Props = {
     | "application/json";
 };
 
+// Downloads the rendered content or the artifact
 export default function TabContentDownloadButton({
   activeTab,
   activeTabContentRef,
+  artifactID,
   contentType = "text/plain"
 }: Props) {
   // Artifacts already have a filename with the extension
@@ -36,6 +39,12 @@ export default function TabContentDownloadButton({
     : `${activeTab}.${getContentTypeExtension(contentType)}`;
 
   const onDownloadLogs = useCallback(async () => {
+    if (artifactID) {
+      const downloadURL = `/api/artifacts/download/${artifactID}`;
+      window.open(downloadURL, "_blank");
+      return;
+    }
+
     const tabContent = activeTabContentRef.current;
     if (!tabContent) {
       toast.error("No content available to download");
@@ -44,7 +53,7 @@ export default function TabContentDownloadButton({
 
     const content = tabContent.innerText;
     downloadFile(content, fileName, contentType);
-  }, [fileName, activeTabContentRef, contentType]);
+  }, [artifactID, fileName, activeTabContentRef, contentType]);
 
   return (
     <button
