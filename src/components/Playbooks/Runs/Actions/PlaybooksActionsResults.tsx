@@ -359,7 +359,7 @@ function ArtifactContent({
 }) {
   const [error, setError] = useState<string | null>(null);
 
-  const maxFileSize = 1048576; // 1MB
+  const maxFileSize = 50 * 1024 * 1024; // 50MB
   const isSmallFile = artifact.size < maxFileSize;
 
   const {
@@ -391,7 +391,9 @@ function ArtifactContent({
     if (!isSmallFile) {
       return (
         <div className="py-8 text-center text-gray-500">
-          <p className="mb-4">File is too large to preview</p>
+          <p className="mb-4">
+            File is too large to preview. Maximum file size is 50MB.
+          </p>
           <Button
             onClick={() => {
               window.open(downloadURL, "_blank");
