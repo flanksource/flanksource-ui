@@ -4,26 +4,35 @@ import NotificationSendHistoryList from "@flanksource-ui/components/Notification
 import NotificationTabsLinks from "@flanksource-ui/components/Notifications/NotificationTabsLinks";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 export default function ResourceNotificationsPage() {
   const { pageIndex, pageSize } = useReactTablePaginationState();
-  const { resourceType, resourceId } = useParams();
+  const { resourceId } = useParams();
+
+  const [searchParams] = useSearchParams();
+  const resourceType = searchParams.get("resource_type") ?? undefined;
+  const status = searchParams.get("status") ?? undefined;
+  const search = searchParams.get("search") ?? undefined;
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: [
       "notifications_send_history",
       pageIndex,
+      status,
       pageSize,
       resourceType,
-      resourceId
+      resourceId,
+      search
     ],
     queryFn: async () => {
       const res = await getNotificationSendHistory({
         pageIndex,
         pageSize,
         resourceType,
-        resourceID: resourceId
+        resourceID: resourceId,
+        status,
+        search
       });
       return res;
     },
