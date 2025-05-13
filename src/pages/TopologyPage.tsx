@@ -223,7 +223,7 @@ export function TopologyPage() {
               <CardsSkeletonLoader />
             ) : (
               <div className="flex w-full px-6 py-4 leading-1.21rel">
-                <div className="flex w-full flex-wrap">
+                <div className="flex nc w-full flex-wrap">
                   {sortedTopologies.map((item) => (
                     <TopologyCard
                       key={item.id}
