@@ -154,7 +154,7 @@ export function LogsTable({
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: sanitizeHTMLContent(
-                    convert.toHtml(row.original.message)
+                    convert.toHtml(stripANSIEscapeCodes(row.original.message))
                   )
                 }}
               />
@@ -348,4 +348,18 @@ export function LogsTable({
       </div>
     </div>
   );
+}
+
+// Source: https://www.npmjs.com/package/ansi-regex
+// Valid string terminator sequences are BEL, ESC\, and 0x9c
+const ST = "(?:\\u0007|\\u001B\\u005C|\\u009C)";
+const pattern = [
+  `[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?${ST})`,
+  "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))"
+].join("|");
+
+const ansiRegex = RegExp(pattern, "g");
+
+function stripANSIEscapeCodes(message: string) {
+  return message.replace(ansiRegex, "");
 }
