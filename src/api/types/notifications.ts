@@ -92,6 +92,7 @@ export type NotificationSendHistory = {
   duration_millis?: number | undefined;
   created_at: string;
   parent_id?: string;
+  group_id?: string;
 };
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
