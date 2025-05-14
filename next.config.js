@@ -57,17 +57,17 @@ const config = {
     const URL_REWRITES = [
       {
         source: "/api/canary/:path*",
-        destination: `${backendURL}/${canaryPrefix}/:path*`
+        destination: `https://incident-commander.demo.aws.flanksource.com/${canaryPrefix}/:path*`
       },
       {
         source: "/api/.ory/:path*",
-        destination: `${backendURL}/kratos/:path*`
+        destination: `https://incident-commander.demo.aws.flanksource.com/kratos/:path*`
       },
       // All other API requests are proxied to the backend on the same path
       // as the request.
       {
         source: "/api/:path*",
-        destination: `${backendURL}/:path*`
+        destination: `https://incident-commander.demo.aws.flanksource.com/:path*`
       }
     ];
     // NODE_ENV is set to "development" when running locally, so we can use it
@@ -78,7 +78,7 @@ const config = {
       ? LOCALHOST_ENV_URL_REWRITES
       : URL_REWRITES;
 
-    return rewrites;
+    return URL_REWRITES;
   },
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
