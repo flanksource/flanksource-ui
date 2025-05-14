@@ -43,7 +43,6 @@ const config = {
     }
 
     console.log("Process env");
-    console.log(process.env);
 
     // Read at build time. See Dockerfile for deployment related steps.
     const backendURL = process.env.BACKEND_URL || "http://localhost:3000/";
