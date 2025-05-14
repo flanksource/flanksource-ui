@@ -53,7 +53,7 @@ const config = {
     const LOCALHOST_ENV_URL_REWRITES = [
       {
         source: "/api/:path*",
-        destination: `https://incident-commander.demo.aws.flanksource.com/api/:path*`
+        destination: `${backendURL}/api/:path*`
       }
     ];
 
