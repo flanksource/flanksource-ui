@@ -216,7 +216,7 @@ export function TopologyPage() {
         contentClass="p-0 h-full"
         loading={isLoading}
       >
-        <div className="flex h-full flex-row overflow-y-auto py-2">
+        <div className="flex h-full b flex-row overflow-y-auto py-2">
           <div className="flex h-full flex-1 flex-col overflow-y-auto">
             <TopologyFilterBar data={data} sortLabels={sortLabels ?? []} />
             {isLoading && !topology?.length ? (
