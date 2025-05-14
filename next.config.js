@@ -61,13 +61,13 @@ const config = {
       },
       {
         source: "/api/.ory/:path*",
-        destination: `https://incident-commander.demo.aws.flanksource.com/kratos/:path*`
+        destination: `https://incident-commander.demo.aws.flanksource.com/api/kratos/:path*`
       },
       // All other API requests are proxied to the backend on the same path
       // as the request.
       {
         source: "/api/:path*",
-        destination: `https://incident-commander.demo.aws.flanksource.com/:path*`
+        destination: `https://incident-commander.demo.aws.flanksource.com/api/:path*`
       }
     ];
     // NODE_ENV is set to "development" when running locally, so we can use it
