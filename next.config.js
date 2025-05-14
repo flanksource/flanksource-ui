@@ -81,7 +81,7 @@ const config = {
       ? LOCALHOST_ENV_URL_REWRITES
       : URL_REWRITES;
 
-    return LOCALHOST_ENV_URL_REWRITES;
+    return rewrites;
   },
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
