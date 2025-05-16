@@ -92,20 +92,48 @@ export type NotificationSendHistory = {
   duration_millis?: number | undefined;
   created_at: string;
   parent_id?: string;
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_status: string;
+  resource_health_description: string;
+};
+
+export type NotificationSendHistoryResource =
+  | (Pick<HealthCheck, "id" | "name" | "type" | "status"> & {
+      health: "healthy" | "unhealthy" | "warning" | "unknown";
+    })
+  | Pick<
+      ConfigItem,
+      "id" | "name" | "type" | "health" | "status" | "config_class"
+    >
+  | Pick<Topology, "id" | "name" | "type" | "icon" | "health" | "status">;
+
+export type NotificationSendHistorySummary = {
+  resource?: NotificationSendHistoryResource; // resource can be null when the resource is deleted, but the notification history is still present
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_status: string;
+  resource_health_description: string;
+  notification_id: string;
+  created_at: string;
+  resource_type: "component" | "config" | "check";
+  first_observed: string;
+  last_seen: string;
+  total: number;
+  sent: number;
+  error: number;
+  suppressed: number;
 };
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
-  resource_type: "component" | "config" | "check" | "canary";
+  resource_type: "component" | "config" | "check";
+  resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_status: string;
   playbook_run: {
     id: string;
     status: PlaybookRunStatus;
     playbook_name: string;
     playbook_id: string;
   };
-  resource:
-    | Pick<HealthCheck, "id" | "name" | "type" | "status">
-    | Pick<ConfigItem, "id" | "name" | "type" | "config_class">
-    | Pick<Topology, "id" | "name" | "icon">;
+  resource: NotificationSendHistoryResource;
   person: User;
 };
 

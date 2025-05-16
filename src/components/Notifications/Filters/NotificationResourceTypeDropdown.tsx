@@ -5,11 +5,6 @@ import { useField } from "formik";
 
 export const jobHistoryResourceTypes: TriStateOptions[] = [
   {
-    label: "Canary",
-    value: "canary",
-    id: "canary"
-  },
-  {
     label: "Check",
     value: "check",
     id: "check"

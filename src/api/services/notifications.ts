@@ -1,10 +1,14 @@
-import { tristateOutputToQueryFilterParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import {
+  tristateOutputToQueryFilterParam,
+  tristateOutputToQueryParamValue
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
-import { IncidentCommander, NotificationAPI } from "../axios";
+import { apiBase, IncidentCommander, NotificationAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NotificationRules,
   NotificationSendHistoryApiResponse,
+  NotificationSendHistorySummary,
   NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
   SilenceNotificationResponse
@@ -71,6 +75,61 @@ export const getNotificationsSummary = async ({
   );
 };
 
+type NotificationSendHistorySummaryRequest = {
+  status?: string;
+  resourceType?: string;
+  search?: string;
+  includeDeletedResources?: boolean;
+  pageIndex?: number;
+  pageSize?: number;
+};
+
+type NotificationSendHistorySummaryResponse = {
+  total: number;
+  results: NotificationSendHistorySummary[];
+};
+
+export const getNotificationSendHistorySummary = async ({
+  pageIndex,
+  pageSize,
+  resourceType,
+  status,
+  search,
+  includeDeletedResources
+}: NotificationQueryFilterOptions & {
+  status?: string;
+  resourceType?: string;
+  search?: string;
+  includeDeletedResources?: boolean;
+}) => {
+  const payload: NotificationSendHistorySummaryRequest = {
+    search: search,
+    includeDeletedResources: includeDeletedResources,
+    pageIndex: pageIndex,
+    pageSize: pageSize
+  };
+
+  if (status) {
+    payload.status = tristateOutputToQueryParamValue(status);
+  }
+
+  if (resourceType) {
+    payload.resourceType = tristateOutputToQueryParamValue(resourceType);
+  }
+
+  const res = await apiBase.post<NotificationSendHistorySummaryResponse>(
+    `/notification/summary`,
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  return res.data;
+};
+
 export const getNotificationById = async (id: string) => {
   const selectColumns = [
     "*",
@@ -110,9 +169,11 @@ export const getNotificationSendHistory = async ({
   pageSize,
   resourceType,
   status,
+  resourceID,
   search
 }: NotificationQueryFilterOptions & {
   status?: string;
+  resourceID?: string;
   resourceType?: string;
   search?: string;
 }) => {
@@ -133,9 +194,11 @@ export const getNotificationSendHistory = async ({
 
   const searchFilter = search ? `&resource->>name.filter=${search}` : "";
 
+  const resourceIDFilter = resourceID ? `&resource_id=eq.${resourceID}` : "";
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
-      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}`,
+      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}${resourceIDFilter}`,
       {
         headers: {
           Prefer: "count=exact"

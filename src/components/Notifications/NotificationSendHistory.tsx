@@ -7,13 +7,12 @@ import NotificationDetailsModal from "./NotificationDetailsModal";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
-import { useMemo } from "react";
-import { TbCornerDownRight } from "react-icons/tb";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
+import { ArrowRightIcon } from "@heroicons/react/solid";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -24,7 +23,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     {
       header: "Age",
       accessorKey: "created_at",
-      size: 70,
+      size: 130,
       Cell: ({ row }) => {
         const dateString = row.original.created_at;
         const count = row.original.count;
@@ -44,7 +43,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     },
     {
       header: "Resource",
-      size: 250,
+      size: 150,
       Cell: ({ row }) => {
         return (
           <div
@@ -54,20 +53,40 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
             }}
             className="flex flex-row items-center"
           >
-            <NotificationResourceDisplay notification={row.original} />
+            <NotificationResourceDisplay
+              resource={row.original.resource}
+              resourceType={row.original.resource_type}
+            />
           </div>
         );
       }
     },
     {
-      header: "Status",
+      header: "Health/Status",
       Header: () => <span title="Status of the resource">Status</span>,
       size: 100,
       Cell: ({ row }) => {
         const resource = row.original.resource;
         const resourceType = row.original.resource_type;
+
+        const healthAtEvent = row.original.resource_health;
+        const statusAtEvent = row.original.resource_status;
+
+        // Only if the health or status has changed, we show the transition in the table
+        const isDistinctHealthOrStatus =
+          row.original.resource.health !== healthAtEvent ||
+          row.original.resource.status !== statusAtEvent;
+
         return (
           <>
+            {healthAtEvent && statusAtEvent && isDistinctHealthOrStatus && (
+              <>
+                <HealthIndicator health={healthAtEvent} />
+                <span className="ml-2 capitalize">{statusAtEvent}</span>
+                <ArrowRightIcon className="mx-1 h-4 w-4 text-gray-500" />
+              </>
+            )}
+
             {resourceType === "check" && (
               <>
                 <HealthIndicator health={(resource as HealthCheck).status} />
@@ -113,16 +132,20 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       }
     },
     {
-      header: "Event",
-      size: 100,
+      header: "Title",
+      size: 300,
       Cell: ({ row }) => {
-        const sourceEvent = row.original.source_event;
-        return <span className="font-mono text-gray-800">{sourceEvent}</span>;
+        const healthDescription = row.original.resource_health_description;
+        return (
+          <span className="inline-block max-w-[180ch] truncate">
+            {healthDescription}
+          </span>
+        );
       }
     },
     {
       header: "Recipient",
-      size: 200,
+      size: 150,
       Cell: ({ row }) => {
         const { playbook_run, person_id, connection_id } = row.original;
         return (
@@ -159,65 +182,17 @@ export default function NotificationSendHistoryList({
 }: NotificationSendHistoryListProps) {
   const [searchParams, setSearchParam] = useSearchParams();
 
-  const id = searchParams.get("id") ?? undefined;
+  const id = searchParams.get("id");
   const isOpen = searchParams.has("id");
-
-  const heirarchicalData = useMemo(() => {
-    const child = data.filter((row) => row.parent_id);
-
-    return data
-      .filter((row) => !row.parent_id)
-      .map((row) => {
-        const children = child.filter((child) => child.parent_id === row.id);
-        const rowWithSubRows: NotificationSendHistoryWithSubRows = {
-          ...row,
-          subRows: children
-        };
-        return rowWithSubRows;
-      });
-  }, [data]);
 
   return (
     <>
       <MRTDataTable
-        data={heirarchicalData}
+        data={data}
         columns={notificationSendHistoryColumns}
         isLoading={isLoading}
-        enableExpanding={true}
         enableGrouping={true}
-        displayColumnDefOptions={{
-          "mrt-row-expand": {
-            size: 2,
-            Cell: ({ row }) => {
-              const parentId = row.original.parent_id;
-              if (parentId) {
-                return (
-                  <TbCornerDownRight
-                    className="-ml-4 flex-shrink-0 text-gray-500"
-                    size={16}
-                  />
-                );
-              }
-
-              if (row.original.subRows?.length) {
-                return (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      row.getToggleExpandedHandler()();
-                    }}
-                    className={`mrt-table-expand-button ${row.getIsExpanded() ? "rotate-0" : "-rotate-90"} transition-transform`}
-                  >
-                    ▼
-                  </button>
-                );
-              }
-
-              return <span>{parentId}</span>;
-            }
-          }
-        }}
-        onRowClick={(row) => {
+        onRowClick={(row: NotificationSendHistoryWithSubRows) => {
           searchParams.set("id", row.id);
           setSearchParam(searchParams);
         }}
