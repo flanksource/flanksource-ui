@@ -14,7 +14,7 @@ const server = setupServer(
           type: "Test Type",
           created_at: "2022-01-01T00:00:00.000Z",
           updated_at: "2022-01-02T00:00:00.000Z",
-          config_scrapers: {
+          scraper: {
             id: "config_scraper_id",
             name: "Test Scraper"
           },
