@@ -149,7 +149,7 @@ type ConfigDetail = ConfigItem & {
 
 export const getConfig = (id: string) =>
   resolvePostGrestRequestWithPagination<ConfigDetail[]>(
-    ConfigDB.get(`/config_detail?id=eq.${id}&select=*,config_scrapers(id,name)`)
+    ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
   );
 
 export type ConfigsTagList = {

@@ -68,7 +68,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
     id: string;
     name: string;
   };
-  config_scrapers?: {
+  scraper?: {
     id: string;
     name: string;
   };

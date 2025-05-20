@@ -159,17 +159,17 @@ export function ConfigDetails({ configId }: Props) {
                 value: (
                   <>
                     <Age from={configDetails.created_at} suffix={true} />
-                    {configDetails.config_scrapers && (
+                    {configDetails.scraper && (
                       <>
                         {" "}
                         by{" "}
                         <Link
                           to={{
-                            pathname: `/catalog/scrapers/${configDetails.config_scrapers.id}`
+                            pathname: `/catalog/scrapers/${configDetails.scraper.id}`
                           }}
                           className="link relative overflow-hidden text-ellipsis whitespace-nowrap"
                         >
-                          {configDetails.config_scrapers.name}
+                          {configDetails.scraper.name}
                         </Link>
                       </>
                     )}
