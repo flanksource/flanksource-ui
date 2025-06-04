@@ -322,6 +322,7 @@ function renderContent(
       return <DisplayLogs className={className} logs={String(content)} />;
 
     case "text/markdown":
+    case "markdown": // for backwards compatibility
       return <DisplayMarkdown className={className} md={content} />;
 
     case "application/yaml":
