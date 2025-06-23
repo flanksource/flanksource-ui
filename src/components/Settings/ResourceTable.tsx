@@ -265,6 +265,7 @@ const permanentlyHiddenColumnsForTableMap: Record<
   properties: ["schedule", "namespace"],
   canaries: ["namespace"],
   config_scrapers: ["schedule", "namespace"],
+  applications: ["schedule", "namespace"],
   incident_rules: ["schedule", "namespace"],
   teams: ["schedule", "namespace"],
   permissions: ["schedule", "namespace"]
