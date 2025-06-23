@@ -10,6 +10,9 @@ const config = {
   env: {
     // make the backend URL available to the frontend
     NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL,
+    NEXT_PUBLIC_AUDIT_REPORT_URL:
+      process.env.NEXT_PUBLIC_AUDIT_REPORT_URL ||
+      "https://audit-report.app.flanksource.com",
     NEXT_PUBLIC_ACCOUNTS_URL: "https://accounts.flanksource.com"
   },
   redirects: async () => {
