@@ -98,6 +98,12 @@ const LogsPage = dynamic(
   import("@flanksource-ui/pages/LogsPage").then((mod) => mod.LogsPage)
 );
 
+const ApplicationsPage = dynamic(
+  import("@flanksource-ui/pages/applications/ApplicationsPage").then(
+    (mod) => mod.ApplicationsPage
+  )
+);
+
 const ConfigChangesPage = dynamic(
   import("@flanksource-ui/pages/config/ConfigChangesPage").then(
     (mod) => mod.ConfigChangesPage
@@ -287,6 +293,15 @@ const navigation: NavigationItems = [
       <Icon name="playbook" className={`${className} text-white`} />
     ),
     featureName: features.playbooks,
+    resourceName: tables.database
+  },
+  {
+    name: "Applications",
+    href: "/applications",
+    icon: ({ className }: { className?: string }) => (
+      <Icon name="workflow" className={`${className} text-white`} />
+    ),
+    featureName: features.applications,
     resourceName: tables.database
   }
 ];
@@ -506,6 +521,18 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             )}
           />
         </Route>
+      </Route>
+
+      <Route path="applications" element={sidebar}>
+        <Route
+          index
+          element={withAuthorizationAccessCheck(
+            <ApplicationsPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
       </Route>
 
       <Route path="notifications" element={sidebar}>
