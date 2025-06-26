@@ -80,6 +80,7 @@ const getTableName = (table: string) => {
   switch (table) {
     case "incident_rules":
     case "connections":
+    case "applications":
       return table;
     default:
       return `${table}_with_status`;

@@ -20,9 +20,11 @@ export type SchemaResourceType = {
     | "Log Backends"
     | "Notifications"
     | "Feature Flags"
+    | "Applications"
     | "Permissions";
   table:
     | "teams"
+    | "applications"
     | "incident_rules"
     | "config_scrapers"
     | "canaries"
