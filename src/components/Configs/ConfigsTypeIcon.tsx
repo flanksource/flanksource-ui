@@ -1,6 +1,7 @@
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import { areTwoIconNamesEqual, Icon } from "@flanksource-ui/ui/Icons/Icon";
-import { useMemo } from "react";
+import { useMemo, useId } from "react";
+import { Tooltip } from "react-tooltip";
 
 export type ConfigIconProps = {
   config?: Pick<ConfigItem, "type">;
@@ -20,6 +21,7 @@ export default function ConfigsTypeIcon({
   children
 }: ConfigIconProps) {
   const { type: configType } = config ? config : { type: null };
+  const tooltipId = useId();
 
   const [primaryIcon, secondaryIcon] = useMemo(() => {
     if (configType?.split("::").length === 1) {
@@ -49,32 +51,46 @@ export default function ConfigsTypeIcon({
   }
 
   return (
-    <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden">
-      <span className="flex flex-row items-center gap-1">
-        {showPrimaryIcon && (
-          <Icon
-            name={primaryIcon}
-            secondary={primaryIcon}
-            className={className}
-          />
-        )}
-        {showSecondaryIcon &&
-          !isPrimaryIconSameAsSecondaryIcon &&
-          secondaryIcon &&
-          primaryIcon !== secondaryIcon && (
+    <>
+      <div
+        className="flex flex-1 flex-row items-center gap-1 overflow-hidden"
+        data-tooltip-id={tooltipId}
+      >
+        <span className="flex flex-row items-center gap-1">
+          {showPrimaryIcon && (
             <Icon
-              name={secondaryIcon}
-              secondary={secondaryIcon}
+              name={primaryIcon}
+              secondary={primaryIcon}
               className={className}
-              prefix={
-                showPrimaryIcon ? <span className="1">/</span> : undefined
-              }
             />
           )}
-      </span>
-      {showLabel && <span> {value}</span>}
-      {/*  eslint-disable-next-line react/jsx-no-useless-fragment */}
-      {children && <>{children}</>}
-    </div>
+          {showSecondaryIcon &&
+            !isPrimaryIconSameAsSecondaryIcon &&
+            secondaryIcon &&
+            primaryIcon !== secondaryIcon && (
+              <Icon
+                name={secondaryIcon}
+                secondary={secondaryIcon}
+                className={className}
+                prefix={
+                  showPrimaryIcon ? <span className="1">/</span> : undefined
+                }
+              />
+            )}
+        </span>
+        {showLabel && <span> {value}</span>}
+        {/*  eslint-disable-next-line react/jsx-no-useless-fragment */}
+        {children && <>{children}</>}
+      </div>
+
+      <Tooltip
+        id={tooltipId}
+        content={configType}
+        place="top-start"
+        style={{ zIndex: 9999 }}
+        offset={8}
+        noArrow={false}
+      />
+    </>
   );
 }
