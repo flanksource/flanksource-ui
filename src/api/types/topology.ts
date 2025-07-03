@@ -8,7 +8,7 @@ export type Property = {
   name: string;
   icon?: string;
   label?: string;
-  type?: string;
+  type?: "url" | "badge" | "currency" | "text" | "age" | "hidden";
   text?: string;
   max?: number;
   min?: number;

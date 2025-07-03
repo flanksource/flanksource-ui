@@ -1,5 +1,6 @@
 import { Property as PropertyD } from "@flanksource-ui/api/types/topology";
 import { Age } from "@flanksource-ui/ui/Age";
+import Image from "next/image";
 import { FiExternalLink } from "react-icons/fi";
 import {
   FormatPropertyCPUMemory,
@@ -38,6 +39,18 @@ export function FormatProperty({
 
   if (property.type === "url") {
     return <FormatPropertyURL property={property} short={short} />;
+  }
+
+  if (property.type === "badge") {
+    return (
+      <Image
+        src={property.text!}
+        alt={property.label || property.name}
+        height={20}
+        width={80}
+        className="inline-block h-5 w-auto"
+      />
+    );
   }
 
   if (property.type === "currency") {
