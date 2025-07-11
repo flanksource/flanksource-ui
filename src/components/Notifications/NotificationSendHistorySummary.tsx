@@ -152,7 +152,11 @@ export default function NotificationSendHistorySummaryList({
         enableGrouping={true}
         onRowClick={(row) => {
           const resourceId = row.resource?.id;
-          navigate(`/notifications/resource/${resourceId}`);
+          // Preserve current search parameters when navigating
+          const currentParams = new URLSearchParams(searchParams);
+          navigate(
+            `/notifications/resource/${resourceId}?${currentParams.toString()}`
+          );
         }}
         manualPageCount={pageCount}
         totalRowCount={sendHistoryRowCount}

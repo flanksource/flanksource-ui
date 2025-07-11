@@ -10,33 +10,13 @@ import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/S
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import clsx from "clsx";
 import { useAtom } from "jotai";
+import { useMemo } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { BsBell, BsBellSlash, BsBraces } from "react-icons/bs";
-
-const tabLinks = [
-  {
-    label: "Notifications",
-    path: "/notifications",
-    key: "Notifications",
-    icon: <BsBell />
-  },
-  {
-    label: "Rules",
-    path: "/notifications/rules",
-    key: "Rules",
-    icon: <BsBraces />
-  },
-  {
-    label: "Silences",
-    path: "/notifications/silences",
-    key: "Silences",
-    icon: <BsBellSlash />
-  }
-];
 
 type NotificationTabsLinksProps = {
   activeTab: "Notifications" | "Rules" | "Silences";
@@ -58,10 +38,40 @@ export default function NotificationTabsLinks({
   isAddSilence = false
 }: NotificationTabsLinksProps) {
   const pageTitle = isAddSilence ? "Add Notification Silence" : activeTab;
+  const [searchParams] = useSearchParams();
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
   );
+
+  const tabLinks = useMemo(() => {
+    const query = searchParams.toString();
+    const search = query ? `?${query}` : "";
+
+    return [
+      {
+        label: "Notifications",
+        path: "/notifications",
+        key: "Notifications",
+        icon: <BsBell />,
+        search
+      },
+      {
+        label: "Rules",
+        path: "/notifications/rules",
+        key: "Rules",
+        icon: <BsBraces />,
+        search
+      },
+      {
+        label: "Silences",
+        path: "/notifications/silences",
+        key: "Silences",
+        icon: <BsBellSlash />,
+        search
+      }
+    ];
+  }, [searchParams]);
 
   return (
     <>
