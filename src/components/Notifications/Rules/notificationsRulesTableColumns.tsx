@@ -10,6 +10,7 @@ import { useState } from "react";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
+import { FaDotCircle } from "react-icons/fa";
 
 export const notificationEvents = [
   // Source: mission-control/api/event.go
@@ -147,6 +148,21 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
           <div className="flex flex-row overflow-hidden text-ellipsis">
             <ErrorMessage message={error} tooltip={true} />
             {value}
+          </div>
+        );
+      }
+    },
+    {
+      header: "Status",
+      id: "status",
+      accessorKey: "error",
+      size: 100,
+      Cell: ({ row }) => {
+        const error = row.original.error;
+        return (
+          <div className="flex items-center gap-2" title={error || undefined}>
+            <FaDotCircle className={error ? "text-red-500" : "text-green-500"} />
+            <span>{error ? "Paused" : "Active"}</span>
           </div>
         );
       }
