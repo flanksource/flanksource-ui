@@ -14,7 +14,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
         return (
           <div
             key={`${summary.name}-${rowIndex}`}
-            className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+            className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
               {summary.name}

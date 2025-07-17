@@ -22,7 +22,7 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
           return (
             <div
               key={`${summary.name}-${rowIndex}`}
-              className="rounded-lg border border-gray-200 bg-gray-50 p-4"
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4"
             >
               <h4 className="mb-1 text-sm font-medium text-gray-600">
                 {summary.name}
@@ -57,13 +57,19 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
                         sortedThresholds[thresholdIndex + 1];
 
                       const startPercentage =
-                        ((currentThreshold.value - gaugeData.min) /
-                          (gaugeData.max - gaugeData.min)) *
-                        100;
+                        gaugeData.min !== undefined &&
+                        gaugeData.max !== undefined
+                          ? ((currentThreshold.value - gaugeData.min) /
+                              (gaugeData.max - gaugeData.min)) *
+                            100
+                          : 0;
                       const endPercentage = nextThreshold
-                        ? ((nextThreshold.value - gaugeData.min) /
-                            (gaugeData.max - gaugeData.min)) *
-                          100
+                        ? gaugeData.min !== undefined &&
+                          gaugeData.max !== undefined
+                          ? ((nextThreshold.value - gaugeData.min) /
+                              (gaugeData.max - gaugeData.min)) *
+                            100
+                          : 100
                         : 100;
 
                       const startLength =

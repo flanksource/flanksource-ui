@@ -108,7 +108,7 @@ export const BackupCalendarHeatmap: React.FC<BackupCalendarHeatmapProps> = ({
       return {
         "data-tooltip-content": "No backups",
         "data-tooltip-id": "backup-tooltip"
-      };
+      } as any;
     }
 
     const heatmapValue = value as HeatmapValue;
@@ -120,7 +120,7 @@ export const BackupCalendarHeatmap: React.FC<BackupCalendarHeatmapProps> = ({
     return {
       "data-tooltip-content": `${date}: ${heatmapValue.successful} successful, ${heatmapValue.failed} failed (${total} total)`,
       "data-tooltip-id": "backup-tooltip"
-    };
+    } as any;
   };
 
   return (
