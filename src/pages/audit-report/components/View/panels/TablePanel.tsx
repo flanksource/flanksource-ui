@@ -7,7 +7,7 @@ interface TablePanelProps {
 
 const TablePanel: React.FC<TablePanelProps> = ({ summary }) => {
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+    <div className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4">
       <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
       <div className="space-y-2">
         {summary.rows?.map((row, rowIndex) => {

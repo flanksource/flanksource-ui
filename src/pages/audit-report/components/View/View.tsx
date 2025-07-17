@@ -40,7 +40,7 @@ const View: React.FC<ViewProps> = ({ title, icon, view }) => {
           pieChartSummaries.length > 0 ||
           gaugeSummaries.length > 0 ||
           textSummaries.length > 0) && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 justify-items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
             {numberSummaries.map((summary, index) => (
               <NumberPanel key={`${summary.name}-${index}`} summary={summary} />
             ))}

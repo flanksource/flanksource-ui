@@ -136,12 +136,6 @@ const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
           />
         )}
       </main>
-
-      <footer className="border-t border-gray-200 bg-white py-4">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Flanksource • Audit Report
-        </div>
-      </footer>
     </div>
   );
 };
