@@ -9,7 +9,6 @@ import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
-import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { FaDotCircle } from "react-icons/fa";
 
 export const notificationEvents = [
@@ -139,18 +138,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Filter",
       id: "filter",
       size: 100,
-      accessorKey: "filter",
-      Cell: ({ row, column }) => {
-        const value = row.original.filter;
-        const error = row.original.error;
-
-        return (
-          <div className="flex flex-row overflow-hidden text-ellipsis">
-            <ErrorMessage message={error} tooltip={true} />
-            {value}
-          </div>
-        );
-      }
+      accessorKey: "filter"
     },
     {
       header: "Status",
@@ -161,46 +149,53 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
         const error = row.original.error;
         return (
           <div className="flex items-center gap-2" title={error || undefined}>
-            <FaDotCircle className={error ? "text-red-500" : "text-green-500"} />
+            <FaDotCircle
+              className={error ? "text-red-500" : "text-green-500"}
+            />
             <span>{error ? "Paused" : "Active"}</span>
           </div>
         );
       }
     },
     {
-      header: "Pending",
-      id: "pending",
-      accessorKey: "pending",
-      size: 90
-    },
-    {
-      header: "Failed",
-      id: "failed",
-      accessorKey: "failed",
-      size: 70,
+      header: "Sent / Failed / Pending",
+      id: "sent_failed_pending",
+      size: 150,
       Cell: ({ row }) => {
+        const sent = row.original.sent ?? 0;
+        const failed = row.original.failed ?? 0;
+        const pending = row.original.pending ?? 0;
+        const mostCommonError = row.original.most_common_error ?? "";
+
         return (
-          <ErrorMessage message={row.original.most_common_error} tooltip={true}>
-            {row.original.failed}
-          </ErrorMessage>
+          <div className="flex items-center gap-2">
+            {sent > 0 && (
+              <span className="rounded bg-green-500/60 px-2 py-1 text-xs text-white">
+                {sent}
+              </span>
+            )}
+            {failed > 0 && (
+              <span
+                className="rounded bg-red-500/50 px-2 py-1 text-xs text-white"
+                title={mostCommonError || undefined}
+              >
+                {failed}
+              </span>
+            )}
+            {pending > 0 && (
+              <span className="rounded bg-orange-400/60 px-2 py-1 text-xs text-white">
+                {pending}
+              </span>
+            )}
+          </div>
         );
       }
-    },
-    {
-      header: "Sent",
-      id: "sent",
-      accessorKey: "sent",
-      Cell: ({ row }) => {
-        const value = row.original.sent;
-        return value;
-      },
-      size: 70
     },
     {
       header: "Avg Duration",
       id: "avg_duration_ms",
       accessorKey: "avg_duration_ms",
-      size: 130,
+      size: 100,
       Cell: ({ row, column }) => {
         const value = row.getValue<number>(column.id);
         if (!value) {
@@ -214,7 +209,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Repeat Interval",
       id: "repeat_interval",
       accessorKey: "repeat_interval",
-      size: 130,
+      size: 100,
       Cell: ({ row }) => {
         const value = row.original.repeat_interval;
         return value;
