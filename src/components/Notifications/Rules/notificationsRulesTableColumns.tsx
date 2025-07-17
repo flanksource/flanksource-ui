@@ -11,6 +11,7 @@ import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
 import { FaDotCircle } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
+import { useId } from "react";
 
 export const notificationEvents = [
   // Source: mission-control/api/event.go
@@ -166,7 +167,8 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
         const sent = row.original.sent ?? 0;
         const failed = row.original.failed ?? 0;
         const pending = row.original.pending ?? 0;
-        const mostCommonError = row.original.most_common_error;
+        const mostCommonError = row.original.most_common_error ?? "";
+        const tooltipId = useId();
 
         return (
           <div className="flex items-center gap-2">
@@ -176,13 +178,18 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
               </span>
             )}
             {failed > 0 && (
-              <span
-                className="rounded bg-red-500/50 px-2 py-1 text-xs text-black"
-                //title={mostCommonError || undefined}
-              >
-                <Tooltip content={mostCommonError || undefined} />
-                {failed}
-              </span>
+              <>
+                <span
+                  className="rounded bg-red-500/50 px-2 py-1 text-xs text-black"
+                  data-tooltip-id={tooltipId}
+                  data-tooltip-content={mostCommonError}
+                >
+                  {failed}
+                </span>
+                {mostCommonError && (
+                  <Tooltip id={tooltipId} className="z-[999999]" />
+                )}
+              </>
             )}
             {pending > 0 && (
               <span className="rounded bg-orange-400/60 px-2 py-1 text-xs text-black">
