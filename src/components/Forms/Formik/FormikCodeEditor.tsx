@@ -53,7 +53,7 @@ export function FormikCodeEditor({
   label,
   labelClassName,
   disabled,
-  className = "flex flex-col h-[min(1000px,calc(90vh))]",
+  className = "flex flex-col",
   required = false,
   saveAsString = false,
   enableSpecUnwrap = false
