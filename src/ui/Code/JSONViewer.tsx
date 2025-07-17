@@ -6,6 +6,7 @@ import Highlight, {
 import { ComponentProps, useMemo } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
+import Linkify from "linkify-react";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { Button } from "../Buttons/Button";
 import { lightTheme } from "./JSONViewerTheme";
@@ -45,12 +46,22 @@ function JSONViewerLine({
         </span>
       )}
       <span className="table-cell text-wrap break-all">
-        {line.map((token, key) => (
-          // key is in the getTokenProps responses. Disabling eslint to skip
-          // check for explicit keys.
-          // eslint-disable-next-line react/jsx-key
-          <span {...getTokenProps({ token, key })} />
-        ))}
+        {line.map((token, key) => {
+          const tokenProps = getTokenProps({ token, key });
+          return (
+            <span key={key} {...tokenProps}>
+              <Linkify
+                options={{
+                  className: "text-blue-500 underline hover:text-blue-700",
+                  target: "_blank",
+                  rel: "noopener noreferrer"
+                }}
+              >
+                {token.content}
+              </Linkify>
+            </span>
+          );
+        })}
       </span>
     </div>
   );
