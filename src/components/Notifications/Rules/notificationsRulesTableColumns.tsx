@@ -9,6 +9,7 @@ import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
+import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { FaDotCircle } from "react-icons/fa";
 
 export const notificationEvents = [
@@ -170,20 +171,21 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
         return (
           <div className="flex items-center gap-2">
             {sent > 0 && (
-              <span className="rounded bg-green-500/60 px-2 py-1 text-xs text-white">
+              <span className="rounded bg-green-500/60 px-2 py-1 text-xs text-black">
                 {sent}
               </span>
             )}
             {failed > 0 && (
               <span
-                className="rounded bg-red-500/50 px-2 py-1 text-xs text-white"
-                title={mostCommonError || undefined}
+                className="rounded bg-red-500/50 px-2 py-1 text-xs text-black"
+                //title={mostCommonError || undefined}
               >
+                <ErrorMessage message={mostCommonError} tooltip={true} />
                 {failed}
               </span>
             )}
             {pending > 0 && (
-              <span className="rounded bg-orange-400/60 px-2 py-1 text-xs text-white">
+              <span className="rounded bg-orange-400/60 px-2 py-1 text-xs text-black">
                 {pending}
               </span>
             )}
@@ -195,7 +197,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Avg Duration",
       id: "avg_duration_ms",
       accessorKey: "avg_duration_ms",
-      size: 100,
+      size: 80,
       Cell: ({ row, column }) => {
         const value = row.getValue<number>(column.id);
         if (!value) {
@@ -209,7 +211,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Repeat Interval",
       id: "repeat_interval",
       accessorKey: "repeat_interval",
-      size: 100,
+      size: 80,
       Cell: ({ row }) => {
         const value = row.original.repeat_interval;
         return value;
@@ -219,7 +221,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       header: "Wait For",
       id: "wait_for",
       accessorKey: "wait_for",
-      size: 130,
+      size: 80,
       Cell: ({ row }) => {
         const value = row.original.wait_for;
         if (!value) {
