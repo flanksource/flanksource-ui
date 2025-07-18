@@ -43,6 +43,7 @@ export type NotificationRules = {
   most_common_error?: string;
   repeat_interval?: string;
   error?: string;
+  error_at?: string;
   wait_for?: number;
 };
 
