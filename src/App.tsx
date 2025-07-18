@@ -540,7 +540,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
-          path=":id"
+          path=":namespace/:name"
           element={withAuthorizationAccessCheck(
             <AuditReportPage />,
             tables.database,

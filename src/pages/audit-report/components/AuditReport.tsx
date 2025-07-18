@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import html2pdf from "html2pdf.js";
 import Header from "./Header";
 import ApplicationsSection from "./ApplicationsSection";
 import { Application } from "../types";
@@ -12,10 +11,11 @@ declare global {
 }
 
 interface AuditReportProps {
-  applicationId?: string;
+  namespace?: string;
+  name?: string;
 }
 
-const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
+const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [application, setApplication] = useState<Application>();
   const [loading, setLoading] = useState(true);
@@ -27,8 +27,8 @@ const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
   });
 
   useEffect(() => {
-    if (!applicationId) {
-      setError("No application ID provided");
+    if (!namespace || !name) {
+      setError("No namespace or name provided");
       setLoading(false);
       return;
     }
@@ -36,7 +36,7 @@ const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/application/${applicationId}`, {
+        const response = await fetch(`/api/application/${namespace}/${name}`, {
           credentials: "include"
         });
 
@@ -59,7 +59,7 @@ const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
     };
 
     fetchData();
-  }, [applicationId]);
+  }, [namespace, name]);
 
   useEffect(() => {
     // Update URL when print view changes
@@ -75,23 +75,26 @@ const AuditReport: React.FC<AuditReportProps> = ({ applicationId }) => {
   const handleExport = async () => {
     if (!reportRef.current) return;
 
-    const opt = {
-      margin: 0.25,
-      filename: `audit-report-${new Date().toISOString().split("T")[0]}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        letterRendering: true
-      },
-      jsPDF: {
-        unit: "in",
-        format: "a4",
-        orientation: "landscape"
-      }
-    };
-
     try {
+      // Dynamically import html2pdf to avoid SSR issues
+      const html2pdf = (await import("html2pdf.js")).default;
+
+      const opt = {
+        margin: 0.25,
+        filename: `audit-report-${new Date().toISOString().split("T")[0]}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true
+        },
+        jsPDF: {
+          unit: "in",
+          format: "a4",
+          orientation: "landscape"
+        }
+      };
+
       await html2pdf().set(opt).from(reportRef.current).save();
     } catch (error) {
       console.error("Error generating PDF:", error);
