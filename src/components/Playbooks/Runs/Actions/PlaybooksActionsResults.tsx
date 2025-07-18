@@ -329,7 +329,12 @@ function renderContent(
     case "application/json":
       return (
         <pre className={className}>
-          <JSONViewer format="json" code={content} convertToYaml />
+          <JSONViewer
+            format="json"
+            code={content}
+            convertToYaml
+            theme={darkTheme}
+          />
         </pre>
       );
 
