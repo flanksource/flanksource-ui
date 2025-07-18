@@ -3,7 +3,7 @@ import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
-import { formatDuration } from "@flanksource-ui/utils/date";
+import { formatDuration, age } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useState } from "react";
@@ -168,7 +168,12 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
         const failed = row.original.failed ?? 0;
         const pending = row.original.pending ?? 0;
         const mostCommonError = row.original.most_common_error ?? "";
+        const errorAt = row.original.error_at;
         const tooltipId = useId();
+
+        const tooltipContent = errorAt
+          ? `${age(errorAt)} ago: ${mostCommonError}`
+          : mostCommonError;
 
         return (
           <div className="flex items-center gap-2">
@@ -182,11 +187,11 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
                 <span
                   className="rounded bg-red-500/50 px-2 py-1 text-xs text-black"
                   data-tooltip-id={tooltipId}
-                  data-tooltip-content={mostCommonError}
+                  data-tooltip-content={tooltipContent}
                 >
                   {failed}
                 </span>
-                {mostCommonError && (
+                {tooltipContent && (
                   <Tooltip id={tooltipId} className="z-[999999]" />
                 )}
               </>
