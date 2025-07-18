@@ -6,6 +6,10 @@ interface NumberPanelProps {
 }
 
 const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
+  if (!summary.rows || summary.rows.length === 0) {
+    return null;
+  }
+
   return (
     <div>
       {summary.rows?.map((row, rowIndex) => {
