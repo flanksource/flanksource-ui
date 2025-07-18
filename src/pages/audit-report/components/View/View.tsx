@@ -1,5 +1,5 @@
 import React from "react";
-import { DynamicIcon, IconName } from "lucide-react/dynamic";
+import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
 import { ViewResult } from "../../types";
 import {
@@ -12,7 +12,7 @@ import {
 
 interface ViewProps {
   title: string;
-  icon: IconName;
+  icon?: string;
   view: ViewResult;
 }
 
@@ -31,7 +31,7 @@ const View: React.FC<ViewProps> = ({ title, icon, view }) => {
   return (
     <div>
       <h3 className="mb-4 flex items-center text-xl font-semibold">
-        <DynamicIcon name={icon} className="mr-2 text-teal-600" size={20} />
+        <Box className="mr-2 text-teal-600" size={20} />
         {title}
       </h3>
       <div className="space-y-6">

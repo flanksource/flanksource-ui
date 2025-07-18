@@ -77,7 +77,7 @@ const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
 
     try {
       // Dynamically import html2pdf to avoid SSR issues
-      const html2pdf = (await import("html2pdf.js")).default;
+      const { default: html2pdf } = await import("html2pdf.js");
 
       const opt = {
         margin: 0.25,
