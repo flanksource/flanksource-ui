@@ -11,9 +11,9 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
   }
 
   return (
-    <div>
-      {summary.rows?.map((row, rowIndex) => {
-        const { value } = row;
+    <>
+      {summary.rows.map((row, rowIndex) => {
+        const { value, label } = row;
 
         return (
           <div
@@ -21,7 +21,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
             className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
-              {summary.name}
+              {label || summary.name}
             </h4>
             {summary.description && (
               <p className="mb-3 text-xs text-gray-500">
@@ -30,7 +30,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
             )}
             <p className="text-2xl font-semibold text-teal-600">
               {summary.number
-                ? Number(value).toFixed(summary.number.precision)
+                ? Number(value).toFixed(summary.number.precision || 0)
                 : value}
               {summary.number?.unit && (
                 <span className="ml-1 text-lg font-normal text-gray-500">
@@ -41,7 +41,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
 

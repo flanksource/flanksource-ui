@@ -19,17 +19,29 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   title
 }) => {
   // Convert ViewColumnDef[] to DataTable Column format
-  const adaptedColumns = columns.map((col, index) => ({
-    header: col.name,
-    accessor: `col_${index}`,
-    render: (value: any) => renderCellValue(value, col)
-  }));
+  const adaptedColumns = columns
+    .map((col, index) =>
+      col.hidden
+        ? null
+        : {
+            header: col.name,
+            accessor: `col_${index}`,
+            render: (value: any) => renderCellValue(value, col)
+          }
+    )
+    .filter(Boolean) as {
+    header: string;
+    accessor: string;
+    render: (value: any) => any;
+  }[];
 
   // Convert rows array to object format expected by DataTable
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
     row.forEach((value, index) => {
-      rowObj[`col_${index}`] = value;
+      if (columns[index] && !columns[index].hidden) {
+        rowObj[`col_${index}`] = value;
+      }
     });
     return rowObj;
   });
