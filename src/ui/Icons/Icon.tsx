@@ -3,6 +3,11 @@ import { IconMap as Icons } from "@flanksource/icons/mi";
 import { isEmpty } from "lodash";
 
 type IconMap = Record<string, string>;
+
+type IconData = {
+  SVG: IconType;
+  iconName: string;
+};
 export const aliases: IconMap = {
   anthropic: "anthropic",
   openai: "openai",
@@ -774,31 +779,40 @@ export var prefixes: IconMap = {
   wipe: "trash"
 };
 
-export function findIconName(name?: string): IconType | undefined {
+export function findIconName(name?: string): IconData | undefined {
   if (isEmpty(name) || !name) {
     return undefined;
   }
 
   let icon = Icons[name as keyof typeof Icons];
   if (icon != null) {
-    return icon;
+    return { SVG: icon, iconName: name };
   }
 
   if (aliases[name as keyof typeof aliases]) {
-    return Icons[aliases[name] as keyof typeof Icons];
+    const aliasedName = aliases[name];
+    const aliasedIcon = Icons[aliasedName as keyof typeof Icons];
+    if (aliasedIcon) {
+      return { SVG: aliasedIcon, iconName: aliasedName };
+    }
   }
 
   for (let prefix in prefixes) {
     if (name.startsWith(prefix)) {
-      return Icons[prefixes[prefix] as keyof typeof Icons];
+      const prefixIcon = Icons[prefixes[prefix] as keyof typeof Icons];
+      if (prefixIcon) {
+        return { SVG: prefixIcon, iconName: prefixes[prefix] };
+      }
     }
   }
 
   for (let prefix in prefixes) {
     if (name.endsWith(prefix)) {
-      return Icons[
-        prefixes[prefix as keyof typeof Icons] as keyof typeof Icons
-      ];
+      const prefixIcon =
+        Icons[prefixes[prefix as keyof typeof Icons] as keyof typeof Icons];
+      if (prefixIcon) {
+        return { SVG: prefixIcon, iconName: prefixes[prefix] };
+      }
     }
   }
 
@@ -854,7 +868,7 @@ export function areTwoIconNamesEqual(
   return false;
 }
 
-export function findByName(name?: string): IconType | undefined {
+export function findByName(name?: string): IconData | undefined {
   if (isEmpty(name) || !name) {
     return undefined;
   }
@@ -917,9 +931,8 @@ export type IconProps = {
 };
 
 type IconCache = {
-  SVG?: IconType;
+  iconData?: IconData;
   color?: string;
-  iconName?: string;
 };
 
 const cache: Record<string, IconCache> = {};
@@ -936,12 +949,11 @@ function findIcon(
   if (iconWithColor) {
     const [icon, color] = iconWithColor.split(":");
     if (icon) {
-      const iconType = findByName(icon);
-      if (iconType) {
+      const iconData = findByName(icon);
+      if (iconData) {
         let value: IconCache = {
-          SVG: iconType,
-          color: colorClassMap[color as keyof typeof colorClassMap],
-          iconName: icon
+          iconData: iconData,
+          color: colorClassMap[color as keyof typeof colorClassMap]
         };
         cache[key] = value;
         return value;
@@ -957,16 +969,13 @@ function findIcon(
     return undefined;
   }
 
-  let iconType = findByName(name);
-  let resolvedName = name;
-  if (!iconType) {
-    iconType = findByName(secondary);
-    resolvedName = secondary;
+  let iconData = findByName(name);
+  if (!iconData) {
+    iconData = findByName(secondary);
   }
 
   const result: IconCache = {
-    SVG: iconType,
-    iconName: resolvedName
+    iconData: iconData
   };
 
   cache[key] = result;
@@ -989,11 +998,11 @@ export function Icon({
 
   const Icon = findIcon(name, secondary, iconWithColor);
 
-  if (!Icon || !Icon.SVG) {
+  if (!Icon || !Icon.iconData) {
     return null;
   }
 
-  const isGcpIcon = Icon.iconName?.toLowerCase().startsWith("gcp-") || false;
+  const isGcpIcon = Icon.iconData.iconName.toLowerCase().startsWith("gcp-");
 
   // Don't apply fill-current to GCP icons to preserve their original colors
   const fillClass = isGcpIcon ? "" : "fill-current";
@@ -1001,7 +1010,7 @@ export function Icon({
   return (
     <>
       {prefix}{" "}
-      <Icon.SVG
+      <Icon.iconData.SVG
         className={`inline-block ${fillClass} object-center ${className} ${Icon.color ?? ""}`}
         {...props}
       />
