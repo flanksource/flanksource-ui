@@ -1060,6 +1060,53 @@ export function Icon({
     cleanClassName
   });
 
+  // Component-level override for GCP icons
+  if (isGcpIcon) {
+    // Try to get SVG as string and manipulate it
+    try {
+      const SVGComponent = Icon.iconData.SVG;
+
+      // Create a temporary element to render the SVG
+      const tempDiv = document.createElement("div");
+      // This is a hack - we'll render the component and extract its SVG
+      const svgString = SVGComponent.toString();
+
+      // Try to render as raw SVG if we can extract it
+      if (svgString.includes("<svg")) {
+        // Extract SVG content and fix currentColor
+        const fixedSVG = svgString
+          .replace(/fill="currentColor"/g, 'fill="#4285f4"')
+          .replace(/currentColor/g, "#4285f4");
+
+        return (
+          <>
+            {prefix}{" "}
+            <div
+              className={`inline-block object-center ${cleanClassName}`}
+              dangerouslySetInnerHTML={{ __html: fixedSVG }}
+              {...props}
+            />
+          </>
+        );
+      }
+
+      // Fallback to component rendering
+      return (
+        <>
+          {prefix}{" "}
+          <SVGComponent
+            className={`inline-block object-center ${cleanClassName}`}
+            style={{ color: "#4285f4", fill: "unset" }}
+            {...props}
+          />
+        </>
+      );
+    } catch (error) {
+      console.error("GCP icon override failed:", error);
+      // Fallback to normal rendering
+    }
+  }
+
   return (
     <>
       {prefix}{" "}
