@@ -1038,11 +1038,14 @@ export function Icon({
   //     }
   //   : {};
 
-  // Back to Approach 4 but only set color for currentColor, not fill
+  // Final approach: Only override currentColor, never override CSS classes or fill attributes
   const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
   const inlineStyle = isGcpIcon
-    ? { color: "#4285f4" } // Only set currentColor, let SVG handle its own fills
+    ? {
+        color: "#4285f4", // Fix currentColor references
+        fill: "" // Explicitly clear any inherited fill
+      }
     : {};
 
   // Debug logging
