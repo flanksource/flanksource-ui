@@ -998,33 +998,29 @@ export function Icon({
 
   const Icon = findIcon(name, secondary, iconWithColor);
 
-  // Debug logging
-  console.log("Icon Debug:", {
-    name,
-    secondary,
-    iconWithColor,
-    iconData: Icon?.iconData,
-    iconName: Icon?.iconData?.iconName,
-    isGcpIcon: Icon?.iconData?.iconName?.toLowerCase().startsWith("gcp-")
-  });
-
   if (!Icon || !Icon.iconData) {
     return null;
   }
 
   const isGcpIcon = Icon.iconData.iconName.toLowerCase().startsWith("gcp-");
 
-  // Approach 1: Remove ALL fill-related classes for GCP icons
-  const fillClass = isGcpIcon ? "" : "fill-current";
-  const cleanClassName = isGcpIcon
-    ? className.replace(/fill-\S+/g, "") // Remove any fill- classes from className
-    : className;
+  // Approach 1: Remove ALL fill-related classes for GCP icons (didn't work)
+  // const fillClass = isGcpIcon ? "" : "fill-current";
+  // const cleanClassName = isGcpIcon
+  //   ? className.replace(/fill-\S+/g, "") // Remove any fill- classes from className
+  //   : className;
 
-  // Approach 2: Force original colors with CSS (commented out)
-  // const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
+  // Approach 2: Force original colors with CSS
+  const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
+  const cleanClassName = className;
 
+  // Debug logging
   console.log("Icon Render:", {
-    iconName: Icon.iconData.iconName,
+    name,
+    secondary,
+    iconWithColor,
+    iconData: Icon?.iconData,
+    iconName: Icon?.iconData?.iconName,
     isGcpIcon,
     fillClass,
     originalClassName: className,
