@@ -919,6 +919,7 @@ export type IconProps = {
 type IconCache = {
   SVG?: IconType;
   color?: string;
+  iconName?: string;
 };
 
 const cache: Record<string, IconCache> = {};
@@ -937,9 +938,10 @@ function findIcon(
     if (icon) {
       const iconType = findByName(icon);
       if (iconType) {
-        let value = {
+        let value: IconCache = {
           SVG: iconType,
-          color: colorClassMap[color as keyof typeof colorClassMap]
+          color: colorClassMap[color as keyof typeof colorClassMap],
+          iconName: icon
         };
         cache[key] = value;
         return value;
@@ -956,17 +958,20 @@ function findIcon(
   }
 
   let iconType = findByName(name);
+  let resolvedName = name;
   if (!iconType) {
     iconType = findByName(secondary);
+    resolvedName = secondary;
   }
 
-  cache[key] = {
-    SVG: iconType
+  const result: IconCache = {
+    SVG: iconType,
+    iconName: resolvedName
   };
 
-  return {
-    SVG: iconType
-  };
+  cache[key] = result;
+
+  return result;
 }
 export function Icon({
   name = "",
@@ -988,11 +993,16 @@ export function Icon({
     return null;
   }
 
+  const isGcpIcon = Icon.iconName?.toLowerCase().startsWith("gcp-") || false;
+
+  // Don't apply fill-current to GCP icons to preserve their original colors
+  const fillClass = isGcpIcon ? "" : "fill-current";
+
   return (
     <>
       {prefix}{" "}
       <Icon.SVG
-        className={`inline-block fill-current object-center ${className} ${Icon.color ?? ""}`}
+        className={`inline-block ${fillClass} object-center ${className} ${Icon.color ?? ""}`}
         {...props}
       />
     </>
