@@ -1023,11 +1023,21 @@ export function Icon({
   //   ? { fill: "#4285f4", color: "#4285f4" } // Set both fill and currentColor
   //   : {};
 
-  // Approach 5: Complete CSS isolation like image viewer
+  // Approach 5: Complete CSS isolation like image viewer (TypeScript issue with 'all')
+  // const inlineStyle = isGcpIcon
+  //   ? { all: "revert" } // TypeScript doesn't like this
+  //   : {};
+
+  // Approach 6: Manual CSS reset to mimic image viewer
   const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
   const inlineStyle = isGcpIcon
-    ? { all: "revert" } // Revert all CSS to browser defaults
+    ? {
+        fill: "unset",
+        color: "unset",
+        stroke: "unset",
+        opacity: "unset"
+      } // Reset key SVG properties
     : {};
 
   // Debug logging
