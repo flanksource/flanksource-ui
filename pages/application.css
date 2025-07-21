@@ -1,0 +1,114 @@
+/* Audit Report Heatmap Styles */
+.react-calendar-heatmap text {
+  font-size: 0.5em;
+  fill: #aaa;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-small-text {
+  font-size: 5px;
+}
+
+.react-calendar-heatmap rect:hover {
+  stroke: #555;
+  stroke-width: 1px;
+}
+
+/* Audit Report Table Styles */
+.table-container {
+  @apply overflow-x-auto rounded-lg border border-gray-200 shadow-sm;
+}
+
+.data-table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.data-table thead {
+  @apply bg-gray-50;
+}
+
+.data-table th {
+  @apply px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500;
+}
+
+.data-table td {
+  @apply border-t border-gray-200 px-3 py-2 text-sm;
+}
+
+.data-table tr {
+  @apply bg-white transition-colors hover:bg-gray-50;
+}
+
+.status-badge {
+  @apply rounded-full px-2 py-0.5 text-xs font-medium;
+}
+
+/* PDF Export Styles */
+.pdf-export {
+  @apply p-0;
+}
+
+.pdf-export .table-container {
+  @apply overflow-visible border-0 shadow-none;
+}
+
+.pdf-export .data-table {
+  @apply w-full table-fixed;
+  page-break-inside: avoid;
+}
+
+.pdf-export .data-table thead {
+  display: table-row-group;
+}
+
+.pdf-export .data-table tbody {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.pdf-export .data-table tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.pdf-export .data-table th {
+  @apply bg-gray-50 px-2 py-1 text-xs;
+}
+
+.pdf-export .data-table td {
+  @apply px-2 py-1 text-xs;
+}
+
+.pdf-export .status-badge {
+  @apply px-1.5 py-0.5 text-xs;
+}
+
+.pdf-export section {
+  break-before: page;
+}
+
+.pdf-export h2 {
+  @apply py-32 text-center text-4xl font-bold;
+}
+
+.pdf-export h3 {
+  @apply mb-2 text-base font-semibold;
+}
+
+/* Ensure sections don't break in the middle */
+.pdf-export .applications-section > div {
+  break-inside: avoid;
+}
+
+/* Add page breaks between major sections */
+.pdf-export .applications-section > div:not(:first-child) {
+  break-before: page;
+}
+
+/* Icon alignment in PDF view */
+.pdf-export .inline-flex {
+  @apply items-center;
+}
+
+.pdf-export svg {
+  @apply align-middle;
+}
