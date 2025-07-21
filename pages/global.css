@@ -281,3 +281,24 @@
   background-color: #fff8e6;
   border-left-width: 5px;
 }
+
+/* GCP Icon Color Preservation */
+.gcp-icon-preserve * {
+  fill: unset !important;
+}
+
+.gcp-icon-preserve .cls-1 {
+  fill: none !important;
+}
+
+.gcp-icon-preserve .cls-2 {
+  fill: #669df6 !important;
+}
+
+.gcp-icon-preserve .cls-3 {
+  fill: #4285f4 !important;
+}
+
+.gcp-icon-preserve .cls-4 {
+  fill: #aecbfa !important;
+}
