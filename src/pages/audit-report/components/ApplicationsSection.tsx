@@ -248,66 +248,6 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
     }
   ];
 
-  const assessmentColumns = [
-    { header: "Name", accessor: "name" },
-    { header: "Type", accessor: "type" },
-    {
-      header: "Assessor",
-      accessor: "assesor",
-      render: (value: any) => value?.name || "-"
-    },
-    {
-      header: "Date",
-      accessor: "date",
-      render: (value: string) => formatDate(value)
-    },
-    {
-      header: "Expiry",
-      accessor: "expiry",
-      render: (value: string) => formatDate(value)
-    },
-    {
-      header: "Findings",
-      accessor: "findings",
-      render: (value: any) => (
-        <div className="space-x-2">
-          <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-            {value.high} High
-          </span>
-          <span className="inline-flex items-center rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
-            {value.medium} Medium
-          </span>
-          <span className="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-            {value.low} Low
-          </span>
-        </div>
-      )
-    },
-    {
-      header: "Unresolved",
-      accessor: "unresolved",
-      render: (value: any) => (
-        <div className="space-x-2">
-          {value.high > 0 && (
-            <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-800">
-              {value.high} High
-            </span>
-          )}
-          {value.low > 0 && (
-            <span className="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-              {value.low} Low
-            </span>
-          )}
-          {value.high === 0 && value.low === 0 && (
-            <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-              All Resolved
-            </span>
-          )}
-        </div>
-      )
-    }
-  ];
-
   return (
     <div className="applications-section space-y-8">
       <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -475,22 +415,6 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                 Recent Restores
               </h3>
               <DataTable columns={restoreColumns} data={application.restores} />
-            </div>
-            <hr className="border-gray-200" />
-          </>
-        )}
-
-        {application.assessments && (
-          <>
-            <div>
-              <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <FileSearch className="mr-2 text-teal-600" size={20} />
-                Security Assessments
-              </h3>
-              <DataTable
-                columns={assessmentColumns}
-                data={application.assessments}
-              />
             </div>
             <hr className="border-gray-200" />
           </>

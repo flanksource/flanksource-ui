@@ -38,26 +38,6 @@ export interface Finding {
   remediation?: string;
 }
 
-export interface Assessment {
-  name: string;
-  type: string;
-  assesor: {
-    type: string;
-    name: string;
-  };
-  date: string;
-  expiry: string;
-  findings: {
-    high: number;
-    low: number;
-    medium: number;
-  };
-  unresolved: {
-    high: number;
-    low: number;
-  };
-}
-
 export interface Repository {
   type: "GitHub" | "Azure DevOps" | "GitLab";
   url: string;
@@ -133,7 +113,6 @@ export interface Application {
   properties?: Properties;
 
   accessControl: AccessControl;
-  assessments?: Assessment[];
   backups?: Backup[];
   changes?: Change[];
   cost?: Cost;
