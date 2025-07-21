@@ -104,6 +104,12 @@ const ApplicationsPage = dynamic(
   )
 );
 
+const AuditReportPage = dynamic(
+  import("@flanksource-ui/pages/audit-report/AuditReportPage").then(
+    (mod) => mod.AuditReportPage
+  )
+);
+
 const ConfigChangesPage = dynamic(
   import("@flanksource-ui/pages/config/ConfigChangesPage").then(
     (mod) => mod.ConfigChangesPage
@@ -528,6 +534,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <ApplicationsPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path=":id"
+          element={withAuthorizationAccessCheck(
+            <AuditReportPage />,
             tables.database,
             "read",
             true
