@@ -1010,9 +1010,13 @@ export function Icon({
   //   ? className.replace(/fill-\S+/g, "") // Remove any fill- classes from className
   //   : className;
 
-  // Approach 2: Force original colors with CSS
-  const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
+  // Approach 2: Force original colors with CSS (made icons invisible)
+  // const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
+
+  // Approach 3: Use inline styles to preserve original colors
+  const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
+  const inlineStyle = isGcpIcon ? { fill: "unset" } : {};
 
   // Debug logging
   console.log("Icon Render:", {
@@ -1032,6 +1036,7 @@ export function Icon({
       {prefix}{" "}
       <Icon.iconData.SVG
         className={`inline-block ${fillClass} object-center ${cleanClassName} ${Icon.color ?? ""}`}
+        style={inlineStyle}
         {...props}
       />
     </>
