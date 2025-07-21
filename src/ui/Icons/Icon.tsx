@@ -1038,13 +1038,12 @@ export function Icon({
   //     }
   //   : {};
 
-  // Final approach: Only override currentColor, never override CSS classes or fill attributes
-  const fillClass = isGcpIcon ? "" : "fill-current";
+  // New Strategy: Add a special CSS class to isolate GCP icons completely
+  const fillClass = isGcpIcon ? "gcp-icon-preserve" : "fill-current";
   const cleanClassName = className;
   const inlineStyle = isGcpIcon
     ? {
-        color: "#4285f4", // Fix currentColor references
-        fill: "" // Explicitly clear any inherited fill
+        color: "#4285f4" // Fix currentColor references
       }
     : {};
 
