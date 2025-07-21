@@ -30,6 +30,13 @@ const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleExportJSON = () => {
+    // Check if window is available and audit data exists
+    if (typeof window === "undefined" || !window.__AUDIT_DATA__) {
+      console.error("Audit data not available for export");
+      setMenuOpen(false);
+      return;
+    }
+
     const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
       JSON.stringify(window.__AUDIT_DATA__, null, 2)
     )}`;
