@@ -1013,10 +1013,16 @@ export function Icon({
   // Approach 2: Force original colors with CSS (made icons invisible)
   // const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
 
-  // Approach 3: Use inline styles to preserve original colors
+  // Approach 3: Use inline styles to preserve original colors (didn't work - still black/white)
+  // const fillClass = isGcpIcon ? "" : "fill-current";
+  // const inlineStyle = isGcpIcon ? { fill: "unset" } : {};
+
+  // Approach 4: Force both fill and color to override CSS cascade and currentColor
   const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
-  const inlineStyle = isGcpIcon ? { fill: "unset" } : {};
+  const inlineStyle = isGcpIcon
+    ? { fill: "#4285f4", color: "#4285f4" } // Set both fill and currentColor
+    : {};
 
   // Debug logging
   console.log("Icon Render:", {
