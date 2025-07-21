@@ -1028,16 +1028,21 @@ export function Icon({
   //   ? { all: "revert" } // TypeScript doesn't like this
   //   : {};
 
-  // Approach 6: Manual CSS reset to mimic image viewer
+  // Approach 6: Manual CSS reset to mimic image viewer (didn't work)
+  // const inlineStyle = isGcpIcon
+  //   ? {
+  //       fill: "unset",
+  //       color: "unset",
+  //       stroke: "unset",
+  //       opacity: "unset"
+  //     }
+  //   : {};
+
+  // Back to Approach 4 but only set color for currentColor, not fill
   const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
   const inlineStyle = isGcpIcon
-    ? {
-        fill: "unset",
-        color: "unset",
-        stroke: "unset",
-        opacity: "unset"
-      } // Reset key SVG properties
+    ? { color: "#4285f4" } // Only set currentColor, let SVG handle its own fills
     : {};
 
   // Debug logging
