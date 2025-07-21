@@ -253,7 +253,10 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
       <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <ApplicationDetails application={application} />
 
-        <ApplicationAccessControl accessControl={application.accessControl} />
+        {(application.accessControl?.users ||
+          application.accessControl?.roles) && (
+          <ApplicationAccessControl accessControl={application.accessControl} />
+        )}
 
         {application.changes && (
           <>

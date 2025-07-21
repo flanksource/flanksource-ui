@@ -112,7 +112,7 @@ export interface Application {
   description: string;
   properties?: Properties;
 
-  accessControl: AccessControl;
+  accessControl?: AccessControl;
   backups?: Backup[];
   changes?: Change[];
   cost?: Cost;
