@@ -17,7 +17,7 @@ import {
 import Section from "../Section";
 import DataTable from "../DataTable";
 import StatusBadge from "../StatusBadge";
-import { formatDistanceToNow } from "date-fns";
+import { formatDate } from "../../utils";
 import { Application } from "../../types";
 import { groupBy } from "lodash";
 
@@ -103,14 +103,12 @@ const FindingsSection: React.FC<FindingsSectionProps> = ({
     {
       header: "First Observed",
       accessor: "date",
-      render: (value: string) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true })
+      render: (value: string) => formatDate(value)
     },
     {
       header: "Last Observed",
       accessor: "lastObserved",
-      render: (value: string) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true })
+      render: (value: string) => formatDate(value)
     },
     {
       header: "Status",

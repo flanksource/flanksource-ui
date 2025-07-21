@@ -2,7 +2,7 @@ import { GitBranch } from "lucide-react";
 import Section from "../Section";
 import DataTable from "../DataTable";
 import { Icon } from "../Icon";
-import { formatDistanceToNow } from "date-fns";
+import { formatDate } from "../../utils";
 import { Application } from "../../types";
 
 interface VersionSectionProps {
@@ -16,14 +16,12 @@ export const VersionSection = ({ application }: VersionSectionProps) => {
     {
       header: "Released",
       accessor: "released",
-      render: (value: string) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true })
+      render: (value: string) => formatDate(value)
     },
     {
       header: "Deployed",
       accessor: "deployed",
-      render: (value: string) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true })
+      render: (value: string) => formatDate(value)
     },
     { header: "Git Tag", accessor: "gitTag" },
     { header: "Repo Name", accessor: "repoName" },
