@@ -1018,10 +1018,16 @@ export function Icon({
   // const inlineStyle = isGcpIcon ? { fill: "unset" } : {};
 
   // Approach 4: Force both fill and color to override CSS cascade and currentColor
+  // const fillClass = isGcpIcon ? "" : "fill-current";
+  // const inlineStyle = isGcpIcon
+  //   ? { fill: "#4285f4", color: "#4285f4" } // Set both fill and currentColor
+  //   : {};
+
+  // Approach 5: Complete CSS isolation like image viewer
   const fillClass = isGcpIcon ? "" : "fill-current";
   const cleanClassName = className;
   const inlineStyle = isGcpIcon
-    ? { fill: "#4285f4", color: "#4285f4" } // Set both fill and currentColor
+    ? { all: "revert" } // Revert all CSS to browser defaults
     : {};
 
   // Debug logging
