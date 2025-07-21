@@ -1014,20 +1014,28 @@ export function Icon({
 
   const isGcpIcon = Icon.iconData.iconName.toLowerCase().startsWith("gcp-");
 
-  // Don't apply fill-current to GCP icons to preserve their original colors
+  // Approach 1: Remove ALL fill-related classes for GCP icons
   const fillClass = isGcpIcon ? "" : "fill-current";
+  const cleanClassName = isGcpIcon
+    ? className.replace(/fill-\S+/g, "") // Remove any fill- classes from className
+    : className;
+
+  // Approach 2: Force original colors with CSS (commented out)
+  // const fillClass = isGcpIcon ? "!fill-none" : "fill-current";
 
   console.log("Icon Render:", {
     iconName: Icon.iconData.iconName,
     isGcpIcon,
-    fillClass
+    fillClass,
+    originalClassName: className,
+    cleanClassName
   });
 
   return (
     <>
       {prefix}{" "}
       <Icon.iconData.SVG
-        className={`inline-block ${fillClass} object-center ${className} ${Icon.color ?? ""}`}
+        className={`inline-block ${fillClass} object-center ${cleanClassName} ${Icon.color ?? ""}`}
         {...props}
       />
     </>
