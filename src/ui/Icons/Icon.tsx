@@ -998,6 +998,16 @@ export function Icon({
 
   const Icon = findIcon(name, secondary, iconWithColor);
 
+  // Debug logging
+  console.log("Icon Debug:", {
+    name,
+    secondary,
+    iconWithColor,
+    iconData: Icon?.iconData,
+    iconName: Icon?.iconData?.iconName,
+    isGcpIcon: Icon?.iconData?.iconName?.toLowerCase().startsWith("gcp-")
+  });
+
   if (!Icon || !Icon.iconData) {
     return null;
   }
@@ -1006,6 +1016,12 @@ export function Icon({
 
   // Don't apply fill-current to GCP icons to preserve their original colors
   const fillClass = isGcpIcon ? "" : "fill-current";
+
+  console.log("Icon Render:", {
+    iconName: Icon.iconData.iconName,
+    isGcpIcon,
+    fillClass
+  });
 
   return (
     <>
