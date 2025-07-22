@@ -18,10 +18,12 @@ export const getViewById = (id: string) =>
 
 export const getViewData = async (
   namespace: string,
-  name: string
+  name: string,
+  headers?: Record<string, string>
 ): Promise<ViewResult> => {
   const response = await fetch(`/api/view/${namespace}/${name}`, {
-    credentials: "include"
+    credentials: "include",
+    headers
   });
 
   if (!response.ok) {

@@ -114,15 +114,15 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     }
   };
 
-  const handleRefresh = () => {
-    // Invalidate both queries to trigger a refetch
-    queryClient.invalidateQueries({
-      queryKey: ["view-metadata", id]
-    });
+  const handleForceRefresh = async () => {
     if (view?.namespace && view?.name) {
-      queryClient.invalidateQueries({
-        queryKey: ["view-data", view.namespace, view.name]
+      const freshData = await getViewData(view.namespace, view.name, {
+        "cache-control": "max-age=1" // To force a refresh
       });
+      queryClient.setQueryData(
+        ["view-data", view.namespace, view.name],
+        freshData
+      );
     }
   };
 
@@ -145,7 +145,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
                   </p>
                 )}
                 <button
-                  onClick={handleRefresh}
+                  onClick={handleForceRefresh}
                   disabled={isLoading || isRefreshing}
                   className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
