@@ -128,14 +128,14 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   return (
     <>
-      <Head prefix={view.title} />
+      <Head prefix={view.title || view.name} />
       <div className="flex min-h-screen flex-col bg-gray-50">
         <div className="border-b bg-white shadow-sm">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <h1 className="flex items-center text-2xl font-bold text-gray-900">
                 <Icon name={view.icon || "workflow"} className="mr-3 h-6 w-6" />
-                {view.title}
+                {view.title || view.name}
               </h1>
               <div className="flex items-center space-x-4">
                 {actualViewData?.lastRefreshedAt && (

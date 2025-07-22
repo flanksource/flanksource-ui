@@ -924,7 +924,7 @@ function useDynamicNavigation() {
 
   return useMemo(() => {
     const viewsNavigationItems = views.map((view) => ({
-      name: view.title,
+      name: view.title || view.name,
       href: `/views/${view.id}`,
       icon: ({ className }: { className?: string }) => (
         <Icon

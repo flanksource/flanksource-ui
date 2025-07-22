@@ -1,4 +1,4 @@
-import { ConfigDB } from "../axios";
+import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult } from "../../pages/audit-report/types";
 
@@ -6,14 +6,16 @@ export type View = {
   id: string;
   name: string;
   namespace: string;
-  title: string;
-  icon?: string | null;
-  last_ran?: string | null;
+  title?: string;
+  icon?: string;
+  ordinal?: number;
+  sidebar?: boolean;
+  last_ran?: string;
 };
 
 export const getViewById = (id: string) =>
   resolvePostGrestRequestWithPagination<View[]>(
-    ConfigDB.get(`/views_summary?id=eq.${id}&select=*`)
+    IncidentCommander.get(`/views_summary?id=eq.${id}&select=*`)
   );
 
 export const getViewData = async (
@@ -37,8 +39,8 @@ export const getViewData = async (
 
 export const getViewsForSidebar = async () => {
   const res = await resolvePostGrestRequestWithPagination<View[]>(
-    ConfigDB.get(
-      `/views_summary?select=id,name,namespace,title,icon&order=title.asc`
+    IncidentCommander.get(
+      `/views_summary?sidebar=eq.true&select=id,name,namespace,title,icon,ordinal&order=ordinal.asc,title.asc`
     )
   );
   return res.data ?? [];
