@@ -43,13 +43,26 @@ export default function NotificationSilenceForm({
 
   const filterExamples = [
     {
-      code: `config.type == "AWS::RDS::DBInstance" && config.tags["account-name"] == "flanksource" && config.config.Engine == "postgres"`,
+      code: `config.type == "AWS::RDS::DBInstance" && tags["account-name"] == "flanksource" && config.config.Engine == "postgres"`,
       description:
         "Silence planned maintenance and brief healthy/unhealthy flaps for RDS Postgres instances in flanksource account"
     },
     {
-      code: 'config.name == "postgresql" && config.type == "Kubernetes::StatefulSet"',
+      code: 'name == "postgresql" && config.type == "Kubernetes::StatefulSet"',
       description: "Silence notification from all postgresql sts"
+    },
+    {
+      code: 'name.startsWith("my-app-")',
+      description: "Silence notifications from pods starting with 'my-app-'"
+    },
+    {
+      code: 'labels["Expected-Fail"] == "true"',
+      description:
+        "Silence notifications from health checks that are expected to fail"
+    },
+    {
+      code: 'labels["helm.sh/chart"] != ""',
+      description: "Silence notifications from resources of Helm chart"
     }
   ];
 
@@ -66,7 +79,28 @@ export default function NotificationSilenceForm({
       title:
         "Silence notifications from ap-south-1 region for the test account",
       code: `selectors:
-    tagSelector: region=ap-south-1,account=830064254263
+  - tagSelector: region=ap-south-1,account=830064254263
+`
+    },
+    {
+      title: "Silence health checks expected to fail",
+      code: `selectors:
+  - labelSelector: Expected-Fail=true
+`
+    },
+    {
+      title:
+        "Silence notifications from pods starting with specific name pattern",
+      code: `selectors:
+  - types:
+      - Kubernetes::Pod
+    nameSelector: my-app-*
+`
+    },
+    {
+      title: "Silence notifications from resources of a specific Helm chart",
+      code: `selectors:
+  - tagSelector: helm.sh/chart=my-app-1.0.0
 `
     }
   ];
