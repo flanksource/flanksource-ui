@@ -44,11 +44,19 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       return;
     }
     if (viewError) {
-      setError("Failed to fetch view metadata");
+      setError(
+        viewError instanceof Error
+          ? viewError.message
+          : "Failed to fetch view metadata"
+      );
       return;
     }
     if (dataError) {
-      setError("Failed to fetch view content");
+      setError(
+        dataError instanceof Error
+          ? dataError.message
+          : "Failed to fetch view content"
+      );
       return;
     }
     setError(undefined);
