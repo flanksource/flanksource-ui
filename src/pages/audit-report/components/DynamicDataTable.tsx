@@ -6,6 +6,7 @@ import { intervalToDuration } from "date-fns";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import StatusBadge from "./StatusBadge";
 import GaugeCell from "./GaugeCell";
+import { Link } from "react-router-dom";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -18,73 +19,121 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   rows,
   title
 }) => {
-  // Convert ViewColumnDef[] to DataTable Column format
   const adaptedColumns = columns
     .map((col, index) =>
-      col.hidden
+      col.hidden || col.for
         ? null
         : {
             header: col.name,
             accessor: `col_${index}`,
-            render: (value: any) => renderCellValue(value, col)
+            render: (value: any, row: any) => renderCellValue(value, col, row)
           }
     )
     .filter(Boolean) as {
     header: string;
     accessor: string;
-    render: (value: any) => any;
+    render: (value: any, row: any) => any;
   }[];
 
-  // Convert rows array to object format expected by DataTable
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
     row.forEach((value, index) => {
-      if (columns[index] && !columns[index].hidden) {
-        rowObj[`col_${index}`] = value;
-      }
+      rowObj[`col_${index}`] = value;
     });
     return rowObj;
   });
 
-  const renderCellValue = (value: any, column: ViewColumnDef) => {
+  const columnIndexMap = React.useMemo(() => {
+    const map = new Map<ViewColumnDef, number>();
+    columns.forEach((col, index) => {
+      map.set(col, index);
+    });
+    return map;
+  }, [columns]);
+
+  const forColumnsMap = React.useMemo(() => {
+    const map = new Map<string, ViewColumnDef[]>();
+    columns.forEach((col) => {
+      if (col.for) {
+        if (!map.has(col.for)) {
+          map.set(col.for, []);
+        }
+        map.get(col.for)!.push(col);
+      }
+    });
+    return map;
+  }, [columns]);
+
+  const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
     if (value == null) return "-";
+
+    const forColumns = forColumnsMap.get(column.name) || [];
+
+    let cellContent: any;
 
     switch (column.type) {
       case "datetime":
         if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
-          return formatDate(value);
+          cellContent = formatDate(value);
+        } else {
+          cellContent = String(value);
         }
-        return String(value);
+        break;
 
       case "boolean":
-        return value ? "Yes" : "No";
+        cellContent = value ? "Yes" : "No";
+        break;
 
       case "number":
-        return typeof value === "number"
-          ? value.toLocaleString()
-          : String(value);
+        cellContent =
+          typeof value === "number" ? value.toLocaleString() : String(value);
+        break;
 
       case "duration":
         if (typeof value !== "number") {
-          return String(value);
+          cellContent = String(value);
+        } else {
+          cellContent = formatDuration(value);
         }
-        return formatDuration(value);
+        break;
 
       case "health":
-        return <HealthBadge health={value as HealthType} />;
+        cellContent = <HealthBadge health={value as HealthType} />;
+        break;
 
       case "status":
-        return <StatusBadge status={String(value)} />;
+        cellContent = <StatusBadge status={String(value)} />;
+        break;
 
       case "gauge":
         if (!column.gauge) {
-          return String(value);
+          cellContent = String(value);
+        } else {
+          cellContent = <GaugeCell value={value} gauge={column.gauge} />;
         }
-        return <GaugeCell value={value} gauge={column.gauge} />;
+        break;
 
       default:
-        return String(value);
+        cellContent = String(value);
+        break;
     }
+
+    for (const forCol of forColumns) {
+      const forColIndex = columnIndexMap.get(forCol);
+      if (forColIndex !== undefined) {
+        const forValue = row[`col_${forColIndex}`];
+
+        if (forCol.type === "url" && forValue) {
+          cellContent = (
+            <Link to={forValue} className="underline">
+              {cellContent}
+            </Link>
+          );
+        }
+      }
+    }
+
+    return cellContent;
   };
 
   return (
