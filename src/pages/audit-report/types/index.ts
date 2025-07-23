@@ -199,10 +199,15 @@ export interface ViewColumnDef {
     | "duration"
     | "health"
     | "status"
-    | "gauge";
+    | "gauge"
+    | "bytes"
+    | "decimal"
+    | "millicore"
+    | "url";
   description?: string;
   gauge?: GaugeConfig;
   hidden?: boolean;
+  for?: string;
 }
 
 type ViewRow = any[];

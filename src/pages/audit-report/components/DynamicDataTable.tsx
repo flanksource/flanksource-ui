@@ -2,10 +2,12 @@ import React from "react";
 import { ViewColumnDef } from "../types";
 import { formatDate } from "../utils";
 import DataTable from "./DataTable";
-import { intervalToDuration } from "date-fns";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import StatusBadge from "./StatusBadge";
 import GaugeCell from "./GaugeCell";
+import { Link } from "react-router-dom";
+import { formatBytes } from "../../../utils/common";
+import { formatDuration as formatDurationMs } from "../../../utils/date";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -18,73 +20,182 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   rows,
   title
 }) => {
-  // Convert ViewColumnDef[] to DataTable Column format
   const adaptedColumns = columns
     .map((col, index) =>
-      col.hidden
+      col.hidden || col.for
         ? null
         : {
             header: col.name,
             accessor: `col_${index}`,
-            render: (value: any) => renderCellValue(value, col)
+            render: (value: any, row: any) => renderCellValue(value, col, row)
           }
     )
     .filter(Boolean) as {
     header: string;
     accessor: string;
-    render: (value: any) => any;
+    render: (value: any, row: any) => any;
   }[];
 
-  // Convert rows array to object format expected by DataTable
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
     row.forEach((value, index) => {
-      if (columns[index] && !columns[index].hidden) {
-        rowObj[`col_${index}`] = value;
-      }
+      rowObj[`col_${index}`] = value;
     });
     return rowObj;
   });
 
-  const renderCellValue = (value: any, column: ViewColumnDef) => {
+  const columnIndexMap = React.useMemo(() => {
+    const map = new Map<ViewColumnDef, number>();
+    columns.forEach((col, index) => {
+      map.set(col, index);
+    });
+    return map;
+  }, [columns]);
+
+  const forColumnsMap = React.useMemo(() => {
+    const map = new Map<string, ViewColumnDef[]>();
+    columns.forEach((col) => {
+      if (col.for) {
+        if (!map.has(col.for)) {
+          map.set(col.for, []);
+        }
+        map.get(col.for)!.push(col);
+      }
+    });
+    return map;
+  }, [columns]);
+
+  const applyHelperColumns = (
+    cellContent: any,
+    column: ViewColumnDef,
+    row: any
+  ) => {
+    const forColumns = forColumnsMap.get(column.name) || [];
+    let enhancedContent = cellContent;
+
+    for (const forCol of forColumns) {
+      const forColIndex = columnIndexMap.get(forCol);
+      if (forColIndex !== undefined) {
+        const forValue = row[`col_${forColIndex}`];
+
+        if (forCol.type === "url" && forValue) {
+          enhancedContent = (
+            <Link to={forValue} className="underline">
+              {enhancedContent}
+            </Link>
+          );
+        }
+      }
+    }
+
+    return enhancedContent;
+  };
+
+  // Format millicore values following the existing pattern from topology formatting
+  const formatMillicore = (value: string | number): string => {
+    let millicoreValue: number;
+
+    if (typeof value === "string") {
+      // Handle string format like "100m" or "1500m"
+      const numericValue = value.replace(/m$/, "");
+      millicoreValue = parseInt(numericValue, 10);
+      if (isNaN(millicoreValue)) {
+        return String(value);
+      }
+    } else if (typeof value === "number") {
+      millicoreValue = value;
+    } else {
+      return String(value);
+    }
+
+    // Follow the same pattern as topology formatting: convert to cores if >= 1000m
+    if (millicoreValue >= 1000) {
+      return `${(millicoreValue / 1000).toFixed(2)} cores`;
+    }
+    return `${millicoreValue}m`;
+  };
+
+  const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
     if (value == null) return "-";
 
+    let cellContent: any;
     switch (column.type) {
       case "datetime":
         if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
-          return formatDate(value);
+          cellContent = formatDate(value);
+        } else {
+          cellContent = String(value);
         }
-        return String(value);
+        break;
 
       case "boolean":
-        return value ? "Yes" : "No";
+        cellContent = value ? "Yes" : "No";
+        break;
 
       case "number":
-        return typeof value === "number"
-          ? value.toLocaleString()
-          : String(value);
+        cellContent =
+          typeof value === "number" ? value.toLocaleString() : String(value);
+        break;
 
       case "duration":
         if (typeof value !== "number") {
-          return String(value);
+          cellContent = String(value);
+        } else {
+          // Convert nanoseconds to milliseconds for the existing formatDuration function
+          cellContent = formatDurationMs(value / 1_000_000);
         }
-        return formatDuration(value);
+        break;
+
+      case "bytes":
+        if (typeof value === "number") {
+          cellContent = formatBytes(value);
+        } else {
+          cellContent = String(value);
+        }
+        break;
+
+      case "decimal":
+        if (typeof value === "number") {
+          cellContent = value.toFixed(2);
+        } else {
+          cellContent = String(value);
+        }
+        break;
+
+      case "millicore":
+        cellContent = formatMillicore(value);
+        break;
 
       case "health":
-        return <HealthBadge health={value as HealthType} />;
+        cellContent = <HealthBadge health={value as HealthType} />;
+        break;
 
       case "status":
-        return <StatusBadge status={String(value)} />;
+        cellContent = <StatusBadge status={String(value)} />;
+        break;
 
       case "gauge":
         if (!column.gauge) {
-          return String(value);
+          cellContent = String(value);
+        } else {
+          cellContent = <GaugeCell value={value} gauge={column.gauge} />;
         }
-        return <GaugeCell value={value} gauge={column.gauge} />;
+        break;
+
+      case "url":
+        cellContent = (
+          <Link to={String(value)} className="underline">
+            {String(value)}
+          </Link>
+        );
+        break;
 
       default:
-        return String(value);
+        cellContent = String(value);
+        break;
     }
+
+    return applyHelperColumns(cellContent, column, row);
   };
 
   return (
@@ -93,22 +204,3 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 };
 
 export default DynamicDataTable;
-
-const formatDuration = (nanoseconds: number): string => {
-  const duration = intervalToDuration({
-    start: 0,
-    end: nanoseconds / 1_000_000
-  });
-
-  const parts = [];
-  if (duration.years) parts.push(`${duration.years}y`);
-  if (duration.months) parts.push(`${duration.months}mo`);
-  if (duration.weeks) parts.push(`${duration.weeks}w`);
-  if (duration.days) parts.push(`${duration.days}d`);
-  if (duration.hours) parts.push(`${duration.hours}h`);
-  if (duration.minutes) parts.push(`${duration.minutes}m`);
-  if (duration.seconds) parts.push(`${duration.seconds}s`);
-
-  // NOTE: just take the first 2 parts. The rest are insignificant.
-  return parts.length > 0 ? parts.slice(0, 2).join(" ") : "0s";
-};
