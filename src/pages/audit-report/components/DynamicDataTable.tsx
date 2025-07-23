@@ -15,6 +15,15 @@ interface DynamicDataTableProps {
   title?: string;
 }
 
+// Convert column names to display-friendly headers
+// Examples: "memory_limit" -> "Memory Limit", "lastUpdated" -> "Last Updated"
+const formatColumnHeader = (name: string): string => {
+  return name
+    .replace(/_/g, " ") // Convert underscores to spaces
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add spaces before capital letters in camelCase
+    .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
+};
+
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
   rows,
@@ -25,7 +34,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       col.hidden || col.for
         ? null
         : {
-            header: col.name,
+            header: formatColumnHeader(col.name),
             accessor: `col_${index}`,
             render: (value: any, row: any) => renderCellValue(value, col, row)
           }
