@@ -1,8 +1,9 @@
 import { AdjustmentsIcon } from "@heroicons/react/solid";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useQuery } from "@tanstack/react-query";
 import { Provider } from "jotai";
 import dynamic from "next/dynamic";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
@@ -40,6 +41,7 @@ import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { features } from "./services/permissions/features";
+import { getViewsForSidebar } from "./api/services/views";
 import { Head } from "./ui/Head";
 import { LogsIcon } from "./ui/Icons/LogsIcon";
 import { TopologyIcon } from "./ui/Icons/TopologyIcon";
@@ -108,6 +110,10 @@ const AuditReportPage = dynamic(
   import("@flanksource-ui/pages/audit-report/AuditReportPage").then(
     (mod) => mod.AuditReportPage
   )
+);
+
+const ViewPage = dynamic(
+  import("@flanksource-ui/pages/views/ViewPage").then((mod) => mod.ViewPage)
 );
 
 const ConfigChangesPage = dynamic(
@@ -550,6 +556,18 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
       </Route>
 
+      <Route path="views" element={sidebar}>
+        <Route
+          path=":id"
+          element={withAuthorizationAccessCheck(
+            <ViewPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+      </Route>
+
       <Route path="notifications" element={sidebar}>
         <Route
           index
@@ -897,10 +915,37 @@ export function CanaryCheckerApp() {
   );
 }
 
+function useDynamicNavigation() {
+  const { data: views = [] } = useQuery({
+    queryKey: ["views-sidebar"],
+    queryFn: getViewsForSidebar,
+    staleTime: 5 * 60 * 1000
+  });
+
+  return useMemo(() => {
+    const viewsNavigationItems = views.map((view) => ({
+      name: view.title || view.name,
+      href: `/views/${view.id}`,
+      icon: ({ className }: { className?: string }) => (
+        <Icon
+          name={view.icon || "workflow"}
+          className={`${className} text-white`}
+        />
+      ),
+      featureName: features.views,
+      resourceName: tables.database
+    }));
+
+    const navigationWithViews = [...navigation, ...viewsNavigationItems];
+    return navigationWithViews;
+  }, [views]);
+}
+
 function SidebarWrapper() {
   const location = useLocation();
   const url = location.pathname.split("/");
   const path = url[2];
+  const dynamicNavigation = useDynamicNavigation();
 
   const pathTrack = [
     "users",
@@ -918,7 +963,7 @@ function SidebarWrapper() {
 
   return (
     <SidebarLayout
-      navigation={navigation}
+      navigation={dynamicNavigation}
       settingsNav={settingsNav}
       checkPath={checkPath}
     />

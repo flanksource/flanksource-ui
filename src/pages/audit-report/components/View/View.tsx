@@ -36,10 +36,13 @@ const renderPanel = (panel: any, index: number) => {
 const View: React.FC<ViewProps> = ({ title, icon, view }) => {
   return (
     <div>
-      <h3 className="mb-4 flex items-center text-xl font-semibold">
-        <Box className="mr-2 text-teal-600" size={20} />
-        {title}
-      </h3>
+      {title !== "" && (
+        <h3 className="mb-4 flex items-center text-xl font-semibold">
+          <Box className="mr-2 text-teal-600" size={20} />
+          {title}
+        </h3>
+      )}
+
       <div className="space-y-6">
         {view.panels && view.panels.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

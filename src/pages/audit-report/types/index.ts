@@ -208,6 +208,7 @@ export interface ViewColumnDef {
 type ViewRow = any[];
 
 export interface ViewResult {
+  lastRefreshedAt?: string;
   columns?: ViewColumnDef[];
   rows?: ViewRow[];
   panels?: PanelResult[];
