@@ -115,6 +115,38 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     return `${millicoreValue}m`;
   };
 
+  // Parse Kubernetes memory units (e.g., "192Mi", "1Gi", "512Ki") to bytes
+  const parseMemoryUnit = (value: string): number | null => {
+    const match = value.match(
+      /^(\d+(?:\.\d+)?)(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$/
+    );
+    if (!match) return null;
+
+    const [, numStr, unit] = match;
+    const num = parseFloat(numStr);
+    if (isNaN(num)) return null;
+
+    const multipliers: { [key: string]: number } = {
+      // Binary units (1024-based)
+      Ki: 1024,
+      Mi: 1024 ** 2,
+      Gi: 1024 ** 3,
+      Ti: 1024 ** 4,
+      Pi: 1024 ** 5,
+      Ei: 1024 ** 6,
+      // Decimal units (1000-based)
+      k: 1000,
+      M: 1000 ** 2,
+      G: 1000 ** 3,
+      T: 1000 ** 4,
+      P: 1000 ** 5,
+      E: 1000 ** 6
+    };
+
+    const multiplier = unit ? multipliers[unit] : 1;
+    return multiplier ? num * multiplier : null;
+  };
+
   const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
     if (value == null) return "-";
 
@@ -149,6 +181,13 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       case "bytes":
         if (typeof value === "number") {
           cellContent = formatBytes(value);
+        } else if (typeof value === "string") {
+          const parsedBytes = parseMemoryUnit(value);
+          if (parsedBytes !== null) {
+            cellContent = formatBytes(parsedBytes);
+          } else {
+            cellContent = String(value);
+          }
         } else {
           cellContent = String(value);
         }
