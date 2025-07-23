@@ -2,11 +2,12 @@ import React from "react";
 import { ViewColumnDef } from "../types";
 import { formatDate } from "../utils";
 import DataTable from "./DataTable";
-import { intervalToDuration } from "date-fns";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import StatusBadge from "./StatusBadge";
 import GaugeCell from "./GaugeCell";
 import { Link } from "react-router-dom";
+import { formatBytes } from "../../../utils/common";
+import { formatDuration as formatDurationMs } from "../../../utils/date";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -64,13 +65,60 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     return map;
   }, [columns]);
 
+  const applyHelperColumns = (
+    cellContent: any,
+    column: ViewColumnDef,
+    row: any
+  ) => {
+    const forColumns = forColumnsMap.get(column.name) || [];
+    let enhancedContent = cellContent;
+
+    for (const forCol of forColumns) {
+      const forColIndex = columnIndexMap.get(forCol);
+      if (forColIndex !== undefined) {
+        const forValue = row[`col_${forColIndex}`];
+
+        if (forCol.type === "url" && forValue) {
+          enhancedContent = (
+            <Link to={forValue} className="underline">
+              {enhancedContent}
+            </Link>
+          );
+        }
+      }
+    }
+
+    return enhancedContent;
+  };
+
+  // Format millicore values following the existing pattern from topology formatting
+  const formatMillicore = (value: string | number): string => {
+    let millicoreValue: number;
+
+    if (typeof value === "string") {
+      // Handle string format like "100m" or "1500m"
+      const numericValue = value.replace(/m$/, "");
+      millicoreValue = parseInt(numericValue, 10);
+      if (isNaN(millicoreValue)) {
+        return String(value);
+      }
+    } else if (typeof value === "number") {
+      millicoreValue = value;
+    } else {
+      return String(value);
+    }
+
+    // Follow the same pattern as topology formatting: convert to cores if >= 1000m
+    if (millicoreValue >= 1000) {
+      return `${(millicoreValue / 1000).toFixed(2)} cores`;
+    }
+    return `${millicoreValue}m`;
+  };
+
   const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
     if (value == null) return "-";
 
-    const forColumns = forColumnsMap.get(column.name) || [];
-
     let cellContent: any;
-
     switch (column.type) {
       case "datetime":
         if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
@@ -93,8 +141,29 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         if (typeof value !== "number") {
           cellContent = String(value);
         } else {
-          cellContent = formatDuration(value);
+          // Convert nanoseconds to milliseconds for the existing formatDuration function
+          cellContent = formatDurationMs(value / 1_000_000);
         }
+        break;
+
+      case "bytes":
+        if (typeof value === "number") {
+          cellContent = formatBytes(value);
+        } else {
+          cellContent = String(value);
+        }
+        break;
+
+      case "decimal":
+        if (typeof value === "number") {
+          cellContent = value.toFixed(2);
+        } else {
+          cellContent = String(value);
+        }
+        break;
+
+      case "millicore":
+        cellContent = formatMillicore(value);
         break;
 
       case "health":
@@ -113,27 +182,20 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         }
         break;
 
+      case "url":
+        cellContent = (
+          <Link to={String(value)} className="underline">
+            {String(value)}
+          </Link>
+        );
+        break;
+
       default:
         cellContent = String(value);
         break;
     }
 
-    for (const forCol of forColumns) {
-      const forColIndex = columnIndexMap.get(forCol);
-      if (forColIndex !== undefined) {
-        const forValue = row[`col_${forColIndex}`];
-
-        if (forCol.type === "url" && forValue) {
-          cellContent = (
-            <Link to={forValue} className="underline">
-              {cellContent}
-            </Link>
-          );
-        }
-      }
-    }
-
-    return cellContent;
+    return applyHelperColumns(cellContent, column, row);
   };
 
   return (
@@ -142,22 +204,3 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 };
 
 export default DynamicDataTable;
-
-const formatDuration = (nanoseconds: number): string => {
-  const duration = intervalToDuration({
-    start: 0,
-    end: nanoseconds / 1_000_000
-  });
-
-  const parts = [];
-  if (duration.years) parts.push(`${duration.years}y`);
-  if (duration.months) parts.push(`${duration.months}mo`);
-  if (duration.weeks) parts.push(`${duration.weeks}w`);
-  if (duration.days) parts.push(`${duration.days}d`);
-  if (duration.hours) parts.push(`${duration.hours}h`);
-  if (duration.minutes) parts.push(`${duration.minutes}m`);
-  if (duration.seconds) parts.push(`${duration.seconds}s`);
-
-  // NOTE: just take the first 2 parts. The rest are insignificant.
-  return parts.length > 0 ? parts.slice(0, 2).join(" ") : "0s";
-};
