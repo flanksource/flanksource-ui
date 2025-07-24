@@ -24,6 +24,7 @@ import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
 import { useState } from "react";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -248,26 +249,18 @@ export default function NotificationSilenceForm({
                   label="Filter"
                   hint="Notifications for resources matching this CEL expression will be silenced"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowFilterExamples(!showFilterExamples)}
-                  className="mb-2 flex items-center gap-1 rounded px-1 py-0.5 text-left text-sm font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1"
+                  className="mb-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                 >
-                  <svg
+                  <ChevronRightIcon
                     className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  />
                   Show Filter Examples
                 </button>
+
                 {showFilterExamples && (
                   <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
                     <div className="space-y-4 p-4">
@@ -292,60 +285,50 @@ export default function NotificationSilenceForm({
                   </div>
                 )}
 
-                <div>
-                  <FormikCodeEditor
-                    fieldName="selectors"
-                    format={"yaml"}
-                    label="Selectors"
-                    hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
-                    lines={12}
+                <FormikCodeEditor
+                  fieldName="selectors"
+                  format={"yaml"}
+                  label="Selectors"
+                  hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                  lines={12}
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowSelectorsExamples(!showSelectorsExamples)
+                  }
+                  className="mb-2 mt-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                >
+                  <ChevronRightIcon
+                    className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
                   />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowSelectorsExamples(!showSelectorsExamples)
-                    }
-                    className="mb-2 mt-2 flex items-center gap-1 rounded px-1 py-0.5 text-left text-sm font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1"
-                  >
-                    <svg
-                      className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                    Show Selectors Examples
-                  </button>
-                  {showSelectorsExamples && (
-                    <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
-                      <div className="space-y-4 p-4">
-                        {selectorsExamples.map((example, index) => (
-                          <div
-                            key={index}
-                            className="overflow-hidden rounded-md border border-gray-200 bg-white"
-                          >
-                            <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
-                              <p className="text-sm font-medium text-gray-700">
-                                {example.title}
-                              </p>
-                            </div>
-                            <div className="p-3">
-                              <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-                                {example.code}
-                              </pre>
-                            </div>
+                  Show Selectors Examples
+                </button>
+
+                {showSelectorsExamples && (
+                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
+                    <div className="space-y-4 p-4">
+                      {selectorsExamples.map((example, index) => (
+                        <div
+                          key={index}
+                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                        >
+                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+                            <p className="text-sm font-medium text-gray-700">
+                              {example.title}
+                            </p>
                           </div>
-                        ))}
-                      </div>
+                          <div className="p-3">
+                            <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+                              {example.code}
+                            </pre>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <ErrorMessage
                   message={data?.error}
