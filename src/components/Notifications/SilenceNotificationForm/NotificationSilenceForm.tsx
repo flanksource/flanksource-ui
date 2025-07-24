@@ -44,25 +44,29 @@ export default function NotificationSilenceForm({
 
   const filterExamples = [
     {
-      code: `config.type == "AWS::RDS::DBInstance" && tags["account-name"] == "flanksource" && config.config.Engine == "postgres"`,
+      code: `config.type == "AWS::RDS::DBInstance" && jsonpath("$['account-name']", tags) == "flanksource" && config.config.Engine == "postgres"`,
       description:
         "Silence planned maintenance and brief healthy/unhealthy flaps for RDS Postgres instances in flanksource account"
     },
     {
       code: 'name == "postgresql" && config.type == "Kubernetes::StatefulSet"',
-      description: "Silence notification from all postgresql sts"
+      description: "Silence notification from all postgresql statefulsets"
     },
     {
       code: 'name.startsWith("my-app-")',
       description: "Silence notifications from pods starting with 'my-app-'"
     },
     {
-      code: 'labels["Expected-Fail"] == "true"',
+      code: `matchQuery(.config, "type=Kubernetes::Pod,Kubernetes::Deployment")`,
+      description: "Silence notifications from all pods and deployments"
+    },
+    {
+      code: `jsonpath("$['Expected-Fail']", labels) == "true"`,
       description:
         "Silence notifications from health checks that are expected to fail"
     },
     {
-      code: 'labels["helm.sh/chart"] != ""',
+      code: '"helm.sh/chart" in labels',
       description: "Silence notifications from resources of Helm chart"
     }
   ];
