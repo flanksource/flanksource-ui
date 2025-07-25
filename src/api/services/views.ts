@@ -29,8 +29,9 @@ export const getViewData = async (
   });
 
   if (!response.ok) {
+    const errorData = await response.json();
     throw new Error(
-      `Failed to fetch view data: ${response.status} ${response.statusText}`
+      errorData.error || `HTTP ${response.status}: ${response.statusText}`
     );
   }
 
