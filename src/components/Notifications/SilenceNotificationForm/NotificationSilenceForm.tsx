@@ -23,6 +23,8 @@ import { Formik, Form, FormikBag } from "formik";
 import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
+import { useState } from "react";
+import { ChevronRightIcon } from "@heroicons/react/outline";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -37,6 +39,77 @@ export default function NotificationSilenceForm({
   onSuccess = () => {},
   onCancel = () => {}
 }: NotificationSilenceFormProps) {
+  const [showFilterExamples, setShowFilterExamples] = useState(false);
+  const [showSelectorsExamples, setShowSelectorsExamples] = useState(false);
+
+  const filterExamples = [
+    {
+      code: `config.type == "AWS::RDS::DBInstance" && jsonpath("$['account-name']", tags) == "flanksource" && config.config.Engine == "postgres"`,
+      description:
+        "Silence planned maintenance and brief healthy/unhealthy flaps for RDS Postgres instances in flanksource account"
+    },
+    {
+      code: 'name == "postgresql" && config.type == "Kubernetes::StatefulSet"',
+      description: "Silence notification from all postgresql statefulsets"
+    },
+    {
+      code: 'name.startsWith("my-app-")',
+      description: "Silence notifications from pods starting with 'my-app-'"
+    },
+    {
+      code: `matchQuery(.config, "type=Kubernetes::Pod,Kubernetes::Deployment")`,
+      description: "Silence notifications from all pods and deployments"
+    },
+    {
+      code: `jsonpath("$['Expected-Fail']", labels) == "true"`,
+      description:
+        "Silence notifications from health checks that are expected to fail"
+    },
+    {
+      code: '"helm.sh/chart" in labels',
+      description: "Silence notifications from resources of Helm chart"
+    }
+  ];
+
+  const selectorsExamples = [
+    {
+      title: "Silence notifications from all jobs with low severity",
+      code: `selectors:
+  - types:
+      - Kubernetes::Job
+    tagSelector: severity=low
+`
+    },
+    {
+      title:
+        "Silence notifications from ap-south-1 region for the test account",
+      code: `selectors:
+  - tagSelector: region=ap-south-1,account=830064254263
+`
+    },
+    {
+      title: "Silence health checks expected to fail",
+      code: `selectors:
+  - labelSelector: Expected-Fail=true
+`
+    },
+    {
+      title:
+        "Silence notifications from pods starting with specific name pattern",
+      code: `selectors:
+  - types:
+      - Kubernetes::Pod
+    nameSelector: my-app-*
+`
+    },
+    {
+      title: "Silence notifications from resources of a specific Helm chart",
+      code: `selectors:
+  - tagSelector: helm.sh/chart=my-app-1.0.0
+`
+    }
+  ];
+
   const initialValues: Partial<SilenceNotificationRequest> = {
     ...data,
     name: data?.name,
@@ -140,7 +213,7 @@ export default function NotificationSilenceForm({
 
   return (
     // @ts-ignore
-    <div className="flex flex-1 flex-col gap-2 overflow-auto">
+    <div className="flex flex-col gap-2 overflow-auto">
       <Formik<Partial<SilenceNotificationRequest>>
         initialValues={initialValues}
         validateOnChange={false}
@@ -181,16 +254,89 @@ export default function NotificationSilenceForm({
                   hint="Notifications for resources matching this CEL expression will be silenced"
                 />
 
+                <button
+                  type="button"
+                  onClick={() => setShowFilterExamples(!showFilterExamples)}
+                  className="mb-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                >
+                  <ChevronRightIcon
+                    className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
+                  />
+                 Filter Examples
+                </button>
+
+                {showFilterExamples && (
+                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
+                    <div className="space-y-4 p-4">
+                      {filterExamples.map((example, index) => (
+                        <div
+                          key={index}
+                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                        >
+                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+                            <p className="text-sm font-medium text-gray-700">
+                              {example.description}
+                            </p>
+                          </div>
+                          <div className="p-3">
+                            <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+                              {example.code}
+                            </code>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <FormikCodeEditor
                   fieldName="selectors"
                   format={"yaml"}
                   label="Selectors"
                   hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                  lines={12}
                 />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowSelectorsExamples(!showSelectorsExamples)
+                  }
+                  className="mb-2 mt-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                >
+                  <ChevronRightIcon
+                    className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
+                  />
+                 Selector Examples
+                </button>
+
+                {showSelectorsExamples && (
+                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
+                    <div className="space-y-4 p-4">
+                      {selectorsExamples.map((example, index) => (
+                        <div
+                          key={index}
+                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                        >
+                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+                            <p className="text-sm font-medium text-gray-700">
+                              {example.title}
+                            </p>
+                          </div>
+                          <div className="p-3">
+                            <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+                              {example.code}
+                            </pre>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <ErrorMessage
                   message={data?.error}
-                  className="h-full pl-2 align-top"
+                  className="pl-2 align-top"
                 />
 
                 <FormikTextArea name="description" label="Reason" />
