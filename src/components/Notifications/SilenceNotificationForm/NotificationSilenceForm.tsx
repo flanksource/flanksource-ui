@@ -262,7 +262,7 @@ export default function NotificationSilenceForm({
                   <ChevronRightIcon
                     className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
                   />
-                  Show Filter Examples
+                 Filter Examples
                 </button>
 
                 {showFilterExamples && (
