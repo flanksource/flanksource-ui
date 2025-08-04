@@ -19,7 +19,8 @@ export const tables = {
   notifications: "notifications",
   playbooks: "playbooks",
   playbook_runs: "playbook_runs",
-  permissions: "permissions"
+  permissions: "permissions",
+  views: "views"
 };
 
 export const permDefs = {

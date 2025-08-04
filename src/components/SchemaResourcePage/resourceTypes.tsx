@@ -33,7 +33,8 @@ export type SchemaResourceType = {
     | "logging_backends"
     | "notifications"
     | "properties"
-    | "permissions";
+    | "permissions"
+    | "views";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;

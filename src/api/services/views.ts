@@ -1,11 +1,25 @@
-import { IncidentCommander } from "../axios";
+import { ConfigDB } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult } from "../../pages/audit-report/types";
 
 export type View = {
   id: string;
   name: string;
-  namespace: string;
+  namespace?: string;
+  spec: any;
+  source: string;
+  created_by?: string;
+  created_at: string;
+  updated_at?: string;
+  deleted_at?: string;
+  last_ran?: string;
+  error?: string;
+};
+
+export type ViewSummary = {
+  id: string;
+  namespace?: string;
+  name: string;
   title?: string;
   icon?: string;
   ordinal?: number;
@@ -13,10 +27,40 @@ export type View = {
   last_ran?: string;
 };
 
+export const getAllViews = (sortBy?: any) => {
+  let url = `/views?select=*`;
+
+  if (sortBy && sortBy.length > 0) {
+    const sortFields = sortBy
+      .map((sort: any) => `${sort.id}.${sort.desc ? "desc" : "asc"}`)
+      .join(",");
+    url += `&order=${sortFields}`;
+  } else {
+    url += `&order=created_at.desc`;
+  }
+
+  return resolvePostGrestRequestWithPagination<View[]>(ConfigDB.get(url));
+};
+
 export const getViewById = (id: string) =>
-  resolvePostGrestRequestWithPagination<View[]>(
-    IncidentCommander.get(`/views_summary?id=eq.${id}&select=*`)
+  resolvePostGrestRequestWithPagination<ViewSummary[]>(
+    ConfigDB.get(`/views_summary?id=eq.${id}&select=*`)
   );
+
+export const createView = async (view: Partial<View>) => {
+  const response = await ConfigDB.post("/views", view);
+  return response;
+};
+
+export const updateView = async (id: string, view: Partial<View>) => {
+  const response = await ConfigDB.patch(`/views?id=eq.${id}`, view);
+  return response;
+};
+
+export const deleteView = async (id: string) => {
+  const response = await ConfigDB.delete(`/views?id=eq.${id}`);
+  return response;
+};
 
 export const getViewData = async (
   namespace: string,
@@ -39,8 +83,8 @@ export const getViewData = async (
 };
 
 export const getViewsForSidebar = async () => {
-  const res = await resolvePostGrestRequestWithPagination<View[]>(
-    IncidentCommander.get(
+  const res = await resolvePostGrestRequestWithPagination<ViewSummary[]>(
+    ConfigDB.get(
       `/views_summary?sidebar=eq.true&select=id,name,namespace,title,icon,ordinal&order=ordinal.asc,title.asc`
     )
   );
