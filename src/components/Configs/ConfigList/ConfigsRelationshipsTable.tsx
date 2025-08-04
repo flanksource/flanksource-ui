@@ -1,8 +1,10 @@
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { mrtConfigListColumns } from "./MRTConfigListColumn";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
 export interface Props {
   data: ConfigItem[];
@@ -37,9 +39,38 @@ export default function ConfigsRelationshipsTable({
     [navigate]
   );
 
+  const relationshipsColumns = useMemo(() => {
+    return mrtConfigListColumns.map((column) => {
+      if (column.accessorKey === "name") {
+        return {
+          ...column,
+          AggregatedCell: ({ row }: any) => {
+            if (row.getCanExpand()) {
+              const groupingValue = row.type;
+              const count = row.subRows?.length;
+              return (
+                <div
+                  className="flex flex-row items-center gap-1"
+                  style={{
+                    marginLeft: row.depth * 20
+                  }}
+                >
+                  <ConfigsTypeIcon config={{ type: groupingValue }} showLabel>
+                    <Badge text={count} />
+                  </ConfigsTypeIcon>
+                </div>
+              );
+            }
+          }
+        };
+      }
+      return column;
+    });
+  }, []);
+
   return (
     <MRTDataTable
-      columns={mrtConfigListColumns}
+      columns={relationshipsColumns}
       data={data}
       onRowClick={handleRowClick}
       isLoading={isLoading}
