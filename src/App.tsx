@@ -41,7 +41,7 @@ import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { features } from "./services/permissions/features";
-import { getViewsForSidebar } from "./api/services/views";
+import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
 import { LogsIcon } from "./ui/Icons/LogsIcon";
 import { TopologyIcon } from "./ui/Icons/TopologyIcon";
@@ -114,6 +114,10 @@ const AuditReportPage = dynamic(
 
 const ViewPage = dynamic(
   import("@flanksource-ui/pages/views/ViewPage").then((mod) => mod.ViewPage)
+);
+
+const ViewsPage = dynamic(
+  import("@flanksource-ui/pages/views/ViewsPage").then((mod) => mod.ViewsPage)
 );
 
 const ConfigChangesPage = dynamic(
@@ -412,6 +416,15 @@ const settingsNav: SettingsNavigationItems = {
       icon: MdOutlineIntegrationInstructions,
       featureName: features["settings.integrations"],
       resourceName: tables.database
+    },
+    {
+      name: "Views",
+      href: "/settings/views",
+      icon: ({ className }: { className: string }) => (
+        <Icon name="workflow" className={className} />
+      ),
+      featureName: features.views,
+      resourceName: tables.views
     }
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
@@ -714,6 +727,18 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           </Route>
         </Route>
 
+        <Route path="views">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <ViewsPage />,
+              tables.views,
+              "read",
+              true
+            )}
+          />
+        </Route>
+
         {settingsNav.submenu
           .filter((v) => (v as SchemaResourceType).table)
           .map((x) => {
@@ -916,7 +941,7 @@ export function CanaryCheckerApp() {
 }
 
 function useDynamicNavigation() {
-  const { data: views = [] } = useQuery({
+  const { data: views = [] } = useQuery<ViewSummary[]>({
     queryKey: ["views-sidebar"],
     queryFn: getViewsForSidebar,
     staleTime: 5 * 60 * 1000
