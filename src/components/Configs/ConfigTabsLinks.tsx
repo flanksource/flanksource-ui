@@ -1,11 +1,20 @@
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useParams } from "react-router-dom";
 import { ConfigItem } from "../../api/types/configs";
+import { getViewsByConfigId } from "../../api/services/views";
+import { useQuery } from "@tanstack/react-query";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 
 export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
   const { id } = useParams<{ id: string }>();
 
-  return [
+  const { data: views = [] } = useQuery({
+    queryKey: ["views", id],
+    queryFn: () => getViewsByConfigId(id!),
+    enabled: !!id
+  });
+
+  const staticTabs = [
     { label: "Config", key: "Catalog", path: `/catalog/${id}` },
     {
       label: (
@@ -58,4 +67,13 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
       path: `/catalog/${id}/checks`
     }
   ];
+
+  const viewTabs = views.map((view) => ({
+    label: view.title,
+    key: view.id,
+    path: `/catalog/${id}/view/${view.name}`,
+    icon: <Icon name={view.icon} />
+  }));
+
+  return [...staticTabs, ...viewTabs];
 }

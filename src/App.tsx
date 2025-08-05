@@ -220,6 +220,12 @@ const ConfigDetailsRelationshipsPage = dynamic(() =>
   ).then((mod) => mod.ConfigDetailsRelationshipsPage)
 );
 
+const ConfigDetailsViewPage = dynamic(() =>
+  import("@flanksource-ui/pages/config/details/ConfigDetailsViewPage").then(
+    (mod) => mod.ConfigDetailsViewPage
+  )
+);
+
 const ConfigScrapersEditPage = dynamic(
   () => import("@flanksource-ui/pages/config/settings/ConfigScrapersEditPage")
 );
@@ -923,6 +929,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               <ConfigDetailsChecksPage />,
               tables.database,
               "read"
+            )}
+          />
+          <Route
+            path="view/:viewName"
+            element={withAuthorizationAccessCheck(
+              <ConfigDetailsViewPage />,
+              tables.database,
+              "read",
+              true
             )}
           />
         </Route>

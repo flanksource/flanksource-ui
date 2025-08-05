@@ -1,4 +1,4 @@
-import { ConfigDB } from "../axios";
+import { ConfigDB, ViewAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult } from "../../pages/audit-report/types";
 
@@ -25,6 +25,13 @@ export type ViewSummary = {
   ordinal?: number;
   sidebar?: boolean;
   last_ran?: string;
+};
+
+export type ViewListItem = {
+  id: string;
+  name: string;
+  title?: string;
+  icon?: string;
 };
 
 export const getAllViews = (sortBy?: any) => {
@@ -88,5 +95,10 @@ export const getViewsForSidebar = async () => {
       `/views_summary?sidebar=eq.true&select=id,name,namespace,title,icon,ordinal&order=ordinal.asc,title.asc`
     )
   );
+  return res.data ?? [];
+};
+
+export const getViewsByConfigId = async (configId: string) => {
+  const res = await ViewAPI.get<ViewListItem[]>(`/list?config_id=${configId}`);
   return res.data ?? [];
 };
