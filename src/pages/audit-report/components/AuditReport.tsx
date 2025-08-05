@@ -41,7 +41,8 @@ const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch audit data");
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to fetch audit data");
         }
 
         const data = await response.json();

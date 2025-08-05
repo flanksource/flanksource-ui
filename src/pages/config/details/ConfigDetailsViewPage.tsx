@@ -6,23 +6,31 @@ import { Loading } from "@flanksource-ui/ui/Loading";
 import View from "@flanksource-ui/pages/audit-report/components/View/View";
 
 export function ConfigDetailsViewPage() {
-  const { id, viewName } = useParams<{ id: string; viewName: string }>();
+  const {
+    id: configId,
+    name,
+    namespace
+  } = useParams<{
+    id: string;
+    name: string;
+    namespace: string;
+  }>();
 
   const {
     data: viewData,
     isLoading,
     error
   } = useQuery({
-    queryKey: ["viewData", viewName, id],
-    queryFn: () => getViewData("default", viewName!, { "X-Config-ID": id! }),
-    enabled: !!id && !!viewName
+    queryKey: ["viewData", namespace, name, configId],
+    queryFn: () => getViewData(namespace!, name!, { "X-Config-ID": configId! }),
+    enabled: !!configId && !!name
   });
 
   return (
     <ConfigDetailsTabs
-      pageTitlePrefix={`Config View - ${viewName}`}
+      pageTitlePrefix={`Config View - ${name}`}
       isLoading={isLoading}
-      activeTabName={viewName!}
+      activeTabName={name!}
     >
       <div className="flex h-full flex-1 flex-col overflow-auto p-4">
         {isLoading ? (

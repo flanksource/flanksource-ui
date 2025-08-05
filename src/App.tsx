@@ -932,7 +932,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             )}
           />
           <Route
-            path="view/:viewName"
+            path="view/:namespace/:name"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsViewPage />,
               tables.database,

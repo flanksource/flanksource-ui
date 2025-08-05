@@ -30,6 +30,7 @@ export type ViewSummary = {
 export type ViewListItem = {
   id: string;
   name: string;
+  namespace?: string;
   title?: string;
   icon?: string;
 };
