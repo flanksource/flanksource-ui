@@ -1,6 +1,6 @@
-import { Toggle } from "@flanksource-ui/components";
+import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Token } from "../../../api/services/tokens";
 import { tokensTableColumns } from "./TokensTableColumns";
 
@@ -17,44 +17,48 @@ export default function TokensTable({
 }: TokensTableProps) {
   const columns = useMemo(() => tokensTableColumns, []);
 
-  // TODO: Add Hide Agents toggle functionality later
   const [hideAgents, setHideAgents] = useState(true);
-  let filteredTokens = useMemo(() => {
+  const filteredTokens = useMemo(() => {
     if (hideAgents) {
-      //return tokens.filter(token => !token.name.startsWith('agent-'));
-      return tokens;
+      return tokens.filter((token) => !token.name.startsWith("agent-"));
     } else {
       return tokens;
     }
   }, [tokens, hideAgents]);
 
+  useEffect(() => {
+    console.log(
+      "TokensTable useEffect - filteredTokens updated:",
+      filteredTokens
+    );
+  }, [filteredTokens]);
+
   return (
-    //TODO: Uncomment to add Hide Agents toggle functionality
-    //<div className="flex flex-col gap-4" >
-    <div>
+    /*
+     * TODO: @yash (Table not displayed at all when this is commented out)
+    <div className="flex flex-col gap-4">
       <Toggle
-        value={true}
+        value={hideAgents}
         label="Hide Agents"
         className="inline-flex items-center"
         onChange={(val) => {
-          if (val) {
-          }
+          setHideAgents(val);
         }}
-      ></Toggle>
+      />
 
       <MRTDataTable
-        data={tokens}
+        data={filteredTokens}
         columns={columns}
         isLoading={isLoading}
         enableServerSideSorting={false}
       />
     </div>
-
-    //<MRTDataTable
-    //data={tokens}
-    //columns={columns}
-    //isLoading={isLoading}
-    //enableServerSideSorting={false}
-    ///>
+    */
+    <MRTDataTable
+      data={filteredTokens}
+      columns={columns}
+      isLoading={isLoading}
+      enableServerSideSorting={false}
+    />
   );
 }

@@ -3,6 +3,7 @@ import { useTokensListQuery } from "../../api/query-hooks/useTokensQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
 import TokensTable from "./List/TokensTable";
+import AddToken from "./Add/AddToken";
 
 export default function TokensPage() {
   const {
@@ -25,7 +26,8 @@ export default function TokensPage() {
             list={[
               <BreadcrumbRoot key={"root-tokens"} link="/settings/tokens">
                 Tokens
-              </BreadcrumbRoot>
+              </BreadcrumbRoot>,
+              <AddToken refresh={refetch} key={"add-token"} />
             ]}
           />
         }

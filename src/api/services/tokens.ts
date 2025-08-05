@@ -1,4 +1,4 @@
-import { IncidentCommander } from "../axios";
+import { apiBase, localBase } from "../axios";
 
 export type Token = {
   id: string;
@@ -17,6 +17,18 @@ export type Token = {
 export type TokensResponse = {
   message: string;
   payload: Token[];
+};
+
+export type CreateTokenRequest = {
+  name: string;
+  expiry: string;
+};
+
+export type CreateTokenResponse = {
+  message: string;
+  payload: {
+    token: string;
+  };
 };
 
 /*
@@ -52,9 +64,23 @@ export type TokensResponse = {
 
  */
 
+export async function createToken(
+  request: CreateTokenRequest
+): Promise<CreateTokenResponse> {
+  //const response = await apiBase.post<CreateTokenResponse>("/auth/create_token", request);
+  const response = await localBase.post<CreateTokenResponse>(
+    "/auth/create_token",
+    request
+  );
+  return response.data;
+}
+
 export async function getTokensList(): Promise<Token[]> {
-  //const response = await IncidentCommander.get<TokensResponse>("/auth/tokens");
-  //return response.data.payload ?? [];
+  if (true) {
+    //const response = await apiBase.get<TokensResponse>("/auth/tokens");
+    const response = await localBase.get<TokensResponse>("/auth/tokens");
+    return response.data.payload ?? [];
+  }
   const response = {
     message: "success",
     payload: [
