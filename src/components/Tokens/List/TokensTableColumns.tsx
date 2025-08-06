@@ -26,9 +26,9 @@ export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
   {
     header: "Expires At",
     accessorKey: "expires_at",
-    Cell: ({ row, column }) => {
-      const expiresAt = row.original.expires_at;
-      return expiresAt ? <MRTDateCell row={row} column={column} /> : "Never";
+    Cell: (props) => {
+      const expiresAt = props.row.original.expires_at;
+      return expiresAt ? <MRTDateCell {...props} /> : "Never";
     },
     sortingFn: "datetime",
     maxSize: 50
