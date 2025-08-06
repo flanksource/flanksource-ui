@@ -45,22 +45,19 @@ export default function ConfigsRelationshipsTable({
         return {
           ...column,
           AggregatedCell: ({ row }: any) => {
-            if (row.getCanExpand()) {
-              const groupingValue = row.type;
-              const count = row.subRows?.length;
-              return (
-                <div
-                  className="flex flex-row items-center gap-1"
-                  style={{
-                    marginLeft: row.depth * 20
-                  }}
-                >
-                  <ConfigsTypeIcon config={{ type: groupingValue }} showLabel>
-                    <Badge text={count} />
-                  </ConfigsTypeIcon>
-                </div>
-              );
-            }
+            const count = row.subRows?.length;
+            return (
+              <div
+                className="flex flex-row items-center gap-1"
+                style={{
+                  marginLeft: row.depth * 20
+                }}
+              >
+                <ConfigsTypeIcon config={{ type: row.groupingValue }} showLabel>
+                  <Badge text={count} />
+                </ConfigsTypeIcon>
+              </div>
+            );
           }
         };
       }
