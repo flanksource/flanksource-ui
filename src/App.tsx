@@ -15,6 +15,7 @@ import {
   MdOutlineSupportAgent
 } from "react-icons/md";
 import { RiShieldUserFill } from "react-icons/ri";
+import { VscKey } from "react-icons/vsc";
 import { VscJson } from "react-icons/vsc";
 import {
   BrowserRouter,
@@ -243,6 +244,10 @@ const AgentsPage = dynamic(
   () => import("@flanksource-ui/components/Agents/AgentPage")
 );
 
+const TokensPage = dynamic(
+  () => import("@flanksource-ui/components/Tokens/TokensPage")
+);
+
 const SchemaResourcePage = dynamic(() =>
   import("@flanksource-ui/components/SchemaResourcePage").then(
     (mod) => mod.SchemaResourcePage
@@ -407,6 +412,13 @@ const settingsNav: SettingsNavigationItems = {
       name: "Agents",
       href: "/settings/agents",
       icon: MdOutlineSupportAgent,
+      featureName: features.agents,
+      resourceName: tables.database
+    },
+    {
+      name: "Tokens",
+      href: "/settings/tokens",
+      icon: VscKey,
       featureName: features.agents,
       resourceName: tables.database
     },
@@ -697,6 +709,18 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <AgentsPage />,
               tables.agents,
+              "read",
+              true
+            )}
+          />
+        </Route>
+
+        <Route path="tokens">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <TokensPage />,
+              tables.database,
               "read",
               true
             )}
