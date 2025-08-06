@@ -47,5 +47,5 @@ export async function getTokensList(): Promise<Token[]> {
 }
 
 export async function deleteToken(id: string): Promise<void> {
-  await apiBase.delete(`/auth/delete_token/${id}`);
+  await apiBase.delete(`/auth/token/${id}`);
 }
