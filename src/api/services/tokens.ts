@@ -1,4 +1,4 @@
-import { apiBase, localBase } from "../axios";
+import { apiBase } from "../axios";
 
 export type Token = {
   id: string;
@@ -31,44 +31,10 @@ export type CreateTokenResponse = {
   };
 };
 
-/*
- * Sample response
- {
-   "message" : "success",
-   "payload" : [
-      {
-         "created_at" : "2025-08-05T15:39:31.791334+05:30",
-         "id" : "019879b5-268f-a187-78fc-30c76e104d12",
-         "name" : "agent-1754388571",
-         "person" : {
-            "avatar" : "he",
-            "id" : "019879af-7e34-2dfa-2669-a462ec054ac5",
-            "name" : "yash",
-            "properties" : {}
-         },
-         "person_id" : "019879af-7e34-2dfa-2669-a462ec054ac5"
-      },
-      {
-         "created_at" : "2025-08-05T15:41:37.146117+05:30",
-         "id" : "019879b7-103a-e32e-5304-05b029b1a0aa",
-         "name" : "agent-1754388697",
-         "person" : {
-            "id" : "019879af-9703-e9a7-14d8-9015cf5e309d",
-            "name" : "aditya",
-            "properties" : {}
-         },
-         "person_id" : "019879af-9703-e9a7-14d8-9015cf5e309d"
-      }
-   ]
-}
-
- */
-
 export async function createToken(
   request: CreateTokenRequest
 ): Promise<CreateTokenResponse> {
-  //const response = await apiBase.post<CreateTokenResponse>("/auth/create_token", request);
-  const response = await localBase.post<CreateTokenResponse>(
+  const response = await apiBase.post<CreateTokenResponse>(
     "/auth/create_token",
     request
   );
@@ -76,38 +42,6 @@ export async function createToken(
 }
 
 export async function getTokensList(): Promise<Token[]> {
-  if (true) {
-    //const response = await apiBase.get<TokensResponse>("/auth/tokens");
-    const response = await localBase.get<TokensResponse>("/auth/tokens");
-    return response.data.payload ?? [];
-  }
-  const response = {
-    message: "success",
-    payload: [
-      {
-        created_at: "2025-08-05T15:39:31.791334+05:30",
-        id: "019879b5-268f-a187-78fc-30c76e104d12",
-        name: "claude-code",
-        person: {
-          avatar: "he",
-          id: "019879af-7e34-2dfa-2669-a462ec054ac5",
-          name: "yash",
-          properties: {}
-        },
-        person_id: "019879af-7e34-2dfa-2669-a462ec054ac5"
-      },
-      {
-        created_at: "2025-08-05T15:41:37.146117+05:30",
-        id: "019879b7-103a-e32e-5304-05b029b1a0aa",
-        name: "agent-1754388697",
-        person: {
-          id: "019879af-9703-e9a7-14d8-9015cf5e309d",
-          name: "aditya",
-          properties: {}
-        },
-        person_id: "019879af-9703-e9a7-14d8-9015cf5e309d"
-      }
-    ]
-  };
-  return response.payload;
+  const response = await apiBase.get<TokensResponse>("/auth/tokens");
+  return response.data.payload ?? [];
 }

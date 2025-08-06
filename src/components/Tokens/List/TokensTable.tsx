@@ -10,11 +10,7 @@ type TokensTableProps = {
   refresh?: () => void;
 };
 
-export default function TokensTable({
-  tokens,
-  isLoading,
-  refresh = () => {}
-}: TokensTableProps) {
+export default function TokensTable({ tokens, isLoading }: TokensTableProps) {
   const columns = useMemo(() => tokensTableColumns, []);
 
   const [hideAgents, setHideAgents] = useState(true);
@@ -26,17 +22,8 @@ export default function TokensTable({
     }
   }, [tokens, hideAgents]);
 
-  useEffect(() => {
-    console.log(
-      "TokensTable useEffect - filteredTokens updated:",
-      filteredTokens
-    );
-  }, [filteredTokens]);
-
   return (
-    /*
-     * TODO: @yash (Table not displayed at all when this is commented out)
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full w-full flex-col gap-4">
       <Toggle
         value={hideAgents}
         label="Hide Agents"
@@ -53,12 +40,5 @@ export default function TokensTable({
         enableServerSideSorting={false}
       />
     </div>
-    */
-    <MRTDataTable
-      data={filteredTokens}
-      columns={columns}
-      isLoading={isLoading}
-      enableServerSideSorting={false}
-    />
   );
 }

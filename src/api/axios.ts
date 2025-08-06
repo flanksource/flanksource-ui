@@ -15,18 +15,6 @@ export const apiBase = axios.create({
   }
 });
 
-// TODO yash - delete
-export const localBase = axios.create({
-  url: "http://localhost:8080",
-  baseURL: `http://localhost:8080`,
-  withCredentials: false,
-  headers: {
-    Accept: "application/json",
-    Prefer: "return=representation",
-    "Content-Type": "application/json"
-  }
-});
-
 export const IncidentCommander = axios.create({
   baseURL: `${API_BASE}/db`,
   headers: {
