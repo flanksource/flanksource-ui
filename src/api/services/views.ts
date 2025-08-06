@@ -36,7 +36,7 @@ export type ViewListItem = {
 };
 
 export const getAllViews = (sortBy?: any) => {
-  let url = `/views?select=*`;
+  let url = `/views?select=*&deleted_at=is.null`;
 
   if (sortBy && sortBy.length > 0) {
     const sortFields = sortBy
