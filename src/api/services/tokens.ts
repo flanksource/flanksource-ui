@@ -45,3 +45,7 @@ export async function getTokensList(): Promise<Token[]> {
   const response = await apiBase.get<TokensResponse>("/auth/tokens");
   return response.data.payload ?? [];
 }
+
+export async function deleteToken(id: string): Promise<void> {
+  await apiBase.delete(`/auth/token/${id}`);
+}
