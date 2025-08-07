@@ -1,36 +1,59 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import { getViewData } from "@flanksource-ui/api/services/views";
+import {
+  getViewById,
+  getViewDataById
+} from "@flanksource-ui/api/services/views";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import View from "@flanksource-ui/pages/audit-report/components/View/View";
 
 export function ConfigDetailsViewPage() {
-  const {
-    id: configId,
-    name,
-    namespace
-  } = useParams<{
+  const { id: configId, viewId } = useParams<{
     id: string;
-    name: string;
-    namespace: string;
+    viewId: string;
   }>();
+
+  // Get the view metadata to get the title/name for display
+  const { data: viewMetadata, isLoading: isLoadingMetadata } = useQuery({
+    queryKey: ["viewMetadata", viewId],
+    queryFn: () => {
+      if (!viewId) {
+        throw new Error("View ID is required");
+      }
+      return getViewById(viewId);
+    },
+    enabled: !!viewId
+  });
 
   const {
     data: viewData,
-    isLoading,
+    isLoading: isLoadingData,
     error
   } = useQuery({
-    queryKey: ["viewData", namespace, name, configId],
-    queryFn: () => getViewData(namespace!, name!, { "X-Config-ID": configId! }),
-    enabled: !!configId && !!name
+    queryKey: ["viewDataById", viewId, configId],
+    queryFn: () => {
+      if (!viewId) {
+        throw new Error("View ID is required");
+      }
+      return getViewDataById(viewId);
+    },
+    enabled: !!viewId && !!configId
   });
+
+  const viewInfo = viewMetadata?.data?.[0];
+  if (!viewInfo) {
+    return <div>View not found</div>;
+  }
+
+  const isLoading = isLoadingMetadata || isLoadingData;
+  const displayName = viewInfo.title || viewInfo.name;
 
   return (
     <ConfigDetailsTabs
-      pageTitlePrefix={`Config View - ${name}`}
+      pageTitlePrefix={`Config View - ${displayName}`}
       isLoading={isLoading}
-      activeTabName={name!}
+      activeTabName={displayName ?? ""}
     >
       <div className="flex h-full flex-1 flex-col overflow-auto p-4">
         {isLoading ? (

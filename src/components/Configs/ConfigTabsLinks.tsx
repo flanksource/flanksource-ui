@@ -69,9 +69,9 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
   ];
 
   const viewTabs = views.map((view) => ({
-    label: view.title,
+    label: view.title || view.name,
     key: view.id,
-    path: `/catalog/${id}/view/${view.namespace}/${view.name}`,
+    path: `/catalog/${id}/view/${view.id}`,
     icon: <Icon name={view.icon} />
   }));
 

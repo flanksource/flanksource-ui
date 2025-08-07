@@ -36,15 +36,15 @@ export type ViewListItem = {
 };
 
 export const getAllViews = (sortBy?: any) => {
-  let url = `/views?select=*&deleted_at=is.null`;
+  let url = `/views?select=*&deleted_at=${encodeURIComponent("is.null")}`;
 
   if (sortBy && sortBy.length > 0) {
     const sortFields = sortBy
       .map((sort: any) => `${sort.id}.${sort.desc ? "desc" : "asc"}`)
       .join(",");
-    url += `&order=${sortFields}`;
+    url += `&order=${encodeURIComponent(sortFields)}`;
   } else {
-    url += `&order=created_at.desc`;
+    url += `&order=${encodeURIComponent("created_at.desc")}`;
   }
 
   return resolvePostGrestRequestWithPagination<View[]>(ConfigDB.get(url));
@@ -70,12 +70,11 @@ export const deleteView = async (id: string) => {
   return response;
 };
 
-export const getViewData = async (
-  namespace: string,
-  name: string,
+export const getViewDataById = async (
+  viewId: string,
   headers?: Record<string, string>
 ): Promise<ViewResult> => {
-  const response = await fetch(`/api/view/${namespace}/${name}`, {
+  const response = await fetch(`/api/view/${viewId}`, {
     credentials: "include",
     headers
   });

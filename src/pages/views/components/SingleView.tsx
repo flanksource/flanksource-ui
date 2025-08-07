@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getViewById, getViewData } from "../../../api/services/views";
+import { getViewById, getViewDataById } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
@@ -19,7 +19,12 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     error: viewError
   } = useQuery({
     queryKey: ["view-metadata", id],
-    queryFn: () => getViewById(id!),
+    queryFn: () => {
+      if (!id) {
+        throw new Error("View ID is required");
+      }
+      return getViewById(id);
+    },
     enabled: !!id,
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
@@ -33,8 +38,13 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     error: dataError
   } = useQuery({
     queryKey: ["view-data", view?.namespace, view?.name],
-    queryFn: () => getViewData(view?.namespace ?? "", view?.name ?? ""),
-    enabled: !!(view?.namespace && view?.name),
+    queryFn: () => {
+      if (!view?.id) {
+        throw new Error("View ID is missing");
+      }
+      return getViewDataById(view.id);
+    },
+    enabled: !!(view?.namespace && view?.name && view?.id),
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
 
@@ -124,7 +134,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (view?.namespace && view?.name) {
-      const freshData = await getViewData(view.namespace, view.name, {
+      const freshData = await getViewDataById(view.id, {
         "cache-control": "max-age=1" // To force a refresh
       });
       queryClient.setQueryData(
