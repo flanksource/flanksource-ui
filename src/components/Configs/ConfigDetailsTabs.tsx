@@ -23,7 +23,8 @@ type ConfigDetailsTabsProps = {
     | "Insights"
     | "Relationships"
     | "Playbooks"
-    | "Checks";
+    | "Checks"
+    | string; // Views
   className?: string;
 };
 

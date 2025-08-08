@@ -136,6 +136,15 @@ export const PlaybookAPI = axios.create({
   }
 });
 
+export const ViewAPI = axios.create({
+  baseURL: `${API_BASE}/view`,
+  headers: {
+    Accept: "application/json",
+    Prefer: "return=representation",
+    "Content-Type": "application/json"
+  }
+});
+
 export const ArtifactAPI = axios.create({
   baseURL: `${API_BASE}/artifacts`,
   headers: {
