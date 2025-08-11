@@ -203,11 +203,11 @@ export interface ViewColumnDef {
     | "bytes"
     | "decimal"
     | "millicore"
-    | "url";
+    | "url"
+    | "row_attributes";
   description?: string;
   gauge?: GaugeConfig;
   hidden?: boolean;
-  for?: string;
 }
 
 type ViewRow = any[];

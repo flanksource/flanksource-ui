@@ -31,7 +31,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 }) => {
   const adaptedColumns = columns
     .map((col, index) =>
-      col.hidden || col.for
+      col.hidden || col.type === "row_attributes"
         ? null
         : {
             header: formatColumnHeader(col.name),
@@ -50,55 +50,19 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     row.forEach((value, index) => {
       rowObj[`col_${index}`] = value;
     });
-    return rowObj;
-  });
 
-  const columnIndexMap = React.useMemo(() => {
-    const map = new Map<ViewColumnDef, number>();
-    columns.forEach((col, index) => {
-      map.set(col, index);
-    });
-    return map;
-  }, [columns]);
-
-  const forColumnsMap = React.useMemo(() => {
-    const map = new Map<string, ViewColumnDef[]>();
-    columns.forEach((col) => {
-      if (col.for) {
-        if (!map.has(col.for)) {
-          map.set(col.for, []);
-        }
-        map.get(col.for)!.push(col);
-      }
-    });
-    return map;
-  }, [columns]);
-
-  const applyHelperColumns = (
-    cellContent: any,
-    column: ViewColumnDef,
-    row: any
-  ) => {
-    const forColumns = forColumnsMap.get(column.name) || [];
-    let enhancedContent = cellContent;
-
-    for (const forCol of forColumns) {
-      const forColIndex = columnIndexMap.get(forCol);
-      if (forColIndex !== undefined) {
-        const forValue = row[`col_${forColIndex}`];
-
-        if (forCol.type === "url" && forValue) {
-          enhancedContent = (
-            <Link to={forValue} className="underline">
-              {enhancedContent}
-            </Link>
-          );
-        }
+    const attributesColumn = columns.find(
+      (col) => col.type === "row_attributes"
+    );
+    if (attributesColumn) {
+      const attributesIndex = columns.indexOf(attributesColumn);
+      if (attributesIndex !== -1 && row[attributesIndex]) {
+        rowObj.__rowAttributes = row[attributesIndex];
       }
     }
 
-    return enhancedContent;
-  };
+    return rowObj;
+  });
 
   // Format millicore values following the existing pattern from topology formatting
   const formatMillicore = (value: string | number): string => {
@@ -243,7 +207,21 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         break;
     }
 
-    return applyHelperColumns(cellContent, column, row);
+    const rowAttributes = row.__rowAttributes as Record<string, any>;
+    if (
+      rowAttributes &&
+      column.name in rowAttributes &&
+      rowAttributes[column.name].url
+    ) {
+      const url = rowAttributes[column.name].url;
+      cellContent = (
+        <Link to={url} className="underline">
+          {cellContent}
+        </Link>
+      );
+    }
+
+    return cellContent;
   };
 
   return (
