@@ -11,13 +11,15 @@ type Props = {
   onClose: () => void;
   tokenResponse: CreateTokenResponse;
   formValues?: TokenFormValues;
+  isMcp?: boolean;
 };
 
 export default function TokenDisplayModal({
   isOpen,
   onClose,
   tokenResponse,
-  formValues
+  formValues,
+  isMcp = false
 }: Props) {
   const [showToken, setShowToken] = useState(false);
 
@@ -76,6 +78,13 @@ export default function TokenDisplayModal({
             />
           </div>
         </div>
+
+        {isMcp && (
+          <div className="rounded-md border border-green-200 bg-green-50 p-4">
+            <h4 className="mb-2 font-medium text-green-800">MCP Setup:</h4>
+            <div>hello</div>
+          </div>
+        )}
 
         <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
           <h4 className="mb-2 font-medium text-blue-800">
