@@ -2,11 +2,13 @@ import { useState } from "react";
 import { FaCopy, FaEye, FaEyeSlash } from "react-icons/fa";
 import { CreateTokenResponse } from "../../../api/services/tokens";
 import { Button } from "../../../ui/Buttons/Button";
-import CodeBlock from "../../../ui/Code/CodeBlock";
+import { JSONViewer } from "../../../ui/Code/JSONViewer";
 import { Modal } from "../../../ui/Modal";
 import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { toastSuccess } from "../../Toast/toast";
 import { TokenFormValues } from "./CreateTokenForm";
+import { useAgentsBaseURL } from "../../../components/Agents/InstalAgentInstruction/useAgentsBaseURL";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 
 type Props = {
   isOpen: boolean;
@@ -137,6 +139,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
   const [activeTab, setActiveTab] = useState<string>("claude-desktop");
 
   const basicAuth = `Basic ${Buffer.from(`token:${token}`).toString("base64")}`;
+  const baseUrl = useAgentsBaseURL() + "/mcp";
 
   const mcpConfigs = {
     "claude-desktop": {
@@ -148,7 +151,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "args": [
         "-y",
         "@modelcontextprotocol/server-http",
-        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+        "${baseUrl}"
       ],
       "env": {
         "AUTHORIZATION": "${basicAuth}"
@@ -162,7 +165,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       config: `{
   "name": "mission-control",
   "type": "http",
-  "url": "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp",
+  "url": "${baseUrl}",
   "headers": {
     "Authorization": "${basicAuth}"
   }
@@ -177,7 +180,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "args": [
         "-y",
         "@modelcontextprotocol/server-http",
-        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+        "${baseUrl}"
       ],
       "env": {
         "AUTHORIZATION": "${basicAuth}"
@@ -195,7 +198,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "args": [
         "-y",
         "@modelcontextprotocol/server-http",
-        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+        "${baseUrl}"
       ],
       "env": {
         "AUTHORIZATION": "${basicAuth}"
@@ -214,7 +217,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "args": [
         "-y",
         "@modelcontextprotocol/server-http",
-        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+        "${baseUrl}"
       ],
       "env": {
         "AUTHORIZATION": "${basicAuth}"
@@ -234,10 +237,10 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
           "args": [
             "-y",
             "@modelcontextprotocol/server-http",
-            "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+            "${baseUrl}"
           ],
           "env": {
-            "AUTHORIZATION": "Bearer ${token}"
+            "AUTHORIZATION": "${basicAuth}"
           }
         }
       }
@@ -247,7 +250,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
     },
     direct: {
       label: "Direct HTTP",
-      config: `curl -X POST https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp \\
+      config: `curl -X POST ${baseUrl} \\
   -H "Authorization: ${basicAuth}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -268,7 +271,16 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
         {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
           <Tab key={key} label={label} value={key} className="p-4">
             <div className="max-h-64 overflow-y-auto">
-              <CodeBlock code={config} />
+              {key === "direct" ? (
+                <CodeBlock code={config} language="bash" />
+              ) : (
+                <JSONViewer
+                  code={config}
+                  format="json"
+                  showLineNo
+                  hideCopyButton={false}
+                />
+              )}
             </div>
           </Tab>
         ))}

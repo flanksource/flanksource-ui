@@ -80,7 +80,6 @@ export default function TokenDetailsModal({
               Created At
             </label>
             <Age from={formattedCreatedAt} />
-            <div className="text-sm text-gray-900">{formattedCreatedAt}</div>
           </div>
         </div>
 
