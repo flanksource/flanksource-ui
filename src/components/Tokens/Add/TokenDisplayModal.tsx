@@ -2,7 +2,9 @@ import { useState } from "react";
 import { FaCopy, FaEye, FaEyeSlash } from "react-icons/fa";
 import { CreateTokenResponse } from "../../../api/services/tokens";
 import { Button } from "../../../ui/Buttons/Button";
+import CodeBlock from "../../../ui/Code/CodeBlock";
 import { Modal } from "../../../ui/Modal";
+import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { toastSuccess } from "../../Toast/toast";
 import { TokenFormValues } from "./CreateTokenForm";
 
@@ -81,8 +83,10 @@ export default function TokenDisplayModal({
 
         {isMcp && (
           <div className="rounded-md border border-green-200 bg-green-50 p-4">
-            <h4 className="mb-2 font-medium text-green-800">MCP Setup:</h4>
-            <div>hello</div>
+            <h4 className="mb-2 font-medium text-green-800">
+              MCP Client Setup:
+            </h4>
+            <McpSetupTabs token={tokenResponse.payload.token} />
           </div>
         )}
 
@@ -122,5 +126,153 @@ export default function TokenDisplayModal({
         <Button text="Close" onClick={onClose} className="btn-primary" />
       </div>
     </Modal>
+  );
+}
+
+type McpSetupTabsProps = {
+  token: string;
+};
+
+function McpSetupTabs({ token }: McpSetupTabsProps) {
+  const [activeTab, setActiveTab] = useState<string>("claude-desktop");
+
+  const basicAuth = `Basic ${Buffer.from(`token:${token}`).toString("base64")}`;
+
+  const mcpConfigs = {
+    "claude-desktop": {
+      label: "Claude Desktop",
+      config: `{
+  "mcpServers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    "claude-code": {
+      label: "Claude Code",
+      config: `{
+  "name": "mission-control",
+  "type": "http",
+  "url": "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp",
+  "headers": {
+    "Authorization": "${basicAuth}"
+  }
+}`
+    },
+    "vscode-copilot": {
+      label: "VS Code Copilot",
+      config: `{
+  "github.copilot.mcp.servers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    cline: {
+      label: "Cline",
+      config: `{
+  "cline.mcpServers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    continue: {
+      label: "Continue.dev",
+      config: `{
+  "mcpServers": [
+    {
+      "name": "mission-control",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  ]
+}`
+    },
+    zed: {
+      label: "Zed Editor",
+      config: `{
+  "assistant": {
+    "mcp": {
+      "servers": {
+        "mission-control": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-http",
+            "https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp"
+          ],
+          "env": {
+            "AUTHORIZATION": "Bearer ${token}"
+          }
+        }
+      }
+    }
+  }
+}`
+    },
+    direct: {
+      label: "Direct HTTP",
+      config: `curl -X POST https://mc.<org-id>.workload-prod-eu-02.flanksource.com/mcp \\
+  -H "Authorization: ${basicAuth}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {}
+    },
+    "id": 1
+  }'`
+    }
+  };
+
+  return (
+    <div className="mt-4">
+      <Tabs activeTab={activeTab} onSelectTab={setActiveTab}>
+        {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
+          <Tab key={key} label={label} value={key} className="p-4">
+            <div className="max-h-64 overflow-y-auto">
+              <CodeBlock code={config} />
+            </div>
+          </Tab>
+        ))}
+      </Tabs>
+    </div>
   );
 }
