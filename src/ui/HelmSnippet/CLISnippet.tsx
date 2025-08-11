@@ -74,7 +74,7 @@ export default function CLIInstallAgent({ data }: Props) {
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-2">
       <p>Copy the following command to install the chart</p>
-      <CodeBlock code={helmCommandTemplate} />
+      <CodeBlock code={helmCommandTemplate} language="bash" />
     </div>
   );
 }
