@@ -31,7 +31,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 }) => {
   const adaptedColumns = columns
     .map((col, index) =>
-      col.hidden
+      col.hidden || col.type === "row_attributes"
         ? null
         : {
             header: formatColumnHeader(col.name),
@@ -50,6 +50,17 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     row.forEach((value, index) => {
       rowObj[`col_${index}`] = value;
     });
+
+    const attributesColumn = columns.find(
+      (col) => col.type === "row_attributes"
+    );
+    if (attributesColumn) {
+      const attributesIndex = columns.indexOf(attributesColumn);
+      if (attributesIndex !== -1 && row[attributesIndex]) {
+        rowObj.__rowAttributes = row[attributesIndex];
+      }
+    }
+
     return rowObj;
   });
 
@@ -194,6 +205,20 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       default:
         cellContent = String(value);
         break;
+    }
+
+    const rowAttributes = row.__rowAttributes as Record<string, any>;
+    if (
+      rowAttributes &&
+      column.name in rowAttributes &&
+      rowAttributes[column.name].url
+    ) {
+      const url = rowAttributes[column.name].url;
+      cellContent = (
+        <Link to={url} className="underline">
+          {cellContent}
+        </Link>
+      );
     }
 
     return cellContent;
