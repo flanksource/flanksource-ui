@@ -1,4 +1,4 @@
-import { ConfigDB } from "../axios";
+import { ConfigDB, ViewAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult } from "../../pages/audit-report/types";
 
@@ -27,16 +27,24 @@ export type ViewSummary = {
   last_ran?: string;
 };
 
+export type ViewListItem = {
+  id: string;
+  name: string;
+  namespace?: string;
+  title?: string;
+  icon?: string;
+};
+
 export const getAllViews = (sortBy?: any) => {
-  let url = `/views?select=*`;
+  let url = `/views?select=*&deleted_at=${encodeURIComponent("is.null")}`;
 
   if (sortBy && sortBy.length > 0) {
     const sortFields = sortBy
       .map((sort: any) => `${sort.id}.${sort.desc ? "desc" : "asc"}`)
       .join(",");
-    url += `&order=${sortFields}`;
+    url += `&order=${encodeURIComponent(sortFields)}`;
   } else {
-    url += `&order=created_at.desc`;
+    url += `&order=${encodeURIComponent("created_at.desc")}`;
   }
 
   return resolvePostGrestRequestWithPagination<View[]>(ConfigDB.get(url));
@@ -62,12 +70,11 @@ export const deleteView = async (id: string) => {
   return response;
 };
 
-export const getViewData = async (
-  namespace: string,
-  name: string,
+export const getViewDataById = async (
+  viewId: string,
   headers?: Record<string, string>
 ): Promise<ViewResult> => {
-  const response = await fetch(`/api/view/${namespace}/${name}`, {
+  const response = await fetch(`/api/view/${viewId}`, {
     credentials: "include",
     headers
   });
@@ -88,5 +95,10 @@ export const getViewsForSidebar = async () => {
       `/views_summary?sidebar=eq.true&select=id,name,namespace,title,icon,ordinal&order=ordinal.asc,title.asc`
     )
   );
+  return res.data ?? [];
+};
+
+export const getViewsByConfigId = async (configId: string) => {
+  const res = await ViewAPI.get<ViewListItem[]>(`/list?config_id=${configId}`);
   return res.data ?? [];
 };

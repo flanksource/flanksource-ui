@@ -22,7 +22,7 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
           return (
             <div
               key={`${summary.name}-${rowIndex}`}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 p-4"
+              className="w-full rounded-lg border border-gray-200 bg-white p-4"
             >
               <h4 className="mb-1 text-sm font-medium text-gray-600">
                 {summary.name}
