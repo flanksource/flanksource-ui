@@ -70,11 +70,18 @@ export const deleteView = async (id: string) => {
   return response;
 };
 
-export const getViewDataById = async (
-  viewId: string,
-  headers?: Record<string, string>
+export const getViewData = async (
+  namespace: string,
+  name: string,
+  headers?: Record<string, string>,
+  filter?: string
 ): Promise<ViewResult> => {
-  const response = await fetch(`/api/view/${viewId}`, {
+  let url = `/api/view/${namespace}/${name}`;
+  if (filter && filter.trim()) {
+    url += `?filter=${encodeURIComponent(filter)}`;
+  }
+
+  const response = await fetch(url, {
     credentials: "include",
     headers
   });

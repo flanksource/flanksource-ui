@@ -9,6 +9,7 @@ import BadgeCell from "./BadgeCell";
 import { Link } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
+import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];

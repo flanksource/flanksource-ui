@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
 import { ViewResult } from "../../types";
+import FormikSearchInputClearable from "@flanksource-ui/components/Forms/Formik/FormikSearchInputClearable";
+import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import {
   NumberPanel,
   TablePanel,
@@ -14,6 +16,8 @@ interface ViewProps {
   title: string;
   icon?: string;
   view: ViewResult;
+  showSearch?: boolean;
+  dropdownOptionsData?: ViewResult; // Unfiltered data for dropdown options
 }
 
 const renderPanel = (panel: any, index: number) => {
@@ -33,7 +37,43 @@ const renderPanel = (panel: any, index: number) => {
   }
 };
 
-const View: React.FC<ViewProps> = ({ title, icon, view }) => {
+const View: React.FC<ViewProps> = ({
+  title,
+  icon,
+  view,
+  showSearch = false,
+  dropdownOptionsData
+}) => {
+  const hasDataTable = view.columns && view.columns.length > 0;
+
+  // Extract filterable columns and their unique values from unfiltered data
+  const filterableColumns = useMemo(() => {
+    const sourceData = dropdownOptionsData || view;
+
+    if (!sourceData.columns || !sourceData.rows) return [];
+
+    return sourceData.columns
+      .map((column, index) => {
+        if (column.filter?.type !== "multiselect") return null;
+
+        const uniqueValues = [
+          ...new Set(
+            sourceData
+              .rows!.map((row) => row[index])
+              .filter((value) => value != null && value !== "")
+              .map(String)
+          )
+        ].sort();
+
+        return { column, columnIndex: index, uniqueValues };
+      })
+      .filter(Boolean) as Array<{
+      column: any;
+      columnIndex: number;
+      uniqueValues: string[];
+    }>;
+  }, [view, dropdownOptionsData]);
+
   return (
     <div>
       {title !== "" && (
@@ -50,8 +90,29 @@ const View: React.FC<ViewProps> = ({ title, icon, view }) => {
           </div>
         )}
 
-        {view.rows && view.columns && (
-          <DynamicDataTable columns={view.columns} rows={view.rows} />
+        {hasDataTable && (
+          <div className="space-y-4">
+            {showSearch && (
+              <div className="flex flex-wrap items-center gap-2">
+                <FormikSearchInputClearable
+                  name="filter"
+                  placeholder="Filter results..."
+                  className="w-80"
+                />
+
+                {filterableColumns.map(({ column, uniqueValues }) => (
+                  <ViewColumnDropdown
+                    key={column.name}
+                    label={column.name}
+                    paramsKey={column.name.toLowerCase()}
+                    options={uniqueValues}
+                  />
+                ))}
+              </div>
+            )}
+
+            <DynamicDataTable columns={view.columns!} rows={view.rows || []} />
+          </div>
         )}
       </div>
     </div>
