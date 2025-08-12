@@ -35,8 +35,17 @@ export type ViewListItem = {
   icon?: string;
 };
 
-export const getAllViews = (sortBy?: any) => {
+export const getAllViews = (
+  sortBy?: any,
+  pageIndex?: number,
+  pageSize?: number
+) => {
   let url = `/views?select=*&deleted_at=${encodeURIComponent("is.null")}`;
+
+  // Add pagination parameters like job history does
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  }
 
   if (sortBy && sortBy.length > 0) {
     const sortFields = sortBy
@@ -47,7 +56,13 @@ export const getAllViews = (sortBy?: any) => {
     url += `&order=${encodeURIComponent("created_at.desc")}`;
   }
 
-  return resolvePostGrestRequestWithPagination<View[]>(ConfigDB.get(url));
+  return resolvePostGrestRequestWithPagination<View[]>(
+    ConfigDB.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
 };
 
 export const getViewById = (id: string) =>
