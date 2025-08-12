@@ -204,10 +204,12 @@ export interface ViewColumnDef {
     | "decimal"
     | "millicore"
     | "url"
+    | "badge"
     | "row_attributes";
   description?: string;
   gauge?: GaugeConfig;
   hidden?: boolean;
+  unit?: string;
 }
 
 type ViewRow = any[];
@@ -224,7 +226,7 @@ export interface GaugeConfig {
   max: number;
   unit?: string;
   thresholds?: {
-    value: number;
+    percent: number;
     color: string;
   }[];
 }

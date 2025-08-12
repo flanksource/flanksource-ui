@@ -18,9 +18,9 @@ const basicGaugeConfig: GaugeConfig = {
   max: 100,
   unit: "%",
   thresholds: [
-    { value: 80, color: "#ef4444" },
-    { value: 60, color: "#f59e0b" },
-    { value: 0, color: "#10b981" }
+    { percent: 80, color: "#ef4444" },
+    { percent: 60, color: "#f59e0b" },
+    { percent: 0, color: "#10b981" }
   ]
 };
 
@@ -53,9 +53,9 @@ export const WithObjectValue: Story = {
       max: 200,
       unit: "MB",
       thresholds: [
-        { value: 160, color: "#ef4444" },
-        { value: 120, color: "#f59e0b" },
-        { value: 0, color: "#10b981" }
+        { percent: 80, color: "#ef4444" },
+        { percent: 60, color: "#f59e0b" },
+        { percent: 0, color: "#10b981" }
       ]
     }
   }
@@ -69,9 +69,9 @@ export const MemoryUsage: Story = {
       max: 2,
       unit: "GB",
       thresholds: [
-        { value: 1.8, color: "#ef4444" },
-        { value: 1.5, color: "#f59e0b" },
-        { value: 0, color: "#10b981" }
+        { percent: 90, color: "#ef4444" },
+        { percent: 75, color: "#f59e0b" },
+        { percent: 0, color: "#10b981" }
       ]
     }
   }
@@ -85,9 +85,9 @@ export const CPUUsage: Story = {
       max: 100,
       unit: "%",
       thresholds: [
-        { value: 90, color: "#ef4444" },
-        { value: 70, color: "#f59e0b" },
-        { value: 0, color: "#10b981" }
+        { percent: 90, color: "#ef4444" },
+        { percent: 70, color: "#f59e0b" },
+        { percent: 0, color: "#10b981" }
       ]
     }
   }
