@@ -16,7 +16,9 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
           const gaugeData = generateGaugeData(row, summary.gauge);
           const outerArcLength = 204; // π * 65 for outer threshold arc
           const sortedThresholds = summary.gauge.thresholds
-            ? [...summary.gauge.thresholds].sort((a, b) => a.value - b.value)
+            ? [...summary.gauge.thresholds].sort(
+                (a, b) => a.percent - b.percent
+              )
             : [];
 
           return (
@@ -59,14 +61,14 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
                       const startPercentage =
                         gaugeData.min !== undefined &&
                         gaugeData.max !== undefined
-                          ? ((currentThreshold.value - gaugeData.min) /
+                          ? ((currentThreshold.percent - gaugeData.min) /
                               (gaugeData.max - gaugeData.min)) *
                             100
                           : 0;
                       const endPercentage = nextThreshold
                         ? gaugeData.min !== undefined &&
                           gaugeData.max !== undefined
-                          ? ((nextThreshold.value - gaugeData.min) /
+                          ? ((nextThreshold.percent - gaugeData.min) /
                               (gaugeData.max - gaugeData.min)) *
                             100
                           : 100

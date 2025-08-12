@@ -22,9 +22,9 @@ const basicGaugeSummary: PanelResult = {
     max: 100,
     unit: "%",
     thresholds: [
-      { value: 0, color: "#10b981" },
-      { value: 60, color: "#f59e0b" },
-      { value: 80, color: "#ef4444" }
+      { percent: 0, color: "#10b981" },
+      { percent: 60, color: "#f59e0b" },
+      { percent: 80, color: "#ef4444" }
     ]
   },
   rows: [{ value: 75 }]
@@ -65,9 +65,9 @@ export const CPUUsage: Story = {
         max: 100,
         unit: "%",
         thresholds: [
-          { value: 0, color: "#10b981" },
-          { value: 70, color: "#f59e0b" },
-          { value: 90, color: "#ef4444" }
+          { percent: 0, color: "#10b981" },
+          { percent: 70, color: "#f59e0b" },
+          { percent: 90, color: "#ef4444" }
         ]
       },
       rows: [{ value: 45 }]
@@ -86,9 +86,9 @@ export const DiskUsage: Story = {
         max: 500,
         unit: "GB",
         thresholds: [
-          { value: 0, color: "#ef4444" },
-          { value: 100, color: "#f59e0b" },
-          { value: 200, color: "#10b981" }
+          { percent: 0, color: "#ef4444" },
+          { percent: 100, color: "#f59e0b" },
+          { percent: 200, color: "#10b981" }
         ]
       },
       rows: [{ value: 150 }]
@@ -106,9 +106,9 @@ export const WithoutDescription: Story = {
         max: 100,
         unit: "ms",
         thresholds: [
-          { value: 0, color: "#10b981" },
-          { value: 50, color: "#f59e0b" },
-          { value: 80, color: "#ef4444" }
+          { percent: 0, color: "#10b981" },
+          { percent: 50, color: "#f59e0b" },
+          { percent: 80, color: "#ef4444" }
         ]
       },
       rows: [{ value: 35 }]

@@ -225,7 +225,7 @@ export interface GaugeConfig {
   max: number;
   unit?: string;
   thresholds?: {
-    value: number;
+    percent: number;
     color: string;
   }[];
 }
