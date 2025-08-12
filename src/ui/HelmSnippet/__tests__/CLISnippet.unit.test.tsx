@@ -11,19 +11,23 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 describe("InstallAgentModal", () => {
   it("renders the Helm repository installation command", () => {
     render(<InstallAgentModal data={[mockInput]} />);
-    expect(
-      screen.getByText("helm repo add flanksource", {
-        exact: false
-      }).textContent
-    ).toMatchSnapshot();
+    const element = screen.getByText((content, element) => {
+      return (
+        element?.tagName.toLowerCase() === "pre" &&
+        element?.textContent?.includes("helm repo add flanksource") === true
+      );
+    });
+    expect(element.textContent).toMatchSnapshot();
   });
 
   it("renders the Helm repository installation command with kube command", () => {
     render(<InstallAgentModal data={mockInputWithKubOptions} />);
-    expect(
-      screen.getByText("helm repo add flanksource", {
-        exact: false
-      }).textContent
-    ).toMatchSnapshot();
+    const element = screen.getByText((content, element) => {
+      return (
+        element?.tagName.toLowerCase() === "pre" &&
+        element?.textContent?.includes("helm repo add flanksource") === true
+      );
+    });
+    expect(element.textContent).toMatchSnapshot();
   });
 });

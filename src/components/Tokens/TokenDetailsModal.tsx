@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
+import { Age } from "@flanksource-ui/ui/Age";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteToken, Token } from "../../api/services/tokens";
 import { Avatar } from "../../ui/Avatar";
@@ -36,7 +37,7 @@ export default function TokenDetailsModal({
   });
 
   const formattedCreatedAt = useMemo(() => {
-    return new Date(token.created_at).toLocaleString();
+    return new Date(token.created_at).toISOString();
   }, [token.created_at]);
 
   const handleDeleteToken = () => {
@@ -78,7 +79,7 @@ export default function TokenDetailsModal({
             <label className="text-sm font-medium text-gray-700">
               Created At
             </label>
-            <div className="text-sm text-gray-900">{formattedCreatedAt}</div>
+            <Age from={formattedCreatedAt} />
           </div>
         </div>
 

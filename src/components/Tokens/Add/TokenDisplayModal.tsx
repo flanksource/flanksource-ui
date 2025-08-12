@@ -2,22 +2,28 @@ import { useState } from "react";
 import { FaCopy, FaEye, FaEyeSlash } from "react-icons/fa";
 import { CreateTokenResponse } from "../../../api/services/tokens";
 import { Button } from "../../../ui/Buttons/Button";
+import { JSONViewer } from "../../../ui/Code/JSONViewer";
 import { Modal } from "../../../ui/Modal";
+import { Tab, Tabs } from "../../../ui/Tabs/Tabs";
 import { toastSuccess } from "../../Toast/toast";
 import { TokenFormValues } from "./CreateTokenForm";
+import { useAgentsBaseURL } from "../../../components/Agents/InstalAgentInstruction/useAgentsBaseURL";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   tokenResponse: CreateTokenResponse;
   formValues?: TokenFormValues;
+  isMcp?: boolean;
 };
 
 export default function TokenDisplayModal({
   isOpen,
   onClose,
   tokenResponse,
-  formValues
+  formValues,
+  isMcp = false
 }: Props) {
   const [showToken, setShowToken] = useState(false);
 
@@ -77,6 +83,15 @@ export default function TokenDisplayModal({
           </div>
         </div>
 
+        {isMcp && (
+          <div className="rounded-md border border-green-200 bg-green-50 p-4">
+            <h4 className="mb-2 font-medium text-green-800">
+              MCP Client Setup:
+            </h4>
+            <McpSetupTabs token={tokenResponse.payload.token} />
+          </div>
+        )}
+
         <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
           <h4 className="mb-2 font-medium text-blue-800">
             Usage Instructions:
@@ -113,5 +128,163 @@ export default function TokenDisplayModal({
         <Button text="Close" onClick={onClose} className="btn-primary" />
       </div>
     </Modal>
+  );
+}
+
+type McpSetupTabsProps = {
+  token: string;
+};
+
+function McpSetupTabs({ token }: McpSetupTabsProps) {
+  const [activeTab, setActiveTab] = useState<string>("claude-desktop");
+
+  const basicAuth = `Basic ${Buffer.from(`token:${token}`).toString("base64")}`;
+  const baseUrl = useAgentsBaseURL() + "/mcp";
+
+  const mcpConfigs = {
+    "claude-desktop": {
+      label: "Claude Desktop",
+      config: `{
+  "mcpServers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "${baseUrl}"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    "claude-code": {
+      label: "Claude Code",
+      config: `{
+  "name": "mission-control",
+  "type": "http",
+  "url": "${baseUrl}",
+  "headers": {
+    "Authorization": "${basicAuth}"
+  }
+}`
+    },
+    "vscode-copilot": {
+      label: "VS Code Copilot",
+      config: `{
+  "github.copilot.mcp.servers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "${baseUrl}"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    cline: {
+      label: "Cline",
+      config: `{
+  "cline.mcpServers": {
+    "mission-control": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "${baseUrl}"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  }
+}`
+    },
+    continue: {
+      label: "Continue.dev",
+      config: `{
+  "mcpServers": [
+    {
+      "name": "mission-control",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http",
+        "${baseUrl}"
+      ],
+      "env": {
+        "AUTHORIZATION": "${basicAuth}"
+      }
+    }
+  ]
+}`
+    },
+    zed: {
+      label: "Zed Editor",
+      config: `{
+  "assistant": {
+    "mcp": {
+      "servers": {
+        "mission-control": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-http",
+            "${baseUrl}"
+          ],
+          "env": {
+            "AUTHORIZATION": "${basicAuth}"
+          }
+        }
+      }
+    }
+  }
+}`
+    },
+    direct: {
+      label: "Direct HTTP",
+      config: `curl -X POST ${baseUrl} \\
+  -H "Authorization: ${basicAuth}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {}
+    },
+    "id": 1
+  }'`
+    }
+  };
+
+  return (
+    <div className="mt-4">
+      <Tabs activeTab={activeTab} onSelectTab={setActiveTab}>
+        {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
+          <Tab key={key} label={label} value={key} className="p-4">
+            <div className="max-h-64 overflow-y-auto">
+              {key === "direct" ? (
+                <CodeBlock code={config} language="bash" />
+              ) : (
+                <JSONViewer
+                  code={config}
+                  format="json"
+                  showLineNo
+                  hideCopyButton={false}
+                />
+              )}
+            </div>
+          </Tab>
+        ))}
+      </Tabs>
+    </div>
   );
 }

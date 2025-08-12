@@ -14,10 +14,12 @@ import KratosLogoutButton from "./KratosLogoutButton";
 
 type UserProfileDropdownProps = {
   openKubeConfigModal: () => void;
+  openMcpTokenModal: () => void;
 };
 
 export function KratosUserProfileDropdown({
-  openKubeConfigModal
+  openKubeConfigModal,
+  openMcpTokenModal
 }: UserProfileDropdownProps) {
   const { user } = useUser();
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
@@ -73,6 +75,14 @@ export function KratosUserProfileDropdown({
               className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
             >
               Download kubeconfig
+            </button>
+          </MenuItem>
+          <MenuItem>
+            <button
+              onClick={openMcpTokenModal}
+              className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Setup MCP
             </button>
           </MenuItem>
           <MenuItem>
