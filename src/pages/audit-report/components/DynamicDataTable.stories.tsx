@@ -80,8 +80,8 @@ const gaugeColumns: ViewColumnDef[] = [
       max: 16,
       unit: "GB",
       thresholds: [
-        { percent: 12, color: "orange" },
-        { percent: 15, color: "red" }
+        { percent: 75, color: "orange" },
+        { percent: 94, color: "red" }
       ]
     }
   },
@@ -93,8 +93,8 @@ const gaugeColumns: ViewColumnDef[] = [
       max: 1000,
       unit: "GB",
       thresholds: [
-        { percent: 800, color: "orange" },
-        { percent: 950, color: "red" }
+        { percent: 80, color: "orange" },
+        { percent: 95, color: "red" }
       ]
     }
   }

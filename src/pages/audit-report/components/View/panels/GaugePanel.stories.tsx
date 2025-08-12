@@ -86,9 +86,9 @@ export const DiskUsage: Story = {
         max: 500,
         unit: "GB",
         thresholds: [
-          { percent: 0, color: "#ef4444" },
-          { percent: 100, color: "#f59e0b" },
-          { percent: 200, color: "#10b981" }
+          { percent: 0, color: "#10b981" },
+          { percent: 60, color: "#f59e0b" },
+          { percent: 80, color: "#ef4444" }
         ]
       },
       rows: [{ value: 150 }]

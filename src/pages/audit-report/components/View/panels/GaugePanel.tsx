@@ -58,20 +58,9 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
                       const nextThreshold =
                         sortedThresholds[thresholdIndex + 1];
 
-                      const startPercentage =
-                        gaugeData.min !== undefined &&
-                        gaugeData.max !== undefined
-                          ? ((currentThreshold.percent - gaugeData.min) /
-                              (gaugeData.max - gaugeData.min)) *
-                            100
-                          : 0;
+                      const startPercentage = currentThreshold.percent;
                       const endPercentage = nextThreshold
-                        ? gaugeData.min !== undefined &&
-                          gaugeData.max !== undefined
-                          ? ((nextThreshold.percent - gaugeData.min) /
-                              (gaugeData.max - gaugeData.min)) *
-                            100
-                          : 100
+                        ? nextThreshold.percent
                         : 100;
 
                       const startLength =

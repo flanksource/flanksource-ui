@@ -53,8 +53,8 @@ export const WithObjectValue: Story = {
       max: 200,
       unit: "MB",
       thresholds: [
-        { percent: 160, color: "#ef4444" },
-        { percent: 120, color: "#f59e0b" },
+        { percent: 80, color: "#ef4444" },
+        { percent: 60, color: "#f59e0b" },
         { percent: 0, color: "#10b981" }
       ]
     }
@@ -69,8 +69,8 @@ export const MemoryUsage: Story = {
       max: 2,
       unit: "GB",
       thresholds: [
-        { percent: 1.8, color: "#ef4444" },
-        { percent: 1.5, color: "#f59e0b" },
+        { percent: 90, color: "#ef4444" },
+        { percent: 75, color: "#f59e0b" },
         { percent: 0, color: "#10b981" }
       ]
     }
