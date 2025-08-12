@@ -189,8 +189,12 @@ export interface Restore {
   completedDate?: string;
 }
 
+interface ViewColumnDefFilter {
+  type: "multiselect";
+}
 export interface ViewColumnDef {
   name: string;
+  filter?: ViewColumnDefFilter;
   type:
     | "string"
     | "number"

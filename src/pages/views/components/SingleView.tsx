@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { getViewById, getViewData } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
 
@@ -11,7 +14,29 @@ interface SingleViewProps {
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
+  // Collect and combine all filter parameters from URL
+  const filters = useMemo(() => {
+    const filterParts: string[] = [];
+
+    const generalFilter = searchParams.get("filter");
+    if (generalFilter) {
+      filterParts.push(generalFilter);
+    }
+
+    for (const [key, value] of searchParams.entries()) {
+      if (key !== "filter" && value && value.trim()) {
+        const filterValue = tristateOutputToQueryParamValue(value);
+        if (filterValue) {
+          filterParts.push(`${key}=${filterValue}`);
+        }
+      }
+    }
+
+    return filterParts.join(",");
+  }, [searchParams]);
 
   const {
     data: viewData,
@@ -26,17 +51,47 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const view = viewData?.data?.[0];
 
+  // Fetch unfiltered data to get complete dropdown options
+  const { data: unfilteredViewData, isLoading: isLoadingUnfilteredData } =
+    useQuery({
+      queryKey: ["view-data-unfiltered", view?.namespace, view?.name],
+      queryFn: () =>
+        getViewData(view?.namespace ?? "", view?.name ?? "", undefined, ""),
+      enabled: !!(view?.namespace && view?.name),
+      staleTime: 5 * 60 * 1000 // 5 minutes
+    });
+
+  // Fetch filtered data for display
   const {
     data: actualViewData,
     isLoading: isLoadingData,
     isFetching: isFetchingData,
     error: dataError
   } = useQuery({
-    queryKey: ["view-data", view?.namespace, view?.name],
-    queryFn: () => getViewData(view?.namespace ?? "", view?.name ?? ""),
+    queryKey: ["view-data", view?.namespace, view?.name, filters],
+    queryFn: () =>
+      getViewData(view?.namespace ?? "", view?.name ?? "", undefined, filters),
     enabled: !!(view?.namespace && view?.name),
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
+
+  // Calculate dynamic filter fields based on filterable columns
+  // This must be called before any conditional rendering to maintain hook order
+  const dynamicFilterFields = useMemo(() => {
+    const baseFields = ["filter"];
+
+    // Use unfiltered data to determine available columns, fall back to filtered data
+    const sourceData = unfilteredViewData || actualViewData;
+    if (sourceData?.columns) {
+      const filterableFields = sourceData.columns
+        .filter((column) => column.filter?.type === "multiselect")
+        .map((column) => column.name.toLowerCase());
+
+      return [...baseFields, ...filterableFields];
+    }
+
+    return baseFields;
+  }, [unfilteredViewData, actualViewData]);
 
   useEffect(() => {
     if (!id) {
@@ -62,7 +117,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     setError(undefined);
   }, [id, viewError, dataError]);
 
-  const isLoading = isLoadingView || isLoadingData;
+  const isLoading = isLoadingView || isLoadingData || isLoadingUnfilteredData;
   // isRefreshing is true when data exists but is being refetched
   const isRefreshing = actualViewData && isFetchingData && !isLoadingData;
 
@@ -124,11 +179,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (view?.namespace && view?.name) {
-      const freshData = await getViewData(view.namespace, view.name, {
-        "cache-control": "max-age=1" // To force a refresh
-      });
+      const freshData = await getViewData(
+        view.namespace,
+        view.name,
+        {
+          "cache-control": "max-age=1" // To force a refresh
+        },
+        filters
+      );
       queryClient.setQueryData(
-        ["view-data", view.namespace, view.name],
+        ["view-data", view.namespace, view.name, filters],
         freshData
       );
     }
@@ -178,7 +238,18 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         </div>
 
         <main className="container mx-auto flex-grow space-y-6 px-4 py-6">
-          <View title="" view={actualViewData} icon="workflow" />
+          <FormikFilterForm
+            paramsToReset={[]}
+            filterFields={dynamicFilterFields}
+          >
+            <View
+              title=""
+              view={actualViewData}
+              icon="workflow"
+              showSearch={true}
+              dropdownOptionsData={unfilteredViewData}
+            />
+          </FormikFilterForm>
         </main>
       </div>
     </>
