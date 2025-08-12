@@ -204,6 +204,7 @@ export interface ViewColumnDef {
     | "decimal"
     | "millicore"
     | "url"
+    | "badge"
     | "row_attributes";
   description?: string;
   gauge?: GaugeConfig;

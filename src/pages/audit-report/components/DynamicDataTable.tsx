@@ -5,6 +5,7 @@ import DataTable from "./DataTable";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import StatusBadge from "./StatusBadge";
 import GaugeCell from "./GaugeCell";
+import BadgeCell from "./BadgeCell";
 import { Link } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
@@ -249,6 +250,10 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
             {String(value)}
           </Link>
         );
+        break;
+
+      case "badge":
+        cellContent = <BadgeCell value={String(value)} />;
         break;
 
       default:
