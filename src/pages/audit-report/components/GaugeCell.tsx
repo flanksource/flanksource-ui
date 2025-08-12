@@ -28,11 +28,7 @@ const GaugeCell: React.FC<GaugeCellProps> = ({ value, gauge }) => {
         return formatBytes(value);
       case "millicores":
       case "millicore":
-        // Use the same logic as formatMillicore function in DynamicDataTable
-        if (value >= 1000) {
-          return `${(value / 1000).toFixed(2)} cores`;
-        }
-        return `${value}m`;
+        return `${value.toFixed(0)} m`;
       default:
         return `${value} ${unit}`;
     }
