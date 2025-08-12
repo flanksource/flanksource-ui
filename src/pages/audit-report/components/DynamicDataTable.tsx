@@ -120,6 +120,37 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     return multiplier ? num * multiplier : null;
   };
 
+  // Format values based on unit type for gauge display
+  const formatValueWithUnit = (value: any, unit?: string): any => {
+    if (!unit || value == null) return value;
+
+    switch (unit) {
+      case "bytes":
+        if (typeof value === "number") {
+          return value; // Keep numeric value for gauge calculation, unit display handled by GaugeCell
+        } else if (typeof value === "string") {
+          const parsedBytes = parseMemoryUnit(value);
+          return parsedBytes !== null ? parsedBytes : value;
+        }
+        return value;
+
+      case "millicores":
+      case "millicore":
+        // Use existing formatMillicore function logic but return numeric value for gauge
+        if (typeof value === "string") {
+          const numericValue = value.replace(/m$/, "");
+          const millicoreValue = parseInt(numericValue, 10);
+          return !isNaN(millicoreValue) ? millicoreValue : value;
+        } else if (typeof value === "number") {
+          return value;
+        }
+        return value;
+
+      default:
+        return value;
+    }
+  };
+
   const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
     if (value == null) return "-";
 
@@ -190,7 +221,25 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         if (!column.gauge) {
           cellContent = String(value);
         } else {
-          cellContent = <GaugeCell value={value} gauge={column.gauge} />;
+          // Check if row attributes contain a max value for this column
+          const rowAttributes = row.__rowAttributes as Record<string, any>;
+          const maxFromAttributes = rowAttributes?.[column.name]?.max;
+
+          const gaugeConfig =
+            maxFromAttributes !== undefined
+              ? { ...column.gauge, max: Number(maxFromAttributes) }
+              : column.gauge;
+
+          // Apply unit formatting based on column.unit
+          const formattedValue = formatValueWithUnit(value, column.unit);
+          const finalGaugeConfig = {
+            ...gaugeConfig,
+            unit: column.unit || gaugeConfig.unit
+          };
+
+          cellContent = (
+            <GaugeCell value={formattedValue} gauge={finalGaugeConfig} />
+          );
         }
         break;
 
