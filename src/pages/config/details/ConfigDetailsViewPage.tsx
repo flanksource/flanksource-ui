@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import View from "@flanksource-ui/pages/audit-report/components/View/View";
 
+// Displays the view as a tab in the config details page
 export function ConfigDetailsViewPage() {
   const { id: configId, viewId } = useParams<{
     id: string;

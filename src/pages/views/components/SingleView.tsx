@@ -22,7 +22,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  // 1. Get view metadata (namespace, name, title, icon, etc.)
   const {
     data: viewData,
     isLoading: isLoadingView,
@@ -33,12 +32,11 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       return getViewSummary(id);
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000
   });
 
   const view = viewData?.data?.[0];
 
-  // 2. Get view panel results and the column definition for the table
   const {
     data: viewFullData,
     isLoading: isLoadingViewData,
@@ -49,10 +47,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       return getViewDataById(id);
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000
   });
 
-  // 3. Get table rows with current filters applied - only if view has columns
   const {
     data: tableResponse,
     isLoading: isLoadingTable,
@@ -73,10 +70,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         searchParams
       ),
     enabled: !!viewFullData?.columns,
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000
   });
 
-  // Construct ViewResult using columns from view data and rows from table query
   const actualViewData = useMemo(() => {
     if (!viewFullData) return undefined;
     return {
@@ -89,10 +85,8 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     } as CombinedViewResult;
   }, [viewFullData, tableResponse]);
 
-  // Calculate dynamic filter fields based on filterable columns
-  // This must be called before any conditional rendering to maintain hook order
   const dynamicFilterFields = useMemo(() => {
-    const baseFields: string[] = []; // Remove "filter" to remove search bar
+    const baseFields: string[] = [];
 
     if (viewFullData?.columns) {
       const filterableFields = viewFullData.columns
@@ -106,10 +100,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   }, [viewFullData]);
 
   useEffect(() => {
-    if (!id) {
-      setError("No view ID provided");
-      return;
-    }
     if (viewError) {
       setError(
         viewError instanceof Error
@@ -135,14 +125,12 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       return;
     }
     setError(undefined);
-  }, [id, viewError, viewDataError, tableError]);
+  }, [viewError, viewDataError, tableError]);
 
-  // Include table loading states only if view has columns
   const isLoading =
     isLoadingView ||
     isLoadingViewData ||
     (viewFullData?.columns && isLoadingTable);
-  // isRefreshing is true when data exists but is being refetched
   const isRefreshing = actualViewData && isFetchingTable && !isLoadingTable;
 
   if (isLoading) {
@@ -180,8 +168,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     );
   }
 
-  // For views with columns, check if we have actualViewData
-  // For views without columns, we can still render (they might have panels)
   if (viewFullData?.columns && !actualViewData) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -193,37 +179,25 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     );
   }
 
-  const formatLastRefreshed = (timestamp?: string) => {
-    if (!timestamp) return null;
-    try {
-      const date = new Date(timestamp);
-      return date.toLocaleString();
-    } catch {
-      return timestamp;
-    }
-  };
-
   const handleForceRefresh = async () => {
-    if (id && view?.namespace && view?.name && viewFullData?.columns) {
-      // Refresh both view data and table data
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["view-panel-results-and-table-columns", id]
-        }),
-        queryClient.invalidateQueries({
+    if (view?.namespace && view?.name) {
+      const freshData = await getViewDataById(view.id, {
+        "cache-control": "max-age=1"
+      });
+      queryClient.setQueryData(
+        ["view-panel-results-and-table-columns", id],
+        freshData
+      );
+      if (viewFullData?.columns) {
+        await queryClient.invalidateQueries({
           queryKey: [
             "view-table",
             view.namespace,
             view.name,
             searchParams.toString()
           ]
-        })
-      ]);
-    } else if (id) {
-      // Just refresh view data if no table
-      await queryClient.invalidateQueries({
-        queryKey: ["view-panel-results-and-table-columns", id]
-      });
+        });
+      }
     }
   };
 
@@ -274,6 +248,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       </SearchLayout>
     </>
   );
+};
+
+const formatLastRefreshed = (timestamp?: string) => {
+  if (!timestamp) return null;
+  try {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  } catch {
+    return timestamp;
+  }
 };
 
 export default SingleView;
