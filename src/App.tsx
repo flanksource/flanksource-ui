@@ -609,6 +609,27 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
       </Route>
 
+      <Route path="view" element={sidebar}>
+        <Route
+          path=":namespace/:name"
+          element={withAuthorizationAccessCheck(
+            <ViewPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path=":name"
+          element={withAuthorizationAccessCheck(
+            <ViewPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+      </Route>
+
       <Route path="notifications" element={sidebar}>
         <Route
           index
