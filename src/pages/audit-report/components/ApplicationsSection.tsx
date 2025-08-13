@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Save,
-  RotateCcw,
-  GitCommit,
-  AlertOctagon,
-  FileSearch
-} from "lucide-react";
+import { Save, RotateCcw, GitCommit, AlertOctagon } from "lucide-react";
 import { formatDate } from "../utils";
 
 import { formatDistanceToNow, differenceInHours } from "date-fns";
@@ -431,8 +425,11 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <View
             key={section.title}
             title={section.title}
-            icon={section.icon}
-            view={section.result}
+            namespace={section.namespace}
+            name={section.name}
+            columns={section.columns}
+            panels={section.panels}
+            columnOptions={section.columnOptions}
           />
         ))}
 

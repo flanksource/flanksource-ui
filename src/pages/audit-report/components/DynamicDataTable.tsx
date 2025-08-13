@@ -38,12 +38,11 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 }) => {
   const columnDef: MRT_ColumnDef<any>[] = columns
     .filter((col) => !col.hidden && col.type !== "row_attributes")
-    .map((col, index) => {
-      const n = formatColumnHeader(col.name);
+    .map((col) => {
       return {
-        id: n,
-        accessorKey: n,
-        header: n,
+        id: col.name,
+        accessorKey: col.name,
+        header: formatColumnHeader(col.name),
         size: 70,
         maxSize: 100,
         Cell: ({ cell, row }: { cell: any; row: any }) =>
@@ -56,8 +55,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     row.forEach((value, index) => {
       const column = columns[index];
       if (column && !column.hidden && column.type !== "row_attributes") {
-        const formattedName = formatColumnHeader(column.name);
-        rowObj[formattedName] = value;
+        rowObj[column.name] = value;
       }
     });
 

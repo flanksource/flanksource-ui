@@ -83,11 +83,6 @@ export const getViewDataById = async (
   return response.json();
 };
 
-export const getViewSummary = (id: string) =>
-  resolvePostGrestRequestWithPagination<ViewSummary[]>(
-    ConfigDB.get(`/views_summary?id=eq.${id}&select=*`)
-  );
-
 export const createView = async (view: Partial<View>) => {
   const response = await ConfigDB.post("/views", view);
   return response;
@@ -117,13 +112,23 @@ export const queryViewTable = async (
 
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
+  const sortBy = searchParams.get("sortBy") ?? "";
+  const sortOrder = searchParams.get("sortOrder") ?? "desc";
+
   queryString += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  // Add sorting support
+  if (sortBy) {
+    queryString += `&order=${encodeURIComponent(`${sortBy}.${sortOrder}`)}`;
+  }
 
   for (const [key, value] of searchParams.entries()) {
     if (
       key !== "filter" &&
       key !== "pageIndex" &&
       key !== "pageSize" &&
+      key !== "sortBy" &&
+      key !== "sortOrder" &&
       value &&
       value.trim()
     ) {

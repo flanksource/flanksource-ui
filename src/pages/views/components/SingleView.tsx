@@ -1,17 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
-import {
-  getViewSummary,
-  getViewDataById,
-  queryViewTable
-} from "../../../api/services/views";
+import { getViewDataById } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
-import { CombinedViewResult } from "@flanksource-ui/pages/audit-report/types";
 import { SearchLayout } from "../../../ui/Layout/SearchLayout";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../../ui/BreadcrumbNav";
+import Age from "../../../ui/Age/Age";
 
 interface SingleViewProps {
   id: string;
@@ -19,30 +14,16 @@ interface SingleViewProps {
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
-  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
+  // Fetch all the view metadata, panel results and the column definitions
+  // NOTE: This doesn't fetch the table rows.
   const {
-    data: viewData,
-    isLoading: isLoadingView,
-    error: viewError
-  } = useQuery({
-    queryKey: ["view-metadata", id],
-    queryFn: () => {
-      return getViewSummary(id);
-    },
-    enabled: !!id,
-    staleTime: 5 * 60 * 1000
-  });
-
-  const view = viewData?.data?.[0];
-
-  const {
-    data: viewFullData,
-    isLoading: isLoadingViewData,
+    data: viewResult,
+    isLoading,
     error: viewDataError
   } = useQuery({
-    queryKey: ["view-panel-results-and-table-columns", id],
+    queryKey: ["view-result", id],
     queryFn: () => {
       return getViewDataById(id);
     },
@@ -50,64 +31,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     staleTime: 5 * 60 * 1000
   });
 
-  const {
-    data: tableResponse,
-    isLoading: isLoadingTable,
-    isFetching: isFetchingTable,
-    error: tableError
-  } = useQuery({
-    queryKey: [
-      "view-table",
-      view?.namespace,
-      view?.name,
-      searchParams.toString()
-    ],
-    queryFn: () =>
-      queryViewTable(
-        view?.namespace ?? "",
-        view?.name ?? "",
-        viewFullData?.columns ?? [],
-        searchParams
-      ),
-    enabled: !!viewFullData?.columns,
-    staleTime: 5 * 60 * 1000
-  });
-
-  const actualViewData = useMemo(() => {
-    if (!viewFullData) return undefined;
-    return {
-      columns: viewFullData.columns,
-      rows: tableResponse?.data || [],
-      panels: viewFullData.panels,
-      lastRefreshedAt: viewFullData.lastRefreshedAt,
-      totalEntries: tableResponse?.totalEntries,
-      columnOptions: viewFullData.columnOptions
-    } as CombinedViewResult;
-  }, [viewFullData, tableResponse]);
-
-  const dynamicFilterFields = useMemo(() => {
-    const baseFields: string[] = [];
-
-    if (viewFullData?.columns) {
-      const filterableFields = viewFullData.columns
-        .filter((column) => column.filter?.type === "multiselect")
-        .map((column) => column.name.toLowerCase());
-
-      return [...baseFields, ...filterableFields];
-    }
-
-    return baseFields;
-  }, [viewFullData]);
-
   useEffect(() => {
-    if (viewError) {
-      setError(
-        viewError instanceof Error
-          ? viewError.message
-          : "Failed to fetch view metadata"
-      );
-      return;
-    }
     if (viewDataError) {
       setError(
         viewDataError instanceof Error
@@ -116,22 +40,22 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       );
       return;
     }
-    if (tableError) {
-      setError(
-        tableError instanceof Error
-          ? tableError.message
-          : "Failed to fetch table data"
-      );
-      return;
-    }
     setError(undefined);
-  }, [viewError, viewDataError, tableError]);
+  }, [viewDataError]);
 
-  const isLoading =
-    isLoadingView ||
-    isLoadingViewData ||
-    (viewFullData?.columns && isLoadingTable);
-  const isRefreshing = actualViewData && isFetchingTable && !isLoadingTable;
+  if (!viewResult) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 text-xl text-gray-500">View not found</div>
+          <p className="text-gray-600">
+            The requested view could not be found.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  const { icon, title, namespace, name } = viewResult;
 
   if (isLoading) {
     return (
@@ -155,74 +79,41 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     );
   }
 
-  if (!view) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-gray-500">View not found</div>
-          <p className="text-gray-600">
-            The requested view could not be found.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (viewFullData?.columns && !actualViewData) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-gray-500">No view data</div>
-          <p className="text-gray-600">No data available for this view.</p>
-        </div>
-      </div>
-    );
-  }
-
   const handleForceRefresh = async () => {
-    if (view?.namespace && view?.name) {
-      const freshData = await getViewDataById(view.id, {
+    if (namespace && name) {
+      const freshData = await getViewDataById(id, {
         "cache-control": "max-age=1"
       });
-      queryClient.setQueryData(
-        ["view-panel-results-and-table-columns", id],
-        freshData
-      );
-      if (viewFullData?.columns) {
-        await queryClient.invalidateQueries({
-          queryKey: [
-            "view-table",
-            view.namespace,
-            view.name,
-            searchParams.toString()
-          ]
-        });
-      }
+      queryClient.setQueryData(["view-result", id], freshData);
+      // Invalidate the table query that will be handled by the View component
+      await queryClient.invalidateQueries({
+        queryKey: ["view-table", namespace, name]
+      });
     }
   };
 
   return (
     <>
-      <Head prefix={view.title || view.name} />
+      <Head prefix={title || name} />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot key={"view"} link="/views">
-                <Icon name={view.icon || "workflow"} className="mr-2 h-4 w-4" />
-                {view.title || view.name}
+                <Icon name={icon || "workflow"} className="mr-2 h-4 w-4" />
+                {title || name}
               </BreadcrumbRoot>
             ]}
           />
         }
         onRefresh={handleForceRefresh}
         contentClass="p-0 h-full"
-        loading={isLoading || isRefreshing}
+        loading={isLoading}
         extra={
-          actualViewData?.lastRefreshedAt && (
+          viewResult?.lastRefreshedAt && (
             <p className="text-sm text-gray-500">
               Last refreshed:{" "}
-              {formatLastRefreshed(actualViewData.lastRefreshedAt)}
+              <Age from={viewResult.lastRefreshedAt} format="full" />
             </p>
           )
         }
@@ -230,34 +121,17 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
           <View
             title=""
-            view={
-              actualViewData ||
-              viewFullData || {
-                columns: [],
-                rows: [],
-                panels: [],
-                columnOptions: {}
-              }
-            }
-            icon="workflow"
+            namespace={namespace}
+            name={name}
+            columns={viewResult?.columns}
+            columnOptions={viewResult?.columnOptions}
+            panels={viewResult?.panels}
             showFilter={true}
-            dropdownOptionsData={viewFullData}
-            filterFields={dynamicFilterFields}
           />
         </div>
       </SearchLayout>
     </>
   );
-};
-
-const formatLastRefreshed = (timestamp?: string) => {
-  if (!timestamp) return null;
-  try {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-  } catch {
-    return timestamp;
-  }
 };
 
 export default SingleView;

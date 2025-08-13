@@ -1,10 +1,13 @@
 import React, { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
-import { ViewResult, CombinedViewResult } from "../../types";
+import { PanelResult, ViewColumnDef, ViewRow } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import { queryViewTable } from "../../../../api/services/views";
 import {
   NumberPanel,
   TablePanel,
@@ -14,13 +17,154 @@ import {
 } from "./panels";
 
 interface ViewProps {
-  title: string;
-  icon?: string;
-  view: CombinedViewResult;
-  showFilter?: boolean;
-  dropdownOptionsData?: ViewResult;
-  filterFields?: string[];
+  title?: string;
+  panels?: PanelResult[];
+  namespace?: string;
+  name: string;
+  columns?: ViewColumnDef[];
+  columnOptions?: Record<string, string[]>;
 }
+
+const View: React.FC<ViewProps> = ({
+  title,
+  namespace,
+  name,
+  columns,
+  columnOptions,
+  panels
+}) => {
+  const { pageSize } = useReactTablePaginationState();
+  const [searchParams] = useSearchParams();
+  const hasDataTable = columns && columns.length > 0;
+
+  const filterFields = useMemo(() => {
+    const baseFields: string[] = [];
+
+    if (hasDataTable) {
+      const filterableFields = columns
+        .filter((column) => column.filter?.type === "multiselect")
+        .map((column) => column.name.toLowerCase());
+
+      return [...baseFields, ...filterableFields];
+    }
+
+    return baseFields;
+  }, [hasDataTable, columns]);
+
+  // Fetch table data if we have the necessary parameters
+  const {
+    data: tableResponse,
+    isLoading: isLoadingTable,
+    error: tableError
+  } = useQuery({
+    queryKey: ["view-table", namespace, name, searchParams.toString()],
+    queryFn: () =>
+      queryViewTable(namespace ?? "", name ?? "", columns ?? [], searchParams),
+    enabled: !!namespace && !!name && !!columns && columns.length > 0,
+    staleTime: 5 * 60 * 1000
+  });
+
+  const rows = (tableResponse?.data as ViewRow[]) || [];
+  const totalEntries = tableResponse?.totalEntries;
+
+  // Extract filterable columns and their unique values from unfiltered data
+  const filterableColumns = useMemo(() => {
+    if (!columns) return [];
+
+    return columns
+      .map((column, index) => {
+        if (column.filter?.type !== "multiselect") return null;
+        const uniqueValues = columnOptions?.[column.name]?.sort() ?? [];
+        return { column, columnIndex: index, uniqueValues };
+      })
+      .filter(Boolean) as Array<{
+      column: any;
+      columnIndex: number;
+      uniqueValues: string[];
+    }>;
+  }, [columns, columnOptions]);
+
+  // Show error if table fetch failed
+  if (tableError) {
+    return (
+      <>
+        {title !== "" && (
+          <h3 className="mb-4 flex items-center text-xl font-semibold">
+            <Box className="mr-2 text-teal-600" size={20} />
+            {title}
+          </h3>
+        )}
+
+        <div className="space-y-6">
+          {panels && panels.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {panels.map((panel, index) => renderPanel(panel, index))}
+            </div>
+          )}
+        </div>
+
+        <div className="text-center text-red-500">
+          <p>
+            Error loading table data:{" "}
+            {tableError instanceof Error ? tableError.message : "Unknown error"}
+          </p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {title !== "" && (
+        <h3 className="mb-4 flex items-center text-xl font-semibold">
+          <Box className="mr-2 text-teal-600" size={20} />
+          {title}
+        </h3>
+      )}
+
+      <div className="space-y-6">
+        {panels && panels.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {panels.map((panel, index) => renderPanel(panel, index))}
+          </div>
+        )}
+      </div>
+
+      {hasDataTable && (
+        <>
+          <div className="mb-2">
+            <FormikFilterForm paramsToReset={[]} filterFields={filterFields}>
+              <div className="flex flex-wrap items-center gap-2">
+                {filterableColumns.map(({ column, uniqueValues }) => (
+                  <ViewColumnDropdown
+                    key={column.name}
+                    label={column.name}
+                    paramsKey={column.name.toLowerCase()}
+                    options={uniqueValues}
+                  />
+                ))}
+              </div>
+            </FormikFilterForm>
+          </div>
+
+          {isLoadingTable ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+              <span className="ml-2">Loading table data...</span>
+            </div>
+          ) : (
+            <DynamicDataTable
+              columns={columns}
+              rows={rows || []}
+              pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+              totalRowCount={totalEntries}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
+};
 
 const renderPanel = (panel: any, index: number) => {
   switch (panel.type) {
@@ -37,89 +181,6 @@ const renderPanel = (panel: any, index: number) => {
     default:
       return null;
   }
-};
-
-const View: React.FC<ViewProps> = ({
-  title,
-  icon,
-  view,
-  showFilter = false,
-  dropdownOptionsData,
-  filterFields = []
-}) => {
-  const { pageSize } = useReactTablePaginationState();
-  const hasDataTable = view.columns && view.columns.length > 0;
-
-  // Extract filterable columns and their unique values from unfiltered data
-  const filterableColumns = useMemo(() => {
-    const sourceData = dropdownOptionsData || view;
-
-    if (!sourceData.columns) return [];
-
-    return sourceData.columns
-      .map((column, index) => {
-        if (column.filter?.type !== "multiselect") return null;
-
-        const uniqueValues =
-          sourceData.columnOptions?.[column.name]?.sort() || [];
-
-        return { column, columnIndex: index, uniqueValues };
-      })
-      .filter(Boolean) as Array<{
-      column: any;
-      columnIndex: number;
-      uniqueValues: string[];
-    }>;
-  }, [view, dropdownOptionsData]);
-
-  return (
-    <>
-      {title !== "" && (
-        <h3 className="mb-4 flex items-center text-xl font-semibold">
-          <Box className="mr-2 text-teal-600" size={20} />
-          {title}
-        </h3>
-      )}
-
-      <div className="space-y-6">
-        {view.panels && view.panels.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {view.panels.map((panel, index) => renderPanel(panel, index))}
-          </div>
-        )}
-      </div>
-
-      {hasDataTable && (
-        <>
-          {showFilter && (
-            <div className="mb-2">
-              <FormikFilterForm paramsToReset={[]} filterFields={filterFields}>
-                <div className="flex flex-wrap items-center gap-2">
-                  {filterableColumns.map(({ column, uniqueValues }) => (
-                    <ViewColumnDropdown
-                      key={column.name}
-                      label={column.name}
-                      paramsKey={column.name.toLowerCase()}
-                      options={uniqueValues}
-                    />
-                  ))}
-                </div>
-              </FormikFilterForm>
-            </div>
-          )}
-
-          <DynamicDataTable
-            columns={view.columns!}
-            rows={view.rows || []}
-            pageCount={
-              view.totalEntries ? Math.ceil(view.totalEntries / pageSize) : 1
-            }
-            totalRowCount={view.totalEntries}
-          />
-        </>
-      )}
-    </>
-  );
 };
 
 export default View;

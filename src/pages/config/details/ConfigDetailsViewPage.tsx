@@ -1,8 +1,5 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import {
-  getViewSummary,
-  getViewDataById
-} from "@flanksource-ui/api/services/views";
+import { getViewDataById } from "@flanksource-ui/api/services/views";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
@@ -15,21 +12,9 @@ export function ConfigDetailsViewPage() {
     viewId: string;
   }>();
 
-  // Get the view metadata to get the title/name for display
-  const { data: viewMetadata, isLoading: isLoadingMetadata } = useQuery({
-    queryKey: ["viewMetadata", viewId],
-    queryFn: () => {
-      if (!viewId) {
-        throw new Error("View ID is required");
-      }
-      return getViewSummary(viewId);
-    },
-    enabled: !!viewId
-  });
-
   const {
-    data: viewData,
-    isLoading: isLoadingData,
+    data: view,
+    isLoading,
     error
   } = useQuery({
     queryKey: ["viewDataById", viewId, configId],
@@ -42,13 +27,11 @@ export function ConfigDetailsViewPage() {
     enabled: !!viewId && !!configId
   });
 
-  const viewInfo = viewMetadata?.data?.[0];
-  if (!viewInfo) {
+  if (!view) {
     return <div>View not found</div>;
   }
 
-  const isLoading = isLoadingMetadata || isLoadingData;
-  const displayName = viewInfo.title || viewInfo.name;
+  const displayName = view.title || view.name;
 
   return (
     <ConfigDetailsTabs
@@ -72,8 +55,15 @@ export function ConfigDetailsViewPage() {
               </p>
             </div>
           </div>
-        ) : viewData ? (
-          <View title="" view={viewData} icon="workflow" />
+        ) : view ? (
+          <View
+            title=""
+            namespace={view.namespace}
+            name={view.name}
+            panels={view.panels}
+            columns={view.columns}
+            columnOptions={view.columnOptions}
+          />
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center">
             <div className="text-center">
