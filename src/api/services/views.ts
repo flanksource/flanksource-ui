@@ -1,6 +1,7 @@
 import { ConfigDB, ViewAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
-import { ViewResult } from "../../pages/audit-report/types";
+import { ViewResult, ViewColumnDef } from "../../pages/audit-report/types";
+import { tristateOutputToQueryFilterParam } from "../../ui/Dropdowns/TristateReactSelect";
 
 export type View = {
   id: string;
@@ -42,7 +43,6 @@ export const getAllViews = (
 ) => {
   let url = `/views?select=*&deleted_at=${encodeURIComponent("is.null")}`;
 
-  // Add pagination parameters like job history does
   if (pageIndex !== undefined && pageSize !== undefined) {
     url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   }
@@ -64,8 +64,26 @@ export const getAllViews = (
     })
   );
 };
+export const getViewDataById = async (
+  viewId: string,
+  headers?: Record<string, string>
+): Promise<ViewResult> => {
+  const response = await fetch(`/api/view/${viewId}`, {
+    credentials: "include",
+    headers
+  });
 
-export const getViewById = (id: string) =>
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      errorData.error || `HTTP ${response.status}: ${response.statusText}`
+    );
+  }
+
+  return response.json();
+};
+
+export const getViewSummary = (id: string) =>
   resolvePostGrestRequestWithPagination<ViewSummary[]>(
     ConfigDB.get(`/views_summary?id=eq.${id}&select=*`)
   );
@@ -85,30 +103,67 @@ export const deleteView = async (id: string) => {
   return response;
 };
 
-export const getViewData = async (
+export const queryViewTable = async (
   namespace: string,
   name: string,
-  headers?: Record<string, string>,
-  filter?: string
-): Promise<ViewResult> => {
-  let url = `/api/view/${namespace}/${name}`;
-  if (filter && filter.trim()) {
-    url += `?filter=${encodeURIComponent(filter)}`;
+  columns: ViewColumnDef[],
+  searchParams: URLSearchParams
+) => {
+  const cleanNamespace = namespace.replaceAll("-", "_");
+  const cleanName = name.replaceAll("-", "_");
+  const tableName = `view_${cleanNamespace}_${cleanName}`;
+
+  let queryString = `?select=*`;
+
+  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
+  queryString += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  for (const [key, value] of searchParams.entries()) {
+    if (
+      key !== "filter" &&
+      key !== "pageIndex" &&
+      key !== "pageSize" &&
+      value &&
+      value.trim()
+    ) {
+      const filterParam = tristateOutputToQueryFilterParam(value, key);
+      if (filterParam) {
+        queryString += filterParam;
+      }
+    }
   }
 
-  const response = await fetch(url, {
-    credentials: "include",
-    headers
-  });
+  const response = await resolvePostGrestRequestWithPagination(
+    ConfigDB.get(`/${tableName}${queryString}`, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.error || `HTTP ${response.status}: ${response.statusText}`
-    );
+  if (response.error) {
+    throw response.error;
   }
 
-  return response.json();
+  const data = response.data;
+
+  // Convert PostgREST object rows to array rows based on column order
+  // Example:
+  // data = [{"name": "John", "age": 30, "city": "New York"}]
+  // columns = [{name: "name"}, {name: "age"}, {name: "city"}]
+  // convertedRows = [["John", 30, "New York"]]
+  const convertedRows =
+    Array.isArray(data) && data.length > 0
+      ? data.map((rowObj) => {
+          return columns.map((column) => rowObj[column.name]);
+        })
+      : data || [];
+
+  return {
+    data: convertedRows,
+    totalEntries: response.totalEntries
+  };
 };
 
 export const getViewsForSidebar = async () => {

@@ -223,6 +223,11 @@ export interface ViewResult {
   columns?: ViewColumnDef[];
   rows?: ViewRow[];
   panels?: PanelResult[];
+  columnOptions?: Record<string, string[]>;
+}
+
+export interface CombinedViewResult extends ViewResult {
+  totalEntries?: number;
 }
 
 export interface GaugeConfig {

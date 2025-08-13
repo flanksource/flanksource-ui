@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
-import { ViewResult } from "../../types";
-import FormikSearchInputClearable from "@flanksource-ui/components/Forms/Formik/FormikSearchInputClearable";
+import { ViewResult, CombinedViewResult } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import {
   NumberPanel,
   TablePanel,
@@ -15,9 +16,10 @@ import {
 interface ViewProps {
   title: string;
   icon?: string;
-  view: ViewResult;
-  showSearch?: boolean;
-  dropdownOptionsData?: ViewResult; // Unfiltered data for dropdown options
+  view: CombinedViewResult;
+  showFilter?: boolean;
+  dropdownOptionsData?: ViewResult;
+  filterFields?: string[];
 }
 
 const renderPanel = (panel: any, index: number) => {
@@ -41,29 +43,25 @@ const View: React.FC<ViewProps> = ({
   title,
   icon,
   view,
-  showSearch = false,
-  dropdownOptionsData
+  showFilter = false,
+  dropdownOptionsData,
+  filterFields = []
 }) => {
+  const { pageSize } = useReactTablePaginationState();
   const hasDataTable = view.columns && view.columns.length > 0;
 
   // Extract filterable columns and their unique values from unfiltered data
   const filterableColumns = useMemo(() => {
     const sourceData = dropdownOptionsData || view;
 
-    if (!sourceData.columns || !sourceData.rows) return [];
+    if (!sourceData.columns) return [];
 
     return sourceData.columns
       .map((column, index) => {
         if (column.filter?.type !== "multiselect") return null;
 
-        const uniqueValues = [
-          ...new Set(
-            sourceData
-              .rows!.map((row) => row[index])
-              .filter((value) => value != null && value !== "")
-              .map(String)
-          )
-        ].sort();
+        const uniqueValues =
+          sourceData.columnOptions?.[column.name]?.sort() || [];
 
         return { column, columnIndex: index, uniqueValues };
       })
@@ -75,7 +73,7 @@ const View: React.FC<ViewProps> = ({
   }, [view, dropdownOptionsData]);
 
   return (
-    <div>
+    <>
       {title !== "" && (
         <h3 className="mb-4 flex items-center text-xl font-semibold">
           <Box className="mr-2 text-teal-600" size={20} />
@@ -89,33 +87,38 @@ const View: React.FC<ViewProps> = ({
             {view.panels.map((panel, index) => renderPanel(panel, index))}
           </div>
         )}
-
-        {hasDataTable && (
-          <div className="space-y-4">
-            {showSearch && (
-              <div className="flex flex-wrap items-center gap-2">
-                <FormikSearchInputClearable
-                  name="filter"
-                  placeholder="Filter results..."
-                  className="w-80"
-                />
-
-                {filterableColumns.map(({ column, uniqueValues }) => (
-                  <ViewColumnDropdown
-                    key={column.name}
-                    label={column.name}
-                    paramsKey={column.name.toLowerCase()}
-                    options={uniqueValues}
-                  />
-                ))}
-              </div>
-            )}
-
-            <DynamicDataTable columns={view.columns!} rows={view.rows || []} />
-          </div>
-        )}
       </div>
-    </div>
+
+      {hasDataTable && (
+        <>
+          {showFilter && (
+            <div className="mb-2">
+              <FormikFilterForm paramsToReset={[]} filterFields={filterFields}>
+                <div className="flex flex-wrap items-center gap-2">
+                  {filterableColumns.map(({ column, uniqueValues }) => (
+                    <ViewColumnDropdown
+                      key={column.name}
+                      label={column.name}
+                      paramsKey={column.name.toLowerCase()}
+                      options={uniqueValues}
+                    />
+                  ))}
+                </div>
+              </FormikFilterForm>
+            </div>
+          )}
+
+          <DynamicDataTable
+            columns={view.columns!}
+            rows={view.rows || []}
+            pageCount={
+              view.totalEntries ? Math.ceil(view.totalEntries / pageSize) : 1
+            }
+            totalRowCount={view.totalEntries}
+          />
+        </>
+      )}
+    </>
   );
 };
 

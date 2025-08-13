@@ -1,6 +1,6 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import {
-  getViewById,
+  getViewSummary,
   getViewDataById
 } from "@flanksource-ui/api/services/views";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ export function ConfigDetailsViewPage() {
       if (!viewId) {
         throw new Error("View ID is required");
       }
-      return getViewById(viewId);
+      return getViewSummary(viewId);
     },
     enabled: !!viewId
   });
