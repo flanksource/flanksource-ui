@@ -126,7 +126,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             columns={viewResult?.columns}
             columnOptions={viewResult?.columnOptions}
             panels={viewResult?.panels}
-            showFilter={true}
           />
         </div>
       </SearchLayout>
