@@ -84,35 +84,6 @@ const View: React.FC<ViewProps> = ({
     }>;
   }, [columns, columnOptions]);
 
-  // Show error if table fetch failed
-  if (tableError) {
-    return (
-      <>
-        {title !== "" && (
-          <h3 className="mb-4 flex items-center text-xl font-semibold">
-            <Box className="mr-2 text-teal-600" size={20} />
-            {title}
-          </h3>
-        )}
-
-        <div className="space-y-6">
-          {panels && panels.length > 0 && (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {panels.map((panel, index) => renderPanel(panel, index))}
-            </div>
-          )}
-        </div>
-
-        <div className="text-center text-red-500">
-          <p>
-            Error loading table data:{" "}
-            {tableError instanceof Error ? tableError.message : "Unknown error"}
-          </p>
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       {title !== "" && (
@@ -129,6 +100,15 @@ const View: React.FC<ViewProps> = ({
           </div>
         )}
       </div>
+
+      {tableError && (
+        <div className="text-center text-red-500">
+          <p>
+            Error loading table data:{" "}
+            {tableError instanceof Error ? tableError.message : "Unknown error"}
+          </p>
+        </div>
+      )}
 
       {hasDataTable && (
         <>

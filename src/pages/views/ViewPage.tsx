@@ -18,7 +18,7 @@ export function ViewPage() {
   const { id, namespace, name } = useParams<{
     id?: string;
     namespace?: string;
-    name: string;
+    name?: string;
   }>();
   const [viewId, setViewId] = useState<string | undefined>(id);
   const [isLoading, setIsLoading] = useState(false);

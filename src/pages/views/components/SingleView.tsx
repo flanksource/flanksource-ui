@@ -43,6 +43,17 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     setError(undefined);
   }, [viewDataError]);
 
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Loading view...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!viewResult) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -55,18 +66,8 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       </div>
     );
   }
-  const { icon, title, namespace, name } = viewResult;
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Loading view...</p>
-        </div>
-      </div>
-    );
-  }
+  const { icon, title, namespace, name } = viewResult;
 
   if (error) {
     return (

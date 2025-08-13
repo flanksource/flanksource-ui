@@ -28,7 +28,9 @@ const GaugeCell: React.FC<GaugeCellProps> = ({ value, gauge }) => {
         return formatBytes(value);
       case "millicores":
       case "millicore":
-        return `${value.toFixed(0)} m`;
+        if (value === 0) return "";
+        if (value > 0 && value < 1) return `1m`;
+        return `${value.toFixed(0)}m`;
       default:
         return `${value} ${unit}`;
     }

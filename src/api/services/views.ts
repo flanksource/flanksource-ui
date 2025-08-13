@@ -104,8 +104,8 @@ export const queryViewTable = async (
   columns: ViewColumnDef[],
   searchParams: URLSearchParams
 ) => {
-  const cleanNamespace = namespace.replaceAll("-", "_");
-  const cleanName = name.replaceAll("-", "_");
+  const cleanNamespace = namespace.replace(/-/g, "_");
+  const cleanName = name.replace(/-/g, "_");
   const tableName = `view_${cleanNamespace}_${cleanName}`;
 
   let queryString = `?select=*`;
