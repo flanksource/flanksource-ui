@@ -119,7 +119,11 @@ export const queryViewTable = async (
 
   // Add sorting support
   if (sortBy) {
-    queryString += `&order=${encodeURIComponent(`${sortBy}.${sortOrder}`)}`;
+    const orderClause =
+      sortOrder === "desc"
+        ? `${sortBy}.${sortOrder}.nullslast`
+        : `${sortBy}.${sortOrder}`;
+    queryString += `&order=${encodeURIComponent(orderClause)}`;
   }
 
   for (const [key, value] of searchParams.entries()) {
