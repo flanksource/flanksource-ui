@@ -13,6 +13,7 @@ import { formatDuration as formatDurationMs } from "../../../utils/date";
 import { Status } from "../../../components/Status";
 import { Icon } from "../../../ui/Icons/Icon";
 import { IconName } from "lucide-react/dynamic";
+import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -217,21 +218,35 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
       if (
         ["health", "healthy", "unhealthy", "warning"].includes(attribute.icon)
       ) {
-        return (
+        cellContent = (
           <span className="inline-flex items-center gap-1">
             <Status status={attribute.icon} hideText={true} />
             {cellContent}
           </span>
         );
+      } else {
+        cellContent = (
+          <span className="inline-flex items-center gap-1">
+            <Icon name={attribute.icon} className="h-4 w-4" />
+            {cellContent}
+          </span>
+        );
       }
-
-      return (
-        <span className="inline-flex items-center gap-1">
-          <Icon name={attribute.icon} className="h-4 w-4" />
-          {cellContent}
-        </span>
-      );
     }
+  }
+
+  // Wrap with FilterByCellValue if column has multiselect filter
+  if (column.filter?.type === "multiselect") {
+    console.log("column.name", column.name);
+    return (
+      <FilterByCellValue
+        paramKey={column.name}
+        filterValue={value}
+        paramsToReset={["pageIndex"]}
+      >
+        {cellContent}
+      </FilterByCellValue>
+    );
   }
 
   return cellContent;
