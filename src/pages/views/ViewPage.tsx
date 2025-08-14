@@ -71,7 +71,7 @@ export function ViewPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">Loading view...</div>
+        <div className="text-center">Loading view metadata...</div>
       </div>
     );
   }
