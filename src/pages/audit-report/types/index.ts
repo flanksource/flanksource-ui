@@ -208,6 +208,7 @@ export interface ViewColumnDef {
   gauge?: GaugeConfig;
   hidden?: boolean;
   unit?: string;
+  icon?: string;
 }
 
 export type ViewRow = any[];

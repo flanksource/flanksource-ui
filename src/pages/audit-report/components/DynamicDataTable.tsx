@@ -11,6 +11,9 @@ import BadgeCell from "./BadgeCell";
 import { Link } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
+import { Status } from "../../../components/Status";
+import { Icon } from "../../../ui/Icons/Icon";
+import { IconName } from "lucide-react/dynamic";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -18,6 +21,12 @@ interface DynamicDataTableProps {
   title?: string;
   pageCount: number;
   totalRowCount?: number;
+}
+
+interface RowAttributes {
+  icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
+  url?: string;
+  max?: number;
 }
 
 // Convert column names to display-friendly headers
@@ -82,8 +91,6 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     />
   );
 };
-
-export default DynamicDataTable;
 
 const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
   if (value == null) return "-";
@@ -156,7 +163,10 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
         cellContent = String(value);
       } else {
         // Check if row attributes contain a max value for this column
-        const rowAttributes = row.__rowAttributes as Record<string, any>;
+        const rowAttributes = row.__rowAttributes as Record<
+          string,
+          RowAttributes
+        >;
         const maxFromAttributes = rowAttributes?.[column.name]?.max;
 
         const gaugeConfig =
@@ -194,18 +204,39 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
       break;
   }
 
-  const rowAttributes = row.__rowAttributes as Record<string, any>;
-  if (
-    rowAttributes &&
-    column.name in rowAttributes &&
-    rowAttributes[column.name].url
-  ) {
-    const url = rowAttributes[column.name].url;
-    cellContent = (
-      <Link to={url} className="underline">
-        {cellContent}
-      </Link>
-    );
+  const rowAttributes = row.__rowAttributes as Record<string, RowAttributes>;
+  const hasAttributes = rowAttributes && column.name in rowAttributes;
+  if (hasAttributes) {
+    const attribute = rowAttributes[column.name];
+    if (attribute.url) {
+      const url = attribute.url;
+      cellContent = (
+        <Link to={url} className="underline">
+          {cellContent}
+        </Link>
+      );
+    }
+
+    if (attribute.icon) {
+      // Handle icon rendering for health-related statuses
+      if (
+        ["health", "healthy", "unhealthy", "warning"].includes(attribute.icon)
+      ) {
+        return (
+          <span className="inline-flex items-center gap-1">
+            <Status status={attribute.icon} hideText={true} />
+            {cellContent}
+          </span>
+        );
+      }
+
+      return (
+        <span className="inline-flex items-center gap-1">
+          <Icon name={attribute.icon} className="h-4 w-4" />
+          {cellContent}
+        </span>
+      );
+    }
   }
 
   return cellContent;
@@ -324,3 +355,5 @@ function minWidthForColumnType(type: ViewColumnDef["type"]): number {
       return 150;
   }
 }
+
+export default DynamicDataTable;
