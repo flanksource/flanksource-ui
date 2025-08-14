@@ -5,7 +5,6 @@ import { formatDate } from "../utils";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import HealthBadge, { HealthType } from "./HealthBadge";
-import StatusBadge from "./StatusBadge";
 import GaugeCell from "./GaugeCell";
 import BadgeCell from "./BadgeCell";
 import { Link } from "react-router-dom";
@@ -152,10 +151,6 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
 
     case "health":
       cellContent = <HealthBadge health={value as HealthType} />;
-      break;
-
-    case "status":
-      cellContent = <StatusBadge status={String(value)} />;
       break;
 
     case "gauge":
