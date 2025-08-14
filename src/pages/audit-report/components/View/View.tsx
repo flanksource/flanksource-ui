@@ -54,7 +54,7 @@ const View: React.FC<ViewProps> = ({
   // Fetch table data if we have the necessary parameters
   const {
     data: tableResponse,
-    isLoading: isLoadingTable,
+    isLoading,
     error: tableError
   } = useQuery({
     queryKey: ["view-table", namespace, name, searchParams.toString()],
@@ -127,19 +127,13 @@ const View: React.FC<ViewProps> = ({
             </FormikFilterForm>
           </div>
 
-          {isLoadingTable ? (
-            <div className="flex items-center justify-center p-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-              <span className="ml-2">Loading table data...</span>
-            </div>
-          ) : (
-            <DynamicDataTable
-              columns={columns}
-              rows={rows || []}
-              pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
-              totalRowCount={totalEntries}
-            />
-          )}
+          <DynamicDataTable
+            columns={columns}
+            isLoading={isLoading}
+            rows={rows || []}
+            pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+            totalRowCount={totalEntries}
+          />
         </>
       )}
     </>

@@ -21,6 +21,7 @@ interface DynamicDataTableProps {
   title?: string;
   pageCount: number;
   totalRowCount?: number;
+  isLoading?: boolean;
 }
 
 interface RowAttributes {
@@ -42,7 +43,8 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
   rows,
   pageCount,
-  totalRowCount
+  totalRowCount,
+  isLoading
 }) => {
   const columnDef: MRT_ColumnDef<any>[] = columns
     .filter((col) => !col.hidden && col.type !== "row_attributes")
@@ -83,6 +85,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     <MRTDataTable
       enableColumnActions={false}
       columns={columnDef}
+      isLoading={isLoading}
       data={adaptedData}
       enableServerSideSorting
       enableServerSidePagination
