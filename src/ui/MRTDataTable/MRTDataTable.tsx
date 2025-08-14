@@ -21,6 +21,7 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   onRowClick?: (row: T) => void;
   isLoading?: boolean;
   disablePagination?: boolean;
+  enableColumnActions?: boolean;
   enableServerSideSorting?: boolean;
   enableServerSidePagination?: boolean;
   manualPageCount?: number;
@@ -56,6 +57,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   enableServerSideSorting = false,
   enableServerSidePagination = false,
   enableGrouping = false,
+  enableColumnActions = true,
   manualPageCount,
   totalRowCount,
   hiddenColumns = [],
@@ -84,6 +86,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableTopToolbar: false,
     enableColumnResizing: true,
     enableStickyHeader: true,
+    enableColumnActions: enableColumnActions,
     enableTableFooter: true,
     enableStickyFooter: true,
     // For performance reasons, we set the columnResizeMode to "onEnd" instead

@@ -32,7 +32,6 @@ const formatColumnHeader = (name: string): string => {
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
   rows,
-  title,
   pageCount,
   totalRowCount
 }) => {
@@ -40,11 +39,10 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     .filter((col) => !col.hidden && col.type !== "row_attributes")
     .map((col) => {
       return {
-        id: col.name,
         accessorKey: col.name,
+        minSize: 15,
+        maxSize: minWidthForColumnType(col.type),
         header: formatColumnHeader(col.name),
-        size: 70,
-        maxSize: 100,
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original)
       };
@@ -74,6 +72,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 
   return (
     <MRTDataTable
+      enableColumnActions={false}
       columns={columnDef}
       data={adaptedData}
       enableServerSideSorting
@@ -298,3 +297,30 @@ const parseMemoryUnit = (value: string): number | null => {
   const multiplier = unit ? multipliers[unit] : 1;
   return multiplier ? num * multiplier : null;
 };
+
+function minWidthForColumnType(type: ViewColumnDef["type"]): number {
+  switch (type) {
+    case "boolean":
+      return 20;
+    case "datetime":
+      return 50;
+    case "duration":
+      return 40;
+    case "health":
+      return 30;
+    case "status":
+      return 50;
+    case "gauge":
+      return 40;
+    case "bytes":
+      return 40;
+    case "decimal":
+      return 40;
+    case "millicore":
+      return 40;
+    case "badge":
+      return 40;
+    default:
+      return 150;
+  }
+}
