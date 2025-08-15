@@ -10,6 +10,7 @@ import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
@@ -30,16 +31,16 @@ export function ViewsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<View>();
   const [sortState] = useReactTableSortState();
+  const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const {
     isLoading: loading,
-    data: views,
+    data: viewsResponse,
     refetch
   } = useQuery({
-    queryKey: ["views", "all", sortState],
+    queryKey: ["views", "all", sortState, pageIndex, pageSize],
     queryFn: async () => {
-      const response = await getAllViews(sortState);
-      return response.data ?? [];
+      return getAllViews(sortState, pageIndex, pageSize);
     }
   });
 
@@ -147,12 +148,14 @@ export function ViewsPage() {
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
           <ViewsList
             className="mt-6 flex h-full flex-col overflow-y-auto py-1"
-            data={views ?? []}
+            data={viewsResponse?.data ?? []}
             isLoading={loading}
             onRowClick={(val) => {
               setIsOpen(true);
               setEditedRow(val);
             }}
+            pageCount={Math.ceil((viewsResponse?.totalEntries ?? 0) / pageSize)}
+            totalRowCount={viewsResponse?.totalEntries}
           />
         </div>
         <ViewFormModal

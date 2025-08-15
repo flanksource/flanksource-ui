@@ -53,8 +53,10 @@ export function FilterByCellValue({
 
   return (
     <div className="group flex w-full">
-      <div className="flex-1 overflow-x-hidden text-ellipsis">{children}</div>
-      <div className="hidden flex-row gap-1 px-1 group-hover:flex">
+      <div className="min-w-0 flex-1 overflow-hidden text-ellipsis">
+        {children}
+      </div>
+      <div className="flex flex-row gap-1 px-1 opacity-0 transition-opacity group-hover:opacity-100">
         <IconButton
           onClick={(e) => onClick(e, "include")}
           icon={<PiMagnifyingGlassPlusThin size={18} />}

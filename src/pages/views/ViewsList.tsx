@@ -10,6 +10,8 @@ type ViewsListProps = {
   data: View[];
   isLoading?: boolean;
   onRowClick?: (data: View) => void;
+  pageCount?: number;
+  totalRowCount?: number;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 
 const NameCell = ({ row, renderedCellValue: getValue }: MRTCellProps<View>) => {
@@ -67,6 +69,8 @@ export function ViewsList({
   isLoading,
   className,
   onRowClick = () => {},
+  pageCount,
+  totalRowCount,
   ...rest
 }: ViewsListProps) {
   return (
@@ -77,6 +81,9 @@ export function ViewsList({
         isLoading={isLoading}
         onRowClick={(row) => onRowClick(row)}
         enableServerSideSorting
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        totalRowCount={totalRowCount}
       />
     </div>
   );

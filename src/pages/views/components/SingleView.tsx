@@ -1,104 +1,60 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getViewById, getViewDataById } from "../../../api/services/views";
+import { getViewDataById } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
+import { SearchLayout } from "../../../ui/Layout/SearchLayout";
+import { BreadcrumbNav, BreadcrumbRoot } from "../../../ui/BreadcrumbNav";
+import Age from "../../../ui/Age/Age";
 
 interface SingleViewProps {
-  id?: string;
+  id: string;
 }
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
   const queryClient = useQueryClient();
 
+  // Fetch all the view metadata, panel results and the column definitions
+  // NOTE: This doesn't fetch the table rows.
   const {
-    data: viewData,
-    isLoading: isLoadingView,
-    error: viewError
+    data: viewResult,
+    isLoading,
+    error: viewDataError
   } = useQuery({
-    queryKey: ["view-metadata", id],
+    queryKey: ["view-result", id],
     queryFn: () => {
-      if (!id) {
-        throw new Error("View ID is required");
-      }
-      return getViewById(id);
+      return getViewDataById(id);
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  });
-
-  const view = viewData?.data?.[0];
-
-  const {
-    data: actualViewData,
-    isLoading: isLoadingData,
-    isFetching: isFetchingData,
-    error: dataError
-  } = useQuery({
-    queryKey: ["view-data", view?.namespace, view?.name],
-    queryFn: () => {
-      if (!view?.id) {
-        throw new Error("View ID is missing");
-      }
-      return getViewDataById(view.id);
-    },
-    enabled: !!(view?.namespace && view?.name && view?.id),
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000
   });
 
   useEffect(() => {
-    if (!id) {
-      setError("No view ID provided");
-      return;
-    }
-    if (viewError) {
+    if (viewDataError) {
       setError(
-        viewError instanceof Error
-          ? viewError.message
-          : "Failed to fetch view metadata"
-      );
-      return;
-    }
-    if (dataError) {
-      setError(
-        dataError instanceof Error
-          ? dataError.message
-          : "Failed to fetch view content"
+        viewDataError instanceof Error
+          ? viewDataError.message
+          : "Failed to fetch view data"
       );
       return;
     }
     setError(undefined);
-  }, [id, viewError, dataError]);
-
-  const isLoading = isLoadingView || isLoadingData;
-  // isRefreshing is true when data exists but is being refetched
-  const isRefreshing = actualViewData && isFetchingData && !isLoadingData;
+  }, [viewDataError]);
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Loading view...</p>
+          <p className="text-gray-600">Loading view results...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-red-500">Error</div>
-          <p className="text-gray-600">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!view) {
+  if (!viewResult) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -111,88 +67,69 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     );
   }
 
-  if (!actualViewData) {
+  const { icon, title, namespace, name } = viewResult;
+
+  if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 text-xl text-gray-500">No view data</div>
-          <p className="text-gray-600">No data available for this view.</p>
+          <div className="mb-4 text-xl text-red-500">Error</div>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
 
-  const formatLastRefreshed = (timestamp?: string) => {
-    if (!timestamp) return null;
-    try {
-      const date = new Date(timestamp);
-      return date.toLocaleString();
-    } catch {
-      return timestamp;
-    }
-  };
-
   const handleForceRefresh = async () => {
-    if (view?.namespace && view?.name) {
-      const freshData = await getViewDataById(view.id, {
-        "cache-control": "max-age=1" // To force a refresh
+    if (namespace && name) {
+      const freshData = await getViewDataById(id, {
+        "cache-control": "max-age=1"
       });
-      queryClient.setQueryData(
-        ["view-data", view.namespace, view.name],
-        freshData
-      );
+      queryClient.setQueryData(["view-result", id], freshData);
+      // Invalidate the table query that will be handled by the View component
+      await queryClient.invalidateQueries({
+        queryKey: ["view-table", namespace, name]
+      });
     }
   };
 
   return (
     <>
-      <Head prefix={view.title || view.name} />
-
-      <div className="flex min-h-screen flex-col bg-gray-50">
-        {/* Header */}
-        <div className="sticky top-0 z-10 border-b bg-white shadow-sm">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <h1 className="flex items-center text-2xl font-bold text-gray-900">
-                <Icon name={view.icon || "workflow"} className="mr-3 h-6 w-6" />
-                {view.title || view.name}
-              </h1>
-              <div className="flex items-center space-x-4">
-                {actualViewData?.lastRefreshedAt && (
-                  <p className="text-sm text-gray-500">
-                    Last refreshed:{" "}
-                    {formatLastRefreshed(actualViewData.lastRefreshedAt)}
-                  </p>
-                )}
-                <button
-                  onClick={handleForceRefresh}
-                  disabled={isLoading || isRefreshing}
-                  className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <svg
-                    className={`mr-2 h-4 w-4 ${isLoading || isRefreshing ? "animate-spin" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
-                  Refresh
-                </button>
-              </div>
-            </div>
-          </div>
+      <Head prefix={title || name} />
+      <SearchLayout
+        title={
+          <BreadcrumbNav
+            list={[
+              <BreadcrumbRoot key={"view"} link="/views">
+                <Icon name={icon || "workflow"} className="mr-2 h-4 w-4" />
+                {title || name}
+              </BreadcrumbRoot>
+            ]}
+          />
+        }
+        onRefresh={handleForceRefresh}
+        contentClass="p-0 h-full"
+        loading={isLoading}
+        extra={
+          viewResult?.lastRefreshedAt && (
+            <p className="text-sm text-gray-500">
+              Last refreshed:{" "}
+              <Age from={viewResult.lastRefreshedAt} format="full" />
+            </p>
+          )
+        }
+      >
+        <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
+          <View
+            title=""
+            namespace={namespace}
+            name={name}
+            columns={viewResult?.columns}
+            columnOptions={viewResult?.columnOptions}
+            panels={viewResult?.panels}
+          />
         </div>
-
-        <main className="container mx-auto flex-grow space-y-6 px-4 py-6">
-          <View title="" view={actualViewData} icon="workflow" />
-        </main>
-      </div>
+      </SearchLayout>
     </>
   );
 };

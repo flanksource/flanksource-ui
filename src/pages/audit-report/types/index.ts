@@ -121,17 +121,11 @@ export interface Application {
   lifecycle?: string;
   locations?: Location[];
   monitoring?: MonitoringMetrics;
-  sections?: ViewSection[];
+  sections?: ViewResult[];
   repositories?: Repository[];
   restores?: Restore[];
   version?: Version;
 }
-
-type ViewSection = {
-  title: string;
-  icon: IconName;
-  result: ViewResult;
-};
 
 export interface User {
   id: string;
@@ -189,8 +183,12 @@ export interface Restore {
   completedDate?: string;
 }
 
+interface ViewColumnDefFilter {
+  type: "multiselect";
+}
 export interface ViewColumnDef {
   name: string;
+  filter?: ViewColumnDefFilter;
   type:
     | "string"
     | "number"
@@ -210,15 +208,22 @@ export interface ViewColumnDef {
   gauge?: GaugeConfig;
   hidden?: boolean;
   unit?: string;
+  icon?: string;
 }
 
-type ViewRow = any[];
+export type ViewRow = any[];
 
 export interface ViewResult {
+  title?: string;
+  icon?: string;
+  namespace?: string;
+  name: string;
+
   lastRefreshedAt?: string;
   columns?: ViewColumnDef[];
   rows?: ViewRow[];
   panels?: PanelResult[];
+  columnOptions?: Record<string, string[]>;
 }
 
 export interface GaugeConfig {
