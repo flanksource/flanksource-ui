@@ -351,9 +351,9 @@ function minWidthForColumnType(type: ViewColumnDef["type"]): number {
     case "duration":
       return 40;
     case "health":
-      return 30;
-    case "status":
       return 50;
+    case "status":
+      return 70;
     case "gauge":
       return 40;
     case "bytes":
