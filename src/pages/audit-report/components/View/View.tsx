@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
+import { formatDisplayLabel } from "./panels/utils";
 import { PanelResult, ViewColumnDef, ViewRow } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
@@ -43,7 +44,7 @@ const View: React.FC<ViewProps> = ({
     if (hasDataTable) {
       const filterableFields = columns
         .filter((column) => column.filter?.type === "multiselect")
-        .map((column) => column.name.toLowerCase());
+        .map((column) => column.name);
 
       return [...baseFields, ...filterableFields];
     }
@@ -118,8 +119,8 @@ const View: React.FC<ViewProps> = ({
                 {filterableColumns.map(({ column, uniqueValues }) => (
                   <ViewColumnDropdown
                     key={column.name}
-                    label={column.name}
-                    paramsKey={column.name.toLowerCase()}
+                    label={formatDisplayLabel(column.name)}
+                    paramsKey={column.name}
                     options={uniqueValues}
                   />
                 ))}
