@@ -14,6 +14,7 @@ import { Status } from "../../../components/Status";
 import { Icon } from "../../../ui/Icons/Icon";
 import { IconName } from "lucide-react/dynamic";
 import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
+import { formatDisplayLabel } from "./View/panels/utils";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -30,15 +31,6 @@ interface RowAttributes {
   max?: number;
 }
 
-// Convert column names to display-friendly headers
-// Examples: "memory_limit" -> "Memory Limit", "lastUpdated" -> "Last Updated"
-const formatColumnHeader = (name: string): string => {
-  return name
-    .replace(/_/g, " ") // Convert underscores to spaces
-    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add spaces before capital letters in camelCase
-    .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
-};
-
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
   rows,
@@ -53,7 +45,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         accessorKey: col.name,
         minSize: 15,
         maxSize: minWidthForColumnType(col.type),
-        header: formatColumnHeader(col.name),
+        header: formatDisplayLabel(col.name),
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original)
       };
@@ -240,7 +232,6 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
 
   // Wrap with FilterByCellValue if column has multiselect filter
   if (column.filter?.type === "multiselect") {
-    console.log("column.name", column.name);
     return (
       <FilterByCellValue
         paramKey={column.name}

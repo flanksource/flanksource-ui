@@ -84,3 +84,12 @@ export const generateGaugeData = (
     label: row.health || row.type || "Value"
   };
 };
+
+// Convert column names to display-friendly headers
+// Examples: "memory_limit" -> "Memory Limit", "lastUpdated" -> "Last Updated"
+export const formatDisplayLabel = (name: string): string => {
+  return name
+    .replace(/_/g, " ") // Convert underscores to spaces
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add spaces before capital letters in camelCase
+    .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
+};
