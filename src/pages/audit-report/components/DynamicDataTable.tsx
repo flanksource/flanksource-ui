@@ -55,9 +55,13 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     const rowObj: { [key: string]: any } = {};
     row.forEach((value, index) => {
       const column = columns[index];
-      if (column && !column.hidden && column.type !== "row_attributes") {
-        rowObj[column.name] = value;
+      if (column.hidden || column.type === "row_attributes") {
+        // These columns are not displayed in the table
+        return;
       }
+
+      const convertedValue = convertViewCellToNativeType(value, column);
+      rowObj[column.name] = convertedValue;
     });
 
     const attributesColumn = columns.find(
@@ -93,7 +97,9 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
   let cellContent: any;
   switch (column.type) {
     case "datetime":
-      if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
+      if (value instanceof Date) {
+        cellContent = formatDate(value.toISOString());
+      } else if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
         cellContent = formatDate(value);
       } else {
         cellContent = String(value);
@@ -359,5 +365,90 @@ function minWidthForColumnType(type: ViewColumnDef["type"]): number {
       return 150;
   }
 }
+
+// Convert view cell to native types, mimicking backend conversion logic
+const convertViewCellToNativeType = (
+  value: any,
+  column: ViewColumnDef
+): any => {
+  if (value == null) {
+    return value;
+  }
+
+  switch (column.type) {
+    case "gauge":
+      if (value instanceof Uint8Array || Array.isArray(value)) {
+        try {
+          const jsonString = new TextDecoder().decode(new Uint8Array(value));
+          return JSON.parse(jsonString);
+        } catch (e) {
+          console.warn(
+            "convertViewCellToNativeType: failed to parse gauge JSON:",
+            e
+          );
+          return value;
+        }
+      }
+      return value;
+
+    case "row_attributes":
+      if (value instanceof Uint8Array || Array.isArray(value)) {
+        try {
+          const jsonString = new TextDecoder().decode(new Uint8Array(value));
+          return JSON.parse(jsonString);
+        } catch (e) {
+          console.warn(
+            "convertViewCellToNativeType: failed to parse attributes JSON:",
+            e
+          );
+          return value;
+        }
+      }
+      return value;
+
+    case "duration":
+      if (typeof value === "number") {
+        return value; // Already a number, assume it's in nanoseconds
+      }
+
+      if (typeof value === "string") {
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue)) {
+          return numValue;
+        }
+      }
+      console.warn(
+        "convertViewCellToNativeType: unknown duration type:",
+        typeof value
+      );
+      return value;
+
+    case "datetime":
+      if (value instanceof Date) {
+        return value;
+      }
+      if (typeof value === "string") {
+        try {
+          const parsed = new Date(value);
+          if (!isNaN(parsed.getTime())) {
+            return parsed;
+          }
+        } catch (e) {
+          console.warn(
+            "convertViewCellToNativeType: failed to parse datetime:",
+            e
+          );
+        }
+      }
+      console.warn(
+        "convertViewCellToNativeType: unknown datetime type:",
+        typeof value
+      );
+      return value;
+
+    default:
+      return value;
+  }
+};
 
 export default DynamicDataTable;
