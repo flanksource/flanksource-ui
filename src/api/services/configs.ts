@@ -824,3 +824,16 @@ export const getConfigAnalysisByComponent = async (componentId: string) => {
   );
   return res.data;
 };
+
+export type ConfigChildItem = {
+  id: string;
+  type: string;
+  name: string;
+};
+
+export const getConfigParentsByLocation = async (configId: string) => {
+  const res = await ConfigDB.get<ConfigChildItem[]>(
+    `/rpc/get_parents_by_location?config_id=${configId}`
+  );
+  return res.data ?? [];
+};

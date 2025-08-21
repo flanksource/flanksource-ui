@@ -1,10 +1,15 @@
-import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
+import {
+  useGetConfigByIdQuery,
+  useGetParentsByLocationQuery
+} from "@flanksource-ui/api/query-hooks";
 import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
 import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import dayjs from "dayjs";
-import { useMemo } from "react";
+import { useAtom } from "jotai";
+import { useMemo, useEffect } from "react";
 import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
@@ -24,8 +29,29 @@ export function ConfigDetails({ configId }: Props) {
   const {
     data: configDetails,
     isLoading,
-    error
+    error,
+    refetch: refetchConfig,
+    isFetching: isFetchingConfig
   } = useGetConfigByIdQuery(configId);
+
+  const {
+    data: parents,
+    isLoading: isLoadingParents,
+    refetch: refetchParents,
+    isFetching: isFetchingParents
+  } = useGetParentsByLocationQuery(configId);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isFetchingConfig) {
+      refetchConfig();
+    }
+    if (!isLoadingParents && !isFetchingParents) {
+      refetchParents();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
 
   const displayDetails = useMemo(() => {
     return formatConfigLabels(configDetails);
@@ -225,6 +251,58 @@ export function ConfigDetails({ configId }: Props) {
           />
 
           <DisplayDetailsRow items={types} />
+
+          {configDetails.external_id &&
+            configDetails.external_id.length > 0 && (
+              <DisplayDetailsRow
+                items={[
+                  {
+                    label: "Aliases",
+                    value: configDetails.external_id?.map((id) => (
+                      <p className="text-sm text-gray-600" key={id}>
+                        {id}
+                      </p>
+                    ))
+                  }
+                ]}
+              />
+            )}
+
+          {parents && parents.length > 0 && (
+            <DisplayDetailsRow
+              items={[
+                {
+                  label: "Parents",
+                  value: (
+                    <div className="flex flex-col gap-1">
+                      {isLoadingParents ? (
+                        <TextSkeletonLoader />
+                      ) : (
+                        parents.map((child) => (
+                          <Link
+                            key={child.id}
+                            to={{
+                              pathname: `/catalog/${child.id}`
+                            }}
+                            className="flex text-sm text-blue-500 hover:underline"
+                          >
+                            <ConfigsTypeIcon
+                              config={{ type: child.type }}
+                              showLabel={false}
+                              showPrimaryIcon
+                              showSecondaryIcon={true}
+                            >
+                              {child.name}
+                            </ConfigsTypeIcon>
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                  )
+                }
+              ]}
+            />
+          )}
 
           <DisplayGroupedProperties items={properties} />
 

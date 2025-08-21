@@ -51,7 +51,7 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   name: string;
   deleted_at?: string;
   status?: string;
-  external_id?: string;
+  external_id?: string[];
   config_class?: string;
   type: string;
   path?: string;
