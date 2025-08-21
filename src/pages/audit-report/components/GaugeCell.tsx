@@ -30,7 +30,7 @@ const GaugeCell: React.FC<GaugeCellProps> = ({ value, gauge }) => {
       case "millicore":
         if (value === 0) return "";
         if (value > 0 && value < 1) return `1m`;
-        return `${value.toFixed(0)}m`;
+        return `${Math.round(value)}m`;
       default:
         return `${value} ${unit}`;
     }

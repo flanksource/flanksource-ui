@@ -300,11 +300,13 @@ const formatMillicore = (value: string | number): string => {
     return String(value);
   }
 
-  // Follow the same pattern as topology formatting: convert to cores if >= 1000m
   if (millicoreValue >= 1000) {
     return `${(millicoreValue / 1000).toFixed(2)} cores`;
   }
-  return `${millicoreValue}m`;
+
+  // values < 1000 means it's a millicore.
+  // No need to display decimal values for a millicore.
+  return `${Math.round(millicoreValue)}m`;
 };
 
 // Parse Kubernetes memory units (e.g., "192Mi", "1Gi", "512Ki") to bytes
