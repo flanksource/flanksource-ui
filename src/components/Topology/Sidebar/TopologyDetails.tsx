@@ -105,7 +105,7 @@ export default function TopologyDetails({
 
   const formattedLabels = useMemo(() => {
     return formatConfigLabels({
-      labels: topology?.labels ?? []
+      labels: topology?.labels
     });
   }, [topology?.labels]);
 

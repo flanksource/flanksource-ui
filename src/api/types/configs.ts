@@ -51,14 +51,14 @@ export interface ConfigItem extends Timestamped, Avatar, Agent, Costs {
   name: string;
   deleted_at?: string;
   status?: string;
-  external_id?: string;
+  external_id?: string[];
   config_class?: string;
   type: string;
   path?: string;
   changes?: number;
   analysis?: Record<string, any>;
   tags?: Record<string, any>;
-  labels?: Record<string, any>;
+  labels?: Record<string, string>;
   allTags?: Record<string, any>;
   config?: Record<string, any>;
   description?: string | null;

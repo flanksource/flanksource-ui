@@ -1,4 +1,5 @@
 import { ConfigItem } from "../../../../api/types/configs";
+import { Link } from "react-router-dom";
 type GroupedProperties = {
   type: "GROUPED";
   label: string;
@@ -24,13 +25,67 @@ type SingleProperty = {
 
 export type PropertyItem = GroupedProperties | SingleProperty;
 
-export function formatConfigLabels(config?: Pick<ConfigItem, "labels">) {
-  if (!config?.labels) {
+type Parent = {
+  id: string;
+  name: string;
+  type: string;
+};
+
+export function formatConfigLabels(
+  config?: Pick<ConfigItem, "labels">,
+  parents?: Parent[]
+) {
+  if (!config?.labels && (!parents || parents.length === 0)) {
     return [];
   }
 
   const items = new Map<string, PropertyItem>();
-  const tags = Object.assign({}, config.labels);
+  const tags = Object.assign({}, config?.labels || {});
+
+  if (parents && parents.length > 0) {
+    // Any labels with the key will overshadow the labels whose name are in the values
+    // Example: if availabilityzone is present, then zone should be hidden
+    const overrides: Record<string, string[]> = {
+      availabilityzone: ["zone"],
+      vpc: ["network"]
+    };
+
+    for (const p of parents) {
+      // Get the last section after splitting by "::"
+      const typeKey = p.type.split("::").pop()?.toLowerCase() || p.type;
+
+      if (overrides[typeKey]) {
+        overrides[typeKey].forEach((key) => {
+          delete tags[key];
+        });
+      }
+    }
+  }
+
+  // Transform parents into the same format as labels
+  const parentUrls = new Map<string, string>();
+  if (parents && parents.length > 0) {
+    const parentsMap: Record<string, string> = {};
+
+    parents.forEach((parent) => {
+      if (parent.type && parent.name) {
+        // Get the last section after splitting by "::"
+        const typeKey =
+          parent.type.split("::").pop()?.toLowerCase() || parent.type;
+        parentsMap[typeKey] = parent.name;
+        parentUrls.set(typeKey, `/catalog/${parent.id}`);
+      }
+    });
+
+    // Filter out parents that are already in tags/labels
+    const existingTagKeys = new Set(Object.keys(tags));
+
+    Object.entries(parentsMap).forEach(([key, value]) => {
+      if (!existingTagKeys.has(key)) {
+        tags[key] = value;
+      }
+    });
+  }
 
   delete tags["name"];
   delete tags["Name"];
@@ -60,7 +115,16 @@ export function formatConfigLabels(config?: Pick<ConfigItem, "labels">) {
           ...((existingValues as SingleProperty)?.properties ?? []),
           {
             label: key,
-            value: value
+            value: parentUrls.has(key) ? (
+              <Link
+                to={parentUrls.get(key)!}
+                className="text-blue-500 hover:underline"
+              >
+                {value}
+              </Link>
+            ) : (
+              value
+            )
           }
         ].sort((a, b) => {
           // sort alphabetically, by label
@@ -107,7 +171,16 @@ export function formatConfigLabels(config?: Pick<ConfigItem, "labels">) {
             ...existingProperty,
             {
               label: label,
-              value: value
+              value: parentUrls.has(key) ? (
+                <Link
+                  to={parentUrls.get(key)!}
+                  className="text-blue-500 hover:underline"
+                >
+                  {value}
+                </Link>
+              ) : (
+                value
+              )
             }
           ]
         }

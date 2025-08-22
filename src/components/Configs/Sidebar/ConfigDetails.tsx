@@ -1,10 +1,15 @@
-import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
+import {
+  useGetConfigByIdQuery,
+  useGetParentsByLocationQuery
+} from "@flanksource-ui/api/query-hooks";
 import { isCostsEmpty } from "@flanksource-ui/api/types/configs";
 import { formatProperties } from "@flanksource-ui/components/Topology/Sidebar/Utils/formatProperties";
 import { Age } from "@flanksource-ui/ui/Age";
 import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLoader";
+import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import dayjs from "dayjs";
-import { useMemo } from "react";
+import { useAtom } from "jotai";
+import { useMemo, useEffect } from "react";
 import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
@@ -24,12 +29,33 @@ export function ConfigDetails({ configId }: Props) {
   const {
     data: configDetails,
     isLoading,
-    error
+    error,
+    refetch: refetchConfig,
+    isFetching: isFetchingConfig
   } = useGetConfigByIdQuery(configId);
 
+  const {
+    data: parents,
+    isLoading: isLoadingParents,
+    refetch: refetchParents,
+    isFetching: isFetchingParents
+  } = useGetParentsByLocationQuery(configId);
+
+  const [triggerRefresh] = useAtom(refreshButtonClickedTrigger);
+
+  useEffect(() => {
+    if (!isLoading && !isFetchingConfig) {
+      refetchConfig();
+    }
+    if (!isLoadingParents && !isFetchingParents) {
+      refetchParents();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerRefresh]);
+
   const displayDetails = useMemo(() => {
-    return formatConfigLabels(configDetails);
-  }, [configDetails]);
+    return formatConfigLabels(configDetails, parents);
+  }, [configDetails, parents]);
 
   const types = useMemo(() => {
     const types = [];
@@ -238,6 +264,7 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
+
           <DisplayGroupedProperties items={displayDetails} />
         </>
       ) : (

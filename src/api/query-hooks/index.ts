@@ -14,7 +14,9 @@ import {
   getConfigLabelsList,
   getConfigName,
   getConfigTagsList,
-  getTopologyRelatedInsights
+  getTopologyRelatedInsights,
+  getConfigParentsByLocation,
+  ConfigChildItem
 } from "../services/configs";
 import { getHypothesisResponse } from "../services/hypothesis";
 import { getIncident } from "../services/incident";
@@ -501,6 +503,20 @@ export function useGetTopologyRelatedInsightsQuery(
           )
         };
       }
+    }
+  );
+}
+
+export function useGetParentsByLocationQuery(
+  configId: string,
+  options?: UseQueryOptions<ConfigChildItem[], Error>
+) {
+  return useQuery<ConfigChildItem[], Error>(
+    ["config", "parents", configId],
+    () => getConfigParentsByLocation(configId),
+    {
+      enabled: !!configId,
+      ...options
     }
   );
 }
