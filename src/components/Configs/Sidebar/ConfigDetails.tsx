@@ -252,22 +252,6 @@ export function ConfigDetails({ configId }: Props) {
 
           <DisplayDetailsRow items={types} />
 
-          {configDetails.external_id &&
-            configDetails.external_id.length > 0 && (
-              <DisplayDetailsRow
-                items={[
-                  {
-                    label: "Aliases",
-                    value: configDetails.external_id?.map((id) => (
-                      <p className="text-sm text-gray-600" key={id}>
-                        {id}
-                      </p>
-                    ))
-                  }
-                ]}
-              />
-            )}
-
           {parents && parents.length > 0 && (
             <DisplayDetailsRow
               items={[
