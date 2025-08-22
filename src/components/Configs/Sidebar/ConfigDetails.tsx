@@ -54,8 +54,8 @@ export function ConfigDetails({ configId }: Props) {
   }, [triggerRefresh]);
 
   const displayDetails = useMemo(() => {
-    return formatConfigLabels(configDetails);
-  }, [configDetails]);
+    return formatConfigLabels(configDetails, parents);
+  }, [configDetails, parents]);
 
   const types = useMemo(() => {
     const types = [];
@@ -252,42 +252,6 @@ export function ConfigDetails({ configId }: Props) {
 
           <DisplayDetailsRow items={types} />
 
-          {parents && parents.length > 0 && (
-            <DisplayDetailsRow
-              items={[
-                {
-                  label: "Parents",
-                  value: (
-                    <div className="flex flex-col gap-1">
-                      {isLoadingParents ? (
-                        <TextSkeletonLoader />
-                      ) : (
-                        parents.map((child) => (
-                          <Link
-                            key={child.id}
-                            to={{
-                              pathname: `/catalog/${child.id}`
-                            }}
-                            className="flex text-sm text-blue-500 hover:underline"
-                          >
-                            <ConfigsTypeIcon
-                              config={{ type: child.type }}
-                              showLabel={false}
-                              showPrimaryIcon
-                              showSecondaryIcon={true}
-                            >
-                              {child.name}
-                            </ConfigsTypeIcon>
-                          </Link>
-                        ))
-                      )}
-                    </div>
-                  )
-                }
-              ]}
-            />
-          )}
-
           <DisplayGroupedProperties items={properties} />
 
           {!isCostsEmpty(configDetails) && (
@@ -300,6 +264,7 @@ export function ConfigDetails({ configId }: Props) {
               ]}
             />
           )}
+
           <DisplayGroupedProperties items={displayDetails} />
         </>
       ) : (
