@@ -40,6 +40,11 @@ export default function ConfigPageTabs({
         label: "Scrapers",
         key: "Scrapers",
         path: `/catalog/scrapers`
+      },
+      {
+        label: "Plugins",
+        key: "Plugins",
+        path: `/catalog/plugins`
       }
     ];
   }, [type]);
