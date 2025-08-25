@@ -116,7 +116,7 @@ export default function TokenDisplayModal({
             <li>
               • Include it in the Authorization header:{" "}
               <code className="rounded bg-blue-100 px-1">
-                Basic base64(token:&lt;YOUR_TOKEN&gt;)
+                Bearer &lt;YOUR_TOKEN&gt;
               </code>
             </li>
             <li>• Store it securely and never share it publicly</li>
@@ -138,7 +138,7 @@ type McpSetupTabsProps = {
 function McpSetupTabs({ token }: McpSetupTabsProps) {
   const [activeTab, setActiveTab] = useState<string>("claude-desktop");
 
-  const basicAuth = `Basic ${Buffer.from(`token:${token}`).toString("base64")}`;
+  const bearerAuth = `Bearer ${token}`;
   const baseUrl = useAgentsBaseURL() + "/mcp";
 
   const mcpConfigs = {
@@ -150,12 +150,12 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-http",
-        "${baseUrl}"
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
       ],
-      "env": {
-        "AUTHORIZATION": "${basicAuth}"
-      }
+      "env": {}
     }
   }
 }`
@@ -167,7 +167,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
   "type": "http",
   "url": "${baseUrl}",
   "headers": {
-    "Authorization": "${basicAuth}"
+    "Authorization": "${bearerAuth}"
   }
 }`
     },
@@ -179,12 +179,12 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-http",
-        "${baseUrl}"
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
       ],
-      "env": {
-        "AUTHORIZATION": "${basicAuth}"
-      }
+      "env": {}
     }
   }
 }`
@@ -197,12 +197,12 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-http",
-        "${baseUrl}"
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
       ],
-      "env": {
-        "AUTHORIZATION": "${basicAuth}"
-      }
+      "env": {}
     }
   }
 }`
@@ -216,12 +216,12 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-http",
-        "${baseUrl}"
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
       ],
-      "env": {
-        "AUTHORIZATION": "${basicAuth}"
-      }
+      "env": {}
     }
   ]
 }`
@@ -235,13 +235,11 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
         "mission-control": {
           "command": "npx",
           "args": [
-            "-y",
-            "@modelcontextprotocol/server-http",
+            "mcp-remote",
             "${baseUrl}"
-          ],
-          "env": {
-            "AUTHORIZATION": "${basicAuth}"
-          }
+            "--header",
+            "Authorization:${bearerAuth}"
+          ]
         }
       }
     }
@@ -251,7 +249,7 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
     direct: {
       label: "Direct HTTP",
       config: `curl -X POST ${baseUrl} \\
-  -H "Authorization: ${basicAuth}" \\
+  -H "Authorization: ${bearerAuth}" \\
   -H "Content-Type: application/json" \\
   -d '{
     "jsonrpc": "2.0",
