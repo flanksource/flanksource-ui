@@ -14,22 +14,36 @@ interface SingleViewProps {
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
+  const [currentGlobalFilters, setCurrentGlobalFilters] = useState<
+    Record<string, string>
+  >({});
   const queryClient = useQueryClient();
+
+  // Debug logging
+  console.log(
+    "SingleView render - currentGlobalFilters:",
+    currentGlobalFilters
+  );
 
   // Fetch all the view metadata, panel results and the column definitions
   // NOTE: This doesn't fetch the table rows.
+  // Use currentGlobalFilters in the query key so it updates when filters change
   const {
     data: viewResult,
     isLoading,
     error: viewDataError
   } = useQuery({
-    queryKey: ["view-result", id],
+    queryKey: ["view-result", id, currentGlobalFilters],
     queryFn: () => {
-      return getViewDataById(id);
+      console.log("useQuery running with filters:", currentGlobalFilters);
+      return getViewDataById(id, currentGlobalFilters);
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000
   });
+
+  // Debug logging for viewResult
+  console.log("viewResult panels:", viewResult?.panels?.length);
 
   useEffect(() => {
     if (viewDataError) {
@@ -55,6 +69,8 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   }
 
   if (!viewResult) {
+    // FIXME: No view result does not mean the view is not found.
+    // we need to display the error in here.
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -82,10 +98,14 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (namespace && name) {
-      const freshData = await getViewDataById(id, {
+      console.log("Refreshing with global filters:", currentGlobalFilters);
+      const freshData = await getViewDataById(id, currentGlobalFilters, {
         "cache-control": "max-age=1"
       });
-      queryClient.setQueryData(["view-result", id], freshData);
+      queryClient.setQueryData(
+        ["view-result", id, currentGlobalFilters],
+        freshData
+      );
       // Invalidate the table query that will be handled by the View component
       await queryClient.invalidateQueries({
         queryKey: ["view-table", namespace, name]
@@ -127,6 +147,11 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             columns={viewResult?.columns}
             columnOptions={viewResult?.columnOptions}
             panels={viewResult?.panels}
+            filters={viewResult?.filters}
+            viewId={id}
+            onGlobalFilterStateChange={setCurrentGlobalFilters}
+            viewResult={viewResult}
+            currentGlobalFilters={currentGlobalFilters}
           />
         </div>
       </SearchLayout>
