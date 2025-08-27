@@ -18,7 +18,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
         return (
           <div
             key={`${summary.name}-${rowIndex}`}
-            className="w-full rounded-lg border border-gray-200 bg-white p-4"
+            className="flex w-full flex-col rounded-lg border border-gray-200 bg-white p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
               {label || summary.name}
@@ -28,16 +28,18 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
                 {summary.description}
               </p>
             )}
-            <p className="text-2xl font-semibold text-teal-600">
-              {summary.number
-                ? Number(value).toFixed(summary.number.precision || 0)
-                : value}
-              {summary.number?.unit && (
-                <span className="ml-1 text-lg font-normal text-gray-500">
-                  {summary.number.unit}
-                </span>
-              )}
-            </p>
+            <div className="flex flex-1 items-center justify-center">
+              <p className="text-6xl font-semibold text-teal-600">
+                {summary.number
+                  ? Number(value).toFixed(summary.number.precision || 0)
+                  : value}
+                {summary.number?.unit && (
+                  <span className="ml-2 text-2xl font-normal text-gray-500">
+                    {summary.number.unit}
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
         );
       })}
