@@ -12,6 +12,7 @@ export type Token = {
     properties: Record<string, any>;
   };
   person_id: string;
+  deny_roles?: string[];
 };
 
 export type TokensResponse = {
