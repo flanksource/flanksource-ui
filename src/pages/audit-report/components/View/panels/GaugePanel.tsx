@@ -66,12 +66,22 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
             }}
             labels={{
               valueLabel: {
-                formatTextValue: () => `${value}${summary.gauge?.unit || ""}`,
+                formatTextValue: () => `${value} ${summary.gauge?.unit || ""}`,
                 style: {
                   fontWeight: "bold",
                   fill: labelColor,
                   stroke: "none",
                   textShadow: "none"
+                }
+              },
+              tickLabels: {
+                type: "outer",
+                ticks: [{ value: 100 }],
+                defaultTickValueConfig: {
+                  formatTextValue: (value: number) => {
+                    return `${Math.round((value / 100) * (max - min) + min)}`;
+                  },
+                  style: { fontSize: 10 }
                 }
               }
             }}
