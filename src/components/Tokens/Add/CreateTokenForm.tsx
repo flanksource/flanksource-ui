@@ -131,14 +131,18 @@ export default function CreateTokenForm({
                       </div>
                     ) : (
                       <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-                        {permissions.map((permission) => (
-                          <FormikCheckbox
-                            name={`permissions.${permission.object}:${permission.action}`}
-                            label={`${permission.object}:${permission.action}`}
-                            labelClassName="text-sm font-normal"
-                            className="flex"
-                          />
-                        ))}
+                        {permissions.map((permission) => {
+                          const permissionKey = `${permission.object}:${permission.action}`;
+                          return (
+                            <FormikCheckbox
+                              key={permissionKey}
+                              name={`permissions.${permissionKey}`}
+                              label={permissionKey}
+                              labelClassName="text-sm font-normal text-gray-700"
+                              inline={true}
+                            />
+                          );
+                        })}
                       </div>
                     )}
                   </div>
