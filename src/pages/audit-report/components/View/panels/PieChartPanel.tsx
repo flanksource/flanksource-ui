@@ -33,41 +33,40 @@ const renderLegend = (props: any) => {
 };
 
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
+  console.log("Rendering PieChartPanel", summary);
   const chartData = generatePieChartData(summary.rows || []);
   return (
-    <div className="w-full rounded-lg border border-gray-200 bg-white p-4">
+    <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
       {summary.description && (
         <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
       )}
-      <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="name"
-              label={
-                summary.piechart?.showLabels === true
-                  ? (entry: any) => entry.value
-                  : false
-              }
-            >
-              {chartData.map((entry, entryIndex) => (
-                <Cell
-                  key={`cell-${entryIndex}`}
-                  fill={
-                    summary.piechart?.colors?.[entry.name] ||
-                    COLOR_BANK[entryIndex % COLOR_BANK.length]
-                  }
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend content={renderLegend} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={chartData}
+            dataKey="value"
+            nameKey="name"
+            label={
+              summary.piechart?.showLabels === true
+                ? (entry: any) => entry.value
+                : false
+            }
+          >
+            {chartData.map((entry, entryIndex) => (
+              <Cell
+                key={`cell-${entryIndex}`}
+                fill={
+                  summary.piechart?.colors?.[entry.name] ||
+                  COLOR_BANK[entryIndex % COLOR_BANK.length]
+                }
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend content={renderLegend} />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 };
