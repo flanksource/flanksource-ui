@@ -43,9 +43,8 @@ export default function CreateTokenForm({
 
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       toastSuccess("Token created successfully");
-      onSuccess(data, variables);
     },
     onError: (error: any) => {
       toastError(error.message || "Failed to create token");
@@ -66,7 +65,11 @@ export default function CreateTokenForm({
       deny_roles: denyRoles.length > 0 ? denyRoles : undefined
     };
 
-    createTokenMutation(tokenRequest);
+    createTokenMutation(tokenRequest, {
+      onSuccess: (data) => {
+        onSuccess(data, values);
+      }
+    });
   };
 
   return (
