@@ -22,6 +22,7 @@ export type TokensResponse = {
 export type CreateTokenRequest = {
   name: string;
   expiry: string;
+  deny_roles?: string[];
 };
 
 export type CreateTokenResponse = {
