@@ -1,4 +1,5 @@
 import { apiBase } from "../axios";
+import { Permission } from "./rbac";
 
 export type Token = {
   id: string;
@@ -12,6 +13,7 @@ export type Token = {
     properties: Record<string, any>;
   };
   person_id: string;
+  deny_roles?: string[];
 };
 
 export type TokensResponse = {
@@ -22,6 +24,7 @@ export type TokensResponse = {
 export type CreateTokenRequest = {
   name: string;
   expiry: string;
+  deny_permissions?: Permission[];
 };
 
 export type CreateTokenResponse = {
