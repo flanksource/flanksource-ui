@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
+import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 import { ViewVariable } from "../../audit-report/types";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
@@ -13,13 +14,19 @@ interface SingleViewProps {
   id: string;
 }
 
+// This is the prefix for all the query params that are related to the view variables.
+const VIEW_VAR_PREFIX = "viewvar";
+
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
-  const [currentViewVariables, setCurrentViewVariables] = useState<
-    Record<string, string>
-  >({});
   const [hasFiltersInitialized, setHasFiltersInitialized] = useState(false);
   const queryClient = useQueryClient();
+
+  // Use prefixed search params for view variables
+  const [viewVarParams, setViewVarParams] =
+    usePrefixedSearchParams(VIEW_VAR_PREFIX);
+
+  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
 
   // Fetch all the view metadata, panel results and the column definitions
   // NOTE: This doesn't fetch the table rows.
@@ -50,33 +57,55 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     setError(undefined);
   }, [viewDataError]);
 
+  // Handle global filter changes with useCallback to stabilize reference
+  const handleGlobalFilterChange = useCallback(
+    (newFilters: Record<string, string>) => {
+      console.log("handleGlobalFilterChange", newFilters);
+      setViewVarParams(() => {
+        const newParams = new URLSearchParams();
+        Object.entries(newFilters).forEach(([key, value]) => {
+          if (value) {
+            newParams.set(key, value);
+          }
+        });
+        return newParams;
+      });
+    },
+    [setViewVarParams]
+  );
+
   // Initialize filters when view data loads, but preserve user selections
   useEffect(() => {
     if (viewResult?.variables && viewResult.variables.length > 0) {
       if (!hasFiltersInitialized) {
-        // First time - initialize with defaults
-        const initial: Record<string, string> = {};
-        viewResult.variables.forEach((filter: ViewVariable) => {
-          const defaultValue =
-            filter.default ||
-            (filter.options.length > 0 ? filter.options[0] : "");
-          if (defaultValue) {
-            initial[filter.key] = defaultValue;
+        // Check if URL already has any variable values
+        const hasExistingValues = Object.keys(currentViewVariables).length > 0;
+
+        if (!hasExistingValues) {
+          // First time with no URL params - initialize with defaults
+          const initial: Record<string, string> = {};
+          viewResult.variables.forEach((filter: ViewVariable) => {
+            const defaultValue =
+              filter.default ||
+              (filter.options.length > 0 ? filter.options[0] : "");
+            if (defaultValue) {
+              initial[filter.key] = defaultValue;
+            }
+          });
+
+          if (Object.keys(initial).length > 0) {
+            handleGlobalFilterChange(initial);
           }
-        });
-        setCurrentViewVariables(initial);
+        }
         setHasFiltersInitialized(true);
       }
     }
-  }, [viewResult?.variables, hasFiltersInitialized]);
-
-  // Handle global filter changes with useCallback to stabilize reference
-  const handleGlobalFilterChange = useCallback(
-    (newFilters: Record<string, string>) => {
-      setCurrentViewVariables(newFilters);
-    },
-    []
-  );
+  }, [
+    viewResult?.variables,
+    hasFiltersInitialized,
+    currentViewVariables,
+    handleGlobalFilterChange
+  ]);
 
   // Only show full loading screen for initial load, not for filter refetches
   if (isLoading && !viewResult) {

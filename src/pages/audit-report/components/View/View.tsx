@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
@@ -13,7 +12,7 @@ import {
 } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
-import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import ViewTableFilterForm from "./ViewTableFilterForm";
 import { queryViewTable } from "../../../../api/services/views";
 import {
   NumberPanel,
@@ -23,6 +22,7 @@ import {
   TextPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
+import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 
 interface ViewProps {
   title?: string;
@@ -50,7 +50,10 @@ const View: React.FC<ViewProps> = ({
   currentVariables
 }) => {
   const { pageSize } = useReactTablePaginationState();
-  const [searchParams] = useSearchParams();
+
+  // Create unique prefix for this view's table
+  const tablePrefix = `view_${namespace}_${name}`;
+  const [tableSearchParams] = usePrefixedSearchParams(tablePrefix);
   const hasDataTable = columns && columns.length > 0;
 
   const columnFilterFields = useMemo(
@@ -72,9 +75,6 @@ const View: React.FC<ViewProps> = ({
     // No defaults needed since global filters are handled separately
     return {};
   }, []);
-
-  // Use only column filters for table data, not global filters
-  const tableSearchParams = searchParams;
 
   // Fetch table data with only column filters (no global filters)
   const {
@@ -148,10 +148,10 @@ const View: React.FC<ViewProps> = ({
         )}
       </div>
 
-      <FormikFilterForm
-        paramsToReset={[]}
+      <ViewTableFilterForm
         filterFields={filterFields}
         defaultFieldValues={defaultFilterValues}
+        tablePrefix={tablePrefix}
       >
         {hasDataTable && (
           <div className="mb-2">
@@ -167,7 +167,7 @@ const View: React.FC<ViewProps> = ({
             </div>
           </div>
         )}
-      </FormikFilterForm>
+      </ViewTableFilterForm>
 
       {tableError && (
         <div className="text-center text-red-500">

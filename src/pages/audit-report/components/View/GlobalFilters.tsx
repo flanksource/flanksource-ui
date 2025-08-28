@@ -6,13 +6,7 @@ import {
 import { ViewVariable } from "../../types";
 import { formatDisplayLabel } from "./panels/utils";
 
-interface GlobalFiltersProps {
-  variables?: ViewVariable[];
-  current?: Record<string, string>;
-  onChange?: (filterState: Record<string, string>) => void;
-}
-
-interface GlobalFilterDropdownProps {
+interface DropdownProps {
   label: string;
   paramsKey: string;
   options: string[];
@@ -20,7 +14,7 @@ interface GlobalFilterDropdownProps {
   onChange: (key: string, value?: string) => void;
 }
 
-const GlobalFilterDropdown: React.FC<GlobalFilterDropdownProps> = ({
+const Dropdown: React.FC<DropdownProps> = ({
   label,
   paramsKey,
   options,
@@ -39,29 +33,14 @@ const GlobalFilterDropdown: React.FC<GlobalFilterDropdownProps> = ({
     return mappedOptions;
   }, [options]);
 
-  const selectedValue = useMemo(() => {
-    if (!value) {
-      return { value: "all", label: "All" };
-    }
-    return (
-      dropdownOptions.find((option) => option.value === value) || {
-        value: "all",
-        label: "All"
-      }
-    );
-  }, [value, dropdownOptions]);
-
   return (
     <MultiSelectDropdown
       label={label}
       options={dropdownOptions}
-      value={selectedValue}
+      value={dropdownOptions.find((option) => option.value === value)}
       onChange={(selectedOption: unknown) => {
         const option = selectedOption as GroupByOptions;
-        onChange(
-          paramsKey,
-          option && option.value !== "all" ? option.value : undefined
-        );
+        onChange(paramsKey, option?.value);
       }}
       className="w-auto max-w-[400px]"
       isMulti={false}
@@ -70,6 +49,12 @@ const GlobalFilterDropdown: React.FC<GlobalFilterDropdownProps> = ({
     />
   );
 };
+
+interface GlobalFiltersProps {
+  variables?: ViewVariable[];
+  current?: Record<string, string>;
+  onChange?: (filterState: Record<string, string>) => void;
+}
 
 const GlobalFilters: React.FC<GlobalFiltersProps> = ({
   variables,
@@ -94,7 +79,7 @@ const GlobalFilters: React.FC<GlobalFiltersProps> = ({
     if (!variables || variables.length === 0) return [];
 
     return variables.map((variable) => (
-      <GlobalFilterDropdown
+      <Dropdown
         key={variable.key}
         label={variable.label || formatDisplayLabel(variable.key)}
         paramsKey={variable.key}
