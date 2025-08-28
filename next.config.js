@@ -96,7 +96,7 @@ const config = {
     esmExternals: "loose",
     optimizePackageImports: ["@flanksource/icons"]
   },
-  transpilePackages: ["monaco-editor"]
+  transpilePackages: ["monaco-editor", "react-gauge-component"]
 };
 
 module.exports = withBundleAnalyzer(config);
