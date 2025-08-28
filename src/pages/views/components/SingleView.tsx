@@ -137,7 +137,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             columns={viewResult?.columns}
             columnOptions={viewResult?.columnOptions}
             panels={viewResult?.panels}
-            filters={viewResult?.filters}
+            variables={viewResult?.variables}
             viewId={id}
             onGlobalFilterStateChange={setCurrentGlobalFilters}
             viewResult={viewResult}

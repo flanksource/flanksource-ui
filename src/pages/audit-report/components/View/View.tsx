@@ -8,7 +8,7 @@ import {
   PanelResult,
   ViewColumnDef,
   ViewRow,
-  ViewFilter,
+  ViewVariable,
   ViewResult
 } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
@@ -31,7 +31,7 @@ interface ViewProps {
   name: string;
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
-  filters?: ViewFilter[];
+  variables?: ViewVariable[];
   viewId?: string;
   onGlobalFilterStateChange?: (filterState: Record<string, string>) => void;
   viewResult?: ViewResult;
@@ -45,7 +45,7 @@ const View: React.FC<ViewProps> = ({
   columns,
   columnOptions,
   panels,
-  filters,
+  variables,
   viewId,
   onGlobalFilterStateChange,
   viewResult,
@@ -133,14 +133,16 @@ const View: React.FC<ViewProps> = ({
       )}
 
       <GlobalFilters
-        filters={filters}
+        filters={variables}
         viewId={viewId || ""}
         namespace={namespace}
         name={name}
         onFilterStateChange={onGlobalFilterStateChange}
       />
 
-      {filters && filters.length > 0 && <hr className="my-4 border-gray-200" />}
+      {variables && variables.length > 0 && (
+        <hr className="my-4 border-gray-200" />
+      )}
 
       <div className="mb-4 space-y-6">
         {panels && panels.length > 0 && (

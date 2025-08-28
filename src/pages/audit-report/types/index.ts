@@ -213,7 +213,7 @@ export interface ViewColumnDef {
 
 export type ViewRow = any[];
 
-export interface ViewFilter {
+export interface ViewVariable {
   key: string;
   value: string;
   type: string;
@@ -233,7 +233,7 @@ export interface ViewResult {
   rows?: ViewRow[];
   panels?: PanelResult[];
   columnOptions?: Record<string, string[]>;
-  filters?: ViewFilter[];
+  variables?: ViewVariable[];
   requestFingerprint: string;
 }
 
