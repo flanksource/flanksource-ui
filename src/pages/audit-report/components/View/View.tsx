@@ -185,6 +185,7 @@ const View: React.FC<ViewProps> = ({
           rows={rows || []}
           pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
           totalRowCount={totalEntries}
+          tablePrefix={tablePrefix}
         />
       )}
     </>
