@@ -7,7 +7,11 @@ import {
   CreateTokenRequest,
   CreateTokenResponse
 } from "../../../api/services/tokens";
-import { getPermissions, Permission } from "../../../api/services/rbac";
+import {
+  getPermissions,
+  permissionHash,
+  permissionFromHash
+} from "../../../api/services/rbac";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
@@ -52,17 +56,14 @@ export default function CreateTokenForm({
   });
 
   const handleSubmit = (values: TokenFormValues) => {
-    const denyRoles = Object.entries(values.permissions)
+    const denyPerms = Object.entries(values.permissions)
       .filter(([_, isChecked]) => !isChecked)
       .map(([permissionId]) => permissionId);
-
-    console.log("denyRoles");
-    console.log(denyRoles);
 
     const tokenRequest: CreateTokenRequest = {
       name: values.name,
       expiry: values.expiry,
-      deny_roles: denyRoles.length > 0 ? denyRoles : undefined
+      deny_permissions: denyPerms.map((p) => permissionFromHash(p))
     };
 
     createTokenMutation(tokenRequest, {
@@ -84,7 +85,7 @@ export default function CreateTokenForm({
           name: "",
           expiry: "never",
           permissions: Object.fromEntries(
-            permissions.map((p) => [`${p.object}:${p.action}`, true])
+            permissions.map((p) => [permissionHash(p), true])
           )
         }}
         enableReinitialize
@@ -135,12 +136,13 @@ export default function CreateTokenForm({
                     ) : (
                       <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
                         {permissions.map((permission) => {
-                          const permissionKey = `${permission.object}:${permission.action}`;
+                          const permissionKey = permissionHash(permission);
+                          const displayLabel = `${permission.object}:${permission.action}`;
                           return (
                             <FormikCheckbox
                               key={permissionKey}
                               name={`permissions.${permissionKey}`}
-                              label={permissionKey}
+                              label={displayLabel}
                               labelClassName="text-sm font-normal text-gray-700"
                               inline={true}
                             />
