@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
+import { ViewVariable } from "../../audit-report/types";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
@@ -14,26 +15,27 @@ interface SingleViewProps {
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
-  const [currentGlobalFilters, setCurrentGlobalFilters] = useState<
+  const [currentViewVariables, setCurrentViewVariables] = useState<
     Record<string, string>
   >({});
+  const [hasFiltersInitialized, setHasFiltersInitialized] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch all the view metadata, panel results and the column definitions
   // NOTE: This doesn't fetch the table rows.
-  // Use currentGlobalFilters in the query key so it updates when filters change
   const {
     data: viewResult,
     isLoading,
+    isFetching,
     error: viewDataError
   } = useQuery({
-    queryKey: ["view-result", id, currentGlobalFilters],
+    queryKey: ["view-result", id, currentViewVariables],
     queryFn: () => {
-      console.log("useQuery running with filters:", currentGlobalFilters);
-      return getViewDataById(id, currentGlobalFilters);
+      return getViewDataById(id, currentViewVariables);
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (previousData: any) => previousData
   });
 
   useEffect(() => {
@@ -48,7 +50,36 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     setError(undefined);
   }, [viewDataError]);
 
-  if (isLoading) {
+  // Initialize filters when view data loads, but preserve user selections
+  useEffect(() => {
+    if (viewResult?.variables && viewResult.variables.length > 0) {
+      if (!hasFiltersInitialized) {
+        // First time - initialize with defaults
+        const initial: Record<string, string> = {};
+        viewResult.variables.forEach((filter: ViewVariable) => {
+          const defaultValue =
+            filter.default ||
+            (filter.options.length > 0 ? filter.options[0] : "");
+          if (defaultValue) {
+            initial[filter.key] = defaultValue;
+          }
+        });
+        setCurrentViewVariables(initial);
+        setHasFiltersInitialized(true);
+      }
+    }
+  }, [viewResult?.variables, hasFiltersInitialized]);
+
+  // Handle global filter changes with useCallback to stabilize reference
+  const handleGlobalFilterChange = useCallback(
+    (newFilters: Record<string, string>) => {
+      setCurrentViewVariables(newFilters);
+    },
+    []
+  );
+
+  // Only show full loading screen for initial load, not for filter refetches
+  if (isLoading && !viewResult) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -60,8 +91,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   }
 
   if (!viewResult) {
-    // FIXME: No view result does not mean the view is not found.
-    // we need to display the error in here.
+    // TODO: Better error handling.
+    // viewResult = undefined does not mean the view is not found.
+    // There could be errors other than 404.
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -89,11 +121,11 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (namespace && name) {
-      const freshData = await getViewDataById(id, currentGlobalFilters, {
+      const freshData = await getViewDataById(id, currentViewVariables, {
         "cache-control": "max-age=1"
       });
       queryClient.setQueryData(
-        ["view-result", id, currentGlobalFilters],
+        ["view-result", id, currentViewVariables],
         freshData
       );
       // Invalidate the table query that will be handled by the View component
@@ -119,7 +151,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         }
         onRefresh={handleForceRefresh}
         contentClass="p-0 h-full"
-        loading={isLoading}
+        loading={isFetching}
         extra={
           viewResult?.lastRefreshedAt && (
             <p className="text-sm text-gray-500">
@@ -138,10 +170,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             columnOptions={viewResult?.columnOptions}
             panels={viewResult?.panels}
             variables={viewResult?.variables}
-            viewId={id}
-            onGlobalFilterStateChange={setCurrentGlobalFilters}
+            onVariableStateChange={handleGlobalFilterChange}
             viewResult={viewResult}
-            currentGlobalFilters={currentGlobalFilters}
+            currentVariables={currentViewVariables}
           />
         </div>
       </SearchLayout>

@@ -64,16 +64,18 @@ export const getAllViews = (
     })
   );
 };
+
+/**
+ * Get the data for a view by its id.
+ */
 export const getViewDataById = async (
   viewId: string,
-  filters?: Record<string, string>,
+  variables?: Record<string, string>,
   headers?: Record<string, string>
 ): Promise<ViewResult> => {
-  const body: { variables?: Record<string, string> } = {};
-
-  if (filters && Object.keys(filters).length > 0) {
-    body.variables = filters;
-  }
+  const body: { variables?: Record<string, string> } = {
+    variables: variables
+  };
 
   const response = await fetch(`/api/view/${viewId}`, {
     method: "POST",

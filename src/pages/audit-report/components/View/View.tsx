@@ -32,10 +32,9 @@ interface ViewProps {
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
   variables?: ViewVariable[];
-  viewId?: string;
-  onGlobalFilterStateChange?: (filterState: Record<string, string>) => void;
+  onVariableStateChange?: (filterState: Record<string, string>) => void;
   viewResult?: ViewResult;
-  currentGlobalFilters?: Record<string, string>;
+  currentVariables?: Record<string, string>;
 }
 
 const View: React.FC<ViewProps> = ({
@@ -46,10 +45,9 @@ const View: React.FC<ViewProps> = ({
   columnOptions,
   panels,
   variables,
-  viewId,
-  onGlobalFilterStateChange,
+  onVariableStateChange,
   viewResult,
-  currentGlobalFilters
+  currentVariables
 }) => {
   const { pageSize } = useReactTablePaginationState();
   const [searchParams] = useSearchParams();
@@ -133,11 +131,9 @@ const View: React.FC<ViewProps> = ({
       )}
 
       <GlobalFilters
-        filters={variables}
-        viewId={viewId || ""}
-        namespace={namespace}
-        name={name}
-        onFilterStateChange={onGlobalFilterStateChange}
+        variables={variables}
+        current={currentVariables}
+        onChange={onVariableStateChange}
       />
 
       {variables && variables.length > 0 && (
