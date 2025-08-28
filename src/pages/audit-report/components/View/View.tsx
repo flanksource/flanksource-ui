@@ -71,11 +71,6 @@ const View: React.FC<ViewProps> = ({
     return columnFilterFields;
   }, [columnFilterFields]);
 
-  const defaultFilterValues = useMemo(() => {
-    // No defaults needed since global filters are handled separately
-    return {};
-  }, []);
-
   // Fetch table data with only column filters (no global filters)
   const {
     data: tableResponse,
@@ -150,7 +145,7 @@ const View: React.FC<ViewProps> = ({
 
       <ViewTableFilterForm
         filterFields={filterFields}
-        defaultFieldValues={defaultFilterValues}
+        defaultFieldValues={{}}
         tablePrefix={tablePrefix}
       >
         {hasDataTable && (

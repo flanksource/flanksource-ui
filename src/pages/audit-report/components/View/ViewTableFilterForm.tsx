@@ -1,5 +1,5 @@
 import { Form, Formik, useFormikContext } from "formik";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 
 type ViewTableFilterFormProps = {
@@ -58,19 +58,9 @@ export default function ViewTableFilterForm({
   defaultFieldValues = {},
   tablePrefix
 }: ViewTableFilterFormProps) {
-  const [tableParams] = usePrefixedSearchParams(tablePrefix);
-
-  const initialValues = useMemo(() => {
-    const values: Record<string, string> = {};
-    filterFields.forEach((field) => {
-      values[field] = tableParams.get(field) || defaultFieldValues[field] || "";
-    });
-    return values;
-  }, [tableParams, filterFields, defaultFieldValues]);
-
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{}}
       onSubmit={() => {
         // Form submission is handled by the listener
       }}
