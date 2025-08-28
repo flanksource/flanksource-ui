@@ -22,6 +22,7 @@ import {
   TextPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
+import GlobalFiltersForm from "./GlobalFiltersForm";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 
 interface ViewProps {
@@ -32,7 +33,6 @@ interface ViewProps {
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
   variables?: ViewVariable[];
-  onVariableStateChange?: (filterState: Record<string, string>) => void;
   viewResult?: ViewResult;
   currentVariables?: Record<string, string>;
 }
@@ -45,7 +45,6 @@ const View: React.FC<ViewProps> = ({
   columnOptions,
   panels,
   variables,
-  onVariableStateChange,
   viewResult,
   currentVariables
 }) => {
@@ -54,6 +53,9 @@ const View: React.FC<ViewProps> = ({
   // Create unique prefix for this view's table
   const tablePrefix = `view_${namespace}_${name}`;
   const [tableSearchParams] = usePrefixedSearchParams(tablePrefix);
+
+  // Create unique prefix for global filters
+  const globalVarPrefix = "viewvar";
   const hasDataTable = columns && columns.length > 0;
 
   const columnFilterFields = useMemo(
@@ -125,11 +127,15 @@ const View: React.FC<ViewProps> = ({
         </h3>
       )}
 
-      <GlobalFilters
-        variables={variables}
-        current={currentVariables}
-        onChange={onVariableStateChange}
-      />
+      {variables && variables.length > 0 && (
+        <GlobalFiltersForm
+          variables={variables}
+          globalVarPrefix={globalVarPrefix}
+          currentVariables={currentVariables}
+        >
+          <GlobalFilters variables={variables} />
+        </GlobalFiltersForm>
+      )}
 
       {variables && variables.length > 0 && (
         <hr className="my-4 border-gray-200" />
