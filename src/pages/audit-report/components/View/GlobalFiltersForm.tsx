@@ -43,7 +43,7 @@ function GlobalFiltersListener({
       const urlValue = globalParams.get(variable.key);
       const currentValue = currentVariables[variable.key];
       const defaultValue =
-        variable.default ||
+        variable.default ??
         (variable.options.length > 0 ? variable.options[0] : "");
 
       const valueToUse = urlValue || currentValue || defaultValue;

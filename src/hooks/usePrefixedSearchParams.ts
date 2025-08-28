@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
+// Global parameter keys that don't require prefixing
+const GLOBAL_PARAM_KEYS = ["sortBy", "sortOrder"] as const;
+
 /**
  * Hook that manages URL search params with a specific prefix.
  * Provides filtered params (without prefix) and a setter that adds the prefix.
@@ -20,7 +23,7 @@ export function usePrefixedSearchParams(
     const prefixWithSeparator = `${prefix}__`;
 
     Array.from(searchParams.entries()).forEach(([key, value]) => {
-      if (["sortBy", "sortOrder"].includes(key)) {
+      if (GLOBAL_PARAM_KEYS.includes(key as any)) {
         filtered.set(key, value);
       } else if (key.startsWith(prefixWithSeparator)) {
         const cleanKey = key.substring(prefixWithSeparator.length);
