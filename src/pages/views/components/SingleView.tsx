@@ -19,12 +19,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   >({});
   const queryClient = useQueryClient();
 
-  // Debug logging
-  console.log(
-    "SingleView render - currentGlobalFilters:",
-    currentGlobalFilters
-  );
-
   // Fetch all the view metadata, panel results and the column definitions
   // NOTE: This doesn't fetch the table rows.
   // Use currentGlobalFilters in the query key so it updates when filters change
@@ -41,9 +35,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     enabled: !!id,
     staleTime: 5 * 60 * 1000
   });
-
-  // Debug logging for viewResult
-  console.log("viewResult panels:", viewResult?.panels?.length);
 
   useEffect(() => {
     if (viewDataError) {
@@ -98,7 +89,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (namespace && name) {
-      console.log("Refreshing with global filters:", currentGlobalFilters);
       const freshData = await getViewDataById(id, currentGlobalFilters, {
         "cache-control": "max-age=1"
       });

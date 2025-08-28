@@ -234,6 +234,7 @@ export interface ViewResult {
   panels?: PanelResult[];
   columnOptions?: Record<string, string[]>;
   filters?: ViewFilter[];
+  requestFingerprint: string;
 }
 
 export interface GaugeConfig {

@@ -84,13 +84,20 @@ const View: React.FC<ViewProps> = ({
     isLoading,
     error: tableError
   } = useQuery({
-    queryKey: ["view-table", namespace, name, tableSearchParams.toString()],
+    queryKey: [
+      "view-table",
+      namespace,
+      name,
+      tableSearchParams.toString(),
+      viewResult?.requestFingerprint
+    ],
     queryFn: () =>
       queryViewTable(
         namespace ?? "",
         name ?? "",
         columns ?? [],
-        tableSearchParams
+        tableSearchParams,
+        viewResult?.requestFingerprint || ""
       ),
     enabled: !!namespace && !!name && !!columns && columns.length > 0,
     staleTime: 5 * 60 * 1000

@@ -114,7 +114,8 @@ export const queryViewTable = async (
   namespace: string,
   name: string,
   columns: ViewColumnDef[],
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
+  requestFingerprint: string
 ) => {
   const cleanNamespace = namespace.replace(/-/g, "_");
   const cleanName = name.replace(/-/g, "_");
@@ -154,6 +155,9 @@ export const queryViewTable = async (
       }
     }
   }
+
+  // Add requestFingerprint as a filter if provided
+  queryString += `&request_fingerprint=eq.${encodeURIComponent(requestFingerprint)}`;
 
   const response = await resolvePostGrestRequestWithPagination(
     ConfigDB.get(`/${tableName}${queryString}`, {
