@@ -20,7 +20,9 @@ export function usePrefixedSearchParams(
     const prefixWithSeparator = `${prefix}__`;
 
     Array.from(searchParams.entries()).forEach(([key, value]) => {
-      if (key.startsWith(prefixWithSeparator)) {
+      if (["sortBy", "sortOrder"].includes(key)) {
+        filtered.set(key, value);
+      } else if (key.startsWith(prefixWithSeparator)) {
         const cleanKey = key.substring(prefixWithSeparator.length);
         filtered.set(cleanKey, value);
       }
