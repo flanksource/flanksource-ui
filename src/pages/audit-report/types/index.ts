@@ -237,14 +237,16 @@ export interface ViewResult {
   requestFingerprint: string;
 }
 
+export interface GaugeThreshold {
+  percent: number;
+  color: string;
+}
+
 export interface GaugeConfig {
   min: number;
   max: number;
   unit?: string;
-  thresholds?: {
-    percent: number;
-    color: string;
-  }[];
+  thresholds?: GaugeThreshold[];
 }
 
 export type PanelResult = {

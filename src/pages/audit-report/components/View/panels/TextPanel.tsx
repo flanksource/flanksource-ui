@@ -14,7 +14,7 @@ const TextPanel: React.FC<TextPanelProps> = ({ summary }) => {
         return (
           <div
             key={`${summary.name}-${rowIndex}`}
-            className="w-full rounded-lg border border-gray-200 bg-white p-4"
+            className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
               {summary.name}
