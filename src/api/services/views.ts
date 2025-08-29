@@ -64,13 +64,27 @@ export const getAllViews = (
     })
   );
 };
+
+/**
+ * Get the data for a view by its id.
+ */
 export const getViewDataById = async (
   viewId: string,
+  variables?: Record<string, string>,
   headers?: Record<string, string>
 ): Promise<ViewResult> => {
+  const body: { variables?: Record<string, string> } = {
+    variables: variables
+  };
+
   const response = await fetch(`/api/view/${viewId}`, {
+    method: "POST",
     credentials: "include",
-    headers
+    headers: {
+      "Content-Type": "application/json",
+      ...headers
+    },
+    body: JSON.stringify(body)
   });
 
   if (!response.ok) {
@@ -102,7 +116,8 @@ export const queryViewTable = async (
   namespace: string,
   name: string,
   columns: ViewColumnDef[],
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
+  requestFingerprint: string
 ) => {
   const cleanNamespace = namespace.replace(/-/g, "_");
   const cleanName = name.replace(/-/g, "_");
@@ -142,6 +157,9 @@ export const queryViewTable = async (
       }
     }
   }
+
+  // Add requestFingerprint as a filter if provided
+  queryString += `&request_fingerprint=eq.${encodeURIComponent(requestFingerprint)}`;
 
   const response = await resolvePostGrestRequestWithPagination(
     ConfigDB.get(`/${tableName}${queryString}`, {

@@ -1,13 +1,18 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
 import { Box } from "lucide-react";
 import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
-import { PanelResult, ViewColumnDef, ViewRow } from "../../types";
+import {
+  PanelResult,
+  ViewColumnDef,
+  ViewRow,
+  ViewVariable,
+  ViewResult
+} from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
-import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
+import ViewTableFilterForm from "./ViewTableFilterForm";
 import { queryViewTable } from "../../../../api/services/views";
 import {
   NumberPanel,
@@ -16,6 +21,9 @@ import {
   GaugePanel,
   TextPanel
 } from "./panels";
+import GlobalFilters from "./GlobalFilters";
+import GlobalFiltersForm from "./GlobalFiltersForm";
+import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 
 interface ViewProps {
   title?: string;
@@ -24,6 +32,9 @@ interface ViewProps {
   name: string;
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
+  variables?: ViewVariable[];
+  viewResult?: ViewResult;
+  currentVariables?: Record<string, string>;
 }
 
 const View: React.FC<ViewProps> = ({
@@ -32,35 +43,57 @@ const View: React.FC<ViewProps> = ({
   name,
   columns,
   columnOptions,
-  panels
+  panels,
+  variables,
+  viewResult,
+  currentVariables
 }) => {
   const { pageSize } = useReactTablePaginationState();
-  const [searchParams] = useSearchParams();
+
+  // Create unique prefix for this view's table
+  const tablePrefix = `view_${namespace}_${name}`;
+  const [tableSearchParams] = usePrefixedSearchParams(tablePrefix);
+
+  // Create unique prefix for global filters
+  const globalVarPrefix = "viewvar";
   const hasDataTable = columns && columns.length > 0;
 
+  const columnFilterFields = useMemo(
+    () =>
+      hasDataTable
+        ? columns
+            .filter((column) => column.filter?.type === "multiselect")
+            .map((column) => column.name)
+        : [],
+    [hasDataTable, columns]
+  );
+
   const filterFields = useMemo(() => {
-    const baseFields: string[] = [];
+    // Only include column filters in Formik form, not global filters
+    return columnFilterFields;
+  }, [columnFilterFields]);
 
-    if (hasDataTable) {
-      const filterableFields = columns
-        .filter((column) => column.filter?.type === "multiselect")
-        .map((column) => column.name);
-
-      return [...baseFields, ...filterableFields];
-    }
-
-    return baseFields;
-  }, [hasDataTable, columns]);
-
-  // Fetch table data if we have the necessary parameters
+  // Fetch table data with only column filters (no global filters)
   const {
     data: tableResponse,
     isLoading,
     error: tableError
   } = useQuery({
-    queryKey: ["view-table", namespace, name, searchParams.toString()],
+    queryKey: [
+      "view-table",
+      namespace,
+      name,
+      tableSearchParams.toString(),
+      viewResult?.requestFingerprint
+    ],
     queryFn: () =>
-      queryViewTable(namespace ?? "", name ?? "", columns ?? [], searchParams),
+      queryViewTable(
+        namespace ?? "",
+        name ?? "",
+        columns ?? [],
+        tableSearchParams,
+        viewResult?.requestFingerprint || ""
+      ),
     enabled: !!namespace && !!name && !!columns && columns.length > 0,
     staleTime: 5 * 60 * 1000
   });
@@ -94,6 +127,20 @@ const View: React.FC<ViewProps> = ({
         </h3>
       )}
 
+      {variables && variables.length > 0 && (
+        <GlobalFiltersForm
+          variables={variables}
+          globalVarPrefix={globalVarPrefix}
+          currentVariables={currentVariables}
+        >
+          <GlobalFilters variables={variables} />
+        </GlobalFiltersForm>
+      )}
+
+      {variables && variables.length > 0 && (
+        <hr className="my-4 border-gray-200" />
+      )}
+
       <div className="mb-4 space-y-6">
         {panels && panels.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -101,6 +148,27 @@ const View: React.FC<ViewProps> = ({
           </div>
         )}
       </div>
+
+      <ViewTableFilterForm
+        filterFields={filterFields}
+        defaultFieldValues={{}}
+        tablePrefix={tablePrefix}
+      >
+        {hasDataTable && (
+          <div className="mb-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {filterableColumns.map(({ column, uniqueValues }) => (
+                <ViewColumnDropdown
+                  key={column.name}
+                  label={formatDisplayLabel(column.name)}
+                  paramsKey={column.name}
+                  options={uniqueValues}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </ViewTableFilterForm>
 
       {tableError && (
         <div className="text-center text-red-500">
@@ -112,30 +180,14 @@ const View: React.FC<ViewProps> = ({
       )}
 
       {hasDataTable && (
-        <>
-          <div className="mb-2">
-            <FormikFilterForm paramsToReset={[]} filterFields={filterFields}>
-              <div className="flex flex-wrap items-center gap-2">
-                {filterableColumns.map(({ column, uniqueValues }) => (
-                  <ViewColumnDropdown
-                    key={column.name}
-                    label={formatDisplayLabel(column.name)}
-                    paramsKey={column.name}
-                    options={uniqueValues}
-                  />
-                ))}
-              </div>
-            </FormikFilterForm>
-          </div>
-
-          <DynamicDataTable
-            columns={columns}
-            isLoading={isLoading}
-            rows={rows || []}
-            pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
-            totalRowCount={totalEntries}
-          />
-        </>
+        <DynamicDataTable
+          columns={columns}
+          isLoading={isLoading}
+          rows={rows || []}
+          pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+          totalRowCount={totalEntries}
+          tablePrefix={tablePrefix}
+        />
       )}
     </>
   );

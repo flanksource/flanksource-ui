@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
+import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 import View from "../../audit-report/components/View/View";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
@@ -12,23 +13,32 @@ interface SingleViewProps {
   id: string;
 }
 
+// This is the prefix for all the query params that are related to the view variables.
+const VIEW_VAR_PREFIX = "viewvar";
+
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const [error, setError] = useState<string>();
   const queryClient = useQueryClient();
+
+  // Use prefixed search params for view variables
+  const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX);
+  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
 
   // Fetch all the view metadata, panel results and the column definitions
   // NOTE: This doesn't fetch the table rows.
   const {
     data: viewResult,
     isLoading,
+    isFetching,
     error: viewDataError
   } = useQuery({
-    queryKey: ["view-result", id],
+    queryKey: ["view-result", id, currentViewVariables],
     queryFn: () => {
-      return getViewDataById(id);
+      return getViewDataById(id, currentViewVariables);
     },
     enabled: !!id,
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (previousData: any) => previousData
   });
 
   useEffect(() => {
@@ -43,7 +53,8 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     setError(undefined);
   }, [viewDataError]);
 
-  if (isLoading) {
+  // Only show full loading screen for initial load, not for filter refetches
+  if (isLoading && !viewResult) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -55,6 +66,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   }
 
   if (!viewResult) {
+    // TODO: Better error handling.
+    // viewResult = undefined does not mean the view is not found.
+    // There could be errors other than 404.
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -82,10 +96,13 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const handleForceRefresh = async () => {
     if (namespace && name) {
-      const freshData = await getViewDataById(id, {
+      const freshData = await getViewDataById(id, currentViewVariables, {
         "cache-control": "max-age=1"
       });
-      queryClient.setQueryData(["view-result", id], freshData);
+      queryClient.setQueryData(
+        ["view-result", id, currentViewVariables],
+        freshData
+      );
       // Invalidate the table query that will be handled by the View component
       await queryClient.invalidateQueries({
         queryKey: ["view-table", namespace, name]
@@ -109,7 +126,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         }
         onRefresh={handleForceRefresh}
         contentClass="p-0 h-full"
-        loading={isLoading}
+        loading={isFetching}
         extra={
           viewResult?.lastRefreshedAt && (
             <p className="text-sm text-gray-500">
@@ -127,6 +144,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             columns={viewResult?.columns}
             columnOptions={viewResult?.columnOptions}
             panels={viewResult?.panels}
+            variables={viewResult?.variables}
+            viewResult={viewResult}
+            currentVariables={currentViewVariables}
           />
         </div>
       </SearchLayout>

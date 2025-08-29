@@ -213,6 +213,15 @@ export interface ViewColumnDef {
 
 export type ViewRow = any[];
 
+export interface ViewVariable {
+  key: string;
+  value: string;
+  type: string;
+  options: string[];
+  default?: string;
+  label?: string;
+}
+
 export interface ViewResult {
   title?: string;
   icon?: string;
@@ -224,6 +233,8 @@ export interface ViewResult {
   rows?: ViewRow[];
   panels?: PanelResult[];
   columnOptions?: Record<string, string[]>;
+  variables?: ViewVariable[];
+  requestFingerprint: string;
 }
 
 export interface GaugeConfig {

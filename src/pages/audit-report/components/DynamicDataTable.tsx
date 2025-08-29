@@ -23,6 +23,7 @@ interface DynamicDataTableProps {
   pageCount: number;
   totalRowCount?: number;
   isLoading?: boolean;
+  tablePrefix?: string;
 }
 
 interface RowAttributes {
@@ -36,7 +37,8 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   rows,
   pageCount,
   totalRowCount,
-  isLoading
+  isLoading,
+  tablePrefix
 }) => {
   const columnDef: MRT_ColumnDef<any>[] = columns
     .filter((col) => !col.hidden && col.type !== "row_attributes")
@@ -47,7 +49,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         maxSize: minWidthForColumnType(col.type),
         header: formatDisplayLabel(col.name),
         Cell: ({ cell, row }: { cell: any; row: any }) =>
-          renderCellValue(cell.getValue(), col, row.original)
+          renderCellValue(cell.getValue(), col, row.original, tablePrefix)
       };
     });
 
@@ -91,7 +93,12 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   );
 };
 
-const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
+const renderCellValue = (
+  value: any,
+  column: ViewColumnDef,
+  row: any,
+  tablePrefix?: string
+) => {
   if (value == null) return "-";
 
   let cellContent: any;
@@ -238,9 +245,14 @@ const renderCellValue = (value: any, column: ViewColumnDef, row: any) => {
 
   // Wrap with FilterByCellValue if column has multiselect filter
   if (column.filter?.type === "multiselect") {
+    // Use prefixed parameter key if tablePrefix is provided
+    const paramKey = tablePrefix
+      ? `${tablePrefix}__${column.name}`
+      : column.name;
+
     return (
       <FilterByCellValue
-        paramKey={column.name}
+        paramKey={paramKey}
         filterValue={value}
         paramsToReset={["pageIndex"]}
       >
