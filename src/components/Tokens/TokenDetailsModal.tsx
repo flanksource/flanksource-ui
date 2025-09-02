@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteToken, Token } from "../../api/services/tokens";
+import { getPermissions } from "../../api/services/rbac";
 import { Avatar } from "../../ui/Avatar";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
@@ -23,6 +24,12 @@ export default function TokenDetailsModal({
 }: TokenDetailsModalProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const queryClient = useQueryClient();
+
+  const { data: allPermissions = [] } = useQuery({
+    queryKey: ["permissions"],
+    queryFn: getPermissions,
+    enabled: isOpen
+  });
 
   const { mutate: deleteTokenMutation, isLoading: isDeleting } = useMutation({
     mutationFn: deleteToken,
@@ -80,6 +87,38 @@ export default function TokenDetailsModal({
               Created At
             </label>
             <Age from={formattedCreatedAt} />
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Token Permissions
+            </label>
+            <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
+              {allPermissions
+                .filter((permission) => {
+                  const permissionKey = `${permission.object}:${permission.action}`;
+                  return !token.deny_roles?.includes(permissionKey);
+                })
+                .map((permission) => {
+                  const permissionKey = `${permission.object}:${permission.action}`;
+                  return (
+                    <div
+                      key={permissionKey}
+                      className="flex items-center gap-2"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={true}
+                        disabled={true}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
+                      />
+                      <label className="text-sm font-medium text-gray-700">
+                        {permissionKey}
+                      </label>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         </div>
 

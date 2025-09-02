@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaSpinner } from "react-icons/fa";
@@ -7,13 +7,21 @@ import {
   CreateTokenRequest,
   CreateTokenResponse
 } from "../../../api/services/tokens";
+import {
+  getPermissions,
+  permissionHash,
+  permissionFromHash
+} from "../../../api/services/rbac";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
+import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
-export type TokenFormValues = CreateTokenRequest;
+export type TokenFormValues = CreateTokenRequest & {
+  permissions: Record<string, boolean>;
+};
 
 type Props = {
   isOpen: boolean;
@@ -31,11 +39,16 @@ export default function CreateTokenForm({
   onClose,
   onSuccess = () => {}
 }: Props) {
+  const { data: permissions = [], isLoading: permissionsLoading } = useQuery({
+    queryKey: ["permissions"],
+    queryFn: getPermissions,
+    enabled: isOpen
+  });
+
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       toastSuccess("Token created successfully");
-      onSuccess(data, variables);
     },
     onError: (error: any) => {
       toastError(error.message || "Failed to create token");
@@ -43,7 +56,21 @@ export default function CreateTokenForm({
   });
 
   const handleSubmit = (values: TokenFormValues) => {
-    createTokenMutation(values);
+    const denyPerms = Object.entries(values.permissions)
+      .filter(([_, isChecked]) => !isChecked)
+      .map(([permissionId]) => permissionId);
+
+    const tokenRequest: CreateTokenRequest = {
+      name: values.name,
+      expiry: values.expiry,
+      deny_permissions: denyPerms.map((p) => permissionFromHash(p))
+    };
+
+    createTokenMutation(tokenRequest, {
+      onSuccess: (data) => {
+        onSuccess(data, values);
+      }
+    });
   };
 
   return (
@@ -56,8 +83,12 @@ export default function CreateTokenForm({
       <Formik<TokenFormValues>
         initialValues={{
           name: "",
-          expiry: "never"
+          expiry: "never",
+          permissions: Object.fromEntries(
+            permissions.map((p) => [permissionHash(p), true])
+          )
         }}
+        enableReinitialize
         onSubmit={handleSubmit}
         validate={(values) => {
           const errors: any = {};
@@ -87,6 +118,39 @@ export default function CreateTokenForm({
                     options={expiryOptions}
                     hint="When this token should expire"
                   />
+
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium text-gray-700">
+                      Permissions
+                      <p className="mt-1 text-xs text-gray-500">
+                        Uncheck permissions you want to deny for this token
+                      </p>
+                    </div>
+                    {permissionsLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <FaSpinner className="animate-spin text-gray-400" />
+                        <span className="ml-2 text-sm text-gray-500">
+                          Loading permissions...
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
+                        {permissions.map((permission) => {
+                          const permissionKey = permissionHash(permission);
+                          const displayLabel = `${permission.object}:${permission.action}`;
+                          return (
+                            <FormikCheckbox
+                              key={permissionKey}
+                              name={`permissions.${permissionKey}`}
+                              label={displayLabel}
+                              labelClassName="text-sm font-normal text-gray-700"
+                              inline={true}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
