@@ -59,8 +59,8 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...checkResourceSelector.map((r) => ({
               ...r,
-              agent: "all",
-              search: searchText
+              search: searchText,
+              agent: r.agent || "all"
             }))
           ]
         : undefined,
@@ -68,8 +68,8 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...componentResourceSelector.map((r) => ({
               ...r,
-              agent: "all",
-              search: searchText
+              search: searchText,
+              agent: r.agent || "all"
             }))
           ]
         : undefined,
@@ -77,8 +77,8 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...configResourceSelector.map((r) => ({
               ...r,
-              agent: "all",
-              search: searchText
+              search: searchText,
+              agent: r.agent || "all"
             }))
           ]
         : undefined
