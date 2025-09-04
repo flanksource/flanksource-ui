@@ -119,7 +119,7 @@ export function ConnectionForm({
       }}
       onSubmit={handleSubmit}
     >
-      {() => (
+      {({ values }) => (
         <Form className="flex flex-1 flex-col overflow-y-auto">
           <div
             className={clsx(
@@ -131,6 +131,11 @@ export function ConnectionForm({
             <div className={clsx("mb-2 flex flex-col px-2")}>
               <div className="flex flex-col space-y-4 overflow-y-auto p-4">
                 {connectionType.fields.map((field, index) => {
+                  // Only render the field if it doesn't have a condition or its condition returns true
+                  if (field.condition && !field.condition(values)) {
+                    return null;
+                  }
+                  
                   return (
                     <RenderConnectionFormFields field={field} key={field.key} />
                   );
