@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
@@ -17,7 +17,6 @@ interface SingleViewProps {
 const VIEW_VAR_PREFIX = "viewvar";
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
-  const [error, setError] = useState<string>();
   const queryClient = useQueryClient();
 
   // Use prefixed search params for view variables
@@ -30,7 +29,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     data: viewResult,
     isLoading,
     isFetching,
-    error: viewDataError
+    error
   } = useQuery({
     queryKey: ["view-result", id, currentViewVariables],
     queryFn: () => {
@@ -40,18 +39,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData: any) => previousData
   });
-
-  useEffect(() => {
-    if (viewDataError) {
-      setError(
-        viewDataError instanceof Error
-          ? viewDataError.message
-          : "Failed to fetch view data"
-      );
-      return;
-    }
-    setError(undefined);
-  }, [viewDataError]);
 
   // Only show full loading screen for initial load, not for filter refetches
   if (isLoading && !viewResult) {
@@ -65,10 +52,22 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 text-xl text-red-500">Something went wrong</div>
+          <p className="text-gray-600">
+            {error instanceof Error
+              ? error.message
+              : "Failed to fetch view data"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!viewResult) {
-    // TODO: Better error handling.
-    // viewResult = undefined does not mean the view is not found.
-    // There could be errors other than 404.
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
@@ -82,17 +81,6 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   }
 
   const { icon, title, namespace, name } = viewResult;
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-red-500">Error</div>
-          <p className="text-gray-600">{error}</p>
-        </div>
-      </div>
-    );
-  }
 
   const handleForceRefresh = async () => {
     if (namespace && name) {
