@@ -19,7 +19,8 @@ import {
   TablePanel,
   PieChartPanel,
   GaugePanel,
-  TextPanel
+  TextPanel,
+  DurationPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -193,7 +194,7 @@ const View: React.FC<ViewProps> = ({
   );
 };
 
-const renderPanel = (panel: any, index: number) => {
+const renderPanel = (panel: PanelResult, index: number) => {
   switch (panel.type) {
     case "number":
       return <NumberPanel key={`${panel.name}-${index}`} summary={panel} />;
@@ -205,6 +206,8 @@ const renderPanel = (panel: any, index: number) => {
       return <GaugePanel key={`${panel.name}-${index}`} summary={panel} />;
     case "text":
       return <TextPanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "duration":
+      return <DurationPanel key={`${panel.name}-${index}`} summary={panel} />;
     default:
       return null;
   }
