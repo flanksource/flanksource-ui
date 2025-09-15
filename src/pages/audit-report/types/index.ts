@@ -251,7 +251,7 @@ export interface GaugeConfig {
 
 export type PanelResult = {
   name: string;
-  type: "piechart" | "number" | "text" | "table" | "gauge";
+  type: "piechart" | "number" | "text" | "table" | "gauge" | "duration";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
