@@ -483,16 +483,6 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
       <Route path="/view/health" element={<HealthPage url={CANARY_API} />} />
 
-      <Route
-        path="/view/:viewId"
-        element={withAuthorizationAccessCheck(
-          <ConfigDetailsViewPage />,
-          tables.database,
-          "read",
-          true
-        )}
-      />
-
       <Route path="topology" element={sidebar}>
         <Route
           index
