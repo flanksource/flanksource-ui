@@ -7,6 +7,7 @@ import {
   CreateTokenRequest,
   CreateTokenResponse
 } from "../../../api/services/tokens";
+import { Permission } from "../../../api/services/rbac";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
@@ -80,9 +81,16 @@ export default function CreateTokenForm({
   );
 
   const handleSubmit = (values: TokenFormValues) => {
-    const selectedScopes = Object.entries(values.objectActions)
+    const selectedScopes: Permission[] = Object.entries(values.objectActions)
       .filter(([_, isChecked]) => isChecked)
-      .map(([scopeId]) => scopeId);
+      .map(([scopeId]) => {
+        const [object, action] = scopeId.split(":");
+        return {
+          subject: "", // subject is handled at server
+          object,
+          action
+        } as Permission;
+      });
 
     const tokenRequest: CreateTokenRequest = {
       name: values.name,
