@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaSpinner } from "react-icons/fa";
@@ -7,11 +7,6 @@ import {
   CreateTokenRequest,
   CreateTokenResponse
 } from "../../../api/services/tokens";
-import {
-  getPermissions,
-  permissionHash,
-  permissionFromHash
-} from "../../../api/services/rbac";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
@@ -19,8 +14,26 @@ import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
 import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
+const OBJECTS = [
+  "mcp",
+  "canaries",
+  "catalog",
+  "application",
+  "playbooks",
+  "notification"
+];
+
+const ACTIONS = [
+  "read",
+  "create",
+  "update",
+  "delete",
+  "playbook:approve",
+  "playbook:run"
+];
+
 export type TokenFormValues = CreateTokenRequest & {
-  permissions: Record<string, boolean>;
+  objectActions: Record<string, boolean>;
 };
 
 type Props = {
@@ -39,12 +52,6 @@ export default function CreateTokenForm({
   onClose,
   onSuccess = () => {}
 }: Props) {
-  const { data: permissions = [], isLoading: permissionsLoading } = useQuery({
-    queryKey: ["permissions"],
-    queryFn: getPermissions,
-    enabled: isOpen
-  });
-
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
     onSuccess: (data) => {
@@ -55,15 +62,32 @@ export default function CreateTokenForm({
     }
   });
 
+  const getActionsForObject = (object: string) => {
+    if (object === "playbooks") {
+      return ACTIONS;
+    }
+    if (object === "mcp") {
+      return ["*"];
+    }
+
+    // Only CRUD
+    return ACTIONS.filter((action) => !action.startsWith("playbook:"));
+  };
+
+  // Generate all combos
+  const allObjectActions = OBJECTS.flatMap((obj) =>
+    getActionsForObject(obj).map((action) => `${obj}:${action}`)
+  );
+
   const handleSubmit = (values: TokenFormValues) => {
-    const denyPerms = Object.entries(values.permissions)
-      .filter(([_, isChecked]) => !isChecked)
-      .map(([permissionId]) => permissionId);
+    const selectedScopes = Object.entries(values.objectActions)
+      .filter(([_, isChecked]) => isChecked)
+      .map(([scopeId]) => scopeId);
 
     const tokenRequest: CreateTokenRequest = {
       name: values.name,
       expiry: values.expiry,
-      deny_permissions: denyPerms.map((p) => permissionFromHash(p))
+      scope: selectedScopes
     };
 
     createTokenMutation(tokenRequest, {
@@ -84,8 +108,8 @@ export default function CreateTokenForm({
         initialValues={{
           name: "",
           expiry: "never",
-          permissions: Object.fromEntries(
-            permissions.map((p) => [permissionHash(p), true])
+          objectActions: Object.fromEntries(
+            allObjectActions.map((objAction) => [objAction, false])
           )
         }}
         enableReinitialize
@@ -121,35 +145,34 @@ export default function CreateTokenForm({
 
                   <div className="space-y-3">
                     <div className="text-sm font-medium text-gray-700">
-                      Permissions
+                      Scopes
                       <p className="mt-1 text-xs text-gray-500">
-                        Uncheck permissions you want to deny for this token
+                        Select the permissions to grant to this token
                       </p>
                     </div>
-                    {permissionsLoading ? (
-                      <div className="flex items-center justify-center py-4">
-                        <FaSpinner className="animate-spin text-gray-400" />
-                        <span className="ml-2 text-sm text-gray-500">
-                          Loading permissions...
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-                        {permissions.map((permission) => {
-                          const permissionKey = permissionHash(permission);
-                          const displayLabel = `${permission.object}:${permission.action}`;
-                          return (
-                            <FormikCheckbox
-                              key={permissionKey}
-                              name={`permissions.${permissionKey}`}
-                              label={displayLabel}
-                              labelClassName="text-sm font-normal text-gray-700"
-                              inline={true}
-                            />
-                          );
-                        })}
-                      </div>
-                    )}
+                    <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border bg-gray-50 p-4">
+                      {OBJECTS.map((object) => (
+                        <div key={object} className="space-y-2">
+                          <div className="text-sm font-medium capitalize text-gray-800">
+                            {object.replace(/[._-]/g, " ")}
+                          </div>
+                          <div className="grid grid-cols-4 gap-2 pl-4">
+                            {getActionsForObject(object).map((action) => {
+                              const scopeKey = `${object}:${action}`;
+                              return (
+                                <FormikCheckbox
+                                  key={scopeKey}
+                                  name={`objectActions.${scopeKey}`}
+                                  label={action}
+                                  labelClassName="text-sm font-normal text-gray-600"
+                                  inline={true}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

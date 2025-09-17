@@ -24,7 +24,7 @@ export type TokensResponse = {
 export type CreateTokenRequest = {
   name: string;
   expiry: string;
-  deny_permissions?: Permission[];
+  scope?: string[];
 };
 
 export type CreateTokenResponse = {
