@@ -14,24 +14,11 @@ import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
 import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
 import { toastError, toastSuccess } from "../../Toast/toast";
-
-const OBJECTS = [
-  "mcp",
-  "canaries",
-  "catalog",
-  "application",
-  "playbooks",
-  "notification"
-];
-
-const ACTIONS = [
-  "read",
-  "create",
-  "update",
-  "delete",
-  "playbook:approve",
-  "playbook:run"
-];
+import {
+  OBJECTS,
+  getActionsForObject,
+  getAllObjectActions
+} from "../tokenUtils";
 
 export type TokenFormValues = CreateTokenRequest & {
   objectActions: Record<string, boolean>;
@@ -63,22 +50,7 @@ export default function CreateTokenForm({
     }
   });
 
-  const getActionsForObject = (object: string) => {
-    if (object === "playbooks") {
-      return ACTIONS;
-    }
-    if (object === "mcp") {
-      return ["*"];
-    }
-
-    // Only CRUD
-    return ACTIONS.filter((action) => !action.startsWith("playbook:"));
-  };
-
-  // Generate all combos
-  const allObjectActions = OBJECTS.flatMap((obj) =>
-    getActionsForObject(obj).map((action) => `${obj}:${action}`)
-  );
+  const allObjectActions = getAllObjectActions();
 
   const handleSubmit = (values: TokenFormValues) => {
     const selectedScopes: Permission[] = Object.entries(values.objectActions)

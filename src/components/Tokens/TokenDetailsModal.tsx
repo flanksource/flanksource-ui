@@ -10,6 +10,7 @@ import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
+import { getAllObjectActions } from "./tokenUtils";
 
 type TokenDetailsModalProps = {
   token: Token;
@@ -25,11 +26,26 @@ export default function TokenDetailsModal({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: allPermissions = [] } = useQuery({
-    queryKey: ["permissions"],
-    queryFn: getPermissions,
+  const { data: tokenPermissions = [] } = useQuery({
+    queryKey: ["permissions", token.id],
+    queryFn: () => getPermissions(token.id),
     enabled: isOpen
   });
+
+  const availablePermissions = useMemo(() => {
+    const allObjectActions = getAllObjectActions();
+    const deniedPermissions = new Set(
+      tokenPermissions
+        .filter(
+          (permission) => permission.deny || permission.subject !== token.id
+        )
+        .map((permission) => `${permission.object}:${permission.action}`)
+    );
+
+    return allObjectActions.filter(
+      (objectAction) => !deniedPermissions.has(objectAction)
+    );
+  }, [tokenPermissions, token.id]);
 
   const { mutate: deleteTokenMutation, isLoading: isDeleting } = useMutation({
     mutationFn: deleteToken,
@@ -94,30 +110,19 @@ export default function TokenDetailsModal({
               Token Permissions
             </label>
             <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-              {allPermissions
-                .filter((permission) => {
-                  const permissionKey = `${permission.object}:${permission.action}`;
-                  return !token.deny_roles?.includes(permissionKey);
-                })
-                .map((permission) => {
-                  const permissionKey = `${permission.object}:${permission.action}`;
-                  return (
-                    <div
-                      key={permissionKey}
-                      className="flex items-center gap-2"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={true}
-                        disabled={true}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
-                      />
-                      <label className="text-sm font-medium text-gray-700">
-                        {permissionKey}
-                      </label>
-                    </div>
-                  );
-                })}
+              {availablePermissions.map((permissionKey) => (
+                <div key={permissionKey} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    disabled={true}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
+                  />
+                  <label className="text-sm font-medium text-gray-700">
+                    {permissionKey}
+                  </label>
+                </div>
+              ))}
             </div>
           </div>
         </div>

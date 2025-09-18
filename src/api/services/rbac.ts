@@ -48,7 +48,9 @@ export function permissionFromHash(hash: string): Permission {
   return permission as Permission;
 }
 
-export async function getPermissions(): Promise<Permission[]> {
-  const response = await Rback.get<PermissionsResponse>("/permissions");
+export async function getPermissions(id: string): Promise<Permission[]> {
+  const response = await Rback.get<PermissionsResponse>(
+    `/token/${id}/permissions`
+  );
   return response.data.payload ?? [];
 }
