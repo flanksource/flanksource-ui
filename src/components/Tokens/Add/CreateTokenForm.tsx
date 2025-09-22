@@ -31,6 +31,7 @@ type Props = {
     response: CreateTokenResponse,
     formValues: TokenFormValues
   ) => void;
+  isMcpSetup?: boolean;
 };
 
 const expiryOptions = [{ label: "Never", value: "never" }];
@@ -38,7 +39,8 @@ const expiryOptions = [{ label: "Never", value: "never" }];
 export default function CreateTokenForm({
   isOpen,
   onClose,
-  onSuccess = () => {}
+  onSuccess = () => {},
+  isMcpSetup = false
 }: Props) {
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
@@ -51,6 +53,22 @@ export default function CreateTokenForm({
   });
 
   const allObjectActions = getAllObjectActions();
+
+  const getInitialObjectActions = () => {
+    const initialActions = Object.fromEntries(
+      allObjectActions.map((objAction) => [objAction, false])
+    );
+
+    if (isMcpSetup) {
+      allObjectActions
+        .filter((objAction) => objAction.startsWith("mcp:"))
+        .forEach((mcpAction) => {
+          initialActions[mcpAction] = true;
+        });
+    }
+
+    return initialActions;
+  };
 
   const handleSubmit = (values: TokenFormValues) => {
     const selectedScopes: Permission[] = Object.entries(values.objectActions)
@@ -88,9 +106,7 @@ export default function CreateTokenForm({
         initialValues={{
           name: "",
           expiry: "never",
-          objectActions: Object.fromEntries(
-            allObjectActions.map((objAction) => [objAction, false])
-          )
+          objectActions: getInitialObjectActions()
         }}
         enableReinitialize
         onSubmit={handleSubmit}
@@ -133,8 +149,8 @@ export default function CreateTokenForm({
                     <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border bg-gray-50 p-4">
                       {OBJECTS.map((object) => (
                         <div key={object} className="space-y-2">
-                          <div className="text-sm font-medium capitalize text-gray-800">
-                            {object.replace(/[._-]/g, " ")}
+                          <div className="text-sm font-medium text-gray-800">
+                            {object}
                           </div>
                           <div className="grid grid-cols-4 gap-2 pl-4">
                             {getActionsForObject(object).map((action) => {
