@@ -66,6 +66,7 @@ export function UserProfileDropdown() {
           setIsMcpTokenModalOpen(false);
           setIsMcpTokenDisplayModalOpen(true);
         }}
+        isMcpSetup={true}
       />
       {mcpTokenResponse && (
         <TokenDisplayModal
