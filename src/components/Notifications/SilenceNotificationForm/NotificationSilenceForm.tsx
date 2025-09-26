@@ -1,7 +1,8 @@
 import {
   deleteNotificationSilence,
   silenceNotification,
-  updateNotificationSilence
+  updateNotificationSilence,
+  getNotificationSilencesHistory
 } from "@flanksource-ui/api/services/notifications";
 import {
   SilenceNotificationResponse as SilenceNotificationRequest,
@@ -23,8 +24,10 @@ import { Formik, Form, FormikBag } from "formik";
 import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
-import { useState } from "react";
-import { ChevronRightIcon } from "@heroicons/react/outline";
+import { useState, useEffect } from "react";
+import { ChevronRightIcon, InformationCircleIcon } from "@heroicons/react/outline";
+import { getNotificationSilences } from "@flanksource-ui/api/services/notifications";
+import { useQuery } from "@tanstack/react-query";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -41,6 +44,7 @@ export default function NotificationSilenceForm({
 }: NotificationSilenceFormProps) {
   const [showFilterExamples, setShowFilterExamples] = useState(false);
   const [showSelectorsExamples, setShowSelectorsExamples] = useState(false);
+  const [activeField, setActiveField] = useState<'resource' | 'filter' | 'selector' | null>(null);
 
   const filterExamples = [
     {
@@ -119,6 +123,48 @@ export default function NotificationSilenceForm({
     canary_id: data?.canary_id
   };
 
+  // Determine which field should be active based on existing data
+  useEffect(() => {
+    if (data?.component_id || data?.config_id || data?.check_id || data?.canary_id) {
+      setActiveField('resource');
+    } else if (data?.filter) {
+      setActiveField('filter');
+    } else if (data?.selectors) {
+      setActiveField('selector');
+    }
+  }, [data]);
+
+  // Create a dynamic query key based on active field and current form values
+  const [formValues, setFormValues] = useState(initialValues);
+
+  // Query for notification silences for the past 15 days
+  const { data: silenceHistory, isLoading: isSilenceHistoryLoading } = useQuery({
+    queryKey: ['notificationSilencesHistory', activeField, formValues.component_id, formValues.config_id, formValues.check_id, formValues.canary_id, formValues.filter, formValues.selectors],
+    queryFn: async () => {
+      if (!activeField) return null;
+
+      const queryParams: any = {};
+
+      if (activeField === 'resource') {
+        if (formValues.component_id) queryParams.component_id = formValues.component_id;
+        if (formValues.config_id) queryParams.config_id = formValues.config_id;
+        if (formValues.check_id) queryParams.check_id = formValues.check_id;
+        if (formValues.canary_id) queryParams.canary_id = formValues.canary_id;
+      } else if (activeField === 'filter' && formValues.filter) {
+        queryParams.filter = formValues.filter;
+      } else if (activeField === 'selector' && formValues.selectors) {
+        queryParams.selectors = formValues.selectors;
+      }
+
+      return getNotificationSilencesHistory({
+        pageIndex: 0,
+        pageSize: 10,
+        ...queryParams
+      });
+    },
+    enabled: !!activeField
+  });
+
   const { isLoading, mutate } = useMutation({
     mutationFn: (data: SilenceNotificationRequest) => {
       if (data.id) {
@@ -162,17 +208,19 @@ export default function NotificationSilenceForm({
     if (!v.name) {
       errors.name = "Must specify a unique name";
     }
-    if (
-      v.canary_id == null &&
-      v.check_id == null &&
-      v.component_id == null &&
-      v.config_id == null &&
-      v.selectors == null &&
-      v.filter == null
-    ) {
-      errors.form =
-        "You must specify at least one of the following: a resource, a filter, or selectors";
+
+    const hasResource = !!(v.canary_id || v.check_id || v.component_id || v.config_id);
+    const hasFilter = !!(v.filter && v.filter.trim());
+    const hasSelectors = !!(v.selectors && v.selectors.trim());
+
+    const fieldsSet = [hasResource, hasFilter, hasSelectors].filter(Boolean).length;
+
+    if (fieldsSet === 0) {
+      errors.form = "You must specify exactly one of the following: a resource, a filter, or selectors";
+    } else if (fieldsSet > 1) {
+      errors.form = "You can only specify one of the following: a resource, a filter, or selectors. Please clear the others.";
     }
+
     return errors;
   };
 
@@ -220,8 +268,45 @@ export default function NotificationSilenceForm({
         validateOnBlur={true}
         validate={validate}
         onSubmit={submit}
+        enableReinitialize={true}
       >
-        {({ errors }) => {
+        {({ errors, values, setFieldValue }) => {
+          // Monitor form changes and enforce mutual exclusion
+          useEffect(() => {
+            const hasResource = !!(values.component_id || values.config_id || values.check_id || values.canary_id);
+            const hasFilter = !!(values.filter && values.filter.trim());
+            const hasSelectors = !!(values.selectors && values.selectors.trim());
+
+            if (hasResource && activeField !== 'resource') {
+              setActiveField('resource');
+              if (hasFilter) setFieldValue('filter', '');
+              if (hasSelectors) setFieldValue('selectors', '');
+            } else if (hasFilter && activeField !== 'filter') {
+              setActiveField('filter');
+              if (hasResource) {
+                setFieldValue('component_id', null);
+                setFieldValue('config_id', null);
+                setFieldValue('check_id', null);
+                setFieldValue('canary_id', null);
+                setFieldValue('recursive', false);
+              }
+              if (hasSelectors) setFieldValue('selectors', '');
+            } else if (hasSelectors && activeField !== 'selector') {
+              setActiveField('selector');
+              if (hasResource) {
+                setFieldValue('component_id', null);
+                setFieldValue('config_id', null);
+                setFieldValue('check_id', null);
+                setFieldValue('canary_id', null);
+                setFieldValue('recursive', false);
+              }
+              if (hasFilter) setFieldValue('filter', '');
+            } else if (!hasResource && !hasFilter && !hasSelectors) {
+              setActiveField(null);
+            }
+
+            setFormValues(values);
+          }, [values.component_id, values.config_id, values.check_id, values.canary_id, values.filter, values.selectors, activeField, setFieldValue]);
           return (
             <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
               <div
@@ -229,14 +314,79 @@ export default function NotificationSilenceForm({
               >
                 <FormikTextInput required name="name" label="Name" />
 
-                <FormikNotificationResourceField />
+                {/* Mutual Exclusion Info */}
+                <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+                  <div className="flex items-start gap-2">
+                    <InformationCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800">
+                      <span className="font-medium">Silence Criteria:</span> You can specify exactly one of the following criteria types:
+                      <strong> Resource</strong>, <strong>Filter</strong>, or <strong>Selectors</strong>. When you start filling one, the others will be disabled.
+                    </div>
+                  </div>
+                </div>
 
-                <FormikCheckbox
-                  checkboxStyle="toggle"
-                  name="recursive"
-                  label="Recursive"
-                  hint="When selected, the silence will apply to all children of the item"
-                />
+                {/* Resource Block */}
+                <div className={`rounded-lg border p-4 transition-all duration-200 ${
+                  activeField !== null && activeField !== 'resource'
+                    ? 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                    : 'border-gray-200 bg-gray-50 cursor-default'
+                }`}>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-gray-700">Resource</h3>
+                      {activeField !== null && activeField !== 'resource' && (
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <InformationCircleIcon className="h-4 w-4" />
+                          <span>Only one criteria can be selected</span>
+                        </div>
+                      )}
+                    </div>
+                    {activeField === 'resource' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFieldValue('component_id', null);
+                          setFieldValue('config_id', null);
+                          setFieldValue('check_id', null);
+                          setFieldValue('canary_id', null);
+                          setFieldValue('recursive', false);
+                          setActiveField(null);
+                          setFormValues({...values, component_id: null, config_id: null, check_id: null, canary_id: null, recursive: false});
+                        }}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className={`relative ${
+                    activeField !== null && activeField !== 'resource' ? 'pointer-events-none' : ''
+                  }`}>
+                    <FormikNotificationResourceField
+                      disabled={activeField !== null && activeField !== 'resource'}
+onFieldChange={(hasValue) => {
+                        // The useEffect above will handle the mutual exclusion
+                        // This is just for immediate feedback
+                      }}
+                    />
+                    {activeField !== null && activeField !== 'resource' && (
+                      <div className="absolute inset-0 bg-gray-100 bg-opacity-50 cursor-not-allowed rounded-md" />
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <div className={`relative ${
+                      activeField !== 'resource' ? 'pointer-events-none opacity-50' : ''
+                    }`}>
+                      <FormikCheckbox
+                        checkboxStyle="toggle"
+                        name="recursive"
+                        label="Recursive"
+                        hint="When selected, the silence will apply to all children of the item"
+                        disabled={activeField !== 'resource'}
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 <FormikDurationPicker
                   required
@@ -248,11 +398,68 @@ export default function NotificationSilenceForm({
                   label="Duration"
                 />
 
-                <FormikTextArea
-                  name="filter"
-                  label="Filter"
-                  hint="Notifications for resources matching this CEL expression will be silenced"
-                />
+                {/* Filter Block */}
+                <div className={`rounded-lg border p-4 transition-all duration-200 ${
+                  activeField !== null && activeField !== 'filter'
+                    ? 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                    : 'border-gray-200 bg-gray-50 cursor-default'
+                }`}>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-gray-700">Filter</h3>
+                      {activeField !== null && activeField !== 'filter' && (
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <InformationCircleIcon className="h-4 w-4" />
+                          <span>Only one criteria can be selected</span>
+                        </div>
+                      )}
+                    </div>
+                    {activeField === 'filter' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFieldValue('filter', '');
+                          setActiveField(null);
+                          setFormValues({...values, filter: ''});
+                        }}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className={`relative ${
+                    activeField !== null && activeField !== 'filter' ? 'pointer-events-none' : ''
+                  }`}>
+                    <FormikTextArea
+                      name="filter"
+                      label="Filter"
+                      hint="Notifications for resources matching this CEL expression will be silenced"
+                      disabled={activeField !== null && activeField !== 'filter'}
+                      readOnly={activeField !== null && activeField !== 'filter'}
+                      className={`${activeField !== null && activeField !== 'filter' ? 'opacity-50' : ''}`}
+                      onChange={(e) => {
+                        const hasValue = e.target.value.trim() !== '';
+                        if (hasValue) {
+                          setActiveField('filter');
+                          // Clear other fields
+                          setFieldValue('component_id', null);
+                          setFieldValue('config_id', null);
+                          setFieldValue('check_id', null);
+                          setFieldValue('canary_id', null);
+                          setFieldValue('recursive', false);
+                          setFieldValue('selectors', '');
+                        } else if (activeField === 'filter') {
+                          setActiveField(null);
+                        }
+                        setFormValues({...values, filter: e.target.value});
+                      }}
+                    />
+                    {activeField !== null && activeField !== 'filter' && (
+                      <div className="absolute inset-0 bg-gray-100 bg-opacity-50 cursor-not-allowed rounded-md" />
+                    )}
+                  </div>
+                </div>
 
                 <button
                   type="button"
@@ -289,13 +496,69 @@ export default function NotificationSilenceForm({
                   </div>
                 )}
 
-                <FormikCodeEditor
-                  fieldName="selectors"
-                  format={"yaml"}
-                  label="Selectors"
-                  hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
-                  lines={12}
-                />
+                {/* Selectors Block */}
+                <div className={`rounded-lg border p-4 transition-all duration-200 ${
+                  activeField !== null && activeField !== 'selector'
+                    ? 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                    : 'border-gray-200 bg-gray-50 cursor-default'
+                }`}>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-gray-700">Selectors</h3>
+                      {activeField !== null && activeField !== 'selector' && (
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <InformationCircleIcon className="h-4 w-4" />
+                          <span>Only one criteria can be selected</span>
+                        </div>
+                      )}
+                    </div>
+                    {activeField === 'selector' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFieldValue('selectors', '');
+                          setActiveField(null);
+                          setFormValues({...values, selectors: ''});
+                        }}
+                        className="text-xs text-red-600 hover:text-red-700 font-medium"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className={`relative ${
+                    activeField !== null && activeField !== 'selector' ? 'pointer-events-none' : ''
+                  }`}>
+                    <FormikCodeEditor
+                      fieldName="selectors"
+                      format={"yaml"}
+                      label="Selectors"
+                      hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                      lines={12}
+                      disabled={activeField !== null && activeField !== 'selector'}
+                      className={`${activeField !== null && activeField !== 'selector' ? 'opacity-50' : ''}`}
+                      onChange={(value) => {
+                        const hasValue = value && value.trim() !== '';
+                        if (hasValue) {
+                          setActiveField('selector');
+                          // Clear other fields
+                          setFieldValue('component_id', null);
+                          setFieldValue('config_id', null);
+                          setFieldValue('check_id', null);
+                          setFieldValue('canary_id', null);
+                          setFieldValue('recursive', false);
+                          setFieldValue('filter', '');
+                        } else if (activeField === 'selector') {
+                          setActiveField(null);
+                        }
+                        setFormValues({...values, selectors: value});
+                      }}
+                    />
+                    {activeField !== null && activeField !== 'selector' && (
+                      <div className="absolute inset-0 bg-gray-100 bg-opacity-50 cursor-not-allowed rounded-md" />
+                    )}
+                  </div>
+                </div>
 
                 <button
                   type="button"
@@ -340,6 +603,46 @@ export default function NotificationSilenceForm({
                 />
 
                 <FormikTextArea name="description" label="Reason" />
+
+                {/* Notification History Section */}
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                  <h3 className="mb-3 text-sm font-medium text-gray-700">Notifications silenced in the past 15 days</h3>
+                  {activeField ? (
+                    <div className="space-y-2">
+                      {isSilenceHistoryLoading ? (
+                        <div className="flex items-center justify-center py-4">
+                          <FaCircleNotch className="animate-spin" />
+                          <span className="ml-2 text-sm text-gray-500">Loading...</span>
+                        </div>
+                      ) : silenceHistory?.results?.length ? (
+                        <div className="space-y-2">
+                          {silenceHistory.results.slice(0, 5).map((silence, index) => (
+                            <div key={index} className="rounded border bg-white p-2 text-sm">
+                              <div className="font-medium">{silence.name}</div>
+                              <div className="text-gray-500">
+                                {silence.description || 'No description'}
+                              </div>
+                            </div>
+                          ))}
+                          {silenceHistory.results.length > 5 && (
+                            <div className="text-sm text-gray-500">
+                              +{silenceHistory.results.length - 5} more...
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500">
+                          No matching silences found in the past 15 days.
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500">
+                      Select a resource, filter, or selector to see related silences.
+                    </div>
+                  )}
+                </div>
+
                 <ErrorMessage
                   message={
                     // @ts-ignore

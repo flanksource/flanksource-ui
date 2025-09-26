@@ -271,6 +271,73 @@ export const getNotificationSilencesByID = async (id: string) => {
   return res.data?.[0] ?? undefined;
 };
 
+export const getNotificationSilencesHistory = async ({
+  pageIndex = 0,
+  pageSize = 10,
+  component_id,
+  config_id,
+  check_id,
+  canary_id,
+  filter,
+  selectors
+}: {
+  pageIndex?: number;
+  pageSize?: number;
+  component_id?: string;
+  config_id?: string;
+  check_id?: string;
+  canary_id?: string;
+  filter?: string;
+  selectors?: string;
+}) => {
+  const pagingParams = getPagingParams({ pageIndex, pageSize });
+
+  const selectColumns = [
+    "*",
+    "checks:check_id(id,name,type,status)",
+    "catalog:config_id(id,name,type,config_class)",
+    "component:component_id(id,name,icon)",
+    `createdBy:created_by(${AVATAR_INFO})`
+  ].join(",");
+
+  // Filter for past 15 days
+  const fifteenDaysAgo = new Date();
+  fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+  const dateFilter = `&created_at=gte.${fifteenDaysAgo.toISOString()}`;
+
+  // Build filters based on provided criteria
+  let filters = "";
+  if (component_id) {
+    filters += `&component_id=eq.${component_id}`;
+  }
+  if (config_id) {
+    filters += `&config_id=eq.${config_id}`;
+  }
+  if (check_id) {
+    filters += `&check_id=eq.${check_id}`;
+  }
+  if (canary_id) {
+    filters += `&canary_id=eq.${canary_id}`;
+  }
+  if (filter) {
+    filters += `&filter=eq.${encodeURIComponent(filter)}`;
+  }
+  if (selectors) {
+    filters += `&selectors=eq.${encodeURIComponent(selectors)}`;
+  }
+
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.get<NotificationSilenceItemApiResponse[] | null>(
+      `/notification_silences?select=${selectColumns}&order=created_at.desc${pagingParams}&deleted_at=is.null${dateFilter}${filters}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
+
 export const deleteNotificationSilence = async (id: string) => {
   return IncidentCommander.patch<NotificationSilenceItem>(
     `/notification_silences?id=eq.${id}`,
