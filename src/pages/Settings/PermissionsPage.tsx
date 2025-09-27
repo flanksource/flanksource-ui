@@ -8,12 +8,11 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export function PermissionsPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const client = useQueryClient();
+  const refetchFunctionRef = useRef<(() => void) | null>(null);
 
   return (
     <>
@@ -38,11 +37,7 @@ export function PermissionsPage() {
             ]}
           />
         }
-        onRefresh={() =>
-          client.refetchQueries({
-            queryKey: ["permissions"]
-          })
-        }
+        onRefresh={() => refetchFunctionRef.current?.()}
         contentClass="p-0 h-full"
         loading={isLoading}
       >
@@ -51,6 +46,9 @@ export function PermissionsPage() {
             <PermissionsView
               permissionRequest={{}}
               setIsLoading={setIsLoading}
+              onRefetch={(refetch) => {
+                refetchFunctionRef.current = refetch;
+              }}
             />
           </div>
         </div>

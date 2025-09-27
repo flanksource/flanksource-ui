@@ -17,8 +17,11 @@ export const getPerson = (id: string) =>
   );
 
 export const getPersons = () =>
+  // email=NULl filters out system user
   resolvePostGrestRequestWithPagination<User[]>(
-    IncidentCommander.get<User[]>(`/people?select=*&order=name.asc`)
+    IncidentCommander.get<User[]>(
+      `/people?select=*&deleted_at=is.null&email=not.is.null&order=name.asc`
+    )
   );
 
 export const getPersonWithEmail = (email: string) =>
