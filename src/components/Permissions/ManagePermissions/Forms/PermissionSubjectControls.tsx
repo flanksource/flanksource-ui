@@ -2,6 +2,7 @@ import FormikPeopleDropdown from "@flanksource-ui/components/Forms/Formik/Formik
 import FormikTeamsDropdown from "@flanksource-ui/components/Forms/Formik/FormikTeamsDropdown";
 import FormikNotificationDropdown from "@flanksource-ui/components/Forms/Formik/FormikNotificationDropdown";
 import FormikRoleDropdown from "@flanksource-ui/components/Forms/Formik/FormikRoleDropdown";
+import FormikPlaybooksDropdown from "@flanksource-ui/components/Forms/Formik/FormikPlaybooksDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
@@ -16,13 +17,14 @@ export default function PermissionsSubjectControls() {
   const subjectType = values.subject_type;
 
   const [switchOption, setSwitchOption] = useState<
-    "Team" | "Person" | "Notification" | "Role"
+    "Team" | "Person" | "Notification" | "Role" | "Playbook"
   >(() => {
     if (teamId || (subjectType === "team" && subject)) return "Team";
     if (personId || (subjectType === "person" && subject)) return "Person";
     if (notificationId || (subjectType === "notification" && subject))
       return "Notification";
     if (subjectType === "group" && subject) return "Role";
+    if (subjectType === "playbook" && subject) return "Playbook";
     return "Team";
   });
 
@@ -35,6 +37,8 @@ export default function PermissionsSubjectControls() {
       setSwitchOption("Notification");
     } else if (subjectType === "group" && subject) {
       setSwitchOption("Role");
+    } else if (subjectType === "playbook" && subject) {
+      setSwitchOption("Playbook");
     }
   }, [teamId, personId, notificationId, subjectType, subject]);
 
@@ -44,7 +48,7 @@ export default function PermissionsSubjectControls() {
       <div>
         <div className="flex w-full flex-row">
           <Switch
-            options={["Team", "Person", "Notification", "Role"]}
+            options={["Team", "Person", "Notification", "Role", "Playbook"]}
             className="w-auto"
             itemsClassName=""
             defaultValue="Go Template"
@@ -52,6 +56,7 @@ export default function PermissionsSubjectControls() {
             onChange={(v) => {
               setSwitchOption(v);
 
+              // These are old deprecated values that must never be set anymore.
               setFieldValue("person_id", undefined);
               setFieldValue("notification_id", undefined);
               setFieldValue("team_id", undefined);
@@ -64,6 +69,8 @@ export default function PermissionsSubjectControls() {
                 setFieldValue("subject_type", "notification");
               } else if (v === "Role") {
                 setFieldValue("subject_type", "group");
+              } else if (v === "Playbook") {
+                setFieldValue("subject_type", "playbook");
               }
             }}
           />
@@ -80,6 +87,9 @@ export default function PermissionsSubjectControls() {
         )}
         {switchOption === "Role" && (
           <FormikRoleDropdown required name="subject" />
+        )}
+        {switchOption === "Playbook" && (
+          <FormikPlaybooksDropdown required name="subject" />
         )}
       </div>
     </div>
