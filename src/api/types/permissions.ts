@@ -28,6 +28,7 @@ export type PermissionTable = {
   updated_at: string;
   until?: string;
   source?: string;
+  tags?: Record<string, string>;
 };
 
 export type PermissionAPIResponse = PermissionTable & {

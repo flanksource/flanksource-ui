@@ -6,6 +6,7 @@ import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
+import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import {
   toastError,
@@ -124,7 +125,8 @@ export default function PermissionForm({
             person_id: data?.person_id,
             team_id: data?.team_id,
             until: data?.until,
-            source: data?.source || "UI"
+            source: data?.source || "UI",
+            tags: data?.tags || {}
           }}
           onSubmit={(v) => {
             if (!data?.id) {
@@ -155,6 +157,11 @@ export default function PermissionForm({
                 label="Action"
               />
               <FormikCheckbox name="deny" label="Deny" />
+              <FormikKeyValueMapField
+                name="tags"
+                label="Tags"
+                hint="Permission will apply only to resources matching these tags"
+              />
               <FormikTextArea name="description" label="Description" />
             </div>
             <CanEditResource
