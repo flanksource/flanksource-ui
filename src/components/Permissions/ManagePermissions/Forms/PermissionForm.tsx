@@ -124,6 +124,8 @@ export default function PermissionForm({
             notification_id: data?.notification_id,
             person_id: data?.person_id,
             team_id: data?.team_id,
+            subject: data?.subject,
+            subject_type: data?.subject_type,
             until: data?.until,
             source: data?.source || "UI",
             tags: data?.tags || {}

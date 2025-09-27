@@ -1,6 +1,7 @@
 import FormikPeopleDropdown from "@flanksource-ui/components/Forms/Formik/FormikPeopleDropdown";
 import FormikTeamsDropdown from "@flanksource-ui/components/Forms/Formik/FormikTeamsDropdown";
 import FormikNotificationDropdown from "@flanksource-ui/components/Forms/Formik/FormikNotificationDropdown";
+import FormikRoleDropdown from "@flanksource-ui/components/Forms/Formik/FormikRoleDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
@@ -11,13 +12,16 @@ export default function PermissionsSubjectControls() {
   const teamId = values.team_id;
   const personId = values.person_id;
   const notificationId = values.notification_id;
+  const subject = values.subject;
+  const subjectType = values.subject_type;
 
   const [switchOption, setSwitchOption] = useState<
-    "Team" | "Person" | "Notification"
+    "Team" | "Person" | "Notification" | "Role"
   >(() => {
     if (teamId) return "Team";
     if (personId) return "Person";
     if (notificationId) return "Notification";
+    if (subjectType === "group" && subject) return "Role";
     return "Team";
   });
 
@@ -28,8 +32,10 @@ export default function PermissionsSubjectControls() {
       setSwitchOption("Person");
     } else if (notificationId) {
       setSwitchOption("Notification");
+    } else if (subjectType === "group" && subject) {
+      setSwitchOption("Role");
     }
-  }, [teamId, personId, notificationId]);
+  }, [teamId, personId, notificationId, subjectType, subject]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -37,7 +43,7 @@ export default function PermissionsSubjectControls() {
       <div>
         <div className="flex w-full flex-row">
           <Switch
-            options={["Team", "Person", "Notification"]}
+            options={["Team", "Person", "Notification", "Role"]}
             className="w-auto"
             itemsClassName=""
             defaultValue="Go Template"
@@ -47,12 +53,23 @@ export default function PermissionsSubjectControls() {
               if (v === "Team") {
                 setFieldValue("person_id", undefined);
                 setFieldValue("notification_id", undefined);
+                setFieldValue("subject", undefined);
+                setFieldValue("subject_type", undefined);
               } else if (v === "Person") {
                 setFieldValue("team_id", undefined);
                 setFieldValue("notification_id", undefined);
-              } else {
+                setFieldValue("subject", undefined);
+                setFieldValue("subject_type", undefined);
+              } else if (v === "Notification") {
                 setFieldValue("team_id", undefined);
                 setFieldValue("person_id", undefined);
+                setFieldValue("subject", undefined);
+                setFieldValue("subject_type", undefined);
+              } else if (v === "Role") {
+                setFieldValue("team_id", undefined);
+                setFieldValue("person_id", undefined);
+                setFieldValue("notification_id", undefined);
+                setFieldValue("subject_type", "group");
               }
             }}
           />
@@ -66,6 +83,9 @@ export default function PermissionsSubjectControls() {
         )}
         {switchOption === "Notification" && (
           <FormikNotificationDropdown required name="notification_id" />
+        )}
+        {switchOption === "Role" && (
+          <FormikRoleDropdown required name="subject" />
         )}
       </div>
     </div>
