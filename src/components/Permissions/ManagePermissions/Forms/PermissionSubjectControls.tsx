@@ -18,9 +18,10 @@ export default function PermissionsSubjectControls() {
   const [switchOption, setSwitchOption] = useState<
     "Team" | "Person" | "Notification" | "Role"
   >(() => {
-    if (teamId) return "Team";
-    if (personId) return "Person";
-    if (notificationId) return "Notification";
+    if (teamId || (subjectType === "team" && subject)) return "Team";
+    if (personId || (subjectType === "person" && subject)) return "Person";
+    if (notificationId || (subjectType === "notification" && subject))
+      return "Notification";
     if (subjectType === "group" && subject) return "Role";
     return "Team";
   });
@@ -28,7 +29,7 @@ export default function PermissionsSubjectControls() {
   useEffect(() => {
     if (teamId) {
       setSwitchOption("Team");
-    } else if (personId) {
+    } else if (personId || (subjectType === "person" && subject)) {
       setSwitchOption("Person");
     } else if (notificationId) {
       setSwitchOption("Notification");
@@ -50,25 +51,18 @@ export default function PermissionsSubjectControls() {
             value={switchOption}
             onChange={(v) => {
               setSwitchOption(v);
+
+              setFieldValue("person_id", undefined);
+              setFieldValue("notification_id", undefined);
+              setFieldValue("team_id", undefined);
+
               if (v === "Team") {
-                setFieldValue("person_id", undefined);
-                setFieldValue("notification_id", undefined);
-                setFieldValue("subject", undefined);
                 setFieldValue("subject_type", "team");
               } else if (v === "Person") {
-                setFieldValue("team_id", undefined);
-                setFieldValue("notification_id", undefined);
-                setFieldValue("subject", undefined);
                 setFieldValue("subject_type", "person");
               } else if (v === "Notification") {
-                setFieldValue("team_id", undefined);
-                setFieldValue("person_id", undefined);
-                setFieldValue("subject", undefined);
                 setFieldValue("subject_type", "notification");
               } else if (v === "Role") {
-                setFieldValue("team_id", undefined);
-                setFieldValue("person_id", undefined);
-                setFieldValue("notification_id", undefined);
                 setFieldValue("subject_type", "group");
               }
             }}
@@ -76,13 +70,13 @@ export default function PermissionsSubjectControls() {
         </div>
 
         {switchOption === "Team" && (
-          <FormikTeamsDropdown required name="team_id" />
+          <FormikTeamsDropdown required name="subject" />
         )}
         {switchOption === "Person" && (
-          <FormikPeopleDropdown required name="person_id" />
+          <FormikPeopleDropdown required name="subject" />
         )}
         {switchOption === "Notification" && (
-          <FormikNotificationDropdown required name="notification_id" />
+          <FormikNotificationDropdown required name="subject" />
         )}
         {switchOption === "Role" && (
           <FormikRoleDropdown required name="subject" />
