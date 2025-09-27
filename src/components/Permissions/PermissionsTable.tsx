@@ -14,6 +14,10 @@ import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 
+const formatTagText = (key: string, value: string): string => {
+  return `${key}: ${value}`;
+};
+
 const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
   {
     header: "Subject",
@@ -21,18 +25,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
     Cell: ({ row }) => {
       const { team, group, person, subject, notification, playbook } =
         row.original;
-      const { tags, agents } = row.original;
-      const rlsFilter = [];
-
-      if (tags && Object.keys(tags).length > 0) {
-        rlsFilter.push(tags);
-      }
-
-      if (agents && agents.length > 0) {
-        rlsFilter.push({ agents: agents });
-      }
-
-      const rlsPayload = rlsFilter.length > 0 ? JSON.stringify(rlsFilter) : "";
 
       if (group) {
         const groupName = group.name || subject;
@@ -43,7 +35,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
               {groupName}
               {/* Add link to permission group when we have a permission group page */}
             </span>
-            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
           </div>
         );
       }
@@ -53,7 +44,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
           <div className="flex flex-row items-center gap-2">
             <Avatar user={person} />
             <span>{person.name}</span>
-            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
           </div>
         );
       }
@@ -63,7 +53,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
           <div className="flex flex-row items-center gap-2">
             <Icon name={team.icon} className="h-5 w-5 text-gray-600" />
             <span>{team.name}</span>
-            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
           </div>
         );
       }
@@ -81,7 +70,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
                   notification.name}
               </Link>
             </span>
-            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
           </div>
         );
       }
@@ -100,7 +88,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
                 </span>
               </Link>
             </span>
-            {rlsPayload && <Badge text={rlsPayload} color="blue"></Badge>}
           </div>
         );
       }
@@ -121,36 +108,90 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
       const connection = row.original.connection;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
+      const { tags, agents } = row.original;
+
+      const renderRlsBadges = (): JSX.Element[] => {
+        const badges: JSX.Element[] = [];
+
+        // Add tag badges
+        if (tags && Object.keys(tags).length > 0) {
+          Object.entries(tags).forEach(([key, value]) => {
+            badges.push(
+              <Badge
+                key={`tag-${key}`}
+                text={formatTagText(key, value)}
+                color="blue"
+              />
+            );
+          });
+        }
+
+        // Add agent badges
+        if (agents && agents.length > 0) {
+          agents.forEach((agent, index) => {
+            badges.push(
+              <Badge
+                key={`agent-${index}`}
+                text={`agent: ${agent}`}
+                color="gray"
+              />
+            );
+          });
+        }
+
+        return badges;
+      };
+
+      const rlsBadges = renderRlsBadges();
 
       if (objectSelector) {
         return (
-          <span
-            className="truncate font-mono text-sm"
-            title={JSON.stringify(objectSelector)} // Provides full text on hover
-          >
-            {JSON.stringify(objectSelector)}
-          </span>
+          <div className="flex flex-row items-center gap-2">
+            <span
+              className="truncate font-mono text-sm"
+              title={JSON.stringify(objectSelector)} // Provides full text on hover
+            >
+              {JSON.stringify(objectSelector)}
+            </span>
+            {rlsBadges.length > 0 && (
+              <div className="flex flex-wrap gap-1">{rlsBadges}</div>
+            )}
+          </div>
         );
       }
 
       if (object) {
-        return permissionObjectList.find((o) => o.value === object)?.label;
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <span>
+              {permissionObjectList.find((o) => o.value === object)?.label}
+            </span>
+            {rlsBadges.length > 0 && (
+              <div className="flex flex-wrap gap-1">{rlsBadges}</div>
+            )}
+          </div>
+        );
       }
 
       return (
-        <div className="flex flex-col">
-          {config && <ConfigLink config={config} />}
-          {/* {check && <CheckLink check={check} />} */}
-          {playbook && <PlaybookSpecIcon playbook={playbook} showLabel />}
-          {component && (
-            <TopologyLink
-              topology={component}
-              className="h-5 w-5 text-gray-600"
-              linkClassName="text-gray-600"
-              size="md"
-            />
+        <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-col">
+            {config && <ConfigLink config={config} />}
+            {/* {check && <CheckLink check={check} />} */}
+            {playbook && <PlaybookSpecIcon playbook={playbook} showLabel />}
+            {component && (
+              <TopologyLink
+                topology={component}
+                className="h-5 w-5 text-gray-600"
+                linkClassName="text-gray-600"
+                size="md"
+              />
+            )}
+            {connection && <ConnectionIcon connection={connection} showLabel />}
+          </div>
+          {rlsBadges.length > 0 && (
+            <div className="flex flex-wrap gap-1">{rlsBadges}</div>
           )}
-          {connection && <ConnectionIcon connection={connection} showLabel />}
         </div>
       );
     }
