@@ -32,6 +32,7 @@ type PermissionsViewProps = {
   hideResourceColumn?: boolean;
   newPermissionData?: Partial<PermissionTable>;
   showAddPermission?: boolean;
+  onRefetch?: (refetch: () => void) => void;
 };
 
 export default function PermissionsView({
@@ -39,7 +40,8 @@ export default function PermissionsView({
   setIsLoading = () => {},
   hideResourceColumn = false,
   newPermissionData,
-  showAddPermission = false
+  showAddPermission = false,
+  onRefetch
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionAPIResponse>();
@@ -66,6 +68,12 @@ export default function PermissionsView({
   useEffect(() => {
     setIsLoading(isLoading);
   }, [isLoading, setIsLoading]);
+
+  useEffect(() => {
+    if (onRefetch) {
+      onRefetch(refetch);
+    }
+  }, [onRefetch, refetch]);
 
   const totalEntries = data?.totalEntries || 0;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : 1;
