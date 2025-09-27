@@ -54,17 +54,17 @@ export default function PermissionsSubjectControls() {
                 setFieldValue("person_id", undefined);
                 setFieldValue("notification_id", undefined);
                 setFieldValue("subject", undefined);
-                setFieldValue("subject_type", undefined);
+                setFieldValue("subject_type", "team");
               } else if (v === "Person") {
                 setFieldValue("team_id", undefined);
                 setFieldValue("notification_id", undefined);
                 setFieldValue("subject", undefined);
-                setFieldValue("subject_type", undefined);
+                setFieldValue("subject_type", "person");
               } else if (v === "Notification") {
                 setFieldValue("team_id", undefined);
                 setFieldValue("person_id", undefined);
                 setFieldValue("subject", undefined);
-                setFieldValue("subject_type", undefined);
+                setFieldValue("subject_type", "notification");
               } else if (v === "Role") {
                 setFieldValue("team_id", undefined);
                 setFieldValue("person_id", undefined);
