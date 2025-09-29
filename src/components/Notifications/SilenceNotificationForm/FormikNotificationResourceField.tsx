@@ -80,32 +80,31 @@ export default function FormikNotificationResourceField({
             itemsClassName=""
             defaultValue="Go Template"
             value={switchOption}
-            disabled={disabled}
             onChange={(v) => {
               setSwitchOption(v);
               // clear the other fields if the user selects a different option
               if (v === "Component") {
-                setFieldValue('config_id', null);
-                setFieldValue('check_id', null);
-                setFieldValue('canary_id', null);
+                setFieldValue("config_id", null);
+                setFieldValue("check_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Catalog") {
-                setFieldValue('component_id', null);
-                setFieldValue('check_id', null);
-                setFieldValue('canary_id', null);
+                setFieldValue("component_id", null);
+                setFieldValue("check_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Check") {
-                setFieldValue('component_id', null);
-                setFieldValue('config_id', null);
-                setFieldValue('canary_id', null);
+                setFieldValue("component_id", null);
+                setFieldValue("config_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Canary") {
-                setFieldValue('component_id', null);
-                setFieldValue('config_id', null);
-                setFieldValue('check_id', null);
+                setFieldValue("component_id", null);
+                setFieldValue("config_id", null);
+                setFieldValue("check_id", null);
               }
             }}
           />
@@ -113,7 +112,6 @@ export default function FormikNotificationResourceField({
 
         <FormikResourceSelectorDropdown
           name={fieldName.name}
-          disabled={disabled}
           checkResourceSelector={
             switchOption === "Check" ? [{ id: check_id }] : undefined
           }
