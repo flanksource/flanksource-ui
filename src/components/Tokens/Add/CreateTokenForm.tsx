@@ -12,13 +12,9 @@ import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
-import FormikCheckbox from "../../Forms/Formik/FormikCheckbox";
 import { toastError, toastSuccess } from "../../Toast/toast";
-import {
-  OBJECTS,
-  getActionsForObject,
-  getAllObjectActions
-} from "../tokenUtils";
+import { getAllObjectActions } from "../tokenUtils";
+import TokenScopeFieldsGroup from "./TokenScopeFieldsGroup";
 
 export type TokenFormValues = CreateTokenRequest & {
   objectActions: Record<string, boolean>;
@@ -139,37 +135,7 @@ export default function CreateTokenForm({
                     hint="When this token should expire"
                   />
 
-                  <div className="space-y-3">
-                    <div className="text-sm font-medium text-gray-700">
-                      Scopes
-                      <p className="mt-1 text-xs text-gray-500">
-                        Select the permissions to grant to this token
-                      </p>
-                    </div>
-                    <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border bg-gray-50 p-4">
-                      {OBJECTS.map((object) => (
-                        <div key={object} className="space-y-2">
-                          <div className="text-sm font-medium text-gray-800">
-                            {object}
-                          </div>
-                          <div className="grid grid-cols-4 gap-2 pl-4">
-                            {getActionsForObject(object).map((action) => {
-                              const scopeKey = `${object}:${action}`;
-                              return (
-                                <FormikCheckbox
-                                  key={scopeKey}
-                                  name={`objectActions.${scopeKey}`}
-                                  label={action}
-                                  labelClassName="text-sm font-normal text-gray-600"
-                                  inline={true}
-                                />
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <TokenScopeFieldsGroup isMcpSetup={isMcpSetup} />
                 </div>
               </div>
             </div>
