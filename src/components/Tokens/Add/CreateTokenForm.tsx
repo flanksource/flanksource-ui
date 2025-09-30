@@ -13,7 +13,11 @@ import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
 import { toastError, toastSuccess } from "../../Toast/toast";
-import { getAllObjectActions } from "../tokenUtils";
+import {
+  OBJECTS,
+  getActionsForObject,
+  getAllObjectActions
+} from "../tokenUtils";
 import TokenScopeFieldsGroup from "./TokenScopeFieldsGroup";
 
 export type TokenFormValues = CreateTokenRequest & {
@@ -56,21 +60,36 @@ export default function CreateTokenForm({
     );
 
     if (isMcpSetup) {
+      // For MCP setup, pre-select mcp:* (will be shown in Custom mode)
       allObjectActions
         .filter((objAction) => objAction.startsWith("mcp:"))
         .forEach((mcpAction) => {
           initialActions[mcpAction] = true;
         });
+    } else {
+      // For regular token creation, apply "Read" preset by default
+      // This matches the default selected scope in TokenScopeFieldsGroup
+      OBJECTS.forEach((object) => {
+        const actions = getActionsForObject(object);
+        if (actions.includes("read")) {
+          initialActions[`${object}:read`] = true;
+        } else if (object === "mcp" && actions.includes("*")) {
+          initialActions[`${object}:*`] = true;
+        }
+      });
     }
 
     return initialActions;
   };
 
-  const handleSubmit = (values: TokenFormValues) => {
+  const handleFormSubmit = (values: TokenFormValues) => {
     const selectedScopes: Permission[] = Object.entries(values.objectActions)
-      .filter(([_, isChecked]) => isChecked)
+      .filter(([_, isChecked]) => isChecked === true)
       .map(([scopeId]) => {
-        const [object, action] = scopeId.split(":");
+        // Split by first colon only to handle cases like "playbooks:playbook:run"
+        const colonIndex = scopeId.indexOf(":");
+        const object = scopeId.substring(0, colonIndex);
+        const action = scopeId.substring(colonIndex + 1);
         return {
           subject: "", // subject is handled at server
           object,
@@ -105,7 +124,7 @@ export default function CreateTokenForm({
           objectActions: getInitialObjectActions()
         }}
         enableReinitialize
-        onSubmit={handleSubmit}
+        onSubmit={handleFormSubmit}
         validate={(values) => {
           const errors: any = {};
           if (!values.name.trim()) {

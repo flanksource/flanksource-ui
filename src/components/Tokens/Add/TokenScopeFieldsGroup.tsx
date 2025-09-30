@@ -9,8 +9,16 @@ type ScopeType = (typeof ScopeOptions)[number];
 
 const ObjectPermissionOptions = ["None", "Read", "Write", "Admin"] as const;
 const McpPermissionOptions = ["None", "Admin"] as const;
+const PlaybookPermissionOptions = [
+  "None",
+  "Read",
+  "Run",
+  "Approve",
+  "Write"
+] as const;
 type ObjectPermissionType = (typeof ObjectPermissionOptions)[number];
 type McpPermissionType = (typeof McpPermissionOptions)[number];
+type PlaybookPermissionType = (typeof PlaybookPermissionOptions)[number];
 
 // Component for individual object permission selection
 type ObjectPermissionSwitchProps = {
@@ -25,7 +33,10 @@ function ObjectPermissionSwitch({
   const { setFieldValue, values } = useFormikContext<TokenFormValues>();
 
   // Determine current permission level for this object
-  const getCurrentPermission = (): ObjectPermissionType | McpPermissionType => {
+  const getCurrentPermission = ():
+    | ObjectPermissionType
+    | McpPermissionType
+    | PlaybookPermissionType => {
     const objectActions = values.objectActions;
 
     // Special handling for MCP setup mode
@@ -38,22 +49,32 @@ function ObjectPermissionSwitch({
     }
 
     if (object === "playbooks") {
-      const playbookActions = [
-        "playbook:run",
-        "playbook:approve",
-        "playbook:cancel"
-      ];
-      const hasAllPlaybookActions = playbookActions.every(
-        (action) => objectActions[`${object}:${action}`]
-      );
-      const hasCrud = ["read", "create", "update", "delete"].every(
-        (action) => objectActions[`${object}:${action}`]
-      );
+      // Write: read + create + delete + playbook:run + playbook:approve
+      const hasWrite =
+        objectActions[`${object}:read`] &&
+        objectActions[`${object}:create`] &&
+        objectActions[`${object}:delete`] &&
+        objectActions[`${object}:playbook:run`] &&
+        objectActions[`${object}:playbook:approve`];
 
-      if (hasCrud && hasAllPlaybookActions) return "Admin";
-      if (objectActions[`${object}:read`] && objectActions[`${object}:create`])
-        return "Write";
-      if (objectActions[`${object}:read`]) return "Read";
+      // Approve: read + playbook:run +  playbook:approve
+      const hasApprove =
+        objectActions[`${object}:read`] &&
+        objectActions[`${object}:playbook:run`] &&
+        objectActions[`${object}:playbook:approve`];
+
+      // Run: read + playbook:run + playbook:cancel
+      const hasRun =
+        objectActions[`${object}:read`] &&
+        objectActions[`${object}:playbook:run`];
+
+      // Read: just read
+      const hasRead = objectActions[`${object}:read`];
+
+      if (hasWrite) return "Write";
+      if (hasApprove) return "Approve";
+      if (hasRun) return "Run";
+      if (hasRead) return "Read";
       return "None";
     }
 
@@ -72,89 +93,79 @@ function ObjectPermissionSwitch({
     getCurrentPermission()
   );
 
-  // Handle initial MCP setup - apply the mcp:* permission when component mounts
-  useEffect(() => {
-    if (isMcpSetup && object === "mcp" && selectedPermission === "Admin") {
-      setFieldValue(
-        "objectActions",
-        (currentObjectActions: Record<string, boolean>) => {
-          const newObjectActions = { ...currentObjectActions };
-          newObjectActions["mcp:*"] = true;
-          return newObjectActions;
-        }
-      );
-    }
-  }, [isMcpSetup, object, selectedPermission, setFieldValue]);
-
   const handlePermissionChange = useCallback(
     (permission: string) => {
       const newPermission = permission as
         | ObjectPermissionType
-        | McpPermissionType;
+        | McpPermissionType
+        | PlaybookPermissionType;
       setSelectedPermission(newPermission);
 
-      // Update the objectActions in form state
-      setFieldValue(
-        "objectActions",
-        (currentObjectActions: Record<string, boolean>) => {
-          const newObjectActions = { ...currentObjectActions };
-          const actions = getActionsForObject(object);
+      // Get current objectActions and create a new copy
+      const newObjectActions = { ...values.objectActions };
+      const actions = getActionsForObject(object);
 
-          // Reset all actions for this object first
-          actions.forEach((action) => {
-            newObjectActions[`${object}:${action}`] = false;
-          });
+      // Reset all actions for this object first
+      actions.forEach((action) => {
+        newObjectActions[`${object}:${action}`] = false;
+      });
 
-          // Apply the selected permission level
-          if (newPermission !== "None") {
-            if (object === "mcp") {
-              // MCP only has Admin option (maps to *)
-              if (newPermission === "Admin") {
-                newObjectActions["mcp:*"] = true;
-              }
-            } else if (object === "playbooks") {
-              if (newPermission === "Read") {
-                newObjectActions[`${object}:read`] = true;
-              } else if (newPermission === "Write") {
-                newObjectActions[`${object}:read`] = true;
-                newObjectActions[`${object}:create`] = true;
-              } else if (newPermission === "Admin") {
-                // For playbooks Admin: CRUD + all 3 specific playbook actions
-                ["read", "create", "update", "delete"].forEach((action) => {
-                  newObjectActions[`${object}:${action}`] = true;
-                });
-                ["playbook:run", "playbook:approve", "playbook:cancel"].forEach(
-                  (action) => {
-                    newObjectActions[`${object}:${action}`] = true;
-                  }
-                );
-              }
-            } else {
-              // For other objects
-              if (newPermission === "Read") {
-                newObjectActions[`${object}:read`] = true;
-              } else if (newPermission === "Write") {
-                newObjectActions[`${object}:read`] = true;
-                newObjectActions[`${object}:create`] = true;
-              } else if (newPermission === "Admin") {
-                ["read", "create", "update", "delete"].forEach((action) => {
-                  newObjectActions[`${object}:${action}`] = true;
-                });
-              }
-            }
+      // Apply the selected permission level
+      if (newPermission !== "None") {
+        if (object === "mcp") {
+          // MCP only has Admin option (maps to *)
+          if (newPermission === "Admin") {
+            newObjectActions["mcp:*"] = true;
           }
-
-          return newObjectActions;
+        } else if (object === "playbooks") {
+          // Each level includes all previous levels
+          if (newPermission === "Read") {
+            newObjectActions[`${object}:read`] = true;
+          } else if (newPermission === "Run") {
+            // Run = Read + playbook:run
+            newObjectActions[`${object}:read`] = true;
+            newObjectActions[`${object}:playbook:run`] = true;
+          } else if (newPermission === "Approve") {
+            // Approve = Run + playbook:approve
+            newObjectActions[`${object}:read`] = true;
+            newObjectActions[`${object}:playbook:run`] = true;
+            newObjectActions[`${object}:playbook:approve`] = true;
+          } else if (newPermission === "Write") {
+            // Write = Approve + create + delete
+            newObjectActions[`${object}:read`] = true;
+            newObjectActions[`${object}:playbook:run`] = true;
+            newObjectActions[`${object}:playbook:approve`] = true;
+            newObjectActions[`${object}:create`] = true;
+            newObjectActions[`${object}:delete`] = true;
+          }
+        } else {
+          // For other objects
+          if (newPermission === "Read") {
+            newObjectActions[`${object}:read`] = true;
+          } else if (newPermission === "Write") {
+            newObjectActions[`${object}:read`] = true;
+            newObjectActions[`${object}:create`] = true;
+          } else if (newPermission === "Admin") {
+            ["read", "create", "update", "delete"].forEach((action) => {
+              newObjectActions[`${object}:${action}`] = true;
+            });
+          }
         }
-      );
+      }
+
+      // Update form state with the new object
+      setFieldValue("objectActions", newObjectActions);
     },
-    [object, setFieldValue]
+    [object, setFieldValue, values.objectActions]
   );
 
   // Get the appropriate options based on object type
   const getOptionsForObject = () => {
     if (object === "mcp") {
       return McpPermissionOptions as unknown as string[];
+    }
+    if (object === "playbooks") {
+      return PlaybookPermissionOptions as unknown as string[];
     }
     return ObjectPermissionOptions as unknown as string[];
   };
@@ -230,7 +241,7 @@ type TokenScopeFieldsGroupProps = {
 export default function TokenScopeFieldsGroup({
   isMcpSetup = false
 }: TokenScopeFieldsGroupProps) {
-  const { setFieldValue } = useFormikContext<TokenFormValues>();
+  const { setFieldValue, values } = useFormikContext<TokenFormValues>();
 
   const [selectedScope, setSelectedScope] = useState<ScopeType>(() => {
     if (isMcpSetup) {
@@ -244,29 +255,28 @@ export default function TokenScopeFieldsGroup({
       const newScope = scope as ScopeType;
       setSelectedScope(newScope);
 
+      // Start with all current keys from form values
+      const newObjectActions: Record<string, boolean> = {
+        ...values.objectActions
+      };
+
+      // Reset all scopes to false
+      Object.keys(newObjectActions).forEach((key) => {
+        newObjectActions[key] = false;
+      });
+
       if (newScope !== "Custom") {
-        // Use setFieldValue with a function to get current values
-        setFieldValue(
-          "objectActions",
-          (currentObjectActions: Record<string, boolean>) => {
-            const newObjectActions: Record<string, boolean> = {};
-
-            // Reset all scopes first
-            Object.keys(currentObjectActions).forEach((key) => {
-              newObjectActions[key] = false;
-            });
-
-            // Apply the selected preset
-            Object.assign(newObjectActions, SCOPE_MAPPINGS[newScope]);
-
-            return newObjectActions;
-          }
-        );
+        // Apply the selected preset (set specific keys to true)
+        Object.keys(SCOPE_MAPPINGS[newScope]).forEach((key) => {
+          newObjectActions[key] = SCOPE_MAPPINGS[newScope][key];
+        });
       }
-      // Note: For Custom mode, individual ObjectPermissionSwitch components handle their own state
-      // For MCP setup, the individual ObjectPermissionSwitch for mcp will handle the pre-selection
+      // For Custom mode, all values are set to false (None)
+      // Exception: MCP setup pre-selects mcp:* which is handled by ObjectPermissionSwitch
+
+      setFieldValue("objectActions", newObjectActions);
     },
-    [setFieldValue]
+    [setFieldValue, values.objectActions]
   );
 
   return (
