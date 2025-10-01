@@ -144,6 +144,7 @@ export default function PermissionForm({
         >
           <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
             <div className="flex flex-1 flex-col gap-3 p-4">
+              <PermissionsSubjectControls />
               {isResourceIdProvided ? (
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold">Resource</label>
@@ -152,7 +153,6 @@ export default function PermissionForm({
               ) : (
                 <FormikPermissionSelectResourceFields />
               )}
-              <PermissionsSubjectControls />
               <FormikSelectDropdown
                 options={permissionsActionsList}
                 name="action"

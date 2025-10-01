@@ -18,6 +18,7 @@ export default function FormikRoleDropdown({
   const options = [
     { label: "Admin", value: "admin" },
     { label: "Editor", value: "editor" },
+    { label: "Guest", value: "guest" },
     { label: "Viewer", value: "viewer" },
     { label: "Responder", value: "responder" },
     { label: "Commander", value: "commander" }
