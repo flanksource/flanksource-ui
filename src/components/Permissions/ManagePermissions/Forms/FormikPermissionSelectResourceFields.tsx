@@ -78,7 +78,11 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Playbook" && (
-          <FormikPlaybooksDropdown required name="playbook_id" />
+          <FormikPlaybooksDropdown
+            required
+            name="playbook_id"
+            hint="Filter the list using queries e.g: name=restart-pod category=kubernetes"
+          />
         )}
 
         {switchOption === "Canary" && (
@@ -86,7 +90,11 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Connection" && (
-          <FormikConnectionField required name="connection_id" />
+          <FormikConnectionField
+            required
+            name="connection_id"
+            hint="Filter the list using queries e.g: name=aws-prod type=AWS"
+          />
         )}
 
         {switchOption === "Global" && (
