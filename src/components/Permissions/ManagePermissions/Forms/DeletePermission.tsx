@@ -5,7 +5,7 @@ import {
 } from "@flanksource-ui/components/Toast/toast";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
@@ -18,6 +18,7 @@ export default function DeletePermission({
   onDeleted: () => void;
 }) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { mutate: deleteResource, isLoading } = useMutation({
     mutationFn: async (id: string) => {
@@ -26,6 +27,7 @@ export default function DeletePermission({
     },
     onSuccess: (_) => {
       toastSuccess("Permission deleted");
+      queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
       onDeleted();
     },
     onError: (error: AxiosError) => {

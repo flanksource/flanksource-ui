@@ -16,7 +16,7 @@ import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import clsx from "clsx";
 import { Form, Formik, useFormikContext } from "formik";
@@ -85,6 +85,7 @@ export default function PermissionForm({
   }, [data]);
 
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   const { data: agents } = useAllAgentNamesQuery({});
 
@@ -106,8 +107,8 @@ export default function PermissionForm({
       return res.data;
     },
     onSuccess: () => {
-      // do something
       toastSuccess("Permission added");
+      queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
       onClose();
     },
     onError: (error: AxiosError) => {
@@ -126,8 +127,8 @@ export default function PermissionForm({
       return res.data;
     },
     onSuccess: () => {
-      // do something
       toastSuccess("Permission updated");
+      queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
       onClose();
     },
     onError: (error: AxiosError) => {
