@@ -36,7 +36,7 @@ type PermissionFormProps = {
   data?: Partial<PermissionTable>;
 };
 
-function PermissionActionDropdown() {
+function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
   const { values } = useFormikContext<Partial<PermissionTable>>();
 
   const resourceType = useMemo<ResourceType | undefined>(() => {
@@ -63,7 +63,58 @@ function PermissionActionDropdown() {
       options={availableActions}
       name="action"
       label="Action"
+      isDisabled={isDisabled}
     />
+  );
+}
+
+function PermissionFormContent({
+  isResourceIdProvided,
+  agentOptions,
+  source
+}: {
+  isResourceIdProvided: boolean;
+  agentOptions: { label: string; value: string }[];
+  source?: string;
+}) {
+  const isReadOnly = source === "KubernetesCRD";
+
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <PermissionsSubjectControls />
+      {isResourceIdProvided ? (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-semibold">Resource</label>
+          <PermissionResource />
+        </div>
+      ) : (
+        <FormikPermissionSelectResourceFields />
+      )}
+      <PermissionActionDropdown isDisabled={isReadOnly} />
+      <FormikCheckbox name="deny" label="Deny" disabled={isReadOnly} />
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="space-y-3">
+          <FormikKeyValueMapField
+            name="tags"
+            label="Tags"
+            hint="Permission will apply only to resources matching these tags"
+          />
+          <FormikSelectDropdown
+            name="agents"
+            label="Agents"
+            options={agentOptions}
+            isMulti
+            placeholder="Select agents..."
+            isDisabled={isReadOnly}
+          />
+        </div>
+      </div>
+      <FormikTextArea
+        name="description"
+        label="Description"
+        disabled={isReadOnly}
+      />
+    </div>
   );
 }
 
@@ -73,7 +124,7 @@ export default function PermissionForm({
   data
 }: PermissionFormProps) {
   const isResourceIdProvided = useMemo(() => {
-    return (
+    return !!(
       data?.component_id ||
       data?.config_id ||
       data?.canary_id ||
@@ -188,42 +239,18 @@ export default function PermissionForm({
           }}
         >
           <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-            <div className="flex flex-1 flex-col gap-3 p-4">
-              <PermissionsSubjectControls />
-              {isResourceIdProvided ? (
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold">Resource</label>
-                  <PermissionResource />
-                </div>
-              ) : (
-                <FormikPermissionSelectResourceFields />
-              )}
-              <PermissionActionDropdown />
-              <FormikCheckbox name="deny" label="Deny" />
-              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <div className="space-y-3">
-                  <FormikKeyValueMapField
-                    name="tags"
-                    label="Tags"
-                    hint="Permission will apply only to resources matching these tags"
-                  />
-                  <FormikSelectDropdown
-                    name="agents"
-                    label="Agents"
-                    options={agentOptions}
-                    isMulti
-                    placeholder="Select agents..."
-                  />
-                </div>
-              </div>
-              <FormikTextArea name="description" label="Description" />
+            <div className="flex flex-1 flex-col overflow-y-auto">
+              <PermissionFormContent
+                isResourceIdProvided={isResourceIdProvided}
+                agentOptions={agentOptions}
+                source={data?.source}
+              />
             </div>
             <CanEditResource
               id={data?.id}
-              name={"Permission"}
               resourceType={"permissions"}
               source={data?.source}
-              className="flex flex-col"
+              className="flex items-center bg-gray-100 px-5 py-4"
             >
               <AuthorizationAccessCheck
                 resource={tables.permissions}

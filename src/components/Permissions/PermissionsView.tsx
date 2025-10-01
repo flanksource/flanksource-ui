@@ -3,7 +3,7 @@ import {
   FetchPermissionsInput
 } from "@flanksource-ui/api/services/permissions";
 import {
-  PermissionAPIResponse,
+  PermissionsSummary,
   PermissionTable
 } from "@flanksource-ui/api/types/permissions";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
@@ -81,7 +81,7 @@ export default function PermissionsView({
   onRefetch
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
-    useState<PermissionAPIResponse>();
+    useState<PermissionsSummary>();
   const { pageSize, pageIndex } = useReactTablePaginationState();
   const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
 

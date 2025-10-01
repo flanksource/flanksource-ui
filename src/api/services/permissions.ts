@@ -1,6 +1,6 @@
 import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
-import { PermissionAPIResponse, PermissionTable } from "../types/permissions";
+import { PermissionsSummary, PermissionTable } from "../types/permissions";
 
 export type FetchPermissionsInput = {
   componentId?: string;
@@ -74,7 +74,7 @@ export function fetchPermissions(
 
   const url = `/permissions_summary?${queryParam}&select=${selectFields.join(",")}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   return resolvePostGrestRequestWithPagination(
-    IncidentCommander.get<PermissionAPIResponse[]>(url, {
+    IncidentCommander.get<PermissionsSummary[]>(url, {
       headers: {
         Prefer: "count=exact"
       }

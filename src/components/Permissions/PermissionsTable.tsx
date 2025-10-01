@@ -1,4 +1,4 @@
-import { PermissionAPIResponse } from "@flanksource-ui/api/types/permissions";
+import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
@@ -18,7 +18,7 @@ const formatTagText = (key: string, value: string): string => {
   return `${key}: ${value}`;
 };
 
-const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
+const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
     header: "Subject",
     size: 100,
@@ -259,11 +259,11 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
 ];
 
 type PermissionsTableProps = {
-  permissions: PermissionAPIResponse[];
+  permissions: PermissionsSummary[];
   isLoading: boolean;
   pageCount: number;
   totalEntries: number;
-  handleRowClick?: (row: PermissionAPIResponse) => void;
+  handleRowClick?: (row: PermissionsSummary) => void;
   hideResourceColumn?: boolean;
 };
 
