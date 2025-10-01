@@ -13,6 +13,7 @@ import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import CRDSource from "../Settings/CRDSource";
 
 const formatTagText = (key: string, value: string): string => {
   return `${key}: ${value}`;
@@ -253,6 +254,13 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     size: 40,
     Cell: ({ row }) => {
       const createdBy = row.original.createdBy;
+      const source = row.original.source;
+
+      if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
+        const id = row.original.id;
+        return <CRDSource source={source} id={id} showMinimal />;
+      }
+
       return <Avatar user={createdBy} />;
     }
   }
