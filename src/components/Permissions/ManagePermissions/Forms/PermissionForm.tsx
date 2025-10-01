@@ -19,11 +19,11 @@ import { Modal } from "@flanksource-ui/ui/Modal";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import clsx from "clsx";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import { useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { AuthorizationAccessCheck } from "../../AuthorizationAccessCheck";
-import { permissionsActionsList } from "../../PermissionsView";
+import { getActionsForResourceType, ResourceType } from "../../PermissionsView";
 import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
@@ -35,6 +35,37 @@ type PermissionFormProps = {
   isOpen: boolean;
   data?: Partial<PermissionTable>;
 };
+
+function PermissionActionDropdown() {
+  const { values } = useFormikContext<Partial<PermissionTable>>();
+
+  const resourceType = useMemo<ResourceType | undefined>(() => {
+    if (values.playbook_id) return "playbook";
+    if (values.config_id) return "catalog";
+    if (values.component_id) return "component";
+    if (values.connection_id) return "connection";
+    if (values.canary_id) return "canary";
+    if (values.object) return "global";
+    return undefined;
+  }, [values]);
+
+  const availableActions = useMemo(
+    () => getActionsForResourceType(resourceType),
+    [resourceType]
+  );
+
+  if (!resourceType) {
+    return null;
+  }
+
+  return (
+    <FormikSelectDropdown
+      options={availableActions}
+      name="action"
+      label="Action"
+    />
+  );
+}
 
 export default function PermissionForm({
   onClose,
@@ -166,11 +197,7 @@ export default function PermissionForm({
               ) : (
                 <FormikPermissionSelectResourceFields />
               )}
-              <FormikSelectDropdown
-                options={permissionsActionsList}
-                name="action"
-                label="Action"
-              />
+              <PermissionActionDropdown />
               <FormikCheckbox name="deny" label="Deny" />
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                 <div className="space-y-3">

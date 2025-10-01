@@ -26,6 +26,43 @@ export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "playbook:*", label: "playbook:*" }
 ];
 
+const commonActions: FormikSelectDropdownOption[] = [
+  { value: "read", label: "read" },
+  { value: "update", label: "update" },
+  { value: "create", label: "create" },
+  { value: "delete", label: "delete" },
+  { value: "*", label: "*" },
+  { value: "create,read,update,delete", label: "create,read,update,delete" }
+];
+
+const playbookSpecificActions: FormikSelectDropdownOption[] = [
+  { value: "playbook:run", label: "playbook:run" },
+  { value: "playbook:approve", label: "playbook:approve" },
+  { value: "playbook:*", label: "playbook:*" }
+];
+
+export type ResourceType =
+  | "catalog"
+  | "component"
+  | "playbook"
+  | "connection"
+  | "canary"
+  | "global";
+
+export function getActionsForResourceType(
+  resourceType?: ResourceType
+): FormikSelectDropdownOption[] {
+  if (!resourceType) {
+    return [];
+  }
+
+  if (resourceType === "playbook") {
+    return [...commonActions, ...playbookSpecificActions];
+  }
+
+  return commonActions;
+}
+
 type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
   setIsLoading?: (isLoading: boolean) => void;
