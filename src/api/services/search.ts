@@ -5,6 +5,8 @@ export type SearchResourcesRequest = {
   checks?: PlaybookResourceSelector[];
   components?: PlaybookResourceSelector[];
   configs?: PlaybookResourceSelector[];
+  connections?: PlaybookResourceSelector[];
+  playbooks?: PlaybookResourceSelector[];
 };
 
 type SearchedResource = {
@@ -22,6 +24,8 @@ type SelectedResources = {
   configs: SearchedResource[];
   checks: SearchedResource[];
   components: SearchedResource[];
+  connections: SearchedResource[];
+  playbooks: SearchedResource[];
 };
 
 export async function searchResources(input: SearchResourcesRequest) {
