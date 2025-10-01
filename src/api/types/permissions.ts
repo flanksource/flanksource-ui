@@ -26,6 +26,7 @@ export type PermissionTable = {
   until?: string;
   source?: string;
   tags?: Record<string, string>;
+  agents?: string[];
 
   // Resources
   object_selector?: Record<string, any>[];

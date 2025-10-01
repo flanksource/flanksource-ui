@@ -28,6 +28,7 @@ import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
 import PermissionsSubjectControls from "./PermissionSubjectControls";
+import { useAllAgentNamesQuery } from "../../../../api/query-hooks";
 
 type PermissionFormProps = {
   onClose: () => void;
@@ -53,6 +54,17 @@ export default function PermissionForm({
   }, [data]);
 
   const { user } = useUser();
+
+  const { data: agents } = useAllAgentNamesQuery({});
+
+  const agentOptions = useMemo(
+    () =>
+      (agents || []).map((agent) => ({
+        label: agent.name || agent.id,
+        value: agent.id
+      })),
+    [agents]
+  );
 
   const { isLoading: adding, mutate: add } = useMutation({
     mutationFn: async (data: PermissionTable) => {
@@ -128,7 +140,8 @@ export default function PermissionForm({
             subject_type: data?.subject_type,
             until: data?.until,
             source: data?.source || "UI",
-            tags: data?.tags || {}
+            tags: data?.tags || {},
+            agents: data?.agents || []
           }}
           onSubmit={(v) => {
             if (!data?.id) {
@@ -159,11 +172,22 @@ export default function PermissionForm({
                 label="Action"
               />
               <FormikCheckbox name="deny" label="Deny" />
-              <FormikKeyValueMapField
-                name="tags"
-                label="Tags"
-                hint="Permission will apply only to resources matching these tags"
-              />
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="space-y-3">
+                  <FormikKeyValueMapField
+                    name="tags"
+                    label="Tags"
+                    hint="Permission will apply only to resources matching these tags"
+                  />
+                  <FormikSelectDropdown
+                    name="agents"
+                    label="Agents"
+                    options={agentOptions}
+                    isMulti
+                    placeholder="Select agents..."
+                  />
+                </div>
+              </div>
               <FormikTextArea name="description" label="Description" />
             </div>
             <CanEditResource
