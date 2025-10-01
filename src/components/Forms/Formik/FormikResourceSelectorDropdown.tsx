@@ -22,6 +22,8 @@ type FormikConfigsDropdownProps = {
   configResourceSelector?: PlaybookResourceSelector[];
   componentResourceSelector?: PlaybookResourceSelector[];
   checkResourceSelector?: PlaybookResourceSelector[];
+  connectionResourceSelector?: PlaybookResourceSelector[];
+  playbookResourceSelector?: PlaybookResourceSelector[];
   className?: string;
 };
 
@@ -33,6 +35,8 @@ export default function FormikResourceSelectorDropdown({
   configResourceSelector,
   componentResourceSelector,
   checkResourceSelector,
+  connectionResourceSelector,
+  playbookResourceSelector,
   className = "flex flex-col space-y-2 py-2"
 }: FormikConfigsDropdownProps) {
   const [inputText, setInputText] = useState<string>("");
@@ -81,12 +85,32 @@ export default function FormikResourceSelectorDropdown({
               agent: r.agent || "all"
             }))
           ]
+        : undefined,
+      connections: connectionResourceSelector
+        ? [
+            ...connectionResourceSelector.map((r) => ({
+              ...r,
+              search: searchText,
+              name: r.name || "*"
+            }))
+          ]
+        : undefined,
+      playbooks: playbookResourceSelector
+        ? [
+            ...playbookResourceSelector.map((r) => ({
+              ...r,
+              search: searchText,
+              name: r.name || "*"
+            }))
+          ]
         : undefined
     }),
     [
       configResourceSelector,
       componentResourceSelector,
       checkResourceSelector,
+      connectionResourceSelector,
+      playbookResourceSelector,
       searchText
     ]
   );
@@ -101,7 +125,9 @@ export default function FormikResourceSelectorDropdown({
     enabled:
       configResourceSelector !== undefined ||
       componentResourceSelector !== undefined ||
-      checkResourceSelector !== undefined, // || (field.value === undefined && field.value === "" && field.value === null),
+      checkResourceSelector !== undefined ||
+      connectionResourceSelector !== undefined ||
+      playbookResourceSelector !== undefined, // || (field.value === undefined && field.value === "" && field.value === null),
     select: (data) => {
       if (data?.checks) {
         return data.checks.map(
@@ -154,6 +180,58 @@ export default function FormikResourceSelectorDropdown({
                     {tag}
                   </Tag>
                 ))}
+              </div>
+            )
+          } as FormikSelectDropdownOption;
+        });
+      }
+      if (data?.connections) {
+        return data.connections.map((connection) => {
+          const tags = Object.values(connection.tags ?? {}).map(
+            (value) => value
+          );
+
+          return {
+            icon: (
+              <Icon
+                className="h-4 w-5"
+                name={connection.icon}
+                secondary={connection.name}
+              />
+            ),
+            value: connection.id,
+            search: connection.name,
+            label: (
+              <div className="flex flex-wrap gap-1">
+                <span className="mr-2"> {connection.name}</span>
+                <Tag title="tags">
+                  {connection.type.split("::").at(-1)?.toLocaleLowerCase()}
+                </Tag>
+                {tags.map((tag) => (
+                  <Tag title={tag} key={tag}>
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
+            )
+          } as FormikSelectDropdownOption;
+        });
+      }
+      if (data?.playbooks) {
+        return data.playbooks.map((playbook) => {
+          return {
+            icon: (
+              <Icon
+                className="h-4 w-5"
+                name={playbook.icon}
+                secondary={playbook.name}
+              />
+            ),
+            value: playbook.id,
+            search: playbook.name,
+            label: (
+              <div className="flex flex-wrap gap-1">
+                <span className="mr-2"> {playbook.name}</span>
               </div>
             )
           } as FormikSelectDropdownOption;

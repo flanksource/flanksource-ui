@@ -12,22 +12,37 @@ export type PermissionTable = {
   deny?: boolean;
   object?: string;
   subject?: string;
-  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
-  object_selector?: Record<string, any>[];
-  component_id?: string;
-  config_id?: string;
-  canary_id?: string;
-  playbook_id?: string;
+  subject_type?:
+    | "group"
+    | "playbook"
+    | "team"
+    | "person"
+    | "notification"
+    | "component";
   created_by: string;
-  connection_id?: string;
-  person_id?: string;
-  notification_id?: string;
-  team_id?: string;
   updated_by: string;
   created_at: string;
   updated_at: string;
   until?: string;
   source?: string;
+  tags?: Record<string, string>;
+  agents?: string[];
+
+  // Resources
+  object_selector?: Record<string, any>[];
+  component_id?: string;
+  config_id?: string;
+  canary_id?: string;
+  connection_id?: string;
+
+  // Deprecated fields
+  // These are subject fields that we do not use anymore.
+  // Instead we use the "subject" and "subject_type" field.
+  // Instead of setting person_id, we set subject = <person_id> and subject_type = "person"
+  person_id?: string;
+  notification_id?: string;
+  team_id?: string;
+  playbook_id?: string;
 };
 
 export type PermissionAPIResponse = PermissionTable & {

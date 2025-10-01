@@ -6,6 +6,7 @@ import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
+import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import {
   toastError,
@@ -18,21 +19,53 @@ import { Modal } from "@flanksource-ui/ui/Modal";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import clsx from "clsx";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import { useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { AuthorizationAccessCheck } from "../../AuthorizationAccessCheck";
-import { permissionsActionsList } from "../../PermissionsView";
+import { getActionsForResourceType, ResourceType } from "../../PermissionsView";
 import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
 import PermissionsSubjectControls from "./PermissionSubjectControls";
+import { useAllAgentNamesQuery } from "../../../../api/query-hooks";
 
 type PermissionFormProps = {
   onClose: () => void;
   isOpen: boolean;
   data?: Partial<PermissionTable>;
 };
+
+function PermissionActionDropdown() {
+  const { values } = useFormikContext<Partial<PermissionTable>>();
+
+  const resourceType = useMemo<ResourceType | undefined>(() => {
+    if (values.playbook_id) return "playbook";
+    if (values.config_id) return "catalog";
+    if (values.component_id) return "component";
+    if (values.connection_id) return "connection";
+    if (values.canary_id) return "canary";
+    if (values.object) return "global";
+    return undefined;
+  }, [values]);
+
+  const availableActions = useMemo(
+    () => getActionsForResourceType(resourceType),
+    [resourceType]
+  );
+
+  if (!resourceType) {
+    return null;
+  }
+
+  return (
+    <FormikSelectDropdown
+      options={availableActions}
+      name="action"
+      label="Action"
+    />
+  );
+}
 
 export default function PermissionForm({
   onClose,
@@ -52,6 +85,17 @@ export default function PermissionForm({
   }, [data]);
 
   const { user } = useUser();
+
+  const { data: agents } = useAllAgentNamesQuery({});
+
+  const agentOptions = useMemo(
+    () =>
+      (agents || []).map((agent) => ({
+        label: agent.name || agent.id,
+        value: agent.id
+      })),
+    [agents]
+  );
 
   const { isLoading: adding, mutate: add } = useMutation({
     mutationFn: async (data: PermissionTable) => {
@@ -123,8 +167,12 @@ export default function PermissionForm({
             notification_id: data?.notification_id,
             person_id: data?.person_id,
             team_id: data?.team_id,
+            subject: data?.subject,
+            subject_type: data?.subject_type,
             until: data?.until,
-            source: data?.source || "UI"
+            source: data?.source || "UI",
+            tags: data?.tags || {},
+            agents: data?.agents || []
           }}
           onSubmit={(v) => {
             if (!data?.id) {
@@ -140,6 +188,7 @@ export default function PermissionForm({
         >
           <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
             <div className="flex flex-1 flex-col gap-3 p-4">
+              <PermissionsSubjectControls />
               {isResourceIdProvided ? (
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold">Resource</label>
@@ -148,13 +197,24 @@ export default function PermissionForm({
               ) : (
                 <FormikPermissionSelectResourceFields />
               )}
-              <PermissionsSubjectControls />
-              <FormikSelectDropdown
-                options={permissionsActionsList}
-                name="action"
-                label="Action"
-              />
+              <PermissionActionDropdown />
               <FormikCheckbox name="deny" label="Deny" />
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div className="space-y-3">
+                  <FormikKeyValueMapField
+                    name="tags"
+                    label="Tags"
+                    hint="Permission will apply only to resources matching these tags"
+                  />
+                  <FormikSelectDropdown
+                    name="agents"
+                    label="Agents"
+                    options={agentOptions}
+                    isMulti
+                    placeholder="Select agents..."
+                  />
+                </div>
+              </div>
               <FormikTextArea name="description" label="Description" />
             </div>
             <CanEditResource

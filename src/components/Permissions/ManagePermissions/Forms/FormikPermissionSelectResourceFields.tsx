@@ -1,6 +1,4 @@
 import FormikCanaryDropdown from "@flanksource-ui/components/Forms/Formik/FormikCanaryDropdown";
-import FormikConnectionField from "@flanksource-ui/components/Forms/Formik/FormikConnectionField";
-import FormikPlaybooksDropdown from "@flanksource-ui/components/Forms/Formik/FormikPlaybooksDropdown";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
@@ -78,7 +76,11 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Playbook" && (
-          <FormikPlaybooksDropdown required name="playbook_id" />
+          <FormikResourceSelectorDropdown
+            required
+            name="playbook_id"
+            playbookResourceSelector={[{}]}
+          />
         )}
 
         {switchOption === "Canary" && (
@@ -86,7 +88,11 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Connection" && (
-          <FormikConnectionField required name="connection_id" />
+          <FormikResourceSelectorDropdown
+            required
+            name="connection_id"
+            connectionResourceSelector={[{}]}
+          />
         )}
 
         {switchOption === "Global" && (
