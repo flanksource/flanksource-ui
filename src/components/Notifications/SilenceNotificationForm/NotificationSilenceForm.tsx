@@ -370,10 +370,10 @@ export default function NotificationSilenceForm({
                 <button
                   type="button"
                   onClick={() => setShowResourceSection(!showResourceSection)}
-                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                  className={`mb-2 flex items-center gap-1 text-left text-sm font-medium ${
                     activeField !== null && activeField !== "resource"
                       ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                      : "text-gray-700 hover:text-gray-900"
                   }`}
                   disabled={activeField !== null && activeField !== "resource"}
                 >
@@ -472,10 +472,10 @@ export default function NotificationSilenceForm({
                 <button
                   type="button"
                   onClick={() => setShowFilterSection(!showFilterSection)}
-                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                  className={`mb-2 flex items-center gap-1 text-left text-sm font-medium ${
                     activeField !== null && activeField !== "filter"
                       ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                      : "text-gray-700 hover:text-gray-900"
                   }`}
                   disabled={activeField !== null && activeField !== "filter"}
                 >
@@ -602,10 +602,10 @@ export default function NotificationSilenceForm({
                 <button
                   type="button"
                   onClick={() => setShowSelectorSection(!showSelectorSection)}
-                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                  className={`mb-2 flex items-center gap-1 text-left text-sm font-medium ${
                     activeField !== null && activeField !== "selector"
                       ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                      : "text-gray-700 hover:text-gray-900"
                   }`}
                   disabled={activeField !== null && activeField !== "selector"}
                 >
