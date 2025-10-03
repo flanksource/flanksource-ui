@@ -34,6 +34,7 @@ export type ViewListItem = {
   namespace?: string;
   title?: string;
   icon?: string;
+  ordinal?: number;
 };
 
 export const getAllViews = (

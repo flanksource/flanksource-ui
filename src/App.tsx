@@ -86,6 +86,12 @@ const ConfigDetailsPage = dynamic(
   )
 );
 
+const ConfigDetailsIndexRedirect = dynamic(
+  import(
+    "@flanksource-ui/pages/config/details/ConfigDetailsIndexRedirect"
+  ).then((mod) => mod.ConfigDetailsIndexRedirect)
+);
+
 const ConfigDetailsChangesPage = dynamic(
   import("@flanksource-ui/pages/config/details/ConfigDetailsChangesPage").then(
     (mod) => mod.ConfigDetailsChangesPage
@@ -913,6 +919,19 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         <Route path=":id">
           <Route
             index
+            element={
+              <ErrorBoundary>
+                {withAuthorizationAccessCheck(
+                  <ConfigDetailsIndexRedirect />,
+                  tables.database,
+                  "read",
+                  true
+                )}
+              </ErrorBoundary>
+            }
+          />
+          <Route
+            path="spec"
             element={
               <ErrorBoundary>
                 {withAuthorizationAccessCheck(

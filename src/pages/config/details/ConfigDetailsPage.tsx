@@ -76,7 +76,7 @@ export function ConfigDetailsPage() {
       pageTitlePrefix={"Catalog"}
       isLoading={isLoading}
       refetch={refetch}
-      activeTabName="Catalog"
+      activeTabName="Spec"
       className=""
     >
       <div className={`relative flex h-full flex-1 flex-col pb-0`}>
