@@ -4,8 +4,19 @@ import { ConfigItem } from "../../api/types/configs";
 import { getViewsByConfigId } from "../../api/services/views";
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { ReactNode } from "react";
 
-export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
+type ConfigDetailsTab = {
+  label: ReactNode;
+  key: string;
+  path: string;
+  icon?: ReactNode;
+  search?: string;
+};
+
+export function useConfigDetailsTabs(
+  countSummary?: ConfigItem["summary"]
+): ConfigDetailsTab[] {
   const { id } = useParams<{ id: string }>();
 
   const { data: views = [] } = useQuery({
@@ -14,8 +25,8 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
     enabled: !!id
   });
 
-  const staticTabs = [
-    { label: "Config", key: "Catalog", path: `/catalog/${id}` },
+  const staticTabs: ConfigDetailsTab[] = [
+    { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
     {
       label: (
         <>
@@ -68,12 +79,35 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]) {
     }
   ];
 
-  const viewTabs = views.map((view) => ({
+  const hasExplicitOrdering = views.some((view) => view.ordinal != null);
+
+  const orderedViews = hasExplicitOrdering
+    ? [...views].sort((a, b) => {
+        const aOrdinal = a.ordinal ?? Number.MAX_SAFE_INTEGER;
+        const bOrdinal = b.ordinal ?? Number.MAX_SAFE_INTEGER;
+
+        if (aOrdinal !== bOrdinal) {
+          return aOrdinal - bOrdinal;
+        }
+
+        const aLabel = a.title || a.name;
+        const bLabel = b.title || b.name;
+
+        return aLabel.localeCompare(bLabel);
+      })
+    : views;
+
+  const viewTabs: ConfigDetailsTab[] = orderedViews.map((view) => ({
     label: view.title || view.name,
     key: view.id,
     path: `/catalog/${id}/view/${view.id}`,
-    icon: <Icon name={view.icon} />
+    icon: <Icon name={view.icon || "workflow"} />
   }));
 
-  return [...staticTabs, ...viewTabs];
+  if (viewTabs.length === 0) {
+    return staticTabs;
+  }
+
+  // Views configured for a config should appear ahead of the built-in tabs.
+  return [...viewTabs, ...staticTabs];
 }

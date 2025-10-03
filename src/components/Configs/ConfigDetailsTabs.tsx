@@ -18,7 +18,7 @@ type ConfigDetailsTabsProps = {
   isLoading?: boolean;
   pageTitlePrefix: string;
   activeTabName:
-    | "Catalog"
+    | "Spec"
     | "Changes"
     | "Insights"
     | "Relationships"
@@ -33,7 +33,7 @@ export function ConfigDetailsTabs({
   children,
   isLoading = false,
   pageTitlePrefix,
-  activeTabName = "Catalog",
+  activeTabName = "Spec",
   className = "p-2"
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
