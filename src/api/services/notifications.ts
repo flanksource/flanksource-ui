@@ -338,6 +338,33 @@ export const getNotificationSilencesHistory = async ({
   );
 };
 
+export const getNotificationSilencePreview = async ({
+  resource_id,
+  filter,
+  selector
+}: {
+  resource_id?: string;
+  filter?: string;
+  selector?: string;
+}) => {
+  const params = new URLSearchParams();
+
+  if (resource_id) {
+    params.append("id", resource_id);
+  }
+  if (filter) {
+    params.append("filter", filter);
+  }
+  if (selector) {
+    params.append("selector", JSON.stringify(selector));
+  }
+
+  const res = await NotificationAPI.get(
+    `/silence_preview?${params.toString()}`
+  );
+  return res.data;
+};
+
 export const deleteNotificationSilence = async (id: string) => {
   return IncidentCommander.patch<NotificationSilenceItem>(
     `/notification_silences?id=eq.${id}`,

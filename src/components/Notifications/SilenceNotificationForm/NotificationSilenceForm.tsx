@@ -2,7 +2,7 @@ import {
   deleteNotificationSilence,
   silenceNotification,
   updateNotificationSilence,
-  getNotificationSilencesHistory
+  getNotificationSilencePreview
 } from "@flanksource-ui/api/services/notifications";
 import {
   SilenceNotificationResponse as SilenceNotificationRequest,
@@ -29,7 +29,21 @@ import {
   ChevronRightIcon,
   InformationCircleIcon
 } from "@heroicons/react/outline";
-import { useQuery } from "@tanstack/react-query";
+
+// Helper component to sync Formik values with parent state
+function FormikValuesSyncer({
+  values,
+  setFormValues
+}: {
+  values: any;
+  setFormValues: (values: any) => void;
+}) {
+  useEffect(() => {
+    setFormValues(values);
+  }, [values, setFormValues]);
+
+  return null;
+}
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -49,6 +63,8 @@ export default function NotificationSilenceForm({
   const [activeField, setActiveField] = useState<
     "resource" | "filter" | "selector" | null
   >(null);
+  const [previewData, setPreviewData] = useState<any>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const filterExamples = [
     {
@@ -146,60 +162,48 @@ export default function NotificationSilenceForm({
     }
   }, [data]);
 
-  // Monitor selectors field changes for mutual exclusion
+  // Monitor all form fields to determine which is active
   useEffect(() => {
-    if (
+    const hasResource = !!(
+      formValues.component_id ||
+      formValues.config_id ||
+      formValues.check_id ||
+      formValues.canary_id
+    );
+    const hasFilter = !!(
+      formValues.filter &&
+      typeof formValues.filter === "string" &&
+      formValues.filter.trim()
+    );
+    const hasSelectors = !!(
       formValues.selectors &&
-      formValues.selectors.trim() !== "" &&
-      activeField !== "selector"
-    ) {
+      typeof formValues.selectors === "string" &&
+      formValues.selectors.trim()
+    );
+
+    if (hasResource && activeField !== "resource") {
+      setActiveField("resource");
+    } else if (hasFilter && activeField !== "filter") {
+      setActiveField("filter");
+    } else if (hasSelectors && activeField !== "selector") {
       setActiveField("selector");
-    } else if (!formValues.selectors && activeField === "selector") {
+    } else if (
+      !hasResource &&
+      !hasFilter &&
+      !hasSelectors &&
+      activeField !== null
+    ) {
       setActiveField(null);
     }
-  }, [formValues.selectors, activeField]);
-
-  // Query for notification silences for the past 15 days
-  const { data: silenceHistory, isLoading: isSilenceHistoryLoading } = useQuery(
-    {
-      queryKey: [
-        "notificationSilencesHistory",
-        activeField,
-        formValues.component_id,
-        formValues.config_id,
-        formValues.check_id,
-        formValues.canary_id,
-        formValues.filter,
-        formValues.selectors
-      ],
-      queryFn: async () => {
-        if (!activeField) return null;
-
-        const queryParams: any = {};
-
-        if (activeField === "resource") {
-          if (formValues.component_id)
-            queryParams.component_id = formValues.component_id;
-          if (formValues.config_id)
-            queryParams.config_id = formValues.config_id;
-          if (formValues.check_id) queryParams.check_id = formValues.check_id;
-          if (formValues.canary_id)
-            queryParams.canary_id = formValues.canary_id;
-        } else if (activeField === "filter" && formValues.filter) {
-          queryParams.filter = formValues.filter;
-        } else if (activeField === "selector" && formValues.selectors) {
-          queryParams.selectors = formValues.selectors;
-        }
-
-        return getNotificationSilencesHistory({
-          pageIndex: 0,
-          pageSize: 10,
-          ...queryParams
-        });
-      },
-      enabled: !!activeField
-    }
-  );
+  }, [
+    formValues.component_id,
+    formValues.config_id,
+    formValues.check_id,
+    formValues.canary_id,
+    formValues.filter,
+    formValues.selectors,
+    activeField
+  ]);
 
   const { isLoading, mutate } = useMutation({
     mutationFn: (data: SilenceNotificationRequest) => {
@@ -245,6 +249,18 @@ export default function NotificationSilenceForm({
       errors.name = "Must specify a unique name";
     }
 
+    // Remove the mutual exclusion validation from here
+    // It will be checked in the submit function
+
+    return errors;
+  };
+
+  const submit = (
+    v: Partial<SilenceNotificationRequest>,
+    // @ts-ignore
+    formik: FormikBag
+  ) => {
+    // Validate mutual exclusion on submit
     const hasResource = !!(
       v.canary_id ||
       v.check_id ||
@@ -259,21 +275,17 @@ export default function NotificationSilenceForm({
     ).length;
 
     if (fieldsSet === 0) {
-      errors.form =
-        "You must specify exactly one of the following: a resource, a filter, or selectors";
+      formik.setErrors({
+        form: "You must specify exactly one of the following: a resource, a filter, or selectors"
+      });
+      return;
     } else if (fieldsSet > 1) {
-      errors.form =
-        "You can only specify one of the following: a resource, a filter, or selectors. Please clear the others.";
+      formik.setErrors({
+        form: "You can only specify one of the following: a resource, a filter, or selectors. Please clear the others."
+      });
+      return;
     }
 
-    return errors;
-  };
-
-  const submit = (
-    v: Partial<SilenceNotificationRequest>,
-    // @ts-ignore
-    formik: FormikBag
-  ) => {
     // Before submitting, we need to parse the date math expressions, if
     // any are present in the from and until fields.
     let { from, until } = v;
@@ -318,6 +330,10 @@ export default function NotificationSilenceForm({
         {({ errors, values, setFieldValue }) => {
           return (
             <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
+              <FormikValuesSyncer
+                values={values}
+                setFormValues={setFormValues}
+              />
               <div
                 className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
               >
@@ -394,8 +410,8 @@ export default function NotificationSilenceForm({
                         activeField !== null && activeField !== "resource"
                       }
                       onFieldChange={(_hasValue) => {
-                        // The useEffect above will handle the mutual exclusion
-                        // This is just for immediate feedback
+                        // Update formValues to trigger the useEffect
+                        setFormValues(values);
                       }}
                     />
                     {activeField !== null && activeField !== "resource" && (
@@ -643,53 +659,126 @@ export default function NotificationSilenceForm({
 
                 <FormikTextArea name="description" label="Reason" />
 
-                {/* Notification History Section */}
+                {/* Notification Preview Section */}
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                  <h3 className="mb-3 text-sm font-medium text-gray-700">
-                    Notifications silenced in the past 15 days
-                  </h3>
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-700">
+                      Preview Notifications to be Silenced
+                    </h3>
+                    <button
+                      type="button"
+                      disabled={!activeField}
+                      onClick={async () => {
+                        setIsPreviewLoading(true);
+                        try {
+                          const params: {
+                            resource_id?: string;
+                            filter?: string;
+                            selector?: string;
+                          } = {};
+
+                          if (activeField === "resource") {
+                            const resourceId =
+                              values.component_id ||
+                              values.config_id ||
+                              values.check_id ||
+                              values.canary_id;
+                            if (resourceId) params.resource_id = resourceId;
+                          } else if (
+                            activeField === "filter" &&
+                            values.filter
+                          ) {
+                            params.filter = values.filter;
+                          } else if (
+                            activeField === "selector" &&
+                            values.selectors
+                          ) {
+                            params.selector = values.selectors;
+                          }
+
+                          const data =
+                            await getNotificationSilencePreview(params);
+                          setPreviewData(data);
+                        } catch (error) {
+                          console.error("Error fetching preview:", error);
+                          setPreviewData({ error: "Failed to fetch preview" });
+                        } finally {
+                          setIsPreviewLoading(false);
+                        }
+                      }}
+                      className={`rounded px-3 py-1 text-xs font-medium ${
+                        activeField
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "cursor-not-allowed bg-gray-300 text-gray-500"
+                      }`}
+                    >
+                      Preview
+                    </button>
+                  </div>
                   {activeField ? (
                     <div className="space-y-2">
-                      {isSilenceHistoryLoading ? (
+                      {isPreviewLoading ? (
                         <div className="flex items-center justify-center py-4">
                           <FaCircleNotch className="animate-spin" />
                           <span className="ml-2 text-sm text-gray-500">
-                            Loading...
+                            Loading preview...
                           </span>
                         </div>
-                      ) : silenceHistory?.data?.length ? (
+                      ) : previewData ? (
                         <div className="space-y-2">
-                          {silenceHistory.data
-                            .slice(0, 5)
-                            .map((silence: any, index: number) => (
-                              <div
-                                key={index}
-                                className="rounded border bg-white p-2 text-sm"
-                              >
-                                <div className="font-medium">
-                                  {silence.name}
-                                </div>
-                                <div className="text-gray-500">
-                                  {silence.description || "No description"}
-                                </div>
+                          {previewData.error ? (
+                            <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                              {previewData.error}
+                            </div>
+                          ) : Array.isArray(previewData) &&
+                            previewData.length > 0 ? (
+                            <>
+                              <div className="text-sm text-gray-600">
+                                {previewData.length} notification(s) will be
+                                silenced:
                               </div>
-                            ))}
-                          {silenceHistory.data.length > 5 && (
+                              {previewData
+                                .slice(0, 5)
+                                .map((notification: any, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="rounded border bg-white p-2 text-sm"
+                                  >
+                                    <div className="font-medium">
+                                      {notification.title ||
+                                        notification.name ||
+                                        "Notification"}
+                                    </div>
+                                    <div className="text-gray-500">
+                                      {notification.message ||
+                                        notification.description ||
+                                        "No description"}
+                                    </div>
+                                  </div>
+                                ))}
+                              {previewData.length > 5 && (
+                                <div className="text-sm text-gray-500">
+                                  +{previewData.length - 5} more...
+                                </div>
+                              )}
+                            </>
+                          ) : (
                             <div className="text-sm text-gray-500">
-                              +{silenceHistory.data.length - 5} more...
+                              No notifications match this criteria.
                             </div>
                           )}
                         </div>
                       ) : (
                         <div className="text-sm text-gray-500">
-                          No matching silences found in the past 15 days.
+                          Click "Preview" to see which notifications will be
+                          silenced.
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="text-sm text-gray-500">
-                      Select a resource, filter, or selector to see related
-                      silences.
+                      Select a resource, filter, or selector to preview
+                      notifications.
                     </div>
                   )}
                 </div>
