@@ -60,6 +60,9 @@ export default function NotificationSilenceForm({
 }: NotificationSilenceFormProps) {
   const [showFilterExamples, setShowFilterExamples] = useState(false);
   const [showSelectorsExamples, setShowSelectorsExamples] = useState(false);
+  const [showResourceSection, setShowResourceSection] = useState(false);
+  const [showFilterSection, setShowFilterSection] = useState(false);
+  const [showSelectorSection, setShowSelectorSection] = useState(false);
   const [activeField, setActiveField] = useState<
     "resource" | "filter" | "selector" | null
   >(null);
@@ -339,104 +342,6 @@ export default function NotificationSilenceForm({
               >
                 <FormikTextInput required name="name" label="Name" />
 
-                {/* Mutual Exclusion Info */}
-                <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
-                  <div className="flex items-start gap-2">
-                    <InformationCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-                    <div className="text-sm text-blue-800">
-                      <span className="font-medium">Silence Criteria:</span> You
-                      can specify exactly one of the following criteria types:
-                      <strong> Resource</strong>, <strong>Filter</strong>, or{" "}
-                      <strong>Selectors</strong>. When you start filling one,
-                      the others will be disabled.
-                    </div>
-                  </div>
-                </div>
-
-                {/* Resource Block */}
-                <div
-                  className={`rounded-lg border p-4 transition-all duration-200 ${
-                    activeField !== null && activeField !== "resource"
-                      ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
-                      : "cursor-default border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-gray-700">
-                        Resource
-                      </h3>
-                      {activeField !== null && activeField !== "resource" && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <InformationCircleIcon className="h-4 w-4" />
-                          <span>Only one criteria can be selected</span>
-                        </div>
-                      )}
-                    </div>
-                    {activeField === "resource" && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFieldValue("component_id", undefined);
-                          setFieldValue("config_id", undefined);
-                          setFieldValue("check_id", undefined);
-                          setFieldValue("canary_id", undefined);
-                          setFieldValue("recursive", false);
-                          setActiveField(null);
-                          setFormValues({
-                            ...values,
-                            component_id: undefined,
-                            config_id: undefined,
-                            check_id: undefined,
-                            canary_id: undefined,
-                            recursive: false
-                          });
-                        }}
-                        className="text-xs font-medium text-red-600 hover:text-red-700"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div
-                    className={`relative ${
-                      activeField !== null && activeField !== "resource"
-                        ? "pointer-events-none"
-                        : ""
-                    }`}
-                  >
-                    <FormikNotificationResourceField
-                      disabled={
-                        activeField !== null && activeField !== "resource"
-                      }
-                      onFieldChange={(_hasValue) => {
-                        // Update formValues to trigger the useEffect
-                        setFormValues(values);
-                      }}
-                    />
-                    {activeField !== null && activeField !== "resource" && (
-                      <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <div
-                      className={`relative ${
-                        activeField !== "resource"
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }`}
-                    >
-                      <FormikCheckbox
-                        checkboxStyle="toggle"
-                        name="recursive"
-                        label="Recursive"
-                        hint="When selected, the silence will apply to all children of the item"
-                        disabled={activeField !== "resource"}
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <FormikDurationPicker
                   required
                   hint="Duration for which the silence will apply for, after which notifications will begin firing again"
@@ -447,208 +352,362 @@ export default function NotificationSilenceForm({
                   label="Duration"
                 />
 
-                {/* Filter Block */}
-                <div
-                  className={`rounded-lg border p-4 transition-all duration-200 ${
-                    activeField !== null && activeField !== "filter"
-                      ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
-                      : "cursor-default border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-gray-700">
-                        Filter
-                      </h3>
-                      {activeField !== null && activeField !== "filter" && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <InformationCircleIcon className="h-4 w-4" />
-                          <span>Only one criteria can be selected</span>
-                        </div>
-                      )}
+                {/* Mutual Exclusion Info */}
+                <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3">
+                  <div className="flex items-start gap-2">
+                    <InformationCircleIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
+                    <div className="text-sm text-yellow-800">
+                      <span className="font-medium">Silence Criteria:</span> You
+                      can specify exactly one of the following criteria types:
+                      <strong> Resource</strong>, <strong>Filter</strong>, or{" "}
+                      <strong>Selectors</strong>. When you start filling one,
+                      the others will be disabled.
                     </div>
-                    {activeField === "filter" && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFieldValue("filter", "");
-                          setActiveField(null);
-                          setFormValues({ ...values, filter: "" });
-                        }}
-                        className="text-xs font-medium text-red-600 hover:text-red-700"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div
-                    className={`relative ${
-                      activeField !== null && activeField !== "filter"
-                        ? "pointer-events-none"
-                        : ""
-                    }`}
-                  >
-                    <FormikTextArea
-                      name="filter"
-                      label="Filter"
-                      hint="Notifications for resources matching this CEL expression will be silenced"
-                      disabled={
-                        activeField !== null && activeField !== "filter"
-                      }
-                      readOnly={
-                        activeField !== null && activeField !== "filter"
-                      }
-                      className={`flex flex-col ${activeField !== null && activeField !== "filter" ? "opacity-50" : ""}`}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                        const hasValue = e.target.value.trim() !== "";
-                        if (hasValue) {
-                          setActiveField("filter");
-                          // Clear other fields
-                          setFieldValue("component_id", undefined);
-                          setFieldValue("config_id", undefined);
-                          setFieldValue("check_id", undefined);
-                          setFieldValue("canary_id", undefined);
-                          setFieldValue("recursive", false);
-                          setFieldValue("selectors", "");
-                        } else if (activeField === "filter") {
-                          setActiveField(null);
-                        }
-                        setFormValues({ ...values, filter: e.target.value });
-                      }}
-                    />
-                    {activeField !== null && activeField !== "filter" && (
-                      <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
-                    )}
                   </div>
                 </div>
 
+                {/* Resource Block */}
                 <button
                   type="button"
-                  onClick={() => setShowFilterExamples(!showFilterExamples)}
-                  className="mb-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  onClick={() => setShowResourceSection(!showResourceSection)}
+                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                    activeField !== null && activeField !== "resource"
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  }`}
+                  disabled={activeField !== null && activeField !== "resource"}
                 >
                   <ChevronRightIcon
-                    className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
+                    className={`h-4 w-4 transition-transform ${showResourceSection ? "rotate-90" : ""}`}
                   />
-                  Filter Examples
+                  Silence a resource
+                  {activeField !== null && activeField !== "resource" && (
+                    <span className="ml-2 text-xs">(disabled)</span>
+                  )}
                 </button>
 
-                {showFilterExamples && (
-                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
-                    <div className="space-y-4 p-4">
-                      {filterExamples.map((example, index) => (
-                        <div
-                          key={index}
-                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                {showResourceSection && (
+                  <div
+                    className={`mb-4 rounded-lg border p-4 transition-all duration-200 ${
+                      activeField !== null && activeField !== "resource"
+                        ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
+                        : "cursor-default border-gray-200 bg-gray-50"
+                    }`}
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {activeField !== null && activeField !== "resource" && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <InformationCircleIcon className="h-4 w-4" />
+                            <span>Only one criteria can be selected</span>
+                          </div>
+                        )}
+                      </div>
+                      {activeField === "resource" && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFieldValue("component_id", undefined);
+                            setFieldValue("config_id", undefined);
+                            setFieldValue("check_id", undefined);
+                            setFieldValue("canary_id", undefined);
+                            setFieldValue("recursive", false);
+                            setActiveField(null);
+                            setFormValues({
+                              ...values,
+                              component_id: undefined,
+                              config_id: undefined,
+                              check_id: undefined,
+                              canary_id: undefined,
+                              recursive: false
+                            });
+                          }}
+                          className="text-xs font-medium text-red-600 hover:text-red-700"
                         >
-                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
-                            <p className="text-sm font-medium text-gray-700">
-                              {example.description}
-                            </p>
-                          </div>
-                          <div className="p-3">
-                            <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-                              {example.code}
-                            </code>
-                          </div>
-                        </div>
-                      ))}
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div
+                      className={`relative ${
+                        activeField !== null && activeField !== "resource"
+                          ? "pointer-events-none"
+                          : ""
+                      }`}
+                    >
+                      <FormikNotificationResourceField
+                        disabled={
+                          activeField !== null && activeField !== "resource"
+                        }
+                        onFieldChange={(_hasValue) => {
+                          // Update formValues to trigger the useEffect
+                          setFormValues(values);
+                        }}
+                      />
+                      {activeField !== null && activeField !== "resource" && (
+                        <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
+                      )}
+                    </div>
+                    <div className="mt-3">
+                      <div
+                        className={`relative ${
+                          activeField !== "resource"
+                            ? "pointer-events-none opacity-50"
+                            : ""
+                        }`}
+                      >
+                        <FormikCheckbox
+                          checkboxStyle="toggle"
+                          name="recursive"
+                          label="Recursive"
+                          hint="When selected, the silence will apply to all children of the item"
+                          disabled={activeField !== "resource"}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
 
-                {/* Selectors Block */}
-                <div
-                  className={`rounded-lg border p-4 transition-all duration-200 ${
-                    activeField !== null && activeField !== "selector"
-                      ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
-                      : "cursor-default border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-medium text-gray-700">
-                        Selectors
-                      </h3>
-                      {activeField !== null && activeField !== "selector" && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <InformationCircleIcon className="h-4 w-4" />
-                          <span>Only one criteria can be selected</span>
-                        </div>
-                      )}
-                    </div>
-                    {activeField === "selector" && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFieldValue("selectors", "");
-                          setActiveField(null);
-                          setFormValues({ ...values, selectors: "" });
-                        }}
-                        className="text-xs font-medium text-red-600 hover:text-red-700"
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                  <div
-                    className={`relative ${
-                      activeField !== null && activeField !== "selector"
-                        ? "pointer-events-none"
-                        : ""
-                    }`}
-                  >
-                    <FormikCodeEditor
-                      fieldName="selectors"
-                      format={"yaml"}
-                      label="Selectors"
-                      hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
-                      lines={12}
-                      disabled={
-                        activeField !== null && activeField !== "selector"
-                      }
-                      className={`${activeField !== null && activeField !== "selector" ? "opacity-50" : ""}`}
-                    />
-                    {activeField !== null && activeField !== "selector" && (
-                      <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
-                    )}
-                  </div>
-                </div>
-
+                {/* Filter Block */}
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowSelectorsExamples(!showSelectorsExamples)
-                  }
-                  className="mb-2 mt-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  onClick={() => setShowFilterSection(!showFilterSection)}
+                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                    activeField !== null && activeField !== "filter"
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  }`}
+                  disabled={activeField !== null && activeField !== "filter"}
                 >
                   <ChevronRightIcon
-                    className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
+                    className={`h-4 w-4 transition-transform ${showFilterSection ? "rotate-90" : ""}`}
                   />
-                  Selector Examples
+                  Silence using a filter
+                  {activeField !== null && activeField !== "filter" && (
+                    <span className="ml-2 text-xs">(disabled)</span>
+                  )}
                 </button>
 
-                {showSelectorsExamples && (
-                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
-                    <div className="space-y-4 p-4">
-                      {selectorsExamples.map((example, index) => (
-                        <div
-                          key={index}
-                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                {showFilterSection && (
+                  <div
+                    className={`mb-4 rounded-lg border p-4 transition-all duration-200 ${
+                      activeField !== null && activeField !== "filter"
+                        ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
+                        : "cursor-default border-gray-200 bg-gray-50"
+                    }`}
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {activeField !== null && activeField !== "filter" && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <InformationCircleIcon className="h-4 w-4" />
+                            <span>Only one criteria can be selected</span>
+                          </div>
+                        )}
+                      </div>
+                      {activeField === "filter" && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFieldValue("filter", "");
+                            setActiveField(null);
+                            setFormValues({ ...values, filter: "" });
+                          }}
+                          className="text-xs font-medium text-red-600 hover:text-red-700"
                         >
-                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
-                            <p className="text-sm font-medium text-gray-700">
-                              {example.title}
-                            </p>
-                          </div>
-                          <div className="p-3">
-                            <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-                              {example.code}
-                            </pre>
-                          </div>
-                        </div>
-                      ))}
+                          Clear
+                        </button>
+                      )}
                     </div>
+                    <div
+                      className={`relative ${
+                        activeField !== null && activeField !== "filter"
+                          ? "pointer-events-none"
+                          : ""
+                      }`}
+                    >
+                      <FormikTextArea
+                        name="filter"
+                        label="Filter"
+                        hint="Notifications for resources matching this CEL expression will be silenced"
+                        disabled={
+                          activeField !== null && activeField !== "filter"
+                        }
+                        readOnly={
+                          activeField !== null && activeField !== "filter"
+                        }
+                        className={`flex flex-col ${activeField !== null && activeField !== "filter" ? "opacity-50" : ""}`}
+                        onChange={(
+                          e: React.ChangeEvent<HTMLTextAreaElement>
+                        ) => {
+                          const hasValue = e.target.value.trim() !== "";
+                          if (hasValue) {
+                            setActiveField("filter");
+                            // Clear other fields
+                            setFieldValue("component_id", undefined);
+                            setFieldValue("config_id", undefined);
+                            setFieldValue("check_id", undefined);
+                            setFieldValue("canary_id", undefined);
+                            setFieldValue("recursive", false);
+                            setFieldValue("selectors", "");
+                          } else if (activeField === "filter") {
+                            setActiveField(null);
+                          }
+                          setFormValues({ ...values, filter: e.target.value });
+                        }}
+                      />
+                      {activeField !== null && activeField !== "filter" && (
+                        <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowFilterExamples(!showFilterExamples)}
+                      className="mb-2 mt-4 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                    >
+                      <ChevronRightIcon
+                        className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
+                      />
+                      Filter Examples
+                    </button>
+
+                    {showFilterExamples && (
+                      <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
+                        <div className="space-y-4 p-4">
+                          {filterExamples.map((example, index) => (
+                            <div
+                              key={index}
+                              className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                            >
+                              <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+                                <p className="text-sm font-medium text-gray-700">
+                                  {example.description}
+                                </p>
+                              </div>
+                              <div className="p-3">
+                                <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+                                  {example.code}
+                                </code>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Selectors Block */}
+                <button
+                  type="button"
+                  onClick={() => setShowSelectorSection(!showSelectorSection)}
+                  className={`mb-2 flex items-center gap-1 rounded px-2 py-1 text-left text-sm font-medium ${
+                    activeField !== null && activeField !== "selector"
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "bg-blue-50/50 text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  }`}
+                  disabled={activeField !== null && activeField !== "selector"}
+                >
+                  <ChevronRightIcon
+                    className={`h-4 w-4 transition-transform ${showSelectorSection ? "rotate-90" : ""}`}
+                  />
+                  Silence using selectors
+                  {activeField !== null && activeField !== "selector" && (
+                    <span className="ml-2 text-xs">(disabled)</span>
+                  )}
+                </button>
+
+                {showSelectorSection && (
+                  <div
+                    className={`mb-4 rounded-lg border p-4 transition-all duration-200 ${
+                      activeField !== null && activeField !== "selector"
+                        ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60"
+                        : "cursor-default border-gray-200 bg-gray-50"
+                    }`}
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {activeField !== null && activeField !== "selector" && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <InformationCircleIcon className="h-4 w-4" />
+                            <span>Only one criteria can be selected</span>
+                          </div>
+                        )}
+                      </div>
+                      {activeField === "selector" && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFieldValue("selectors", "");
+                            setActiveField(null);
+                            setFormValues({ ...values, selectors: "" });
+                          }}
+                          className="text-xs font-medium text-red-600 hover:text-red-700"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div
+                      className={`relative ${
+                        activeField !== null && activeField !== "selector"
+                          ? "pointer-events-none"
+                          : ""
+                      }`}
+                    >
+                      <FormikCodeEditor
+                        fieldName="selectors"
+                        format={"yaml"}
+                        label="Selectors"
+                        hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                        lines={12}
+                        disabled={
+                          activeField !== null && activeField !== "selector"
+                        }
+                        className={`${activeField !== null && activeField !== "selector" ? "opacity-50" : ""}`}
+                      />
+                      {activeField !== null && activeField !== "selector" && (
+                        <div className="absolute inset-0 cursor-not-allowed rounded-md bg-gray-100 bg-opacity-50" />
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowSelectorsExamples(!showSelectorsExamples)
+                      }
+                      className="mb-2 mt-4 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                    >
+                      <ChevronRightIcon
+                        className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
+                      />
+                      Selector Examples
+                    </button>
+
+                    {showSelectorsExamples && (
+                      <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
+                        <div className="space-y-4 p-4">
+                          {selectorsExamples.map((example, index) => (
+                            <div
+                              key={index}
+                              className="overflow-hidden rounded-md border border-gray-200 bg-white"
+                            >
+                              <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+                                <p className="text-sm font-medium text-gray-700">
+                                  {example.title}
+                                </p>
+                              </div>
+                              <div className="p-3">
+                                <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+                                  {example.code}
+                                </pre>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
