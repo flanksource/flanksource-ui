@@ -48,7 +48,7 @@ export default function PermissionsSubjectControls() {
       <div>
         <div className="flex w-full flex-row">
           <Switch
-            options={["Team", "Person", "Notification", "Role", "Playbook"]}
+            options={["Person", "Team", "Notification", "Role", "Playbook"]}
             className="w-auto"
             itemsClassName=""
             defaultValue="Go Template"

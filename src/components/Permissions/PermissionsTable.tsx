@@ -1,4 +1,4 @@
-import { PermissionAPIResponse } from "@flanksource-ui/api/types/permissions";
+import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
@@ -13,12 +13,13 @@ import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import CRDSource from "../Settings/CRDSource";
 
 const formatTagText = (key: string, value: string): string => {
   return `${key}: ${value}`;
 };
 
-const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
+const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
     header: "Subject",
     size: 100,
@@ -253,17 +254,24 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionAPIResponse>[] = [
     size: 40,
     Cell: ({ row }) => {
       const createdBy = row.original.createdBy;
+      const source = row.original.source;
+
+      if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
+        const id = row.original.id;
+        return <CRDSource source={source} id={id} showMinimal />;
+      }
+
       return <Avatar user={createdBy} />;
     }
   }
 ];
 
 type PermissionsTableProps = {
-  permissions: PermissionAPIResponse[];
+  permissions: PermissionsSummary[];
   isLoading: boolean;
   pageCount: number;
   totalEntries: number;
-  handleRowClick?: (row: PermissionAPIResponse) => void;
+  handleRowClick?: (row: PermissionsSummary) => void;
   hideResourceColumn?: boolean;
 };
 

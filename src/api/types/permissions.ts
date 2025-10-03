@@ -45,10 +45,11 @@ export type PermissionTable = {
   playbook_id?: string;
 };
 
-export type PermissionAPIResponse = PermissionTable & {
+export type PermissionsSummary = PermissionTable & {
   // checks: Pick<HealthCheck, "id" | "name" | "type" | "status">;
   catalog: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
   component: Pick<Topology, "id" | "name" | "icon">;
+  source?: string;
   canary: {
     id: string;
     name: string;
