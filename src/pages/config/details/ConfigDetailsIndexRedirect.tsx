@@ -39,7 +39,7 @@ export function ConfigDetailsIndexRedirect() {
     );
   }, [id, tabs, navigate, location.pathname, location.search]);
 
-  if (isConfigLoading && tabs.length === 0) {
+  if (isConfigLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading />
