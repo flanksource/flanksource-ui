@@ -1,11 +1,94 @@
 import { useFormikContext } from "formik";
 import { useCallback, useState, useEffect } from "react";
+import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { Switch } from "../../../ui/FormControls/Switch";
 import { OBJECTS, getActionsForObject } from "../tokenUtils";
 import { TokenFormValues } from "./CreateTokenForm";
 
 const ScopeOptions = ["Read", "Write", "Admin", "Custom"] as const;
 type ScopeType = (typeof ScopeOptions)[number];
+
+// Scope level descriptions
+const SCOPE_DESCRIPTIONS: Record<Exclude<ScopeType, "Custom">, string> = {
+  Read: `Grant read-only access to all resources (${OBJECTS.join(", ")})`,
+  Write: `Grant read and create permissions for all resources (${OBJECTS.join(", ")})`,
+  Admin: `Grant full access (read, create, update, delete) to all resources (${OBJECTS.join(", ")})`
+};
+
+// Permission level descriptions for each object type
+const PERMISSION_DESCRIPTIONS: Record<string, Record<string, string>> = {
+  configs: {
+    None: "No access to configuration items",
+    Read: "View configuration items and their details",
+    Write: "View and create configuration items",
+    Admin: "Full control: view, create, update, and delete configs"
+  },
+  canaries: {
+    None: "No access to health checks",
+    Read: "View health checks and their status",
+    Write: "View and create health checks",
+    Admin: "Full control: view, create, update, and delete health checks"
+  },
+  components: {
+    None: "No access to topology components",
+    Read: "View topology components and relationships",
+    Write: "View and create topology components",
+    Admin: "Full control: view, create, update, and delete components"
+  },
+  incidents: {
+    None: "No access to incidents",
+    Read: "View incidents and their details",
+    Write: "View and create incidents",
+    Admin: "Full control: view, create, update, and delete incidents"
+  },
+  playbooks: {
+    None: "No access to playbooks",
+    Read: "View playbook definitions",
+    Run: "View and execute playbooks",
+    Approve: "View, run, and approve playbook executions",
+    Write: "Full control: view, run, approve, create, and delete playbooks"
+  },
+  people: {
+    None: "No access to people/team members",
+    Read: "View people and team member details",
+    Write: "View and add people",
+    Admin: "Full control: view, add, update, and remove people"
+  },
+  teams: {
+    None: "No access to teams",
+    Read: "View teams and their members",
+    Write: "View and create teams",
+    Admin: "Full control: view, create, update, and delete teams"
+  },
+  connections: {
+    None: "No access to connections",
+    Read: "View connection configurations",
+    Write: "View and create connections",
+    Admin: "Full control: view, create, update, and delete connections"
+  },
+  notifications: {
+    None: "No access to notifications",
+    Read: "View notification settings",
+    Write: "View and create notifications",
+    Admin: "Full control: view, create, update, and delete notifications"
+  },
+  config_items: {
+    None: "No access to catalog items",
+    Read: "View catalog items",
+    Write: "View and create catalog items",
+    Admin: "Full control: view, create, update, and delete catalog items"
+  },
+  logs: {
+    None: "No access to logs",
+    Read: "View and search logs",
+    Write: "View and export logs",
+    Admin: "Full control: view, export, and manage logs"
+  },
+  mcp: {
+    None: "No access to MCP (Model Context Protocol)",
+    Admin: "Full access to MCP servers and tools"
+  }
+};
 
 const ObjectPermissionOptions = ["None", "Read", "Write", "Admin"] as const;
 const McpPermissionOptions = ["None", "Admin"] as const;
@@ -175,13 +258,30 @@ function ObjectPermissionSwitch({
       <label className="w-20 flex-shrink-0 text-sm font-medium text-gray-800">
         {object}
       </label>
-      <div className="flex flex-row">
+      <div className="flex flex-row items-center space-x-2">
         <Switch
           options={getOptionsForObject()}
           defaultValue="None"
           value={selectedPermission as string}
           onChange={handlePermissionChange}
         />
+        <div className="group relative">
+          <QuestionMarkCircleIcon
+            className="h-4 w-4 cursor-help text-gray-400"
+            aria-label="Permission info"
+          />
+          <div className="invisible absolute left-6 top-0 z-50 w-80 rounded-md bg-gray-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
+            <div className="space-y-1">
+              {getOptionsForObject().map((option) => (
+                <div key={option}>
+                  <span className="font-semibold">{option}:</span>{" "}
+                  {PERMISSION_DESCRIPTIONS[object]?.[option] ||
+                    "Permission level"}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -297,6 +397,11 @@ export default function TokenScopeFieldsGroup({
             onChange={handleScopeChange}
           />
         </div>
+        {selectedScope !== "Custom" && (
+          <div className="rounded-md bg-blue-50 px-3 py-2 text-xs text-blue-700">
+            {SCOPE_DESCRIPTIONS[selectedScope]}
+          </div>
+        )}
       </div>
 
       {selectedScope === "Custom" && (
