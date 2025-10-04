@@ -6,7 +6,8 @@ import {
 } from "@flanksource-ui/api/services/notifications";
 import {
   SilenceNotificationResponse as SilenceNotificationRequest,
-  SilenceNotificationResponse
+  SilenceNotificationResponse,
+  NotificationSendHistorySummary
 } from "@flanksource-ui/api/types/notifications";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
@@ -15,6 +16,7 @@ import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextAr
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationResourceField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
 import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
@@ -29,6 +31,16 @@ import {
   ChevronRightIcon,
   InformationCircleIcon
 } from "@heroicons/react/outline";
+import { Age } from "@flanksource-ui/ui/Age";
+import NotificationResourceDisplay from "@flanksource-ui/components/Notifications/NotificationResourceDisplay";
+import {
+  Count,
+  CountBar,
+  OrderByColor
+} from "@flanksource-ui/ui/Icons/ChangeCount";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import { HealthIndicator } from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 
 // Helper component to sync Formik values with parent state
 function FormikValuesSyncer({
@@ -66,7 +78,9 @@ export default function NotificationSilenceForm({
   const [activeField, setActiveField] = useState<
     "resource" | "filter" | "selector" | null
   >(null);
-  const [previewData, setPreviewData] = useState<any>(null);
+  const [previewData, setPreviewData] = useState<
+    NotificationSendHistorySummary[] | null
+  >(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   const filterExamples = [
@@ -760,7 +774,7 @@ export default function NotificationSilenceForm({
                           setPreviewData(data);
                         } catch (error) {
                           console.error("Error fetching preview:", error);
-                          setPreviewData({ error: "Failed to fetch preview" });
+                          setPreviewData(null);
                         } finally {
                           setIsPreviewLoading(false);
                         }
@@ -785,41 +799,62 @@ export default function NotificationSilenceForm({
                         </div>
                       ) : previewData ? (
                         <div className="space-y-2">
-                          {previewData.error ? (
-                            <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-                              {previewData.error}
-                            </div>
-                          ) : Array.isArray(previewData) &&
-                            previewData.length > 0 ? (
+                          {Array.isArray(previewData) &&
+                          previewData.length > 0 ? (
                             <>
-                              <div className="text-sm text-gray-600">
+                              <div className="mb-2 text-sm text-gray-600">
                                 {previewData.length} notification(s) will be
                                 silenced:
                               </div>
-                              {previewData
-                                .slice(0, 5)
-                                .map((notification: any, index: number) => (
+                              <div className="space-y-2">
+                                {previewData.map((notification, index) => (
                                   <div
                                     key={index}
-                                    className="rounded border bg-white p-2 text-sm"
+                                    className="rounded border border-gray-200 bg-white p-3"
                                   >
-                                    <div className="font-medium">
-                                      {notification.title ||
-                                        notification.name ||
-                                        "Notification"}
-                                    </div>
-                                    <div className="text-gray-500">
-                                      {notification.message ||
-                                        notification.description ||
-                                        "No description"}
+                                    <div className="flex items-start justify-between gap-4">
+                                      <div className="flex-1 space-y-2">
+                                        {/* Resource and Count */}
+                                        <div className="text-sm text-gray-700">
+                                          <div className="flex flex-wrap gap-1">
+                                            <Icon
+                                              name={
+                                                notification?.resource?.type
+                                              }
+                                            />
+                                            <span className="mr-2">
+                                              {" "}
+                                              {notification.resource?.name}
+                                            </span>
+                                            <Tag title="tags">
+                                              {notification.resource?.type
+                                                ?.split("::")
+                                                .at(-1)
+                                                ?.toLocaleLowerCase()}
+                                            </Tag>
+
+                                            {Object.entries(
+                                              notification.resource?.tags ?? {}
+                                            ).map(([key, val]) => (
+                                              <Tag title={key} key={key}>
+                                                {val}
+                                              </Tag>
+                                            ))}
+
+                                            <span className="mr-2">
+                                              {" "}
+                                              on{" "}
+                                              <Age
+                                                from={notification.created_at}
+                                              />{" "}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 ))}
-                              {previewData.length > 5 && (
-                                <div className="text-sm text-gray-500">
-                                  +{previewData.length - 5} more...
-                                </div>
-                              )}
+                              </div>
                             </>
                           ) : (
                             <div className="text-sm text-gray-500">

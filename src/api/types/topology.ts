@@ -32,6 +32,7 @@ export interface Component extends Timestamped, Namespaced {
   parent_id?: string;
   path?: string;
   type?: string;
+  tags?: Record<string, any>;
   updated_at?: string;
 }
 
