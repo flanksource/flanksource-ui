@@ -32,14 +32,6 @@ import {
   InformationCircleIcon
 } from "@heroicons/react/outline";
 import { Age } from "@flanksource-ui/ui/Age";
-import NotificationResourceDisplay from "@flanksource-ui/components/Notifications/NotificationResourceDisplay";
-import {
-  Count,
-  CountBar,
-  OrderByColor
-} from "@flanksource-ui/ui/Icons/ChangeCount";
-import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { HealthIndicator } from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 
 // Helper component to sync Formik values with parent state
@@ -82,6 +74,7 @@ export default function NotificationSilenceForm({
     NotificationSendHistorySummary[] | null
   >(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const filterExamples = [
     {
@@ -743,6 +736,7 @@ export default function NotificationSilenceForm({
                       disabled={!activeField}
                       onClick={async () => {
                         setIsPreviewLoading(true);
+                        setPreviewError(null);
                         try {
                           const params: {
                             resource_id?: string;
@@ -771,10 +765,12 @@ export default function NotificationSilenceForm({
 
                           const data =
                             await getNotificationSilencePreview(params);
-                          setPreviewData(data);
+                          setPreviewData(data || []);
+                          setPreviewError(null);
                         } catch (error) {
                           console.error("Error fetching preview:", error);
                           setPreviewData(null);
+                          setPreviewError("Failed to fetch preview");
                         } finally {
                           setIsPreviewLoading(false);
                         }
@@ -796,6 +792,10 @@ export default function NotificationSilenceForm({
                           <span className="ml-2 text-sm text-gray-500">
                             Loading preview...
                           </span>
+                        </div>
+                      ) : previewError ? (
+                        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                          {previewError}
                         </div>
                       ) : previewData ? (
                         <div className="space-y-2">
@@ -857,7 +857,7 @@ export default function NotificationSilenceForm({
                               </div>
                             </>
                           ) : (
-                            <div className="text-sm text-gray-500">
+                            <div className="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
                               No notifications match this criteria.
                             </div>
                           )}
@@ -884,7 +884,7 @@ export default function NotificationSilenceForm({
                   }
                 />
               </div>
-              <div className={`${footerClassName}`}>
+              <div className={`${footerClassName} mb-4`}>
                 {data?.id && (
                   <>
                     <DeleteButton
