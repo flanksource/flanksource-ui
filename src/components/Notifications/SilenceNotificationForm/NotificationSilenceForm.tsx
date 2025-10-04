@@ -33,6 +33,7 @@ import {
 } from "@heroicons/react/outline";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import YAML from "yaml";
 
 // Helper component to sync Formik values with parent state
 function FormikValuesSyncer({
@@ -107,40 +108,28 @@ export default function NotificationSilenceForm({
 
   const selectorsExamples = [
     {
+      title:
+        "Silence notifications from pods starting with specific name pattern",
+      code: `- search: name=my-app-* type=Kubernetes::Pod`
+    },
+    {
       title: "Silence notifications from all jobs with low severity",
-      code: `selectors:
-  - types:
-      - Kubernetes::Job
-    tagSelector: severity=low
-`
+      code: `- types:
+  - Kubernetes::Job
+  tagSelector: severity=low`
     },
     {
       title:
         "Silence notifications from ap-south-1 region for the test account",
-      code: `selectors:
-  - tagSelector: region=ap-south-1,account=830064254263
-`
+      code: `- tagSelector: region=ap-south-1,account=830064254263`
     },
     {
       title: "Silence health checks expected to fail",
-      code: `selectors:
-  - labelSelector: Expected-Fail=true
-`
-    },
-    {
-      title:
-        "Silence notifications from pods starting with specific name pattern",
-      code: `selectors:
-  - types:
-      - Kubernetes::Pod
-    nameSelector: my-app-*
-`
+      code: `- labelSelector: Expected-Fail=true`
     },
     {
       title: "Silence notifications from resources of a specific Helm chart",
-      code: `selectors:
-  - tagSelector: helm.sh/chart=my-app-1.0.0
-`
+      code: `- tagSelector: helm.sh/chart=my-app-1.0.0`
     }
   ];
 
@@ -311,11 +300,26 @@ export default function NotificationSilenceForm({
 
     v = omit(v, "error");
 
+    // Convert selectors from YAML string to JSON string if present
+    let selectors = v.selectors;
+    if (selectors && typeof selectors === "string" && selectors.trim()) {
+      try {
+        const parsedYaml = YAML.parse(selectors);
+        selectors = JSON.stringify(parsedYaml);
+      } catch (e) {
+        formik.setErrors({
+          form: "Invalid YAML format in selectors field"
+        });
+        return;
+      }
+    }
+
     return mutate(
       {
         ...v,
         from: fromTime,
-        until: untilTime
+        until: untilTime,
+        selectors
       } as SilenceNotificationRequest,
       {
         onError(error) {
@@ -646,9 +650,9 @@ export default function NotificationSilenceForm({
                         <button
                           type="button"
                           onClick={() => {
-                            setFieldValue("selectors", "");
+                            setFieldValue("selectors", undefined);
                             setActiveField(null);
-                            setFormValues({ ...values, selectors: "" });
+                            setFormValues({ ...values, selectors: undefined });
                           }}
                           className="text-xs font-medium text-red-600 hover:text-red-700"
                         >
@@ -672,6 +676,7 @@ export default function NotificationSilenceForm({
                         disabled={
                           activeField !== null && activeField !== "selector"
                         }
+                        saveAsString={true}
                         className={`${activeField !== null && activeField !== "selector" ? "opacity-50" : ""}`}
                       />
                       {activeField !== null && activeField !== "selector" && (
@@ -760,7 +765,16 @@ export default function NotificationSilenceForm({
                             activeField === "selector" &&
                             values.selectors
                           ) {
-                            params.selector = values.selectors;
+                            // Convert YAML string to JSON object, then it will be JSON stringified by the API
+                            try {
+                              const parsedYaml = YAML.parse(values.selectors);
+                              params.selector = parsedYaml;
+                            } catch (e) {
+                              // If YAML parsing fails, show error
+                              throw new Error(
+                                "Invalid YAML format in selectors"
+                              );
+                            }
                           }
 
                           const data =

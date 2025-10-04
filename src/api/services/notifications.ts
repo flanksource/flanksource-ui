@@ -356,7 +356,7 @@ export const getNotificationSilencePreview = async ({
     params.append("filter", filter);
   }
   if (selector) {
-    params.append("selector", JSON.stringify(selector));
+    params.append("selectors", JSON.stringify(selector));
   }
 
   const res = await NotificationAPI.get(
