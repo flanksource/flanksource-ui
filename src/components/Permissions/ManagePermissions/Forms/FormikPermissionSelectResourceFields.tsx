@@ -8,8 +8,6 @@ import { useState } from "react";
 export const permissionObjectList = [
   { label: "Canaries", value: "canaries" },
   { label: "Catalog", value: "catalog" },
-  { label: "Incident", value: "incident" },
-  { label: "People", value: "people" },
   { label: "Topology", value: "topology" },
   { label: "Playbooks", value: "playbooks" },
   { label: "Connection", value: "connection" },

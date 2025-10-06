@@ -10,7 +10,6 @@ export type PermissionTable = {
   description: string;
   action: string;
   deny?: boolean;
-  object?: string;
   subject?: string;
   subject_type?:
     | "group"
@@ -29,11 +28,19 @@ export type PermissionTable = {
   agents?: string[];
 
   // Resources
+  object?:
+    | "catalog"
+    | "component"
+    | "canaries"
+    | "connection"
+    | "playbook"
+    | "topology";
   object_selector?: Record<string, any>[];
   component_id?: string;
-  config_id?: string;
   canary_id?: string;
+  config_id?: string;
   connection_id?: string;
+  playbook_id?: string;
 
   // Deprecated fields
   // These are subject fields that we do not use anymore.
@@ -42,7 +49,6 @@ export type PermissionTable = {
   person_id?: string;
   notification_id?: string;
   team_id?: string;
-  playbook_id?: string;
 };
 
 export type PermissionsSummary = PermissionTable & {
