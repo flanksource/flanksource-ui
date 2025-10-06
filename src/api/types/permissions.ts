@@ -5,6 +5,14 @@ import { Topology } from "./topology";
 import { Team, User } from "./users";
 import { NotificationRules } from "./notifications";
 
+export type PermissionGlobalObject =
+  | "catalog"
+  | "component"
+  | "canaries"
+  | "connection"
+  | "playbook"
+  | "topology";
+
 export type PermissionTable = {
   id: string;
   description: string;
@@ -28,13 +36,7 @@ export type PermissionTable = {
   agents?: string[];
 
   // Resources
-  object?:
-    | "catalog"
-    | "component"
-    | "canaries"
-    | "connection"
-    | "playbook"
-    | "topology";
+  object?: PermissionGlobalObject;
   object_selector?: Record<string, any>[];
   component_id?: string;
   canary_id?: string;
@@ -71,13 +73,7 @@ export type PermissionsSummary = PermissionTable & {
   agents: string[] | null;
 
   // These represent global objects
-  object:
-    | "catalog"
-    | "component"
-    | "canaries"
-    | "connection"
-    | "playbook"
-    | "topology";
+  object: PermissionGlobalObject;
 
   // These represent object selectors per type
   object_selector?: PermissionObjectSelector;

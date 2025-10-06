@@ -146,10 +146,8 @@ export default function PermissionForm({
       permissionData?.component_id ||
       permissionData?.config_id ||
       permissionData?.canary_id ||
-      permissionData?.canary_id ||
       permissionData?.playbook_id ||
-      permissionData?.connection_id ||
-      permissionData?.object
+      permissionData?.connection_id
     );
   }, [permissionData]);
 
