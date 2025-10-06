@@ -22,7 +22,14 @@ export default function FormikPeopleDropdown({
   const options = useMemo(
     () =>
       people?.map((person) => ({
-        label: person.name,
+        label: (
+          <div className="flex items-center justify-between gap-2">
+            <span>{person.name}</span>
+            {person.email && (
+              <span className="text-xs text-gray-500">{person.email}</span>
+            )}
+          </div>
+        ),
         value: person.id
       })),
     [people]
