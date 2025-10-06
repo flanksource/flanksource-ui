@@ -42,6 +42,22 @@ export default function PermissionsSubjectControls() {
     }
   }, [teamId, personId, notificationId, subjectType, subject]);
 
+  useEffect(() => {
+    if (!subjectType) {
+      if (switchOption === "Team") {
+        setFieldValue("subject_type", "team");
+      } else if (switchOption === "Person") {
+        setFieldValue("subject_type", "person");
+      } else if (switchOption === "Notification") {
+        setFieldValue("subject_type", "notification");
+      } else if (switchOption === "Role") {
+        setFieldValue("subject_type", "group");
+      } else if (switchOption === "Playbook") {
+        setFieldValue("subject_type", "playbook");
+      }
+    }
+  }, [switchOption, subjectType, setFieldValue]);
+
   return (
     <div className="flex flex-col gap-2">
       <label className="form-label">Subject</label>
