@@ -7,6 +7,14 @@ import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 
+const SWITCH_OPTION_TO_SUBJECT_TYPE = {
+  Team: "team",
+  Person: "person",
+  Notification: "notification",
+  Role: "group",
+  Playbook: "playbook"
+} as const;
+
 export default function PermissionsSubjectControls() {
   const { values, setFieldValue } = useFormikContext<Record<string, any>>();
 
@@ -25,7 +33,7 @@ export default function PermissionsSubjectControls() {
       return "Notification";
     if (subjectType === "group" && subject) return "Role";
     if (subjectType === "playbook" && subject) return "Playbook";
-    return "Team";
+    return "Person";
   });
 
   useEffect(() => {
@@ -42,6 +50,15 @@ export default function PermissionsSubjectControls() {
     }
   }, [teamId, personId, notificationId, subjectType, subject]);
 
+  useEffect(() => {
+    if (!subjectType) {
+      setFieldValue(
+        "subject_type",
+        SWITCH_OPTION_TO_SUBJECT_TYPE[switchOption]
+      );
+    }
+  }, [switchOption, subjectType, setFieldValue]);
+
   return (
     <div className="flex flex-col gap-2">
       <label className="form-label">Subject</label>
@@ -55,23 +72,12 @@ export default function PermissionsSubjectControls() {
             value={switchOption}
             onChange={(v) => {
               setSwitchOption(v);
+              setFieldValue("subject_type", SWITCH_OPTION_TO_SUBJECT_TYPE[v]);
 
               // These are old deprecated values that must never be set anymore.
               setFieldValue("person_id", undefined);
               setFieldValue("notification_id", undefined);
               setFieldValue("team_id", undefined);
-
-              if (v === "Team") {
-                setFieldValue("subject_type", "team");
-              } else if (v === "Person") {
-                setFieldValue("subject_type", "person");
-              } else if (v === "Notification") {
-                setFieldValue("subject_type", "notification");
-              } else if (v === "Role") {
-                setFieldValue("subject_type", "group");
-              } else if (v === "Playbook") {
-                setFieldValue("subject_type", "playbook");
-              }
             }}
           />
         </div>

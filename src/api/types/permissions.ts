@@ -5,12 +5,19 @@ import { Topology } from "./topology";
 import { Team, User } from "./users";
 import { NotificationRules } from "./notifications";
 
+export type PermissionGlobalObject =
+  | "catalog"
+  | "component"
+  | "canaries"
+  | "connection"
+  | "playbook"
+  | "topology";
+
 export type PermissionTable = {
   id: string;
   description: string;
   action: string;
   deny?: boolean;
-  object?: string;
   subject?: string;
   subject_type?:
     | "group"
@@ -29,11 +36,13 @@ export type PermissionTable = {
   agents?: string[];
 
   // Resources
+  object?: PermissionGlobalObject;
   object_selector?: Record<string, any>[];
   component_id?: string;
-  config_id?: string;
   canary_id?: string;
+  config_id?: string;
   connection_id?: string;
+  playbook_id?: string;
 
   // Deprecated fields
   // These are subject fields that we do not use anymore.
@@ -42,7 +51,6 @@ export type PermissionTable = {
   person_id?: string;
   notification_id?: string;
   team_id?: string;
-  playbook_id?: string;
 };
 
 export type PermissionsSummary = PermissionTable & {
@@ -56,7 +64,6 @@ export type PermissionsSummary = PermissionTable & {
   };
   playbook: Pick<PlaybookSpec, "id" | "name" | "namespace" | "icon" | "title">;
   team: Pick<Team, "id" | "name" | "icon">;
-  connection: Pick<Connection, "id" | "name" | "type">;
   notification: Pick<NotificationRules, "id" | "name" | "namespace">;
   group: any;
   subject: string;
@@ -64,4 +71,25 @@ export type PermissionsSummary = PermissionTable & {
   createdBy: User;
   tags: Record<string, string> | null;
   agents: string[] | null;
+
+  // These represent global objects
+  object: PermissionGlobalObject;
+
+  // These represent object selectors per type
+  object_selector?: PermissionObjectSelector;
+
+  // These are objects that are specifically chosen
+  config_object: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
+  playbook_object: Pick<PlaybookSpec, "id" | "name" | "icon">;
+  connection_object: Pick<Connection, "id" | "name" | "type">;
+  component_object: Pick<Topology, "id" | "name" | "icon">;
 };
+
+type PermissionObjectSelector = {
+  playbooks: Selectors[];
+  connections: Selectors[];
+  configs: Selectors[];
+  components: Selectors[];
+};
+
+interface Selectors {}

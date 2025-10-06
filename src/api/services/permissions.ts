@@ -96,3 +96,10 @@ export function updatePermission(permission: PermissionTable) {
 export function deletePermission(id: string) {
   return IncidentCommander.delete(`/permissions?id=eq.${id}`);
 }
+
+export async function fetchPermissionById(id: string) {
+  const response = await IncidentCommander.get<PermissionTable[]>(
+    `/permissions?id=eq.${id}`
+  );
+  return response.data[0];
+}
