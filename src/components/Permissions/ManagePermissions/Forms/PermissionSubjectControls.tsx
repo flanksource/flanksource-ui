@@ -25,7 +25,7 @@ export default function PermissionsSubjectControls() {
       return "Notification";
     if (subjectType === "group" && subject) return "Role";
     if (subjectType === "playbook" && subject) return "Playbook";
-    return "Team";
+    return "Person";
   });
 
   useEffect(() => {
