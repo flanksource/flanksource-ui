@@ -22,11 +22,27 @@ export const permissionObjectList = [
 ];
 
 export default function FormikPermissionSelectResourceFields() {
-  const { setFieldValue } = useFormikContext<Record<string, any>>();
+  const { setFieldValue, values } = useFormikContext<Record<string, any>>();
+
+  const getInitialTab = ():
+    | "Component"
+    | "Catalog"
+    | "Canary"
+    | "Playbook"
+    | "Connection"
+    | "Global" => {
+    if (values.playbook_id) return "Playbook";
+    if (values.config_id) return "Catalog";
+    if (values.component_id) return "Component";
+    if (values.connection_id) return "Connection";
+    if (values.canary_id) return "Canary";
+    if (values.object) return "Global";
+    return "Catalog";
+  };
 
   const [switchOption, setSwitchOption] = useState<
     "Component" | "Catalog" | "Canary" | "Playbook" | "Connection" | "Global"
-  >("Catalog");
+  >(getInitialTab());
 
   return (
     <div className="flex flex-col gap-2">
