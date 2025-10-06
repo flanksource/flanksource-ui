@@ -131,12 +131,15 @@ export default function PermissionForm({
     {
       queryKey: ["permission", permissionId],
       queryFn: () => fetchPermissionById(permissionId!),
-      enabled: !!permissionId
+      enabled: !!permissionId && isOpen
     }
   );
 
   // Use fetched data if editing, otherwise use provided data
   const permissionData = permissionId ? fetchedPermission : data;
+
+  // Only show loading when we're actually fetching an existing permission
+  const shouldShowLoading = !!permissionId && isFetchingPermission;
 
   const isResourceIdProvided = useMemo(() => {
     return !!(
@@ -206,7 +209,7 @@ export default function PermissionForm({
 
   const isLoading = adding || updating;
 
-  if (isFetchingPermission) {
+  if (shouldShowLoading) {
     return (
       <Modal
         title="Edit Permission"

@@ -102,11 +102,10 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     enableHiding: true,
     size: 150,
     Cell: ({ row }) => {
-      const config = row.original.catalog;
-      // const check = row.original.checks;
-      const playbook = row.original.playbook;
-      const component = row.original.component;
-      const connection = row.original.connection;
+      const config = row.original.config_object;
+      const playbook = row.original.playbook_object;
+      const component = row.original.component_object;
+      const connection = row.original.connection_object;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
       const { tags, agents } = row.original;
@@ -177,19 +176,47 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       return (
         <div className="flex flex-row items-center gap-2">
           <div className="flex flex-col">
-            {config && <ConfigLink config={config} />}
-            {/* {check && <CheckLink check={check} />} */}
-            {playbook && <PlaybookSpecIcon playbook={playbook} showLabel />}
-            {component && (
-              <TopologyLink
-                topology={component}
-                className="h-5 w-5 text-gray-600"
-                linkClassName="text-gray-600"
-                size="md"
-              />
+            {config && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Catalog:</span>
+                <ConfigLink config={config} />
+              </div>
             )}
-            {connection && <ConnectionIcon connection={connection} showLabel />}
+
+            {playbook && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Playbook:</span>
+                <PlaybookSpecIcon
+                  playbook={{
+                    ...playbook,
+                    title: playbook.name,
+                    spec: { icon: playbook.icon || "", actions: [] }
+                  }}
+                  showLabel
+                />
+              </div>
+            )}
+
+            {component && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Component:</span>
+                <TopologyLink
+                  topology={component}
+                  className="h-5 w-5 text-gray-600"
+                  linkClassName="text-gray-600"
+                  size="md"
+                />
+              </div>
+            )}
+
+            {connection && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Connection:</span>
+                <ConnectionIcon connection={connection} showLabel />
+              </div>
+            )}
           </div>
+
           {rlsBadges.length > 0 && (
             <div className="flex flex-wrap gap-1">{rlsBadges}</div>
           )}

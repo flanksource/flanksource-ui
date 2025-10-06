@@ -62,7 +62,6 @@ export type PermissionsSummary = PermissionTable & {
   };
   playbook: Pick<PlaybookSpec, "id" | "name" | "namespace" | "icon" | "title">;
   team: Pick<Team, "id" | "name" | "icon">;
-  connection: Pick<Connection, "id" | "name" | "type">;
   notification: Pick<NotificationRules, "id" | "name" | "namespace">;
   group: any;
   subject: string;
@@ -70,4 +69,31 @@ export type PermissionsSummary = PermissionTable & {
   createdBy: User;
   tags: Record<string, string> | null;
   agents: string[] | null;
+
+  // These represent global objects
+  object:
+    | "catalog"
+    | "component"
+    | "canaries"
+    | "connection"
+    | "playbook"
+    | "topology";
+
+  // These represent object selectors per type
+  object_selector?: PermissionObjectSelector;
+
+  // These are objects that are specifically chosen
+  config_object: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
+  playbook_object: Pick<PlaybookSpec, "id" | "name" | "icon">;
+  connection_object: Pick<Connection, "id" | "name" | "type">;
+  component_object: Pick<Topology, "id" | "name" | "icon">;
 };
+
+type PermissionObjectSelector = {
+  playbooks: Selectors[];
+  connections: Selectors[];
+  configs: Selectors[];
+  components: Selectors[];
+};
+
+interface Selectors {}
