@@ -33,10 +33,9 @@ const renderLegend = (props: any) => {
 };
 
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
-  console.log("Rendering PieChartPanel", summary);
   const chartData = generatePieChartData(summary.rows || []);
   return (
-    <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
+    <div className="flex h-full min-h-[300px] w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
       {summary.description && (
         <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
