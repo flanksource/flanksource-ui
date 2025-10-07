@@ -13,7 +13,8 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
   return (
     <>
       {summary.rows.map((row, rowIndex) => {
-        const { value, label } = row;
+        const { value, count, label } = row;
+        const displayValue = value ?? count;
 
         return (
           <div
@@ -31,8 +32,8 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
             <div className="flex flex-1 items-center justify-center">
               <p className="text-6xl font-semibold text-teal-600">
                 {summary.number
-                  ? Number(value).toFixed(summary.number.precision || 0)
-                  : value}
+                  ? Number(displayValue).toFixed(summary.number.precision || 0)
+                  : displayValue}
                 {summary.number?.unit && (
                   <span className="ml-2 text-2xl font-normal text-gray-500">
                     {summary.number.unit}
