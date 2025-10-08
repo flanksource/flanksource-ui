@@ -9,7 +9,8 @@ export async function getAccessScopes(
   return IncidentCommander.get("/access_scopes", {
     params: {
       ...params,
-      select: "*,person:people(id,email,name),team:teams(id,name)",
+      select:
+        "*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),createdBy:people!access_scopes_created_by_fkey(id,email,name,avatar)",
       deleted_at: "is.null"
     }
   });
@@ -24,7 +25,8 @@ export async function getAccessScopeById(
     {
       params: {
         id: `eq.${id}`,
-        select: "*,person:people(id,email,name),team:teams(id,name)"
+        select:
+          "*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),createdBy:people!access_scopes_created_by_fkey(id,email,name,avatar)"
       }
     }
   );

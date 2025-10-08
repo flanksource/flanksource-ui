@@ -1,6 +1,6 @@
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const RESOURCE_OPTIONS = [
   { label: "All Resources (*)", value: "*" },
@@ -15,16 +15,40 @@ const RESOURCE_OPTIONS = [
   { label: "Connections", value: "connections" }
 ];
 
-export default function AccessScopeResourcesSelect() {
+type AccessScopeResourcesSelectProps = {
+  disabled?: boolean;
+};
+
+export default function AccessScopeResourcesSelect({
+  disabled = false
+}: AccessScopeResourcesSelectProps) {
   const { values, setFieldValue } = useFormikContext<any>();
-  const resources = values.resources || [];
+  const prevResourcesRef = useRef<string[]>([]);
 
   useEffect(() => {
-    // If "*" is selected, clear all other selections
-    if (resources.includes("*") && resources.length > 1) {
+    const resources = values.resources || [];
+    const prevResources = prevResourcesRef.current;
+
+    // If "*" was already selected and user adds another resource, remove "*"
+    if (
+      prevResources.includes("*") &&
+      resources.includes("*") &&
+      resources.length > 1
+    ) {
+      const newResources = resources.filter((r: string) => r !== "*");
+      setFieldValue("resources", newResources);
+    }
+    // If "*" is newly selected (wasn't in prev), clear all other selections
+    else if (
+      !prevResources.includes("*") &&
+      resources.includes("*") &&
+      resources.length > 1
+    ) {
       setFieldValue("resources", ["*"]);
     }
-  }, [resources, setFieldValue]);
+
+    prevResourcesRef.current = resources;
+  }, [values.resources, setFieldValue]);
 
   return (
     <FormikSelectDropdown
@@ -33,6 +57,7 @@ export default function AccessScopeResourcesSelect() {
       options={RESOURCE_OPTIONS}
       isMulti
       required
+      isDisabled={disabled}
       hint="Select which resource types this scope applies to. Select 'All Resources' for everything."
     />
   );

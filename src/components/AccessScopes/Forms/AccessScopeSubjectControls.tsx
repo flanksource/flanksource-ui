@@ -4,7 +4,13 @@ import FormikTeamsDropdown from "@flanksource-ui/components/Forms/Formik/FormikT
 import { useFormikContext } from "formik";
 import { useState, useEffect } from "react";
 
-export default function AccessScopeSubjectControls() {
+type AccessScopeSubjectControlsProps = {
+  disabled?: boolean;
+};
+
+export default function AccessScopeSubjectControls({
+  disabled = false
+}: AccessScopeSubjectControlsProps) {
   const { values, setFieldValue } = useFormikContext<any>();
   const [subjectType, setSubjectType] = useState<"Person" | "Team">(
     values.person_id ? "Person" : "Team"
@@ -27,23 +33,29 @@ export default function AccessScopeSubjectControls() {
             options={["Person", "Team"]}
             className="w-auto"
             value={subjectType}
-            onChange={(v) => setSubjectType(v)}
+            onChange={(v) => {
+              if (!disabled) setSubjectType(v);
+            }}
           />
         </div>
 
         {subjectType === "Person" && (
-          <FormikPeopleDropdown
-            name="person_id"
-            required
-            hint="Person who will have this access scope"
-          />
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikPeopleDropdown
+              name="person_id"
+              required
+              hint="Person who will have this access scope"
+            />
+          </div>
         )}
         {subjectType === "Team" && (
-          <FormikTeamsDropdown
-            name="team_id"
-            required
-            hint="Team that will have this access scope"
-          />
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikTeamsDropdown
+              name="team_id"
+              required
+              hint="Team that will have this access scope"
+            />
+          </div>
         )}
       </div>
     </div>

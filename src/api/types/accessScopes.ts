@@ -36,4 +36,5 @@ export type AccessScopeDB = {
 export type AccessScopeDisplay = AccessScopeDB & {
   person?: { id: string; email: string; name: string };
   team?: { id: string; name: string };
+  createdBy?: { id: string; email: string; name: string; avatar?: string };
 };

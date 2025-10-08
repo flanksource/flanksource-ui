@@ -161,30 +161,48 @@ export default function AccessScopeForm({
       >
         <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
           <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
-            <FormikTextInput
-              name="name"
-              label="Name"
-              required
-              disabled={isReadOnly}
-            />
+            {isReadOnly && (
+              <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                <p className="font-medium">
+                  Read-Only Mode: This resource is managed by Kubernetes CRD and
+                  cannot be edited from the UI.
+                </p>
+              </div>
+            )}
 
-            <FormikTextInput
-              name="namespace"
-              label="Namespace"
-              disabled={isReadOnly}
-            />
+            <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+              <FormikTextInput
+                name="name"
+                label="Name"
+                required
+                disabled={isReadOnly}
+              />
+            </div>
 
-            <FormikTextArea
-              name="description"
-              label="Description"
-              disabled={isReadOnly}
-            />
+            {/* Only show namespace field for KubernetesCRD sources (read-only) */}
+            {isReadOnly && (
+              <div className="pointer-events-none opacity-60">
+                <FormikTextInput
+                  name="namespace"
+                  label="Namespace"
+                  disabled={true}
+                />
+              </div>
+            )}
 
-            <AccessScopeSubjectControls />
+            <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+              <FormikTextArea
+                name="description"
+                label="Description"
+                disabled={isReadOnly}
+              />
+            </div>
 
-            <AccessScopeResourcesSelect />
+            <AccessScopeSubjectControls disabled={isReadOnly} />
 
-            <AccessScopeCriteriaForm />
+            <AccessScopeResourcesSelect disabled={isReadOnly} />
+
+            <AccessScopeCriteriaForm disabled={isReadOnly} />
           </div>
 
           <CanEditResource

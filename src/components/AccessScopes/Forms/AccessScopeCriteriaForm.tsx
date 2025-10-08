@@ -7,7 +7,13 @@ import { useAllAgentNamesQuery } from "@flanksource-ui/api/query-hooks";
 import { useMemo } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 
-export default function AccessScopeCriteriaForm() {
+type AccessScopeCriteriaFormProps = {
+  disabled?: boolean;
+};
+
+export default function AccessScopeCriteriaForm({
+  disabled = false
+}: AccessScopeCriteriaFormProps) {
   const { values } = useFormikContext<any>();
   const scopes = values.scopes || [];
 
@@ -27,12 +33,14 @@ export default function AccessScopeCriteriaForm() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <label className="form-label">Scopes</label>
-            <Button
-              text="Add Scope"
-              icon={<FaPlus />}
-              className="btn-secondary btn-sm"
-              onClick={() => push({ tags: {}, agents: [], names: "" })}
-            />
+            {!disabled && (
+              <Button
+                text="Add Scope"
+                icon={<FaPlus />}
+                className="btn-secondary btn-sm"
+                onClick={() => push({ tags: {}, agents: [], names: "" })}
+              />
+            )}
           </div>
 
           {/* Info banner explaining AND/OR logic */}
@@ -67,7 +75,7 @@ export default function AccessScopeCriteriaForm() {
             >
               <div className="mb-3 flex items-center justify-between">
                 <h4 className="font-medium text-gray-900">Scope {index + 1}</h4>
-                {scopes.length > 1 && (
+                {scopes.length > 1 && !disabled && (
                   <Button
                     icon={<FaTrash />}
                     className="btn-danger-base btn-sm"
@@ -78,11 +86,15 @@ export default function AccessScopeCriteriaForm() {
               </div>
 
               <div className="space-y-3">
-                <FormikKeyValueMapField
-                  name={`scopes.${index}.tags`}
-                  label="Tags"
-                  hint="Resources must match ALL these tags"
-                />
+                <div
+                  className={disabled ? "pointer-events-none opacity-60" : ""}
+                >
+                  <FormikKeyValueMapField
+                    name={`scopes.${index}.tags`}
+                    label="Tags"
+                    hint="Resources must match ALL these tags"
+                  />
+                </div>
 
                 <FormikSelectDropdown
                   name={`scopes.${index}.agents`}
@@ -90,15 +102,20 @@ export default function AccessScopeCriteriaForm() {
                   options={agentOptions}
                   isMulti
                   hint="Resources must be from ANY of these agents"
+                  isDisabled={disabled}
                 />
 
-                <FormikTextArea
-                  name={`scopes.${index}.names`}
-                  label="Names"
-                  placeholder="Enter resource names, one per line, or * for all"
-                  hint="Exact resource name matches. Use * to match all names."
-                  rows={3}
-                />
+                <div
+                  className={disabled ? "pointer-events-none opacity-60" : ""}
+                >
+                  <FormikTextArea
+                    name={`scopes.${index}.names`}
+                    label="Names"
+                    placeholder="Enter resource names, one per line, or * for all"
+                    hint="Exact resource name matches. Use * to match all names."
+                    rows={3}
+                  />
+                </div>
               </div>
             </div>
           ))}
