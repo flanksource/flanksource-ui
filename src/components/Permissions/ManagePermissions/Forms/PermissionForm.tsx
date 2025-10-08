@@ -18,7 +18,6 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import clsx from "clsx";
 import { Form, Formik, useFormikContext } from "formik";
 import { useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
@@ -78,22 +77,45 @@ function PermissionFormContent({
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <PermissionsSubjectControls />
-      {isResourceIdProvided && isReadOnly ? (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold">Resource</label>
-          <PermissionResource />
+      {isReadOnly && (
+        <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+          <p className="font-medium">
+            Read-Only Mode: This resource is managed by Kubernetes CRD and
+            cannot be edited from the UI.
+          </p>
         </div>
-      ) : (
-        <FormikPermissionSelectResourceFields />
       )}
-      <PermissionActionDropdown isDisabled={isReadOnly} />
-      <FormikCheckbox name="deny" label="Deny" disabled={isReadOnly} />
-      <FormikTextArea
-        name="description"
-        label="Description"
-        disabled={isReadOnly}
-      />
+
+      <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+        <PermissionsSubjectControls disabled={isReadOnly} />
+      </div>
+
+      <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+        {isResourceIdProvided && isReadOnly ? (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold">Resource</label>
+            <PermissionResource />
+          </div>
+        ) : (
+          <FormikPermissionSelectResourceFields />
+        )}
+      </div>
+
+      <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+        <PermissionActionDropdown isDisabled={isReadOnly} />
+      </div>
+
+      <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+        <FormikCheckbox name="deny" label="Deny" disabled={isReadOnly} />
+      </div>
+
+      <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
+        <FormikTextArea
+          name="description"
+          label="Description"
+          disabled={isReadOnly}
+        />
+      </div>
     </div>
   );
 }
@@ -247,41 +269,36 @@ export default function PermissionForm({
               id={permissionData?.id}
               resourceType={"permissions"}
               source={permissionData?.source}
-              className="flex items-center bg-gray-100 px-5 py-4"
+              className="flex items-center justify-between bg-gray-100 px-5 py-4"
             >
-              <AuthorizationAccessCheck
-                resource={tables.permissions}
-                action="write"
-              >
-                <div
-                  className={clsx(
-                    "flex items-center bg-gray-100 px-5 py-4",
-                    permissionData?.id ? "justify-between" : "justify-end"
-                  )}
-                >
-                  {permissionData?.id && (
+              <div>
+                {permissionData?.id && permissionData.source === "UI" && (
+                  <AuthorizationAccessCheck
+                    resource={tables.permissions}
+                    action="write"
+                  >
                     <DeletePermission
                       permissionId={permissionData.id}
                       onDeleted={onClose}
                     />
-                  )}
-                  <Button
-                    icon={
-                      isLoading ? (
-                        <FaSpinner className="animate-spin" />
-                      ) : undefined
-                    }
-                    type="submit"
-                    text={
-                      permissionData?.id
-                        ? "Save"
-                        : isLoading
-                          ? "Saving ..."
-                          : "Save"
-                    }
-                    className="btn-primary"
-                  />
-                </div>
+                  </AuthorizationAccessCheck>
+                )}
+              </div>
+              <AuthorizationAccessCheck
+                resource={tables.permissions}
+                action="write"
+              >
+                <Button
+                  type="submit"
+                  text={permissionData?.id ? "Save" : "Create"}
+                  className="btn-primary"
+                  icon={
+                    isLoading ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : undefined
+                  }
+                  disabled={isLoading}
+                />
               </AuthorizationAccessCheck>
             </CanEditResource>
           </Form>
