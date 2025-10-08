@@ -86,7 +86,6 @@ export default function PermissionsSubjectControls({
               setFieldValue("notification_id", undefined);
               setFieldValue("team_id", undefined);
             }}
-            disabled={disabled}
           />
         </div>
 
