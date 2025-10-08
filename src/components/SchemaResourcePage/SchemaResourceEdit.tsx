@@ -222,7 +222,7 @@ export function SchemaResourceEdit({
                 label={nav.label}
                 value={nav.value}
               >
-                <div className="flex flex-1 flex-col overflow-y-auto bg-white">
+                <div className="flex flex-1 flex-col bg-white">
                   {hasSubNav("spec") &&
                     (table === "canaries" && !source ? (
                       <div className="flex flex-1 flex-col overflow-y-auto">
@@ -256,7 +256,7 @@ export function SchemaResourceEdit({
                       </div>
                     ) : (
                       <form
-                        className="flex flex-1 flex-col overflow-y-auto"
+                        className="flex h-full flex-col"
                         onSubmit={handleSubmit(doSubmit)}
                       >
                         <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
@@ -449,6 +449,7 @@ export function SchemaResourceEdit({
                           namespace={namespace!}
                           id={id!}
                           agentId={agentId}
+                          className="flex flex-row justify-end gap-2"
                         >
                           <div
                             className={clsx(
