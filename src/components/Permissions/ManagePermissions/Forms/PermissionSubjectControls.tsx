@@ -90,27 +90,19 @@ export default function PermissionsSubjectControls({
         </div>
 
         {switchOption === "Team" && (
-          <FormikTeamsDropdown required name="subject" disabled={disabled} />
+          <FormikTeamsDropdown required name="subject" />
         )}
         {switchOption === "Person" && (
-          <FormikPeopleDropdown required name="subject" disabled={disabled} />
+          <FormikPeopleDropdown required name="subject" />
         )}
         {switchOption === "Notification" && (
-          <FormikNotificationDropdown
-            required
-            name="subject"
-            disabled={disabled}
-          />
+          <FormikNotificationDropdown required name="subject" />
         )}
         {switchOption === "Role" && (
-          <FormikRoleDropdown required name="subject" disabled={disabled} />
+          <FormikRoleDropdown required name="subject" />
         )}
         {switchOption === "Playbook" && (
-          <FormikPlaybooksDropdown
-            required
-            name="subject"
-            disabled={disabled}
-          />
+          <FormikPlaybooksDropdown required name="subject" />
         )}
       </div>
     </div>

@@ -66,7 +66,6 @@ export type PermissionsSummary = PermissionTable & {
   group: any;
   subject: string;
   person: User;
-  createdBy: User;
   created_by?: User;
 
   // These represent global objects
