@@ -7,12 +7,7 @@ const RESOURCE_OPTIONS = [
   { label: "Configs", value: "configs" },
   { label: "Components", value: "components" },
   { label: "Playbooks", value: "playbooks" },
-  { label: "Canaries", value: "canaries" },
-  { label: "Checks", value: "checks" },
-  { label: "Topologies", value: "topologies" },
-  { label: "Scrapers", value: "scrapers" },
-  { label: "Notifications", value: "notifications" },
-  { label: "Connections", value: "connections" }
+  { label: "Canaries", value: "canaries" }
 ];
 
 type AccessScopeResourcesSelectProps = {
