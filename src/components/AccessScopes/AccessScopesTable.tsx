@@ -89,7 +89,7 @@ const accessScopesTableColumns: MRT_ColumnDef<AccessScopeDisplay>[] = [
     id: "createdBy",
     size: 40,
     Cell: ({ row }) => {
-      const createdBy = row.original.createdBy;
+      const createdBy = row.original.created_by;
       const source = row.original.source;
 
       if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {

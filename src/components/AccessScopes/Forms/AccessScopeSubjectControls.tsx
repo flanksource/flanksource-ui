@@ -13,7 +13,7 @@ export default function AccessScopeSubjectControls({
 }: AccessScopeSubjectControlsProps) {
   const { values, setFieldValue } = useFormikContext<any>();
   const [subjectType, setSubjectType] = useState<"Person" | "Team">(
-    values.person_id ? "Person" : "Team"
+    values.team_id ? "Team" : "Person"
   );
 
   useEffect(() => {

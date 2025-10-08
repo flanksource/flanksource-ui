@@ -1,6 +1,7 @@
 import { AccessScopeDB, AccessScopeDisplay } from "../types/accessScopes";
 import { AxiosResponse } from "axios";
 import { IncidentCommander } from "../axios";
+import { AVATAR_INFO } from "@flanksource-ui/constants";
 
 // List AccessScopes with optional filters
 export async function getAccessScopes(
@@ -9,8 +10,7 @@ export async function getAccessScopes(
   return IncidentCommander.get("/access_scopes", {
     params: {
       ...params,
-      select:
-        "*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),createdBy:people!access_scopes_created_by_fkey(id,email,name,avatar)",
+      select: `*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),created_by(${AVATAR_INFO})`,
       deleted_at: "is.null"
     }
   });
@@ -25,8 +25,7 @@ export async function getAccessScopeById(
     {
       params: {
         id: `eq.${id}`,
-        select:
-          "*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),createdBy:people!access_scopes_created_by_fkey(id,email,name,avatar)"
+        select: `*,person:people!access_scopes_sub_person_id_fkey(id,email,name),team:teams(id,name),created_by(${AVATAR_INFO})`
       }
     }
   );

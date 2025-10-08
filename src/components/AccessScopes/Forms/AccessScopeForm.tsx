@@ -24,6 +24,7 @@ import {
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { useUser } from "@flanksource-ui/context";
 
 // Form values type - names is string for textarea input
 type AccessScopeFormScope = Omit<AccessScopeScope, "names"> & {
@@ -46,6 +47,7 @@ export default function AccessScopeForm({
   data
 }: AccessScopeFormProps) {
   const isReadOnly = data?.source === "KubernetesCRD";
+  const { user } = useUser();
 
   const { mutate: create, isLoading: isCreating } =
     useCreateAccessScopeMutation();
@@ -75,7 +77,13 @@ export default function AccessScopeForm({
 
     if (data?.id) {
       update(
-        { id: data.id, data: payload },
+        {
+          id: data.id,
+          data: {
+            ...payload,
+            updated_by: user?.id!
+          }
+        },
         {
           onSuccess: () => {
             toastSuccess("Access Scope updated");
@@ -87,15 +95,21 @@ export default function AccessScopeForm({
         }
       );
     } else {
-      create(payload, {
-        onSuccess: () => {
-          toastSuccess("Access Scope created");
-          onClose();
+      create(
+        {
+          ...payload,
+          created_by: user?.id!
         },
-        onError: (error: any) => {
-          toastError(error.message);
+        {
+          onSuccess: () => {
+            toastSuccess("Access Scope created");
+            onClose();
+          },
+          onError: (error: any) => {
+            toastError(error.message);
+          }
         }
-      });
+      );
     }
   };
 
@@ -160,7 +174,7 @@ export default function AccessScopeForm({
         }}
       >
         <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-          <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
+          <div className="flex flex-1 flex-col space-y-3 overflow-y-auto p-4">
             {isReadOnly && (
               <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
                 <p className="font-medium">

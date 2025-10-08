@@ -30,7 +30,7 @@ export default function AccessScopeCriteriaForm({
   return (
     <FieldArray name="scopes">
       {({ push, remove }) => (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label className="form-label">Scopes</label>
             {!disabled && (
@@ -63,7 +63,7 @@ export default function AccessScopeCriteriaForm({
           </div>
 
           {scopes.length === 0 && (
-            <div className="rounded-md border-2 border-dashed py-8 text-center text-gray-500">
+            <div className="rounded border-2 border-dashed py-6 text-center text-sm text-gray-500">
               No scopes defined. Click &quot;Add Scope&quot; to create one.
             </div>
           )}
@@ -71,10 +71,12 @@ export default function AccessScopeCriteriaForm({
           {scopes.map((scope: any, index: number) => (
             <div
               key={index}
-              className="rounded-lg border border-gray-300 bg-gray-50 p-4"
+              className="rounded border border-gray-300 bg-gray-50 p-3"
             >
-              <div className="mb-3 flex items-center justify-between">
-                <h4 className="font-medium text-gray-900">Scope {index + 1}</h4>
+              <div className="mb-2 flex items-center justify-between">
+                <h4 className="text-sm font-medium text-gray-900">
+                  Scope {index + 1}
+                </h4>
                 {scopes.length > 1 && !disabled && (
                   <Button
                     icon={<FaTrash />}
@@ -85,7 +87,7 @@ export default function AccessScopeCriteriaForm({
                 )}
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div
                   className={disabled ? "pointer-events-none opacity-60" : ""}
                 >

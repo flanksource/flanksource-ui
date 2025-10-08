@@ -30,11 +30,13 @@ export type AccessScopeDB = {
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+  created_by?: string;
+  updated_by?: string;
 };
 
 // For display in UI (with joined person/team info)
 export type AccessScopeDisplay = AccessScopeDB & {
   person?: { id: string; email: string; name: string };
   team?: { id: string; name: string };
-  createdBy?: { id: string; email: string; name: string; avatar?: string };
+  created_by?: { id: string; email: string; name: string; avatar?: string };
 };
