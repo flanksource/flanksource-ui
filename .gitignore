@@ -55,3 +55,4 @@ tsconfig.tsbuildinfo
 
 .envrc
 default.nix
+.claude
