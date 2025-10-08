@@ -69,6 +69,7 @@ export type PermissionsSummary = PermissionTable & {
   subject: string;
   person: User;
   createdBy: User;
+  created_by?: User;
   tags: Record<string, string> | null;
   agents: string[] | null;
 

@@ -280,12 +280,16 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     header: "Created By",
     size: 40,
     Cell: ({ row }) => {
-      const createdBy = row.original.createdBy;
+      const createdBy = row.original.created_by;
       const source = row.original.source;
 
       if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
         const id = row.original.id;
         return <CRDSource source={source} id={id} showMinimal />;
+      }
+
+      if (!createdBy) {
+        return null;
       }
 
       return <Avatar user={createdBy} />;

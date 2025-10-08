@@ -1,6 +1,7 @@
 import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
+import { AVATAR_INFO } from "@flanksource-ui/constants";
 
 export type FetchPermissionsInput = {
   componentId?: string;
@@ -68,11 +69,11 @@ export function fetchPermissions(
   }
 ) {
   const queryParam = composeQueryParamForFetchPermissions(input);
-  const selectFields = ["*"];
+  const selectFields = `*,created_by(${AVATAR_INFO})`;
 
   const { pageSize, pageIndex } = pagination;
 
-  const url = `/permissions_summary?${queryParam}&select=${selectFields.join(",")}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  const url = `/permissions_summary?${queryParam}&select=${selectFields}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<PermissionsSummary[]>(url, {
       headers: {
