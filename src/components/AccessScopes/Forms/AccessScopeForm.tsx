@@ -79,10 +79,7 @@ export default function AccessScopeForm({
       update(
         {
           id: data.id,
-          data: {
-            ...payload,
-            updated_by: user?.id!
-          }
+          data: payload
         },
         {
           onSuccess: () => {

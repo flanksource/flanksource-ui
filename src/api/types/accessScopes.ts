@@ -31,7 +31,6 @@ export type AccessScopeDB = {
   updated_at: string;
   deleted_at?: string;
   created_by?: string;
-  updated_by?: string;
 };
 
 // For display in UI (with joined person/team info)
