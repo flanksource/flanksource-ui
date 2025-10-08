@@ -3,6 +3,7 @@ import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/Form
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useAllAgentNamesQuery } from "@flanksource-ui/api/query-hooks";
 import { useMemo } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
@@ -81,29 +82,29 @@ export default function AccessScopeCriteriaForm({
               key={index}
               className="rounded border border-gray-300 bg-gray-50 p-3"
             >
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h4 className="text-sm font-medium text-gray-900">
-                  Scope {index + 1}
-                </h4>
-                <div className="flex items-center gap-2">
-                  {/* Display per-scope validation error */}
-                  {showError &&
+              <div className="mb-2 flex items-center justify-end gap-2">
+                {/* Display per-scope validation error (except wildcard errors, which are shown inline) */}
+                {(() => {
+                  const error =
+                    showError &&
                     Array.isArray(scopesError) &&
-                    scopesError[index] &&
-                    typeof scopesError[index] === "string" && (
-                      <p className="text-sm text-red-500">
-                        {scopesError[index]}
-                      </p>
-                    )}
-                  {scopes.length > 1 && !disabled && (
-                    <Button
-                      icon={<FaTrash />}
-                      className="btn-danger-base btn-sm"
-                      onClick={() => remove(index)}
-                      aria-label={`Remove scope ${index + 1}`}
-                    />
-                  )}
-                </div>
+                    scopesError[index];
+                  return (
+                    error &&
+                    typeof error === "string" &&
+                    !error.includes("Wildcard") && (
+                      <p className="text-sm text-red-500">{error}</p>
+                    )
+                  );
+                })()}
+                {scopes.length > 1 && !disabled && (
+                  <Button
+                    icon={<FaTrash />}
+                    className="btn-danger-base btn-sm"
+                    onClick={() => remove(index)}
+                    aria-label={`Remove scope ${index + 1}`}
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -133,9 +134,43 @@ export default function AccessScopeCriteriaForm({
                     name={`scopes.${index}.names`}
                     label="Names"
                     placeholder="Enter resource names, one per line, or * for all"
-                    hint="Exact resource name matches. Use * to match all names."
-                    rows={3}
+                    hint="Enter one resource name per line for exact matches. Use * alone to match all resources."
+                    rows={6}
                   />
+                  {scope.names &&
+                    scope.names.trim().length > 0 &&
+                    (() => {
+                      const names = scope.names
+                        .split("\n")
+                        .map((n: string) => n.trim())
+                        .filter(Boolean);
+                      const hasWildcard = names.includes("*");
+                      const hasWildcardError = hasWildcard && names.length > 1;
+
+                      return (
+                        <>
+                          <div
+                            className={`mt-2 rounded border p-2 ${hasWildcardError ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
+                          >
+                            <div className="flex flex-wrap gap-1">
+                              {names.map((name: string, nameIndex: number) => (
+                                <Badge
+                                  key={nameIndex}
+                                  text={name}
+                                  color="gray"
+                                  size="sm"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          {hasWildcardError && (
+                            <p className="mt-1 text-sm text-red-600">
+                              Wildcard '*' must be the only name when used
+                            </p>
+                          )}
+                        </>
+                      );
+                    })()}
                 </div>
               </div>
             </div>
