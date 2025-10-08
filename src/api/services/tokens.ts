@@ -24,6 +24,7 @@ export type TokensResponse = {
 export type CreateTokenRequest = {
   name: string;
   expiry: string;
+  autoRenew?: boolean;
   scope?: Permission[];
 };
 
