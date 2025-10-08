@@ -21,7 +21,8 @@ export const tables = {
   playbook_runs: "playbook_runs",
   permissions: "permissions",
   access_scopes: "access_scopes",
-  views: "views"
+  views: "views",
+  teams: "teams"
 };
 
 export const permDefs = {
