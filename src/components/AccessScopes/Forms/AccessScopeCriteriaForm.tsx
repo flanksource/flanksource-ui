@@ -14,8 +14,11 @@ type AccessScopeCriteriaFormProps = {
 export default function AccessScopeCriteriaForm({
   disabled = false
 }: AccessScopeCriteriaFormProps) {
-  const { values } = useFormikContext<any>();
+  const { values, errors, touched, submitCount } = useFormikContext<any>();
   const scopes = values.scopes || [];
+  const scopesError = errors.scopes;
+  const scopesTouched = touched.scopes;
+  const showError = (scopesTouched || submitCount > 0) && scopesError;
 
   const { data: agents } = useAllAgentNamesQuery({});
   const agentOptions = useMemo(
@@ -62,6 +65,11 @@ export default function AccessScopeCriteriaForm({
             </ul>
           </div>
 
+          {/* Display scopes validation error */}
+          {showError && typeof scopesError === "string" && (
+            <p className="w-full py-1 text-sm text-red-500">{scopesError}</p>
+          )}
+
           {scopes.length === 0 && (
             <div className="rounded border-2 border-dashed py-6 text-center text-sm text-gray-500">
               No scopes defined. Click &quot;Add Scope&quot; to create one.
@@ -73,18 +81,29 @@ export default function AccessScopeCriteriaForm({
               key={index}
               className="rounded border border-gray-300 bg-gray-50 p-3"
             >
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between gap-2">
                 <h4 className="text-sm font-medium text-gray-900">
                   Scope {index + 1}
                 </h4>
-                {scopes.length > 1 && !disabled && (
-                  <Button
-                    icon={<FaTrash />}
-                    className="btn-danger-base btn-sm"
-                    onClick={() => remove(index)}
-                    aria-label={`Remove scope ${index + 1}`}
-                  />
-                )}
+                <div className="flex items-center gap-2">
+                  {/* Display per-scope validation error */}
+                  {showError &&
+                    Array.isArray(scopesError) &&
+                    scopesError[index] &&
+                    typeof scopesError[index] === "string" && (
+                      <p className="text-sm text-red-500">
+                        {scopesError[index]}
+                      </p>
+                    )}
+                  {scopes.length > 1 && !disabled && (
+                    <Button
+                      icon={<FaTrash />}
+                      className="btn-danger-base btn-sm"
+                      onClick={() => remove(index)}
+                      aria-label={`Remove scope ${index + 1}`}
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
