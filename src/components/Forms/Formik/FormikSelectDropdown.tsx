@@ -78,7 +78,9 @@ export default function FormikSelectDropdown({
             }
           });
         }}
-        menuPortalTarget={document.body}
+        menuPortalTarget={
+          typeof window !== "undefined" ? document.body : undefined
+        }
         styles={{
           menuPortal: (base) => ({ ...base, zIndex: 9999 })
         }}

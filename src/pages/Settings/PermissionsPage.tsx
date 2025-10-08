@@ -9,6 +9,7 @@ import {
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 
 export function PermissionsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +44,19 @@ export function PermissionsPage() {
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
           <div className="flex h-full flex-col overflow-y-auto py-6">
+            <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 p-4">
+              <p className="text-sm text-blue-900">
+                <strong>Note:</strong> Permissions define what actions users can
+                perform. For controlling what resources users can see, use{" "}
+                <Link
+                  to="/settings/access-scopes"
+                  className="font-medium underline"
+                >
+                  Access Scopes
+                </Link>
+                .
+              </p>
+            </div>
             <PermissionsView
               permissionRequest={{}}
               setIsLoading={setIsLoading}
