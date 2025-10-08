@@ -25,6 +25,8 @@ import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useUser } from "@flanksource-ui/context";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
+import YAML from "yaml";
 
 // Form values type - names is string for textarea input
 type AccessScopeFormScope = Omit<AccessScopeScope, "names"> & {
@@ -213,7 +215,20 @@ export default function AccessScopeForm({
 
             <AccessScopeResourcesSelect disabled={isReadOnly} />
 
-            <AccessScopeCriteriaForm disabled={isReadOnly} />
+            {isReadOnly ? (
+              <div className="flex flex-col gap-2">
+                <label className="form-label">Scopes</label>
+                <div className="rounded border border-gray-300 bg-gray-50">
+                  <JSONViewer
+                    code={YAML.stringify(data?.scopes || [])}
+                    format="yaml"
+                    showLineNo={false}
+                  />
+                </div>
+              </div>
+            ) : (
+              <AccessScopeCriteriaForm disabled={isReadOnly} />
+            )}
           </div>
 
           <CanEditResource
