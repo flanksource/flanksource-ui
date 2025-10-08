@@ -39,6 +39,18 @@ export const fetchPeopleRoles = (personIds: string[]) =>
     IncidentCommander.get(`/people_roles?id=in.(${personIds.toString()})`)
   );
 
+export const fetchPeopleWithRoles = (roles?: string[]) => {
+  let query = `/people_roles?order=name.asc`;
+
+  if (roles && roles.length > 0) {
+    query += `&roles=cs.{${roles.join(",")}}`;
+  }
+
+  return resolvePostGrestRequestWithPagination<PeopleRoles[]>(
+    IncidentCommander.get(query)
+  );
+};
+
 export const getRegisteredUsers = () =>
   resolvePostGrestRequestWithPagination<RegisteredUser[]>(
     IncidentCommander.get(`/identities`).then(async (res) => {

@@ -1,5 +1,7 @@
 import { useMemo } from "react";
-import { useGetAllPeople } from "../../../api/query-hooks/responders";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPeopleWithRoles } from "../../../api/services/users";
+import { PeopleRoles } from "../../../api/types/users";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 
 type FormikEventsDropdownProps = {
@@ -8,6 +10,7 @@ type FormikEventsDropdownProps = {
   required?: boolean;
   hint?: string;
   className?: string;
+  roles?: string[];
 };
 
 export default function FormikPeopleDropdown({
@@ -15,9 +18,18 @@ export default function FormikPeopleDropdown({
   label,
   required = false,
   hint,
-  className = "flex flex-col space-y-2 py-2"
+  className = "flex flex-col space-y-2 py-2",
+  roles
 }: FormikEventsDropdownProps) {
-  const { data: people, isLoading } = useGetAllPeople();
+  const { data, isLoading } = useQuery<PeopleRoles[], Error>(
+    ["people-roles", roles],
+    async () => {
+      const result = await fetchPeopleWithRoles(roles);
+      return result.data ?? [];
+    }
+  );
+
+  const people = data;
 
   const options = useMemo(
     () =>

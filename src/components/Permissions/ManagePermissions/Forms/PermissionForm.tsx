@@ -7,7 +7,6 @@ import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
-import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import {
   toastError,
@@ -29,7 +28,6 @@ import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
 import PermissionsSubjectControls from "./PermissionSubjectControls";
-import { useAllAgentNamesQuery } from "../../../../api/query-hooks";
 
 type PermissionFormProps = {
   onClose: () => void;
@@ -71,11 +69,9 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
 
 function PermissionFormContent({
   isResourceIdProvided,
-  agentOptions,
   source
 }: {
   isResourceIdProvided: boolean;
-  agentOptions: { label: string; value: string }[];
   source?: string;
 }) {
   const isReadOnly = source === "KubernetesCRD";
@@ -93,23 +89,6 @@ function PermissionFormContent({
       )}
       <PermissionActionDropdown isDisabled={isReadOnly} />
       <FormikCheckbox name="deny" label="Deny" disabled={isReadOnly} />
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="space-y-3">
-          <FormikKeyValueMapField
-            name="tags"
-            label="Tags"
-            hint="Permission will apply only to resources matching these tags"
-          />
-          <FormikSelectDropdown
-            name="agents"
-            label="Agents"
-            options={agentOptions}
-            isMulti
-            placeholder="Select agents..."
-            isDisabled={isReadOnly}
-          />
-        </div>
-      </div>
       <FormikTextArea
         name="description"
         label="Description"
@@ -153,17 +132,6 @@ export default function PermissionForm({
 
   const { user } = useUser();
   const queryClient = useQueryClient();
-
-  const { data: agents } = useAllAgentNamesQuery({});
-
-  const agentOptions = useMemo(
-    () =>
-      (agents || []).map((agent) => ({
-        label: agent.name || agent.id,
-        value: agent.id
-      })),
-    [agents]
-  );
 
   const { isLoading: adding, mutate: add } = useMutation({
     mutationFn: async (data: PermissionTable) => {
@@ -254,9 +222,7 @@ export default function PermissionForm({
             subject: permissionData?.subject,
             subject_type: permissionData?.subject_type,
             until: permissionData?.until,
-            source: permissionData?.source || "UI",
-            tags: permissionData?.tags || {},
-            agents: permissionData?.agents || []
+            source: permissionData?.source || "UI"
           }}
           onSubmit={(v) => {
             if (!permissionData?.id) {
@@ -274,7 +240,6 @@ export default function PermissionForm({
             <div className="flex flex-1 flex-col overflow-y-auto">
               <PermissionFormContent
                 isResourceIdProvided={isResourceIdProvided}
-                agentOptions={agentOptions}
                 source={permissionData?.source}
               />
             </div>

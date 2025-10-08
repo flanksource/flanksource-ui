@@ -41,6 +41,7 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
+import AccessScopesPage from "./pages/Settings/AccessScopesPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
@@ -368,6 +369,13 @@ const settingsNav: SettingsNavigationItems = {
       featureName: features["settings.permissions"],
       resourceName: tables.permissions
     },
+    {
+      name: "Access Scopes",
+      href: "/settings/access-scopes",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.access_scopes
+    },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
       : [
@@ -689,6 +697,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <PermissionsPage />,
             tables.permissions,
+            "read"
+          )}
+        />
+        <Route
+          path="access-scopes"
+          element={withAuthorizationAccessCheck(
+            <AccessScopesPage />,
+            tables.access_scopes,
             "read"
           )}
         />

@@ -20,6 +20,7 @@ export const tables = {
   playbooks: "playbooks",
   playbook_runs: "playbook_runs",
   permissions: "permissions",
+  access_scopes: "access_scopes",
   views: "views"
 };
 

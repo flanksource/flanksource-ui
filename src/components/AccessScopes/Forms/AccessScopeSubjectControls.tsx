@@ -1,0 +1,64 @@
+import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
+import FormikPeopleDropdown from "@flanksource-ui/components/Forms/Formik/FormikPeopleDropdown";
+import FormikTeamsDropdown from "@flanksource-ui/components/Forms/Formik/FormikTeamsDropdown";
+import { useFormikContext } from "formik";
+import { useState, useEffect } from "react";
+
+type AccessScopeSubjectControlsProps = {
+  disabled?: boolean;
+};
+
+export default function AccessScopeSubjectControls({
+  disabled = false
+}: AccessScopeSubjectControlsProps) {
+  const { values, setFieldValue } = useFormikContext<any>();
+  const [subjectType, setSubjectType] = useState<"Guest" | "Team">(
+    values.team_id ? "Team" : "Guest"
+  );
+
+  useEffect(() => {
+    if (subjectType === "Guest") {
+      setFieldValue("team_id", undefined);
+    } else {
+      setFieldValue("person_id", undefined);
+    }
+  }, [subjectType, setFieldValue]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="form-label">Subject</label>
+      <div>
+        <div className="flex w-full flex-row">
+          <Switch
+            options={["Guest", "Team"]}
+            className="w-auto"
+            value={subjectType}
+            onChange={(v) => {
+              if (!disabled) setSubjectType(v);
+            }}
+          />
+        </div>
+
+        {subjectType === "Guest" && (
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikPeopleDropdown
+              roles={["guest"]}
+              name="person_id"
+              required
+              hint="Guest who will have this access scope"
+            />
+          </div>
+        )}
+        {subjectType === "Team" && (
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikTeamsDropdown
+              name="team_id"
+              required
+              hint="All guests in this team will inherit this access scope"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

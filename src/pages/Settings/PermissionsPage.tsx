@@ -9,6 +9,7 @@ import {
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 
 export function PermissionsPage() {
   const [isLoading, setIsLoading] = useState(false);
