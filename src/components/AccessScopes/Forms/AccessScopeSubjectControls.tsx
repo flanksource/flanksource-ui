@@ -42,6 +42,7 @@ export default function AccessScopeSubjectControls({
         {subjectType === "Person" && (
           <div className={disabled ? "pointer-events-none opacity-60" : ""}>
             <FormikPeopleDropdown
+              roles={["guest"]}
               name="person_id"
               required
               hint="Person who will have this access scope"
