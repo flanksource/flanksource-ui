@@ -2,23 +2,29 @@ import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/Formik
 import { useFormikContext } from "formik";
 import { useEffect, useRef } from "react";
 
-const RESOURCE_OPTIONS = [
+export type ResourceType = "*" | "config" | "component" | "playbook" | "canary";
+
+const RESOURCE_OPTIONS: Array<{ label: string; value: ResourceType }> = [
   { label: "All Resources (*)", value: "*" },
-  { label: "Configs", value: "configs" },
-  { label: "Components", value: "components" },
-  { label: "Playbooks", value: "playbooks" },
-  { label: "Canaries", value: "canaries" }
+  { label: "Config", value: "config" },
+  { label: "Component", value: "component" },
+  { label: "Playbook", value: "playbook" },
+  { label: "Canary", value: "canary" }
 ];
 
 type AccessScopeResourcesSelectProps = {
   disabled?: boolean;
 };
 
+type AccessScopeFormValues = {
+  resources?: ResourceType[];
+};
+
 export default function AccessScopeResourcesSelect({
   disabled = false
 }: AccessScopeResourcesSelectProps) {
-  const { values, setFieldValue } = useFormikContext<any>();
-  const prevResourcesRef = useRef<string[]>([]);
+  const { values, setFieldValue } = useFormikContext<AccessScopeFormValues>();
+  const prevResourcesRef = useRef<ResourceType[]>([]);
 
   useEffect(() => {
     const resources = values.resources || [];
@@ -30,7 +36,7 @@ export default function AccessScopeResourcesSelect({
       resources.includes("*") &&
       resources.length > 1
     ) {
-      const newResources = resources.filter((r: string) => r !== "*");
+      const newResources = resources.filter((r) => r !== "*");
       setFieldValue("resources", newResources);
     }
     // If "*" is newly selected (wasn't in prev), clear all other selections
