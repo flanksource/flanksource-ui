@@ -164,21 +164,6 @@ export default function AccessScopeForm({
                 errors.scopes[index] =
                   "Each scope must have at least one of: tags, agents, or names";
               }
-
-              // Validate wildcard usage in names
-              if (scope.names && scope.names.trim().length > 0) {
-                const names = scope.names
-                  .split("\n")
-                  .map((n: string) => n.trim())
-                  .filter(Boolean);
-
-                const hasWildcard = names.includes("*");
-                if (hasWildcard && names.length > 1) {
-                  if (!errors.scopes) errors.scopes = [];
-                  errors.scopes[index] =
-                    "Wildcard '*' must be the only name when used";
-                }
-              }
             });
           }
 
