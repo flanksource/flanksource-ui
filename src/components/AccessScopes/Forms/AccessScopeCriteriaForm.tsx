@@ -83,7 +83,7 @@ export default function AccessScopeCriteriaForm({
               className="rounded border border-gray-300 bg-gray-50 p-3"
             >
               <div className="mb-2 flex items-center justify-end gap-2">
-                {/* Display per-scope validation error (except wildcard errors, which are shown inline) */}
+                {/* Display per-scope validation error */}
                 {(() => {
                   const error =
                     showError &&
@@ -91,8 +91,7 @@ export default function AccessScopeCriteriaForm({
                     scopesError[index];
                   return (
                     error &&
-                    typeof error === "string" &&
-                    !error.includes("Wildcard") && (
+                    typeof error === "string" && (
                       <p className="text-sm text-red-500">{error}</p>
                     )
                   );
@@ -130,13 +129,7 @@ export default function AccessScopeCriteriaForm({
                 <div
                   className={disabled ? "pointer-events-none opacity-60" : ""}
                 >
-                  <FormikTextArea
-                    name={`scopes.${index}.names`}
-                    label="Names"
-                    placeholder="Enter resource names, one per line, or * for all"
-                    hint="Enter one resource name per line for exact matches. Use * alone to match all resources."
-                    rows={6}
-                  />
+                  <label className="form-label">Names</label>
                   {scope.names &&
                     scope.names.trim().length > 0 &&
                     (() => {
@@ -144,33 +137,28 @@ export default function AccessScopeCriteriaForm({
                         .split("\n")
                         .map((n: string) => n.trim())
                         .filter(Boolean);
-                      const hasWildcard = names.includes("*");
-                      const hasWildcardError = hasWildcard && names.length > 1;
 
                       return (
-                        <>
-                          <div
-                            className={`mt-2 rounded border p-2 ${hasWildcardError ? "border-red-300 bg-red-50" : "border-gray-200 bg-gray-50"}`}
-                          >
-                            <div className="flex flex-wrap gap-1">
-                              {names.map((name: string, nameIndex: number) => (
-                                <Badge
-                                  key={nameIndex}
-                                  text={name}
-                                  color="gray"
-                                  size="sm"
-                                />
-                              ))}
-                            </div>
+                        <div className="mb-2 rounded border border-gray-200 bg-gray-50 p-2">
+                          <div className="flex flex-wrap gap-1">
+                            {names.map((name: string, nameIndex: number) => (
+                              <Badge
+                                key={nameIndex}
+                                text={name}
+                                color="blue"
+                                size="sm"
+                              />
+                            ))}
                           </div>
-                          {hasWildcardError && (
-                            <p className="mt-1 text-sm text-red-600">
-                              Wildcard '*' must be the only name when used
-                            </p>
-                          )}
-                        </>
+                        </div>
                       );
                     })()}
+                  <FormikTextArea
+                    name={`scopes.${index}.names`}
+                    placeholder="Enter resource names, one per line, or * for all"
+                    hint="Enter one resource name per line for exact matches. Use * alone to match all resources."
+                    rows={4}
+                  />
                 </div>
               </div>
             </div>
