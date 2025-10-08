@@ -144,7 +144,7 @@ export default function AccessScopeForm({
 
           // Validate subject
           if (!values.person_id && !values.team_id) {
-            errors.person_id = "Either Person or Team must be selected";
+            errors.person_id = "Either a Guest or Team must be selected";
           }
 
           // Validate resources

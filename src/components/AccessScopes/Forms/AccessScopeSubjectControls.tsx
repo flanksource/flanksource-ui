@@ -12,12 +12,12 @@ export default function AccessScopeSubjectControls({
   disabled = false
 }: AccessScopeSubjectControlsProps) {
   const { values, setFieldValue } = useFormikContext<any>();
-  const [subjectType, setSubjectType] = useState<"Person" | "Team">(
-    values.team_id ? "Team" : "Person"
+  const [subjectType, setSubjectType] = useState<"Guest" | "Team">(
+    values.team_id ? "Team" : "Guest"
   );
 
   useEffect(() => {
-    if (subjectType === "Person") {
+    if (subjectType === "Guest") {
       setFieldValue("team_id", undefined);
     } else {
       setFieldValue("person_id", undefined);
@@ -30,7 +30,7 @@ export default function AccessScopeSubjectControls({
       <div>
         <div className="flex w-full flex-row">
           <Switch
-            options={["Person", "Team"]}
+            options={["Guest", "Team"]}
             className="w-auto"
             value={subjectType}
             onChange={(v) => {
@@ -39,13 +39,13 @@ export default function AccessScopeSubjectControls({
           />
         </div>
 
-        {subjectType === "Person" && (
+        {subjectType === "Guest" && (
           <div className={disabled ? "pointer-events-none opacity-60" : ""}>
             <FormikPeopleDropdown
               roles={["guest"]}
               name="person_id"
               required
-              hint="Person who will have this access scope"
+              hint="Guest who will have this access scope"
             />
           </div>
         )}
@@ -54,7 +54,7 @@ export default function AccessScopeSubjectControls({
             <FormikTeamsDropdown
               name="team_id"
               required
-              hint="Team that will have this access scope"
+              hint="All guests in this team will inherit this access scope"
             />
           </div>
         )}
