@@ -1,11 +1,13 @@
 import {
   deleteNotificationSilence,
   silenceNotification,
-  updateNotificationSilence
+  updateNotificationSilence,
+  getNotificationSilencePreview
 } from "@flanksource-ui/api/services/notifications";
 import {
   SilenceNotificationResponse as SilenceNotificationRequest,
-  SilenceNotificationResponse
+  SilenceNotificationResponse,
+  NotificationSendHistorySummary
 } from "@flanksource-ui/api/types/notifications";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
@@ -14,6 +16,7 @@ import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextAr
 import FormikNotificationResourceField from "@flanksource-ui/components/Notifications/SilenceNotificationForm/FormikNotificationResourceField";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
 import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
@@ -23,8 +26,10 @@ import { Formik, Form, FormikBag } from "formik";
 import { omit } from "lodash";
 import { FaCircleNotch } from "react-icons/fa";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
-import { useState } from "react";
-import { ChevronRightIcon } from "@heroicons/react/outline";
+import { useState, useEffect } from "react";
+import { Age } from "@flanksource-ui/ui/Age";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import YAML from "yaml";
 
 type NotificationSilenceFormProps = {
   data?: SilenceNotificationRequest;
@@ -39,76 +44,14 @@ export default function NotificationSilenceForm({
   onSuccess = () => {},
   onCancel = () => {}
 }: NotificationSilenceFormProps) {
-  const [showFilterExamples, setShowFilterExamples] = useState(false);
-  const [showSelectorsExamples, setShowSelectorsExamples] = useState(false);
-
-  const filterExamples = [
-    {
-      code: `config.type == "AWS::RDS::DBInstance" && jsonpath("$['account-name']", tags) == "flanksource" && config.config.Engine == "postgres"`,
-      description:
-        "Silence planned maintenance and brief healthy/unhealthy flaps for RDS Postgres instances in flanksource account"
-    },
-    {
-      code: 'name == "postgresql" && config.type == "Kubernetes::StatefulSet"',
-      description: "Silence notification from all postgresql statefulsets"
-    },
-    {
-      code: 'name.startsWith("my-app-")',
-      description: "Silence notifications from pods starting with 'my-app-'"
-    },
-    {
-      code: `matchQuery(.config, "type=Kubernetes::Pod,Kubernetes::Deployment")`,
-      description: "Silence notifications from all pods and deployments"
-    },
-    {
-      code: `jsonpath("$['Expected-Fail']", labels) == "true"`,
-      description:
-        "Silence notifications from health checks that are expected to fail"
-    },
-    {
-      code: '"helm.sh/chart" in labels',
-      description: "Silence notifications from resources of Helm chart"
-    }
-  ];
-
-  const selectorsExamples = [
-    {
-      title: "Silence notifications from all jobs with low severity",
-      code: `selectors:
-  - types:
-      - Kubernetes::Job
-    tagSelector: severity=low
-`
-    },
-    {
-      title:
-        "Silence notifications from ap-south-1 region for the test account",
-      code: `selectors:
-  - tagSelector: region=ap-south-1,account=830064254263
-`
-    },
-    {
-      title: "Silence health checks expected to fail",
-      code: `selectors:
-  - labelSelector: Expected-Fail=true
-`
-    },
-    {
-      title:
-        "Silence notifications from pods starting with specific name pattern",
-      code: `selectors:
-  - types:
-      - Kubernetes::Pod
-    nameSelector: my-app-*
-`
-    },
-    {
-      title: "Silence notifications from resources of a specific Helm chart",
-      code: `selectors:
-  - tagSelector: helm.sh/chart=my-app-1.0.0
-`
-    }
-  ];
+  const [selectedType, setSelectedType] = useState<
+    "resource" | "filter" | "selector" | null
+  >(null);
+  const [previewData, setPreviewData] = useState<
+    NotificationSendHistorySummary[] | null
+  >(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   const initialValues: Partial<SilenceNotificationRequest> = {
     ...data,
@@ -118,6 +61,24 @@ export default function NotificationSilenceForm({
     check_id: data?.check_id,
     canary_id: data?.canary_id
   };
+
+  // Determine selected type based on existing data when editing
+  useEffect(() => {
+    if (data) {
+      if (
+        data?.component_id ||
+        data?.config_id ||
+        data?.check_id ||
+        data?.canary_id
+      ) {
+        setSelectedType("resource");
+      } else if (data?.filter) {
+        setSelectedType("filter");
+      } else if (data?.selectors) {
+        setSelectedType("selector");
+      }
+    }
+  }, [data]);
 
   const { isLoading, mutate } = useMutation({
     mutationFn: (data: SilenceNotificationRequest) => {
@@ -162,17 +123,10 @@ export default function NotificationSilenceForm({
     if (!v.name) {
       errors.name = "Must specify a unique name";
     }
-    if (
-      v.canary_id == null &&
-      v.check_id == null &&
-      v.component_id == null &&
-      v.config_id == null &&
-      v.selectors == null &&
-      v.filter == null
-    ) {
-      errors.form =
-        "You must specify at least one of the following: a resource, a filter, or selectors";
-    }
+
+    // Remove the mutual exclusion validation from here
+    // It will be checked in the submit function
+
     return errors;
   };
 
@@ -181,6 +135,32 @@ export default function NotificationSilenceForm({
     // @ts-ignore
     formik: FormikBag
   ) => {
+    // Validate mutual exclusion on submit
+    const hasResource = !!(
+      v.canary_id ||
+      v.check_id ||
+      v.component_id ||
+      v.config_id
+    );
+    const hasFilter = !!(v.filter && v.filter.trim());
+    const hasSelectors = !!(v.selectors && v.selectors.trim());
+
+    const fieldsSet = [hasResource, hasFilter, hasSelectors].filter(
+      Boolean
+    ).length;
+
+    if (fieldsSet === 0) {
+      formik.setErrors({
+        form: "You must specify exactly one of the following: a resource, a filter, or selectors"
+      });
+      return;
+    } else if (fieldsSet > 1) {
+      formik.setErrors({
+        form: "You can only specify one of the following: a resource, a filter, or selectors. Please clear the others."
+      });
+      return;
+    }
+
     // Before submitting, we need to parse the date math expressions, if
     // any are present in the from and until fields.
     let { from, until } = v;
@@ -196,11 +176,26 @@ export default function NotificationSilenceForm({
 
     v = omit(v, "error");
 
+    // Convert selectors from YAML string to JSON string if present
+    let selectors = v.selectors;
+    if (selectors && typeof selectors === "string" && selectors.trim()) {
+      try {
+        const parsedYaml = YAML.parse(selectors);
+        selectors = JSON.stringify(parsedYaml);
+      } catch (e) {
+        formik.setErrors({
+          form: "Invalid YAML format in selectors field"
+        });
+        return;
+      }
+    }
+
     return mutate(
       {
         ...v,
         from: fromTime,
-        until: untilTime
+        until: untilTime,
+        selectors
       } as SilenceNotificationRequest,
       {
         onError(error) {
@@ -220,164 +215,331 @@ export default function NotificationSilenceForm({
         validateOnBlur={true}
         validate={validate}
         onSubmit={submit}
+        enableReinitialize={true}
       >
-        {({ errors }) => {
+        {({ errors, values, setFieldValue }) => {
           return (
             <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-              <div
-                className={`flex flex-col gap-2 overflow-y-auto p-4 ${data?.id ? "flex-1" : ""}`}
-              >
-                <FormikTextInput required name="name" label="Name" />
-
-                <FormikNotificationResourceField />
-
-                <FormikCheckbox
-                  checkboxStyle="toggle"
-                  name="recursive"
-                  label="Recursive"
-                  hint="When selected, the silence will apply to all children of the item"
-                />
-
-                <FormikDurationPicker
-                  required
-                  hint="Duration for which the silence will apply for, after which notifications will begin firing again"
-                  fieldNames={{
-                    from: "from",
-                    to: "until"
-                  }}
-                  label="Duration"
-                />
-
-                <FormikTextArea
-                  name="filter"
-                  label="Filter"
-                  hint="Notifications for resources matching this CEL expression will be silenced"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowFilterExamples(!showFilterExamples)}
-                  className="mb-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                >
-                  <ChevronRightIcon
-                    className={`h-4 w-4 transition-transform ${showFilterExamples ? "rotate-90" : ""}`}
-                  />
-                 Filter Examples
-                </button>
-
-                {showFilterExamples && (
-                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
-                    <div className="space-y-4 p-4">
-                      {filterExamples.map((example, index) => (
-                        <div
-                          key={index}
-                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
-                        >
-                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
-                            <p className="text-sm font-medium text-gray-700">
-                              {example.description}
-                            </p>
-                          </div>
-                          <div className="p-3">
-                            <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-                              {example.code}
-                            </code>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <FormikCodeEditor
-                  fieldName="selectors"
-                  format={"yaml"}
-                  label="Selectors"
-                  hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
-                  lines={12}
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowSelectorsExamples(!showSelectorsExamples)
-                  }
-                  className="mb-2 mt-2 flex items-center gap-1 rounded bg-blue-50/50 px-2 py-1 text-left text-sm font-medium text-blue-600 hover:bg-blue-100/50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-                >
-                  <ChevronRightIcon
-                    className={`h-4 w-4 transition-transform ${showSelectorsExamples ? "rotate-90" : ""}`}
-                  />
-                 Selector Examples
-                </button>
-
-                {showSelectorsExamples && (
-                  <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50/50 shadow-sm">
-                    <div className="space-y-4 p-4">
-                      {selectorsExamples.map((example, index) => (
-                        <div
-                          key={index}
-                          className="overflow-hidden rounded-md border border-gray-200 bg-white"
-                        >
-                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
-                            <p className="text-sm font-medium text-gray-700">
-                              {example.title}
-                            </p>
-                          </div>
-                          <div className="p-3">
-                            <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-                              {example.code}
-                            </pre>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <ErrorMessage
-                  message={data?.error}
-                  className="pl-2 align-top"
-                />
-
-                <FormikTextArea name="description" label="Reason" />
-                <ErrorMessage
-                  message={
-                    // @ts-ignore
-                    errors.form
-                  }
-                />
-              </div>
-              <div className={`${footerClassName}`}>
-                {data?.id && (
-                  <>
-                    <DeleteButton
-                      title="Delete Silence"
-                      description="Are you sure you want to delete this silence?"
-                      yesLabel="Delete"
-                      onConfirm={() => deleteSilence(data.id)}
-                    />
-
-                    <div className="flex-1" />
-
-                    <Button
-                      onClick={() => {
-                        onCancel();
-                      }}
-                      className="btn-secondary"
+              {!selectedType ? (
+                // Selection boxes view
+                <div className="flex flex-1 flex-col gap-2 p-4">
+                  <h3 className="mb-2 text-lg font-medium">
+                    Choose Silence Criteria
+                  </h3>
+                  <div className="flex flex-wrap gap-4">
+                    <div
+                      onClick={() => setSelectedType("resource")}
+                      role="button"
+                      className="flex h-32 w-48 cursor-pointer flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-4 text-center hover:border-blue-200 hover:bg-gray-100"
                     >
-                      Cancel
-                    </Button>
-                  </>
+                      <Icon name="config" className="h-8 w-8" />
+                      <span className="font-medium">Resource</span>
+                      <span className="text-xs text-gray-500">
+                        Silence a specific resource
+                      </span>
+                    </div>
+                    <div
+                      onClick={() => setSelectedType("filter")}
+                      role="button"
+                      className="flex h-32 w-48 cursor-pointer flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-4 text-center hover:border-blue-200 hover:bg-gray-100"
+                    >
+                      <Icon name="filter" className="h-8 w-8" />
+                      <span className="font-medium">Filter</span>
+                      <span className="text-xs text-gray-500">
+                        Use CEL expression to match resources
+                      </span>
+                    </div>
+                    <div
+                      onClick={() => setSelectedType("selector")}
+                      role="button"
+                      className="flex h-32 w-48 cursor-pointer flex-col items-center justify-center space-y-2 rounded-md border border-gray-300 p-4 text-center hover:border-blue-200 hover:bg-gray-100"
+                    >
+                      <Icon name="search" className="h-8 w-8" />
+                      <span className="font-medium">Selector</span>
+                      <span className="text-xs text-gray-500">
+                        Use selectors to match resources
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Form view
+                <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-4">
+                  <FormikTextInput required name="name" label="Name" />
+
+                  <FormikDurationPicker
+                    required
+                    hint="Duration for which the silence will apply for, after which notifications will begin firing again"
+                    fieldNames={{
+                      from: "from",
+                      to: "until"
+                    }}
+                    label="Duration"
+                  />
+
+                  <FormikTextArea name="description" label="Reason" />
+
+                  {/* Type-specific content */}
+                  {selectedType === "resource" && (
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <h4 className="mb-3 font-medium">Select Resource</h4>
+                      <FormikNotificationResourceField />
+                      <div className="mt-3">
+                        <FormikCheckbox
+                          checkboxStyle="toggle"
+                          name="recursive"
+                          label="Recursive"
+                          hint="When selected, the silence will apply to all children of the item"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedType === "filter" && (
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <h4 className="mb-3 font-medium">
+                        CEL Filter Expression
+                      </h4>
+                      <FormikTextArea
+                        name="filter"
+                        label="Filter"
+                        hint="Notifications for resources matching this CEL expression will be silenced"
+                      />
+                    </div>
+                  )}
+
+                  {selectedType === "selector" && (
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                      <h4 className="mb-3 font-medium">Resource Selectors</h4>
+                      <FormikCodeEditor
+                        fieldName="selectors"
+                        format={"yaml"}
+                        label="Selectors"
+                        hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                        lines={12}
+                        saveAsString={true}
+                      />
+                    </div>
+                  )}
+
+                  {/* Notification Preview Section */}
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <h3 className="mb-3 text-sm font-medium text-gray-700">
+                      Preview Notifications to be Silenced
+                    </h3>
+                    {previewData || isPreviewLoading || previewError ? (
+                      <div className="space-y-2">
+                        {isPreviewLoading ? (
+                          <div className="flex items-center justify-center py-4">
+                            <FaCircleNotch className="animate-spin" />
+                            <span className="ml-2 text-sm text-gray-500">
+                              Loading preview...
+                            </span>
+                          </div>
+                        ) : previewError ? (
+                          <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                            {previewError}
+                          </div>
+                        ) : previewData ? (
+                          <div className="space-y-2">
+                            {Array.isArray(previewData) &&
+                            previewData.length > 0 ? (
+                              <>
+                                <div className="mb-2 text-sm text-gray-600">
+                                  {previewData.length} notification(s) will be
+                                  silenced:
+                                </div>
+                                <div className="space-y-2">
+                                  {previewData.map((notification, index) => (
+                                    <div
+                                      key={index}
+                                      className="rounded border border-gray-200 bg-white p-3"
+                                    >
+                                      <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1 space-y-2">
+                                          {/* Resource and Count */}
+                                          <div className="text-sm text-gray-700">
+                                            <div className="flex flex-wrap gap-1">
+                                              <Icon
+                                                name={
+                                                  notification?.resource?.type
+                                                }
+                                              />
+                                              <span className="mr-2">
+                                                {" "}
+                                                {notification.resource?.name}
+                                              </span>
+                                              <Tag title="tags">
+                                                {notification.resource?.type
+                                                  ?.split("::")
+                                                  .at(-1)
+                                                  ?.toLocaleLowerCase()}
+                                              </Tag>
+
+                                              {Object.entries(
+                                                notification.resource?.tags ??
+                                                  {}
+                                              ).map(([key, val]) => (
+                                                <Tag title={key} key={key}>
+                                                  {val}
+                                                </Tag>
+                                              ))}
+
+                                              <span className="mr-2">
+                                                {" "}
+                                                on{" "}
+                                                <Age
+                                                  from={notification.created_at}
+                                                />{" "}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+                                No notifications match this criteria.
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-500">
+                            Click "Preview" to see which notifications will be
+                            silenced.
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-500">
+                        Click the "Preview" button below to see which
+                        notifications will be silenced.
+                      </div>
+                    )}
+                  </div>
+
+                  <ErrorMessage
+                    message={
+                      // @ts-ignore
+                      errors.form
+                    }
+                  />
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className={`${footerClassName} mb-4 gap-2`}>
+                {/* Left side - Back button */}
+                {selectedType && !data?.id && (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setSelectedType(null);
+                      setPreviewData(null);
+                      setPreviewError(null);
+                    }}
+                    className="btn-secondary"
+                  >
+                    Back
+                  </Button>
                 )}
 
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={isLoading}
-                >
-                  {isLoading && <FaCircleNotch className="mr-2 animate-spin" />}
-                  {data?.id ? "Update" : "Submit"}
-                </button>
+                {/* Delete button for editing */}
+                {data?.id && (
+                  <DeleteButton
+                    title="Delete Silence"
+                    description="Are you sure you want to delete this silence?"
+                    yesLabel="Delete"
+                    onConfirm={() => deleteSilence(data.id)}
+                  />
+                )}
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Right side - Preview, Cancel/Submit buttons */}
+                {selectedType && (
+                  <Button
+                    type="button"
+                    onClick={async () => {
+                      setIsPreviewLoading(true);
+                      setPreviewError(null);
+                      try {
+                        const params: {
+                          resource_id?: string;
+                          filter?: string;
+                          selector?: string;
+                        } = {};
+
+                        if (selectedType === "resource") {
+                          const resourceId =
+                            values.component_id ||
+                            values.config_id ||
+                            values.check_id ||
+                            values.canary_id;
+                          if (resourceId) params.resource_id = resourceId;
+                        } else if (selectedType === "filter" && values.filter) {
+                          params.filter = values.filter;
+                        } else if (
+                          selectedType === "selector" &&
+                          values.selectors
+                        ) {
+                          try {
+                            const parsedYaml = YAML.parse(values.selectors);
+                            params.selector = parsedYaml;
+                          } catch (e) {
+                            throw new Error("Invalid YAML format in selectors");
+                          }
+                        }
+
+                        const data =
+                          await getNotificationSilencePreview(params);
+                        setPreviewData(data || []);
+                        setPreviewError(null);
+                      } catch (error) {
+                        console.error("Error fetching preview:", error);
+                        setPreviewData(null);
+                        setPreviewError("Failed to fetch preview");
+                      } finally {
+                        setIsPreviewLoading(false);
+                      }
+                    }}
+                    className="btn-secondary"
+                    disabled={isPreviewLoading}
+                  >
+                    {isPreviewLoading && (
+                      <FaCircleNotch className="mr-2 animate-spin" />
+                    )}
+                    Preview
+                  </Button>
+                )}
+
+                {data?.id && (
+                  <Button
+                    onClick={() => {
+                      onCancel();
+                    }}
+                    className="btn-secondary"
+                  >
+                    Cancel
+                  </Button>
+                )}
+
+                {selectedType && (
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <FaCircleNotch className="mr-2 animate-spin" />
+                    )}
+                    {data?.id ? "Update" : "Submit"}
+                  </button>
+                )}
               </div>
             </Form>
           );

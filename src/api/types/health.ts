@@ -15,6 +15,7 @@ export interface HealthCheck extends Timestamped, Avatar, Agent {
   id: string;
   canary_id: string;
   type: string;
+  tags?: Record<string, any>;
   name: string;
   canary_name: string;
   canary_namesspace?: string;

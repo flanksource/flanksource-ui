@@ -2,10 +2,18 @@ import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/For
 import { Label } from "@flanksource-ui/ui/FormControls/Label";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
-export default function FormikNotificationResourceField() {
-  const { values } = useFormikContext<Record<string, any>>();
+type FormikNotificationResourceFieldProps = {
+  disabled?: boolean;
+  onFieldChange?: (hasValue: boolean) => void;
+};
+
+export default function FormikNotificationResourceField({
+  disabled = false,
+  onFieldChange
+}: FormikNotificationResourceFieldProps = {}) {
+  const { values, setFieldValue } = useFormikContext<Record<string, any>>();
 
   const component_id = values.component_id;
   const config_id = values.config_id;
@@ -55,6 +63,12 @@ export default function FormikNotificationResourceField() {
     }
   }, [switchOption]);
 
+  // Monitor field values and call onFieldChange when they change
+  useEffect(() => {
+    const hasValue = !!(component_id || config_id || check_id || canary_id);
+    onFieldChange?.(hasValue);
+  }, [component_id, config_id, check_id, canary_id, onFieldChange]);
+
   return (
     <div className="flex flex-col gap-2">
       <Label label="Resource" required={true} />
@@ -70,27 +84,27 @@ export default function FormikNotificationResourceField() {
               setSwitchOption(v);
               // clear the other fields if the user selects a different option
               if (v === "Component") {
-                values.config_id = null;
-                values.check_id = null;
-                values.canary_id = null;
+                setFieldValue("config_id", null);
+                setFieldValue("check_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Catalog") {
-                values.component_id = null;
-                values.check_id = null;
-                values.canary_id = null;
+                setFieldValue("component_id", null);
+                setFieldValue("check_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Check") {
-                values.component_id = null;
-                values.config_id = null;
-                values.canary_id = null;
+                setFieldValue("component_id", null);
+                setFieldValue("config_id", null);
+                setFieldValue("canary_id", null);
               }
 
               if (v === "Canary") {
-                values.component_id = null;
-                values.config_id = null;
-                values.check_id = null;
+                setFieldValue("component_id", null);
+                setFieldValue("config_id", null);
+                setFieldValue("check_id", null);
               }
             }}
           />

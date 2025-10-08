@@ -99,14 +99,17 @@ export type NotificationSendHistory = {
 };
 
 export type NotificationSendHistoryResource =
-  | (Pick<HealthCheck, "id" | "name" | "type" | "status"> & {
+  | (Pick<HealthCheck, "id" | "name" | "type" | "status" | "tags"> & {
       health: "healthy" | "unhealthy" | "warning" | "unknown";
     })
   | Pick<
       ConfigItem,
-      "id" | "name" | "type" | "health" | "status" | "config_class"
+      "id" | "name" | "type" | "health" | "status" | "config_class" | "tags"
     >
-  | Pick<Topology, "id" | "name" | "type" | "icon" | "health" | "status">;
+  | Pick<
+      Topology,
+      "id" | "name" | "type" | "icon" | "health" | "status" | "tags"
+    >;
 
 export type NotificationSendHistorySummary = {
   resource?: NotificationSendHistoryResource; // resource can be null when the resource is deleted, but the notification history is still present
