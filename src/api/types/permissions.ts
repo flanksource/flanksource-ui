@@ -32,8 +32,6 @@ export type PermissionTable = {
   updated_at: string;
   until?: string;
   source?: string;
-  tags?: Record<string, string>;
-  agents?: string[];
 
   // Resources
   object?: PermissionGlobalObject;
@@ -70,8 +68,6 @@ export type PermissionsSummary = PermissionTable & {
   person: User;
   createdBy: User;
   created_by?: User;
-  tags: Record<string, string> | null;
-  agents: string[] | null;
 
   // These represent global objects
   object: PermissionGlobalObject;
@@ -79,7 +75,8 @@ export type PermissionsSummary = PermissionTable & {
   // These represent object selectors per type
   object_selector?: PermissionObjectSelector;
 
-  // These are objects that are specifically chosen
+  // These are objects that are specifically chosen (from the dropdown).
+  // We store their ID.
   config_object: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
   playbook_object: Pick<PlaybookSpec, "id" | "name" | "icon">;
   connection_object: Pick<Connection, "id" | "name" | "type">;
