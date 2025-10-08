@@ -19,6 +19,7 @@ import {
   getAllObjectActions
 } from "../tokenUtils";
 import TokenScopeFieldsGroup from "./TokenScopeFieldsGroup";
+import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 
 export type TokenFormValues = CreateTokenRequest & {
   objectActions: Record<string, boolean>;
@@ -34,7 +35,13 @@ type Props = {
   isMcpSetup?: boolean;
 };
 
-const expiryOptions = [{ label: "Never", value: "never" }];
+const expiryOptions = [
+  { label: "30 days", value: "30d" },
+  { label: "90 days", value: "90d" },
+  { label: "180 days", value: "180d" },
+  { label: "1 year", value: "365d" },
+  { label: "Never", value: "never" }
+];
 
 export default function CreateTokenForm({
   isOpen,
@@ -100,6 +107,7 @@ export default function CreateTokenForm({
     const tokenRequest: CreateTokenRequest = {
       name: values.name,
       expiry: values.expiry,
+      autoRenew: values.autoRenew,
       scope: selectedScopes
     };
 
@@ -120,7 +128,8 @@ export default function CreateTokenForm({
       <Formik<TokenFormValues>
         initialValues={{
           name: "",
-          expiry: "never",
+          expiry: "90d",
+          autoRenew: false,
           objectActions: getInitialObjectActions()
         }}
         enableReinitialize
@@ -152,6 +161,12 @@ export default function CreateTokenForm({
                     label="Expiry"
                     options={expiryOptions}
                     hint="When this token should expire"
+                  />
+                  <FormikCheckbox
+                    name="autoRenew"
+                    label="Auto Renew"
+                    hint="If the token is being used continuously, it's expiry is renewed"
+                    checkboxStyle="toggle"
                   />
 
                   <TokenScopeFieldsGroup isMcpSetup={isMcpSetup} />
