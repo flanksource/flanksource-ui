@@ -45,20 +45,26 @@ function getFieldVisibility(resources: ResourceType[]): FieldVisibility {
 
   // If "All Resources" is selected, show hints for fields that don't apply to all
   if (resources.includes("*")) {
+    const getUnsupportedResources = (field: "tags" | "names" | "agents") => {
+      return Object.entries(RESOURCE_FIELD_SUPPORT)
+        .filter(([_, support]) => !support[field])
+        .map(([resource]) => resource)
+        .join(", ");
+    };
+
     return {
       tagsDisabled: false,
       namesDisabled: false,
       agentsDisabled: false,
-      tagsHint: "Ignored by playbook, canary, component when checking scope",
-      agentsHint: "Ignored by playbook when checking scope"
+      tagsHint: `Ignored by ${getUnsupportedResources("tags")} when checking scope`,
+      agentsHint: `Ignored by ${getUnsupportedResources("agents")} when checking scope`
     };
   }
 
   // For specific resources, check support
-  const specificResources = resources.filter((r) => r !== "*") as Exclude<
-    ResourceType,
-    "*"
-  >[];
+  const specificResources = resources.filter(
+    (r): r is Exclude<ResourceType, "*"> => r !== "*"
+  );
 
   // Check if ANY resource supports each field (for enabling)
   // and if ALL resources support it (for showing warning)
