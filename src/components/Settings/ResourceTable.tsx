@@ -269,8 +269,7 @@ const permanentlyHiddenColumnsForTableMap: Record<
   incident_rules: ["schedule", "namespace"],
   teams: ["schedule", "namespace"],
   permissions: ["schedule", "namespace"],
-  views: [],
-  access_scopes: []
+  views: []
 };
 
 type ResourceTableProps = {
