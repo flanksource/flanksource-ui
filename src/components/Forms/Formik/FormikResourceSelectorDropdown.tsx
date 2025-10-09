@@ -26,6 +26,8 @@ type FormikConfigsDropdownProps = {
   connectionResourceSelector?: PlaybookResourceSelector[];
   playbookResourceSelector?: PlaybookResourceSelector[];
   className?: string;
+  valueField?: "id" | "name";
+  disabled?: boolean;
 };
 
 export default function FormikResourceSelectorDropdown({
@@ -39,7 +41,9 @@ export default function FormikResourceSelectorDropdown({
   canaryResourceSelector,
   connectionResourceSelector,
   playbookResourceSelector,
-  className = "flex flex-col space-y-2 py-2"
+  className = "flex flex-col space-y-2 py-2",
+  valueField = "id",
+  disabled = false
 }: FormikConfigsDropdownProps) {
   const [inputText, setInputText] = useState<string>("");
   const [searchText, setSearchText] = useState<string>();
@@ -153,7 +157,7 @@ export default function FormikResourceSelectorDropdown({
                   secondary={check.name}
                 />
               ),
-              value: check.name,
+              value: check[valueField],
               label: check.name
             }) as FormikSelectDropdownOption
         );
@@ -169,7 +173,7 @@ export default function FormikResourceSelectorDropdown({
                   secondary={canary.name}
                 />
               ),
-              value: canary.name,
+              value: canary[valueField],
               label: canary.name
             }) as FormikSelectDropdownOption
         );
@@ -185,7 +189,7 @@ export default function FormikResourceSelectorDropdown({
                   secondary={component.name}
                 />
               ),
-              value: component.name,
+              value: component[valueField],
               label: component.name
             }) as FormikSelectDropdownOption
         );
@@ -196,7 +200,7 @@ export default function FormikResourceSelectorDropdown({
 
           return {
             icon: <ConfigIcon config={config} />,
-            value: config.name,
+            value: config[valueField],
             search: config.name,
             label: (
               <div className="flex flex-wrap gap-1">
@@ -228,7 +232,7 @@ export default function FormikResourceSelectorDropdown({
                 secondary={connection.name}
               />
             ),
-            value: connection.name,
+            value: connection[valueField],
             search: connection.name,
             label: (
               <div className="flex flex-wrap gap-1">
@@ -256,7 +260,7 @@ export default function FormikResourceSelectorDropdown({
                 secondary={playbook.name}
               />
             ),
-            value: playbook.name,
+            value: playbook[valueField],
             search: playbook.name,
             label: (
               <div className="flex flex-wrap gap-1">
@@ -298,6 +302,7 @@ export default function FormikResourceSelectorDropdown({
         isLoading={isLoading || isRefetching}
         className="h-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         options={options}
+        isDisabled={disabled}
         noOptionsMessage={(input) => {
           if (input.inputValue) {
             return "No options found";

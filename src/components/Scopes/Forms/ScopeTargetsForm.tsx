@@ -260,6 +260,7 @@ function TargetBlock({
                 configResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
+                valueField="name"
                 disabled={isWildcard}
               />
             )}
@@ -271,6 +272,7 @@ function TargetBlock({
                 componentResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
+                valueField="name"
                 disabled={isWildcard}
               />
             )}
@@ -282,6 +284,7 @@ function TargetBlock({
                 playbookResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
+                valueField="name"
                 disabled={isWildcard}
               />
             )}
@@ -293,6 +296,7 @@ function TargetBlock({
                 canaryResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
+                valueField="name"
                 disabled={isWildcard}
               />
             )}
@@ -304,6 +308,7 @@ function TargetBlock({
                 configResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
+                valueField="name"
                 disabled={isWildcard}
               />
             )}
