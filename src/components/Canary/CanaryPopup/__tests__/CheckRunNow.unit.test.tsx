@@ -37,6 +37,7 @@ describe("CheckRunNow", () => {
           value={{
             refresh: jest.fn(),
             isAdmin: true,
+            isViewer: false,
             hasResourceAccess: jest.fn(),
             hasAnyResourceAccess: jest.fn(),
             roles: ["admin"]
@@ -77,6 +78,7 @@ describe("CheckRunNow", () => {
           value={{
             refresh: jest.fn(),
             isAdmin: true,
+            isViewer: false,
             hasResourceAccess: jest.fn(),
             hasAnyResourceAccess: jest.fn(),
             roles: ["guest"]

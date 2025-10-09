@@ -16,6 +16,7 @@ const mockPlaybook: PlaybookSpec = {
   spec: {
     actions: [
       {
+        name: "test-action",
         exec: {
           script: 'echo "{{.}}"'
         }
