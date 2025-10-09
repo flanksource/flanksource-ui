@@ -208,23 +208,27 @@ function TargetBlock({
           />
         )}
 
-        {/* Tags Field */}
-        <div className={disabled ? "pointer-events-none opacity-60" : ""}>
-          <FormikKeyValueMapField
-            name={`targets.${index}.${resourceKey}.tags`}
-            label="Tags"
-            hint="Resources must match ALL these tags"
-          />
-        </div>
+        {/* Tags Field - Only show for Config and Global */}
+        {(resourceType === "Config" || resourceType === "Global") && (
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikKeyValueMapField
+              name={`targets.${index}.${resourceKey}.tags`}
+              label="Tags"
+              hint="Resources must match ALL these tags"
+            />
+          </div>
+        )}
 
-        {/* Agent Selector */}
-        <FormikSelectDropdown
-          name={`targets.${index}.${resourceKey}.agent`}
-          label="Agent"
-          options={agentOptions}
-          hint="Select the agent for this resource"
-          isDisabled={disabled}
-        />
+        {/* Agent Selector - Hide for Playbooks */}
+        {resourceType !== "Playbook" && (
+          <FormikSelectDropdown
+            name={`targets.${index}.${resourceKey}.agent`}
+            label="Agent"
+            options={agentOptions}
+            hint="Select the agent for this resource"
+            isDisabled={disabled}
+          />
+        )}
       </div>
     </div>
   );
