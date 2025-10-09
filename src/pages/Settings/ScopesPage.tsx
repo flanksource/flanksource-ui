@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useAccessScopesQuery } from "@flanksource-ui/api/query-hooks/useAccessScopesQuery";
-import AccessScopesTable from "@flanksource-ui/components/AccessScopes/AccessScopesTable";
-import AccessScopeForm from "@flanksource-ui/components/AccessScopes/Forms/AccessScopeForm";
-import { AccessScopeDisplay } from "@flanksource-ui/api/types/accessScopes";
+import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
+import ScopesTable from "@flanksource-ui/components/Scopes/ScopesTable";
+import ScopeForm from "@flanksource-ui/components/Scopes/Forms/ScopeForm";
+import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
 import { Head } from "@flanksource-ui/ui/Head";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
@@ -11,39 +11,30 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import AddAccessScopeButton from "@flanksource-ui/components/AccessScopes/Forms/AddAccessScopeButton";
+import AddScopeButton from "@flanksource-ui/components/Scopes/Forms/AddScopeButton";
 
-export default function AccessScopesPage() {
-  const {
-    data: accessScopes,
-    isLoading,
-    isError,
-    error,
-    refetch
-  } = useAccessScopesQuery();
-  const [selectedAccessScope, setSelectedAccessScope] = useState<
-    AccessScopeDisplay | undefined
+export default function ScopesPage() {
+  const { data: scopes, isLoading, isError, error, refetch } = useScopesQuery();
+  const [selectedScope, setSelectedScope] = useState<
+    ScopeDisplay | undefined
   >();
 
   return (
     <>
-      <Head prefix="Access Scopes" />
+      <Head prefix="Scopes" />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot
-                link="/settings/access-scopes"
-                key="access-scopes-root-item"
-              >
-                Access Scopes
+              <BreadcrumbRoot link="/settings/scopes" key="scopes-root-item">
+                Scopes
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
                 key={"add-button"}
-                resource={tables.access_scopes}
+                resource={tables.scopes}
                 action="write"
               >
-                <AddAccessScopeButton />
+                <AddScopeButton />
               </AuthorizationAccessCheck>
             ]}
           />
@@ -58,7 +49,7 @@ export default function AccessScopesPage() {
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
                   <p className="mb-2 font-medium text-red-600">
-                    Error loading access scopes
+                    Error loading scopes
                   </p>
                   <p className="text-sm text-gray-600">
                     {error instanceof Error
@@ -68,24 +59,24 @@ export default function AccessScopesPage() {
                 </div>
               </div>
             ) : (
-              <AccessScopesTable
-                data={accessScopes || []}
+              <ScopesTable
+                data={scopes || []}
                 isLoading={isLoading}
-                handleRowClick={(row) => setSelectedAccessScope(row)}
+                handleRowClick={(row) => setSelectedScope(row)}
               />
             )}
           </div>
         </div>
       </SearchLayout>
 
-      {selectedAccessScope && (
-        <AccessScopeForm
-          isOpen={!!selectedAccessScope}
+      {selectedScope && (
+        <ScopeForm
+          isOpen={!!selectedScope}
           onClose={() => {
-            setSelectedAccessScope(undefined);
+            setSelectedScope(undefined);
             refetch();
           }}
-          data={selectedAccessScope}
+          data={selectedScope}
         />
       )}
     </>

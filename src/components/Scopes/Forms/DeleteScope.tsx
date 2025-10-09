@@ -1,4 +1,4 @@
-import { useDeleteAccessScopeMutation } from "@flanksource-ui/api/query-hooks/useAccessScopesQuery";
+import { useDeleteScopeMutation } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 import {
   toastSuccess,
   toastError
@@ -8,23 +8,19 @@ import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 
-type DeleteAccessScopeProps = {
-  accessScopeId: string;
+type DeleteScopeProps = {
+  scopeId: string;
   onDeleted: () => void;
 };
 
-export default function DeleteAccessScope({
-  accessScopeId,
-  onDeleted
-}: DeleteAccessScopeProps) {
+export default function DeleteScope({ scopeId, onDeleted }: DeleteScopeProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate: deleteAccessScope, isLoading } =
-    useDeleteAccessScopeMutation();
+  const { mutate: deleteScope, isLoading } = useDeleteScopeMutation();
 
   const handleDelete = () => {
-    deleteAccessScope(accessScopeId, {
+    deleteScope(scopeId, {
       onSuccess: () => {
-        toastSuccess("Access Scope deleted");
+        toastSuccess("Scope deleted");
         onDeleted();
       },
       onError: (error: any) => {
@@ -46,8 +42,8 @@ export default function DeleteAccessScope({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onConfirm={handleDelete}
-        title="Delete Access Scope"
-        description="Are you sure you want to delete this access scope? This action cannot be undone."
+        title="Delete Scope"
+        description="Are you sure you want to delete this scope? This action cannot be undone."
         yesLabel={isLoading ? "Deleting..." : "Delete"}
       />
     </>

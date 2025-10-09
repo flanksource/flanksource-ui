@@ -7,7 +7,7 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa";
+import { FaCrosshairs, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -41,7 +41,7 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
-import AccessScopesPage from "./pages/Settings/AccessScopesPage";
+import ScopesPage from "./pages/Settings/ScopesPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
@@ -376,11 +376,11 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.permissions
     },
     {
-      name: "Access Scopes",
-      href: "/settings/access-scopes",
-      icon: RiShieldUserFill,
+      name: "Scopes",
+      href: "/settings/scopes",
+      icon: FaCrosshairs,
       featureName: features["settings.permissions"],
-      resourceName: tables.access_scopes
+      resourceName: tables.scopes
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -707,10 +707,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
-          path="access-scopes"
+          path="scopes"
           element={withAuthorizationAccessCheck(
-            <AccessScopesPage />,
-            tables.access_scopes,
+            <ScopesPage />,
+            tables.scopes,
             "read"
           )}
         />

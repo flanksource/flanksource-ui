@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
-import AccessScopeForm from "./AccessScopeForm";
-import { useAccessScopesQuery } from "@flanksource-ui/api/query-hooks/useAccessScopesQuery";
+import ScopeForm from "./ScopeForm";
+import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 
-export default function AddAccessScopeButton() {
+export default function AddScopeButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const { refetch } = useAccessScopesQuery();
+  const { refetch } = useScopesQuery();
 
   return (
     <>
       <button type="button" className="" onClick={() => setIsOpen(true)}>
         <AiFillPlusCircle size={32} className="text-blue-600" />
       </button>
-      <AccessScopeForm
+      <ScopeForm
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);

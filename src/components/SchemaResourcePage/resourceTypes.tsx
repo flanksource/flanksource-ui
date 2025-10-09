@@ -35,7 +35,7 @@ export type SchemaResourceType = {
     | "properties"
     | "permissions"
     | "views"
-    | "access_scopes";
+    | "scopes";
   api: "incident-commander" | "canary-checker" | "config-db";
   featureName: string;
   resourceName: string;

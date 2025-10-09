@@ -1,4 +1,4 @@
-import { AccessScopeDisplay } from "@flanksource-ui/api/types/accessScopes";
+import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
@@ -6,7 +6,7 @@ import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells"
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 
-const accessScopesTableColumns: MRT_ColumnDef<AccessScopeDisplay>[] = [
+const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
   {
     header: "Name",
     id: "name",
@@ -22,44 +22,14 @@ const accessScopesTableColumns: MRT_ColumnDef<AccessScopeDisplay>[] = [
     }
   },
   {
-    header: "Subject",
-    id: "subject",
-    size: 100,
-    Cell: ({ row }) => {
-      const { person, team } = row.original;
-      if (person) {
-        return <span>{person.email}</span>;
-      }
-      if (team) {
-        return <span>{team.name}</span>;
-      }
-      return <span className="text-gray-400">-</span>;
-    }
-  },
-  {
-    header: "Resources",
-    id: "resources",
-    size: 150,
-    Cell: ({ row }) => {
-      const { resources } = row.original;
-      return (
-        <div className="flex flex-wrap gap-1">
-          {resources.map((resource) => (
-            <Badge key={resource} text={resource} color="gray" />
-          ))}
-        </div>
-      );
-    }
-  },
-  {
-    header: "Scopes",
-    id: "scopes",
+    header: "Targets",
+    id: "targets",
     size: 80,
     Cell: ({ row }) => {
-      const { scopes } = row.original;
+      const { targets } = row.original;
       return (
         <span className="text-sm text-gray-600">
-          {scopes.length} {scopes.length === 1 ? "scope" : "scopes"}
+          {targets.length} {targets.length === 1 ? "target" : "targets"}
         </span>
       );
     }
@@ -102,20 +72,20 @@ const accessScopesTableColumns: MRT_ColumnDef<AccessScopeDisplay>[] = [
   }
 ];
 
-type AccessScopesTableProps = {
-  data: AccessScopeDisplay[];
+type ScopesTableProps = {
+  data: ScopeDisplay[];
   isLoading: boolean;
-  handleRowClick?: (row: AccessScopeDisplay) => void;
+  handleRowClick?: (row: ScopeDisplay) => void;
 };
 
-export default function AccessScopesTable({
+export default function ScopesTable({
   data,
   isLoading,
   handleRowClick = () => {}
-}: AccessScopesTableProps) {
+}: ScopesTableProps) {
   return (
     <MRTDataTable
-      columns={accessScopesTableColumns}
+      columns={scopesTableColumns}
       data={data}
       isLoading={isLoading}
       onRowClick={handleRowClick}

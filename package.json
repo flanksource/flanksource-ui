@@ -132,6 +132,7 @@
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "jest --watch",
     "test:ci": "jest --ci",
+    "typecheck": "tsc --noEmit",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "eject": "react-scripts eject",
     "lint:eslint": "cross-env NODE_ENV=development eslint --ext .js,.jsx,.ts,.tsx .",
