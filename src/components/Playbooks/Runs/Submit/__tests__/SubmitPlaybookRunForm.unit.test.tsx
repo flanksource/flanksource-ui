@@ -27,6 +27,7 @@ const playbook: RunnablePlaybook & {
   updated_at: "2021-09-01T00:00:00Z",
   spec: {
     icon: "playbook.svg",
+    actions: [],
     components: [
       {
         types: ["kubernetes"]

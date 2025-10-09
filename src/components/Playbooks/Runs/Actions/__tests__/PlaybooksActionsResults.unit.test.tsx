@@ -3,24 +3,55 @@ import PlaybooksRunActionsResults from "../PlaybooksActionsResults";
 
 describe("PlaybooksRunActionsResults", () => {
   it("renders 'No result' when result is falsy", () => {
-    render(<PlaybooksRunActionsResults action={{}} />);
+    render(
+      <PlaybooksRunActionsResults
+        action={{
+          id: "1",
+          name: "test",
+          status: "completed",
+          playbook_run_id: "1",
+          start_time: "2024-01-01"
+        }}
+      />
+    );
     expect(screen.getByText("No result")).toBeInTheDocument();
   });
 
   it("renders stdout when result has stdout", () => {
-    const action = { result: { stdout: "Hello, world!" } };
+    const action = {
+      id: "1",
+      name: "test",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      result: { stdout: "Hello, world!" }
+    };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(screen.getByText("Hello, world!")).toBeInTheDocument();
   });
 
   it("renders logs when result has logs", () => {
-    const action = { result: { logs: "Hello, world!" } };
+    const action = {
+      id: "1",
+      name: "test",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      result: { logs: "Hello, world!" }
+    };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(screen.getByText("Hello, world!")).toBeInTheDocument();
   });
 
   it("renders JSON when result has neither stdout nor logs", () => {
-    const action = { result: { foo: "bar" } };
+    const action = {
+      id: "1",
+      name: "test",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      result: { foo: "bar" }
+    };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(
       screen.getByText("foo", {
@@ -31,6 +62,11 @@ describe("PlaybooksRunActionsResults", () => {
 
   it("shows stdout as the first tab", () => {
     const action = {
+      id: "1",
+      name: "test",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
       result: { stdout: "Hello, world!", stderr: "Goodbye, world!" }
     };
     render(<PlaybooksRunActionsResults action={action} />);
@@ -38,7 +74,14 @@ describe("PlaybooksRunActionsResults", () => {
   });
 
   it("renders error when action has error", () => {
-    const action = { error: "Something went wrong" };
+    const action = {
+      id: "1",
+      name: "test",
+      status: "failed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      error: "Something went wrong"
+    };
     render(<PlaybooksRunActionsResults action={action} />);
     expect(
       screen.getByText("Something went wrong", {
