@@ -140,7 +140,7 @@ export default function FormikResourceSelectorDropdown({
                   secondary={check.name}
                 />
               ),
-              value: check.id,
+              value: check.name,
               label: check.name
             }) as FormikSelectDropdownOption
         );
@@ -156,7 +156,7 @@ export default function FormikResourceSelectorDropdown({
                   secondary={component.name}
                 />
               ),
-              value: component.id,
+              value: component.name,
               label: component.name
             }) as FormikSelectDropdownOption
         );
@@ -167,7 +167,7 @@ export default function FormikResourceSelectorDropdown({
 
           return {
             icon: <ConfigIcon config={config} />,
-            value: config.id,
+            value: config.name,
             search: config.name,
             label: (
               <div className="flex flex-wrap gap-1">
@@ -199,7 +199,7 @@ export default function FormikResourceSelectorDropdown({
                 secondary={connection.name}
               />
             ),
-            value: connection.id,
+            value: connection.name,
             search: connection.name,
             label: (
               <div className="flex flex-wrap gap-1">
@@ -227,7 +227,7 @@ export default function FormikResourceSelectorDropdown({
                 secondary={playbook.name}
               />
             ),
-            value: playbook.id,
+            value: playbook.name,
             search: playbook.name,
             label: (
               <div className="flex flex-wrap gap-1">
