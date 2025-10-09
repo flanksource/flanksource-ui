@@ -150,15 +150,16 @@ function TargetBlock({
 
       <div className="space-y-3">
         {/* Resource Type Selector */}
-        <div className="flex flex-col gap-2">
-          <label className="form-label">Resource Type</label>
-          <Switch
-            options={["Config", "Component", "Playbook", "Canary", "Global"]}
-            className="w-auto"
-            value={resourceType}
-            onChange={handleResourceTypeChange}
-            disabled={disabled}
-          />
+        <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+          <div className="flex flex-col gap-2">
+            <label className="form-label">Resource Type</label>
+            <Switch
+              options={["Config", "Component", "Playbook", "Canary", "Global"]}
+              className="w-auto"
+              value={resourceType}
+              onChange={handleResourceTypeChange}
+            />
+          </div>
         </div>
 
         {/* Resource Name Selector */}

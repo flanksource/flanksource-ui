@@ -1,10 +1,3 @@
-export type ScopeResourceType =
-  | "*"
-  | "config"
-  | "component"
-  | "playbook"
-  | "canary";
-
 export type ScopeResourceSelector = {
   agent?: string;
   name?: string;
