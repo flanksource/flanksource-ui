@@ -218,7 +218,7 @@ function TargetBlock({
               <FormikResourceSelectorDropdown
                 name={`targets.${index}.canary.name`}
                 label="Name"
-                checkResourceSelector={[{}]}
+                canaryResourceSelector={[{}]}
                 hintLink={false}
                 className="flex flex-col space-y-2"
               />

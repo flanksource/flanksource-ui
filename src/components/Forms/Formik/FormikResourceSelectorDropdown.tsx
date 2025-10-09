@@ -22,6 +22,7 @@ type FormikConfigsDropdownProps = {
   configResourceSelector?: PlaybookResourceSelector[];
   componentResourceSelector?: PlaybookResourceSelector[];
   checkResourceSelector?: PlaybookResourceSelector[];
+  canaryResourceSelector?: PlaybookResourceSelector[];
   connectionResourceSelector?: PlaybookResourceSelector[];
   playbookResourceSelector?: PlaybookResourceSelector[];
   className?: string;
@@ -35,6 +36,7 @@ export default function FormikResourceSelectorDropdown({
   configResourceSelector,
   componentResourceSelector,
   checkResourceSelector,
+  canaryResourceSelector,
   connectionResourceSelector,
   playbookResourceSelector,
   className = "flex flex-col space-y-2 py-2"
@@ -62,6 +64,15 @@ export default function FormikResourceSelectorDropdown({
       checks: checkResourceSelector
         ? [
             ...checkResourceSelector.map((r) => ({
+              ...r,
+              search: searchText,
+              agent: r.agent || "all"
+            }))
+          ]
+        : undefined,
+      canaries: canaryResourceSelector
+        ? [
+            ...canaryResourceSelector.map((r) => ({
               ...r,
               search: searchText,
               agent: r.agent || "all"
@@ -109,6 +120,7 @@ export default function FormikResourceSelectorDropdown({
       configResourceSelector,
       componentResourceSelector,
       checkResourceSelector,
+      canaryResourceSelector,
       connectionResourceSelector,
       playbookResourceSelector,
       searchText
@@ -126,6 +138,7 @@ export default function FormikResourceSelectorDropdown({
       configResourceSelector !== undefined ||
       componentResourceSelector !== undefined ||
       checkResourceSelector !== undefined ||
+      canaryResourceSelector !== undefined ||
       connectionResourceSelector !== undefined ||
       playbookResourceSelector !== undefined, // || (field.value === undefined && field.value === "" && field.value === null),
     select: (data) => {
@@ -142,6 +155,22 @@ export default function FormikResourceSelectorDropdown({
               ),
               value: check.name,
               label: check.name
+            }) as FormikSelectDropdownOption
+        );
+      }
+      if (data?.canaries) {
+        return data.canaries.map(
+          (canary) =>
+            ({
+              icon: (
+                <Icon
+                  className="h-4 w-5"
+                  name={canary.icon}
+                  secondary={canary.name}
+                />
+              ),
+              value: canary.name,
+              label: canary.name
             }) as FormikSelectDropdownOption
         );
       }

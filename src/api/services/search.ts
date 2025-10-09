@@ -3,6 +3,7 @@ import { PlaybookResourceSelector } from "../types/playbooks";
 
 export type SearchResourcesRequest = {
   checks?: PlaybookResourceSelector[];
+  canaries?: PlaybookResourceSelector[];
   components?: PlaybookResourceSelector[];
   configs?: PlaybookResourceSelector[];
   connections?: PlaybookResourceSelector[];
@@ -23,6 +24,7 @@ type SearchedResource = {
 type SelectedResources = {
   configs: SearchedResource[];
   checks: SearchedResource[];
+  canaries: SearchedResource[];
   components: SearchedResource[];
   connections: SearchedResource[];
   playbooks: SearchedResource[];
