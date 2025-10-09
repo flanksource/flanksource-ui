@@ -16,7 +16,7 @@ type ScopeTargetsFormProps = {
 export default function ScopeTargetsForm({
   disabled = false
 }: ScopeTargetsFormProps) {
-  const { values } = useFormikContext<any>();
+  const { values, errors, touched } = useFormikContext<any>();
   const targets: ScopeTarget[] = values.targets || [];
 
   const { data: agents } = useAllAgentNamesQuery({});
@@ -55,6 +55,15 @@ export default function ScopeTargetsForm({
             </div>
           )}
 
+          {/* Show validation error for targets */}
+          {touched.targets &&
+            errors.targets &&
+            typeof errors.targets === "string" && (
+              <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+                {errors.targets}
+              </div>
+            )}
+
           {targets.map((target, index) => (
             <TargetBlock
               key={index}
@@ -62,7 +71,11 @@ export default function ScopeTargetsForm({
               target={target}
               disabled={disabled}
               agentOptions={agentOptions}
-              onRemove={() => remove(index)}
+              onRemove={() => {
+                if (targets.length > 1) {
+                  remove(index);
+                }
+              }}
               showRemove={targets.length > 1}
             />
           ))}
@@ -89,7 +102,7 @@ function TargetBlock({
   onRemove,
   showRemove
 }: TargetBlockProps) {
-  const { setFieldValue, values } = useFormikContext<any>();
+  const { setFieldValue } = useFormikContext<any>();
 
   // Determine which resource type is selected
   const getInitialResourceType = ():
@@ -134,19 +147,16 @@ function TargetBlock({
 
   return (
     <div className="rounded border border-gray-300 bg-gray-50 p-3">
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">
-          Target {index + 1}
-        </span>
-        {showRemove && !disabled && (
+      {showRemove && !disabled && (
+        <div className="mb-3 flex items-center justify-end">
           <Button
             icon={<FaTrash />}
             className="btn-danger-base btn-sm"
             onClick={onRemove}
             aria-label={`Remove target ${index + 1}`}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="space-y-3">
         {/* Resource Type Selector */}
@@ -162,51 +172,82 @@ function TargetBlock({
           </div>
         </div>
 
-        {/* Resource Name Selector */}
-        {resourceType === "Config" && (
-          <FormikResourceSelectorDropdown
-            name={`targets.${index}.config.name`}
-            label="Name"
-            configResourceSelector={[{}]}
-            hintLink={false}
-          />
-        )}
-
-        {resourceType === "Component" && (
-          <FormikResourceSelectorDropdown
-            name={`targets.${index}.component.name`}
-            label="Name"
-            componentResourceSelector={[{}]}
-            hintLink={false}
-          />
-        )}
-
-        {resourceType === "Playbook" && (
-          <FormikResourceSelectorDropdown
-            name={`targets.${index}.playbook.name`}
-            label="Name"
-            playbookResourceSelector={[{}]}
-            hintLink={false}
-          />
-        )}
-
-        {resourceType === "Canary" && (
-          <FormikResourceSelectorDropdown
-            name={`targets.${index}.canary.name`}
-            label="Name"
-            checkResourceSelector={[{}]}
-            hintLink={false}
-          />
-        )}
-
+        {/* Global Warning */}
         {resourceType === "Global" && (
-          <FormikResourceSelectorDropdown
-            name={`targets.${index}.global.name`}
-            label="Name"
-            configResourceSelector={[{}]}
-            hintLink={false}
-          />
+          <div className="rounded-md border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900">
+            <p className="font-medium">
+              Tags only applies to Configs. Agent applies to all but Playbooks.
+            </p>
+          </div>
         )}
+
+        {/* Resource Name and Agent Selector - Horizontal layout */}
+        <div className="flex gap-3">
+          <div className="flex-1">
+            {resourceType === "Config" && (
+              <FormikResourceSelectorDropdown
+                name={`targets.${index}.config.name`}
+                label="Name"
+                configResourceSelector={[{}]}
+                hintLink={false}
+                className="flex flex-col space-y-2"
+              />
+            )}
+
+            {resourceType === "Component" && (
+              <FormikResourceSelectorDropdown
+                name={`targets.${index}.component.name`}
+                label="Name"
+                componentResourceSelector={[{}]}
+                hintLink={false}
+                className="flex flex-col space-y-2"
+              />
+            )}
+
+            {resourceType === "Playbook" && (
+              <FormikResourceSelectorDropdown
+                name={`targets.${index}.playbook.name`}
+                label="Name"
+                playbookResourceSelector={[{}]}
+                hintLink={false}
+                className="flex flex-col space-y-2"
+              />
+            )}
+
+            {resourceType === "Canary" && (
+              <FormikResourceSelectorDropdown
+                name={`targets.${index}.canary.name`}
+                label="Name"
+                checkResourceSelector={[{}]}
+                hintLink={false}
+                className="flex flex-col space-y-2"
+              />
+            )}
+
+            {resourceType === "Global" && (
+              <FormikResourceSelectorDropdown
+                name={`targets.${index}.global.name`}
+                label="Name"
+                configResourceSelector={[{}]}
+                hintLink={false}
+                className="flex flex-col space-y-2"
+              />
+            )}
+          </div>
+
+          {/* Agent Selector - Hide for Playbooks */}
+          {resourceType !== "Playbook" && (
+            <div className="flex-1">
+              <FormikSelectDropdown
+                name={`targets.${index}.${resourceKey}.agent`}
+                label="Agent"
+                options={agentOptions}
+                hint="Select the agent for this resource"
+                isDisabled={disabled}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Tags Field - Only show for Config and Global */}
         {(resourceType === "Config" || resourceType === "Global") && (
@@ -217,17 +258,6 @@ function TargetBlock({
               hint="Resources must match ALL these tags"
             />
           </div>
-        )}
-
-        {/* Agent Selector - Hide for Playbooks */}
-        {resourceType !== "Playbook" && (
-          <FormikSelectDropdown
-            name={`targets.${index}.${resourceKey}.agent`}
-            label="Agent"
-            options={agentOptions}
-            hint="Select the agent for this resource"
-            isDisabled={disabled}
-          />
         )}
       </div>
     </div>

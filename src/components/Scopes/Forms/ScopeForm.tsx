@@ -197,90 +197,98 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           return errors;
         }}
       >
-        <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-          <div className="flex flex-1 flex-col space-y-3 overflow-y-auto p-4">
-            {isReadOnly && (
-              <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
-                <p className="font-medium">
-                  Read-Only Mode: This resource is managed by Kubernetes CRD and
-                  cannot be edited from the UI.
-                </p>
-              </div>
-            )}
+        {({ isValid, isSubmitting, errors }) => (
+          <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
+            <div className="flex flex-1 flex-col space-y-3 overflow-y-auto p-4">
+              {isReadOnly && (
+                <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                  <p className="font-medium">
+                    Read-Only Mode: This resource is managed by Kubernetes CRD
+                    and cannot be edited from the UI.
+                  </p>
+                </div>
+              )}
 
-            <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
-              <FormikTextInput
-                name="name"
-                label="Name"
-                required
-                disabled={isReadOnly}
-              />
-            </div>
-
-            {/* Only show namespace field for KubernetesCRD sources (read-only) */}
-            {isReadOnly && (
-              <div className="pointer-events-none opacity-60">
+              <div
+                className={isReadOnly ? "pointer-events-none opacity-60" : ""}
+              >
                 <FormikTextInput
-                  name="namespace"
-                  label="Namespace"
-                  disabled={true}
+                  name="name"
+                  label="Name"
+                  required
+                  disabled={isReadOnly}
                 />
               </div>
-            )}
 
-            <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
-              <FormikTextArea
-                name="description"
-                label="Description"
-                disabled={isReadOnly}
-              />
-            </div>
-
-            {isReadOnly ? (
-              <div className="flex flex-col gap-2">
-                <label className="form-label">Targets</label>
-                <div className="rounded border border-gray-300 bg-gray-50">
-                  <JSONViewer
-                    code={YAML.stringify(data?.targets || [])}
-                    format="yaml"
-                    showLineNo={false}
+              {/* Only show namespace field for KubernetesCRD sources (read-only) */}
+              {isReadOnly && (
+                <div className="pointer-events-none opacity-60">
+                  <FormikTextInput
+                    name="namespace"
+                    label="Namespace"
+                    disabled={true}
                   />
                 </div>
-              </div>
-            ) : (
-              <ScopeTargetsForm disabled={isReadOnly} />
-            )}
-          </div>
+              )}
 
-          <CanEditResource
-            id={data?.id}
-            resourceType="scopes"
-            source={data?.source}
-            className="flex items-center justify-between bg-gray-100 px-5 py-4"
-          >
-            <div>
-              {data?.id && data.source === "UI" && (
-                <AuthorizationAccessCheck
-                  resource={tables.scopes}
-                  action="write"
-                >
-                  <DeleteScope scopeId={data.id} onDeleted={onClose} />
-                </AuthorizationAccessCheck>
+              <div
+                className={isReadOnly ? "pointer-events-none opacity-60" : ""}
+              >
+                <FormikTextArea
+                  name="description"
+                  label="Description"
+                  disabled={isReadOnly}
+                />
+              </div>
+
+              {isReadOnly ? (
+                <div className="flex flex-col gap-2">
+                  <label className="form-label">Targets</label>
+                  <div className="rounded border border-gray-300 bg-gray-50">
+                    <JSONViewer
+                      code={YAML.stringify(data?.targets || [])}
+                      format="yaml"
+                      showLineNo={false}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <ScopeTargetsForm disabled={isReadOnly} />
               )}
             </div>
-            <AuthorizationAccessCheck resource={tables.scopes} action="write">
-              <Button
-                type="submit"
-                text={data?.id ? "Save" : "Create"}
-                className="btn-primary"
-                icon={
-                  isLoading ? <FaSpinner className="animate-spin" /> : undefined
-                }
-                disabled={isLoading}
-              />
-            </AuthorizationAccessCheck>
-          </CanEditResource>
-        </Form>
+
+            <CanEditResource
+              id={data?.id}
+              resourceType="scopes"
+              source={data?.source}
+              className="flex items-center justify-between bg-gray-100 px-5 py-4"
+            >
+              <div>
+                {data?.id && data.source === "UI" && (
+                  <AuthorizationAccessCheck
+                    resource={tables.scopes}
+                    action="write"
+                  >
+                    <DeleteScope scopeId={data.id} onDeleted={onClose} />
+                  </AuthorizationAccessCheck>
+                )}
+              </div>
+              <AuthorizationAccessCheck resource={tables.scopes} action="write">
+                <Button
+                  type="submit"
+                  text={data?.id ? "Save" : "Create"}
+                  className="btn-primary"
+                  icon={
+                    isLoading ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : undefined
+                  }
+                  disabled={isLoading || !isValid || isSubmitting}
+                />
+              </AuthorizationAccessCheck>
+            </CanEditResource>
+          </Form>
+        )}
       </Formik>
     </Modal>
   );
