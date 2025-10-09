@@ -6,11 +6,102 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useAllAgentNamesQuery } from "@flanksource-ui/api/query-hooks";
 import { useMemo } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash, FaInfoCircle } from "react-icons/fa";
+import { ResourceType } from "./AccessScopeResourcesSelect";
 
 type AccessScopeCriteriaFormProps = {
   disabled?: boolean;
 };
+
+type FieldVisibility = {
+  tagsDisabled: boolean;
+  namesDisabled: boolean;
+  agentsDisabled: boolean;
+  tagsHint?: string;
+  namesHint?: string;
+  agentsHint?: string;
+};
+
+// Define which fields each resource type supports
+const RESOURCE_FIELD_SUPPORT: Record<
+  Exclude<ResourceType, "*">,
+  { tags: boolean; names: boolean; agents: boolean }
+> = {
+  config: { tags: true, names: true, agents: true },
+  playbook: { tags: false, names: true, agents: false },
+  canary: { tags: false, names: true, agents: true },
+  component: { tags: false, names: true, agents: true }
+};
+
+function getFieldVisibility(resources: ResourceType[]): FieldVisibility {
+  // If no resources selected, disable all fields
+  if (!resources || resources.length === 0) {
+    return {
+      tagsDisabled: true,
+      namesDisabled: true,
+      agentsDisabled: true
+    };
+  }
+
+  // If "All Resources" is selected, show hints for fields that don't apply to all
+  if (resources.includes("*")) {
+    return {
+      tagsDisabled: false,
+      namesDisabled: false,
+      agentsDisabled: false,
+      tagsHint: "Ignored by playbook, canary, component when checking scope",
+      agentsHint: "Ignored by playbook when checking scope"
+    };
+  }
+
+  // For specific resources, check support
+  const specificResources = resources.filter((r) => r !== "*") as Exclude<
+    ResourceType,
+    "*"
+  >[];
+
+  // Check if ANY resource supports each field (for enabling)
+  // and if ALL resources support it (for showing warning)
+  let anySupportTags = false;
+  let anySupportNames = false;
+  let anySupportAgents = false;
+  let allSupportTags = true;
+  let allSupportNames = true;
+  let allSupportAgents = true;
+
+  for (const resource of specificResources) {
+    const support = RESOURCE_FIELD_SUPPORT[resource];
+    anySupportTags = anySupportTags || support.tags;
+    anySupportNames = anySupportNames || support.names;
+    anySupportAgents = anySupportAgents || support.agents;
+    allSupportTags = allSupportTags && support.tags;
+    allSupportNames = allSupportNames && support.names;
+    allSupportAgents = allSupportAgents && support.agents;
+  }
+
+  // Get list of SELECTED resources that DON'T support each field for hints
+  const getNotApplicableResources = (field: "tags" | "names" | "agents") => {
+    const notApplicable = specificResources.filter(
+      (resource) => !RESOURCE_FIELD_SUPPORT[resource][field]
+    );
+    return notApplicable.join(", ");
+  };
+
+  return {
+    tagsDisabled: !anySupportTags,
+    namesDisabled: !anySupportNames,
+    agentsDisabled: !anySupportAgents,
+    tagsHint: !allSupportTags
+      ? `Ignored by ${getNotApplicableResources("tags")} when checking scope`
+      : undefined,
+    namesHint: !allSupportNames
+      ? `Ignored by ${getNotApplicableResources("names")} when checking scope`
+      : undefined,
+    agentsHint: !allSupportAgents
+      ? `Ignored by ${getNotApplicableResources("agents")} when checking scope`
+      : undefined
+  };
+}
 
 export default function AccessScopeCriteriaForm({
   disabled = false
@@ -29,6 +120,11 @@ export default function AccessScopeCriteriaForm({
         value: agent.id
       })),
     [agents]
+  );
+
+  const fieldVisibility = useMemo(
+    () => getFieldVisibility(values.resources || []),
+    [values.resources]
   );
 
   return (
@@ -108,28 +204,70 @@ export default function AccessScopeCriteriaForm({
 
               <div className="space-y-2">
                 <div
-                  className={disabled ? "pointer-events-none opacity-60" : ""}
+                  className={
+                    disabled || fieldVisibility.tagsDisabled
+                      ? "pointer-events-none opacity-60"
+                      : ""
+                  }
                 >
+                  <div className="mb-2 flex items-center gap-2">
+                    <label className="form-label mb-0">Tags</label>
+                    {fieldVisibility.tagsHint && (
+                      <div className="flex items-center gap-1.5 text-xs text-orange-600">
+                        <FaInfoCircle className="flex-shrink-0" />
+                        <span>{fieldVisibility.tagsHint}</span>
+                      </div>
+                    )}
+                  </div>
                   <FormikKeyValueMapField
                     name={`scopes.${index}.tags`}
-                    label="Tags"
+                    label=""
                     hint="Resources must match ALL these tags"
                   />
                 </div>
 
-                <FormikSelectDropdown
-                  name={`scopes.${index}.agents`}
-                  label="Agents"
-                  options={agentOptions}
-                  isMulti
-                  hint="Resources must be from ANY of these agents"
-                  isDisabled={disabled}
-                />
+                <div
+                  className={
+                    fieldVisibility.agentsDisabled
+                      ? "pointer-events-none opacity-60"
+                      : ""
+                  }
+                >
+                  <div className="mb-2 flex items-center gap-2">
+                    <label className="form-label mb-0">Agents</label>
+                    {fieldVisibility.agentsHint && (
+                      <div className="flex items-center gap-1.5 text-xs text-orange-600">
+                        <FaInfoCircle className="flex-shrink-0" />
+                        <span>{fieldVisibility.agentsHint}</span>
+                      </div>
+                    )}
+                  </div>
+                  <FormikSelectDropdown
+                    name={`scopes.${index}.agents`}
+                    label=""
+                    options={agentOptions}
+                    isMulti
+                    hint="Resources must be from ANY of these agents"
+                    isDisabled={disabled || fieldVisibility.agentsDisabled}
+                  />
+                </div>
 
                 <div
-                  className={disabled ? "pointer-events-none opacity-60" : ""}
+                  className={
+                    disabled || fieldVisibility.namesDisabled
+                      ? "pointer-events-none opacity-60"
+                      : ""
+                  }
                 >
-                  <label className="form-label">Names</label>
+                  <div className="mb-2 flex items-center gap-2">
+                    <label className="form-label mb-0">Names</label>
+                    {fieldVisibility.namesHint && (
+                      <div className="flex items-center gap-1.5 text-xs text-orange-600">
+                        <FaInfoCircle className="flex-shrink-0" />
+                        <span>{fieldVisibility.namesHint}</span>
+                      </div>
+                    )}
+                  </div>
                   {scope.names &&
                     scope.names.trim().length > 0 &&
                     (() => {
