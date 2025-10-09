@@ -43,6 +43,11 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
       const transformTarget = (selector: any) => {
         if (!selector) return selector;
 
+        // If wildcard is enabled, only send {name: "*"}
+        if (selector.wildcard) {
+          return { name: "*" };
+        }
+
         // Convert tags object to tagSelector string
         const tagSelector = selector.tags
           ? Object.entries(selector.tags)
@@ -50,8 +55,8 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
               .join(",")
           : selector.tagSelector || "";
 
-        // Remove tags field and set tagSelector
-        const { tags, ...rest } = selector;
+        // Remove tags and wildcard fields, set tagSelector
+        const { tags, wildcard, ...rest } = selector;
         return { ...rest, tagSelector };
       };
 
@@ -115,6 +120,10 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
         const convertSelector = (selector: any) => {
           if (!selector) return selector;
 
+          // Check if this is a wildcard selector (name: "*" and no other fields)
+          const isWildcard =
+            selector.name === "*" && !selector.agent && !selector.tagSelector;
+
           // Convert tagSelector string to tags object
           const tags: Record<string, string> = {};
           if (selector.tagSelector) {
@@ -126,7 +135,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
             });
           }
 
-          return { ...selector, tags };
+          return { ...selector, tags, wildcard: isWildcard };
         };
 
         return {
@@ -141,7 +150,17 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           global: target.global ? convertSelector(target.global) : undefined
         };
       })
-    : [{ config: { name: "", agent: "", tagSelector: "", tags: {} } }];
+    : [
+        {
+          config: {
+            name: "",
+            agent: "",
+            tagSelector: "",
+            tags: {},
+            wildcard: false
+          }
+        }
+      ];
 
   return (
     <Modal
@@ -196,14 +215,17 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                 const name = selectedResource.name || "";
                 const agent = selectedResource.agent || "";
                 const tags = selectedResource.tags || {};
+                const wildcard = selectedResource.wildcard || false;
                 const tagsLength = Object.keys(tags).length;
 
-                const isEmpty = tagsLength === 0 && name === "" && agent === "";
+                // If wildcard is enabled, validation passes
+                const isEmpty =
+                  !wildcard && tagsLength === 0 && name === "" && agent === "";
 
                 if (isEmpty) {
                   if (!errors.targets) errors.targets = [];
                   errors.targets[index] =
-                    "Target cannot be empty. Please specify at least one of: name, agent, or tags";
+                    "Target cannot be empty. Please specify at least one of: name, agent, tags, or enable wildcard";
                 }
               }
             });
