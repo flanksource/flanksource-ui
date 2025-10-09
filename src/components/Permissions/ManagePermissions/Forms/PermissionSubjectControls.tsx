@@ -15,7 +15,13 @@ const SWITCH_OPTION_TO_SUBJECT_TYPE = {
   Playbook: "playbook"
 } as const;
 
-export default function PermissionsSubjectControls() {
+type PermissionsSubjectControlsProps = {
+  disabled?: boolean;
+};
+
+export default function PermissionsSubjectControls({
+  disabled = false
+}: PermissionsSubjectControlsProps) {
   const { values, setFieldValue } = useFormikContext<Record<string, any>>();
 
   const teamId = values.team_id;
@@ -71,6 +77,7 @@ export default function PermissionsSubjectControls() {
             defaultValue="Go Template"
             value={switchOption}
             onChange={(v) => {
+              if (disabled) return;
               setSwitchOption(v);
               setFieldValue("subject_type", SWITCH_OPTION_TO_SUBJECT_TYPE[v]);
 

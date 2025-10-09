@@ -12,12 +12,7 @@ import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermission
 import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import CRDSource from "../Settings/CRDSource";
-
-const formatTagText = (key: string, value: string): string => {
-  return `${key}: ${value}`;
-};
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
@@ -108,41 +103,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       const connection = row.original.connection_object;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
-      const { tags, agents } = row.original;
-
-      const renderRlsBadges = (): JSX.Element[] => {
-        const badges: JSX.Element[] = [];
-
-        // Add tag badges
-        if (tags && Object.keys(tags).length > 0) {
-          Object.entries(tags).forEach(([key, value]) => {
-            badges.push(
-              <Badge
-                key={`tag-${key}`}
-                text={formatTagText(key, value)}
-                color="blue"
-              />
-            );
-          });
-        }
-
-        // Add agent badges
-        if (agents && agents.length > 0) {
-          agents.forEach((agent, index) => {
-            badges.push(
-              <Badge
-                key={`agent-${index}`}
-                text={`agent: ${agent}`}
-                color="gray"
-              />
-            );
-          });
-        }
-
-        return badges;
-      };
-
-      const rlsBadges = renderRlsBadges();
 
       if (objectSelector) {
         return (
@@ -153,9 +113,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
             >
               {JSON.stringify(objectSelector)}
             </span>
-            {rlsBadges.length > 0 && (
-              <div className="flex flex-wrap gap-1">{rlsBadges}</div>
-            )}
           </div>
         );
       }
@@ -166,9 +123,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
             <span>
               {permissionObjectList.find((o) => o.value === object)?.label}
             </span>
-            {rlsBadges.length > 0 && (
-              <div className="flex flex-wrap gap-1">{rlsBadges}</div>
-            )}
           </div>
         );
       }
@@ -216,10 +170,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
               </div>
             )}
           </div>
-
-          {rlsBadges.length > 0 && (
-            <div className="flex flex-wrap gap-1">{rlsBadges}</div>
-          )}
         </div>
       );
     }
@@ -280,12 +230,16 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     header: "Created By",
     size: 40,
     Cell: ({ row }) => {
-      const createdBy = row.original.createdBy;
+      const createdBy = row.original.created_by;
       const source = row.original.source;
 
       if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
         const id = row.original.id;
         return <CRDSource source={source} id={id} showMinimal />;
+      }
+
+      if (!createdBy) {
+        return null;
       }
 
       return <Avatar user={createdBy} />;
