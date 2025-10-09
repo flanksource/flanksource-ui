@@ -11,10 +11,12 @@ import { ScopeTarget } from "@flanksource-ui/api/types/scopes";
 
 type ScopeTargetsFormProps = {
   disabled?: boolean;
+  submitCount?: number;
 };
 
 export default function ScopeTargetsForm({
-  disabled = false
+  disabled = false,
+  submitCount = 0
 }: ScopeTargetsFormProps) {
   const { values, errors, touched } = useFormikContext<any>();
   const targets: ScopeTarget[] = values.targets || [];
@@ -56,7 +58,7 @@ export default function ScopeTargetsForm({
           )}
 
           {/* Show validation error for targets */}
-          {touched.targets &&
+          {submitCount > 0 &&
             errors.targets &&
             typeof errors.targets === "string" && (
               <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
@@ -64,21 +66,44 @@ export default function ScopeTargetsForm({
               </div>
             )}
 
-          {targets.map((target, index) => (
-            <TargetBlock
-              key={index}
-              index={index}
-              target={target}
-              disabled={disabled}
-              agentOptions={agentOptions}
-              onRemove={() => {
-                if (targets.length > 1) {
-                  remove(index);
-                }
-              }}
-              showRemove={targets.length > 1}
-            />
-          ))}
+          {targets.map((target, index) => {
+            // Get the error for this specific target
+            // Only show error if:
+            // 1. User has attempted to submit (submitCount > 0), AND
+            // 2. This specific target has been touched/interacted with
+            const targetTouched =
+              touched.targets &&
+              Array.isArray(touched.targets) &&
+              touched.targets[index]
+                ? Object.keys(touched.targets[index] || {}).length > 0
+                : false;
+
+            const targetError =
+              submitCount > 0 &&
+              targetTouched &&
+              Array.isArray(errors.targets) &&
+              errors.targets[index] &&
+              typeof errors.targets[index] === "string"
+                ? errors.targets[index]
+                : undefined;
+
+            return (
+              <TargetBlock
+                key={index}
+                index={index}
+                target={target}
+                disabled={disabled}
+                agentOptions={agentOptions}
+                onRemove={() => {
+                  if (targets.length > 1) {
+                    remove(index);
+                  }
+                }}
+                showRemove={targets.length > 1}
+                error={targetError as string | undefined}
+              />
+            );
+          })}
         </div>
       )}
     </FieldArray>
@@ -92,6 +117,7 @@ type TargetBlockProps = {
   agentOptions: Array<{ label: string; value: string }>;
   onRemove: () => void;
   showRemove: boolean;
+  error?: string;
 };
 
 function TargetBlock({
@@ -100,7 +126,8 @@ function TargetBlock({
   disabled,
   agentOptions,
   onRemove,
-  showRemove
+  showRemove,
+  error
 }: TargetBlockProps) {
   const { setFieldValue } = useFormikContext<any>();
 
@@ -171,6 +198,13 @@ function TargetBlock({
             />
           </div>
         </div>
+
+        {/* Validation Error for this target */}
+        {error && (
+          <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+            {error}
+          </div>
+        )}
 
         {/* Global Warning */}
         {resourceType === "Global" && (

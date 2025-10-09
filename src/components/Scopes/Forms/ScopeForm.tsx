@@ -190,6 +190,21 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                 if (!errors.targets) errors.targets = [];
                 errors.targets[index] =
                   "Each target can only have one resource type";
+              } else {
+                // Validate that the target is not empty
+                const selectedResource = resourceTypes[0];
+                const name = selectedResource.name || "";
+                const agent = selectedResource.agent || "";
+                const tags = selectedResource.tags || {};
+                const tagsLength = Object.keys(tags).length;
+
+                const isEmpty = tagsLength === 0 && name === "" && agent === "";
+
+                if (isEmpty) {
+                  if (!errors.targets) errors.targets = [];
+                  errors.targets[index] =
+                    "Target cannot be empty. Please specify at least one of: name, agent, or tags";
+                }
               }
             });
           }
@@ -197,7 +212,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           return errors;
         }}
       >
-        {({ isValid, isSubmitting, errors }) => (
+        {({ isValid, isSubmitting, errors, submitCount }) => (
           <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
             <div className="flex flex-1 flex-col space-y-3 overflow-y-auto p-4">
               {isReadOnly && (
@@ -253,7 +268,10 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                   </div>
                 </div>
               ) : (
-                <ScopeTargetsForm disabled={isReadOnly} />
+                <ScopeTargetsForm
+                  disabled={isReadOnly}
+                  submitCount={submitCount}
+                />
               )}
             </div>
 
@@ -283,7 +301,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                       <FaSpinner className="animate-spin" />
                     ) : undefined
                   }
-                  disabled={isLoading || !isValid || isSubmitting}
+                  disabled={isLoading || isSubmitting}
                 />
               </AuthorizationAccessCheck>
             </CanEditResource>
