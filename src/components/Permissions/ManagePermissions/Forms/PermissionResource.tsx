@@ -6,17 +6,28 @@ import { useFormikContext } from "formik";
 import { permissionObjectList } from "./FormikPermissionSelectResourceFields";
 
 export default function PermissionResource() {
-  const { values } = useFormikContext<Record<string, string>>();
+  const { values } = useFormikContext<Record<string, any>>();
 
   const componentId = values.component_id;
   const playbookId = values.playbook_id;
   const configId = values.config_id;
   const connectionId = values.connection_id;
   const object = values.object;
+  const objectSelector = values.object_selector;
 
   if (object) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{permissionObjectList.find((o) => o.value === object)?.label}</>;
+  }
+
+  if (objectSelector?.scopes) {
+    const scopeNames = objectSelector.scopes
+      .map((scope: { namespace?: string; name: string }) =>
+        scope.namespace ? `${scope.namespace}/${scope.name}` : scope.name
+      )
+      .join(", ");
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>Scopes: {scopeNames}</>;
   }
 
   return (

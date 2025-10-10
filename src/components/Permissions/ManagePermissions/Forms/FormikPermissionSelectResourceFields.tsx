@@ -4,6 +4,7 @@ import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/Formik
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useState } from "react";
+import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
 
 export const permissionObjectList = [
   { label: "Canaries", value: "canaries" },
@@ -30,18 +31,26 @@ export default function FormikPermissionSelectResourceFields() {
     | "Canary"
     | "Playbook"
     | "Connection"
-    | "Global" => {
+    | "Global"
+    | "Scope" => {
     if (values.playbook_id) return "Playbook";
     if (values.config_id) return "Catalog";
     if (values.component_id) return "Component";
     if (values.connection_id) return "Connection";
     if (values.canary_id) return "Canary";
     if (values.object) return "Global";
+    if (values.object_selector?.scopes) return "Scope";
     return "Catalog";
   };
 
   const [switchOption, setSwitchOption] = useState<
-    "Component" | "Catalog" | "Canary" | "Playbook" | "Connection" | "Global"
+    | "Component"
+    | "Catalog"
+    | "Canary"
+    | "Playbook"
+    | "Connection"
+    | "Global"
+    | "Scope"
   >(getInitialTab());
 
   return (
@@ -55,7 +64,8 @@ export default function FormikPermissionSelectResourceFields() {
               "Component",
               "Connection",
               "Playbook",
-              "Global"
+              "Global",
+              "Scope"
             ]}
             className="w-auto"
             itemsClassName=""
@@ -69,6 +79,8 @@ export default function FormikPermissionSelectResourceFields() {
               setFieldValue("canary_id", undefined);
               setFieldValue("component_id", undefined);
               setFieldValue("playbook_id", undefined);
+              setFieldValue("connection_id", undefined);
+              setFieldValue("object_selector", undefined);
             }}
           />
         </div>
@@ -116,6 +128,8 @@ export default function FormikPermissionSelectResourceFields() {
             options={permissionObjectList}
           />
         )}
+
+        {switchOption === "Scope" && <FormikScopeMultiSelect />}
       </div>
     </div>
   );

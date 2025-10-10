@@ -13,6 +13,21 @@ export type PermissionGlobalObject =
   | "playbook"
   | "topology";
 
+type PermissionObjectSelector = {
+  playbooks?: Selectors[];
+  connections?: Selectors[];
+  configs?: Selectors[];
+  components?: Selectors[];
+  scopes?: ScopeSelector[];
+};
+
+interface Selectors {}
+
+interface ScopeSelector {
+  namespace?: string;
+  name: string;
+}
+
 export type PermissionTable = {
   id: string;
   description: string;
@@ -35,7 +50,7 @@ export type PermissionTable = {
 
   // Resources
   object?: PermissionGlobalObject;
-  object_selector?: Record<string, any>[];
+  object_selector?: PermissionObjectSelector;
   component_id?: string;
   canary_id?: string;
   config_id?: string;
@@ -81,12 +96,3 @@ export type PermissionsSummary = PermissionTable & {
   connection_object: Pick<Connection, "id" | "name" | "type">;
   component_object: Pick<Topology, "id" | "name" | "icon">;
 };
-
-type PermissionObjectSelector = {
-  playbooks: Selectors[];
-  connections: Selectors[];
-  configs: Selectors[];
-  components: Selectors[];
-};
-
-interface Selectors {}
