@@ -105,6 +105,46 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       const objectSelector = row.original.object_selector;
 
       if (objectSelector) {
+        // Format scopes as "Scope: namespace/name, namespace2/name2"
+        if (objectSelector.scopes && Array.isArray(objectSelector.scopes)) {
+          const scopes = objectSelector.scopes;
+          const maxDisplay = 2;
+          const displayScopes = scopes.slice(0, maxDisplay);
+          const remaining = scopes.length - maxDisplay;
+
+          const scopeText = displayScopes
+            .map((scope: any) => {
+              const namespace = scope.namespace || "";
+              const name = scope.name || "";
+              return namespace && name ? `${namespace}/${name}` : name;
+            })
+            .filter(Boolean)
+            .join(", ");
+
+          const fullScopeText = scopes
+            .map((scope: any) => {
+              const namespace = scope.namespace || "";
+              const name = scope.name || "";
+              return namespace && name ? `${namespace}/${name}` : name;
+            })
+            .filter(Boolean)
+            .join(", ");
+
+          return (
+            <div className="flex flex-row items-center gap-2">
+              <span className="text-sm text-gray-600">Scope:</span>
+              <span
+                className="truncate font-mono text-sm"
+                title={fullScopeText}
+              >
+                {scopeText}
+                {remaining > 0 && ` and ${remaining} more...`}
+              </span>
+            </div>
+          );
+        }
+
+        // Fallback to JSON for non-scope object selectors
         return (
           <div className="flex flex-row items-center gap-2">
             <span
