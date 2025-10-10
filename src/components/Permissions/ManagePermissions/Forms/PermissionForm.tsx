@@ -43,6 +43,7 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     if (values.component_id) return "component";
     if (values.connection_id) return "connection";
     if (values.canary_id) return "canary";
+    if (values.object_selector?.scopes) return "global";
     if (values.object) return "global";
     return undefined;
   }, [values]);
@@ -231,6 +232,7 @@ export default function PermissionForm({
             playbook_id: permissionData?.playbook_id,
             deny: permissionData?.deny ?? false,
             object: permissionData?.object,
+            object_selector: permissionData?.object_selector,
             description: permissionData?.description,
             connection_id: permissionData?.connection_id,
             created_at: permissionData?.created_at,
