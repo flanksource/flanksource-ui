@@ -14,6 +14,17 @@ import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
 
+interface ScopeObject {
+  namespace?: string;
+  name?: string;
+}
+
+const formatScopeText = (scope: ScopeObject): string => {
+  const namespace = scope.namespace || "";
+  const name = scope.name || "";
+  return namespace && name ? `${namespace}/${name}` : name;
+};
+
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
     header: "Subject",
@@ -113,20 +124,12 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
           const remaining = scopes.length - maxDisplay;
 
           const scopeText = displayScopes
-            .map((scope: any) => {
-              const namespace = scope.namespace || "";
-              const name = scope.name || "";
-              return namespace && name ? `${namespace}/${name}` : name;
-            })
+            .map(formatScopeText)
             .filter(Boolean)
             .join(", ");
 
           const fullScopeText = scopes
-            .map((scope: any) => {
-              const namespace = scope.namespace || "";
-              const name = scope.name || "";
-              return namespace && name ? `${namespace}/${name}` : name;
-            })
+            .map(formatScopeText)
             .filter(Boolean)
             .join(", ");
 
