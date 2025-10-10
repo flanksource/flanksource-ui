@@ -3,7 +3,7 @@ import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/For
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
 
 export const permissionObjectList = [
@@ -53,6 +53,23 @@ export default function FormikPermissionSelectResourceFields() {
     | "Scope"
   >(getInitialTab());
 
+  // Sync switchOption with form values when they change (e.g., when form is reopened with fresh data)
+  useEffect(() => {
+    const currentTab = getInitialTab();
+    if (currentTab !== switchOption) {
+      setSwitchOption(currentTab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    values.playbook_id,
+    values.config_id,
+    values.component_id,
+    values.connection_id,
+    values.canary_id,
+    values.object,
+    values.object_selector
+  ]);
+
   return (
     <div className="flex flex-col gap-2">
       <label className={`form-label`}>Resource</label>
@@ -73,14 +90,14 @@ export default function FormikPermissionSelectResourceFields() {
             value={switchOption}
             onChange={(v) => {
               setSwitchOption(v);
-              setFieldValue("object", undefined);
-              setFieldValue("config_id", undefined);
-              setFieldValue("check_id", undefined);
-              setFieldValue("canary_id", undefined);
-              setFieldValue("component_id", undefined);
-              setFieldValue("playbook_id", undefined);
-              setFieldValue("connection_id", undefined);
-              setFieldValue("object_selector", undefined);
+              // Explicitly set to null to clear the database values when updating
+              setFieldValue("object", null);
+              setFieldValue("config_id", null);
+              setFieldValue("canary_id", null);
+              setFieldValue("component_id", null);
+              setFieldValue("playbook_id", null);
+              setFieldValue("connection_id", null);
+              setFieldValue("object_selector", null);
             }}
           />
         </div>
