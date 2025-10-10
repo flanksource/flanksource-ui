@@ -28,6 +28,10 @@ type FormikConfigsDropdownProps = {
   className?: string;
   valueField?: "id" | "name";
   disabled?: boolean;
+  onValueChange?: (
+    value: any,
+    option: FormikSelectDropdownOption | null
+  ) => void;
 };
 
 export default function FormikResourceSelectorDropdown({
@@ -43,7 +47,8 @@ export default function FormikResourceSelectorDropdown({
   playbookResourceSelector,
   className = "flex flex-col space-y-2 py-2",
   valueField = "id",
-  disabled = false
+  disabled = false,
+  onValueChange
 }: FormikConfigsDropdownProps) {
   const [inputText, setInputText] = useState<string>("");
   const [searchText, setSearchText] = useState<string>();
@@ -262,6 +267,7 @@ export default function FormikResourceSelectorDropdown({
             ),
             value: playbook[valueField],
             search: playbook.name,
+            name: playbook.name,
             label: (
               <div className="flex flex-wrap gap-1">
                 <span className="mr-2"> {playbook.name}</span>
@@ -312,14 +318,18 @@ export default function FormikResourceSelectorDropdown({
         isClearable
         value={value}
         onChange={(value: any) => {
+          const selectedValue = Array.isArray(value)
+            ? value.map((item) => item.value)
+            : value?.value;
+
           field.onChange({
             target: {
               name: field.name,
-              value: Array.isArray(value)
-                ? value.map((item) => item.value)
-                : value?.value
+              value: selectedValue
             }
           });
+
+          onValueChange?.(selectedValue, value);
         }}
         onInputChange={handleInputChange}
         inputValue={inputText ?? value}

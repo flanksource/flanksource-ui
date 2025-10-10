@@ -106,6 +106,16 @@ export default function FormikPermissionSelectResourceFields() {
             required
             name="playbook_id"
             playbookResourceSelector={[{}]}
+            onValueChange={(value, option) => {
+              if (option && (option as any).name) {
+                setFieldValue("object_selector", {
+                  playbooks: [{ name: (option as any).name }],
+                  configs: [{ name: "*" }]
+                });
+              } else {
+                setFieldValue("object_selector", undefined);
+              }
+            }}
           />
         )}
 
