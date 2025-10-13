@@ -47,6 +47,7 @@ export type PermissionTable = {
   updated_at: string;
   until?: string;
   source?: string;
+  error?: string;
 
   // Resources
   object?: PermissionGlobalObject;

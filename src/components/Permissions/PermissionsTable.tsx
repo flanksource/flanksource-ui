@@ -11,6 +11,7 @@ import { TopologyLink } from "../Topology/TopologyLink";
 import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
+import { MdError } from "react-icons/md";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
 
@@ -23,6 +24,69 @@ const formatScopeText = (scope: ScopeObject): string => {
   const namespace = scope.namespace || "";
   const name = scope.name || "";
   return namespace && name ? `${namespace}/${name}` : name;
+};
+
+// Known permission error types
+const SCOPE_EXPANSION_ERRORS = {
+  ErrScopeExpansionInvalidObjectSelector:
+    "ErrScopeExpansionInvalidObjectSelector",
+  ErrScopeExpansionScopeNotFound: "ErrScopeExpansionScopeNotFound",
+  ErrScopeExpansionInvalidScopeTargets: "ErrScopeExpansionInvalidScopeTargets"
+} as const;
+
+interface ParsedError {
+  type: string;
+  message: string;
+  scope?: string;
+}
+
+/**
+ * Parse permission errors and return a human-readable message
+ * Known errors start with "ErrScopeExpansion" prefix
+ * Format: ErrorType:additional-info
+ */
+const parsePermissionError = (error: string): ParsedError => {
+  if (!error) {
+    return { type: "unknown", message: error };
+  }
+
+  // Check if it's a known scope expansion error
+  if (error.startsWith("ErrScopeExpansion")) {
+    const [errorType, ...rest] = error.split(":");
+    const additionalInfo = rest.join(":");
+
+    switch (errorType) {
+      case SCOPE_EXPANSION_ERRORS.ErrScopeExpansionScopeNotFound:
+        return {
+          type: "scope-not-found",
+          message: "Scope not found",
+          scope: additionalInfo
+        };
+      case SCOPE_EXPANSION_ERRORS.ErrScopeExpansionInvalidObjectSelector:
+        return {
+          type: "invalid-object-selector",
+          message: "Invalid object selector",
+          scope: additionalInfo
+        };
+      case SCOPE_EXPANSION_ERRORS.ErrScopeExpansionInvalidScopeTargets:
+        return {
+          type: "invalid-scope-targets",
+          message: "Invalid scope targets",
+          scope: additionalInfo
+        };
+      default:
+        return {
+          type: "scope-expansion-error",
+          message: error
+        };
+    }
+  }
+
+  // Unknown error - return as is
+  return {
+    type: "unknown",
+    message: error
+  };
 };
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
@@ -114,6 +178,27 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       const connection = row.original.connection_object;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
+      const error = row.original.error;
+
+      // Parse error if it exists
+      const parsedError = error ? parsePermissionError(error) : null;
+
+      // Render error display component
+      const ErrorDisplay = parsedError ? (
+        <div className="flex flex-row items-center gap-2 border-l-2 border-red-500 pl-2">
+          <MdError className="h-5 w-5 flex-shrink-0 text-red-500" />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-red-600">
+              {parsedError.message}
+            </span>
+            {parsedError.scope && (
+              <span className="font-mono text-xs text-gray-600">
+                {parsedError.scope}
+              </span>
+            )}
+          </div>
+        </div>
+      ) : null;
 
       if (objectSelector) {
         // Format scopes as "Scope: namespace/name, namespace2/name2"
@@ -134,85 +219,97 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
             .join(", ");
 
           return (
-            <div className="flex flex-row items-center gap-2">
-              <span className="text-sm text-gray-600">Scope:</span>
-              <span
-                className="truncate font-mono text-sm"
-                title={fullScopeText}
-              >
-                {scopeText}
-                {remaining > 0 && ` and ${remaining} more...`}
-              </span>
+            <div className="flex flex-row items-center gap-3">
+              <div className="flex flex-row items-center gap-2">
+                <span className="text-sm text-gray-600">Scope:</span>
+                <span
+                  className="truncate font-mono text-sm"
+                  title={fullScopeText}
+                >
+                  {scopeText}
+                  {remaining > 0 && ` and ${remaining} more...`}
+                </span>
+              </div>
+              {ErrorDisplay}
             </div>
           );
         }
 
         // Fallback to JSON for non-scope object selectors
         return (
-          <div className="flex flex-row items-center gap-2">
-            <span
-              className="truncate font-mono text-sm"
-              title={JSON.stringify(objectSelector)} // Provides full text on hover
-            >
-              {JSON.stringify(objectSelector)}
-            </span>
+          <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-2">
+              <span
+                className="truncate font-mono text-sm"
+                title={JSON.stringify(objectSelector)} // Provides full text on hover
+              >
+                {JSON.stringify(objectSelector)}
+              </span>
+            </div>
+            {ErrorDisplay}
           </div>
         );
       }
 
       if (object) {
         return (
-          <div className="flex flex-row items-center gap-2">
-            <span>
-              {permissionObjectList.find((o) => o.value === object)?.label}
-            </span>
+          <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-2">
+              <span>
+                {permissionObjectList.find((o) => o.value === object)?.label}
+              </span>
+            </div>
+            {ErrorDisplay}
           </div>
         );
       }
 
       return (
-        <div className="flex flex-row items-center gap-2">
-          <div className="flex flex-col">
-            {config && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Catalog:</span>
-                <ConfigLink config={config} />
-              </div>
-            )}
+        <div className="flex flex-row items-center gap-3">
+          <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col">
+              {config && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Catalog:</span>
+                  <ConfigLink config={config} />
+                </div>
+              )}
 
-            {playbook && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Playbook:</span>
-                <PlaybookSpecIcon
-                  playbook={{
-                    ...playbook,
-                    title: playbook.name,
-                    spec: { icon: playbook.icon || "", actions: [] }
-                  }}
-                  showLabel
-                />
-              </div>
-            )}
+              {playbook && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Playbook:</span>
+                  <PlaybookSpecIcon
+                    playbook={{
+                      ...playbook,
+                      title: playbook.name,
+                      spec: { icon: playbook.icon || "", actions: [] }
+                    }}
+                    showLabel
+                  />
+                </div>
+              )}
 
-            {component && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Component:</span>
-                <TopologyLink
-                  topology={component}
-                  className="h-5 w-5 text-gray-600"
-                  linkClassName="text-gray-600"
-                  size="md"
-                />
-              </div>
-            )}
+              {component && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Component:</span>
+                  <TopologyLink
+                    topology={component}
+                    className="h-5 w-5 text-gray-600"
+                    linkClassName="text-gray-600"
+                    size="md"
+                  />
+                </div>
+              )}
 
-            {connection && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Connection:</span>
-                <ConnectionIcon connection={connection} showLabel />
-              </div>
-            )}
+              {connection && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Connection:</span>
+                  <ConnectionIcon connection={connection} showLabel />
+                </div>
+              )}
+            </div>
           </div>
+          {ErrorDisplay}
         </div>
       );
     }
