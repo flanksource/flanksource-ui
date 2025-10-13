@@ -1,7 +1,8 @@
 import {
   addPermission,
   updatePermission,
-  fetchPermissionById
+  fetchPermissionById,
+  recheckPermission
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
@@ -27,6 +28,7 @@ import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
 import PermissionsSubjectControls from "./PermissionSubjectControls";
+import { PermissionErrorDisplay } from "../../PermissionErrorDisplay";
 
 type PermissionFormProps = {
   onClose: () => void;
@@ -201,7 +203,24 @@ export default function PermissionForm({
     }
   });
 
-  const isLoading = adding || updating;
+  const { isLoading: rechecking, mutate: recheck } = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await recheckPermission(id);
+      return res.data;
+    },
+    onSuccess: (result, id) => {
+      toastSuccess("Re-evaluated successfully");
+      queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
+      queryClient.invalidateQueries({ queryKey: ["permission", id] });
+      // Don't close the modal - let user see the result
+    },
+    onError: (error: AxiosError) => {
+      console.error(error);
+      toastError(error.message);
+    }
+  });
+
+  const isLoading = adding || updating || rechecking;
 
   if (shouldShowLoading) {
     return (
@@ -251,7 +270,8 @@ export default function PermissionForm({
             subject: permissionData?.subject,
             subject_type: permissionData?.subject_type,
             until: permissionData?.until,
-            source: permissionData?.source || "UI"
+            source: permissionData?.source || "UI",
+            error: permissionData?.error
           }}
           onSubmit={(v) => {
             if (!permissionData?.id) {
@@ -272,13 +292,21 @@ export default function PermissionForm({
                 source={permissionData?.source}
               />
             </div>
+            <PermissionErrorDisplay
+              error={permissionData?.error}
+              showRecheckButton={
+                !!permissionData?.id && !!permissionData?.error
+              }
+              onRecheck={() => permissionData?.id && recheck(permissionData.id)}
+              isRechecking={rechecking}
+            />
             <CanEditResource
               id={permissionData?.id}
               resourceType={"permissions"}
               source={permissionData?.source}
               className="flex items-center justify-between bg-gray-100 px-5 py-4"
             >
-              <div>
+              <div className="flex items-center gap-2">
                 {permissionData?.id && permissionData.source === "UI" && (
                   <AuthorizationAccessCheck
                     resource={tables.permissions}
