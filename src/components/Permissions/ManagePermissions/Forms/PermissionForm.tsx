@@ -164,9 +164,13 @@ export default function PermissionForm({
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       toastSuccess("Permission added");
       queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
+      // Invalidate the newly created permission's cache in case it's immediately opened
+      if (result?.id) {
+        queryClient.invalidateQueries({ queryKey: ["permission", result.id] });
+      }
       onClose();
     },
     onError: (error: AxiosError) => {
@@ -184,9 +188,10 @@ export default function PermissionForm({
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, data) => {
       toastSuccess("Permission updated");
       queryClient.invalidateQueries({ queryKey: ["permissions_summary"] });
+      queryClient.invalidateQueries({ queryKey: ["permission", data.id] });
       onClose();
     },
     onError: (error: AxiosError) => {
