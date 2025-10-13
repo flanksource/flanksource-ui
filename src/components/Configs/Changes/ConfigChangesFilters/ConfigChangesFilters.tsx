@@ -1,5 +1,6 @@
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
+import { usePartialUpdateSearchParams } from "@flanksource-ui/hooks/usePartialUpdateSearchParams";
 import ClosableBadge from "@flanksource-ui/ui/Badge/ClosableBadge";
 import clsx from "clsx";
 import { useCallback, useMemo } from "react";
@@ -18,7 +19,7 @@ type FilterBadgeProps = {
 };
 
 export function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
 
   const onRemove = useCallback(
     (key: string, value: string) => {
@@ -32,7 +33,7 @@ export function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
         params.set(key, updateValue);
       }
       paramsToReset.configChanges.forEach((param) => params.delete(param));
-      setParams(params);
+      setParams(Object.fromEntries(params.entries()));
     },
     [params, setParams]
   );

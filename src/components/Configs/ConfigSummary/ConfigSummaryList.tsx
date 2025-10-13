@@ -4,7 +4,7 @@ import { DataTable } from "@flanksource-ui/ui/DataTable";
 import ChangeCount, { CountBar } from "@flanksource-ui/ui/Icons/ChangeCount";
 import { CellContext, ColumnDef, Row } from "@tanstack/react-table";
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 import ConfigListCostCell from "../ConfigList/Cells/ConfigListCostCell";
 import ConfigListDateCell from "../ConfigList/Cells/ConfigListDateCell";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
@@ -219,7 +219,7 @@ export default function ConfigSummaryList({
   isLoading = false,
   groupBy = ["type"]
 }: ConfigSummaryListProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
 
   const groupByTags = useMemo(() => {
     const groupByProp = params.get("groupBy") ?? undefined;
@@ -259,7 +259,7 @@ export default function ConfigSummaryList({
         params.set("labels", tagsParam);
       }
       params.delete("groupBy");
-      setParams(params);
+      setParams(Object.fromEntries(params.entries()));
     },
     [groupBy, params, setParams]
   );

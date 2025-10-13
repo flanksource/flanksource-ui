@@ -7,8 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { BiLabel, BiStats } from "react-icons/bi";
 import { MdDifference } from "react-icons/md";
-import { useSearchParams } from "react-router-dom";
 import { MultiValue } from "react-select";
+import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 
 type ConfigGroupByDropdownProps = {
   onChange?: (value: string[] | undefined) => void;
@@ -50,7 +50,7 @@ export default function ConfigGroupByDropdown({
   onChange = () => {},
   paramsToReset = []
 }: ConfigGroupByDropdownProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
 
   const configType = params.get("configType") ?? undefined;
 
@@ -118,7 +118,7 @@ export default function ConfigGroupByDropdown({
         params.set(searchParamKey, values);
       }
       paramsToReset.forEach((param) => params.delete(param));
-      setParams(params);
+      setParams(Object.fromEntries(params.entries()));
       onChange(value?.map((v) => v.value));
     },
     [onChange, params, paramsToReset, searchParamKey, setParams]
