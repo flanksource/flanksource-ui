@@ -21,8 +21,8 @@ import React, {
   useState
 } from "react";
 import { FaCog } from "react-icons/fa";
-import { useSearchParams } from "react-router-dom";
 import { useLoader } from "../../../hooks";
+import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
 type QueryBuilderProps = {
@@ -34,7 +34,7 @@ const QueryBuilderFC: React.FC<QueryBuilderProps> = ({
   className,
   ...props
 }) => {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
   const query = params.get("query") || "";
   const [selectedQuery, setSelectedQuery] = useState<
     Record<string, any> | undefined

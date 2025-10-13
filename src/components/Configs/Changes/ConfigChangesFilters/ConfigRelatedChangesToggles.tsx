@@ -1,13 +1,11 @@
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
-import { useSearchParams } from "react-router-dom";
+import { usePartialUpdateSearchParams } from "../../../../hooks/usePartialUpdateSearchParams";
 
 export function ConfigRelatedChangesToggles() {
-  const [params, setParams] = useSearchParams({
-    downstream: "true",
-    upstream: "false"
-  });
+  const [params, setParams] = usePartialUpdateSearchParams();
 
-  const downstream = params.get("downstream") === "true";
+  const downstream =
+    params.get("downstream") === "true" || params.get("downstream") === null;
   const upstream = params.get("upstream") === "true";
 
   return (
@@ -16,16 +14,14 @@ export function ConfigRelatedChangesToggles() {
         label="Downstream"
         value={downstream}
         onChange={(value) => {
-          params.set("downstream", value ? "true" : "false");
-          setParams(params);
+          setParams({ downstream: value ? "true" : "false" });
         }}
       />
       <Toggle
         label="Upstream"
         value={upstream}
         onChange={(value) => {
-          params.set("upstream", value ? "true" : "false");
-          setParams(params);
+          setParams({ upstream: value ? "true" : "false" });
         }}
       />
     </div>

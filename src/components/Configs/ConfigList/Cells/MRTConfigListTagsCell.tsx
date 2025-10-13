@@ -1,8 +1,8 @@
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
+import { usePartialUpdateSearchParams } from "../../../../hooks/usePartialUpdateSearchParams";
 
 type MRTConfigListTagsCellProps<
   T extends {
@@ -24,7 +24,7 @@ export default function MRTConfigListTagsCell<
   enableFilterByTag = false,
   filterByTagParamKey = "tags"
 }: MRTConfigListTagsCellProps<T>): JSX.Element | null {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
 
   const tagMap = cell.getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
@@ -69,7 +69,7 @@ export default function MRTConfigListTagsCell<
 
       // Update the URL
       params.set(filterByTagParamKey, updatedValue);
-      setParams(params);
+      setParams(Object.fromEntries(params.entries()));
     },
     [enableFilterByTag, filterByTagParamKey, params, setParams]
   );

@@ -1,15 +1,13 @@
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
-import { useSearchParams } from "react-router-dom";
+import { usePartialUpdateSearchParams } from "../../../../../hooks/usePartialUpdateSearchParams";
 
 export const ConfigRelationKey = "relation";
 
 export function ConfigRelationshipToggles() {
-  const [params, setParams] = useSearchParams({
-    outgoing: "true",
-    incoming: "false"
-  });
+  const [params, setParams] = usePartialUpdateSearchParams();
 
-  const outgoing = params.get("outgoing") === "true";
+  const outgoing =
+    params.get("outgoing") === "true" || params.get("outgoing") === null;
   const incoming = params.get("incoming") === "true";
   const relation = params.get(ConfigRelationKey) === "soft";
 
@@ -26,30 +24,27 @@ export function ConfigRelationshipToggles() {
         }
         disabled={!incoming}
         onChange={(value) => {
-          params.set("outgoing", value ? "true" : "false");
-          setParams(params);
+          setParams({ outgoing: value ? "true" : "false" });
         }}
       />
       <Toggle
         label="Incoming"
         value={incoming}
         onChange={(value) => {
-          params.set("incoming", value ? "true" : "false");
-          // When incoming is false, we want to set outgoing to true, as the
-          // default is outgoing when both are false, so from a user perspective
-          // it's easier to understand the default behavior
-          if (!value) {
-            params.set("outgoing", "true");
-          }
-          setParams(params);
+          setParams({
+            incoming: value ? "true" : "false",
+            // When incoming is false, we want to set outgoing to true, as the
+            // default is outgoing when both are false, so from a user perspective
+            // it's easier to understand the default behavior
+            ...(value ? {} : { outgoing: "true" })
+          });
         }}
       />
       <Toggle
         label="Soft"
         value={relation}
         onChange={(value) => {
-          params.set(ConfigRelationKey, value ? "soft" : "hard");
-          setParams(params);
+          setParams({ [ConfigRelationKey]: value ? "soft" : "hard" });
         }}
       />
     </div>

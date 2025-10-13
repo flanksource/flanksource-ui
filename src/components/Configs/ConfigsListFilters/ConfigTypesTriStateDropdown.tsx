@@ -7,7 +7,7 @@ import TristateReactSelect, {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { usePartialUpdateSearchParams } from "../../../hooks/usePartialUpdateSearchParams";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 
 type ConfigTypesTriStateDropdownProps = {
@@ -21,7 +21,7 @@ export function ConfigTypesTriStateDropdown({
   paramsToReset = [],
   paramKey = "configType"
 }: ConfigTypesTriStateDropdownProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
   const type = params.get(paramKey) ?? undefined;
 
   const { isLoading, data: configTypeOptions = [] } = useQuery(
@@ -67,7 +67,7 @@ export function ConfigTypesTriStateDropdown({
           params.set(paramKey, value);
         }
         paramsToReset.forEach((param) => params.delete(param));
-        setParams(params);
+        setParams(Object.fromEntries(params.entries()));
       }}
       value={type}
       className="w-auto max-w-[400px]"

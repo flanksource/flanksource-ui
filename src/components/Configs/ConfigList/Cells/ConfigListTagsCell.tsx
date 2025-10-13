@@ -1,8 +1,8 @@
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { CellContext } from "@tanstack/react-table";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
+import { usePartialUpdateSearchParams } from "../../../../hooks/usePartialUpdateSearchParams";
 
 type ConfigListTagsCellProps<
   T extends {
@@ -16,7 +16,7 @@ type ConfigListTagsCellProps<
 };
 
 export default function ConfigListTagsCell<
-  T extends { tags?: Record<string, any>; id: string } 
+  T extends { tags?: Record<string, any>; id: string }
 >({
   row,
   getValue,
@@ -24,7 +24,7 @@ export default function ConfigListTagsCell<
   enableFilterByTag = false,
   filterByTagParamKey = "tags"
 }: ConfigListTagsCellProps<T>): JSX.Element | null {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePartialUpdateSearchParams();
 
   const tagMap = getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
@@ -69,7 +69,7 @@ export default function ConfigListTagsCell<
 
       // Update the URL
       params.set(filterByTagParamKey, updatedValue);
-      setParams(params);
+      setParams(Object.fromEntries(params.entries()));
     },
     [enableFilterByTag, filterByTagParamKey, params, setParams]
   );
