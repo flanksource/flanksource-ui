@@ -315,6 +315,7 @@ export default function ConfigSummaryList({
 
   return (
     <DataTable
+      key={`datatable-${data.length}-${shouldExpandAllRows}`}
       stickyHead
       columns={virtualColumns}
       data={data}
