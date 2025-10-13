@@ -104,3 +104,13 @@ export async function fetchPermissionById(id: string) {
   );
   return response.data[0];
 }
+
+/**
+ * Re-checks/re-validates a permission by clearing its error field.
+ * The backend will re-evaluate the permission and set a new error if validation fails.
+ */
+export function recheckPermission(id: string) {
+  return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
+    error: null
+  });
+}

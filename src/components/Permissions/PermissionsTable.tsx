@@ -13,6 +13,7 @@ import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
+import { PermissionErrorDisplay } from "./PermissionErrorDisplay";
 
 interface ScopeObject {
   namespace?: string;
@@ -114,6 +115,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       const connection = row.original.connection_object;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
+      const error = row.original.error;
 
       if (objectSelector) {
         // Format scopes as "Scope: namespace/name, namespace2/name2"
@@ -134,85 +136,97 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
             .join(", ");
 
           return (
-            <div className="flex flex-row items-center gap-2">
-              <span className="text-sm text-gray-600">Scope:</span>
-              <span
-                className="truncate font-mono text-sm"
-                title={fullScopeText}
-              >
-                {scopeText}
-                {remaining > 0 && ` and ${remaining} more...`}
-              </span>
+            <div className="flex flex-row items-center gap-3">
+              <div className="flex flex-row items-center gap-2">
+                <span className="text-sm text-gray-600">Scope:</span>
+                <span
+                  className="truncate font-mono text-sm"
+                  title={fullScopeText}
+                >
+                  {scopeText}
+                  {remaining > 0 && ` and ${remaining} more...`}
+                </span>
+              </div>
+              <PermissionErrorDisplay error={error} />
             </div>
           );
         }
 
         // Fallback to JSON for non-scope object selectors
         return (
-          <div className="flex flex-row items-center gap-2">
-            <span
-              className="truncate font-mono text-sm"
-              title={JSON.stringify(objectSelector)} // Provides full text on hover
-            >
-              {JSON.stringify(objectSelector)}
-            </span>
+          <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-2">
+              <span
+                className="truncate font-mono text-sm"
+                title={JSON.stringify(objectSelector)} // Provides full text on hover
+              >
+                {JSON.stringify(objectSelector)}
+              </span>
+            </div>
+            <PermissionErrorDisplay error={error} />
           </div>
         );
       }
 
       if (object) {
         return (
-          <div className="flex flex-row items-center gap-2">
-            <span>
-              {permissionObjectList.find((o) => o.value === object)?.label}
-            </span>
+          <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-2">
+              <span>
+                {permissionObjectList.find((o) => o.value === object)?.label}
+              </span>
+            </div>
+            <PermissionErrorDisplay error={error} />
           </div>
         );
       }
 
       return (
-        <div className="flex flex-row items-center gap-2">
-          <div className="flex flex-col">
-            {config && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Catalog:</span>
-                <ConfigLink config={config} />
-              </div>
-            )}
+        <div className="flex flex-row items-center gap-3">
+          <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-col">
+              {config && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Catalog:</span>
+                  <ConfigLink config={config} />
+                </div>
+              )}
 
-            {playbook && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Playbook:</span>
-                <PlaybookSpecIcon
-                  playbook={{
-                    ...playbook,
-                    title: playbook.name,
-                    spec: { icon: playbook.icon || "", actions: [] }
-                  }}
-                  showLabel
-                />
-              </div>
-            )}
+              {playbook && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Playbook:</span>
+                  <PlaybookSpecIcon
+                    playbook={{
+                      ...playbook,
+                      title: playbook.name,
+                      spec: { icon: playbook.icon || "", actions: [] }
+                    }}
+                    showLabel
+                  />
+                </div>
+              )}
 
-            {component && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Component:</span>
-                <TopologyLink
-                  topology={component}
-                  className="h-5 w-5 text-gray-600"
-                  linkClassName="text-gray-600"
-                  size="md"
-                />
-              </div>
-            )}
+              {component && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Component:</span>
+                  <TopologyLink
+                    topology={component}
+                    className="h-5 w-5 text-gray-600"
+                    linkClassName="text-gray-600"
+                    size="md"
+                  />
+                </div>
+              )}
 
-            {connection && (
-              <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-600">Connection:</span>
-                <ConnectionIcon connection={connection} showLabel />
-              </div>
-            )}
+              {connection && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Connection:</span>
+                  <ConnectionIcon connection={connection} showLabel />
+                </div>
+              )}
+            </div>
           </div>
+          <PermissionErrorDisplay error={error} />
         </div>
       );
     }
