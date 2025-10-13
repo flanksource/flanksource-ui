@@ -315,7 +315,7 @@ export default function ConfigSummaryList({
       isLoading={isLoading}
       className="max-w-full table-auto table-fixed overflow-x-auto"
       savePreferences={false}
-      expandAllRows={groupBy[0] === "config_class"}
+      expandAllRows={false}
     />
   );
 }
