@@ -294,6 +294,25 @@ export default function ConfigSummaryList({
     return [...list, "isFavorite"];
   }, [groupBy]);
 
+  // Determine if groups should be expanded by default
+  const shouldExpandAllRows = useMemo(() => {
+    // If no grouping is applied, no rows to expand
+    if (groupBy.length <= 1) {
+      return false;
+    }
+
+    // Get the first grouping field
+    const primaryGroupingField = groupBy[0];
+    
+    // Count unique values for the primary grouping field
+    const uniqueGroups = new Set(
+      data.map((item) => item[primaryGroupingField as keyof ConfigSummary])
+    );
+
+    // If there's only one unique group, expand it by default
+    return uniqueGroups.size === 1;
+  }, [data, groupBy]);
+
   return (
     <DataTable
       stickyHead
@@ -315,7 +334,7 @@ export default function ConfigSummaryList({
       isLoading={isLoading}
       className="max-w-full table-auto table-fixed overflow-x-auto"
       savePreferences={false}
-      expandAllRows={false}
+      expandAllRows={shouldExpandAllRows}
     />
   );
 }
