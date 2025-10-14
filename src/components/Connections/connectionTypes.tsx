@@ -361,7 +361,16 @@ export const connectionTypes: ConnectionType[] = [
         key: "insecure_tls",
         type: ConnectionsFieldTypes.checkbox
       }
-    ]
+    ],
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        username: data.username,
+        password: data.password,
+        insecure_tls: data.insecure_tls
+      };
+    }
   },
   {
     title: "Prometheus",
