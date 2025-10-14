@@ -8,9 +8,13 @@ import { ConnectionFormFields } from "./connectionTypes";
 
 interface FieldViewProps {
   field: ConnectionFormFields;
+  disabled?: boolean;
 }
 
-export default function RenderConnectionFormFields({ field }: FieldViewProps) {
+export default function RenderConnectionFormFields({
+  field,
+  disabled = false
+}: FieldViewProps) {
   const type = field.type ?? "input";
   switch (type) {
     case "input":
@@ -21,6 +25,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           required={field.required}
           hint={field.hint}
           defaultValue={field.default?.toString()}
+          disabled={disabled}
         />
       );
     case "numberInput":
@@ -32,6 +37,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           required={field.required}
           hint={field.hint}
           defaultValue={field.default?.toString()}
+          disabled={disabled}
         />
       );
     case "checkbox":
@@ -42,6 +48,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           labelClassName="text-sm font-semibold text-gray-700"
           required={field.required}
           hint={field.hint}
+          disabled={disabled}
         />
       );
     case "EnvVarSource":
@@ -52,10 +59,13 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           variant={field.variant}
           hint={field.hint}
           required={field.required}
+          disabled={disabled}
         />
       );
     case "ConnectionSwitch":
-      return <FormikConnectionOptionsSwitchField field={field} />;
+      return (
+        <FormikConnectionOptionsSwitchField field={field} disabled={disabled} />
+      );
 
     case "SwitchField":
       return (
@@ -65,6 +75,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           required={field.required}
           hint={field.hint}
           options={field.switchFieldProps?.options ?? []}
+          disabled={disabled}
         />
       );
 
@@ -76,6 +87,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
           variant={field.variant}
           hint={field.hint}
           required={field.required}
+          disabled={disabled}
         />
       );
     case "GroupField":
@@ -83,7 +95,7 @@ export default function RenderConnectionFormFields({ field }: FieldViewProps) {
         <div className="flex flex-row gap-2">
           {field.groupFieldProps?.fields.map((f) => (
             <div className="flex flex-1 flex-col gap-2" key={field.key}>
-              <RenderConnectionFormFields field={f} />
+              <RenderConnectionFormFields field={f} disabled={disabled} />
             </div>
           ))}
         </div>

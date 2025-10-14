@@ -7,9 +7,13 @@ import { ConnectionFormFields } from "./connectionTypes";
 
 type Props = {
   field: ConnectionFormFields;
+  disabled?: boolean;
 };
 
-export default function FormikConnectionOptionsSwitchField({ field }: Props) {
+export default function FormikConnectionOptionsSwitchField({
+  field,
+  disabled = false
+}: Props) {
   const { setFieldValue, values } = useFormikContext<Record<string, any>>();
 
   const [selectedGroup, setSelectedGroup] = useState(() => {
@@ -31,7 +35,7 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
   return (
     <div className="flex flex-col gap-4 overflow-y-auto">
       <label className="text-sm font-semibold">{field.label}</label>
-      <div className="flex flex-row">
+      <div className={disabled ? "pointer-events-none opacity-60" : ""}>
         <Switch
           options={["None", ...field.options?.map((option) => option.label)]}
           defaultValue="None"
@@ -39,6 +43,7 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
             field.options?.find((option) => option.key === selectedGroup)?.label
           }
           onChange={(v) => {
+            if (disabled) return;
             // reset all other fields that are not selected
             field.options?.forEach((option) => {
               if (option.key === v) {
@@ -54,7 +59,11 @@ export default function FormikConnectionOptionsSwitchField({ field }: Props) {
       </div>
       <div className="flex flex-col gap-4 overflow-y-auto px-2">
         {selectedField?.fields?.map((field) => (
-          <RenderConnectionFormFields field={field} key={field.key} />
+          <RenderConnectionFormFields
+            field={field}
+            key={field.key}
+            disabled={disabled}
+          />
         ))}
       </div>
     </div>

@@ -34,6 +34,8 @@ export function ConnectionForm({
   isDeleting = false,
   ...props
 }: ConnectionFormProps) {
+  const isReadOnly = formValue?.source === "KubernetesCRD";
+
   const handleSubmit = (value: any) => {
     onConnectionSubmit?.({
       ...convertData(value),
@@ -130,11 +132,28 @@ export function ConnectionForm({
           >
             <div className={clsx("mb-2 flex flex-col px-2")}>
               <div className="flex flex-col space-y-4 overflow-y-auto p-4">
-                {connectionType.fields.map((field, index) => {
-                  return (
-                    <RenderConnectionFormFields field={field} key={field.key} />
-                  );
-                })}
+                {isReadOnly && (
+                  <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                    <p className="font-medium">
+                      Read-Only Mode: This resource is managed by Kubernetes CRD
+                      and cannot be edited from the UI.
+                    </p>
+                  </div>
+                )}
+
+                <div
+                  className={isReadOnly ? "pointer-events-none opacity-60" : ""}
+                >
+                  {connectionType.fields.map((field, index) => {
+                    return (
+                      <RenderConnectionFormFields
+                        field={field}
+                        key={field.key}
+                        disabled={isReadOnly}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
