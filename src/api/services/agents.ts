@@ -79,6 +79,7 @@ export async function deleteAgent(id: string, cleanup: boolean = false) {
   });
   return res.data;
 }
+
 export const getAgentByID = async (id: string) => {
   if (id === Local) {
     return null;
@@ -88,14 +89,16 @@ export const getAgentByID = async (id: string) => {
   );
   return res.data?.[0] ?? null;
 };
+
 export const getAgentByIDs = async (ids: string[]) => {
   const res = await IncidentCommander.get<AgentItem[] | null>(
     `/agents?select=id,name,description&id=in.(${ids.join(",")})`
   );
   return res.data ?? [];
 };
+
 export const getAllAgents = () => {
   return IncidentCommander.get<AgentItem[] | null>(
-    `/agents?select=id,name,description`
+    `/agents?select=id,name,description&deleted_at=is.null`
   );
 };
