@@ -131,9 +131,9 @@ export function ConnectionForm({
             {...props}
           >
             <div className={clsx("mb-2 flex flex-col px-2")}>
-              <div className="flex flex-col space-y-4 overflow-y-auto p-4">
+              <div className="flex flex-col overflow-y-auto p-4">
                 {isReadOnly && (
-                  <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                  <div className="mb-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
                     <p className="font-medium">
                       Read-Only Mode: This resource is managed by Kubernetes CRD
                       and cannot be edited from the UI.
@@ -142,7 +142,10 @@ export function ConnectionForm({
                 )}
 
                 <div
-                  className={isReadOnly ? "pointer-events-none opacity-60" : ""}
+                  className={clsx(
+                    "flex flex-col space-y-4",
+                    isReadOnly && "pointer-events-none opacity-60"
+                  )}
                 >
                   {connectionType.fields.map((field, index) => {
                     return (
