@@ -14,7 +14,7 @@ const mockTagsData = [
 ];
 
 const mockLabelsData = [
-  // Include tags (they are also in labels)
+  // Include some tags (they are also in labels - but will be deduplicated)
   { key: "account", value: "prod" },
   { key: "environment", value: "staging" },
   { key: "region", value: "us-west-2" },

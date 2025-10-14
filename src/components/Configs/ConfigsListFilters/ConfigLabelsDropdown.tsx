@@ -25,7 +25,30 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
   const isLoading = isTagsLoading || isLabelsLoading;
 
   const labelItems = useMemo(() => {
-    // Create a set of tag identifiers for quick lookup
+    const tagItems: TriStateOptions[] = [];
+    const labelItems: TriStateOptions[] = [];
+
+    // First, process ALL tags from tagsData (this ensures all tags are shown at the top)
+    if (tagsData && Array.isArray(tagsData)) {
+      const sortedTags = [...tagsData].sort((a, b) => {
+        const keyCompare = a.key.localeCompare(b.key);
+        if (keyCompare !== 0) return keyCompare;
+        return String(a.value).localeCompare(String(b.value));
+      });
+
+      tagItems.push(...sortedTags.map(tag => ({
+        label: (
+          <span className="space-x-1 text-sm">
+            <span className="text-gray-600">{tag.key}:</span>
+            <span>{tag.value}</span>
+          </span>
+        ),
+        value: `${tag.key}____${tag.value}`,
+        id: `${tag.key}____${tag.value}`
+      } satisfies TriStateOptions)));
+    }
+
+    // Create a set of tag identifiers for deduplication
     const tagSet = new Set<string>();
     if (tagsData && Array.isArray(tagsData)) {
       tagsData.forEach(tag => {
@@ -33,40 +56,30 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
       });
     }
 
-    // Separate labels into tags and non-tags
-    const tagItems: TriStateOptions[] = [];
-    const labelItems: TriStateOptions[] = [];
-
+    // Then, process labels from labelsData, but exclude items that are already in tags
     if (labelsData && Array.isArray(labelsData)) {
-      labelsData.forEach(item => {
+      const filteredLabels = labelsData.filter(item => {
         const identifier = `${item.key}____${item.value}`;
-        const optionItem = {
-          label: (
-            <span className="space-x-1 text-sm">
-              <span className="text-gray-600">{item.key}:</span>
-              <span>{item.value}</span>
-            </span>
-          ),
-          value: identifier,
-          id: identifier
-        } satisfies TriStateOptions;
-
-        // If this item exists in tags, put it in tags section
-        if (tagSet.has(identifier)) {
-          tagItems.push(optionItem);
-        } else {
-          labelItems.push(optionItem);
-        }
+        return !tagSet.has(identifier); // Only include if NOT in tags
       });
-    }
 
-    // Sort both sections
-    const sortFn = (a: TriStateOptions, b: TriStateOptions) => {
-      return a.value.localeCompare(b.value);
-    };
-    
-    tagItems.sort(sortFn);
-    labelItems.sort(sortFn);
+      const sortedLabels = filteredLabels.sort((a, b) => {
+        const keyCompare = a.key.localeCompare(b.key);
+        if (keyCompare !== 0) return keyCompare;
+        return String(a.value).localeCompare(String(b.value));
+      });
+
+      labelItems.push(...sortedLabels.map(item => ({
+        label: (
+          <span className="space-x-1 text-sm">
+            <span className="text-gray-600">{item.key}:</span>
+            <span>{item.value}</span>
+          </span>
+        ),
+        value: `${item.key}____${item.value}`,
+        id: `${item.key}____${item.value}`
+      } satisfies TriStateOptions)));
+    }
 
     // Combine with separator if both sections have items
     const allItems: TriStateOptions[] = [];
