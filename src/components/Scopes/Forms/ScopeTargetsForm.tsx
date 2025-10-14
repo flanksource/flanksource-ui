@@ -27,7 +27,7 @@ export default function ScopeTargetsForm({
     () =>
       (agents || []).map((agent: any) => ({
         label: agent.name || agent.id,
-        value: agent.name || agent.id
+        value: agent.id
       })),
     [agents]
   );
@@ -40,8 +40,6 @@ export default function ScopeTargetsForm({
             <label className="form-label">Targets</label>
             {!disabled && (
               <Button
-                text="Add Target"
-                icon={<FaPlus />}
                 className="btn-secondary btn-sm"
                 onClick={() =>
                   push({
@@ -54,7 +52,10 @@ export default function ScopeTargetsForm({
                     }
                   })
                 }
-              />
+              >
+                <FaPlus />
+                Add Target
+              </Button>
             )}
           </div>
 
