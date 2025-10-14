@@ -4,7 +4,7 @@ import { ConnectionList } from "../ConnectionsList";
 
 // Mock the CRDSource component
 jest.mock("../../Settings/CRDSource", () => {
-  return function MockCRDSource({
+  const MockCRDSource = ({
     source,
     id,
     showMinimal
@@ -12,36 +12,36 @@ jest.mock("../../Settings/CRDSource", () => {
     source: string;
     id: string;
     showMinimal: boolean;
-  }) {
+  }) => {
     return (
       <div data-testid="crd-source">
         CRD (source: {source}, id: {id}, minimal: {showMinimal.toString()})
       </div>
     );
   };
+  return MockCRDSource;
 });
 
 // Mock MRTAvatarCell
 jest.mock("../../../ui/MRTDataTable/Cells/MRTAvataCell", () => {
-  return function MockMRTAvatarCell(props: any) {
+  const MockMRTAvatarCell = (props: any) => {
     const user = props.row?.getValue(props.column?.id);
     return (
-      <div data-testid="avatar-cell">
-        Avatar: {user?.name || "No user"}
-      </div>
+      <div data-testid="avatar-cell">Avatar: {user?.name || "No user"}</div>
     );
   };
+  return MockMRTAvatarCell;
 });
 
 // Mock other required dependencies
 jest.mock("../../../ui/MRTDataTable/MRTDataTable", () => {
-  return function MockMRTDataTable({
+  const MockMRTDataTable = ({
     columns,
     data
   }: {
     columns: any[];
     data: any[];
-  }) {
+  }) => {
     return (
       <div data-testid="mrt-table">
         {data.map((row, index) => (
@@ -50,7 +50,10 @@ jest.mock("../../../ui/MRTDataTable/MRTDataTable", () => {
               <div key={colIndex} data-testid={`cell-${column.header}`}>
                 {column.Cell
                   ? column.Cell({
-                      row: { original: row, getValue: (key: string) => row[key] },
+                      row: {
+                        original: row,
+                        getValue: (key: string) => row[key]
+                      },
                       column: { id: column.accessorKey }
                     })
                   : row[column.accessorKey]}
@@ -61,6 +64,7 @@ jest.mock("../../../ui/MRTDataTable/MRTDataTable", () => {
       </div>
     );
   };
+  return MockMRTDataTable;
 });
 
 describe("ConnectionsList", () => {
@@ -80,12 +84,7 @@ describe("ConnectionsList", () => {
   };
 
   it("should display CRD component when source is KubernetesCRD", () => {
-    render(
-      <ConnectionList
-        data={[mockConnectionWithCRD]}
-        isLoading={false}
-      />
-    );
+    render(<ConnectionList data={[mockConnectionWithCRD]} isLoading={false} />);
 
     expect(screen.getByTestId("crd-source")).toBeInTheDocument();
     expect(screen.getByText(/CRD \(source: KubernetesCRD/)).toBeInTheDocument();
@@ -93,10 +92,7 @@ describe("ConnectionsList", () => {
 
   it("should display avatar when source is not KubernetesCRD", () => {
     render(
-      <ConnectionList
-        data={[mockConnectionWithUser]}
-        isLoading={false}
-      />
+      <ConnectionList data={[mockConnectionWithUser]} isLoading={false} />
     );
 
     expect(screen.getByTestId("avatar-cell")).toBeInTheDocument();
