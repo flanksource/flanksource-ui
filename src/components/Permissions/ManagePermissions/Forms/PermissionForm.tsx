@@ -29,6 +29,7 @@ import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResour
 import PermissionResource from "./PermissionResource";
 import PermissionsSubjectControls from "./PermissionSubjectControls";
 import { PermissionErrorDisplay } from "../../PermissionErrorDisplay";
+import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 
 type PermissionFormProps = {
   onClose: () => void;
@@ -66,6 +67,65 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
       label="Action"
       isDisabled={isDisabled}
     />
+  );
+}
+
+function PlaybookRunWarning() {
+  const { values } = useFormikContext<Partial<PermissionTable>>();
+
+  // Show warning when resource is a playbook and action is playbook:run or playbook:*
+  const shouldShowWarning =
+    values.playbook_id &&
+    (values.action === "playbook:run" || values.action === "playbook:*");
+
+  if (!shouldShowWarning) {
+    return null;
+  }
+
+  const crdExample = `apiVersion: mission-control.flanksource.com/v1
+kind: Permission
+metadata:
+  name: allow-playbook-run
+  namespace: mc
+spec:
+  description: allow user John to run the playbook on only monitoring deployments.
+  subject:
+    person: john@flanksource.com
+  actions:
+    - playbook:run
+  object:
+    playbooks:
+      - name: scale-deployment
+    configs:
+      - tagSelector: cluster=dev,namespace=monitoring`;
+
+  return (
+    <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+      <p className="font-medium">
+        This permission does <span className="font-bold">NOT</span> restrict
+        which configs, components, or checks the playbook can run on.
+      </p>
+      <p className="mt-1">
+        The user can attempt to run it on anything they can read.
+      </p>
+      <p className="mt-1 text-xs italic">
+        (Note: The playbook itself may have resource restrictions that further
+        limit what it accepts.)
+      </p>
+      <p className="mt-1">
+        If you need granular control over which specific configs, components, or
+        checks can run this playbook, use the Kubernetes CRD to define resource
+        selectors.
+      </p>
+      <details className="mt-2">
+        <summary className="cursor-pointer font-medium hover:underline">
+          View CRD Example
+        </summary>
+        <div className="mt-2">
+          <JSONViewer code={crdExample} format="yaml" />
+        </div>
+      </details>
+    </div>
   );
 }
 
@@ -107,6 +167,8 @@ function PermissionFormContent({
       <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
         <PermissionActionDropdown isDisabled={isReadOnly} />
       </div>
+
+      <PlaybookRunWarning />
 
       <div className={isReadOnly ? "pointer-events-none opacity-60" : ""}>
         <FormikCheckbox name="deny" label="Deny" disabled={isReadOnly} />
