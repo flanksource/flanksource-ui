@@ -1,5 +1,3 @@
-import { Connection } from "./ConnectionFormModal";
-
 /**
  * Formats a connection URL in the format:
  * - connection://<namespace>/<name> when namespace is provided
