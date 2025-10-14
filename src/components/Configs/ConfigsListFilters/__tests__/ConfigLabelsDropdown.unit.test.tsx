@@ -14,6 +14,11 @@ const mockTagsData = [
 ];
 
 const mockLabelsData = [
+  // Include tags (they are also in labels)
+  { key: "account", value: "prod" },
+  { key: "environment", value: "staging" },
+  { key: "region", value: "us-west-2" },
+  // Plus additional labels that are not tags
   { key: "app", value: "web" },
   { key: "component", value: "frontend" },
   { key: "version", value: "1.0.0" }

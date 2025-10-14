@@ -25,58 +25,48 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
   const isLoading = isTagsLoading || isLabelsLoading;
 
   const labelItems = useMemo(() => {
+    // Create a set of tag identifiers for quick lookup
+    const tagSet = new Set<string>();
+    if (tagsData && Array.isArray(tagsData)) {
+      tagsData.forEach(tag => {
+        tagSet.add(`${tag.key}____${tag.value}`);
+      });
+    }
+
+    // Separate labels into tags and non-tags
     const tagItems: TriStateOptions[] = [];
     const labelItems: TriStateOptions[] = [];
 
-    // Process tags first
-    if (tagsData && Array.isArray(tagsData)) {
-      const sortedTags = [...tagsData].sort((a, b) => {
-        const keyCompare = a.key.localeCompare(b.key);
-        if (keyCompare !== 0) return keyCompare;
-        return String(a.value).localeCompare(String(b.value));
-      });
-
-      tagItems.push(
-        ...sortedTags.map(
-          (tag) =>
-            ({
-              label: (
-                <span className="space-x-1 text-sm">
-                  <span className="text-gray-600">{tag.key}:</span>
-                  <span>{tag.value}</span>
-                </span>
-              ),
-              value: `${tag.key}____${tag.value}`,
-              id: `${tag.key}____${tag.value}`
-            }) satisfies TriStateOptions
-        )
-      );
-    }
-
-    // Process labels second
     if (labelsData && Array.isArray(labelsData)) {
-      const sortedLabels = [...labelsData].sort((a, b) => {
-        const keyCompare = a.key.localeCompare(b.key);
-        if (keyCompare !== 0) return keyCompare;
-        return String(a.value).localeCompare(String(b.value));
-      });
+      labelsData.forEach(item => {
+        const identifier = `${item.key}____${item.value}`;
+        const optionItem = {
+          label: (
+            <span className="space-x-1 text-sm">
+              <span className="text-gray-600">{item.key}:</span>
+              <span>{item.value}</span>
+            </span>
+          ),
+          value: identifier,
+          id: identifier
+        } satisfies TriStateOptions;
 
-      labelItems.push(
-        ...sortedLabels.map(
-          (tag) =>
-            ({
-              label: (
-                <span className="space-x-1 text-sm">
-                  <span className="text-gray-600">{tag.key}:</span>
-                  <span>{tag.value}</span>
-                </span>
-              ),
-              value: `${tag.key}____${tag.value}`,
-              id: `${tag.key}____${tag.value}`
-            }) satisfies TriStateOptions
-        )
-      );
+        // If this item exists in tags, put it in tags section
+        if (tagSet.has(identifier)) {
+          tagItems.push(optionItem);
+        } else {
+          labelItems.push(optionItem);
+        }
+      });
     }
+
+    // Sort both sections
+    const sortFn = (a: TriStateOptions, b: TriStateOptions) => {
+      return a.value.localeCompare(b.value);
+    };
+    
+    tagItems.sort(sortFn);
+    labelItems.sort(sortFn);
 
     // Combine with separator if both sections have items
     const allItems: TriStateOptions[] = [];
