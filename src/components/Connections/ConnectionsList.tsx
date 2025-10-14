@@ -5,6 +5,7 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import clsx from "clsx";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { Icon } from "../../ui/Icons/Icon";
+import CRDSource from "../Settings/CRDSource";
 import { Connection } from "./ConnectionFormModal";
 
 type ConnectionListProps = {
@@ -48,7 +49,17 @@ const columns: MRT_ColumnDef<Connection>[] = [
   {
     header: "Created By",
     accessorKey: "created_by",
-    Cell: MRTAvatarCell,
+    Cell: (props) => {
+      const { row } = props;
+      const source = row.original.source;
+
+      if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
+        const id = row.original.id;
+        return <CRDSource source={source} id={id} showMinimal />;
+      }
+
+      return <MRTAvatarCell {...props} />;
+    },
     maxSize: 50
   },
   {
