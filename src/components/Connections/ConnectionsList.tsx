@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { Icon } from "../../ui/Icons/Icon";
 import { Connection } from "./ConnectionFormModal";
+import { CopyConnectionURLButton } from "./CopyConnectionURLButton";
 
 type ConnectionListProps = {
   data: Connection[];
@@ -21,6 +22,11 @@ const NameCell = ({
     <div className="flex flex-row items-center space-x-2">
       <Icon name={row.original.type} className="h-auto w-6" />
       <div>{getValue}</div>
+      <CopyConnectionURLButton
+        namespace={row.original.namespace}
+        name={row.original.name}
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   );
 };
