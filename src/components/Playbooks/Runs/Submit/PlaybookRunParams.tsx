@@ -1,4 +1,5 @@
 import { getPlaybookParams } from "@flanksource-ui/api/services/playbooks";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import {
   PlaybookParam,
   PlaybookParamCodeEditor,
@@ -53,7 +54,7 @@ export default function PlaybookRunParams({
   const checkId = values.check_id;
   const playbookId = values.id;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [
       "playbook",
       "params",
@@ -115,6 +116,15 @@ export default function PlaybookRunParams({
 
   if (isLoading && isResourceRequired) {
     return <FormSkeletonLoader />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-row items-center text-red-600">
+        <FaExclamationTriangle className="mr-2 inline-block" />
+        <span>{getErrorMessage(error)}</span>
+      </div>
+    );
   }
 
   // if no resource is required, show the playbook parameters, as they are not
