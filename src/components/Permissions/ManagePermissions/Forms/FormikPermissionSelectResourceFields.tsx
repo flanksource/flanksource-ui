@@ -79,6 +79,7 @@ export default function FormikPermissionSelectResourceFields() {
             options={[
               "Catalog",
               "Component",
+              "Canary",
               "Connection",
               "Playbook",
               "Global",
@@ -127,7 +128,11 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Canary" && (
-          <FormikCanaryDropdown required name="canary_id" />
+          <FormikResourceSelectorDropdown
+            required
+            name="canary_id"
+            canaryResourceSelector={[{}]}
+          />
         )}
 
         {switchOption === "Connection" && (
