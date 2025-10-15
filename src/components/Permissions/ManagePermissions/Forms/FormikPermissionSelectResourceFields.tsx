@@ -2,7 +2,7 @@ import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/For
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
 
 export const permissionObjectList = [
@@ -51,23 +51,6 @@ export default function FormikPermissionSelectResourceFields() {
     | "Global"
     | "Scope"
   >(getInitialTab());
-
-  // Sync switchOption with form values when they change (e.g., when form is reopened with fresh data)
-  useEffect(() => {
-    const currentTab = getInitialTab();
-    if (currentTab !== switchOption) {
-      setSwitchOption(currentTab);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    values.playbook_id,
-    values.config_id,
-    values.component_id,
-    values.connection_id,
-    values.canary_id,
-    values.object,
-    values.object_selector
-  ]);
 
   return (
     <div className="flex flex-col gap-2">

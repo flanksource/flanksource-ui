@@ -131,10 +131,12 @@ spec:
 
 function PermissionFormContent({
   isResourceIdProvided,
-  source
+  source,
+  permissionId
 }: {
   isResourceIdProvided: boolean;
   source?: string;
+  permissionId?: string;
 }) {
   const isReadOnly = source === "KubernetesCRD";
 
@@ -160,7 +162,9 @@ function PermissionFormContent({
             <PermissionResource />
           </div>
         ) : (
-          <FormikPermissionSelectResourceFields />
+          <FormikPermissionSelectResourceFields
+            key={`permission-resource-${permissionId || "new"}`}
+          />
         )}
       </div>
 
@@ -352,6 +356,7 @@ export default function PermissionForm({
               <PermissionFormContent
                 isResourceIdProvided={isResourceIdProvided}
                 source={permissionData?.source}
+                permissionId={permissionData?.id}
               />
             </div>
             <PermissionErrorDisplay
