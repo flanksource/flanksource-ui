@@ -4,6 +4,7 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
+import CanaryLink from "../Canary/CanaryLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
@@ -113,6 +114,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       const playbook = row.original.playbook_object;
       const component = row.original.component_object;
       const connection = row.original.connection_object;
+      const canary = row.original.canary_object;
       const object = row.original.object;
       const objectSelector = row.original.object_selector;
       const error = row.original.error;
@@ -215,6 +217,13 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
                     linkClassName="text-gray-600"
                     size="md"
                   />
+                </div>
+              )}
+
+              {canary && (
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-600">Canary:</span>
+                  <CanaryLink canary={canary} />
                 </div>
               )}
 

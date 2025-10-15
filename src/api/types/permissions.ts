@@ -68,21 +68,20 @@ export type PermissionTable = {
 };
 
 export type PermissionsSummary = PermissionTable & {
-  // checks: Pick<HealthCheck, "id" | "name" | "type" | "status">;
-  catalog: Pick<ConfigItem, "id" | "name" | "type" | "config_class">;
-  component: Pick<Topology, "id" | "name" | "icon">;
-  source?: string;
-  canary: {
+  created_by?: User;
+
+  // Subjects with minimal fields
+  person?: User;
+  team?: Pick<Team, "id" | "name" | "icon">;
+  canary?: {
     id: string;
     name: string;
   };
-  playbook: Pick<PlaybookSpec, "id" | "name" | "namespace" | "icon" | "title">;
-  team: Pick<Team, "id" | "name" | "icon">;
-  notification: Pick<NotificationRules, "id" | "name" | "namespace">;
-  group: any;
-  subject: string;
-  person: User;
-  created_by?: User;
+  playbook?: Pick<PlaybookSpec, "id" | "name" | "namespace" | "icon" | "title">;
+  notification?: Pick<NotificationRules, "id" | "name" | "namespace">;
+  group?: { id: string; namespace: string; name: string };
+  scraper?: { id: string; namespace: string; name: string };
+  topology?: { id: string; namespace: string; name: string };
 
   // These represent global objects
   object: PermissionGlobalObject;
@@ -96,4 +95,9 @@ export type PermissionsSummary = PermissionTable & {
   playbook_object: Pick<PlaybookSpec, "id" | "name" | "icon">;
   connection_object: Pick<Connection, "id" | "name" | "type">;
   component_object: Pick<Topology, "id" | "name" | "icon">;
+  canary_object: {
+    id: string;
+    name: string;
+    icon?: string;
+  };
 };

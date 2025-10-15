@@ -1,4 +1,3 @@
-import FormikCanaryDropdown from "@flanksource-ui/components/Forms/Formik/FormikCanaryDropdown";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
