@@ -8,6 +8,7 @@ type Props<OptionsValueType = string> = {
   hint?: string;
   className?: string;
   required?: boolean;
+  disabled?: boolean;
   options: {
     label: string;
     key: OptionsValueType;
@@ -21,6 +22,7 @@ export default function FormikSwitchField<OptionsValueType = string>({
   hintPosition = "bottom",
   className = "flex flex-col gap-2",
   required = false,
+  disabled = false,
   options
 }: Props<OptionsValueType>) {
   const [field, meta] = useField<string>({
@@ -36,11 +38,12 @@ export default function FormikSwitchField<OptionsValueType = string>({
       {hint && hintPosition === "top" && (
         <p className="py-1 text-sm text-gray-500">{hint}</p>
       )}
-      <div className="flex flex-row items-center">
+      <div className={disabled ? "pointer-events-none opacity-60" : ""}>
         <Switch
           options={options.map((x) => x.label)}
           value={options.find((x) => x.key === field.value)?.label}
           onChange={(value) => {
+            if (disabled) return;
             const realValue = options.find((x) => x.label === value);
             if (realValue) {
               field.onChange({

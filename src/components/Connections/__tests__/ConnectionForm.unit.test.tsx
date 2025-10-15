@@ -170,4 +170,58 @@ describe("ConnectionForm", () => {
     fireEvent.click(screen.getByText("Back"));
     expect(handleBack).toHaveBeenCalled();
   });
+
+  it("shows read-only warning when source is KubernetesCRD", () => {
+    const formValueWithCRD = {
+      ...formInitialValue,
+      source: "KubernetesCRD",
+      id: "123"
+    };
+
+    render(
+      <QueryClientProvider client={client}>
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={formValueWithCRD}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
+      </QueryClientProvider>
+    );
+
+    expect(
+      screen.getByText(
+        "Read-Only Mode: This resource is managed by Kubernetes CRD and cannot be edited from the UI."
+      )
+    ).toBeInTheDocument();
+  });
+
+  it("disables form fields when source is KubernetesCRD", () => {
+    const formValueWithCRD = {
+      ...formInitialValue,
+      source: "KubernetesCRD",
+      id: "123"
+    };
+
+    render(
+      <QueryClientProvider client={client}>
+        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+          <UserAccessStateContextProvider>
+            <ConnectionForm
+              connectionType={connectionType}
+              formValue={formValueWithCRD}
+            />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
+      </QueryClientProvider>
+    );
+
+    const nameField = screen.getByLabelText("Name");
+    const urlField = screen.getByLabelText("URL");
+
+    expect(nameField).toBeDisabled();
+    expect(urlField).toBeDisabled();
+  });
 });
