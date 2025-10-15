@@ -472,6 +472,7 @@ export default function NotificationSilenceForm({
                           resource_id?: string;
                           filter?: string;
                           selector?: string;
+                          recursive?: boolean;
                         } = {};
 
                         if (selectedType === "resource") {
@@ -481,6 +482,8 @@ export default function NotificationSilenceForm({
                             values.check_id ||
                             values.canary_id;
                           if (resourceId) params.resource_id = resourceId;
+                          if (values.recursive)
+                            params.recursive = values.recursive;
                         } else if (selectedType === "filter" && values.filter) {
                           params.filter = values.filter;
                         } else if (
