@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React from "react";
+import { Tooltip } from "react-tooltip";
 
 type Props = {
   /**
@@ -16,6 +17,10 @@ type Props = {
   icon?: React.ReactNode;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "none";
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void> | void;
+  /**
+   * Tooltip message to show when button is disabled
+   */
+  disabledTooltip?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function Button({
@@ -27,6 +32,7 @@ export function Button({
   onClick = () => {},
   type = "button",
   children,
+  disabledTooltip,
   ...props
 }: Props) {
   switch (size) {
@@ -52,7 +58,7 @@ export function Button({
       className += " px-3 py-2 text-sm  leading-4 rounded-md ";
   }
 
-  return (
+  const button = (
     <button
       disabled={disabled}
       type={type}
@@ -60,7 +66,8 @@ export function Button({
       className={clsx(
         className,
         "space-x-2",
-        disabled && "btn-disabled hover:btn-disabled cursor-not-allowed"
+        disabled &&
+          "btn-disabled hover:btn-disabled pointer-events-none cursor-not-allowed"
       )}
       {...props}
     >
@@ -72,4 +79,23 @@ export function Button({
       )}
     </button>
   );
+
+  if (disabled && disabledTooltip) {
+    const tooltipId = `button-tooltip-${Math.random().toString(36).substring(7)}`;
+    return (
+      <>
+        <div
+          className="inline-block"
+          data-tooltip-id={tooltipId}
+          data-tooltip-content={disabledTooltip}
+          data-tooltip-place="top"
+        >
+          {button}
+        </div>
+        <Tooltip id={tooltipId} className="z-50" />
+      </>
+    );
+  }
+
+  return button;
 }

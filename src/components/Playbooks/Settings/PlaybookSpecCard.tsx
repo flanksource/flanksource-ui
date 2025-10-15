@@ -1,6 +1,8 @@
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { hasPlaybookRunPermission } from "@flanksource-ui/utils/playbookPermissions";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +31,11 @@ export default function PlaybookSpecCard({
   const { data: playbookSpec } = useGetPlaybookSpecsDetails(playbook.id, {
     enabled: isEditPlaybookFormOpen || isSubmitPlaybookRunFormOpen
   });
+
+  const { permissions, roles } = useUser();
+  const isAdminOrEditor = roles.includes("admin") || roles.includes("editor");
+  const canRunPlaybooks =
+    isAdminOrEditor || hasPlaybookRunPermission(permissions);
 
   const navigate = useNavigate();
 
@@ -82,9 +89,16 @@ export default function PlaybookSpecCard({
             className="btn-white"
           />
           <Button
-            text="Run"
             onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
-          />
+            disabled={!canRunPlaybooks}
+            disabledTooltip={
+              !canRunPlaybooks
+                ? "You don't have permission to run playbooks"
+                : undefined
+            }
+          >
+            Run
+          </Button>
         </div>
       </div>
 
