@@ -341,11 +341,13 @@ export const getNotificationSilencesHistory = async ({
 export const getNotificationSilencePreview = async ({
   resource_id,
   filter,
-  selector
+  selector,
+  recursive
 }: {
   resource_id?: string;
   filter?: string;
   selector?: string;
+  recursive?: boolean;
 }) => {
   const params = new URLSearchParams();
 
@@ -357,6 +359,9 @@ export const getNotificationSilencePreview = async ({
   }
   if (selector) {
     params.append("selectors", JSON.stringify(selector));
+  }
+  if (recursive) {
+    params.append("recursive", "true");
   }
 
   const res = await NotificationAPI.get(
