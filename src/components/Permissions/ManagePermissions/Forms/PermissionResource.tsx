@@ -2,6 +2,9 @@ import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink
 import ConnectionLink from "@flanksource-ui/components/Connections/ConnectionLink";
 import { PlaybookSpecLabel } from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
+import CanaryLink from "@flanksource-ui/components/Canary/CanaryLink";
+import { getCanaryById } from "@flanksource-ui/api/services/topology";
+import { useQuery } from "@tanstack/react-query";
 import { useFormikContext } from "formik";
 import { permissionObjectList } from "./FormikPermissionSelectResourceFields";
 
@@ -11,9 +14,16 @@ export default function PermissionResource() {
   const componentId = values.component_id;
   const playbookId = values.playbook_id;
   const configId = values.config_id;
+  const canaryId = values.canary_id;
   const connectionId = values.connection_id;
   const object = values.object;
   const objectSelector = values.object_selector;
+
+  const { data: canary } = useQuery({
+    queryKey: ["canary", canaryId],
+    queryFn: () => getCanaryById(canaryId!),
+    enabled: !!canaryId
+  });
 
   if (object) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -36,7 +46,7 @@ export default function PermissionResource() {
         <TopologyLink viewType="label" topologyId={componentId} />
       )}
       {playbookId && <PlaybookSpecLabel playbookId={playbookId} />}
-      {/*  {canaryId && <TopologyLink viewType="label" topology={canaryId} />} */}
+      {canary && <CanaryLink canary={canary} />}
       {configId && <ConfigLink configId={configId} />}
       {connectionId && <ConnectionLink connectionId={connectionId} />}
     </div>

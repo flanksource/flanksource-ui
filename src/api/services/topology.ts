@@ -315,3 +315,14 @@ export const getCanaryNames = async () => {
   >(`/canary_names`);
   return res.data;
 };
+
+export const getCanaryById = async (id: string) => {
+  const res = await IncidentCommander.get<
+    {
+      id: string;
+      name: string;
+      icon?: string;
+    }[]
+  >(`/canaries?id=eq.${id}&select=id,name,icon`);
+  return res.data?.[0];
+};
