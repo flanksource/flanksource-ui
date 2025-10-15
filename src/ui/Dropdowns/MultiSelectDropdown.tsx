@@ -111,7 +111,8 @@ export function MultiSelectDropdown({
             <PopoverPanel
               ref={refs.setFloating}
               className={clsx(
-                "absolute flex flex-col rounded-sm bg-white shadow-lg"
+                "absolute flex flex-col rounded-sm bg-white shadow-lg",
+                dropDownClassNames
               )}
               style={floatingStyles}
             >
@@ -164,7 +165,7 @@ export function MultiSelectDropdown({
                   styles={{
                     control: (provided) => ({
                       ...provided,
-                      minWidth: 288,
+                      width: "100%",
                       margin: "0.5rem",
                       backgroundColor: "white",
                       fontSize: "0.875rem"

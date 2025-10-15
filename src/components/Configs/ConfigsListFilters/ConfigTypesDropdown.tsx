@@ -97,7 +97,8 @@ export function ConfigTypesDropdown({
               label: "All"
             }
       }
-      className="w-auto max-w-[400px]"
+      className="w-[300px]"
+      dropDownClassNames="w-[300px]"
       label="Config Type"
     />
   );

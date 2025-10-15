@@ -67,8 +67,9 @@ export function ConfigStatusDropdown({
           });
         }
       }}
+      minMenuWidth="250px"
       value={field.value}
-      className="w-auto max-w-[400px]"
+      className="w-[250px]"
       label={label}
     />
   );
