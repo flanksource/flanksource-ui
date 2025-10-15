@@ -21,6 +21,7 @@ export type TriStateOptions = {
   label: React.ReactNode;
   icon?: any;
   value: string;
+  disabled?: boolean;
 };
 
 // We need to extend the Props interface from react-select to include the
@@ -117,6 +118,20 @@ function ReactSelectTriStateOptions({
     () => currentToggleState[data.value!] || 0,
     [currentToggleState, data.value]
   );
+
+  // If the option is disabled (like a separator), render without the toggle
+  if (data.disabled) {
+    return (
+      <components.Option
+        clearValue={clearValue}
+        data={data}
+        selectProps={selectProps}
+        {...props}
+      >
+        <div className="w-full">{data.label || children}</div>
+      </components.Option>
+    );
+  }
 
   return (
     <components.Option
@@ -465,6 +480,9 @@ export function TristateReactSelectComponent({
       }}
       options={sortOptionsSelectedFirst}
       isLoading={isLoading}
+      isOptionDisabled={(option) =>
+        (option as TriStateOptions).disabled === true
+      }
       components={{
         // React.memo here is a hack, force the component to re-render when the
         // toggle state changes from other options or parent components, which
