@@ -8,17 +8,8 @@ import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
 export const permissionObjectList = [
   { label: "Canaries", value: "canaries" },
   { label: "Catalog", value: "catalog" },
-  { label: "Topology", value: "topology" },
   { label: "Playbooks", value: "playbooks" },
-  { label: "Connection", value: "connection" },
-  { label: "Connection Detail", value: "connection-detail" },
-  { label: "Agent Push", value: "agent-push" },
-  { label: "Kubernetes Proxy", value: "kubernetes-proxy" },
-  { label: "Notification", value: "notification" },
-  { label: "RBAC", value: "rbac" },
-  { label: "Logs", value: "logs" },
-  { label: "Agent", value: "agent" },
-  { label: "Artifact", value: "artifact" }
+  { label: "Connection", value: "connection" }
 ];
 
 export default function FormikPermissionSelectResourceFields() {

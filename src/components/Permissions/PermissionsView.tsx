@@ -16,23 +16,13 @@ import PermissionsTable from "./PermissionsTable";
 
 export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "read", label: "read" },
-  { value: "update", label: "update" },
-  { value: "create", label: "create" },
-  { value: "delete", label: "delete" },
-  { value: "*", label: "*" },
-  { value: "create,read,update,delete", label: "create,read,update,delete" },
   { value: "playbook:run", label: "playbook:run" },
   { value: "playbook:approve", label: "playbook:approve" },
   { value: "playbook:*", label: "playbook:*" }
 ];
 
 const commonActions: FormikSelectDropdownOption[] = [
-  { value: "read", label: "read" },
-  { value: "update", label: "update" },
-  { value: "create", label: "create" },
-  { value: "delete", label: "delete" },
-  { value: "*", label: "*" },
-  { value: "create,read,update,delete", label: "create,read,update,delete" }
+  { value: "read", label: "read" }
 ];
 
 const playbookSpecificActions: FormikSelectDropdownOption[] = [
@@ -50,13 +40,14 @@ export type ResourceType =
   | "global";
 
 export function getActionsForResourceType(
-  resourceType?: ResourceType
+  resourceType?: ResourceType,
+  subjectType?: string
 ): FormikSelectDropdownOption[] {
   if (!resourceType) {
     return [];
   }
 
-  if (resourceType === "playbook") {
+  if (resourceType === "playbook" || resourceType === "global") {
     return [...commonActions, ...playbookSpecificActions];
   }
 
