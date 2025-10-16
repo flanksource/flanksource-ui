@@ -36,7 +36,7 @@ export default function FlatTabs<T extends string>({
       </div>
       <div className="hidden flex-1 flex-col sm:flex">
         <div className="border-b border-gray-200">
-          <nav aria-label="Tabs" className="-mb-px flex space-x-8">
+          <nav aria-label="Tabs" className="-mb-px flex space-x-8 px-4">
             {tabs.map((tab) => (
               <button
                 key={tab.label}

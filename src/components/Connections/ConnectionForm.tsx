@@ -9,8 +9,10 @@ import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessChec
 import CanEditResource from "../Settings/CanEditResource";
 import { Connection } from "./ConnectionFormModal";
 import { ConnectionType, connectionTypes } from "./connectionTypes";
+import { CopyConnectionURLButton } from "./CopyConnectionURLButton";
 import RenderConnectionFormFields from "./RenderConnectionFormFields";
 import { TestConnection } from "./TestConnection";
+import { getConnectionURL } from "./utils";
 
 interface ConnectionFormProps {
   connectionType: ConnectionType;
@@ -161,6 +163,20 @@ export function ConnectionForm({
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
+            {formValue?.id && (
+              <div className="flex items-center gap-2 rounded bg-white px-3 py-1.5">
+                <code className="text-xs text-gray-700">
+                  {getConnectionURL({
+                    namespace: formValue.namespace,
+                    name: formValue.name
+                  })}
+                </code>
+                <CopyConnectionURLButton
+                  namespace={formValue.namespace}
+                  name={formValue.name}
+                />
+              </div>
+            )}
             <div className="flex flex-1 gap-2">
               {connectionType && !formValue?.id && (
                 <Button
