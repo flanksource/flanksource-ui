@@ -22,8 +22,21 @@ export const tables = {
   permissions: "permissions",
   scopes: "scopes",
   views: "views",
-  teams: "teams"
+  teams: "teams",
+  applications: "applications"
 };
+
+const viewerReadObjects = [
+  ...Object.values(tables).filter(
+    (v) =>
+      ![
+        tables.rbac,
+        tables.identities,
+        tables.connections,
+        tables.applications
+      ].includes(v)
+  )
+];
 
 export const permDefs = {
   admin: {
@@ -71,19 +84,11 @@ export const permDefs = {
     ]
   },
   viewer: {
-    read: [
-      ...Object.values(tables).filter(
-        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
-      )
-    ],
+    read: viewerReadObjects,
     write: []
   },
   guest: {
-    read: [
-      ...Object.values(tables).filter(
-        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
-      )
-    ],
+    read: viewerReadObjects,
     write: []
   }
 };

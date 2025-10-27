@@ -336,7 +336,7 @@ const navigation: NavigationItems = [
       <Icon name="workflow" className={`${className} text-white`} />
     ),
     featureName: features.applications,
-    resourceName: tables.database
+    resourceName: tables.applications
   }
 ];
 
@@ -585,7 +585,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <ApplicationsPage />,
-            tables.database,
+            tables.applications,
             "read",
             true
           )}
@@ -594,7 +594,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":namespace/:name"
           element={withAuthorizationAccessCheck(
             <AuditReportPage />,
-            tables.database,
+            tables.applications,
             "read",
             true
           )}
@@ -606,7 +606,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":id"
           element={withAuthorizationAccessCheck(
             <ViewPage />,
-            tables.database,
+            tables.views,
             "read",
             true
           )}
@@ -618,7 +618,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":namespace/:name"
           element={withAuthorizationAccessCheck(
             <ViewPage />,
-            tables.database,
+            tables.views,
             "read",
             true
           )}
@@ -627,7 +627,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path=":name"
           element={withAuthorizationAccessCheck(
             <ViewPage />,
-            tables.database,
+            tables.views,
             "read",
             true
           )}
@@ -1053,7 +1053,7 @@ function useDynamicNavigation() {
         />
       ),
       featureName: features.views,
-      resourceName: tables.database
+      resourceName: tables.views
     }));
 
     const navigationWithViews = [...navigation, ...viewsNavigationItems];
