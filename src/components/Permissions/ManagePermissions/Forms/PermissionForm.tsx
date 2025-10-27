@@ -46,6 +46,7 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     if (values.component_id) return "component";
     if (values.connection_id) return "connection";
     if (values.canary_id) return "canary";
+    if (values.object_selector?.views) return "view";
     if (values.object_selector?.scopes) return "global";
     if (values.object) return "global";
     return undefined;

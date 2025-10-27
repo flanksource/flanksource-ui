@@ -4,6 +4,7 @@ import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useFormikContext } from "formik";
 import { useState } from "react";
 import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
+import FormikViewMultiSelect from "./FormikViewMultiSelect";
 
 export const permissionObjectList = [
   { label: "Canaries", value: "canaries" },
@@ -29,6 +30,7 @@ export default function FormikPermissionSelectResourceFields() {
     | "Catalog"
     | "Canary"
     | "Playbook"
+    | "View"
     | "Connection"
     | "Global"
     | "Scope" => {
@@ -38,6 +40,7 @@ export default function FormikPermissionSelectResourceFields() {
     if (values.connection_id) return "Connection";
     if (values.canary_id) return "Canary";
     if (values.object) return "Global";
+    if (values.object_selector?.views) return "View";
     if (values.object_selector?.scopes) return "Scope";
     return "Catalog";
   };
@@ -47,6 +50,7 @@ export default function FormikPermissionSelectResourceFields() {
     | "Catalog"
     | "Canary"
     | "Playbook"
+    | "View"
     | "Connection"
     | "Global"
     | "Scope"
@@ -64,6 +68,7 @@ export default function FormikPermissionSelectResourceFields() {
               "Canary",
               "Connection",
               "Playbook",
+              "View",
               "Global",
               "Scope"
             ]}
@@ -108,6 +113,8 @@ export default function FormikPermissionSelectResourceFields() {
             playbookResourceSelector={[{}]}
           />
         )}
+
+        {switchOption === "View" && <FormikViewMultiSelect />}
 
         {switchOption === "Canary" && (
           <FormikResourceSelectorDropdown

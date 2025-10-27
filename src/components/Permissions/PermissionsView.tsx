@@ -47,6 +47,7 @@ export type ResourceType =
   | "playbook"
   | "connection"
   | "canary"
+  | "view"
   | "global";
 
 export function getActionsForResourceType(
@@ -58,6 +59,10 @@ export function getActionsForResourceType(
 
   if (resourceType === "playbook") {
     return [...commonActions, ...playbookSpecificActions];
+  }
+
+  if (resourceType === "view") {
+    return [{ value: "read", label: "read" }];
   }
 
   return commonActions;
