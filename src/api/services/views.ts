@@ -203,6 +203,18 @@ export const getViewsForSidebar = async () => {
   return res.data ?? [];
 };
 
+/**
+ * Get all active views for dropdown selection in scope form
+ */
+export const getViewsSummary = async () => {
+  const res = await resolvePostGrestRequestWithPagination<ViewSummary[]>(
+    ConfigDB.get(
+      `/views_summary?select=id,name,namespace,title&order=namespace.asc,name.asc`
+    )
+  );
+  return res.data ?? [];
+};
+
 export const getViewsByConfigId = async (configId: string) => {
   const res = await ViewAPI.get<ViewListItem[]>(`/list?config_id=${configId}`);
   return res.data ?? [];

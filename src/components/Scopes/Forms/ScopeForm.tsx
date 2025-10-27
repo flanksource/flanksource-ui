@@ -10,7 +10,12 @@ import {
   useCreateScopeMutation,
   useUpdateScopeMutation
 } from "@flanksource-ui/api/query-hooks/useScopesQuery";
-import { ScopeDisplay, ScopeDB } from "@flanksource-ui/api/types/scopes";
+import {
+  ScopeDisplay,
+  ScopeDB,
+  ScopeTargetForm,
+  ScopeResourceSelectorForm
+} from "@flanksource-ui/api/types/scopes";
 import {
   toastSuccess,
   toastError
@@ -39,39 +44,49 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
 
   const handleSubmit = (values: Partial<ScopeDB>) => {
     // Convert tags object to tagSelector string for each target
-    const transformedTargets = values.targets?.map((target: any) => {
-      const transformTarget = (selector: any) => {
-        if (!selector) return selector;
+    const transformedTargets = values.targets?.map(
+      (target: ScopeTargetForm) => {
+        const transformTarget = (selector: ScopeResourceSelectorForm) => {
+          if (!selector) return selector;
 
-        // If wildcard is enabled, only send {name: "*"}
-        if (selector.wildcard) {
-          return { name: "*" };
-        }
+          // If wildcard is enabled, only send {name: "*"}
+          if (selector.wildcard) {
+            return { name: "*" };
+          }
 
-        // Convert tags object to tagSelector string
-        const tagSelector = selector.tags
-          ? Object.entries(selector.tags)
-              .map(([key, value]) => `${key}=${value}`)
-              .join(",")
-          : selector.tagSelector || "";
+          // Convert tags object to tagSelector string
+          const tagSelector = selector.tags
+            ? Object.entries(selector.tags)
+                .map(([key, value]) => `${key}=${value}`)
+                .join(",")
+            : selector.tagSelector || "";
 
-        // Remove tags and wildcard fields, set tagSelector
-        const { tags, wildcard, ...rest } = selector;
-        return { ...rest, tagSelector };
-      };
+          // Remove tags and wildcard fields
+          const { tags, wildcard, ...rest } = selector;
 
-      return {
-        config: target.config ? transformTarget(target.config) : undefined,
-        component: target.component
-          ? transformTarget(target.component)
-          : undefined,
-        playbook: target.playbook
-          ? transformTarget(target.playbook)
-          : undefined,
-        canary: target.canary ? transformTarget(target.canary) : undefined,
-        global: target.global ? transformTarget(target.global) : undefined
-      };
-    });
+          // Add tagSelector if it's not empty
+          const result = tagSelector ? { ...rest, tagSelector } : rest;
+
+          // Remove all empty strings
+          return Object.fromEntries(
+            Object.entries(result).filter(([_, value]) => value !== "")
+          );
+        };
+
+        return {
+          config: target.config ? transformTarget(target.config) : undefined,
+          component: target.component
+            ? transformTarget(target.component)
+            : undefined,
+          playbook: target.playbook
+            ? transformTarget(target.playbook)
+            : undefined,
+          canary: target.canary ? transformTarget(target.canary) : undefined,
+          view: target.view ? transformTarget(target.view) : undefined,
+          global: target.global ? transformTarget(target.global) : undefined
+        };
+      }
+    );
 
     const payload = {
       ...values,
@@ -147,6 +162,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
             ? convertSelector(target.playbook)
             : undefined,
           canary: target.canary ? convertSelector(target.canary) : undefined,
+          view: target.view ? convertSelector(target.view) : undefined,
           global: target.global ? convertSelector(target.global) : undefined
         };
       })
@@ -198,6 +214,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                 target.component,
                 target.playbook,
                 target.canary,
+                target.view,
                 target.global
               ].filter(Boolean);
 

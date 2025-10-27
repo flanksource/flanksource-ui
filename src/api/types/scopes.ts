@@ -9,7 +9,23 @@ export type ScopeTarget = {
   component?: ScopeResourceSelector;
   playbook?: ScopeResourceSelector;
   canary?: ScopeResourceSelector;
+  view?: ScopeResourceSelector;
   global?: ScopeResourceSelector;
+};
+
+// Form-specific extensions for UI (includes additional fields for form editing)
+export type ScopeResourceSelectorForm = ScopeResourceSelector & {
+  tags?: Record<string, string>; // Object form of tagSelector for easier editing
+  wildcard?: boolean; // Indicates "match all" mode
+};
+
+export type ScopeTargetForm = {
+  config?: ScopeResourceSelectorForm;
+  component?: ScopeResourceSelectorForm;
+  playbook?: ScopeResourceSelectorForm;
+  canary?: ScopeResourceSelectorForm;
+  view?: ScopeResourceSelectorForm;
+  global?: ScopeResourceSelectorForm;
 };
 
 // Database model (from PostgREST)
