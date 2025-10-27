@@ -19,11 +19,17 @@ type PermissionObjectSelector = {
   configs?: Selectors[];
   components?: Selectors[];
   scopes?: ScopeSelector[];
+  views?: ViewSelector[];
 };
 
 interface Selectors {}
 
 interface ScopeSelector {
+  namespace?: string;
+  name: string;
+}
+
+interface ViewSelector {
   namespace?: string;
   name: string;
 }
