@@ -2,13 +2,13 @@
 
 exports[`InstallAgentModal renders the Helm repository installation command 1`] = `
 "helm repo add flanksource https://flanksource.github.io/charts
-helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\  --set upstream.createSecret=true  \\   --set upstream.host=http://localhost:3000  \\   --set upstream.username=token  \\   --set upstream.password=password  \\   --set upstream.agentName=test-new-agent-instructions  \\   --set pushTelemetry.enabled=true  \\   --set pushTelemetry.topologyName=incident-commander.demo.aws.flanksource.com-test-new-agent-instructions  \\  --create-namespace    
+helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\  --set upstream.createSecret='true'  \\  --set upstream.host='http://localhost:3000'  \\  --set upstream.username='token'  \\  --set upstream.password='password'  \\  --set upstream.agentName='test-new-agent-instructions'  \\  --set pushTelemetry.enabled='true'  \\  --set pushTelemetry.topologyName='incident-commander.demo.aws.flanksource.com-test-new-agent-instructions'  \\  --create-namespace    
 "
 `;
 
 exports[`InstallAgentModal renders the Helm repository installation command with kube command 1`] = `
 "helm repo add flanksource https://flanksource.github.io/charts
-helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\  --set upstream.createSecret=true  \\   --set upstream.host=http://localhost:3000  \\   --set upstream.username=token  \\   --set upstream.password=password  \\   --set upstream.agentName=test-new-agent-instructions  \\   --set pushTelemetry.enabled=true  \\   --set pushTelemetry.topologyName=incident-commander.demo.aws.flanksource.com-test-new-agent-instructions  \\  --create-namespace    
-helm install mission-control-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent" \\  --set clusterName=test-new-agent-instructions2  \\   --set scraper.schedule=@every 31m    
+helm install mission-control-agent flanksource/mission-control-agent -n "mission-control-agent" \\  --set upstream.createSecret='true'  \\  --set upstream.host='http://localhost:3000'  \\  --set upstream.username='token'  \\  --set upstream.password='password'  \\  --set upstream.agentName='test-new-agent-instructions'  \\  --set pushTelemetry.enabled='true'  \\  --set pushTelemetry.topologyName='incident-commander.demo.aws.flanksource.com-test-new-agent-instructions'  \\  --create-namespace    
+helm install mission-control-kubernetes flanksource/mission-control-kubernetes -n "mission-control-agent" \\  --set clusterName='test-new-agent-instructions2'  \\  --set scraper.schedule='@every 31m'    
 "
 `;

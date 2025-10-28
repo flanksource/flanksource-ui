@@ -21,7 +21,7 @@ helm repo update
 
 helm install {{{ this.chart }}} {{{ this.repoName }}}/{{{ this.chart }}} -n "{{{ this.namespace }}}" \\
   {{#each this.values}}
-  --set {{{ @key }}}={{{ this }}} {{#unless @last}} \\ \n{{/unless}}{{/each}}{{#if this.createNamespace }} \\
+  --set {{{ @key }}}='{{{ this }}}' {{#unless @last}} \\\n{{/unless}}{{/each}}{{#if this.createNamespace }} \\
   --create-namespace {{#if this.valueFile }} \\ {{/if}}
 {{/if}} {{#if this.valueFile }} \\
   --set-file values.yaml {{#if this.args}} \\ {{/if}}
