@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
@@ -8,6 +8,7 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { SearchLayout } from "../../../ui/Layout/SearchLayout";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../../ui/BreadcrumbNav";
 import Age from "../../../ui/Age/Age";
+import { toastError } from "../../../components/Toast/toast";
 
 interface SingleViewProps {
   id: string;
@@ -66,6 +67,7 @@ const ViewLayout: React.FC<ViewLayoutProps> = ({
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const queryClient = useQueryClient();
+  const forceRefreshRef = useRef(false);
 
   // Use prefixed search params for view variables
   const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX);
@@ -77,11 +79,15 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     data: viewResult,
     isLoading,
     isFetching,
-    error
+    error,
+    refetch
   } = useQuery({
     queryKey: ["view-result", id, currentViewVariables],
     queryFn: () => {
-      return getViewDataById(id, currentViewVariables);
+      const headers = forceRefreshRef.current
+        ? { "cache-control": "max-age=1" }
+        : undefined;
+      return getViewDataById(id, currentViewVariables, headers);
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
@@ -89,18 +95,19 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   });
 
   const handleForceRefresh = async () => {
-    const freshData = await getViewDataById(id, currentViewVariables, {
-      "cache-control": "max-age=1"
-    });
-    queryClient.setQueryData(
-      ["view-result", id, currentViewVariables],
-      freshData
-    );
+    forceRefreshRef.current = true;
+    const result = await refetch();
+    forceRefreshRef.current = false;
 
-    // Invalidate the table query if we have fresh view data
-    if (freshData?.namespace && freshData?.name) {
+    if (result.isError) {
+      toastError(
+        result.error instanceof Error
+          ? result.error.message
+          : "Failed to refresh view"
+      );
+    } else if (result.data?.namespace && result.data?.name) {
       await queryClient.invalidateQueries({
-        queryKey: ["view-table", freshData.namespace, freshData.name]
+        queryKey: ["view-table", result.data.namespace, result.data.name]
       });
     }
   };
