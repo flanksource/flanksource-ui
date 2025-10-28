@@ -13,7 +13,7 @@ export function ConfigDetailsViewPage() {
   }>();
 
   const {
-    data: view,
+    data: viewResult,
     isLoading,
     error
   } = useQuery({
@@ -27,11 +27,11 @@ export function ConfigDetailsViewPage() {
     enabled: !!viewId && !!configId
   });
 
-  if (!view) {
+  if (!viewResult) {
     return <div>View not found</div>;
   }
 
-  const displayName = view.title || view.name;
+  const displayName = viewResult.title || viewResult.name;
 
   return (
     <ConfigDetailsTabs
@@ -55,14 +55,15 @@ export function ConfigDetailsViewPage() {
               </p>
             </div>
           </div>
-        ) : view ? (
+        ) : viewResult ? (
           <View
             title=""
-            namespace={view.namespace}
-            name={view.name}
-            panels={view.panels}
-            columns={view.columns}
-            columnOptions={view.columnOptions}
+            namespace={viewResult.namespace}
+            name={viewResult.name}
+            panels={viewResult.panels}
+            columns={viewResult.columns}
+            requestFingerprint={viewResult.requestFingerprint}
+            columnOptions={viewResult.columnOptions}
           />
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center">

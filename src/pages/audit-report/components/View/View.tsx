@@ -34,7 +34,7 @@ interface ViewProps {
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
   variables?: ViewVariable[];
-  viewResult?: ViewResult;
+  requestFingerprint: string;
   currentVariables?: Record<string, string>;
 }
 
@@ -46,7 +46,7 @@ const View: React.FC<ViewProps> = ({
   columnOptions,
   panels,
   variables,
-  viewResult,
+  requestFingerprint,
   currentVariables
 }) => {
   const { pageSize } = useReactTablePaginationState();
@@ -85,7 +85,7 @@ const View: React.FC<ViewProps> = ({
       namespace,
       name,
       tableSearchParams.toString(),
-      viewResult?.requestFingerprint
+      requestFingerprint
     ],
     queryFn: () =>
       queryViewTable(
@@ -93,7 +93,7 @@ const View: React.FC<ViewProps> = ({
         name ?? "",
         columns ?? [],
         tableSearchParams,
-        viewResult?.requestFingerprint || ""
+        requestFingerprint
       ),
     enabled: !!namespace && !!name && !!columns && columns.length > 0,
     staleTime: 5 * 60 * 1000

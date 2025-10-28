@@ -421,15 +421,16 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
         <MonitoringSection application={application} />
         <VersionSection application={application} />
 
-        {application.sections?.map((section) => (
+        {application.sections?.map((viewResult) => (
           <View
-            key={section.title}
-            title={section.title}
-            namespace={section.namespace}
-            name={section.name}
-            columns={section.columns}
-            panels={section.panels}
-            columnOptions={section.columnOptions}
+            key={viewResult.title}
+            title={viewResult.title}
+            namespace={viewResult.namespace}
+            name={viewResult.name}
+            columns={viewResult.columns}
+            panels={viewResult.panels}
+            columnOptions={viewResult.columnOptions}
+            requestFingerprint={viewResult.requestFingerprint}
           />
         ))}
 
