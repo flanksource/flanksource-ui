@@ -162,6 +162,17 @@ const renderCellValue = (
       cellContent = <HealthBadge health={value as HealthType} />;
       break;
 
+    case "status":
+      if (!column.icon) {
+        // If the column doesn't have an icon defined, we use the Status component
+        // that uses heuristic coloring based on the status string.
+        cellContent = <Status status={String(value)} />;
+      } else {
+        cellContent = String(value);
+      }
+
+      break;
+
     case "gauge":
       if (!column.gauge) {
         cellContent = String(value);
