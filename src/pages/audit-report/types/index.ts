@@ -254,10 +254,18 @@ export interface GaugeConfig {
 
 export type PanelResult = {
   name: string;
-  type: "piechart" | "number" | "text" | "table" | "gauge" | "duration";
+  type:
+    | "piechart"
+    | "number"
+    | "text"
+    | "table"
+    | "gauge"
+    | "duration"
+    | "bargauge";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
+  bargauge?: GaugeConfig;
   number?: NumberConfig;
   piechart?: PiechartConfig;
 };
