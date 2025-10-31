@@ -5,14 +5,14 @@ import { Switch } from "../../../ui/FormControls/Switch";
 import { OBJECTS, getActionsForObject } from "../tokenUtils";
 import { TokenFormValues } from "./CreateTokenForm";
 
-const ScopeOptions = ["Read", "Write", "Admin", "Custom"] as const;
+const ScopeOptions = ["Read", "Write", "Full", "Custom"] as const;
 type ScopeType = (typeof ScopeOptions)[number];
 
 // Scope level descriptions
 const SCOPE_DESCRIPTIONS: Record<Exclude<ScopeType, "Custom">, string> = {
   Read: `Grant read-only access to all resources (${OBJECTS.join(", ")})`,
   Write: `Grant read and create permissions for all resources (${OBJECTS.join(", ")})`,
-  Admin: `Grant full access (read, create, update, delete) to all resources (${OBJECTS.join(", ")})`
+  Full: `Grant full access (read, create, update, delete) to all resources (${OBJECTS.join(", ")})`
 };
 
 // Permission level descriptions for each object type
@@ -21,25 +21,25 @@ const PERMISSION_DESCRIPTIONS: Record<string, Record<string, string>> = {
     None: "No access to configuration items",
     Read: "View configuration items and their details",
     Write: "View and create configuration items",
-    Admin: "Full control: view, create, update, and delete configs"
+    Full: "Full control: view, create, update, and delete configs"
   },
   canaries: {
     None: "No access to health checks",
     Read: "View health checks and their status",
     Write: "View and create health checks",
-    Admin: "Full control: view, create, update, and delete health checks"
+    Full: "Full control: view, create, update, and delete health checks"
   },
   components: {
     None: "No access to topology components",
     Read: "View topology components and relationships",
     Write: "View and create topology components",
-    Admin: "Full control: view, create, update, and delete components"
+    Full: "Full control: view, create, update, and delete components"
   },
   incidents: {
     None: "No access to incidents",
     Read: "View incidents and their details",
     Write: "View and create incidents",
-    Admin: "Full control: view, create, update, and delete incidents"
+    Full: "Full control: view, create, update, and delete incidents"
   },
   playbooks: {
     None: "No access to playbooks",
@@ -52,46 +52,46 @@ const PERMISSION_DESCRIPTIONS: Record<string, Record<string, string>> = {
     None: "No access to people/team members",
     Read: "View people and team member details",
     Write: "View and add people",
-    Admin: "Full control: view, add, update, and remove people"
+    Full: "Full control: view, add, update, and remove people"
   },
   teams: {
     None: "No access to teams",
     Read: "View teams and their members",
     Write: "View and create teams",
-    Admin: "Full control: view, create, update, and delete teams"
+    Full: "Full control: view, create, update, and delete teams"
   },
   connections: {
     None: "No access to connections",
     Read: "View connection configurations",
     Write: "View and create connections",
-    Admin: "Full control: view, create, update, and delete connections"
+    Full: "Full control: view, create, update, and delete connections"
   },
   notifications: {
     None: "No access to notifications",
     Read: "View notification settings",
     Write: "View and create notifications",
-    Admin: "Full control: view, create, update, and delete notifications"
+    Full: "Full control: view, create, update, and delete notifications"
   },
   config_items: {
     None: "No access to catalog items",
     Read: "View catalog items",
     Write: "View and create catalog items",
-    Admin: "Full control: view, create, update, and delete catalog items"
+    Full: "Full control: view, create, update, and delete catalog items"
   },
   logs: {
     None: "No access to logs",
     Read: "View and search logs",
     Write: "View and export logs",
-    Admin: "Full control: view, export, and manage logs"
+    Full: "Full control: view, export, and manage logs"
   },
   mcp: {
     None: "No access to MCP (Model Context Protocol)",
-    Admin: "Full access to MCP servers and tools"
+    Full: "Full access to MCP servers and tools"
   }
 };
 
-const ObjectPermissionOptions = ["None", "Read", "Write", "Admin"] as const;
-const McpPermissionOptions = ["None", "Admin"] as const;
+const ObjectPermissionOptions = ["None", "Read", "Write", "Full"] as const;
+const McpPermissionOptions = ["None", "Full"] as const;
 const PlaybookPermissionOptions = [
   "None",
   "Read",
@@ -124,11 +124,11 @@ function ObjectPermissionSwitch({
 
     // Special handling for MCP setup mode
     if (isMcpSetup && object === "mcp") {
-      return "Admin"; // Pre-select Admin (which maps to mcp:*) for MCP setup
+      return "Full"; // Pre-select Full (which maps to mcp:*) for MCP setup
     }
 
     if (object === "mcp") {
-      return objectActions["mcp:*"] ? "Admin" : "None";
+      return objectActions["mcp:*"] ? "Full" : "None";
     }
 
     if (object === "playbooks") {
@@ -165,7 +165,7 @@ function ObjectPermissionSwitch({
     const hasCrud = ["read", "create", "update", "delete"].every(
       (action) => objectActions[`${object}:${action}`]
     );
-    if (hasCrud) return "Admin";
+    if (hasCrud) return "Full";
     if (objectActions[`${object}:read`] && objectActions[`${object}:create`])
       return "Write";
     if (objectActions[`${object}:read`]) return "Read";
@@ -196,8 +196,8 @@ function ObjectPermissionSwitch({
       // Apply the selected permission level
       if (newPermission !== "None") {
         if (object === "mcp") {
-          // MCP only has Admin option (maps to *)
-          if (newPermission === "Admin") {
+          // MCP only has Full option (maps to *)
+          if (newPermission === "Full") {
             newObjectActions["mcp:*"] = true;
           }
         } else if (object === "playbooks") {
@@ -228,7 +228,7 @@ function ObjectPermissionSwitch({
           } else if (newPermission === "Write") {
             newObjectActions[`${object}:read`] = true;
             newObjectActions[`${object}:create`] = true;
-          } else if (newPermission === "Admin") {
+          } else if (newPermission === "Full") {
             ["read", "create", "update", "delete"].forEach((action) => {
               newObjectActions[`${object}:${action}`] = true;
             });
@@ -316,7 +316,7 @@ const SCOPE_MAPPINGS = {
     });
     return scopes;
   })(),
-  Admin: (() => {
+  Full: (() => {
     const scopes: Record<string, boolean> = {};
     OBJECTS.forEach((object) => {
       const actions = getActionsForObject(object);
