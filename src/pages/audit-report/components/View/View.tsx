@@ -20,7 +20,8 @@ import {
   PieChartPanel,
   GaugePanel,
   TextPanel,
-  DurationPanel
+  DurationPanel,
+  BarGaugePanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -204,6 +205,8 @@ const renderPanel = (panel: PanelResult, index: number) => {
       return <PieChartPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "gauge":
       return <GaugePanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "bargauge":
+      return <BarGaugePanel key={`${panel.name}-${index}`} summary={panel} />;
     case "text":
       return <TextPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "duration":
