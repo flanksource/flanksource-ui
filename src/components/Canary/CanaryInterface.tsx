@@ -58,12 +58,13 @@ const CanaryInterfaceMinimalFC = ({
       if (excludeMatching && urlLabels) {
         processedLabels = Object.entries(urlLabels).reduce(
           (acc, [key, value]) => {
-            if (value === 1) {
+            const numValue = Number(value);
+            if (numValue === 1) {
               acc[key] = -1; // selected becomes excluded
-            } else if (value === -1) {
+            } else if (numValue === -1) {
               acc[key] = 1; // excluded becomes selected (though this shouldn't happen in normal use)
             } else {
-              acc[key] = value; // keep 0 as is
+              acc[key] = numValue; // keep 0 as is
             }
             return acc;
           },
