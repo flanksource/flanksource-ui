@@ -83,45 +83,50 @@ export default function TokenDisplayModal({
           </div>
         </div>
 
-        {isMcp && (
+        {isMcp ? (
           <div className="rounded-md border border-green-200 bg-green-50 p-4">
             <h4 className="mb-2 font-medium text-green-800">
               MCP Client Setup:
             </h4>
-            <McpSetupTabs token={tokenResponse.payload.token} />
+            <McpSetupTabs
+              token={tokenResponse.payload.token}
+              onTabChange={(tab) => {
+                // Tab change handled by McpSetupTabs
+              }}
+            />
+          </div>
+        ) : (
+          <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+            <h4 className="mb-2 font-medium text-blue-800">
+              Usage Instructions:
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-700">
+              <li>• Use this token for API authentication</li>
+              <li>
+                • Basic auth:
+                <ul className="px-6">
+                  <li>
+                    Username:{" "}
+                    <code className="rounded bg-blue-100 px-1">token</code>
+                  </li>
+                  <li>
+                    Password:{" "}
+                    <code className="rounded bg-blue-100 px-1">
+                      &lt;YOUR_TOKEN&gt;
+                    </code>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                • Include it in the Authorization header:{" "}
+                <code className="rounded bg-blue-100 px-1">
+                  Bearer &lt;YOUR_TOKEN&gt;
+                </code>
+              </li>
+              <li>• Store it securely and never share it publicly</li>
+            </ul>
           </div>
         )}
-
-        <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
-          <h4 className="mb-2 font-medium text-blue-800">
-            Usage Instructions:
-          </h4>
-          <ul className="space-y-1 text-sm text-blue-700">
-            <li>• Use this token for API authentication</li>
-            <li>
-              • Basic auth:
-              <ul className="px-6">
-                <li>
-                  Username:{" "}
-                  <code className="rounded bg-blue-100 px-1">token</code>
-                </li>
-                <li>
-                  Password:{" "}
-                  <code className="rounded bg-blue-100 px-1">
-                    &lt;YOUR_TOKEN&gt;
-                  </code>
-                </li>
-              </ul>
-            </li>
-            <li>
-              • Include it in the Authorization header:{" "}
-              <code className="rounded bg-blue-100 px-1">
-                Bearer &lt;YOUR_TOKEN&gt;
-              </code>
-            </li>
-            <li>• Store it securely and never share it publicly</li>
-          </ul>
-        </div>
       </div>
 
       <div className="flex flex-row justify-end gap-4 p-4">
@@ -133,10 +138,16 @@ export default function TokenDisplayModal({
 
 type McpSetupTabsProps = {
   token: string;
+  onTabChange?: (tab: string) => void;
 };
 
-function McpSetupTabs({ token }: McpSetupTabsProps) {
+function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
   const [activeTab, setActiveTab] = useState<string>("claude-desktop");
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    onTabChange?.(tab);
+  };
 
   const bearerAuth = `Bearer ${token}`;
   const baseUrl = useAgentsBaseURL() + "/mcp";
@@ -163,11 +174,15 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
     "claude-code": {
       label: "Claude Code",
       config: `{
-  "name": "mission-control",
-  "type": "http",
-  "url": "${baseUrl}",
-  "headers": {
-    "Authorization": "${bearerAuth}"
+  "mcpServers": {
+    "mission-control": {
+      "name": "mission-control",
+      "type": "http",
+      "url": "${baseUrl}",
+      "headers": {
+        "Authorization": "${bearerAuth}"
+      }
+    }
   }
 }`
     },
@@ -263,26 +278,88 @@ function McpSetupTabs({ token }: McpSetupTabsProps) {
     }
   };
 
+  const getMcpUsageInstructions = (key: string) => {
+    switch (key) {
+      case "claude-desktop":
+        return (
+          <>
+            <li>
+              Add this configuration to{" "}
+              <code className="rounded bg-blue-100 px-1">
+                claude_desktop_config.json
+              </code>{" "}
+              located at:
+            </li>
+            <ul className="list-inside list-disc space-y-1 pl-6">
+              <li>
+                macOS:{" "}
+                <code className="rounded bg-blue-100 px-1">
+                  ~/Library/Application Support/Claude/
+                </code>
+              </li>
+              <li>
+                Windows:{" "}
+                <code className="rounded bg-blue-100 px-1">
+                  %APPDATA%\Claude\
+                </code>
+              </li>
+              <li>
+                Linux:{" "}
+                <code className="rounded bg-blue-100 px-1">
+                  ~/.config/Claude/
+                </code>
+              </li>
+            </ul>
+          </>
+        );
+      case "claude-code":
+        return (
+          <li>
+            Add this configuration to{" "}
+            <code className="rounded bg-blue-100 px-1">.mcp.json</code> file in
+            your project root.
+          </li>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const usageInstructions = getMcpUsageInstructions(activeTab);
+
   return (
-    <div className="mt-4">
-      <Tabs activeTab={activeTab} onSelectTab={setActiveTab}>
-        {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
-          <Tab key={key} label={label} value={key} className="p-4">
-            <div className="max-h-64 overflow-y-auto">
-              {key === "direct" ? (
-                <CodeBlock code={config} language="bash" />
-              ) : (
-                <JSONViewer
-                  code={config}
-                  format="json"
-                  showLineNo
-                  hideCopyButton={false}
-                />
-              )}
-            </div>
-          </Tab>
-        ))}
-      </Tabs>
-    </div>
+    <>
+      <div className="mt-4">
+        <Tabs activeTab={activeTab} onSelectTab={handleTabChange}>
+          {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
+            <Tab key={key} label={label} value={key} className="p-4">
+              <div className="max-h-64 overflow-y-auto">
+                {key === "direct" ? (
+                  <CodeBlock code={config} language="bash" />
+                ) : (
+                  <JSONViewer
+                    code={config}
+                    format="json"
+                    showLineNo
+                    hideCopyButton={false}
+                  />
+                )}
+              </div>
+            </Tab>
+          ))}
+        </Tabs>
+      </div>
+      {usageInstructions && (
+        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50 p-4">
+          <h4 className="mb-2 font-medium text-blue-800">
+            Usage Instructions:
+          </h4>
+          <ul className="space-y-1 text-sm text-blue-700">
+            {usageInstructions}
+            <li>• Store it securely and never share it publicly</li>
+          </ul>
+        </div>
+      )}
+    </>
   );
 }
