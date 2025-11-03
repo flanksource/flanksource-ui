@@ -1,5 +1,3 @@
-import { TristateToggle } from "@flanksource-ui/ui/FormControls/TristateToggle";
-import { ChevronDownIcon } from "@heroicons/react/solid";
 import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { HiCheck } from "react-icons/hi";
@@ -12,10 +10,8 @@ import { PivotCellTypeDropdown } from "../../Dropdown/PivotCellTypeDropdown";
 import { PivotLabelDropdown } from "../../Dropdown/PivotLabelDropdown";
 import { TabByDropdown } from "../../Dropdown/TabByDropdown";
 import { TimeRange } from "../../Dropdown/TimeRange";
-import { DropdownMenu } from "../../DropdownMenu";
 import { Select, components } from "../../Select";
 import { setDeepWithString } from "../CanaryPopup/utils";
-import { separateLabelsByBooleanType } from "../labels";
 import { getDefaultForm, initialiseFormState, updateFormState } from "../state";
 import { decodeUrlSearchParams, useUpdateParams } from "../url";
 
@@ -73,9 +69,7 @@ export function FilterForm({
     };
   });
 
-  const [booleanLabels, nonBooleanLabels] = separateLabelsByBooleanType(
-    Object.values(filterLabels)
-  );
+  const allLabels = Object.values(filterLabels);
 
   return (
     <form className={`relative ${className}`}>
@@ -171,12 +165,12 @@ export function FilterForm({
               >
                 <LabelFilterDropdown
                   name="labelFilter"
-                  labels={nonBooleanLabels}
+                  labels={allLabels}
                   onChange={(selected, all) => {
                     // get current label state
                     let newState = getValues("labels");
 
-                    // initialize all nonBooleanLabels with 0s
+                    // initialize all labels with 0s
                     all.forEach((label) => {
                       newState = setDeepWithString(label.value, 0, newState);
                     });
@@ -189,52 +183,6 @@ export function FilterForm({
                     // set form
                     setValue("labels", newState);
                   }}
-                />
-              </div>
-              <div
-                className={filtersContainerClassName}
-                style={{ zIndex: "5" }}
-              >
-                <DropdownMenu
-                  buttonClass="w-full"
-                  buttonElement={
-                    <div
-                      className="flex w-full items-center justify-between border border-gray-300 px-2 py-2"
-                      style={{ height: "38px", borderRadius: "4px" }}
-                    >
-                      <span className="text-sm text-gray-500">
-                        Boolean labels
-                      </span>
-                      <ChevronDownIcon
-                        style={{
-                          height: "20px",
-                          color: "#8f8f8f",
-                          marginLeft: "12px"
-                        }}
-                      />
-                    </div>
-                  }
-                  content={
-                    <div className="px-4 py-2">
-                      {booleanLabels
-                        .filter((o) => o && o !== undefined)
-                        .map((label) => (
-                          <Controller
-                            key={label.id}
-                            name={`labels.${label.id}`}
-                            control={control}
-                            render={({ field: { ref, ...rest } }) => (
-                              <TristateToggle
-                                key={label.key}
-                                className="mb-2"
-                                label={label}
-                                {...rest}
-                              />
-                            )}
-                          />
-                        ))}
-                    </div>
-                  }
                 />
               </div>
             </div>
