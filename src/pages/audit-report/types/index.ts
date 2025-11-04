@@ -247,6 +247,8 @@ export interface GaugeConfig {
   max: number;
   unit?: string;
   thresholds?: GaugeThreshold[];
+  format?: "percentage" | "multiplier";
+  group?: string;
 }
 
 export type PanelResult = {
