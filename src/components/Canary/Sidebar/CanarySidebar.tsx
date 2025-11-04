@@ -5,7 +5,6 @@ import {
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import { XIcon } from "@heroicons/react/solid";
 import { useSearchParams } from "react-router-dom";
-import { ExcludeMatchingToggle } from "../CanaryFilters/ExcludeMatchingToggle";
 import { HidePassingToggle } from "../CanaryFilters/HidePassingToggle";
 import { LabelFilterList } from "../CanaryFilters/LabelFilterList";
 import { CanaryStickySidebar } from "./CanaryStickySidebar";
@@ -89,12 +88,6 @@ export default function CanarySidebar({
         <SectionTitle className="mb-5 flex items-center justify-between">
           Filter by Label
         </SectionTitle>
-        <div className="mb-3 flex items-center pr-5">
-          <div className="flex items-center">
-            <ExcludeMatchingToggle />
-          </div>
-          <div className="mb-0 text-sm text-gray-800">Exclude matching</div>
-        </div>
         <div className="flex w-full flex-col pr-5">
           <LabelFilterList labels={filteredLabels} />
         </div>

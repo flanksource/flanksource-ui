@@ -30,7 +30,6 @@ const CanaryInterfaceMinimalFC = ({
 
   const labels = searchParams.get("labels");
   const query = searchParams.get("query");
-  const excludeMatching = searchParams.get("excludeMatching") === "true";
 
   const urlLabels = useMemo(() => {
     if (labels) {
@@ -52,28 +51,8 @@ const CanaryInterfaceMinimalFC = ({
         onLabelFiltersCallback(getLabels(filtered));
       }
 
-      // If excludeMatching is enabled, invert the label selection
-      // Convert selected labels (1) to excluded (-1) and vice versa
-      let processedLabels = urlLabels;
-      if (excludeMatching && urlLabels) {
-        processedLabels = Object.entries(urlLabels).reduce(
-          (acc, [key, value]) => {
-            const numValue = Number(value);
-            if (numValue === 1) {
-              acc[key] = -1; // selected becomes excluded
-            } else if (numValue === -1) {
-              acc[key] = 1; // excluded becomes selected (though this shouldn't happen in normal use)
-            } else {
-              acc[key] = numValue; // keep 0 as is
-            }
-            return acc;
-          },
-          {} as Record<string, number>
-        );
-      }
-
       /* @ts-expect-error */
-      const labelFilters = getLabelFilters(processedLabels, getLabels(checks)); // get include/exclude filters from url state
+      const labelFilters = getLabelFilters(urlLabels, getLabels(checks)); // get include/exclude filters from url state
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters
       setChecksForTabGeneration(filtered);
       filtered = filterChecksByTabSelection(tabBy!, selectedTab!, filtered); // filter based on selected tab
@@ -92,7 +71,6 @@ const CanaryInterfaceMinimalFC = ({
     hidePassing,
     query,
     urlLabels,
-    excludeMatching,
     tabBy
   ]);
 
