@@ -169,7 +169,7 @@ const View: React.FC<ViewProps> = ({
       <div className="mb-4 space-y-6">
         {panels && panels.length > 0 && (
           <div className="min-h-100 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {panels.map((panel, index) => renderPanel(panel, index))}
+            {groupAndRenderPanels(panels)}
           </div>
         )}
       </div>
@@ -257,6 +257,57 @@ const View: React.FC<ViewProps> = ({
         ))}
     </>
   );
+};
+
+const groupAndRenderPanels = (panels: PanelResult[]) => {
+  const grouped: { [key: string]: PanelResult[] } = {};
+  const processedIndices = new Set<number>();
+
+  // Group bargauge panels by their group field
+  panels.forEach((panel, index) => {
+    if (panel.type === "bargauge" && panel.bargauge?.group) {
+      const groupKey = panel.bargauge.group;
+      if (!grouped[groupKey]) {
+        grouped[groupKey] = [];
+      }
+      grouped[groupKey].push(panel);
+      processedIndices.add(index);
+    }
+  });
+
+  const result: JSX.Element[] = [];
+  let panelIndex = 0;
+
+  // Render panels, merging grouped ones
+  panels.forEach((panel, originalIndex) => {
+    if (processedIndices.has(originalIndex)) {
+      const groupKey = panel.bargauge?.group;
+      if (groupKey && grouped[groupKey]?.[0] === panel) {
+        // First panel in group - merge all panels in this group
+        const groupPanels = grouped[groupKey];
+        const mergedRows = groupPanels.flatMap((p) =>
+          (p.rows || []).map((row) => ({
+            ...row,
+            _thresholds: p.bargauge?.thresholds
+          }))
+        );
+
+        const mergedPanel: PanelResult = {
+          ...groupPanels[0],
+          name: groupKey,
+          rows: mergedRows
+        };
+        const element = renderPanel(mergedPanel, panelIndex++);
+        if (element) result.push(element);
+      }
+      // Skip subsequent panels in the same group
+    } else {
+      const element = renderPanel(panel, panelIndex++);
+      if (element) result.push(element);
+    }
+  });
+
+  return result;
 };
 
 const renderPanel = (panel: PanelResult, index: number) => {
