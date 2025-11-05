@@ -50,6 +50,7 @@ const CanaryInterfaceMinimalFC = ({
       if (onLabelFiltersCallback) {
         onLabelFiltersCallback(getLabels(filtered));
       }
+
       /* @ts-expect-error */
       const labelFilters = getLabelFilters(urlLabels, getLabels(checks)); // get include/exclude filters from url state
       filtered = Object.values(filterChecksByLabels(filtered, labelFilters)); // filters checks by its 'include/exclude' filters

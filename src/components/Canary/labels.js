@@ -133,7 +133,7 @@ export function filterChecksByLabels(checks, labelFilters) {
       }
     }
 
-    return Object.values(acc);
+    return acc;
   }, {});
   return filtered;
 }
