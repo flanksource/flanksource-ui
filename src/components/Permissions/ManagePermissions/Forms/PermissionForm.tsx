@@ -46,6 +46,7 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     if (values.component_id) return "component";
     if (values.connection_id) return "connection";
     if (values.canary_id) return "canary";
+    if (values.object === "mcp") return "mcp";
     if (values.object_selector?.views) return "view";
     if (values.object_selector?.scopes) return "global";
     if (values.object) return "global";
@@ -57,7 +58,7 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     [resourceType]
   );
 
-  if (!resourceType) {
+  if (!resourceType || resourceType === "mcp") {
     return null;
   }
 
@@ -218,7 +219,8 @@ export default function PermissionForm({
       permissionData?.config_id ||
       permissionData?.canary_id ||
       permissionData?.playbook_id ||
-      permissionData?.connection_id
+      permissionData?.connection_id ||
+      permissionData?.object === "mcp"
     );
   }, [permissionData]);
 

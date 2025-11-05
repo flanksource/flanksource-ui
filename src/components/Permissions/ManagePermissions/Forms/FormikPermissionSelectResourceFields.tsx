@@ -1,8 +1,9 @@
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
+import { Switch as ToggleSwitch } from "@headlessui/react";
 import { useFormikContext } from "formik";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FormikScopeMultiSelect from "./FormikScopeMultiSelect";
 import FormikViewMultiSelect from "./FormikViewMultiSelect";
 
@@ -33,12 +34,14 @@ export default function FormikPermissionSelectResourceFields() {
     | "View"
     | "Connection"
     | "Global"
-    | "Scope" => {
+    | "Scope"
+    | "MCP" => {
     if (values.playbook_id) return "Playbook";
     if (values.config_id) return "Catalog";
     if (values.component_id) return "Component";
     if (values.connection_id) return "Connection";
     if (values.canary_id) return "Canary";
+    if (values.object === "mcp") return "MCP";
     if (values.object) return "Global";
     if (values.object_selector?.views) return "View";
     if (values.object_selector?.scopes) return "Scope";
@@ -54,7 +57,15 @@ export default function FormikPermissionSelectResourceFields() {
     | "Connection"
     | "Global"
     | "Scope"
+    | "MCP"
   >(getInitialTab());
+
+  // Auto-set action to '*' when object is 'mcp'
+  useEffect(() => {
+    if (values.object === "mcp") {
+      setFieldValue("action", "*");
+    }
+  }, [values.object, setFieldValue]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -70,7 +81,8 @@ export default function FormikPermissionSelectResourceFields() {
               "Playbook",
               "View",
               "Global",
-              "Scope"
+              "Scope",
+              "MCP"
             ]}
             className="w-auto"
             itemsClassName=""
@@ -141,6 +153,26 @@ export default function FormikPermissionSelectResourceFields() {
         )}
 
         {switchOption === "Scope" && <FormikScopeMultiSelect />}
+
+        {switchOption === "MCP" && (
+          <div className="flex flex-col gap-2 py-2">
+            <ToggleSwitch
+              checked={values.object === "mcp"}
+              onChange={(checked) => {
+                setFieldValue("object", checked ? "mcp" : null);
+              }}
+              className="group relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-offset-2 data-[checked]:bg-blue-600"
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out group-data-[checked]:translate-x-5"
+              />
+            </ToggleSwitch>
+            <p className="text-sm text-gray-600">
+              Allows the user to use the Mission Control MCP
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

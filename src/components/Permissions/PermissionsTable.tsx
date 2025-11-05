@@ -170,6 +170,17 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
         );
       }
 
+      if (object === "mcp") {
+        return (
+          <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-2">
+              <span>MCP</span>
+            </div>
+            <PermissionErrorDisplay error={error} />
+          </div>
+        );
+      }
+
       if (object) {
         return (
           <div className="flex flex-row items-center gap-3">

@@ -25,6 +25,11 @@ export default function PermissionResource() {
     enabled: !!canaryId
   });
 
+  if (object === "mcp") {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <>MCP</>;
+  }
+
   if (object) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{permissionObjectList.find((o) => o.value === object)?.label}</>;

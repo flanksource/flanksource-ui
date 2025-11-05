@@ -48,7 +48,8 @@ export type ResourceType =
   | "connection"
   | "canary"
   | "view"
-  | "global";
+  | "global"
+  | "mcp";
 
 export function getActionsForResourceType(
   resourceType?: ResourceType
@@ -63,6 +64,10 @@ export function getActionsForResourceType(
 
   if (resourceType === "view") {
     return [{ value: "read", label: "read" }];
+  }
+
+  if (resourceType === "mcp") {
+    return [{ value: "*", label: "*" }];
   }
 
   return commonActions;
