@@ -11,7 +11,8 @@ const GLOBAL_PARAM_KEYS = ["sortBy", "sortOrder"] as const;
  * @param prefix - The prefix to use for this component's params (e.g., 'viewvar', 'view_namespace_name')
  */
 export function usePrefixedSearchParams(
-  prefix: string
+  prefix: string,
+  useGlobalParams: boolean = true
 ): [
   URLSearchParams,
   (updater: (prev: URLSearchParams) => URLSearchParams) => void
@@ -23,7 +24,7 @@ export function usePrefixedSearchParams(
     const prefixWithSeparator = `${prefix}__`;
 
     Array.from(searchParams.entries()).forEach(([key, value]) => {
-      if (GLOBAL_PARAM_KEYS.includes(key as any)) {
+      if (GLOBAL_PARAM_KEYS.includes(key as any) && useGlobalParams) {
         filtered.set(key, value);
       } else if (key.startsWith(prefixWithSeparator)) {
         const cleanKey = key.substring(prefixWithSeparator.length);
@@ -32,7 +33,7 @@ export function usePrefixedSearchParams(
     });
 
     return filtered;
-  }, [searchParams, prefix]);
+  }, [searchParams, prefix, useGlobalParams]);
 
   // Setter that adds prefix to keys when updating URL
   const setPrefixedParams = useCallback(
