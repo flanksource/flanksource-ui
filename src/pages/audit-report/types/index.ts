@@ -203,6 +203,7 @@ export interface ViewColumnDef {
     | "millicore"
     | "url"
     | "badge"
+    | "config_item"
     | "row_attributes";
   description?: string;
   gauge?: GaugeConfig;
