@@ -12,6 +12,7 @@ import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
 import { Status } from "../../../components/Status";
 import { Icon } from "../../../ui/Icons/Icon";
+import ConfigsTypeIcon from "../../../components/Configs/ConfigsTypeIcon";
 import { IconName } from "lucide-react/dynamic";
 import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { formatDisplayLabel } from "./View/panels/utils";
@@ -30,6 +31,11 @@ interface RowAttributes {
   icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
   url?: string;
   max?: number;
+  config?: {
+    id: string;
+    type: string;
+    class: string;
+  };
 }
 
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
@@ -214,6 +220,31 @@ const renderCellValue = (
       cellContent = <BadgeCell value={String(value)} />;
       break;
 
+    case "config_item":
+      const rowAttributes = row.__rowAttributes as Record<
+        string,
+        RowAttributes
+      >;
+      const configData = rowAttributes?.[column.name]?.config;
+      if (configData) {
+        cellContent = (
+          <Link
+            to={`/catalog/${configData.id}`}
+            className="flex flex-row items-center"
+          >
+            <ConfigsTypeIcon
+              config={{ type: configData.type }}
+              showPrimaryIcon={false}
+            >
+              <span>{value}</span>
+            </ConfigsTypeIcon>
+          </Link>
+        );
+      } else {
+        cellContent = String(value);
+      }
+      break;
+
     default:
       cellContent = String(value);
       break;
@@ -386,6 +417,8 @@ function minWidthForColumnType(type: ViewColumnDef["type"]): number {
       return 40;
     case "badge":
       return 40;
+    case "config_item":
+      return 150;
     default:
       return 150;
   }
