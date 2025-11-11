@@ -66,7 +66,7 @@ const View: React.FC<ViewProps> = ({
 
   // Detect if card mode is available
   const hasCardMode = useMemo(() => {
-    return columns?.some((col) => col.card?.enabled) ?? false;
+    return columns?.some((col) => col.cardPosition != null) ?? false;
   }, [columns]);
 
   // Get display mode from URL params (default to table)

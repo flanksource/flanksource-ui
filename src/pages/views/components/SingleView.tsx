@@ -55,7 +55,7 @@ const ViewLayout: React.FC<ViewLayoutProps> = ({
       extra={extra}
     >
       {centered ? (
-        <div className="flex h-full w-full flex-1 items-center justify-center">
+        <div className="flex w-full flex-1 items-center justify-center">
           {children}
         </div>
       ) : (
@@ -185,7 +185,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         )
       }
     >
-      <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
+      <div className="flex h-full w-full flex-1 flex-col overflow-y-auto p-6 pb-0">
         <View
           title=""
           namespace={namespace}
