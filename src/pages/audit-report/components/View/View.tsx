@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Box } from "lucide-react";
+import { Box, Table2, LayoutGrid } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
 import {
@@ -25,6 +26,7 @@ import {
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
+import ViewCardsDisplay from "./ViewCardsDisplay";
 
 interface ViewProps {
   title?: string;
@@ -55,9 +57,30 @@ const View: React.FC<ViewProps> = ({
   const tablePrefix = `view_${namespace}_${name}`;
   const [tableSearchParams] = usePrefixedSearchParams(tablePrefix);
 
+  // Separate display mode state (frontend only, not sent to backend)
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // Create unique prefix for global filters
   const globalVarPrefix = "viewvar";
   const hasDataTable = columns && columns.length > 0;
+
+  // Detect if card mode is available
+  const hasCardMode = useMemo(() => {
+    return columns?.some((col) => col.card?.enabled) ?? false;
+  }, [columns]);
+
+  // Get display mode from URL params (default to table)
+  // Using unprefixed param since this is purely frontend UI state
+  const displayMode =
+    (searchParams.get("display") as "table" | "cards") || "table";
+
+  const setDisplayMode = (mode: "table" | "cards") => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("display", mode);
+      return newParams;
+    });
+  };
 
   const columnFilterFields = useMemo(
     () =>
@@ -123,7 +146,7 @@ const View: React.FC<ViewProps> = ({
     <>
       {title !== "" && (
         <h3 className="mb-4 flex items-center text-xl font-semibold">
-          <Box className="mr-2 text-teal-600" size={20} />
+          <Box className="text-teal-600 mr-2" size={20} />
           {title}
         </h3>
       )}
@@ -157,15 +180,47 @@ const View: React.FC<ViewProps> = ({
       >
         {hasDataTable && (
           <div className="mb-2">
-            <div className="flex flex-wrap items-center gap-2">
-              {filterableColumns.map(({ column, uniqueValues }) => (
-                <ViewColumnDropdown
-                  key={column.name}
-                  label={formatDisplayLabel(column.name)}
-                  paramsKey={column.name}
-                  options={uniqueValues}
-                />
-              ))}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {filterableColumns.map(({ column, uniqueValues }) => (
+                  <ViewColumnDropdown
+                    key={column.name}
+                    label={formatDisplayLabel(column.name)}
+                    paramsKey={column.name}
+                    options={uniqueValues}
+                  />
+                ))}
+              </div>
+
+              {/* Display Mode Toggle */}
+              {hasCardMode && (
+                <div className="flex items-center gap-1 rounded-lg border border-gray-300 bg-white p-1">
+                  <button
+                    onClick={() => setDisplayMode("table")}
+                    className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                      displayMode === "table"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                    title="Table view"
+                  >
+                    <Table2 size={16} />
+                    Table
+                  </button>
+                  <button
+                    onClick={() => setDisplayMode("cards")}
+                    className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                      displayMode === "cards"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                    title="Card view"
+                  >
+                    <LayoutGrid size={16} />
+                    Cards
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -180,16 +235,25 @@ const View: React.FC<ViewProps> = ({
         </div>
       )}
 
-      {hasDataTable && (
-        <DynamicDataTable
-          columns={columns}
-          isLoading={isLoading}
-          rows={rows || []}
-          pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
-          totalRowCount={totalEntries}
-          tablePrefix={tablePrefix}
-        />
-      )}
+      {hasDataTable &&
+        (displayMode === "cards" && hasCardMode ? (
+          <ViewCardsDisplay
+            columns={columns}
+            isLoading={isLoading}
+            rows={rows || []}
+            pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+            totalRowCount={totalEntries}
+          />
+        ) : (
+          <DynamicDataTable
+            columns={columns}
+            isLoading={isLoading}
+            rows={rows || []}
+            pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+            totalRowCount={totalEntries}
+            tablePrefix={tablePrefix}
+          />
+        ))}
     </>
   );
 };

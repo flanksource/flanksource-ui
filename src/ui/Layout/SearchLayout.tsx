@@ -65,7 +65,7 @@ export function SearchLayout({
       </div>
 
       <main
-        className="h-full overflow-y-hidden bg-warm-gray-50"
+        className="bg-warm-gray-50 h-full overflow-y-auto"
         style={{ zIndex: 0 }}
       >
         <DashboardErrorBoundary>

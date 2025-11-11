@@ -186,6 +186,12 @@ export interface Restore {
 interface ViewColumnDefFilter {
   type: "multiselect";
 }
+
+export interface CardConfig {
+  enabled: boolean;
+  style?: "title" | "subtitle" | "badge" | "property" | "footer" | "chip";
+}
+
 export interface ViewColumnDef {
   name: string;
   filter?: ViewColumnDefFilter;
@@ -210,6 +216,7 @@ export interface ViewColumnDef {
   hidden?: boolean;
   unit?: string;
   icon?: string;
+  card?: CardConfig;
 }
 
 export type ViewRow = any[];
