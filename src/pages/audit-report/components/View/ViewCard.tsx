@@ -39,23 +39,21 @@ interface ViewCardShadcnProps {
 
 const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
   // Get card-enabled columns only
-  const cardColumns = columns.filter((col) => col.card?.enabled);
+  const cardColumns = columns.filter((col) => col.cardPosition != null);
 
-  // Group columns by style
-  const titleColumns = cardColumns.filter((col) => col.card?.style === "title");
+  // Group columns by cardPosition
+  const titleColumns = cardColumns.filter(
+    (col) => col.cardPosition === "title"
+  );
   const subtitleColumns = cardColumns.filter(
-    (col) => col.card?.style === "subtitle"
+    (col) => col.cardPosition === "subtitle"
   );
-  const chipColumns = cardColumns.filter(
-    (col) => col.card?.style === "chip" || col.card?.style === "badge"
-  );
-  const propertyColumns = cardColumns.filter(
-    (col) => col.card?.style === "property"
-  );
+  const deckColumns = cardColumns.filter((col) => col.cardPosition === "deck");
+  const bodyColumns = cardColumns.filter((col) => col.cardPosition === "body");
   const footerColumns = cardColumns.filter(
-    (col) => col.card?.style === "footer"
+    (col) => col.cardPosition === "footer"
   );
-  const otherColumns = cardColumns.filter((col) => !col.card?.style);
+  const otherColumns = cardColumns.filter((col) => !col.cardPosition);
 
   const rowAttributes = rowData.__rowAttributes as Record<
     string,
@@ -95,7 +93,7 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
           return (
             <CardTitle
               key={col.name}
-              className="truncate"
+              className="truncate font-normal leading-normal"
               title={String(value)}
             >
               {cellContent}
@@ -123,10 +121,10 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
           );
         })}
 
-        {/* Chips - inline items in header */}
-        {chipColumns.length > 0 && (
+        {/* Deck - inline items in header */}
+        {deckColumns.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {chipColumns.map((col) => {
+            {deckColumns.map((col) => {
               const value = rowData[col.name];
               const cellContent = renderCellValue(
                 value,
@@ -146,7 +144,7 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
                   }
                 >
                   {isGauge && (
-                    <span className="whitespace-nowrap text-xs font-semibold">
+                    <span className="whitespace-nowrap text-xs">
                       {formatDisplayLabel(col.name)}:
                     </span>
                   )}
@@ -161,10 +159,10 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
       <Separator />
 
       <CardContent className="p-4 pt-3">
-        {/* Property fields */}
-        {propertyColumns.length > 0 && (
+        {/* Body fields */}
+        {bodyColumns.length > 0 && (
           <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-2 text-xs">
-            {propertyColumns.map((col) => {
+            {bodyColumns.map((col) => {
               const value = rowData[col.name];
               const cellContent = renderCellValue(
                 value,
