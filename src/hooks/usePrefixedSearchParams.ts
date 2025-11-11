@@ -9,6 +9,7 @@ const GLOBAL_PARAM_KEYS = ["sortBy", "sortOrder"] as const;
  * Provides filtered params (without prefix) and a setter that adds the prefix.
  *
  * @param prefix - The prefix to use for this component's params (e.g., 'viewvar', 'view_namespace_name')
+ * @param useGlobalParams - Whether to include global parameters (e.g., sortBy, sortOrder) in the filtered params. Defaults to true.
  */
 export function usePrefixedSearchParams(
   prefix: string,

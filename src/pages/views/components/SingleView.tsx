@@ -70,7 +70,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const forceRefreshRef = useRef(false);
 
   // Use prefixed search params for view variables
-  // NOTE: Backend uses view variables (template parameters) to partitione the rows in the view table.
+  // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
   // We must remove the global query parameters from the URL params.
   const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
   const currentViewVariables = Object.fromEntries(viewVarParams.entries());
