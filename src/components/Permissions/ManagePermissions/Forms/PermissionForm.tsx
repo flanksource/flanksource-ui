@@ -52,10 +52,20 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     return undefined;
   }, [values]);
 
-  const availableActions = useMemo(
-    () => getActionsForResourceType(resourceType),
-    [resourceType]
-  );
+  const availableActions = useMemo(() => {
+    const actions = getActionsForResourceType(resourceType);
+
+    // Add mcp:run when: playbook resource + specific playbook selected + person/team subject
+    if (
+      resourceType === "playbook" &&
+      values.playbook_id &&
+      (values.subject_type === "person" || values.subject_type === "team")
+    ) {
+      return [...actions, { value: "mcp:run", label: "mcp:run" }];
+    }
+
+    return actions;
+  }, [resourceType, values.playbook_id, values.subject_type]);
 
   if (!resourceType) {
     return null;

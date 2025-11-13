@@ -14,6 +14,7 @@ import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown
 import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
 import PermissionsTable from "./PermissionsTable";
 
+// Source: github.com/flanksource/duty/rbac/policy/policy.go
 export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "read", label: "read" },
   { value: "update", label: "update" },
@@ -23,7 +24,8 @@ export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "create,read,update,delete", label: "create,read,update,delete" },
   { value: "playbook:run", label: "playbook:run" },
   { value: "playbook:approve", label: "playbook:approve" },
-  { value: "playbook:*", label: "playbook:*" }
+  { value: "playbook:*", label: "playbook:*" },
+  { value: "mcp:run", label: "mcp:run" }
 ];
 
 const commonActions: FormikSelectDropdownOption[] = [
