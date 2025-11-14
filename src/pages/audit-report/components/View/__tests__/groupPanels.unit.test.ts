@@ -99,6 +99,88 @@ describe("groupPanels", () => {
           }
         }
       ]
+    },
+    {
+      description:
+        "mixed panels - grouped bargauge panels and ungrouped panels remain in order",
+      input: [
+        {
+          name: "number1",
+          type: "number",
+          rows: [{ value: 42 }]
+        },
+        {
+          name: "disk1",
+          type: "bargauge",
+          rows: [{ label: "disk1", value: 50 }],
+          bargauge: {
+            min: 0,
+            max: 100,
+            group: "disk",
+            unit: "GB"
+          }
+        },
+        {
+          name: "disk2",
+          type: "bargauge",
+          rows: [{ label: "disk2", value: 75 }],
+          bargauge: {
+            min: 0,
+            max: 100,
+            group: "disk",
+            unit: "GB"
+          }
+        },
+        {
+          name: "table1",
+          type: "table",
+          rows: [{ col1: "data" }]
+        }
+      ],
+      expected: [
+        {
+          name: "number1",
+          type: "number",
+          rows: [{ value: 42 }]
+        },
+        {
+          name: "disk",
+          type: "bargauge",
+          rows: [
+            {
+              label: "disk1",
+              value: 50,
+              _bargauge: {
+                min: 0,
+                max: 100,
+                group: "disk",
+                unit: "GB"
+              }
+            },
+            {
+              label: "disk2",
+              value: 75,
+              _bargauge: {
+                min: 0,
+                max: 100,
+                group: "disk",
+                unit: "GB"
+              }
+            }
+          ],
+          bargauge: {
+            min: 0,
+            max: 100,
+            group: "disk",
+            unit: "GB"
+          }
+        },
+        {
+          name: "table1",
+          type: "table",
+          rows: [{ col1: "data" }]
+        }
+      ]
     }
   ];
 

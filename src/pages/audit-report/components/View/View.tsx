@@ -258,47 +258,45 @@ const View: React.FC<ViewProps> = ({
  * Each row preserves its source panel's full bargauge config via _bargauge field.
  */
 export const groupPanels = (panels: PanelResult[]): PanelResult[] => {
-  const grouped: { [key: string]: PanelResult[] } = {};
-  const processedIndices = new Set<number>();
+  const panelsByGroup: { [key: string]: PanelResult[] } = {};
+  const groupedIndices = new Set<number>();
 
-  // Group bargauge panels by their group field
   panels.forEach((panel, index) => {
     if (panel.type === "bargauge" && panel.bargauge?.group) {
-      const groupKey = panel.bargauge.group;
-      if (!grouped[groupKey]) {
-        grouped[groupKey] = [];
+      const group = panel.bargauge.group;
+      if (!panelsByGroup[group]) {
+        panelsByGroup[group] = [];
       }
-      grouped[groupKey].push(panel);
-      processedIndices.add(index);
+      panelsByGroup[group].push(panel);
+      groupedIndices.add(index);
     }
   });
 
   const result: PanelResult[] = [];
 
-  // Process panels, merging grouped ones
-  panels.forEach((panel, originalIndex) => {
-    if (processedIndices.has(originalIndex)) {
-      const groupKey = panel.bargauge?.group;
-      if (groupKey && grouped[groupKey]?.[0] === panel) {
-        // First panel in group - merge all panels in this group
-        const groupPanels = grouped[groupKey];
-        const mergedRows = groupPanels.flatMap((p) =>
-          (p.rows || []).map((row) => ({
-            ...row,
-            _bargauge: p.bargauge
-          }))
-        );
-
-        const mergedPanel: PanelResult = {
-          ...groupPanels[0],
-          name: groupKey,
-          rows: mergedRows
-        };
-        result.push(mergedPanel);
-      }
-      // Skip subsequent panels in the same group
-    } else {
+  panels.forEach((panel, index) => {
+    if (!groupedIndices.has(index)) {
       result.push(panel);
+      return;
+    }
+
+    const group = panel.bargauge?.group;
+    const isFirstInGroup = group && panelsByGroup[group]?.[0] === panel;
+
+    if (isFirstInGroup) {
+      const panelsInGroup = panelsByGroup[group!];
+      const mergedRows = panelsInGroup.flatMap((p) =>
+        (p.rows || []).map((row) => ({
+          ...row,
+          _bargauge: p.bargauge
+        }))
+      );
+
+      result.push({
+        ...panelsInGroup[0],
+        name: group!,
+        rows: mergedRows
+      });
     }
   });
 
