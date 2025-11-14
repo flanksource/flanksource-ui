@@ -4,13 +4,7 @@ import { Box, Table2, LayoutGrid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
-import {
-  PanelResult,
-  ViewColumnDef,
-  ViewRow,
-  ViewVariable,
-  ViewResult
-} from "../../types";
+import { PanelResult, ViewColumnDef, ViewRow, ViewVariable } from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import ViewTableFilterForm from "./ViewTableFilterForm";
@@ -259,7 +253,11 @@ const View: React.FC<ViewProps> = ({
   );
 };
 
-const groupAndRenderPanels = (panels: PanelResult[]) => {
+/**
+ * Groups bargauge panels by their group field and merges their rows.
+ * Each row preserves its source panel's full bargauge config via _bargauge field.
+ */
+export const groupPanels = (panels: PanelResult[]): PanelResult[] => {
   const grouped: { [key: string]: PanelResult[] } = {};
   const processedIndices = new Set<number>();
 
@@ -275,10 +273,9 @@ const groupAndRenderPanels = (panels: PanelResult[]) => {
     }
   });
 
-  const result: JSX.Element[] = [];
-  let panelIndex = 0;
+  const result: PanelResult[] = [];
 
-  // Render panels, merging grouped ones
+  // Process panels, merging grouped ones
   panels.forEach((panel, originalIndex) => {
     if (processedIndices.has(originalIndex)) {
       const groupKey = panel.bargauge?.group;
@@ -288,7 +285,7 @@ const groupAndRenderPanels = (panels: PanelResult[]) => {
         const mergedRows = groupPanels.flatMap((p) =>
           (p.rows || []).map((row) => ({
             ...row,
-            _thresholds: p.bargauge?.thresholds
+            _bargauge: p.bargauge
           }))
         );
 
@@ -297,17 +294,20 @@ const groupAndRenderPanels = (panels: PanelResult[]) => {
           name: groupKey,
           rows: mergedRows
         };
-        const element = renderPanel(mergedPanel, panelIndex++);
-        if (element) result.push(element);
+        result.push(mergedPanel);
       }
       // Skip subsequent panels in the same group
     } else {
-      const element = renderPanel(panel, panelIndex++);
-      if (element) result.push(element);
+      result.push(panel);
     }
   });
 
   return result;
+};
+
+const groupAndRenderPanels = (panels: PanelResult[]) => {
+  const groupedPanels = groupPanels(panels);
+  return groupedPanels.map((panel, index) => renderPanel(panel, index));
 };
 
 const renderPanel = (panel: PanelResult, index: number) => {

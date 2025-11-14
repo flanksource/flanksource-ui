@@ -13,9 +13,9 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
 
   const globalMin = summary.bargauge?.min || 0;
   const globalMax = summary.bargauge?.max;
-  const unit = summary.bargauge?.unit || "";
-  const thresholds = summary.bargauge?.thresholds;
-  const format = summary.bargauge?.format || "multiplier"; // "percentage" or "multiplier"
+  const globalUnit = summary.bargauge?.unit || "";
+  const globalThresholds = summary.bargauge?.thresholds;
+  const globalFormat = summary.bargauge?.format; // "percentage", "multiplier", or undefined (raw)
 
   return (
     <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
@@ -40,9 +40,20 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
               ? row.value
               : parseFloat(row.value) || 0;
 
-          // Use row-specific max if available, otherwise use global max
-          const max = row.max !== undefined ? row.max : globalMax || 100;
+          // Use row-specific config if available (_bargauge), otherwise use global
+          const rowConfig = row._bargauge || {};
+          const max =
+            rowConfig.max !== undefined
+              ? rowConfig.max
+              : row.max !== undefined
+                ? row.max
+                : globalMax || 100;
           const min = globalMin;
+          const unit =
+            rowConfig.unit !== undefined ? rowConfig.unit : globalUnit;
+          const thresholds =
+            rowConfig.thresholds || row._thresholds || globalThresholds;
+          const format = rowConfig.format || globalFormat;
 
           // Calculate actual percentage (can exceed 100%)
           let percentage = 0;
@@ -54,20 +65,20 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
           const clampedPercentage = Math.max(0, Math.min(100, percentage));
 
           // Get color based on actual percentage (not clamped)
-          // Use row-specific thresholds if available, otherwise use global thresholds
-          const rowThresholds = row._thresholds || thresholds;
-          const color = rowThresholds
-            ? getGaugeColor(percentage, rowThresholds)
+          const color = thresholds
+            ? getGaugeColor(percentage, thresholds)
             : "#10b981"; // Default green
 
           // Format the display value based on the format setting
           let displayValue = "";
           if (format === "percentage") {
             displayValue = `${Math.round(percentage)}%`;
-          } else {
-            // Default to multiplier format
+          } else if (format === "multiplier") {
             const multiplier = percentage / 100;
             displayValue = `x${multiplier.toFixed(1)}`;
+          } else {
+            // Default to raw format (no format specified)
+            displayValue = `${numericValue.toFixed(1)}${unit}`;
           }
 
           return (
