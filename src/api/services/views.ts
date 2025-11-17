@@ -98,6 +98,19 @@ export const getViewDataById = async (
   return response.json();
 };
 
+/**
+ * Get display plugin variables for a view based on a config
+ */
+export const getViewDisplayPluginVariables = async (
+  viewId: string,
+  configId: string
+): Promise<Record<string, string>> => {
+  const response = await ViewAPI.get(
+    `/display-plugin-variables/${viewId}?config_id=${configId}`
+  );
+  return response.data;
+};
+
 export const createView = async (view: Partial<View>) => {
   const response = await ConfigDB.post("/views", view);
   return response;
