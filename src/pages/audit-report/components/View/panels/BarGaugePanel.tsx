@@ -6,16 +6,54 @@ interface BarGaugePanelProps {
   summary: PanelResult;
 }
 
+interface RowConfig {
+  max: number;
+  min: number;
+  unit: string;
+  thresholds: any;
+  format: "percentage" | "multiplier" | "raw" | undefined;
+}
+
+const getRowConfig = (row: any, globalConfig: any): RowConfig => {
+  const rowBargauge = row._bargauge || {};
+
+  return {
+    max: rowBargauge.max ?? row.max ?? globalConfig.max ?? 100,
+    min: globalConfig.min || 0,
+    unit: (rowBargauge.unit ?? globalConfig.unit) || "",
+    thresholds:
+      rowBargauge.thresholds || row._thresholds || globalConfig.thresholds,
+    format: rowBargauge.format || globalConfig.format
+  };
+};
+
+const formatDisplayValue = (
+  numericValue: number,
+  percentage: number,
+  format: string | undefined,
+  unit: string
+): string => {
+  if (format === "percentage") {
+    return `${Math.round(percentage)}%`;
+  }
+  if (format === "multiplier") {
+    return `x${(percentage / 100).toFixed(1)}`;
+  }
+  return `${numericValue.toFixed(1)}${unit}`;
+};
+
 const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
   if (!summary.rows || summary.rows.length === 0) {
     return null;
   }
 
-  const globalMin = summary.bargauge?.min || 0;
-  const globalMax = summary.bargauge?.max;
-  const unit = summary.bargauge?.unit || "";
-  const thresholds = summary.bargauge?.thresholds;
-  const format = summary.bargauge?.format || "multiplier"; // "percentage" or "multiplier"
+  const globalConfig = {
+    min: summary.bargauge?.min || 0,
+    max: summary.bargauge?.max,
+    unit: summary.bargauge?.unit || "",
+    thresholds: summary.bargauge?.thresholds,
+    format: summary.bargauge?.format
+  };
 
   return (
     <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
@@ -26,7 +64,6 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
 
       <div className="flex flex-col gap-3">
         {summary.rows.map((row, rowIndex) => {
-          // Support both new structure (name, value, max) and old structure
           const labelValue =
             row.name ||
             (() => {
@@ -40,54 +77,38 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
               ? row.value
               : parseFloat(row.value) || 0;
 
-          // Use row-specific max if available, otherwise use global max
-          const max = row.max !== undefined ? row.max : globalMax || 100;
-          const min = globalMin;
+          const config = getRowConfig(row, globalConfig);
+          const percentage =
+            config.max !== config.min
+              ? ((numericValue - config.min) / (config.max - config.min)) * 100
+              : 0;
 
-          // Calculate actual percentage (can exceed 100%)
-          let percentage = 0;
-          if (max !== min) {
-            percentage = ((numericValue - min) / (max - min)) * 100;
-          }
-
-          // Clamp percentage for visual bar display only (0-100)
           const clampedPercentage = Math.max(0, Math.min(100, percentage));
+          const color = config.thresholds
+            ? getGaugeColor(percentage, config.thresholds)
+            : "#10b981";
 
-          // Get color based on actual percentage (not clamped)
-          // Use row-specific thresholds if available, otherwise use global thresholds
-          const rowThresholds = row._thresholds || thresholds;
-          const color = rowThresholds
-            ? getGaugeColor(percentage, rowThresholds)
-            : "#10b981"; // Default green
-
-          // Format the display value based on the format setting
-          let displayValue = "";
-          if (format === "percentage") {
-            displayValue = `${Math.round(percentage)}%`;
-          } else {
-            // Default to multiplier format
-            const multiplier = percentage / 100;
-            displayValue = `x${multiplier.toFixed(1)}`;
-          }
+          const displayValue = formatDisplayValue(
+            numericValue,
+            percentage,
+            config.format,
+            config.unit
+          );
 
           return (
             <div key={rowIndex} className="flex flex-col gap-1">
-              {/* Label and Value Row */}
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">
                   {labelValue}
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold" style={{ color }}>
-                    {displayValue}
-                  </span>
-                </div>
+                <span className="text-sm font-bold" style={{ color }}>
+                  {displayValue}
+                </span>
               </div>
 
-              {/* Progress Bar */}
               <div
                 className="h-4 w-full overflow-hidden rounded bg-gray-200"
-                title={`${Math.round(numericValue)}${unit} / ${Math.round(max)}${unit}`}
+                title={`${Math.round(numericValue)}${config.unit} / ${Math.round(config.max)}${config.unit}`}
               >
                 <div
                   className="h-full rounded transition-all duration-500 ease-out"

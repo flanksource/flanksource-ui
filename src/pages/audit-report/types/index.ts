@@ -250,7 +250,7 @@ export interface GaugeConfig {
   max: number;
   unit?: string;
   thresholds?: GaugeThreshold[];
-  format?: "percentage" | "multiplier";
+  format?: "percentage" | "multiplier" | "raw";
   group?: string;
 }
 
