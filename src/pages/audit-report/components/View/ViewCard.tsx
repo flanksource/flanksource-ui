@@ -19,6 +19,7 @@ import {
 import { Badge } from "../../../../components/ui/badge";
 import { Separator } from "../../../../components/ui/separator";
 import { formatDisplayLabel } from "./panels/utils";
+import clsx from "clsx";
 
 interface RowAttributes {
   icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
@@ -35,25 +36,40 @@ interface ViewCardShadcnProps {
   columns: ViewColumnDef[];
   row: any[];
   rowData: Record<string, any>;
+  card?: {
+    columns: number;
+    default?: boolean;
+  };
 }
 
-const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
+const ViewCard: React.FC<ViewCardShadcnProps> = ({
+  columns,
+  row,
+  rowData,
+  card
+}) => {
   // Get card-enabled columns only
-  const cardColumns = columns.filter((col) => col.cardPosition != null);
+  const cardColumns = columns.filter((col) => col.card != null);
 
-  // Group columns by cardPosition
+  // Group columns by card.position
   const titleColumns = cardColumns.filter(
-    (col) => col.cardPosition === "title"
+    (col) => col.card?.position === "title"
   );
   const subtitleColumns = cardColumns.filter(
-    (col) => col.cardPosition === "subtitle"
+    (col) => col.card?.position === "subtitle"
   );
-  const deckColumns = cardColumns.filter((col) => col.cardPosition === "deck");
-  const bodyColumns = cardColumns.filter((col) => col.cardPosition === "body");
+  const deckColumns = cardColumns.filter(
+    (col) => col.card?.position === "deck"
+  );
+  const bodyColumns = cardColumns.filter(
+    (col) => col.card?.position === "body"
+  );
   const footerColumns = cardColumns.filter(
-    (col) => col.cardPosition === "footer"
+    (col) => col.card?.position === "footer"
   );
-  const otherColumns = cardColumns.filter((col) => !col.cardPosition);
+  const headerRightColumns = cardColumns.filter(
+    (col) => col.card?.position === "headerRight"
+  );
 
   const rowAttributes = rowData.__rowAttributes as Record<
     string,
@@ -76,6 +92,12 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
       icon = firstTitleColumn.icon;
     }
   }
+
+  // Get accent color from the column marked with useForAccent
+  const accentColumn = cardColumns.find((col) => col.card?.useForAccent);
+  const accentColor = accentColumn
+    ? getAccentColorFromValue(accentColumn.type, rowData[accentColumn.name])
+    : undefined;
 
   return (
     <Card className="transition-shadow hover:shadow-lg">
@@ -156,36 +178,24 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
         )}
       </CardHeader>
 
-      <Separator />
+      {accentColor ? (
+        <div className={clsx("h-0.5", accentColor)} />
+      ) : (
+        <Separator />
+      )}
 
       <CardContent className="p-4 pt-3">
         {/* Body fields */}
         {bodyColumns.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-2 text-xs">
+          <div
+            className={clsx(
+              "gap-x-2 gap-y-2 text-xs",
+              card?.columns === 2
+                ? "grid grid-cols-[auto_1fr_auto_1fr]"
+                : "grid grid-cols-[auto_1fr]"
+            )}
+          >
             {bodyColumns.map((col) => {
-              const value = rowData[col.name];
-              const cellContent = renderCellValue(
-                value,
-                col,
-                rowData,
-                rowAttributes
-              );
-              return (
-                <React.Fragment key={col.name}>
-                  <span className="whitespace-nowrap font-semibold">
-                    {formatDisplayLabel(col.name)}:
-                  </span>
-                  <span className="min-w-0 break-all">{cellContent}</span>
-                </React.Fragment>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Other fields */}
-        {otherColumns.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-2 text-xs">
-            {otherColumns.map((col) => {
               const value = rowData[col.name];
               const cellContent = renderCellValue(
                 value,
@@ -552,6 +562,51 @@ const parseMemoryUnit = (value: string): number | null => {
 
   const multiplier = unit ? multipliers[unit] : 1;
   return multiplier ? num * multiplier : null;
+};
+
+// Helper function to determine accent color from a column value based on type
+const getAccentColorFromValue = (
+  columnType: string,
+  value: any
+): string | undefined => {
+  if (value == null) return undefined;
+
+  const stringValue = String(value).toLowerCase();
+
+  switch (columnType) {
+    case "health":
+      if (stringValue === "healthy") return "bg-green-200";
+      if (stringValue === "warning") return "bg-yellow-200";
+      return "bg-red-200";
+
+    case "status":
+      // Status can have various values - apply heuristics
+      if (
+        stringValue.includes("healthy") ||
+        stringValue.includes("success") ||
+        stringValue.includes("ok")
+      ) {
+        return "bg-green-200";
+      }
+      if (
+        stringValue.includes("warning") ||
+        stringValue.includes("pending") ||
+        stringValue.includes("progress")
+      ) {
+        return "bg-yellow-200";
+      }
+      if (
+        stringValue.includes("error") ||
+        stringValue.includes("failed") ||
+        stringValue.includes("unhealthy")
+      ) {
+        return "bg-red-200";
+      }
+      return undefined;
+
+    default:
+      return undefined;
+  }
 };
 
 export default ViewCard;

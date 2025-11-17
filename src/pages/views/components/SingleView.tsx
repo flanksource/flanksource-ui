@@ -194,6 +194,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           columnOptions={viewResult?.columnOptions}
           panels={viewResult?.panels}
           variables={viewResult?.variables}
+          card={viewResult?.card}
           requestFingerprint={viewResult.requestFingerprint}
           currentVariables={currentViewVariables}
         />

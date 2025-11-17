@@ -5,6 +5,10 @@ import ViewCard from "./ViewCard";
 interface ViewCardsDisplayProps {
   columns: ViewColumnDef[];
   rows: any[][];
+  card?: {
+    columns: number;
+    default?: boolean;
+  };
   isLoading?: boolean;
   pageCount?: number;
   totalRowCount?: number;
@@ -13,6 +17,7 @@ interface ViewCardsDisplayProps {
 const ViewCardsDisplay: React.FC<ViewCardsDisplayProps> = ({
   columns,
   rows,
+  card,
   isLoading
 }) => {
   // Convert rows to objects (same logic as DynamicDataTable)
@@ -77,6 +82,7 @@ const ViewCardsDisplay: React.FC<ViewCardsDisplayProps> = ({
           columns={columns}
           row={rows[index]}
           rowData={rowData}
+          card={card}
         />
       ))}
     </div>

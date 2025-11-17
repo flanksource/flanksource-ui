@@ -31,6 +31,10 @@ interface ViewProps {
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, string[]>;
   variables?: ViewVariable[];
+  card?: {
+    columns: number;
+    default?: boolean;
+  };
   requestFingerprint: string;
   currentVariables?: Record<string, string>;
 }
@@ -43,6 +47,7 @@ const View: React.FC<ViewProps> = ({
   columnOptions,
   panels,
   variables,
+  card,
   requestFingerprint,
   currentVariables
 }) => {
@@ -61,13 +66,21 @@ const View: React.FC<ViewProps> = ({
 
   // Detect if card mode is available
   const hasCardMode = useMemo(() => {
-    return columns?.some((col) => col.cardPosition != null) ?? false;
+    return columns?.some((col) => col.card != null) ?? false;
   }, [columns]);
 
-  // Get display mode from URL params (default to table)
+  // Determine default display mode: use spec default if available, otherwise "table"
+  const defaultDisplayMode =
+    panels && panels.length > 0
+      ? "table"
+      : card?.default && hasCardMode
+        ? "cards"
+        : "table";
+
+  // Get display mode from URL params (default based on spec)
   // Using unprefixed param since this is purely frontend UI state
   const displayMode =
-    (searchParams.get("display") as "table" | "cards") || "table";
+    (searchParams.get("display") as "table" | "cards") || defaultDisplayMode;
 
   const setDisplayMode = (mode: "table" | "cards") => {
     setSearchParams((prev) => {
@@ -234,6 +247,7 @@ const View: React.FC<ViewProps> = ({
         (displayMode === "cards" && hasCardMode ? (
           <ViewCardsDisplay
             columns={columns}
+            card={card}
             isLoading={isLoading}
             rows={rows || []}
             pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
