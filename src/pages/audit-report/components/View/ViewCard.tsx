@@ -134,24 +134,24 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
         })}
 
         {/* Card Description */}
-        {subtitleColumns.map((col) => {
-          const value = rowData[col.name];
-          const cellContent = renderCellValue(
-            value,
-            col,
-            rowData,
-            rowAttributes
-          );
-          return (
-            <CardDescription
-              key={col.name}
-              className="truncate"
-              title={String(value)}
-            >
-              {cellContent}
-            </CardDescription>
-          );
-        })}
+        {subtitleColumns.length > 0 && (
+          <CardDescription className="flex flex-wrap gap-2 truncate">
+            {subtitleColumns.map((col) => {
+              const value = rowData[col.name];
+              const cellContent = renderCellValue(
+                value,
+                col,
+                rowData,
+                rowAttributes
+              );
+              return (
+                <span key={col.name} title={String(value)}>
+                  {cellContent}
+                </span>
+              );
+            })}
+          </CardDescription>
+        )}
 
         {/* Deck - inline items in header */}
         {deckColumns.length > 0 && (
