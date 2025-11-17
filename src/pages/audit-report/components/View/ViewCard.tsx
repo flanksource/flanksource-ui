@@ -42,6 +42,16 @@ interface ViewCardShadcnProps {
   };
 }
 
+// Helper function to get card position with backwards compatibility
+const getCardPosition = (col: ViewColumnDef): string | undefined => {
+  return col.card?.position || col.cardPosition;
+};
+
+// Helper function to check if column is a card column
+const isCardColumn = (col: ViewColumnDef): boolean => {
+  return col.card != null || col.cardPosition != null;
+};
+
 const ViewCard: React.FC<ViewCardShadcnProps> = ({
   columns,
   row,
@@ -49,26 +59,26 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
   card
 }) => {
   // Get card-enabled columns only
-  const cardColumns = columns.filter((col) => col.card != null);
+  const cardColumns = columns.filter(isCardColumn);
 
   // Group columns by card.position
   const titleColumns = cardColumns.filter(
-    (col) => col.card?.position === "title"
+    (col) => getCardPosition(col) === "title"
   );
   const subtitleColumns = cardColumns.filter(
-    (col) => col.card?.position === "subtitle"
+    (col) => getCardPosition(col) === "subtitle"
   );
   const deckColumns = cardColumns.filter(
-    (col) => col.card?.position === "deck"
+    (col) => getCardPosition(col) === "deck"
   );
   const bodyColumns = cardColumns.filter(
-    (col) => col.card?.position === "body"
+    (col) => getCardPosition(col) === "body"
   );
   const footerColumns = cardColumns.filter(
-    (col) => col.card?.position === "footer"
+    (col) => getCardPosition(col) === "footer"
   );
   const headerRightColumns = cardColumns.filter(
-    (col) => col.card?.position === "headerRight"
+    (col) => getCardPosition(col) === "headerRight"
   );
 
   const rowAttributes = rowData.__rowAttributes as Record<

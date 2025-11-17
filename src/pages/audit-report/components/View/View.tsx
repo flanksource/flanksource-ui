@@ -64,9 +64,12 @@ const View: React.FC<ViewProps> = ({
   const globalVarPrefix = "viewvar";
   const hasDataTable = columns && columns.length > 0;
 
-  // Detect if card mode is available
+  // Detect if card mode is available (supports both new and old cardPosition field)
   const hasCardMode = useMemo(() => {
-    return columns?.some((col) => col.card != null) ?? false;
+    return (
+      columns?.some((col) => col.card != null || col.cardPosition != null) ??
+      false
+    );
   }, [columns]);
 
   // Determine default display mode: use spec default if available, otherwise "table"

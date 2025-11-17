@@ -223,6 +223,8 @@ export interface ViewColumnDef {
   unit?: string;
   icon?: string;
   card?: CardConfig;
+  /** @deprecated Use card.position instead */
+  cardPosition?: "title" | "subtitle" | "body" | "footer" | "deck";
 }
 
 export type ViewRow = any[];
