@@ -193,7 +193,7 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
 
           {/* Header Right - top right corner metrics */}
           {headerRightColumns.length > 0 && (
-            <div className="flex flex-wrap items-start justify-end gap-4 text-xs">
+            <div className="flex flex-wrap items-center justify-end gap-4 text-xs">
               {headerRightColumns.map((col) => {
                 const value = rowData[col.name];
                 const isGaugeType = col.type === "gauge";
@@ -617,7 +617,7 @@ const getAccentColorFromValue = (
 
   switch (columnType) {
     case "health":
-      if (stringValue === "healthy") return "bg-green-200";
+      if (stringValue === "healthy") return undefined;
       if (stringValue === "warning") return "bg-yellow-200";
       return "bg-red-200";
 
@@ -628,7 +628,7 @@ const getAccentColorFromValue = (
         stringValue.includes("success") ||
         stringValue.includes("ok")
       ) {
-        return "bg-green-200";
+        return undefined;
       }
       if (
         stringValue.includes("warning") ||
