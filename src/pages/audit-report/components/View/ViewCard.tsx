@@ -112,80 +112,117 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
   return (
     <Card className="transition-shadow hover:shadow-lg">
       <CardHeader className="p-4 pb-3">
-        {/* Card Title */}
-        {titleColumns.map((col) => {
-          const value = rowData[col.name];
-          const cellContent = renderCellValue(
-            value,
-            col,
-            rowData,
-            rowAttributes,
-            true
-          );
-          return (
-            <CardTitle
-              key={col.name}
-              className="truncate font-normal leading-normal"
-              title={String(value)}
-            >
-              {cellContent}
-            </CardTitle>
-          );
-        })}
-
-        {/* Card Description */}
-        {subtitleColumns.length > 0 && (
-          <CardDescription className="flex flex-wrap gap-2 truncate">
-            {subtitleColumns.map((col) => {
+        {/* Header with title on left and headerRight on right */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            {/* Card Title */}
+            {titleColumns.map((col) => {
               const value = rowData[col.name];
               const cellContent = renderCellValue(
                 value,
                 col,
                 rowData,
-                rowAttributes
+                rowAttributes,
+                true
               );
               return (
-                <span key={col.name} title={String(value)}>
-                  {cellContent}
-                </span>
-              );
-            })}
-          </CardDescription>
-        )}
-
-        {/* Deck - inline items in header */}
-        {deckColumns.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {deckColumns.map((col) => {
-              const value = rowData[col.name];
-              const cellContent = renderCellValue(
-                value,
-                col,
-                rowData,
-                rowAttributes
-              );
-              // Give gauges flex space for proper display
-              const isGauge = col.type === "gauge";
-              return (
-                <div
+                <CardTitle
                   key={col.name}
-                  className={
-                    isGauge
-                      ? "flex min-w-0 flex-1 items-center gap-2"
-                      : undefined
-                  }
+                  className="truncate font-normal leading-normal"
+                  title={String(value)}
                 >
-                  {isGauge && (
-                    <span className="whitespace-nowrap text-xs">
-                      {formatDisplayLabel(col.name)}:
-                    </span>
-                  )}
                   {cellContent}
-                </div>
+                </CardTitle>
               );
             })}
+
+            {/* Card Description */}
+            {subtitleColumns.length > 0 && (
+              <CardDescription className="flex flex-wrap gap-2 truncate">
+                {subtitleColumns.map((col) => {
+                  const value = rowData[col.name];
+                  const cellContent = renderCellValue(
+                    value,
+                    col,
+                    rowData,
+                    rowAttributes
+                  );
+                  return (
+                    <span key={col.name} title={String(value)}>
+                      {cellContent}
+                    </span>
+                  );
+                })}
+              </CardDescription>
+            )}
+
+            {/* Deck - inline items in header */}
+            {deckColumns.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {deckColumns.map((col) => {
+                  const value = rowData[col.name];
+                  const cellContent = renderCellValue(
+                    value,
+                    col,
+                    rowData,
+                    rowAttributes
+                  );
+                  // Give gauges flex space for proper display
+                  const isGauge = col.type === "gauge";
+                  return (
+                    <div
+                      key={col.name}
+                      className={
+                        isGauge
+                          ? "flex min-w-0 flex-1 items-center gap-2"
+                          : undefined
+                      }
+                    >
+                      {isGauge && (
+                        <span className="whitespace-nowrap text-xs">
+                          {formatDisplayLabel(col.name)}:
+                        </span>
+                      )}
+                      {cellContent}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Header Right - top right corner metrics */}
+          {headerRightColumns.length > 0 && (
+            <div className="flex flex-wrap items-start justify-end gap-4 text-xs">
+              {headerRightColumns.map((col) => {
+                const value = rowData[col.name];
+                const isGaugeType = col.type === "gauge";
+                const cellContent = renderCellValue(
+                  value,
+                  col,
+                  rowData,
+                  rowAttributes
+                );
+                return (
+                  <div
+                    key={col.name}
+                    className={clsx(
+                      "flex flex-col items-end",
+                      isGaugeType ? "w-20" : "whitespace-nowrap"
+                    )}
+                  >
+                    <span className="text-muted-foreground">
+                      {formatDisplayLabel(col.name)}
+                    </span>
+                    <div className={isGaugeType ? "w-full" : ""}>
+                      {cellContent}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </CardHeader>
 
       {accentColor ? (
@@ -345,12 +382,7 @@ const renderCellValue = (
       break;
 
     case "status":
-      const statusValue = String(value);
-      cellContent = (
-        <Badge variant="outline" className="font-normal">
-          {statusValue}
-        </Badge>
-      );
+      cellContent = String(value);
       break;
 
     case "gauge":
