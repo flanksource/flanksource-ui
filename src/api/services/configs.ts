@@ -94,6 +94,16 @@ export const getConfigsByID = async (id: string) => {
   return null;
 };
 
+export const getConfigDetails = async (id: string) => {
+  const res = await resolvePostGrestRequestWithPagination<
+    Pick<ConfigItem, "id" | "name" | "tags">[] | null
+  >(ConfigDB.get(`/configs?id=eq.${id}&select=id,name,tags`));
+  if (res.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  return null;
+};
+
 export const getAllChanges = (
   queryParams: Record<string, string | undefined>,
   pageIndex?: number,
