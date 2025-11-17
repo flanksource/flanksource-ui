@@ -1,6 +1,8 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import { getViewDataById } from "@flanksource-ui/api/services/views";
-import { getConfigDetails } from "@flanksource-ui/api/services/configs";
+import {
+  getViewDataById,
+  getViewDisplayPluginVariables
+} from "@flanksource-ui/api/services/views";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
@@ -18,11 +20,11 @@ export function ConfigDetailsViewPage() {
     viewId: string;
   }>();
 
-  // Fetch config to get tags and name for view variables
-  const { data: configItem } = useQuery({
-    queryKey: ["config-tags-name", configId],
-    queryFn: () => getConfigDetails(configId!),
-    enabled: !!configId
+  // Fetch display plugin variables from the API
+  const { data: variables } = useQuery({
+    queryKey: ["viewDisplayPluginVariables", viewId, configId],
+    queryFn: () => getViewDisplayPluginVariables(viewId!, configId!),
+    enabled: !!viewId && !!configId
   });
 
   const {
@@ -31,7 +33,7 @@ export function ConfigDetailsViewPage() {
     error,
     refetch
   } = useQuery({
-    queryKey: ["viewDataById", viewId, configId, configItem?.id],
+    queryKey: ["viewDataById", viewId, configId, variables],
     queryFn: () => {
       if (!viewId) {
         throw new Error("View ID is required");
@@ -40,19 +42,9 @@ export function ConfigDetailsViewPage() {
         ? { "cache-control": "max-age=1" }
         : undefined;
 
-      // Build variables from config tags and name
-      // TODO: This variables need to come from the view spec.template.variables
-      const variables: Record<string, string> = {};
-      if (configItem?.tags?.cluster) {
-        variables.cluster = String(configItem.tags.cluster);
-      }
-      if (configItem?.name) {
-        variables.pod_name = configItem.name;
-      }
-
       return getViewDataById(viewId, variables, headers);
     },
-    enabled: !!viewId && !!configId && !!configItem
+    enabled: !!viewId && !!configId && !!variables
   });
 
   const handleRefresh = async () => {
