@@ -187,6 +187,17 @@ interface ViewColumnDefFilter {
   type: "multiselect";
 }
 
+export interface CardConfig {
+  // Position defines where the field is displayed on the card
+  // Omit this to hide the field but still have it affect the card (e.g., for accent)
+  position?: "title" | "subtitle" | "deck" | "body" | "footer" | "headerRight";
+
+  // UseForAccent determines if this column's value should be used to color the card accent divider.
+  // Only one column should have this set to true.
+  // The column's value will be analyzed using heuristics to determine the appropriate color.
+  useForAccent?: boolean;
+}
+
 export interface ViewColumnDef {
   name: string;
   filter?: ViewColumnDefFilter;
@@ -211,6 +222,8 @@ export interface ViewColumnDef {
   hidden?: boolean;
   unit?: string;
   icon?: string;
+  card?: CardConfig;
+  /** @deprecated Use card.position instead */
   cardPosition?: "title" | "subtitle" | "body" | "footer" | "deck";
 }
 
@@ -225,6 +238,14 @@ export interface ViewVariable {
   label?: string;
 }
 
+export interface DisplayCard {
+  // Columns defines the number of columns for the card body layout
+  columns: number;
+
+  // Default indicates if cards should be the default display mode
+  default?: boolean;
+}
+
 export interface ViewResult {
   title?: string;
   icon?: string;
@@ -237,6 +258,7 @@ export interface ViewResult {
   panels?: PanelResult[];
   columnOptions?: Record<string, string[]>;
   variables?: ViewVariable[];
+  card?: DisplayCard;
   requestFingerprint: string;
 }
 

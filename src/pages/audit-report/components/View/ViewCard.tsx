@@ -19,6 +19,7 @@ import {
 import { Badge } from "../../../../components/ui/badge";
 import { Separator } from "../../../../components/ui/separator";
 import { formatDisplayLabel } from "./panels/utils";
+import clsx from "clsx";
 
 interface RowAttributes {
   icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
@@ -31,34 +32,77 @@ interface RowAttributes {
   };
 }
 
-interface ViewCardShadcnProps {
+interface ViewCardProps {
   columns: ViewColumnDef[];
-  row: any[];
-  rowData: Record<string, any>;
+  row: Record<string, any>;
+  columnsCount?: number;
 }
 
-const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
-  // Get card-enabled columns only
-  const cardColumns = columns.filter((col) => col.cardPosition != null);
+interface HeaderRightMetricsProps {
+  columns: ViewColumnDef[];
+  row: Record<string, any>;
+  rowAttributes?: Record<string, RowAttributes>;
+}
 
-  // Group columns by cardPosition
+const HeaderRightMetrics: React.FC<HeaderRightMetricsProps> = ({
+  columns,
+  row,
+  rowAttributes
+}) => {
+  return (
+    <div className="flex flex-wrap items-start justify-end gap-4 text-xs">
+      {columns.map((col, index) => {
+        const value = row[col.name];
+        const isGaugeType = col.type === "gauge";
+        const cellContent = renderCellValue(value, col, row, rowAttributes);
+        return (
+          <React.Fragment key={col.name}>
+            {index > 0 && <Separator orientation="vertical" className="h-12" />}
+            <div
+              className={clsx(
+                "flex flex-col items-center",
+                isGaugeType ? "w-24" : "whitespace-nowrap"
+              )}
+            >
+              <span className="text-center text-muted-foreground">
+                {formatDisplayLabel(col.name)}
+              </span>
+              <div className={isGaugeType ? "flex w-full justify-center" : ""}>
+                {cellContent}
+              </div>
+            </div>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
+
+const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
+  // Get card-enabled columns only
+  const cardColumns = columns.filter(isCardColumn);
+
+  // Group columns by card.position
   const titleColumns = cardColumns.filter(
-    (col) => col.cardPosition === "title"
+    (col) => getCardPosition(col) === "title"
   );
   const subtitleColumns = cardColumns.filter(
-    (col) => col.cardPosition === "subtitle"
+    (col) => getCardPosition(col) === "subtitle"
   );
-  const deckColumns = cardColumns.filter((col) => col.cardPosition === "deck");
-  const bodyColumns = cardColumns.filter((col) => col.cardPosition === "body");
+  const deckColumns = cardColumns.filter(
+    (col) => getCardPosition(col) === "deck"
+  );
+  const bodyColumns = cardColumns.filter(
+    (col) => getCardPosition(col) === "body"
+  );
   const footerColumns = cardColumns.filter(
-    (col) => col.cardPosition === "footer"
+    (col) => getCardPosition(col) === "footer"
   );
-  const otherColumns = cardColumns.filter((col) => !col.cardPosition);
+  const headerRightColumns = cardColumns.filter(
+    (col) => getCardPosition(col) === "headerRight"
+  );
 
-  const rowAttributes = rowData.__rowAttributes as Record<
-    string,
-    RowAttributes
-  >;
+  const rowAttributes = row.__rowAttributes as Record<string, RowAttributes>;
 
   // Get icon
   const firstTitleColumn = titleColumns[0];
@@ -77,120 +121,127 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
     }
   }
 
+  // Get accent color from the column marked with useForAccent
+  const accentColumn = cardColumns.find((col) => col.card?.useForAccent);
+  const accentColor = accentColumn
+    ? getAccentColorFromValue(accentColumn.type, row[accentColumn.name])
+    : undefined;
+
   return (
     <Card className="transition-shadow hover:shadow-lg">
       <CardHeader className="p-4 pb-3">
-        {/* Card Title */}
-        {titleColumns.map((col) => {
-          const value = rowData[col.name];
-          const cellContent = renderCellValue(
-            value,
-            col,
-            rowData,
-            rowAttributes,
-            true
-          );
-          return (
-            <CardTitle
-              key={col.name}
-              className="truncate font-normal leading-normal"
-              title={String(value)}
-            >
-              {cellContent}
-            </CardTitle>
-          );
-        })}
-
-        {/* Card Description */}
-        {subtitleColumns.map((col) => {
-          const value = rowData[col.name];
-          const cellContent = renderCellValue(
-            value,
-            col,
-            rowData,
-            rowAttributes
-          );
-          return (
-            <CardDescription
-              key={col.name}
-              className="truncate"
-              title={String(value)}
-            >
-              {cellContent}
-            </CardDescription>
-          );
-        })}
-
-        {/* Deck - inline items in header */}
-        {deckColumns.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {deckColumns.map((col) => {
-              const value = rowData[col.name];
+        {/* Header with title on left and headerRight on right */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            {/* Card Title */}
+            {titleColumns.map((col) => {
+              const value = row[col.name];
               const cellContent = renderCellValue(
                 value,
                 col,
-                rowData,
-                rowAttributes
+                row,
+                rowAttributes,
+                true
               );
-              // Give gauges flex space for proper display
-              const isGauge = col.type === "gauge";
               return (
-                <div
+                <CardTitle
                   key={col.name}
-                  className={
-                    isGauge
-                      ? "flex min-w-0 flex-1 items-center gap-2"
-                      : undefined
-                  }
+                  className="truncate font-normal leading-normal"
+                  title={String(value)}
                 >
-                  {isGauge && (
-                    <span className="whitespace-nowrap text-xs">
-                      {formatDisplayLabel(col.name)}:
-                    </span>
-                  )}
                   {cellContent}
-                </div>
+                </CardTitle>
               );
             })}
+
+            {/* Card Description */}
+            {subtitleColumns.length > 0 && (
+              <CardDescription className="flex flex-wrap gap-2 truncate">
+                {subtitleColumns.map((col) => {
+                  const value = row[col.name];
+                  const cellContent = renderCellValue(
+                    value,
+                    col,
+                    row,
+                    rowAttributes
+                  );
+                  return (
+                    <span key={col.name} title={String(value)}>
+                      {cellContent}
+                    </span>
+                  );
+                })}
+              </CardDescription>
+            )}
+
+            {/* Deck - inline items in header */}
+            {deckColumns.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {deckColumns.map((col) => {
+                  const value = row[col.name];
+                  const cellContent = renderCellValue(
+                    value,
+                    col,
+                    row,
+                    rowAttributes
+                  );
+                  // Give gauges flex space for proper display
+                  const isGauge = col.type === "gauge";
+                  return (
+                    <div
+                      key={col.name}
+                      className={
+                        isGauge
+                          ? "flex min-w-0 flex-1 items-center gap-2"
+                          : undefined
+                      }
+                    >
+                      {isGauge && (
+                        <span className="whitespace-nowrap text-xs">
+                          {formatDisplayLabel(col.name)}:
+                        </span>
+                      )}
+                      {cellContent}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Header Right - top right corner */}
+          {headerRightColumns.length > 0 && (
+            <HeaderRightMetrics
+              columns={headerRightColumns}
+              row={row}
+              rowAttributes={rowAttributes}
+            />
+          )}
+        </div>
       </CardHeader>
 
-      <Separator />
+      {accentColor ? (
+        <div className={clsx("h-0.5", accentColor)} />
+      ) : (
+        <Separator />
+      )}
 
       <CardContent className="p-4 pt-3">
         {/* Body fields */}
         {bodyColumns.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-2 text-xs">
+          <div
+            className="gap-x-2 gap-y-2 text-xs"
+            style={{
+              display: "grid",
+              gridTemplateColumns: generateGridColumns(columnsCount || 1)
+            }}
+          >
             {bodyColumns.map((col) => {
-              const value = rowData[col.name];
+              const value = row[col.name];
               const cellContent = renderCellValue(
                 value,
                 col,
-                rowData,
-                rowAttributes
-              );
-              return (
-                <React.Fragment key={col.name}>
-                  <span className="whitespace-nowrap font-semibold">
-                    {formatDisplayLabel(col.name)}:
-                  </span>
-                  <span className="min-w-0 break-all">{cellContent}</span>
-                </React.Fragment>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Other fields */}
-        {otherColumns.length > 0 && (
-          <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-2 text-xs">
-            {otherColumns.map((col) => {
-              const value = rowData[col.name];
-              const cellContent = renderCellValue(
-                value,
-                col,
-                rowData,
+                row,
                 rowAttributes
               );
               return (
@@ -212,11 +263,11 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({ columns, row, rowData }) => {
           <CardFooter className="p-4 pt-3">
             <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
               {footerColumns.map((col) => {
-                const value = rowData[col.name];
+                const value = row[col.name];
                 const cellContent = renderCellValue(
                   value,
                   col,
-                  rowData,
+                  row,
                   rowAttributes
                 );
                 return (
@@ -325,12 +376,7 @@ const renderCellValue = (
       break;
 
     case "status":
-      const statusValue = String(value);
-      cellContent = (
-        <Badge variant="outline" className="font-normal">
-          {statusValue}
-        </Badge>
-      );
+      cellContent = String(value);
       break;
 
     case "gauge":
@@ -473,6 +519,23 @@ const renderCellValue = (
   return cellContent;
 };
 
+// Helper function to generate grid columns for any column count
+const generateGridColumns = (columnCount: number): string => {
+  if (columnCount <= 0) columnCount = 1;
+  // Each column pair: label (auto) + value (1fr)
+  return Array(columnCount).fill("auto 1fr").join(" ");
+};
+
+// Helper function to get card position with backwards compatibility
+const getCardPosition = (col: ViewColumnDef): string | undefined => {
+  return col.card?.position || col.cardPosition;
+};
+
+// Helper function to check if column is a card column
+const isCardColumn = (col: ViewColumnDef): boolean => {
+  return col.card != null || col.cardPosition != null;
+};
+
 // Helper functions
 const formatValueWithUnit = (value: any, unit?: string): any => {
   if (!unit || value == null) return value;
@@ -552,6 +615,51 @@ const parseMemoryUnit = (value: string): number | null => {
 
   const multiplier = unit ? multipliers[unit] : 1;
   return multiplier ? num * multiplier : null;
+};
+
+// Helper function to determine accent color from a column value based on type
+const getAccentColorFromValue = (
+  columnType: string,
+  value: any
+): string | undefined => {
+  if (value == null) return undefined;
+
+  const stringValue = String(value).toLowerCase();
+
+  switch (columnType) {
+    case "health":
+      if (stringValue === "healthy") return undefined;
+      if (stringValue === "warning") return "bg-yellow-500";
+      return "bg-red-500";
+
+    case "status":
+      // Status can have various values - apply heuristics
+      if (
+        stringValue.includes("healthy") ||
+        stringValue.includes("success") ||
+        stringValue.includes("ok")
+      ) {
+        return undefined;
+      }
+      if (
+        stringValue.includes("warning") ||
+        stringValue.includes("pending") ||
+        stringValue.includes("progress")
+      ) {
+        return "bg-yellow-500";
+      }
+      if (
+        stringValue.includes("error") ||
+        stringValue.includes("failed") ||
+        stringValue.includes("unhealthy")
+      ) {
+        return "bg-red-500";
+      }
+      return undefined;
+
+    default:
+      return undefined;
+  }
 };
 
 export default ViewCard;

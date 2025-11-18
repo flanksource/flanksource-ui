@@ -256,7 +256,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <GitCommit className="mr-2 text-teal-600" size={20} />
+                <GitCommit className="text-teal-600 mr-2" size={20} />
                 Changes
               </h3>
               <DataTable columns={changeColumns} data={application.changes} />
@@ -269,7 +269,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <AlertOctagon className="mr-2 text-teal-600" size={20} />
+                <AlertOctagon className="text-teal-600 mr-2" size={20} />
                 Incidents
               </h3>
               <div className="space-y-6">
@@ -311,7 +311,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Average Resolution Time
                     </h4>
-                    <p className="text-2xl font-semibold text-teal-600">
+                    <p className="text-teal-600 text-2xl font-semibold">
                       {incidentStats.avgResolutionTime}h
                     </p>
                   </div>
@@ -363,7 +363,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <Save className="mr-2 text-teal-600" size={20} />
+                <Save className="text-teal-600 mr-2" size={20} />
                 Recent Backups
               </h3>
               <div className="space-y-4">
@@ -372,7 +372,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Average Backup Size
                     </h4>
-                    <p className="text-2xl font-semibold text-teal-600">
+                    <p className="text-teal-600 text-2xl font-semibold">
                       {backupStats.avgSize} GB
                     </p>
                   </div>
@@ -380,7 +380,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Backup Success Rate
                     </h4>
-                    <p className="text-2xl font-semibold text-teal-600">
+                    <p className="text-teal-600 text-2xl font-semibold">
                       {backupStats.successRate}%
                     </p>
                   </div>
@@ -388,7 +388,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Last Backup Age
                     </h4>
-                    <p className="text-2xl font-semibold text-teal-600">
+                    <p className="text-teal-600 text-2xl font-semibold">
                       {backupStats.backupAge}
                     </p>
                   </div>
@@ -408,7 +408,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <RotateCcw className="mr-2 text-teal-600" size={20} />
+                <RotateCcw className="text-teal-600 mr-2" size={20} />
                 Recent Restores
               </h3>
               <DataTable columns={restoreColumns} data={application.restores} />
@@ -430,6 +430,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
             columns={viewResult.columns}
             panels={viewResult.panels}
             columnOptions={viewResult.columnOptions}
+            card={viewResult.card}
             requestFingerprint={viewResult.requestFingerprint}
           />
         ))}
