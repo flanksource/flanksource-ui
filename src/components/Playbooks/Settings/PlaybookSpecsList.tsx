@@ -40,7 +40,7 @@ export default function PlaybookSpecsList({
             <div className="flex flex-row flex-wrap">
               {playbooks.map((playbook) => (
                 <div
-                  className="flex w-full min-w-[23rem] flex-col p-2 md:w-1/2 lg:w-1/3 xl:w-1/4"
+                  className="flex w-full min-w-[23rem] flex-col p-2 md:w-1/2 lg:w-1/3 xl:w-1/5"
                   key={playbook.id}
                 >
                   <PlaybookSpecCard playbook={playbook} refetch={refetch} />

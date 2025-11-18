@@ -1,5 +1,13 @@
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { Button } from "@flanksource-ui/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@flanksource-ui/components/ui/card";
 import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { hasPlaybookRunPermission } from "@flanksource-ui/utils/playbookPermissions";
@@ -8,7 +16,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePlaybookSpec } from "../../../api/services/playbooks";
 import { PlaybookNames } from "../../../api/types/playbooks";
-import { Button } from "../../../ui/Buttons/Button";
 import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
@@ -55,13 +62,13 @@ export default function PlaybookSpecCard({
 
   return (
     <>
-      <div className="card relative flex h-full w-full flex-col rounded-8px bg-lightest-gray shadow-card">
-        <div className="flex flex-row items-center gap-2 bg-white p-2">
+      <Card className="relative flex h-full w-full flex-col">
+        <CardHeader className="flex flex-row items-center gap-2 px-3 py-2">
           <Icon name={playbook.icon} className="h-6 w-6" />
-          <h3 className="flex-1 text-lg font-medium leading-6 text-gray-900">
+          <CardTitle className="flex-1 text-base">
             {/* For now, default to name, when title isn't there */}
             {playbook.title || playbook.name}
-          </h3>
+          </CardTitle>
           <AuthorizationAccessCheck
             resource={tables.playbooks}
             action="write"
@@ -72,26 +79,30 @@ export default function PlaybookSpecCard({
               onDeletePlaybook={() => deletePlaybook(playbook.id)}
             />
           </AuthorizationAccessCheck>
-        </div>
-        <div className="flex flex-1 flex-col p-2">
-          {playbook.description && (
-            <div className="mt-2 max-w-xl text-sm text-gray-500">
+        </CardHeader>
+        {playbook.description && (
+          <CardContent className="px-3 py-1">
+            <div className="text-sm text-gray-500">
               <p>{playbook.description}</p>
             </div>
-          )}
-        </div>
-        <div className="flex flex-row justify-between p-2">
+          </CardContent>
+        )}
+        <CardFooter className="flex flex-row justify-between gap-2 px-3 py-2">
           <Button
-            text="History"
+            variant="outline"
+            size="sm"
             onClick={() => {
               navigate(`/playbooks/runs?playbook=${playbook.id}`);
             }}
-            className="btn-white"
-          />
+          >
+            History
+          </Button>
           <Button
+            variant="default"
+            size="sm"
             onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
             disabled={!canRunPlaybooks}
-            disabledTooltip={
+            title={
               !canRunPlaybooks
                 ? "You don't have permission to run playbooks"
                 : undefined
@@ -99,8 +110,8 @@ export default function PlaybookSpecCard({
           >
             Run
           </Button>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
 
       {playbookSpec && (
         <PlaybookSpecFormModal

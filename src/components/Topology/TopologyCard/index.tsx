@@ -154,12 +154,24 @@ export function TopologyCard({
     (i) => i.headline && (!!i.value || !!i.text || !!i.url)
   );
 
+  const getTopBorderColor = () => {
+    const statusColor = StatusStyles[topology.health as ComponentHealth];
+    if (statusColor === "border-red-300") return "#fca5a5";
+    if (statusColor === "border-orange-300") return "#fed7aa";
+    return "#d1d5db";
+  };
+
   return (
     <div
-      style={{ width: CardWidth[size as Size] || size }}
+      style={{
+        width: CardWidth[size as Size] || size,
+        borderTop: `8px solid ${getTopBorderColor()}`,
+        borderLeft: "1px solid #d1d5db",
+        borderRight: "1px solid #d1d5db",
+        borderBottom: "1px solid #d1d5db"
+      }}
       className={clsx(
-        "card relative mb-3 mr-3 rounded-8px border-0 border-t-8 bg-lightest-gray shadow-card",
-        StatusStyles[topology.health as ComponentHealth] || "border-white",
+        "card relative mb-3 mr-3 rounded-8px bg-lightest-gray shadow-card",
         selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
