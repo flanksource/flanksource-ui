@@ -38,6 +38,46 @@ interface ViewCardProps {
   columnsCount?: number;
 }
 
+interface HeaderRightMetricsProps {
+  columns: ViewColumnDef[];
+  row: Record<string, any>;
+  rowAttributes?: Record<string, RowAttributes>;
+}
+
+const HeaderRightMetrics: React.FC<HeaderRightMetricsProps> = ({
+  columns,
+  row,
+  rowAttributes
+}) => {
+  return (
+    <div className="flex flex-wrap items-start justify-end gap-4 text-xs">
+      {columns.map((col, index) => {
+        const value = row[col.name];
+        const isGaugeType = col.type === "gauge";
+        const cellContent = renderCellValue(value, col, row, rowAttributes);
+        return (
+          <React.Fragment key={col.name}>
+            {index > 0 && <Separator orientation="vertical" className="h-12" />}
+            <div
+              className={clsx(
+                "flex flex-col items-center",
+                isGaugeType ? "w-24" : "whitespace-nowrap"
+              )}
+            >
+              <span className="text-center text-muted-foreground">
+                {formatDisplayLabel(col.name)}
+              </span>
+              <div className={isGaugeType ? "flex w-full justify-center" : ""}>
+                {cellContent}
+              </div>
+            </div>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
+
 const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
   // Get card-enabled columns only
   const cardColumns = columns.filter(isCardColumn);
@@ -169,36 +209,13 @@ const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
             )}
           </div>
 
-          {/* Header Right - top right corner metrics */}
+          {/* Header Right - top right corner */}
           {headerRightColumns.length > 0 && (
-            <div className="flex flex-wrap items-center justify-end gap-4 text-xs">
-              {headerRightColumns.map((col) => {
-                const value = row[col.name];
-                const isGaugeType = col.type === "gauge";
-                const cellContent = renderCellValue(
-                  value,
-                  col,
-                  row,
-                  rowAttributes
-                );
-                return (
-                  <div
-                    key={col.name}
-                    className={clsx(
-                      "flex flex-col items-end",
-                      isGaugeType ? "w-20" : "whitespace-nowrap"
-                    )}
-                  >
-                    <span className="text-muted-foreground">
-                      {formatDisplayLabel(col.name)}
-                    </span>
-                    <div className={isGaugeType ? "w-full" : ""}>
-                      {cellContent}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <HeaderRightMetrics
+              columns={headerRightColumns}
+              row={row}
+              rowAttributes={rowAttributes}
+            />
           )}
         </div>
       </CardHeader>
