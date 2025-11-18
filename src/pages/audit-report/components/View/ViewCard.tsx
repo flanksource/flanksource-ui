@@ -32,32 +32,13 @@ interface RowAttributes {
   };
 }
 
-interface ViewCardShadcnProps {
+interface ViewCardProps {
   columns: ViewColumnDef[];
-  row: any[];
-  rowData: Record<string, any>;
-  card?: {
-    columns: number;
-    default?: boolean;
-  };
+  row: Record<string, any>;
+  columnsCount?: number;
 }
 
-// Helper function to get card position with backwards compatibility
-const getCardPosition = (col: ViewColumnDef): string | undefined => {
-  return col.card?.position || col.cardPosition;
-};
-
-// Helper function to check if column is a card column
-const isCardColumn = (col: ViewColumnDef): boolean => {
-  return col.card != null || col.cardPosition != null;
-};
-
-const ViewCard: React.FC<ViewCardShadcnProps> = ({
-  columns,
-  row,
-  rowData,
-  card
-}) => {
+const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
   // Get card-enabled columns only
   const cardColumns = columns.filter(isCardColumn);
 
@@ -81,10 +62,7 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
     (col) => getCardPosition(col) === "headerRight"
   );
 
-  const rowAttributes = rowData.__rowAttributes as Record<
-    string,
-    RowAttributes
-  >;
+  const rowAttributes = row.__rowAttributes as Record<string, RowAttributes>;
 
   // Get icon
   const firstTitleColumn = titleColumns[0];
@@ -106,7 +84,7 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
   // Get accent color from the column marked with useForAccent
   const accentColumn = cardColumns.find((col) => col.card?.useForAccent);
   const accentColor = accentColumn
-    ? getAccentColorFromValue(accentColumn.type, rowData[accentColumn.name])
+    ? getAccentColorFromValue(accentColumn.type, row[accentColumn.name])
     : undefined;
 
   return (
@@ -117,11 +95,11 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
           <div className="min-w-0 flex-1">
             {/* Card Title */}
             {titleColumns.map((col) => {
-              const value = rowData[col.name];
+              const value = row[col.name];
               const cellContent = renderCellValue(
                 value,
                 col,
-                rowData,
+                row,
                 rowAttributes,
                 true
               );
@@ -140,11 +118,11 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
             {subtitleColumns.length > 0 && (
               <CardDescription className="flex flex-wrap gap-2 truncate">
                 {subtitleColumns.map((col) => {
-                  const value = rowData[col.name];
+                  const value = row[col.name];
                   const cellContent = renderCellValue(
                     value,
                     col,
-                    rowData,
+                    row,
                     rowAttributes
                   );
                   return (
@@ -160,11 +138,11 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
             {deckColumns.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {deckColumns.map((col) => {
-                  const value = rowData[col.name];
+                  const value = row[col.name];
                   const cellContent = renderCellValue(
                     value,
                     col,
-                    rowData,
+                    row,
                     rowAttributes
                   );
                   // Give gauges flex space for proper display
@@ -195,12 +173,12 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
           {headerRightColumns.length > 0 && (
             <div className="flex flex-wrap items-center justify-end gap-4 text-xs">
               {headerRightColumns.map((col) => {
-                const value = rowData[col.name];
+                const value = row[col.name];
                 const isGaugeType = col.type === "gauge";
                 const cellContent = renderCellValue(
                   value,
                   col,
-                  rowData,
+                  row,
                   rowAttributes
                 );
                 return (
@@ -235,19 +213,18 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
         {/* Body fields */}
         {bodyColumns.length > 0 && (
           <div
-            className={clsx(
-              "gap-x-2 gap-y-2 text-xs",
-              card?.columns === 2
-                ? "grid grid-cols-[auto_1fr_auto_1fr]"
-                : "grid grid-cols-[auto_1fr]"
-            )}
+            className="gap-x-2 gap-y-2 text-xs"
+            style={{
+              display: "grid",
+              gridTemplateColumns: generateGridColumns(columnsCount || 1)
+            }}
           >
             {bodyColumns.map((col) => {
-              const value = rowData[col.name];
+              const value = row[col.name];
               const cellContent = renderCellValue(
                 value,
                 col,
-                rowData,
+                row,
                 rowAttributes
               );
               return (
@@ -269,11 +246,11 @@ const ViewCard: React.FC<ViewCardShadcnProps> = ({
           <CardFooter className="p-4 pt-3">
             <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
               {footerColumns.map((col) => {
-                const value = rowData[col.name];
+                const value = row[col.name];
                 const cellContent = renderCellValue(
                   value,
                   col,
-                  rowData,
+                  row,
                   rowAttributes
                 );
                 return (
@@ -525,6 +502,23 @@ const renderCellValue = (
   return cellContent;
 };
 
+// Helper function to generate grid columns for any column count
+const generateGridColumns = (columnCount: number): string => {
+  if (columnCount <= 0) columnCount = 1;
+  // Each column pair: label (auto) + value (1fr)
+  return Array(columnCount).fill("auto 1fr").join(" ");
+};
+
+// Helper function to get card position with backwards compatibility
+const getCardPosition = (col: ViewColumnDef): string | undefined => {
+  return col.card?.position || col.cardPosition;
+};
+
+// Helper function to check if column is a card column
+const isCardColumn = (col: ViewColumnDef): boolean => {
+  return col.card != null || col.cardPosition != null;
+};
+
 // Helper functions
 const formatValueWithUnit = (value: any, unit?: string): any => {
   if (!unit || value == null) return value;
@@ -618,8 +612,8 @@ const getAccentColorFromValue = (
   switch (columnType) {
     case "health":
       if (stringValue === "healthy") return undefined;
-      if (stringValue === "warning") return "bg-yellow-200";
-      return "bg-red-200";
+      if (stringValue === "warning") return "bg-yellow-500";
+      return "bg-red-500";
 
     case "status":
       // Status can have various values - apply heuristics
@@ -635,14 +629,14 @@ const getAccentColorFromValue = (
         stringValue.includes("pending") ||
         stringValue.includes("progress")
       ) {
-        return "bg-yellow-200";
+        return "bg-yellow-500";
       }
       if (
         stringValue.includes("error") ||
         stringValue.includes("failed") ||
         stringValue.includes("unhealthy")
       ) {
-        return "bg-red-200";
+        return "bg-red-500";
       }
       return undefined;
 

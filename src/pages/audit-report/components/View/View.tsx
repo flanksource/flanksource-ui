@@ -250,7 +250,7 @@ const View: React.FC<ViewProps> = ({
         (displayMode === "cards" && hasCardMode ? (
           <ViewCardsDisplay
             columns={columns}
-            card={card}
+            columnsCount={card?.columns}
             isLoading={isLoading}
             rows={rows || []}
             pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
