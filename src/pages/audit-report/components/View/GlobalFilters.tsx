@@ -41,6 +41,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, paramsKey, options }) => {
         });
       }}
       className="w-auto max-w-[400px]"
+      dropDownClassNames="w-auto min-w-[200px]"
       isMulti={false}
       closeMenuOnSelect={true}
       isClearable={false}

@@ -64,7 +64,7 @@ export default function PlaybookSpecCard({
     <>
       <Card className="relative flex h-full w-full flex-col">
         <CardHeader className="flex flex-row items-center gap-2 px-3 py-2">
-          <Icon name={playbook.icon} className="h-6 w-6 grayscale" />
+          <Icon name={playbook.icon} className="h-6 w-6" />
           <CardTitle className="flex-1 text-base">
             {/* For now, default to name, when title isn't there */}
             {playbook.title || playbook.name}
