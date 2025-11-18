@@ -55,8 +55,8 @@ export default function PlaybookSpecCard({
 
   return (
     <>
-      <div className="card relative flex h-full w-full flex-col rounded-8px bg-lightest-gray shadow-card">
-        <div className="flex flex-row items-center gap-2 bg-white p-2">
+      <div className="card relative flex h-full w-full flex-col rounded-8px border bg-lightest-gray shadow-card">
+        <div className="flex flex-row items-center gap-2 rounded-t-2xl bg-white p-2">
           <Icon name={playbook.icon} className="h-6 w-6" />
           <h3 className="flex-1 text-lg font-medium leading-6 text-gray-900">
             {/* For now, default to name, when title isn't there */}

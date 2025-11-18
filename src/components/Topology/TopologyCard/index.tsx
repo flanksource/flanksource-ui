@@ -158,8 +158,8 @@ export function TopologyCard({
     <div
       style={{ width: CardWidth[size as Size] || size }}
       className={clsx(
-        "card relative mb-3 mr-3 rounded-8px border-0 border-t-8 bg-lightest-gray shadow-card",
-        StatusStyles[topology.health as ComponentHealth] || "border-white",
+        "card relative mb-3 mr-3 rounded-8px border-b border-l border-r border-t-8 bg-lightest-gray shadow-card",
+        StatusStyles[topology.health as ComponentHealth] || "border-gray-200",
         selectionMode ? "cursor-pointer" : ""
       )}
       {...selectionModeRootProps}
