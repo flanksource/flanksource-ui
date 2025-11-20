@@ -1,4 +1,5 @@
 import { GaugeConfig } from "../../../types";
+import { formatBytes } from "../../../../../utils/common";
 
 export const COLOR_BANK = [
   "#4F83EF", // bright but balanced blue
@@ -83,6 +84,23 @@ export const generateGaugeData = (
     min: gauge?.min,
     label: row.health || row.type || "Value"
   };
+};
+
+// Format a display value with unit formatting
+export const formatDisplayValue = (value: number, unit?: string): string => {
+  if (!unit) return Number(value).toString();
+
+  switch (unit) {
+    case "bytes":
+      return formatBytes(value);
+    case "millicores":
+    case "millicore":
+      if (value === 0) return "0";
+      if (value > 0 && value < 1) return `1m`;
+      return `${Math.round(value)}m`;
+    default:
+      return `${value} ${unit}`;
+  }
 };
 
 // Convert column names to display-friendly headers
