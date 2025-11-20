@@ -59,7 +59,7 @@ export const generatePieChartData = (
 
     if (customColor) {
       fill = customColor;
-    } else {
+    } else if (typeof labelValue === "string") {
       const heuristicColorIndex = getStatusColorIndex(labelValue);
       if (heuristicColorIndex !== 0) {
         const hexColors = COLOR_INDEX_TO_HEX[heuristicColorIndex];
@@ -68,6 +68,8 @@ export const generatePieChartData = (
       } else {
         fill = COLOR_PALETTE[index % COLOR_PALETTE.length];
       }
+    } else {
+      fill = COLOR_PALETTE[index % COLOR_PALETTE.length];
     }
 
     return {

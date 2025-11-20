@@ -71,8 +71,8 @@ module.exports = {
   			fadeIn: 'fadeIn ease-in normal'
   		},
   		colors: {
-  			'warm-gray': 'colors.stone',
-  			teal: 'colors.teal',
+  			'warm-gray': colors.stone,
+  			teal: colors.teal,
   			'warm-blue': '#CCDAF8',
   			'dark-blue': '#326CE5',
   			'gray-color': '#C4C4C4',
