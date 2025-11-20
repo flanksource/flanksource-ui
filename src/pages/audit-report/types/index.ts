@@ -391,7 +391,16 @@ export interface GaugeConfig {
   max: number;
   unit?: string;
   thresholds?: GaugeThreshold[];
-  format?: "percentage" | "multiplier" | "raw";
+  precision?: number;
+}
+
+export interface BarGaugeConfig {
+  min: number;
+  max: number;
+  unit?: string;
+  thresholds?: GaugeThreshold[];
+  precision?: number;
+  format?: "percentage" | "multiplier";
   group?: string;
 }
 
@@ -408,7 +417,7 @@ export type PanelResult = {
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
-  bargauge?: GaugeConfig;
+  bargauge?: BarGaugeConfig;
   number?: NumberConfig;
   piechart?: PiechartConfig;
 };
