@@ -1,6 +1,7 @@
 import React from "react";
 import GaugeComponent from "react-gauge-component";
 import { PanelResult, GaugeThreshold } from "../../../types";
+import { formatDisplayValue } from "./utils";
 
 interface GaugePanelProps {
   summary: PanelResult;
@@ -66,7 +67,8 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
             }}
             labels={{
               valueLabel: {
-                formatTextValue: () => `${value} ${summary.gauge?.unit || ""}`,
+                formatTextValue: () =>
+                  formatDisplayValue(value, summary.gauge?.unit),
                 style: {
                   fontWeight: "bold",
                   fill: labelColor,
@@ -74,16 +76,31 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
                   textShadow: "none"
                 }
               },
-              tickLabels: {
-                type: "outer",
-                ticks: [{ value: 100 }],
-                defaultTickValueConfig: {
-                  formatTextValue: (value: number) => {
-                    return `${Math.round((value / 100) * (max - min) + min)}`;
-                  },
-                  style: { fontSize: 10 }
-                }
-              }
+              tickLabels: (() => {
+                const hasExplicitMinMax =
+                  summary.gauge?.min !== undefined ||
+                  summary.gauge?.max !== undefined;
+                if (!hasExplicitMinMax) return undefined;
+
+                return {
+                  type: "outer",
+                  ticks: summary.gauge?.thresholds
+                    ? summary.gauge.thresholds.map((t) => ({
+                        value: t.percent
+                      }))
+                    : [{ value: 100 }],
+                  defaultTickValueConfig: {
+                    formatTextValue: (value: number) => {
+                      const actualValue = (value / 100) * (max - min) + min;
+                      return formatDisplayValue(
+                        actualValue,
+                        summary.gauge?.unit
+                      );
+                    },
+                    style: { fontSize: 10 }
+                  }
+                };
+              })()
             }}
             arc={{
               emptyColor: "#ebebeb",
