@@ -105,6 +105,13 @@ export const formatDisplayValue = (
       // Always round to whole numbers for millicores
       if (value === 0) return "0";
       if (value > 0 && value < 1) return `1m`;
+      if (value >= 1000) {
+        // Convert to cores (1000m = 1 core)
+        const cores = value / 1000;
+        return cores === Math.round(cores)
+          ? `${Math.round(cores)}`
+          : `${cores.toFixed(1)}`;
+      }
       return `${Math.round(value)}m`;
     default:
       // Apply precision before appending unit
