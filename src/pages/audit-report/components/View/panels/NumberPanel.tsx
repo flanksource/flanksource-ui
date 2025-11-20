@@ -35,12 +35,9 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
               <p className="text-teal-600 text-6xl font-semibold">
                 {summary.number
                   ? formatDisplayValue(
-                      summary.number.unit
-                        ? numericValue
-                        : Number(
-                            numericValue.toFixed(summary.number.precision || 0)
-                          ),
-                      summary.number.unit
+                      numericValue,
+                      summary.number.unit,
+                      summary.number.precision
                     )
                   : displayValue}
               </p>
