@@ -63,7 +63,17 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     const rowObj: { [key: string]: any } = {};
     row.forEach((value, index) => {
       const column = columns[index];
-      if (column.hidden || column.type === "row_attributes") {
+      if (!column) {
+        throw new Error(
+          `Column definition not found for index ${index}. Available columns: ${columns.map((c) => c.name).join(", ")}`
+        );
+      }
+
+      if (
+        column.hidden ||
+        column.type === "row_attributes" ||
+        column.type === "grants"
+      ) {
         // These columns are not displayed in the table
         return;
       }
