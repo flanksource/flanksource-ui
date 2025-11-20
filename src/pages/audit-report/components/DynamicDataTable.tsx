@@ -276,7 +276,7 @@ const renderCellValue = (
     if (attribute.icon) {
       // Handle icon rendering for health-related statuses
       if (
-        ["health", "healthy", "unhealthy", "warning"].includes(attribute.icon)
+        ["healthy", "unknown", "unhealthy", "warning"].includes(attribute.icon)
       ) {
         cellContent = (
           <span className="inline-flex items-center gap-1">

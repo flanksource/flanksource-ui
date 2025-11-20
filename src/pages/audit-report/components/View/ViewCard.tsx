@@ -630,6 +630,7 @@ const getAccentColorFromValue = (
     case "health":
       if (stringValue === "healthy") return undefined;
       if (stringValue === "warning") return "bg-yellow-500";
+      if (stringValue === "unknown") return "bg-gray-400";
       return "bg-red-500";
 
     case "status":
