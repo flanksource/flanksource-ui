@@ -21,7 +21,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
         return (
           <div
             key={`${summary.name}-${rowIndex}`}
-            className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4"
+            className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
               {label || summary.name}
@@ -32,7 +32,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
               </p>
             )}
             <div className="flex flex-1 items-center justify-center">
-              <p className="text-teal-600 text-6xl font-semibold">
+              <p className="text-teal-600 text-2xl font-semibold md:text-3xl lg:text-4xl">
                 {summary.number
                   ? formatDisplayValue(
                       numericValue,

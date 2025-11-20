@@ -24,7 +24,7 @@ const DurationPanel: React.FC<DurationPanelProps> = ({ summary }) => {
         return (
           <div
             key={`${summary.name}-${rowIndex}`}
-            className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4"
+            className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
           >
             <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
               {label || summary.name}
@@ -35,7 +35,7 @@ const DurationPanel: React.FC<DurationPanelProps> = ({ summary }) => {
               </p>
             )}
             <div className="flex flex-1 items-center justify-center">
-              <p className="text-6xl font-semibold text-teal-600">
+              <p className="text-teal-600 text-2xl font-semibold md:text-3xl lg:text-4xl">
                 {formattedDuration}
               </p>
             </div>
