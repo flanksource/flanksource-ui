@@ -52,7 +52,7 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
       return (
         <div
           key={`${summary.name}-${rowIndex}`}
-          className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4"
+          className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
         >
           <h4 className="mb-1 text-sm font-medium text-gray-600">
             {summary.name}
@@ -60,53 +60,55 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
           {summary.description && (
             <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
           )}
-          <GaugeComponent
-            value={clampedPercentage}
-            pointer={{
-              animationDuration: 1000
-            }}
-            labels={{
-              valueLabel: {
-                formatTextValue: () =>
-                  formatDisplayValue(value, summary.gauge?.unit),
-                style: {
-                  fontWeight: "bold",
-                  fill: labelColor,
-                  stroke: "none",
-                  textShadow: "none"
-                }
-              },
-              tickLabels: (() => {
-                const hasExplicitMinMax =
-                  summary.gauge?.min !== undefined ||
-                  summary.gauge?.max !== undefined;
-                if (!hasExplicitMinMax) return undefined;
-
-                return {
-                  type: "outer",
-                  ticks: summary.gauge?.thresholds
-                    ? summary.gauge.thresholds.map((t) => ({
-                        value: t.percent
-                      }))
-                    : [{ value: 100 }],
-                  defaultTickValueConfig: {
-                    formatTextValue: (value: number) => {
-                      const actualValue = (value / 100) * (max - min) + min;
-                      return formatDisplayValue(
-                        actualValue,
-                        summary.gauge?.unit
-                      );
-                    },
-                    style: { fontSize: 10 }
+          <div className="flex flex-1 items-center justify-center overflow-hidden">
+            <GaugeComponent
+              value={clampedPercentage}
+              pointer={{
+                animationDuration: 1000
+              }}
+              labels={{
+                valueLabel: {
+                  formatTextValue: () =>
+                    formatDisplayValue(value, summary.gauge?.unit),
+                  style: {
+                    fontWeight: "bold",
+                    fill: labelColor,
+                    stroke: "none",
+                    textShadow: "none"
                   }
-                };
-              })()
-            }}
-            arc={{
-              emptyColor: "#ebebeb",
-              subArcs: subArcs
-            }}
-          />
+                },
+                tickLabels: (() => {
+                  const hasExplicitMinMax =
+                    summary.gauge?.min !== undefined ||
+                    summary.gauge?.max !== undefined;
+                  if (!hasExplicitMinMax) return undefined;
+
+                  return {
+                    type: "outer",
+                    ticks: summary.gauge?.thresholds
+                      ? summary.gauge.thresholds.map((t) => ({
+                          value: t.percent
+                        }))
+                      : [{ value: 100 }],
+                    defaultTickValueConfig: {
+                      formatTextValue: (value: number) => {
+                        const actualValue = (value / 100) * (max - min) + min;
+                        return formatDisplayValue(
+                          actualValue,
+                          summary.gauge?.unit
+                        );
+                      },
+                      style: { fontSize: 10 }
+                    }
+                  };
+                })()
+              }}
+              arc={{
+                emptyColor: "#ebebeb",
+                subArcs: subArcs
+              }}
+            />
+          </div>
         </div>
       );
     })
