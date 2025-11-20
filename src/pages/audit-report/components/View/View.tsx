@@ -178,7 +178,7 @@ const View: React.FC<ViewProps> = ({
 
       <div className="mb-4 space-y-6">
         {panels && panels.length > 0 && (
-          <div className="min-h-100 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="min-h-100 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
             {groupAndRenderPanels(panels)}
           </div>
         )}
