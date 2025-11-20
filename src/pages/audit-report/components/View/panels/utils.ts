@@ -86,20 +86,30 @@ export const generateGaugeData = (
   };
 };
 
-// Format a display value with unit formatting
-export const formatDisplayValue = (value: number, unit?: string): string => {
-  if (!unit) return Number(value).toString();
+// Format a display value with unit formatting and optional precision
+export const formatDisplayValue = (
+  value: number,
+  unit?: string,
+  precision?: number
+): string => {
+  if (!unit) {
+    return Number(value.toFixed(precision || 0)).toString();
+  }
 
   switch (unit) {
     case "bytes":
+      // formatBytes has its own precision logic, ignore precision param
       return formatBytes(value);
     case "millicores":
     case "millicore":
+      // Always round to whole numbers for millicores
       if (value === 0) return "0";
       if (value > 0 && value < 1) return `1m`;
       return `${Math.round(value)}m`;
     default:
-      return `${value} ${unit}`;
+      // Apply precision before appending unit
+      const rounded = Number(value.toFixed(precision || 0));
+      return `${rounded} ${unit}`;
   }
 };
 
