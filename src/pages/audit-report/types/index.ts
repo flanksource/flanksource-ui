@@ -183,24 +183,94 @@ export interface Restore {
   completedDate?: string;
 }
 
+/**
+ * Configuration for config item column behavior
+ * @source github.com/flanksource/duty/view/columns.go
+ */
+export interface ConfigItemColumnType {
+  /**
+   * The field to use as the ID for config items.
+   * Defaults to "id" if not specified.
+   */
+  idField?: string;
+}
+
+/**
+ * URL configuration for columns
+ * @source github.com/flanksource/duty/view/columns.go
+ */
+export interface ColumnURL {
+  /**
+   * CEL expression for config references
+   */
+  config?: string;
+  /**
+   * View URL reference details
+   */
+  view?: ViewURLRef;
+}
+
+/**
+ * View URL reference details
+ * @source github.com/flanksource/duty/view/columns.go
+ */
+export interface ViewURLRef {
+  [key: string]: any;
+}
+
+/**
+ * Filter configuration for view columns
+ * @source github.com/flanksource/duty/view/columns.go
+ */
 interface ViewColumnDefFilter {
+  /**
+   * The type of filter to apply
+   */
   type: "multiselect";
 }
 
+/**
+ * Card display configuration for columns
+ * @source github.com/flanksource/duty/view/columns.go
+ */
 export interface CardConfig {
-  // Position defines where the field is displayed on the card
-  // Omit this to hide the field but still have it affect the card (e.g., for accent)
+  /**
+   * Defines where the field is displayed on the card.
+   * Omit this to hide the field but still have it affect the card (e.g., for accent).
+   */
   position?: "title" | "subtitle" | "deck" | "body" | "footer" | "headerRight";
 
-  // UseForAccent determines if this column's value should be used to color the card accent divider.
-  // Only one column should have this set to true.
-  // The column's value will be analyzed using heuristics to determine the appropriate color.
+  /**
+   * Determines if this column's value should be used to color the card accent divider.
+   * Only one column should have this set to true.
+   * The column's value will be analyzed using heuristics to determine the appropriate color.
+   */
   useForAccent?: boolean;
 }
 
+/**
+ * Column definition for view tables
+ * @source github.com/flanksource/duty/view/columns.go
+ */
 export interface ViewColumnDef {
+  /**
+   * The name of the column
+   */
   name: string;
+
+  /**
+   * Marks this column as a primary key
+   */
+  primaryKey?: boolean;
+
+  /**
+   * Filter configuration for this column
+   */
   filter?: ViewColumnDefFilter;
+
+  /**
+   * The data type of the column
+   */
   type:
     | "string"
     | "number"
@@ -216,15 +286,64 @@ export interface ViewColumnDef {
     | "url"
     | "badge"
     | "config_item"
-    | "row_attributes";
+    | "row_attributes"
+    | "grants";
+
+  /**
+   * Description of the column
+   */
   description?: string;
+
+  /**
+   * Gauge visualization configuration
+   */
   gauge?: GaugeConfig;
+
+  /**
+   * Configuration for config item columns
+   */
+  configItem?: ConfigItemColumnType;
+
+  /**
+   * Whether the column is hidden from display
+   */
   hidden?: boolean;
+
+  /**
+   * Unit of measurement for the column value
+   */
   unit?: string;
+
+  /**
+   * Icon to display for this column
+   */
   icon?: string;
+
+  /**
+   * URL configuration for the column
+   */
+  url?: ColumnURL;
+
+  /**
+   * @deprecated Use a different approach
+   */
+  for?: string;
+
+  /**
+   * Card display configuration
+   */
   card?: CardConfig;
-  /** @deprecated Use card.position instead */
-  cardPosition?: "title" | "subtitle" | "body" | "footer" | "deck";
+
+  /**
+   * @deprecated Use card.position instead
+   */
+  cardPosition?:
+    | "title"
+    | "subtitle"
+    | "body"
+    | "footer"
+    | "deck"
+    | "headerRight";
 }
 
 export type ViewRow = any[];
