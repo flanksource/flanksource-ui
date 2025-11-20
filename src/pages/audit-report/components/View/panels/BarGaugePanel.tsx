@@ -1,6 +1,6 @@
 import React from "react";
 import { PanelResult, BarGaugeConfig } from "../../../types";
-import { getGaugeColor } from "./utils";
+import { getGaugeColor, formatDisplayValue } from "./utils";
 
 interface BarGaugePanelProps {
   summary: PanelResult;
@@ -29,7 +29,7 @@ const getRowConfig = (row: any, globalConfig: BarGaugeConfig): RowConfig => {
   };
 };
 
-const formatDisplayValue = (
+const formatBarGaugeValue = (
   numericValue: number,
   percentage: number,
   format: string | undefined,
@@ -42,7 +42,7 @@ const formatDisplayValue = (
   if (format === "multiplier") {
     return `x${(percentage / 100).toFixed(Math.max(precision, 1))}`;
   }
-  return `${numericValue.toFixed(precision)}${unit}`;
+  return formatDisplayValue(numericValue, unit || undefined, precision);
 };
 
 const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
@@ -92,7 +92,7 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
             ? getGaugeColor(percentage, config.thresholds)
             : "#10b981";
 
-          const displayValue = formatDisplayValue(
+          const displayValue = formatBarGaugeValue(
             numericValue,
             percentage,
             config.format,
