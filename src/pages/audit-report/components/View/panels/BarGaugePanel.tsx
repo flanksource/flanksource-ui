@@ -40,7 +40,7 @@ const formatDisplayValue = (
     return `${Math.round(percentage)}%`;
   }
   if (format === "multiplier") {
-    return `x${(percentage / 100).toFixed(1)}`;
+    return `x${(percentage / 100).toFixed(Math.max(precision, 1))}`;
   }
   return `${numericValue.toFixed(precision)}${unit}`;
 };
@@ -51,9 +51,9 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
   }
 
   const globalConfig: BarGaugeConfig = {
-    min: summary.bargauge?.min || 0,
-    max: summary.bargauge?.max || 100,
-    unit: summary.bargauge?.unit || "",
+    min: summary.bargauge?.min ?? 0,
+    max: summary.bargauge?.max ?? 100,
+    unit: summary.bargauge?.unit ?? "",
     thresholds: summary.bargauge?.thresholds,
     format: summary.bargauge?.format,
     precision: summary.bargauge?.precision
