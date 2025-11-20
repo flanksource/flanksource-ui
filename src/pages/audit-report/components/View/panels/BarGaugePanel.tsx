@@ -107,7 +107,7 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
               </div>
 
               <div
-                className="h-4 w-full overflow-hidden rounded bg-gray-200"
+                className="h-2.5 w-full overflow-hidden rounded bg-gray-200"
                 title={`${Math.round(numericValue)}${config.unit} / ${Math.round(config.max)}${config.unit}`}
               >
                 <div
