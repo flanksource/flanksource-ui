@@ -1,5 +1,5 @@
 import React from "react";
-import { PanelResult } from "../../../types";
+import { PanelResult, BarGaugeConfig } from "../../../types";
 import { getGaugeColor } from "./utils";
 
 interface BarGaugePanelProps {
@@ -11,10 +11,11 @@ interface RowConfig {
   min: number;
   unit: string;
   thresholds: any;
-  format: "percentage" | "multiplier" | "raw" | undefined;
+  format: "percentage" | "multiplier" | undefined;
+  precision: number;
 }
 
-const getRowConfig = (row: any, globalConfig: any): RowConfig => {
+const getRowConfig = (row: any, globalConfig: BarGaugeConfig): RowConfig => {
   const rowBargauge = row._bargauge || {};
 
   return {
@@ -23,7 +24,8 @@ const getRowConfig = (row: any, globalConfig: any): RowConfig => {
     unit: (rowBargauge.unit ?? globalConfig.unit) || "",
     thresholds:
       rowBargauge.thresholds || row._thresholds || globalConfig.thresholds,
-    format: rowBargauge.format || globalConfig.format
+    format: rowBargauge.format || globalConfig.format,
+    precision: rowBargauge.precision ?? globalConfig.precision ?? 0
   };
 };
 
@@ -31,7 +33,8 @@ const formatDisplayValue = (
   numericValue: number,
   percentage: number,
   format: string | undefined,
-  unit: string
+  unit: string,
+  precision: number
 ): string => {
   if (format === "percentage") {
     return `${Math.round(percentage)}%`;
@@ -39,7 +42,7 @@ const formatDisplayValue = (
   if (format === "multiplier") {
     return `x${(percentage / 100).toFixed(1)}`;
   }
-  return `${numericValue.toFixed(1)}${unit}`;
+  return `${numericValue.toFixed(precision)}${unit}`;
 };
 
 const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
@@ -47,12 +50,13 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
     return null;
   }
 
-  const globalConfig = {
+  const globalConfig: BarGaugeConfig = {
     min: summary.bargauge?.min || 0,
-    max: summary.bargauge?.max,
+    max: summary.bargauge?.max || 100,
     unit: summary.bargauge?.unit || "",
     thresholds: summary.bargauge?.thresholds,
-    format: summary.bargauge?.format
+    format: summary.bargauge?.format,
+    precision: summary.bargauge?.precision
   };
 
   return (
@@ -92,7 +96,8 @@ const BarGaugePanel: React.FC<BarGaugePanelProps> = ({ summary }) => {
             numericValue,
             percentage,
             config.format,
-            config.unit
+            config.unit,
+            config.precision
           );
 
           return (
