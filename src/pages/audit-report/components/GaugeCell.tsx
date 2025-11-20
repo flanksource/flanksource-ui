@@ -1,7 +1,6 @@
 import React from "react";
 import { GaugeConfig } from "../types";
-import { generateGaugeData } from "./View/panels/utils";
-import { formatBytes } from "../../../utils/common";
+import { generateGaugeData, formatDisplayValue } from "./View/panels/utils";
 import { Tooltip } from "react-tooltip";
 
 interface GaugeCellProps {
@@ -19,23 +18,6 @@ const GaugeCell: React.FC<GaugeCellProps> = ({ value, gauge }) => {
   const gaugeData = generateGaugeData({ value: gaugeValue }, gaugeConfig);
   const percentage = gaugeData.value;
   const color = gaugeData.color;
-
-  // Format display value based on unit
-  const formatDisplayValue = (value: number, unit?: string): string => {
-    if (!unit) return value.toString();
-
-    switch (unit) {
-      case "bytes":
-        return formatBytes(value);
-      case "millicores":
-      case "millicore":
-        if (value === 0) return "";
-        if (value > 0 && value < 1) return `1m`;
-        return `${Math.round(value)}m`;
-      default:
-        return `${value} ${unit}`;
-    }
-  };
 
   const displayValue = formatDisplayValue(gaugeValue, gaugeConfig?.unit);
   const maxValue = gaugeConfig?.max;

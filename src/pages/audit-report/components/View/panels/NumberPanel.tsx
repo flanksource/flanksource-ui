@@ -1,5 +1,6 @@
 import React from "react";
 import { PanelResult } from "../../../types";
+import { formatDisplayValue } from "./utils";
 
 interface NumberPanelProps {
   summary: PanelResult;
@@ -15,6 +16,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
       {summary.rows.map((row, rowIndex) => {
         const { value, count, label } = row;
         const displayValue = value ?? count;
+        const numericValue = Number(displayValue);
 
         return (
           <div
@@ -30,15 +32,17 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
               </p>
             )}
             <div className="flex flex-1 items-center justify-center">
-              <p className="text-6xl font-semibold text-teal-600">
+              <p className="text-teal-600 text-6xl font-semibold">
                 {summary.number
-                  ? Number(displayValue).toFixed(summary.number.precision || 0)
+                  ? formatDisplayValue(
+                      summary.number.unit
+                        ? numericValue
+                        : Number(
+                            numericValue.toFixed(summary.number.precision || 0)
+                          ),
+                      summary.number.unit
+                    )
                   : displayValue}
-                {summary.number?.unit && (
-                  <span className="ml-2 text-2xl font-normal text-gray-500">
-                    {summary.number.unit}
-                  </span>
-                )}
               </p>
             </div>
           </div>
