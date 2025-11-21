@@ -8,11 +8,7 @@ import {
   Legend
 } from "recharts";
 import { PanelResult } from "../../../types";
-import {
-  COLOR_PALETTE,
-  getStatusColorIndex,
-  COLOR_INDEX_TO_HEX
-} from "./utils";
+import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
 
 interface PieChartPanelProps {
   summary: PanelResult;
@@ -20,22 +16,6 @@ interface PieChartPanelProps {
 
 /**
  * Transforms raw data rows into pie chart compatible format with intelligent color assignment.
- *
- * Color assignment priority:
- * 1. User-provided custom color (if specified in customColors map)
- * 2. Heuristic color based on label/status name (e.g., "error" -> red, "success" -> green)
- * 3. Cycle through default palette as fallback
- *
- * @param rows - Array of data rows containing count and at least one other field for the label
- * @param customColors - Optional map of label values to hex color overrides
- * @returns Array of objects with name, value, and fill color for pie chart rendering
- *
- * @example
- * const data = [
- *   { status: 'success', count: 10 },
- *   { status: 'error', count: 3 }
- * ];
- * generatePieChartData(data); // Returns chart data with heuristic colors
  */
 export const generatePieChartData = (
   rows: Record<string, any>[],
@@ -60,14 +40,10 @@ export const generatePieChartData = (
     if (customColor) {
       fill = customColor;
     } else if (typeof labelValue === "string") {
-      const heuristicColorIndex = getStatusColorIndex(labelValue);
-      if (heuristicColorIndex !== 0) {
-        const hexColors = COLOR_INDEX_TO_HEX[heuristicColorIndex];
-        const colorInGroup = index % hexColors.length;
-        fill = hexColors[colorInGroup];
-      } else {
-        fill = COLOR_PALETTE[index % COLOR_PALETTE.length];
-      }
+      const severity = getSeverityOfText(labelValue);
+      const hexColors = severityToHex[severity];
+      const colorInGroup = index % hexColors.length;
+      fill = hexColors[colorInGroup];
     } else {
       fill = COLOR_PALETTE[index % COLOR_PALETTE.length];
     }

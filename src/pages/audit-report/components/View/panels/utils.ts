@@ -2,28 +2,6 @@ import { GaugeConfig } from "../../../types";
 import { formatBytes } from "../../../../../utils/common";
 
 /**
- * Maps status color indices (0-5) to arrays of hex colors derived from Tailwind CSS.
- * Index meanings:
- * - 0: Gray (unknown/default status)
- * - 1: Green (success, resolved, healthy)
- * - 2: Blue (in-progress, pending)
- * - 3: Yellow (warning)
- * - 4: Orange (high severity)
- * - 5: Red (critical/error)
- */
-export const COLOR_INDEX_TO_HEX: Record<number, string[]> = {
-  0: ["#4b5563", "#78716c"], // Gray: gray-600, stone-600
-  1: ["#16a34a", "#22c55e", "#15803d", "#059669"], // Green: green-600, green-500, green-700, teal-600
-  2: ["#2563eb", "#0891b2", "#3b82f6", "#1d4ed8", "#0d9488"], // Blue: blue-600, cyan-600, blue-500, blue-800, teal-600
-  3: ["#eab308", "#f59e0b", "#d97706"], // Yellow: yellow-500, amber-500, amber-600
-  4: ["#ea580c", "#f97316", "#d97706"], // Orange: orange-600, orange-500, amber-600
-  5: ["#dc2626", "#ef4444", "#991b1b"] // Red: red-600, red-500, red-900
-};
-
-/** Default color palette for charts, combining all colors from COLOR_INDEX_TO_HEX flattened */
-export const COLOR_PALETTE = Object.values(COLOR_INDEX_TO_HEX).flat();
-
-/**
  * Determines the color for a gauge based on percentage and defined thresholds.
  * Returns the color of the highest threshold that the percentage is greater than or equal to.
  *
@@ -147,27 +125,13 @@ export const formatDisplayLabel = (name: string): string => {
     .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
 };
 
+type Severity = "critical" | "high" | "medium" | "low" | "info";
+
 /**
- * Determines a color index (0-5) for a status string using heuristic matching.
+ * Determines the severity level for a status string using heuristic matching.
  * Uses both exact matches for common statuses and substring matching for flexible classification.
- *
- * Color index mapping:
- * - 0: Gray (unknown/unmatched status)
- * - 1: Green (success, resolved, healthy, active)
- * - 2: Blue (in-progress, pending, low severity)
- * - 3: Yellow (warning, medium severity)
- * - 4: Orange (high severity)
- * - 5: Red (critical, error, failure)
- *
- * @param status - The status string to classify
- * @returns Color index (0-5) corresponding to the status
- *
- * @example
- * getStatusColorIndex('success') // 1 (Green)
- * getStatusColorIndex('Error: Connection failed') // 5 (Red)
- * getStatusColorIndex('unknown-status') // 0 (Gray)
  */
-export const getStatusColorIndex = (status: string): number => {
+export const getSeverityOfText = (status: string): Severity => {
   const statusLower = status.toLowerCase();
 
   // Specific status mappings
@@ -177,14 +141,25 @@ export const getStatusColorIndex = (status: string): number => {
     case "mitigated":
     case "low":
     case "scaled to zero":
-      return 2; // Blue
+    case "terminating":
+    case "upgradesucceeded":
+      return "low";
+
     case "investigating":
+    case "imagepullbackoff":
+    case "rollbacksucceeded":
+    case "terminating stalled":
     case "medium":
-      return 3; // Yellow
+      return "medium";
+
     case "critical":
-      return 5; // Red
+    case "failed":
+      return "critical";
+
     case "high":
-      return 4; // Orange
+    case "unschedulable":
+    case "sourcenotready":
+      return "high";
   }
 
   // Dynamic heuristics for substring matches
@@ -199,23 +174,37 @@ export const getStatusColorIndex = (status: string): number => {
     statusLower.includes("running") ||
     statusLower.includes("active")
   ) {
-    return 1; // Green (best)
+    return "info";
   } else if (
     statusLower.includes("error") ||
     statusLower.includes("fail") ||
     statusLower.includes("reject") ||
     statusLower.includes("deny")
   ) {
-    return 5; // Red (worst)
+    return "critical";
   } else if (
     statusLower.includes("warn") ||
     statusLower.includes("caution") ||
     statusLower.includes("alert")
   ) {
-    return 3; // Yellow
+    return "medium";
   } else if (statusLower.includes("progress")) {
-    return 1; // Green (running/progress is good)
+    return "info";
   }
 
-  return 0; // Gray (unknown/default)
+  return "info";
 };
+
+/**
+ * Maps severity levels to arrays of hex colors derived from Tailwind CSS.
+ */
+export const severityToHex: Record<Severity, string[]> = {
+  info: ["#16a34a", "#22c55e", "#15803d", "#059669"],
+  low: ["#2563eb", "#0891b2", "#3b82f6", "#1d4ed8", "#0d9488"],
+  medium: ["#eab308", "#f59e0b", "#d97706"],
+  high: ["#ea580c", "#f97316", "#d97706"],
+  critical: ["#dc2626", "#ef4444", "#991b1b"]
+};
+
+/** Default color palette for charts, combining all colors from COLOR_INDEX_TO_HEX flattened */
+export const COLOR_PALETTE = Object.values(severityToHex).flat();

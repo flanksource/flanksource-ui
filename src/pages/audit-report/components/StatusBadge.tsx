@@ -1,5 +1,5 @@
 import React from "react";
-import { getStatusColorIndex } from "./View/panels/utils";
+import { getSeverityOfText } from "./View/panels/utils";
 
 interface StatusBadgeProps {
   status: string;
@@ -7,49 +7,44 @@ interface StatusBadgeProps {
 }
 
 /**
- * Tailwind CSS color definitions for each status color index.
- * Each index (0-5) contains background, dot indicator, and text color classes.
+ * Tailwind CSS color definitions for each severity level.
+ * Each severity contains background, dot indicator, and text color classes.
  *
- * Index mapping:
- * - 0: Gray (unknown/default status)
- * - 1: Green (success, resolved, healthy)
- * - 2: Blue (in-progress, pending)
- * - 3: Yellow (warning)
- * - 4: Orange (high severity)
- * - 5: Red (critical/error)
+ * Severity mapping:
+ * - "info": Green (success, resolved, healthy)
+ * - "low": Blue (in-progress, pending)
+ * - "medium": Yellow (warning)
+ * - "high": Orange (high severity)
+ * - "critical": Red (critical/error)
  */
-const STATUS_COLORS = [
+const STATUS_COLORS: Record<string, { bg: string; dot: string; text: string }> =
   {
-    bg: "bg-gray-100 text-gray-800",
-    dot: "bg-gray-600",
-    text: "text-gray-700"
-  },
-  {
-    bg: "bg-green-100 text-green-800",
-    dot: "bg-green-600",
-    text: "text-green-700"
-  },
-  {
-    bg: "bg-blue-100 text-blue-800",
-    dot: "bg-blue-600",
-    text: "text-blue-700"
-  },
-  {
-    bg: "bg-yellow-100 text-yellow-800",
-    dot: "bg-yellow-600",
-    text: "text-yellow-700"
-  },
-  {
-    bg: "bg-orange-100 text-orange-800",
-    dot: "bg-orange-600",
-    text: "text-orange-700"
-  },
-  {
-    bg: "bg-red-100 text-red-800",
-    dot: "bg-red-600",
-    text: "text-red-700"
-  }
-];
+    info: {
+      bg: "bg-green-100 text-green-800",
+      dot: "bg-green-600",
+      text: "text-green-700"
+    },
+    low: {
+      bg: "bg-blue-100 text-blue-800",
+      dot: "bg-blue-600",
+      text: "text-blue-700"
+    },
+    medium: {
+      bg: "bg-yellow-100 text-yellow-800",
+      dot: "bg-yellow-600",
+      text: "text-yellow-700"
+    },
+    high: {
+      bg: "bg-orange-100 text-orange-800",
+      dot: "bg-orange-600",
+      text: "text-orange-700"
+    },
+    critical: {
+      bg: "bg-red-100 text-red-800",
+      dot: "bg-red-600",
+      text: "text-red-700"
+    }
+  };
 
 /**
  * Capitalizes the first character of a string.
@@ -62,18 +57,6 @@ const capitalizeStatus = (str: string): string => {
 
 /**
  * Displays a status badge with heuristic-based coloring.
- *
- * Uses the status string to determine an appropriate color from a predefined palette.
- * Colors are assigned based on semantic meaning (green for success, red for error, etc.).
- * The component can render as either a simple badge or a print-optimized format with a dot indicator.
- *
- * @param props - Component props
- * @param props.status - The status string to display
- * @param props.printView - If true, renders with a dot indicator for print-friendly format (default: false)
- *
- * @example
- * <StatusBadge status="success" />
- * <StatusBadge status="error" printView />
  */
 const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
@@ -82,8 +65,8 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   const getStatusColor = (
     status: string
   ): { bg: string; dot: string; text: string } => {
-    const colorIndex = getStatusColorIndex(status);
-    return STATUS_COLORS[colorIndex];
+    const severity = getSeverityOfText(status);
+    return STATUS_COLORS[severity];
   };
 
   const { bg, dot, text } = getStatusColor(status);
