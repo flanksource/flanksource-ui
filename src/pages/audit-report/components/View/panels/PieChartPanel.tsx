@@ -8,12 +8,59 @@ import {
   Legend
 } from "recharts";
 import { PanelResult } from "../../../types";
-import { COLOR_BANK, generatePieChartData } from "./utils";
+import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
 
 interface PieChartPanelProps {
   summary: PanelResult;
 }
 
+/**
+ * Transforms raw data rows into pie chart compatible format with intelligent color assignment.
+ */
+export const generatePieChartData = (
+  rows: Record<string, any>[],
+  customColors?: Record<string, string>
+) => {
+  return rows.map((row, index) => {
+    const { count, ...rest } = row;
+    const labelKey = Object.keys(rest)[0];
+    const labelValue = rest[labelKey];
+
+    if (!labelValue) {
+      return {
+        name: "Unknown",
+        value: count,
+        fill: COLOR_PALETTE[index % COLOR_PALETTE.length]
+      };
+    }
+
+    const customColor = customColors?.[labelValue];
+    let fill: string;
+
+    if (customColor) {
+      fill = customColor;
+    } else if (typeof labelValue === "string") {
+      const severity = getSeverityOfText(labelValue);
+      const hexColors = severityToHex[severity];
+      const colorInGroup = index % hexColors.length;
+      fill = hexColors[colorInGroup];
+    } else {
+      fill = COLOR_PALETTE[index % COLOR_PALETTE.length];
+    }
+
+    return {
+      name: labelValue,
+      value: count,
+      fill
+    };
+  });
+};
+
+/**
+ * Custom legend renderer for the pie chart displaying color indicators with labels.
+ * @param props - Recharts legend props containing payload array
+ * @returns JSX element rendering the legend
+ */
 const renderLegend = (props: any) => {
   const { payload } = props;
 
@@ -32,8 +79,24 @@ const renderLegend = (props: any) => {
   );
 };
 
+/**
+ * Displays data as an interactive pie chart with intelligent color coding.
+ *
+ * Features:
+ * - Automatic semantic coloring (success=green, error=red, etc.)
+ * - Support for custom color overrides
+ * - Optional value labels on chart slices
+ * - Custom legend with color indicators
+ *
+ * @param props - Component props
+ * @param props.summary - Panel data containing rows, title, description, and chart config
+ */
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
-  const chartData = generatePieChartData(summary.rows || []);
+  const chartData = generatePieChartData(
+    summary.rows || [],
+    summary.piechart?.colors
+  );
+
   return (
     <div className="flex h-full min-h-[300px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
@@ -54,13 +117,7 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
               }
             >
               {chartData.map((entry, entryIndex) => (
-                <Cell
-                  key={`cell-${entryIndex}`}
-                  fill={
-                    summary.piechart?.colors?.[entry.name] ||
-                    COLOR_BANK[entryIndex % COLOR_BANK.length]
-                  }
-                />
+                <Cell key={`cell-${entryIndex}`} fill={entry.fill} />
               ))}
             </Pie>
             <Tooltip allowEscapeViewBox={{ x: true, y: true }} />
