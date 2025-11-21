@@ -1,5 +1,5 @@
 import React from "react";
-import GaugeComponent from "react-gauge-component";
+import GaugeComponent, { SubArc } from "react-gauge-component";
 import { PanelResult, GaugeThreshold } from "../../../types";
 import { formatDisplayValue } from "./utils";
 
@@ -14,34 +14,39 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
     .map((row, rowIndex) => {
       if (!summary.gauge) return null;
 
-      const value = parseFloat(
-        typeof row.value === "number" ? row.value.toFixed(2) : "0"
-      );
-      const min = summary.gauge.min || 0;
-      const max = summary.gauge.max || 100;
-      let percentage = 0;
-      if (summary.gauge && max !== min) {
-        percentage = ((value - min) / (max - min)) * 100;
-      }
-      let clampedPercentage = parseFloat(
-        Math.max(0, Math.min(100, percentage)).toFixed(2)
-      );
+      const value = Number(row.value);
+      const safeValue = Number.isFinite(value) ? value : 0;
+      const min = Number(summary.gauge.min || 0);
+      const max = Number(summary.gauge.max || 0);
+      const hasMax = summary.gauge.max != null;
 
-      const subArcs = summary.gauge?.thresholds
-        ? summary.gauge.thresholds.map(
-            (threshold: GaugeThreshold, i: number) => ({
-              limit:
-                i === (summary.gauge?.thresholds?.length ?? 0) - 1
-                  ? 100
-                  : (summary.gauge?.thresholds?.[i + 1]?.percent ?? 100),
-              color: threshold.color,
-              showTick: true
-            })
-          )
-        : [{ limit: 100, color: "teal", showTick: false }];
+      let percentage = 0;
+      if (hasMax && max !== min) {
+        percentage = ((safeValue - min) / (max - min)) * 100;
+      }
+
+      // Handle edge cases where value is outside min/max or percentage is NaN
+      const clampedPercentage = Number.isFinite(percentage)
+        ? parseFloat(Math.max(0, Math.min(100, percentage)).toFixed(2))
+        : 0;
+
+      const subArcs: SubArc[] = !hasMax
+        ? [{ color: "#d1d5db" }] // Simplified arc for gauges without max value
+        : summary.gauge?.thresholds
+          ? summary.gauge.thresholds.map(
+              (threshold: GaugeThreshold, i: number) => ({
+                limit:
+                  i === (summary.gauge?.thresholds?.length ?? 0) - 1
+                    ? 100
+                    : (summary.gauge?.thresholds?.[i + 1]?.percent ?? 100),
+                color: threshold.color,
+                showTick: true
+              })
+            )
+          : [{ limit: 100, color: "teal", showTick: false }];
 
       let labelColor = "black";
-      if (summary.gauge?.thresholds) {
+      if (hasMax && summary.gauge?.thresholds) {
         for (const threshold of summary.gauge.thresholds) {
           if (clampedPercentage >= (threshold.percent || 0)) {
             labelColor = threshold.color;
@@ -78,10 +83,13 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
                   }
                 },
                 tickLabels: (() => {
-                  const hasExplicitMinMax =
-                    summary.gauge?.min !== undefined ||
-                    summary.gauge?.max !== undefined;
-                  if (!hasExplicitMinMax) return undefined;
+                  if (!hasMax) {
+                    // Only show simplified ticks when max is not defined
+                    return {
+                      type: "outer",
+                      hideMinMax: true
+                    };
+                  }
 
                   return {
                     type: "outer",
