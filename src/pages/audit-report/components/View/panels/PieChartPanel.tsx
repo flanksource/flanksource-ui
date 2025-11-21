@@ -110,6 +110,7 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
               data={chartData}
               dataKey="value"
               nameKey="name"
+              stroke={chartData.length === 1 ? "none" : undefined}
               label={
                 summary.piechart?.showLabels === true
                   ? (entry: any) => entry.value
