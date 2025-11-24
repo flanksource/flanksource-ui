@@ -121,7 +121,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     }),
     mantinePaperProps: () => ({
       sx: {
-        flex: "1 1 0",
+        flex: "1 1 auto",
         display: "flex",
         flexFlow: "column"
       }
@@ -130,7 +130,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
     enableExpandAll: enableGrouping,
     mantineTableContainerProps: {
       sx: {
-        flex: "1 1 0"
+        flex: "1 1 auto"
       }
     },
     mantineTableBodyCellProps: () => ({
