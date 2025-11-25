@@ -239,33 +239,52 @@ export const dateSortHelper = (
   return 0;
 };
 
-export function formatDuration(value: number): string {
-  const duration = dayjs.duration(value, "milliseconds");
-  const milliseconds = duration.asMilliseconds();
-  if (milliseconds < 1000) {
-    return `${milliseconds.toFixed(0)}ms`;
+export function formatDuration(ms: number): string {
+  ms = Math.abs(ms);
+  const dur = dayjs.duration(ms, "milliseconds");
+  const totalMs = dur.asMilliseconds();
+
+  if (totalMs < 1000) {
+    return `${Math.floor(totalMs)}ms`;
   }
-  const seconds = duration.seconds();
-  const minutes = duration.minutes();
-  const hours = duration.hours();
-  const days = duration.days();
-  const parts = [];
-  if (days > 0) {
-    parts.push(`${days}d`);
+
+  const totalSeconds = dur.asSeconds();
+  if (totalSeconds < 60) {
+    return `${Math.floor(totalSeconds)}s`;
   }
-  if (hours > 0) {
-    parts.push(`${hours}h`);
+
+  const totalMinutes = dur.asMinutes();
+  if (totalMinutes < 60) {
+    const minutes = Math.floor(totalMinutes);
+    const seconds = Math.floor(dur.asSeconds() % 60);
+    return seconds > 0 ? `${minutes}m${seconds}s` : `${minutes}m`;
   }
-  if (minutes > 0) {
-    parts.push(`${minutes}m`);
+
+  const totalHours = dur.asHours();
+  if (totalHours < 24) {
+    return `${Math.floor(totalHours)}h`;
   }
-  if (seconds > 0) {
-    parts.push(`${seconds}s`);
+
+  const totalDays = dur.asDays();
+
+  // Less than 2 days: show compound format (e.g., "1d1h")
+  if (totalDays < 2) {
+    const days = Math.floor(totalDays);
+    const hours = Math.floor(dur.asHours() % 24);
+    return hours > 0 ? `${days}d${hours}h` : `${days}d`;
   }
-  const remainingMilliseconds = (milliseconds % 1000).toFixed(0);
-  // only show milliseconds if there is no other value
-  if (parseInt(remainingMilliseconds) > 0 && parts.length === 0) {
-    parts.push(`${remainingMilliseconds}ms`);
+
+  // Less than ~60 days: show decimal days (e.g., "2.1d") or whole days (e.g., "20d")
+  if (totalDays < 60) {
+    const rounded = Math.round(totalDays * 10) / 10;
+    return rounded % 1 === 0
+      ? `${Math.floor(rounded)}d`
+      : `${rounded.toFixed(1)}d`;
   }
-  return parts.join("");
+
+  // Months + days format (e.g., "3mo4d")
+  const avgDaysPerMonth = 30.44;
+  const months = Math.floor(totalDays / avgDaysPerMonth);
+  const remainingDays = Math.round(totalDays - months * avgDaysPerMonth);
+  return remainingDays > 0 ? `${months}mo${remainingDays}d` : `${months}mo`;
 }
