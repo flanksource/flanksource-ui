@@ -386,10 +386,17 @@ export interface GaugeThreshold {
   color: string;
 }
 
+export type GaugeUnit =
+  | "bytes"
+  | "millicore"
+  | "millicores"
+  | "percent"
+  | (string & {});
+
 export interface GaugeConfig {
   min: number;
   max: number;
-  unit?: string;
+  unit?: GaugeUnit;
   thresholds?: GaugeThreshold[];
   precision?: number;
 }
@@ -397,7 +404,7 @@ export interface GaugeConfig {
 export interface BarGaugeConfig {
   min: number;
   max: number;
-  unit?: string;
+  unit?: GaugeUnit;
   thresholds?: GaugeThreshold[];
   precision?: number;
   format?: "percentage" | "multiplier";

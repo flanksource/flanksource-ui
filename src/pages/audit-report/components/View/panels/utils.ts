@@ -88,6 +88,8 @@ export const formatDisplayValue = (
   }
 
   switch (unit) {
+    case "percent":
+      return `${Number(value.toFixed(precision || 0))}%`;
     case "bytes":
       return formatBytes(value);
     case "millicores":

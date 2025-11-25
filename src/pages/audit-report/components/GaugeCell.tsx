@@ -25,9 +25,12 @@ const GaugeCell: React.FC<GaugeCellProps> = ({ value, gauge }) => {
     undefined
   );
   const maxValue = gaugeConfig?.max;
-  const maxDisplayValue = maxValue
-    ? formatDisplayValue(maxValue, gaugeConfig?.unit, undefined)
-    : undefined;
+  const isPercentUnit =
+    gaugeConfig?.unit === "percent" || gaugeConfig?.unit === "%";
+  const maxDisplayValue =
+    maxValue && !isPercentUnit
+      ? formatDisplayValue(maxValue, gaugeConfig?.unit, undefined)
+      : undefined;
 
   const tooltipId = `gauge-tooltip-${Math.random().toString(36).slice(2, 9)}`;
 
