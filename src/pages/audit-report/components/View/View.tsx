@@ -27,8 +27,8 @@ import {
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
-import { getViewPrefix } from "../../../../utils/viewHash";
 import ViewCardsDisplay from "./ViewCardsDisplay";
+import { VIEW_VAR_PREFIX } from "@flanksource-ui/pages/views/components/ViewSection";
 
 interface ViewProps {
   title?: string;
@@ -68,10 +68,7 @@ const View: React.FC<ViewProps> = ({
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Create unique prefix for global filters (same as ViewSection uses)
-  const globalVarPrefix = useMemo(
-    () => getViewPrefix(namespace, name),
-    [namespace, name]
-  );
+  const globalVarPrefix = VIEW_VAR_PREFIX;
   const hasDataTable = columns && columns.length > 0;
 
   // Detect if card mode is available (supports both new and old cardPosition field)
