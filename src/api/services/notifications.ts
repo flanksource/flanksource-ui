@@ -11,7 +11,7 @@ import {
   NotificationSendHistorySummary,
   NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
-  SilenceNotificationResponse
+  SilenceSaveRequest
 } from "../types/notifications";
 
 export function getPagingParams({
@@ -143,9 +143,7 @@ export const getNotificationById = async (id: string) => {
   return res.data ? res.data?.[0] : undefined;
 };
 
-export const silenceNotification = async (
-  data: SilenceNotificationResponse
-) => {
+export const silenceNotification = async (data: SilenceSaveRequest) => {
   const res = await NotificationAPI.post("/silence", data);
   return res.data;
 };

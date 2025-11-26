@@ -5,10 +5,11 @@ import {
   getNotificationSilencePreview
 } from "@flanksource-ui/api/services/notifications";
 import {
-  SilenceNotificationResponse as SilenceNotificationRequest,
-  SilenceNotificationResponse,
+  SilenceSaveRequest,
+  SilenceSaveFormValues,
   NotificationSendHistorySummary
 } from "@flanksource-ui/api/types/notifications";
+import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
@@ -32,9 +33,9 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import YAML from "yaml";
 
 type NotificationSilenceFormProps = {
-  data?: SilenceNotificationRequest;
+  data?: SilenceSaveFormValues;
   footerClassName?: string;
-  onSuccess?: (data: SilenceNotificationResponse) => void;
+  onSuccess?: (data: SilenceSaveFormValues) => void;
   onCancel?: () => void;
 };
 
@@ -53,7 +54,7 @@ export default function NotificationSilenceForm({
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
-  const initialValues: Partial<SilenceNotificationRequest> = {
+  const initialValues: Partial<SilenceSaveFormValues> = {
     ...data,
     name: data?.name,
     component_id: data?.component_id,
@@ -81,7 +82,7 @@ export default function NotificationSilenceForm({
   }, [data]);
 
   const { isLoading, mutate } = useMutation({
-    mutationFn: (data: SilenceNotificationRequest) => {
+    mutationFn: (data: SilenceSaveRequest) => {
       if (data.id) {
         return updateNotificationSilence({
           id: data.id,
@@ -93,8 +94,8 @@ export default function NotificationSilenceForm({
           check_id: data.check_id,
           component_id: data.component_id,
           config_id: data.config_id,
-          from: data.from,
-          until: data.until,
+          from: data.from!,
+          until: data.until ?? null,
           description: data.description,
           recursive: data.recursive,
           namespace: data.namespace ?? ""
@@ -118,7 +119,7 @@ export default function NotificationSilenceForm({
     }
   });
 
-  const validate = (v: Partial<SilenceNotificationRequest>) => {
+  const validate = (v: Partial<SilenceSaveFormValues>) => {
     const errors: { [key: string]: string } = {};
     if (!v.name) {
       errors.name = "Must specify a unique name";
@@ -131,7 +132,7 @@ export default function NotificationSilenceForm({
   };
 
   const submit = (
-    v: Partial<SilenceNotificationRequest>,
+    v: Partial<SilenceSaveFormValues>,
     // @ts-ignore
     formik: FormikBag
   ) => {
@@ -176,12 +177,11 @@ export default function NotificationSilenceForm({
 
     v = omit(v, "error");
 
-    // Convert selectors from YAML string to JSON string if present
-    let selectors = v.selectors;
-    if (selectors && typeof selectors === "string" && selectors.trim()) {
+    // Convert selectors from YAML string to array if present
+    let selectors: PlaybookResourceSelector[] | undefined = undefined;
+    if (v.selectors && typeof v.selectors === "string" && v.selectors.trim()) {
       try {
-        const parsedYaml = YAML.parse(selectors);
-        selectors = JSON.stringify(parsedYaml);
+        selectors = YAML.parse(v.selectors);
       } catch (e) {
         formik.setErrors({
           form: "Invalid YAML format in selectors field"
@@ -196,7 +196,7 @@ export default function NotificationSilenceForm({
         from: fromTime,
         until: untilTime,
         selectors
-      } as SilenceNotificationRequest,
+      } as SilenceSaveRequest,
       {
         onError(error) {
           // @ts-ignore
@@ -209,7 +209,7 @@ export default function NotificationSilenceForm({
   return (
     // @ts-ignore
     <div className="flex flex-col gap-2 overflow-auto">
-      <Formik<Partial<SilenceNotificationRequest>>
+      <Formik<Partial<SilenceSaveFormValues>>
         initialValues={initialValues}
         validateOnChange={false}
         validateOnBlur={true}
@@ -453,7 +453,7 @@ export default function NotificationSilenceForm({
                     title="Delete Silence"
                     description="Are you sure you want to delete this silence?"
                     yesLabel="Delete"
-                    onConfirm={() => deleteSilence(data.id)}
+                    onConfirm={() => deleteSilence(data.id!)}
                   />
                 )}
 
