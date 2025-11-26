@@ -38,6 +38,7 @@ interface ViewProps {
   };
   requestFingerprint: string;
   currentVariables?: Record<string, string>;
+  hideVariables?: boolean;
 }
 
 const View: React.FC<ViewProps> = ({
@@ -50,7 +51,8 @@ const View: React.FC<ViewProps> = ({
   variables,
   card,
   requestFingerprint,
-  currentVariables
+  currentVariables,
+  hideVariables
 }) => {
   const { pageSize } = useReactTablePaginationState();
 
@@ -164,7 +166,7 @@ const View: React.FC<ViewProps> = ({
           </h3>
         )}
 
-        {variables && variables.length > 0 && (
+        {!hideVariables && variables && variables.length > 0 && (
           <GlobalFiltersForm
             variables={variables}
             globalVarPrefix={globalVarPrefix}
@@ -174,7 +176,7 @@ const View: React.FC<ViewProps> = ({
           </GlobalFiltersForm>
         )}
 
-        {variables && variables.length > 0 && (
+        {!hideVariables && variables && variables.length > 0 && (
           <hr className="my-4 border-gray-200" />
         )}
 

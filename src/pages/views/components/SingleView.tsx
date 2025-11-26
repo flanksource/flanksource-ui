@@ -1,10 +1,13 @@
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
-import ViewSection from "./ViewSection";
+import ViewSection, { VIEW_VAR_PREFIX } from "./ViewSection";
 import Age from "../../../ui/Age/Age";
 import { toastError } from "../../../components/Toast/toast";
 import ViewLayout from "./ViewLayout";
+import { useAggregatedViewVariables } from "../hooks/useAggregatedViewVariables";
+import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersForm";
+import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
 
 interface SingleViewProps {
   id: string;
@@ -34,6 +37,30 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     staleTime: 5 * 60 * 1000,
     keepPreviousData: true
   });
+
+  // Collect all section refs (main view + additional sections)
+  // Must be called before early returns to satisfy React hooks rules
+  const allSectionRefs = useMemo(() => {
+    if (!viewResult?.namespace || !viewResult?.name) {
+      return [];
+    }
+    const refs = [
+      { namespace: viewResult.namespace || "", name: viewResult.name }
+    ];
+    if (viewResult?.sections) {
+      viewResult.sections.forEach((section) => {
+        refs.push({
+          namespace: section.viewRef.namespace,
+          name: section.viewRef.name
+        });
+      });
+    }
+    return refs;
+  }, [viewResult?.namespace, viewResult?.name, viewResult?.sections]);
+
+  // Fetch and aggregate variables from all sections
+  const { variables: aggregatedVariables, currentVariables } =
+    useAggregatedViewVariables(allSectionRefs);
 
   const handleForceRefresh = async () => {
     forceRefreshRef.current = true;
@@ -135,15 +162,30 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       }
     >
       <div className="flex h-full w-full flex-1 flex-col overflow-y-auto p-6 pb-0">
+        {/* Render aggregated variables once at the top */}
+        {aggregatedVariables && aggregatedVariables.length > 0 && (
+          <GlobalFiltersForm
+            variables={aggregatedVariables}
+            globalVarPrefix={VIEW_VAR_PREFIX}
+            currentVariables={currentVariables}
+          >
+            <GlobalFilters variables={aggregatedVariables} />
+          </GlobalFiltersForm>
+        )}
+
+        {aggregatedVariables && aggregatedVariables.length > 0 && (
+          <hr className="my-4 border-gray-200" />
+        )}
+
         <div>
-          <ViewSection key={name} section={mySection} />
+          <ViewSection key={name} section={mySection} hideVariables />
         </div>
 
         {viewResult?.sections && viewResult.sections.length > 0 && (
           <>
             {viewResult.sections.map((section) => (
               <div key={section.viewRef.name} className="mt-6 pt-6">
-                <ViewSection section={section} />
+                <ViewSection section={section} hideVariables />
               </div>
             ))}
           </>
