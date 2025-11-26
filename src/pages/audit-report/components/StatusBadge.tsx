@@ -43,6 +43,11 @@ const STATUS_COLORS: Record<string, { bg: string; dot: string; text: string }> =
       bg: "bg-red-100 text-red-800",
       dot: "bg-red-600",
       text: "text-red-700"
+    },
+    unknown: {
+      bg: "bg-gray-100 text-gray-800",
+      dot: "bg-gray-600",
+      text: "text-gray-700"
     }
   };
 

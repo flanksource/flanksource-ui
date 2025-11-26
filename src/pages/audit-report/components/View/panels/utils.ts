@@ -131,7 +131,7 @@ export const formatDisplayLabel = (name: string): string => {
     .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
 };
 
-type Severity = "critical" | "high" | "medium" | "low" | "info";
+type Severity = "critical" | "high" | "medium" | "low" | "info" | "unknown";
 
 /**
  * Determines the severity level for a status string using heuristic matching.
@@ -198,18 +198,96 @@ export const getSeverityOfText = (status: string): Severity => {
     return "info";
   }
 
-  return "info";
+  return "unknown";
 };
 
 /**
  * Maps severity levels to arrays of hex colors derived from Tailwind CSS.
  */
 export const severityToHex: Record<Severity, string[]> = {
-  info: ["#16a34a", "#22c55e", "#15803d", "#059669"],
-  low: ["#2563eb", "#0891b2", "#3b82f6", "#1d4ed8", "#0d9488"],
-  medium: ["#eab308", "#f59e0b", "#d97706"],
-  high: ["#ea580c", "#f97316", "#d97706"],
-  critical: ["#dc2626", "#ef4444", "#991b1b"]
+  info: [
+    "#16a34a",
+    "#22c55e",
+    "#4ade80",
+    "#15803d",
+    "#059669",
+    "#10b981",
+    "#34d399",
+    "#047857",
+    "#065f46",
+    "#14532d"
+  ],
+  low: [
+    "#2563eb",
+    "#0891b2",
+    "#3b82f6",
+    "#60a5fa",
+    "#1d4ed8",
+    "#0d9488",
+    "#06b6d4",
+    "#0ea5e9",
+    "#38bdf8",
+    "#1e40af",
+    "#14b8a6",
+    "#2dd4bf"
+  ],
+  medium: [
+    "#eab308",
+    "#f59e0b",
+    "#fbbf24",
+    "#d97706",
+    "#fcd34d",
+    "#ca8a04",
+    "#b45309",
+    "#a16207",
+    "#facc15",
+    "#f5d500"
+  ],
+  high: [
+    "#ea580c",
+    "#f97316",
+    "#fb923c",
+    "#c2410c",
+    "#fdba74",
+    "#9a3412",
+    "#ed6c02",
+    "#ff8c00",
+    "#e65100",
+    "#bf360c"
+  ],
+  critical: [
+    "#dc2626",
+    "#ef4444",
+    "#f87171",
+    "#991b1b",
+    "#b91c1c",
+    "#7f1d1d",
+    "#fca5a5",
+    "#e11d48",
+    "#be123c",
+    "#9f1239"
+  ],
+  unknown: [
+    "#8b5cf6",
+    "#06b6d4",
+    "#ec4899",
+    "#84cc16",
+    "#6366f1",
+    "#db2777",
+    "#22d3ee",
+    "#7c3aed",
+    "#f43f5e",
+    "#a855f7",
+    "#c026d3",
+    "#a3e635",
+    "#4f46e5",
+    "#f472b6",
+    "#d946ef",
+    "#fb7185",
+    "#6b7280",
+    "#9ca3af",
+    "#4b5563"
+  ]
 };
 
 /** Default color palette for charts, combining all colors from COLOR_INDEX_TO_HEX flattened */
