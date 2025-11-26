@@ -8,12 +8,16 @@ import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams"
 
 interface ViewSectionProps {
   section: Section;
+  hideVariables?: boolean;
 }
 
 // This is the prefix for all the query params that are related to the view variables.
 export const VIEW_VAR_PREFIX = "viewvar";
 
-const ViewSection: React.FC<ViewSectionProps> = ({ section }) => {
+const ViewSection: React.FC<ViewSectionProps> = ({
+  section,
+  hideVariables
+}) => {
   const { namespace, name } = section.viewRef;
 
   // Use prefixed search params for view variables
@@ -77,6 +81,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({ section }) => {
         card={sectionViewResult?.card}
         requestFingerprint={sectionViewResult.requestFingerprint}
         currentVariables={currentViewVariables}
+        hideVariables={hideVariables}
       />
     </>
   );
