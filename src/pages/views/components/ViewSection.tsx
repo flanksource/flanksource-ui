@@ -5,19 +5,22 @@ import View from "../../audit-report/components/View/View";
 import { ViewSection as Section } from "../../audit-report/types";
 import { Icon } from "../../../ui/Icons/Icon";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
-import { getViewPrefix } from "../../../utils/viewHash";
 
 interface ViewSectionProps {
   section: Section;
 }
 
+// This is the prefix for all the query params that are related to the view variables.
+export const VIEW_VAR_PREFIX = "viewvar";
+
 const ViewSection: React.FC<ViewSectionProps> = ({ section }) => {
   const { namespace, name } = section.viewRef;
 
-  // Use unique prefix for this section's variables
-  const sectionPrefix = getViewPrefix(namespace, name);
-  const [sectionVarParams] = usePrefixedSearchParams(sectionPrefix, false);
-  const currentViewVariables = Object.fromEntries(sectionVarParams.entries());
+  // Use prefixed search params for view variables
+  // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
+  // We must remove the global query parameters from the URL params.
+  const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
+  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
 
   // Fetch section view data with independent variables
   const {
