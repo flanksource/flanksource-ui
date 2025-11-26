@@ -50,9 +50,13 @@ export const generateGaugeData = (
   }
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
 
-  const color = gauge?.thresholds
+  let color = gauge?.thresholds
     ? getGaugeColor(clampedPercentage, gauge.thresholds)
     : COLOR_PALETTE[0];
+
+  if (!gauge?.max) {
+    color = "";
+  }
 
   return {
     value: clampedPercentage,
