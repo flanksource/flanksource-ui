@@ -54,13 +54,27 @@ export default function NotificationSilenceForm({
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
 
+  // Convert selectors from JSON (from DB) to YAML for display in editor
+  const getSelectorsAsYaml = (selectors?: string): string | undefined => {
+    if (!selectors) return undefined;
+    try {
+      // Try parsing as JSON first (data from DB is JSON)
+      const parsed = JSON.parse(selectors);
+      return YAML.stringify(parsed);
+    } catch {
+      // Already YAML or invalid, return as-is
+      return selectors;
+    }
+  };
+
   const initialValues: Partial<SilenceSaveFormValues> = {
     ...data,
     name: data?.name,
     component_id: data?.component_id,
     config_id: data?.config_id,
     check_id: data?.check_id,
-    canary_id: data?.canary_id
+    canary_id: data?.canary_id,
+    selectors: getSelectorsAsYaml(data?.selectors)
   };
 
   // Determine selected type based on existing data when editing
@@ -204,6 +218,57 @@ export default function NotificationSilenceForm({
         }
       }
     );
+  };
+
+  const previewBtnOnClick = (values: Partial<SilenceSaveFormValues>) => {
+    return async () => {
+      setIsPreviewLoading(true);
+      setPreviewError(null);
+
+      try {
+        const params: {
+          resource_id?: string;
+          filter?: string;
+          selector?: string;
+          recursive?: boolean;
+        } = {};
+
+        if (selectedType === "resource") {
+          const resourceId =
+            values.component_id ||
+            values.config_id ||
+            values.check_id ||
+            values.canary_id;
+          if (resourceId) params.resource_id = resourceId;
+          if (values.recursive) params.recursive = values.recursive;
+        } else if (selectedType === "filter" && values.filter) {
+          params.filter = values.filter;
+        } else if (selectedType === "selector" && values.selectors) {
+          if (typeof values.selectors === "string") {
+            const result = YAML.parse(values.selectors);
+            params.selector = JSON.stringify(result);
+          } else {
+            try {
+              params.selector = JSON.stringify(values.selectors);
+            } catch (e) {
+              throw new Error("Invalid selectors format", values.selectors);
+            }
+          }
+        } else {
+          throw new Error("unknown selector type");
+        }
+
+        const data = await getNotificationSilencePreview(params);
+        setPreviewData(data || []);
+        setPreviewError(null);
+      } catch (error) {
+        console.error("Error fetching preview:", error);
+        setPreviewData(null);
+        setPreviewError("Failed to fetch preview");
+      } finally {
+        setIsPreviewLoading(false);
+      }
+    };
   };
 
   return (
@@ -464,52 +529,7 @@ export default function NotificationSilenceForm({
                 {selectedType && (
                   <Button
                     type="button"
-                    onClick={async () => {
-                      setIsPreviewLoading(true);
-                      setPreviewError(null);
-                      try {
-                        const params: {
-                          resource_id?: string;
-                          filter?: string;
-                          selector?: string;
-                          recursive?: boolean;
-                        } = {};
-
-                        if (selectedType === "resource") {
-                          const resourceId =
-                            values.component_id ||
-                            values.config_id ||
-                            values.check_id ||
-                            values.canary_id;
-                          if (resourceId) params.resource_id = resourceId;
-                          if (values.recursive)
-                            params.recursive = values.recursive;
-                        } else if (selectedType === "filter" && values.filter) {
-                          params.filter = values.filter;
-                        } else if (
-                          selectedType === "selector" &&
-                          values.selectors
-                        ) {
-                          try {
-                            const parsedYaml = YAML.parse(values.selectors);
-                            params.selector = parsedYaml;
-                          } catch (e) {
-                            throw new Error("Invalid YAML format in selectors");
-                          }
-                        }
-
-                        const data =
-                          await getNotificationSilencePreview(params);
-                        setPreviewData(data || []);
-                        setPreviewError(null);
-                      } catch (error) {
-                        console.error("Error fetching preview:", error);
-                        setPreviewData(null);
-                        setPreviewError("Failed to fetch preview");
-                      } finally {
-                        setIsPreviewLoading(false);
-                      }
-                    }}
+                    onClick={previewBtnOnClick(values)}
                     className="btn-secondary"
                     disabled={isPreviewLoading}
                   >

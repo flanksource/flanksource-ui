@@ -356,7 +356,7 @@ export const getNotificationSilencePreview = async ({
     params.append("filter", filter);
   }
   if (selector) {
-    params.append("selectors", JSON.stringify(selector));
+    params.append("selectors", selector);
   }
   if (recursive) {
     params.append("recursive", "true");

@@ -46,13 +46,27 @@ export default function NotificationSilenceDirectForm({
   const check_id = searchParam.get("check_id") ?? undefined;
   const canary_id = searchParam.get("canary_id") ?? undefined;
 
+  // Convert selectors from JSON (from DB) to YAML for display in editor
+  const getSelectorsAsYaml = (selectors?: string): string | undefined => {
+    if (!selectors) return undefined;
+    try {
+      // Try parsing as JSON first (data from DB is JSON)
+      const parsed = JSON.parse(selectors);
+      return YAML.stringify(parsed);
+    } catch {
+      // Already YAML or invalid, return as-is
+      return selectors;
+    }
+  };
+
   const initialValues: Partial<SilenceSaveFormValues> = {
     ...data,
     name: data?.name,
     component_id: data?.component_id ?? component_id,
     config_id: data?.config_id ?? config_id,
     check_id: data?.check_id ?? check_id,
-    canary_id: data?.canary_id ?? canary_id
+    canary_id: data?.canary_id ?? canary_id,
+    selectors: getSelectorsAsYaml(data?.selectors)
   };
 
   const { isLoading, mutate } = useMutation({
