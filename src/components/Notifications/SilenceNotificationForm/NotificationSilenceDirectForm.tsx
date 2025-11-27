@@ -76,6 +76,9 @@ export default function NotificationSilenceDirectForm({
           id: data.id,
           name: data.name,
           filter: data.filter,
+          selectors: data.selectors
+            ? JSON.stringify(data.selectors)
+            : undefined,
           updated_at: "now()",
           source: data.source,
           canary_id: data.canary_id,

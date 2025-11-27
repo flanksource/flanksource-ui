@@ -153,6 +153,7 @@ export type NotificationSilenceItem = {
   namespace: string;
   description?: string;
   filter?: string;
+  selectors?: string;
   error?: string;
   from: string;
   until: string | null;
