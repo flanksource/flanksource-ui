@@ -4,9 +4,11 @@ import {
   updateNotificationSilence
 } from "@flanksource-ui/api/services/notifications";
 import {
-  SilenceNotificationResponse as SilenceNotificationRequest,
-  SilenceNotificationResponse
+  SilenceSaveRequest,
+  SilenceSaveFormValues
 } from "@flanksource-ui/api/types/notifications";
+import { PlaybookResourceSelector } from "@flanksource-ui/api/types/playbooks";
+import YAML from "yaml";
 import FormikDurationPicker from "@flanksource-ui/components/Forms/Formik/FormikDurationPicker";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
@@ -25,9 +27,9 @@ import FormikNotificationDirectResourceField from "./FormikNotificationDirectRes
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
 
 type NotificationSilenceFormProps = {
-  data?: SilenceNotificationRequest;
+  data?: SilenceSaveFormValues;
   footerClassName?: string;
-  onSuccess?: (data: SilenceNotificationResponse) => void;
+  onSuccess?: (data: SilenceSaveFormValues) => void;
   onCancel?: () => void;
 };
 
@@ -44,30 +46,47 @@ export default function NotificationSilenceDirectForm({
   const check_id = searchParam.get("check_id") ?? undefined;
   const canary_id = searchParam.get("canary_id") ?? undefined;
 
-  const initialValues: Partial<SilenceNotificationRequest> = {
+  // Convert selectors from JSON (from DB) to YAML for display in editor
+  const getSelectorsAsYaml = (selectors?: string): string | undefined => {
+    if (!selectors) return undefined;
+    try {
+      // Try parsing as JSON first (data from DB is JSON)
+      const parsed = JSON.parse(selectors);
+      return YAML.stringify(parsed);
+    } catch {
+      // Already YAML or invalid, return as-is
+      return selectors;
+    }
+  };
+
+  const initialValues: Partial<SilenceSaveFormValues> = {
     ...data,
     name: data?.name,
     component_id: data?.component_id ?? component_id,
     config_id: data?.config_id ?? config_id,
     check_id: data?.check_id ?? check_id,
-    canary_id: data?.canary_id ?? canary_id
+    canary_id: data?.canary_id ?? canary_id,
+    selectors: getSelectorsAsYaml(data?.selectors)
   };
 
   const { isLoading, mutate } = useMutation({
-    mutationFn: (data: SilenceNotificationRequest) => {
+    mutationFn: (data: SilenceSaveRequest) => {
       if (data.id) {
         return updateNotificationSilence({
           id: data.id,
           name: data.name,
           filter: data.filter,
+          selectors: data.selectors
+            ? JSON.stringify(data.selectors)
+            : undefined,
           updated_at: "now()",
           source: data.source,
           canary_id: data.canary_id,
           check_id: data.check_id,
           component_id: data.component_id,
           config_id: data.config_id,
-          from: data.from,
-          until: data.until,
+          from: data.from!,
+          until: data.until ?? null,
           description: data.description,
           recursive: data.recursive,
           namespace: data.namespace ?? ""
@@ -91,7 +110,7 @@ export default function NotificationSilenceDirectForm({
     }
   });
 
-  const validate = (v: Partial<SilenceNotificationRequest>) => {
+  const validate = (v: Partial<SilenceSaveFormValues>) => {
     const errors: { [key: string]: string } = {};
     if (!v.name) {
       errors.name = "Must specify a unique name";
@@ -111,7 +130,7 @@ export default function NotificationSilenceDirectForm({
   };
 
   const submit = (
-    v: Partial<SilenceNotificationRequest>,
+    v: Partial<SilenceSaveFormValues>,
     // @ts-ignore
     formik: FormikBag
   ) => {
@@ -142,13 +161,27 @@ export default function NotificationSilenceDirectForm({
 
     v = omit(v, "error");
 
+    // Convert selectors from YAML string to array if present
+    let selectors: PlaybookResourceSelector[] | undefined = undefined;
+    if (v.selectors && typeof v.selectors === "string" && v.selectors.trim()) {
+      try {
+        selectors = YAML.parse(v.selectors);
+      } catch (e) {
+        formik.setErrors({
+          form: "Invalid YAML format in selectors field"
+        });
+        return;
+      }
+    }
+
     return mutate(
       {
         ...v,
         from: fromTime,
         until: untilTime,
-        config_id: config_id
-      } as SilenceNotificationRequest,
+        config_id: config_id,
+        selectors
+      } as SilenceSaveRequest,
       {
         onError(error) {
           // @ts-ignore
@@ -161,7 +194,7 @@ export default function NotificationSilenceDirectForm({
   return (
     // @ts-ignore
     <div className="flex flex-1 flex-col gap-2 overflow-auto">
-      <Formik<Partial<SilenceNotificationRequest>>
+      <Formik<Partial<SilenceSaveFormValues>>
         initialValues={initialValues}
         validateOnChange={false}
         validateOnBlur={true}
@@ -225,7 +258,7 @@ export default function NotificationSilenceDirectForm({
                       title="Delete Silence"
                       description="Are you sure you want to delete this silence?"
                       yesLabel="Delete"
-                      onConfirm={() => deleteSilence(data.id)}
+                      onConfirm={() => deleteSilence(data.id!)}
                     />
 
                     <div className="flex-1" />

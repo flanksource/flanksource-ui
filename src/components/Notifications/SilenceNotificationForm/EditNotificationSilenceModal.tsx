@@ -1,4 +1,4 @@
-import { SilenceNotificationResponse } from "@flanksource-ui/api/types/notifications";
+import { SilenceSaveFormValues } from "@flanksource-ui/api/types/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import NotificationSilenceForm from "./NotificationSilenceForm";
 
@@ -6,7 +6,7 @@ type EditNotificationSilenceModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onUpdate: () => void;
-  data: SilenceNotificationResponse;
+  data: SilenceSaveFormValues;
 };
 
 export default function EditNotificationSilenceModal({
