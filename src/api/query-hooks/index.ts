@@ -520,3 +520,54 @@ export function useGetParentsByLocationQuery(
     }
   );
 }
+
+export type NotificationTagItem = {
+  key: string;
+  value: string;
+};
+
+export function useGetNotificationTagsListQuery(
+  options?: UseQueryOptions<NotificationTagItem[]>
+) {
+  return useQuery({
+    queryKey: ["notifications", "tags", "list"],
+    queryFn: async () => {
+      // Fetch notification data to aggregate tags
+      const { getNotificationSendHistorySummary } = await import(
+        "../services/notifications"
+      );
+      const { results } = await getNotificationSendHistorySummary({
+        pageIndex: 0,
+        pageSize: 500
+      });
+
+      // Aggregate unique tags
+      const uniqueTags = new Map<string, Set<string>>();
+      results?.forEach((notification) => {
+        Object.entries(notification.resource_tags || {}).forEach(
+          ([key, value]) => {
+            if (!uniqueTags.has(key)) {
+              uniqueTags.set(key, new Set());
+            }
+            uniqueTags.get(key)!.add(String(value));
+          }
+        );
+      });
+
+      // Convert to array format
+      const tags: NotificationTagItem[] = [];
+      uniqueTags.forEach((values, key) => {
+        values.forEach((value) => {
+          tags.push({ key, value });
+        });
+      });
+
+      return tags.sort(
+        (a, b) => a.key.localeCompare(b.key) || a.value.localeCompare(b.value)
+      );
+    },
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 5,
+    ...options
+  });
+}

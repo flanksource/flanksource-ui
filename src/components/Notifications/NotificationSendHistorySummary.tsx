@@ -11,6 +11,7 @@ import {
   OrderByColor
 } from "@flanksource-ui/ui/Icons/ChangeCount";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
+import TagsFilterCell from "@flanksource-ui/ui/Tags/TagsFilterCell";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
 
@@ -94,6 +95,16 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
         const description = row.original.resource_health_description;
         return <span>{description}</span>;
       }
+    },
+    {
+      header: "Tags",
+      size: 200,
+      Cell: ({ row }) => (
+        <TagsFilterCell
+          tags={row.original.resource_tags || {}}
+          filterByTagParamKey="tags"
+        />
+      )
     },
     {
       header: "Status",
