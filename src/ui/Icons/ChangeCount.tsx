@@ -75,12 +75,14 @@ function roundedStyleValue(style: "RAG" | "icons", i: number, length: number) {
 
 export type Count = {
   count: number | string;
+  suffix?: string;
   tooltip?: string;
   url?: string;
   target?: string;
   color?: string;
   icon?: React.ReactNode;
 };
+
 export function CountBar({
   items,
   height = "h-6",
@@ -142,7 +144,10 @@ export function CountBar({
                 item.color
               )}
             >
-              <span className="inline p-1">{num(item.count)}</span>
+              <span className="inline p-1">
+                {num(item.count)}
+                {item.suffix && ` ${item.suffix}`}
+              </span>
             </div>
           </>
         );

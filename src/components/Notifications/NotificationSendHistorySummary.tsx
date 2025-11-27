@@ -96,7 +96,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
       }
     },
     {
-      header: "Statistics",
+      header: "Status",
       minSize: 50,
       maxSize: 100,
       Cell: ({ row }) => {
@@ -105,6 +105,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
         if (row.original.sent > 0) {
           statusLines.push({
             count: row.original.sent,
+            suffix: "sent",
             color: "bg-green-500/60",
             tooltip: "Sent"
           });
@@ -113,6 +114,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
         if (row.original.error > 0) {
           statusLines.push({
             count: row.original.error,
+            suffix: "failed",
             color: "bg-red-500/50",
             tooltip: "Error"
           });
@@ -121,6 +123,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
         if (row.original.suppressed > 0) {
           statusLines.push({
             count: row.original.suppressed,
+            suffix: "suppressed",
             color: "bg-gray-400/80",
             tooltip: "Suppressed"
           });
