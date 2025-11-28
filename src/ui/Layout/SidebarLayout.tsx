@@ -86,8 +86,8 @@ function NavItemWrapper(props: NavItemWrapperProps) {
   const cls = ({ isActive }: { isActive: boolean }) =>
     clsx(
       active || isActive
-        ? "bg-gray-800 text-gray-100"
-        : "text-gray-200 hover:bg-gray-800 hover:text-gray-100",
+        ? "bg-blue-500 text-white"
+        : "text-gray-200 hover:bg-blue-500/70 hover:text-white",
       "group rounded-md py-1.5 px-2 flex items-center text-base font-medium",
       className
     );
@@ -154,7 +154,7 @@ function SideNavGroup({
         <MenuItems
           anchor={"right start"}
           portal
-          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border bg-gray-800 shadow-md"
+          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border border-blue-400/30 bg-[#1a3a5c] shadow-md"
         >
           {submenu.map(({ name, icon, href, featureName, resourceName }) => {
             return !isFeatureDisabled(
@@ -238,7 +238,7 @@ function SideNav({
   const { isViewer } = useContext(UserAccessStateContext);
 
   return (
-    <nav className="flex flex-col divide-y divide-gray-500">
+    <nav className="flex flex-col divide-y divide-blue-400/30">
       <div className="mb-1 flex flex-col gap-1">
         {navs.map((item) =>
           !isFeatureDisabled(
@@ -302,7 +302,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
     <div className="flex h-screen min-w-[800px] flex-row">
       <div
         className={clsx(
-          "z-10 flex transform flex-col bg-gray-700 duration-500",
+          "z-10 flex transform flex-col bg-gradient-to-b from-[#1a3a5c] to-[#1e4976] duration-500",
           {
             "w-56": !collapseSidebar,
             "w-14": collapseSidebar
@@ -319,12 +319,12 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
           <button
             type="button"
             className={clsx(
-              "absolute -right-6 top-20 m-2 transform rounded-full border border-gray-300 bg-white p-1 duration-500 hover:bg-gray-200",
+              "absolute -right-3 top-5 z-20 flex h-6 w-6 transform items-center justify-center rounded border border-gray-300 bg-white text-gray-600 shadow-sm duration-300 hover:bg-gray-100",
               { "rotate-180": !collapseSidebar }
             )}
             onClick={() => setCollapseSidebar((value) => !value)}
           >
-            <IoChevronForwardOutline />
+            <IoChevronForwardOutline className="h-4 w-4" />
           </button>
 
           <Link
@@ -333,11 +333,11 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
             }}
           >
             {collapseSidebar ? (
-              <div className="flex h-16 border-b border-b-gray-500 shadow">
+              <div className="flex h-16 border-b border-b-blue-400/30 shadow">
                 <MissionControlWhite className="h-auto w-auto" size="auto" />
               </div>
             ) : (
-              <div className="border-b border-b-gray-500 p-3 pl-5 shadow">
+              <div className="border-b border-b-blue-400/30 p-3 pl-5 shadow">
                 <MissionControlLogoWhite
                   className="h-auto w-auto"
                   size="auto"
