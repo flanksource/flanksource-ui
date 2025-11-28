@@ -1,6 +1,7 @@
 import {
   tristateOutputToQueryFilterParam,
-  tristateOutputToQueryParamValue
+  tristateOutputToQueryParamValue,
+  tristateToTagSelector
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
 import { apiBase, IncidentCommander, NotificationAPI } from "../axios";
@@ -121,7 +122,7 @@ export const getNotificationSendHistorySummary = async ({
   }
 
   if (tags) {
-    payload.tags = tristateOutputToQueryParamValue(tags);
+    payload.tags = tristateToTagSelector(tags);
   }
 
   const res = await apiBase.post<NotificationSendHistorySummaryResponse>(

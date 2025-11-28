@@ -98,6 +98,39 @@ export function setTristateOutputToQueryFilterToURLSearchParam(
   }
 }
 
+/**
+ * Converts a tristate value to a tag selector format.
+ *
+ * Output: namespace!=cert-manager,namespace!=dbms,namespace=default
+ */
+export function tristateToTagSelector(p: string): string {
+  const val = tristateOutputToQueryParamValue(p);
+  if (!val) {
+    return "";
+  }
+
+  const parts = val.split(",");
+  const result = parts.map((part) => {
+    const negated = part.startsWith("!");
+    if (negated) {
+      part = part.slice(1);
+    }
+
+    // Split on ":" to get key and value (max 2 parts)
+    const colonIndex = part.indexOf(":");
+    if (colonIndex !== -1) {
+      const key = part.slice(0, colonIndex);
+      const value = part.slice(colonIndex + 1);
+      return negated ? `${key}!=${value}` : `${key}=${value}`;
+    } else {
+      // No value, just a key (e.g., "!namespace" or "namespace")
+      return negated ? `${part}!=` : `${part}=`;
+    }
+  });
+
+  return result.join(",");
+}
+
 type TriStateToggleState = {
   [key: string]: number;
 };
