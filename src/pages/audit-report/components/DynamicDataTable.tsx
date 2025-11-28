@@ -64,9 +64,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     row.forEach((value, index) => {
       const column = columns[index];
       if (!column) {
-        throw new Error(
-          `Column definition not found for index ${index}. Available columns: ${columns.map((c) => c.name).join(", ")}`
-        );
+        return;
       }
 
       if (

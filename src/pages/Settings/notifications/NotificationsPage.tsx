@@ -14,6 +14,7 @@ export default function NotificationsPage() {
   const resourceType = searchParams.get("resource_type") ?? undefined;
   const status = searchParams.get("status") ?? undefined;
   const search = searchParams.get("search") ?? undefined;
+  const tags = searchParams.get("tags") ?? undefined;
 
   const includeDeletedResources = useShowDeletedConfigs();
 
@@ -25,6 +26,7 @@ export default function NotificationsPage() {
       status,
       resourceType,
       search,
+      tags,
       includeDeletedResources
     ],
     queryFn: async () => {
@@ -34,6 +36,7 @@ export default function NotificationsPage() {
         status,
         resourceType,
         search,
+        tags,
         includeDeletedResources
       });
       return res;

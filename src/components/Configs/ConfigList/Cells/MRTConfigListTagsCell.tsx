@@ -1,6 +1,5 @@
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
-import { Tag } from "@flanksource-ui/ui/Tags/Tag";
-import { useCallback } from "react";
+import TagsFilterCell from "@flanksource-ui/ui/Tags/TagsFilterCell";
 import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
@@ -18,61 +17,17 @@ type MRTConfigListTagsCellProps<
 export default function MRTConfigListTagsCell<
   T extends { tags?: Record<string, any>; id: string }
 >({
-  row,
   cell,
   hideGroupByView = false,
   enableFilterByTag = false,
   filterByTagParamKey = "tags"
 }: MRTConfigListTagsCellProps<T>): JSX.Element | null {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
 
   const tagMap = cell.getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
     .sort()
     .filter((key) => key !== "toString");
-
-  const onFilterByTag = useCallback(
-    (
-      e: React.MouseEvent<HTMLButtonElement>,
-      tag: {
-        key: string;
-        value: string;
-      },
-      action: "include" | "exclude"
-    ) => {
-      if (!enableFilterByTag) {
-        return;
-      }
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Get the current tags from the URL
-      const currentTags = params.get(filterByTagParamKey);
-      const currentTagsArray = (
-        currentTags ? currentTags.split(",") : []
-      ).filter((value) => {
-        const tagKey = value.split("____")[0];
-        const tagAction = value.split(":")[1] === "1" ? "include" : "exclude";
-
-        if (tagKey === tag.key && tagAction !== action) {
-          return false;
-        }
-        return true;
-      });
-
-      // Append the new value, but for same tags, don't allow including and excluding at the same time
-      const updatedValue = currentTagsArray
-        .concat(`${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`)
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .join(",");
-
-      // Update the URL
-      params.set(filterByTagParamKey, updatedValue);
-      setParams(params);
-    },
-    [enableFilterByTag, filterByTagParamKey, params, setParams]
-  );
 
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");
 
@@ -98,22 +53,24 @@ export default function MRTConfigListTagsCell<
     );
   }
 
+  if (!enableFilterByTag) {
+    return (
+      <div className="flex flex-wrap gap-1">
+        {Object.entries(tagMap)
+          .filter(([key]) => key !== "toString")
+          .map(([key, value]) => (
+            <div
+              key={key}
+              className="rounded-md bg-gray-100 px-1 py-0.5 text-xs text-gray-600"
+            >
+              {key}: {String(value)}
+            </div>
+          ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-wrap gap-1">
-      {Object.entries(tagMap).map(([key, value]) => (
-        <Tag
-          tag={{
-            key,
-            value
-          }}
-          id={row.original.id}
-          key={value}
-          variant="gray"
-          onFilterByTag={enableFilterByTag ? onFilterByTag : undefined}
-        >
-          {value}
-        </Tag>
-      ))}
-    </div>
+    <TagsFilterCell tags={tagMap} filterByTagParamKey={filterByTagParamKey} />
   );
 }
