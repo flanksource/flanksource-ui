@@ -103,6 +103,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
         <TagsFilterCell
           tags={row.original.resource_tags || {}}
           filterByTagParamKey="tags"
+          useBase64Encoding
         />
       )
     },

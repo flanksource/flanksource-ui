@@ -100,6 +100,7 @@ export function setTristateOutputToQueryFilterToURLSearchParam(
 
 /**
  * Converts a tristate value to a tag selector format.
+ * Expects base64-encoded key and value separated by ":".
  *
  * Output: namespace!=cert-manager,namespace!=dbms,namespace=default
  */
@@ -116,15 +117,18 @@ export function tristateToTagSelector(p: string): string {
       part = part.slice(1);
     }
 
-    // Split on ":" to get key and value (max 2 parts)
+    // Split on ":" to get base64-encoded key and value
     const colonIndex = part.indexOf(":");
     if (colonIndex !== -1) {
-      const key = part.slice(0, colonIndex);
-      const value = part.slice(colonIndex + 1);
+      const encodedKey = part.slice(0, colonIndex);
+      const encodedValue = part.slice(colonIndex + 1);
+      const key = Buffer.from(encodedKey, "base64").toString();
+      const value = Buffer.from(encodedValue, "base64").toString();
       return negated ? `${key}!=${value}` : `${key}=${value}`;
     } else {
       // No value, just a key (e.g., "!namespace" or "namespace")
-      return negated ? `${part}!=` : `${part}=`;
+      const key = Buffer.from(part, "base64").toString();
+      return negated ? `${key}!=` : `${key}=`;
     }
   });
 

@@ -6,11 +6,11 @@ import { useField } from "formik";
 import { useMemo } from "react";
 
 /**
- * Escapes ':' and ',' characters in tag values to avoid tristate parsing issues.
- * These characters have special meaning in the tristate selector format.
+ * Base64 encodes tag values to avoid tristate parsing issues.
+ * Characters like ':' and ',' have special meaning in the tristate selector format.
  */
-function escapeTagValue(value: string): string {
-  return value.replace(/:/g, "\\:").replace(/,/g, "\\,");
+function encodeTagValue(value: string): string {
+  return Buffer.from(value).toString("base64");
 }
 
 type Props = {
@@ -32,9 +32,9 @@ export default function NotificationTagsDropdown({
     }
 
     return tagsData.map((tag) => {
-      const escapedKey = escapeTagValue(tag.key);
-      const escapedValue = escapeTagValue(tag.value);
-      const optionValue = `${escapedKey}____${escapedValue}`;
+      const encodedKey = encodeTagValue(tag.key);
+      const encodedValue = encodeTagValue(tag.value);
+      const optionValue = `${encodedKey}____${encodedValue}`;
 
       return {
         label: (
