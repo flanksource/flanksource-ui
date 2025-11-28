@@ -536,14 +536,34 @@ export function useGetNotificationTagsListQuery(
       const { getNotificationSendHistorySummary } = await import(
         "../services/notifications"
       );
-      const { results } = await getNotificationSendHistorySummary({
-        pageIndex: 0,
-        pageSize: 500
-      });
+
+      // Paginate through all pages to get all results
+      const pageSize = 500;
+      let pageIndex = 0;
+      const allResults: Awaited<
+        ReturnType<typeof getNotificationSendHistorySummary>
+      >["results"] = [];
+
+      while (true) {
+        const { results, total } = await getNotificationSendHistorySummary({
+          pageIndex,
+          pageSize
+        });
+
+        if (results) {
+          allResults.push(...results);
+        }
+
+        // Check if there are more pages
+        if ((pageIndex + 1) * pageSize >= total) {
+          break;
+        }
+        pageIndex++;
+      }
 
       // Aggregate unique tags
       const uniqueTags = new Map<string, Set<string>>();
-      results?.forEach((notification) => {
+      allResults.forEach((notification) => {
         Object.entries(notification.resource_tags || {}).forEach(
           ([key, value]) => {
             if (!uniqueTags.has(key)) {
