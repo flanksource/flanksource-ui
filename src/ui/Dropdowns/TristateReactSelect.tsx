@@ -310,6 +310,15 @@ type TristateReactSelectProps = {
   value?: string;
   label: string;
   className?: string;
+  /**
+   * When true, allows mixing included and excluded items. However, the same
+   * tag key (the part before "____") cannot be both included and excluded -
+   * selecting a tag with a key that's already selected with a different state
+   * will replace the previous selection for that key.
+   *
+   * When false (default), selecting an item resets all items with a different
+   * state, so you can only have all includes OR all excludes.
+   */
   isTagsDropdown?: boolean;
   minMenuWidth?: string;
 };
