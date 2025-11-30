@@ -154,7 +154,7 @@ function SideNavGroup({
         <MenuItems
           anchor={"right start"}
           portal
-          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border border-blue-400/30 bg-[#1a3a5c] shadow-md"
+          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border border-blue-400/30 bg-[#1e3a5f] shadow-md"
         >
           {submenu.map(({ name, icon, href, featureName, resourceName }) => {
             return !isFeatureDisabled(
@@ -199,13 +199,13 @@ function SideNavGroup({
                 />
                 <ChevronUpIcon
                   className={`${
-                    submenu && open ? "rotate-180 transform" : ""
+                    submenu && open ? "" : "rotate-180 transform"
                   } h-5 w-5`}
                 />
               </div>
             </NavItemWrapper>
           </Disclosure.Button>
-          <Disclosure.Panel className="space-y-1 pl-4">
+          <Disclosure.Panel className="-mx-3 mt-1 flex flex-col gap-1 bg-[#0f1f2e] px-3 py-2">
             {submenu.map((item) =>
               !isFeatureDisabled(
                 item.featureName as unknown as keyof typeof features
@@ -302,7 +302,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
     <div className="flex h-screen min-w-[800px] flex-row">
       <div
         className={clsx(
-          "z-10 flex transform flex-col bg-gradient-to-b from-[#1a3a5c] to-[#1e4976] duration-500",
+          "z-10 flex transform flex-col bg-[#1e3a5f] duration-500",
           {
             "w-56": !collapseSidebar,
             "w-14": collapseSidebar
