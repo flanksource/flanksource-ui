@@ -39,33 +39,45 @@ export function SearchLayout({
             <div>{title}</div>
           </div>
           <div
-            className={`ml-4 flex items-center gap-2 md:ml-6 ${extraClassName}`}
+            className={`ml-4 flex items-center gap-3 md:ml-6 ${extraClassName}`}
           >
             {extra}
-            {onRefresh && (
-              <RefreshButton onClick={onRefresh} animate={loading} />
-            )}
-            <Link
-              to={{
-                pathname: "/notifications"
-              }}
-            >
-              <FaBell className="cursor-pointer text-gray-500" size={20} />
-            </Link>
+            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+              {onRefresh && (
+                <div className="flex h-full w-10 items-center justify-center">
+                  <RefreshButton onClick={onRefresh} animate={loading} />
+                </div>
+              )}
+              <div className="flex h-full w-10 items-center justify-center">
+                <PreferencePopOver
+                  cardSize={topologyCardSize}
+                  setTopologyCardSize={setTopologyCardSize}
+                />
+              </div>
+            </div>
 
-            <PreferencePopOver
-              cardSize={topologyCardSize}
-              setTopologyCardSize={setTopologyCardSize}
-            />
-
-            <HelpDropdown />
-            <UserProfileDropdown />
+            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+              <Link
+                to={{
+                  pathname: "/notifications"
+                }}
+                className="flex h-full w-10 items-center justify-center text-gray-400 hover:text-gray-500"
+              >
+                <FaBell className="h-5 w-5" />
+              </Link>
+              <div className="flex h-full w-10 items-center justify-center">
+                <HelpDropdown />
+              </div>
+              <div className="flex h-full w-10 items-center justify-center">
+                <UserProfileDropdown />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <main
-        className="bg-warm-gray-50 h-full overflow-y-hidden"
+        className="h-full overflow-y-hidden bg-warm-gray-50"
         style={{ zIndex: 0 }}
       >
         <DashboardErrorBoundary>
