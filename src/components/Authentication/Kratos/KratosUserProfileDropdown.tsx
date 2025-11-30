@@ -25,19 +25,19 @@ export function KratosUserProfileDropdown({
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
 
   return (
-    <Menu as="div" className="relative ml-3 flex-shrink-0">
+    <Menu as="div" className="relative flex-shrink-0">
       <div>
         <MenuButton className="flex items-center rounded-full text-sm">
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              className="h-8 w-8 rounded-full"
+              className="h-5 w-5 rounded-full"
               src={user.avatar}
               alt={user.name}
             />
           ) : (
             <ClickableSvg>
-              <FaUserAlt size={24} />
+              <FaUserAlt className="h-5 w-5" />
             </ClickableSvg>
           )}
         </MenuButton>

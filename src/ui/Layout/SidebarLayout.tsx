@@ -319,12 +319,12 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
           <button
             type="button"
             className={clsx(
-              "absolute -right-3 top-5 z-20 flex h-6 w-6 transform items-center justify-center rounded border border-gray-300 bg-white text-gray-600 shadow-sm duration-300 hover:bg-gray-100",
+              "absolute -right-6 top-20 m-2 transform rounded-full border border-gray-300 bg-white p-1 duration-500 hover:bg-gray-200",
               { "rotate-180": !collapseSidebar }
             )}
             onClick={() => setCollapseSidebar((value) => !value)}
           >
-            <IoChevronForwardOutline className="h-4 w-4" />
+            <IoChevronForwardOutline />
           </button>
 
           <Link
