@@ -35,6 +35,7 @@ interface RowAttributes {
   icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
   url?: string;
   max?: number;
+  derivedMax?: boolean; // True if max was computed from data, not explicitly set
   config?: {
     id: string;
     type: string;
@@ -42,7 +43,103 @@ interface RowAttributes {
   };
 }
 
+type GaugeMaxValue = { max: number; derivedMax: boolean };
+
 export const hiddenColumnTypes = ["row_attributes", "grants"];
+
+/**
+ * Computes the maximum 'max' value for each gauge column across all rows and tracks whether it was derived.
+ * Considers column-level gauge.max, row-level attributes, and falls back
+ * to the maximum value among all rows if no explicit max is defined.
+ */
+const computeGaugeMaxValues = (
+  columns: ViewColumnDef[],
+  data: Record<string, any>[]
+): Map<string, GaugeMaxValue> => {
+  const maxValues = new Map<string, GaugeMaxValue>();
+
+  const gaugeColumns = columns.filter((col) => col.type === "gauge");
+
+  for (const col of gaugeColumns) {
+    // col.gauge?.max might be a CEL expression string, so only use if it's a valid number
+    const colMax = col.gauge?.max;
+    const hasValidColMax = typeof colMax === "number" && colMax > 0;
+    let maxValue = hasValidColMax ? colMax : 0;
+    let derivedMax = false;
+    let explicitMaxFound = hasValidColMax;
+
+    // First, try to find max from row attributes
+    for (const row of data) {
+      const rowMax = row.__rowAttributes?.[col.name]?.max;
+      if (rowMax === undefined) continue;
+
+      const numMax = Number(rowMax);
+      if (!isNaN(numMax) && numMax > 0) {
+        explicitMaxFound = true;
+        if (numMax > maxValue) {
+          maxValue = numMax;
+        }
+      }
+    }
+
+    // If no valid max found, fall back to the maximum value among all rows
+    if (!explicitMaxFound) {
+      for (const row of data) {
+        const value = row[col.name];
+        if (typeof value === "number" && value > maxValue) {
+          maxValue = value;
+        }
+      }
+      if (maxValue > 0) {
+        derivedMax = true;
+      }
+    }
+
+    if (maxValue > 0) {
+      maxValues.set(col.name, { max: maxValue, derivedMax });
+    }
+  }
+
+  return maxValues;
+};
+
+/**
+ * Injects computed max values into rows that are missing or have zero max for gauge columns.
+ * Also carries over whether the max was derived so it can be styled differently.
+ */
+const injectMissingGaugeMax = (
+  data: Record<string, any>[],
+  columns: ViewColumnDef[],
+  maxValues: Map<string, GaugeMaxValue>
+): Record<string, any>[] => {
+  const gaugeColumns = columns.filter((col) => col.type === "gauge");
+
+  return data.map((row) => {
+    let modified = false;
+    let newAttributes = { ...row.__rowAttributes };
+
+    for (const col of gaugeColumns) {
+      const computedMaxEntry = maxValues.get(col.name);
+      if (computedMaxEntry === undefined) continue;
+
+      const existingMax = newAttributes?.[col.name]?.max;
+      // Inject if max is missing or is zero/falsy
+      if (existingMax === undefined || Number(existingMax) === 0) {
+        newAttributes = {
+          ...newAttributes,
+          [col.name]: {
+            ...newAttributes?.[col.name],
+            max: computedMaxEntry.max,
+            derivedMax: computedMaxEntry.derivedMax // Flag to indicate max was computed, not explicit
+          }
+        };
+        modified = true;
+      }
+    }
+
+    return modified ? { ...row, __rowAttributes: newAttributes } : row;
+  });
+};
 
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
@@ -96,12 +193,20 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     return rowObj;
   });
 
+  // Pre-process gauge columns to compute and inject missing max values
+  const gaugeMaxValues = computeGaugeMaxValues(columns, adaptedData);
+  const processedData = injectMissingGaugeMax(
+    adaptedData,
+    columns,
+    gaugeMaxValues
+  );
+
   return (
     <MRTDataTable
       enableColumnActions={false}
       columns={columnDef}
       isLoading={isLoading}
-      data={adaptedData}
+      data={processedData}
       enableServerSideSorting
       enableServerSidePagination
       manualPageCount={pageCount}
@@ -262,6 +367,7 @@ const renderCellValue = (
           RowAttributes
         >;
         const maxFromAttributes = rowAttributes?.[column.name]?.max;
+        const isDerivedMax = rowAttributes?.[column.name]?.derivedMax === true;
 
         const gaugeConfig =
           maxFromAttributes !== undefined
@@ -276,7 +382,11 @@ const renderCellValue = (
         };
 
         cellContent = (
-          <GaugeCell value={formattedValue} gauge={finalGaugeConfig} />
+          <GaugeCell
+            value={formattedValue}
+            gauge={finalGaugeConfig}
+            derivedMax={isDerivedMax}
+          />
         );
       }
       break;
