@@ -286,6 +286,7 @@ export interface ViewColumnDef {
     | "url"
     | "badge"
     | "config_item"
+    | "labels"
     | "row_attributes"
     | "grants";
 

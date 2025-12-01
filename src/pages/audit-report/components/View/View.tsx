@@ -157,7 +157,7 @@ const View: React.FC<ViewProps> = ({
     <>
       {title !== "" && (
         <h3 className="mb-4 flex items-center text-xl font-semibold">
-          <Box className="text-teal-600 mr-2" size={20} />
+          <Box className="mr-2 text-teal-600" size={20} />
           {title}
         </h3>
       )}
@@ -205,6 +205,7 @@ const View: React.FC<ViewProps> = ({
                     label={formatDisplayLabel(column.name)}
                     paramsKey={column.name}
                     options={uniqueValues}
+                    isLabelsColumn={column.type === "labels"}
                   />
                 ))}
               </div>

@@ -416,6 +416,29 @@ const renderCellValue = (
       cellContent = <Badge variant="outline">{String(value)}</Badge>;
       break;
 
+    case "labels":
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const entries = Object.entries(value).filter(
+          ([key]) => key !== "toString"
+        );
+        cellContent =
+          entries.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {entries.map(([key, val]) => (
+                <div
+                  key={key}
+                  className="rounded-md bg-gray-100 px-1 py-0.5 text-xs text-gray-600"
+                >
+                  {key}: {String(val)}
+                </div>
+              ))}
+            </div>
+          ) : null;
+      } else {
+        cellContent = null;
+      }
+      break;
+
     case "config_item":
       const configData = rowAttributes?.[column.name]?.config;
       if (configData) {

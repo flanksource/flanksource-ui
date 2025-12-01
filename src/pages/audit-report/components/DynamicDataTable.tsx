@@ -56,6 +56,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         minSize: 15,
         maxSize: minWidthForColumnType(col.type),
         header: formatDisplayLabel(col.name),
+        enableSorting: col.type !== "labels",
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original, tablePrefix)
       };
@@ -224,6 +225,31 @@ const renderCellValue = (
 
     case "badge":
       cellContent = <BadgeCell value={String(value)} />;
+      break;
+
+    case "labels":
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const entries = Object.entries(value).filter(
+          ([key]) => key !== "toString"
+        );
+        cellContent =
+          entries.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {entries.map(([key, val]) => (
+                <div
+                  key={key}
+                  className="rounded-md bg-gray-100 px-1 py-0.5 text-xs text-gray-600"
+                >
+                  {key}: {String(val)}
+                </div>
+              ))}
+            </div>
+          ) : (
+            "-"
+          );
+      } else {
+        cellContent = "-";
+      }
       break;
 
     case "config_item":

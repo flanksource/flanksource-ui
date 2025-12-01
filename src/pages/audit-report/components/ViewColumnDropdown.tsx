@@ -8,27 +8,33 @@ type ViewColumnDropdownProps = {
   label: string;
   paramsKey: string;
   options: string[];
+  /** If true, converts key____value format to key: value for display */
+  isLabelsColumn?: boolean;
 };
 
 export function ViewColumnDropdown({
   label,
   paramsKey,
-  options
+  options,
+  isLabelsColumn = false
 }: ViewColumnDropdownProps) {
   const [field] = useField({
     name: paramsKey
   });
 
   const dropdownOptions = useMemo(() => {
-    return options.map(
-      (option) =>
-        ({
-          value: option,
-          label: option,
-          id: option
-        }) satisfies TriStateOptions
-    );
-  }, [options]);
+    return options.map((option) => {
+      // For labels columns, convert key____value to key: value for display
+      const displayLabel = isLabelsColumn
+        ? option.replace("____", ": ")
+        : option;
+      return {
+        value: option,
+        label: displayLabel,
+        id: option
+      } satisfies TriStateOptions;
+    });
+  }, [options, isLabelsColumn]);
 
   const sortedOptions = useMemo(
     () =>
