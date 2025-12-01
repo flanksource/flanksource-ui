@@ -102,6 +102,14 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         })
       )
     );
+
+    await Promise.all(
+      sectionsToRefresh.map((section) =>
+        queryClient.invalidateQueries({
+          queryKey: ["view-variables", section.namespace, section.name]
+        })
+      )
+    );
   };
 
   if (isLoading && !viewResult) {

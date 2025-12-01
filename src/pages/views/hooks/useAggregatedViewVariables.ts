@@ -16,20 +16,11 @@ export function useAggregatedViewVariables(sections: ViewRef[]) {
   // Fetch all sections in parallel
   const queries = useQueries({
     queries: sections.map((section) => ({
-      queryKey: [
-        "view-result",
-        section.namespace,
-        section.name,
-        currentVariables
-      ],
-      queryFn: () =>
-        getViewDataByNamespace(
-          section.namespace,
-          section.name,
-          currentVariables
-        ),
+      queryKey: ["view-variables", section.namespace, section.name],
+      queryFn: () => getViewDataByNamespace(section.namespace, section.name),
       enabled: !!section.namespace && !!section.name,
-      staleTime: 5 * 60 * 1000
+      staleTime: 5 * 60 * 1000,
+      keepPreviousData: true
     }))
   });
 
