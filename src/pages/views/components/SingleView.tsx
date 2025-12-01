@@ -73,11 +73,34 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           ? result.error.message
           : "Failed to refresh view"
       );
-    } else if (result.data?.namespace && result.data?.name) {
-      await queryClient.invalidateQueries({
-        queryKey: ["view-table", result.data.namespace, result.data.name]
-      });
+      return;
     }
+
+    // Invalidate all section data (view results and tables) so they refetch
+    const sectionsToRefresh =
+      allSectionRefs.length > 0 &&
+      allSectionRefs[0].namespace &&
+      allSectionRefs[0].name
+        ? allSectionRefs
+        : result.data?.namespace && result.data.name
+          ? [{ namespace: result.data.namespace, name: result.data.name }]
+          : [];
+
+    await Promise.all(
+      sectionsToRefresh.map((section) =>
+        queryClient.invalidateQueries({
+          queryKey: ["view-result", section.namespace, section.name]
+        })
+      )
+    );
+
+    await Promise.all(
+      sectionsToRefresh.map((section) =>
+        queryClient.invalidateQueries({
+          queryKey: ["view-table", section.namespace, section.name]
+        })
+      )
+    );
   };
 
   if (isLoading && !viewResult) {
