@@ -446,8 +446,8 @@ const settingsNav: SettingsNavigationItems = {
       name: "Notifications",
       href: "/notifications/rules",
       icon: FaBell,
-      featureName: features.agents,
-      resourceName: tables.database
+      featureName: features["settings.notifications"],
+      resourceName: tables.notifications
     },
     {
       name: "Integrations",
