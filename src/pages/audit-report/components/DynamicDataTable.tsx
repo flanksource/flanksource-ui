@@ -38,6 +38,8 @@ interface RowAttributes {
   };
 }
 
+export const hiddenColumnTypes = ["row_attributes", "grants"];
+
 const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   columns,
   rows,
@@ -47,7 +49,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   tablePrefix
 }) => {
   const columnDef: MRT_ColumnDef<any>[] = columns
-    .filter((col) => !col.hidden && col.type !== "row_attributes")
+    .filter((col) => !col.hidden && !hiddenColumnTypes.includes(col.type))
     .map((col) => {
       return {
         accessorKey: col.name,
@@ -67,11 +69,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         return;
       }
 
-      if (
-        column.hidden ||
-        column.type === "row_attributes" ||
-        column.type === "grants"
-      ) {
+      if (column.hidden || hiddenColumnTypes.includes(column.type)) {
         // These columns are not displayed in the table
         return;
       }

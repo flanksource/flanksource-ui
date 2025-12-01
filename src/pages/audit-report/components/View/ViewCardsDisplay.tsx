@@ -1,6 +1,7 @@
 import React from "react";
 import { ViewColumnDef } from "../../types";
 import ViewCard from "./ViewCard";
+import { hiddenColumnTypes } from "../DynamicDataTable";
 
 interface ViewCardsDisplayProps {
   columns: ViewColumnDef[];
@@ -28,6 +29,11 @@ const ViewCardsDisplay: React.FC<ViewCardsDisplayProps> = ({
 
       if (column.type === "row_attributes") {
         // Row attributes are handled separately
+        return;
+      }
+
+      if (hiddenColumnTypes.includes(column.type)) {
+        // These columns are not displayed in the cards
         return;
       }
 
