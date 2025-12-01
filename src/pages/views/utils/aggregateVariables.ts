@@ -2,7 +2,8 @@ import { ViewVariable } from "../../audit-report/types";
 
 /**
  * Aggregates variables from multiple views, deduplicating by key.
- * When same key appears multiple times, merges options arrays (union).
+ * When same key appears multiple times, merges options arrays (union) and keeps
+ * the first definition for other fields to avoid silently overriding labels or defaults.
  */
 export function aggregateVariables(
   variableArrays: (ViewVariable[] | undefined)[]

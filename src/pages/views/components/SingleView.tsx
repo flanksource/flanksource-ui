@@ -9,6 +9,7 @@ import { useAggregatedViewVariables } from "../hooks/useAggregatedViewVariables"
 import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersForm";
 import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
 import { VIEW_VAR_PREFIX } from "../constants";
+import type { ViewRef } from "../../audit-report/types";
 
 interface SingleViewProps {
   id: string;
@@ -41,13 +42,11 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   // Collect all section refs (main view + additional sections)
   // Must be called before early returns to satisfy React hooks rules
-  const allSectionRefs = useMemo(() => {
+  const allSectionRefs = useMemo<ViewRef[]>(() => {
     if (!viewResult?.namespace || !viewResult?.name) {
       return [];
     }
-    const refs = [
-      { namespace: viewResult.namespace || "", name: viewResult.name }
-    ];
+    const refs = [{ namespace: viewResult.namespace, name: viewResult.name }];
     if (viewResult?.sections) {
       viewResult.sections.forEach((section) => {
         refs.push({
@@ -91,27 +90,17 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     await queryClient.invalidateQueries({ queryKey: ["view-result", id] });
 
     await Promise.all(
-      sectionsToRefresh.map((section) =>
+      sectionsToRefresh.flatMap((section) => [
         queryClient.invalidateQueries({
           queryKey: ["view-result", section.namespace, section.name]
-        })
-      )
-    );
-
-    await Promise.all(
-      sectionsToRefresh.map((section) =>
+        }),
         queryClient.invalidateQueries({
           queryKey: ["view-table", section.namespace, section.name]
-        })
-      )
-    );
-
-    await Promise.all(
-      sectionsToRefresh.map((section) =>
+        }),
         queryClient.invalidateQueries({
           queryKey: ["view-variables", section.namespace, section.name]
         })
-      )
+      ])
     );
   };
 
@@ -171,9 +160,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const { icon, title, namespace, name } = viewResult;
 
-  // Render the main view as a section as well.
-  // Doing this due to some CSS issues that I couldn't solve.
-  const mySection = {
+  // Render the main view through ViewSection to reuse its spacing/scroll styling;
+  // rendering the raw View here caused padding/overflow glitches alongside sections.
+  const primaryViewSection = {
     title: "",
     viewRef: {
       namespace: namespace || "",
@@ -215,7 +204,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         <div>
           <ViewSection
             key={`${namespace || "default"}:${name}`}
-            section={mySection}
+            section={primaryViewSection}
             hideVariables
           />
         </div>

@@ -4,11 +4,7 @@ import { getViewDataByNamespace } from "../../../api/services/views";
 import { aggregateVariables } from "../utils/aggregateVariables";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 import { VIEW_VAR_PREFIX } from "../constants";
-
-interface ViewRef {
-  namespace: string;
-  name: string;
-}
+import type { ViewRef } from "../../audit-report/types";
 
 export function useAggregatedViewVariables(sections: ViewRef[]) {
   const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
