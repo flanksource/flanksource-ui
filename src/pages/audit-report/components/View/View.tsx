@@ -28,7 +28,7 @@ import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 import ViewCardsDisplay from "./ViewCardsDisplay";
-import { VIEW_VAR_PREFIX } from "@flanksource-ui/pages/views/components/ViewSection";
+import { VIEW_VAR_PREFIX } from "@flanksource-ui/pages/views/constants";
 
 interface ViewProps {
   title?: string;

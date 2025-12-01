@@ -2,17 +2,15 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getViewDataByNamespace } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
-import { ViewSection as Section } from "../../audit-report/types";
 import { Icon } from "../../../ui/Icons/Icon";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
+import { VIEW_VAR_PREFIX } from "../constants";
+import { ViewSection as Section } from "../../audit-report/types";
 
 interface ViewSectionProps {
   section: Section;
   hideVariables?: boolean;
 }
-
-// This is the prefix for all the query params that are related to the view variables.
-export const VIEW_VAR_PREFIX = "viewvar";
 
 const ViewSection: React.FC<ViewSectionProps> = ({
   section,

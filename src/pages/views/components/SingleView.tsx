@@ -1,13 +1,14 @@
 import React, { useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
-import ViewSection, { VIEW_VAR_PREFIX } from "./ViewSection";
+import ViewSection from "./ViewSection";
 import Age from "../../../ui/Age/Age";
 import { toastError } from "../../../components/Toast/toast";
 import ViewLayout from "./ViewLayout";
 import { useAggregatedViewVariables } from "../hooks/useAggregatedViewVariables";
 import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersForm";
 import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
+import { VIEW_VAR_PREFIX } from "../constants";
 
 interface SingleViewProps {
   id: string;
@@ -201,13 +202,20 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         )}
 
         <div>
-          <ViewSection key={name} section={mySection} hideVariables />
+          <ViewSection
+            key={`${namespace || "default"}:${name}`}
+            section={mySection}
+            hideVariables
+          />
         </div>
 
         {viewResult?.sections && viewResult.sections.length > 0 && (
           <>
             {viewResult.sections.map((section) => (
-              <div key={section.viewRef.name} className="mt-6 pt-6">
+              <div
+                key={`${section.viewRef.namespace}:${section.viewRef.name}`}
+                className="mt-6 pt-6"
+              >
                 <ViewSection section={section} hideVariables />
               </div>
             ))}

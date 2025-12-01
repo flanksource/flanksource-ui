@@ -2,7 +2,7 @@ import { useQueries } from "@tanstack/react-query";
 import { getViewDataByNamespace } from "../../../api/services/views";
 import { aggregateVariables } from "../utils/aggregateVariables";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
-import { VIEW_VAR_PREFIX } from "../components/ViewSection";
+import { VIEW_VAR_PREFIX } from "../constants";
 
 interface ViewRef {
   namespace: string;
