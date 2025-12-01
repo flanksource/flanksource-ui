@@ -96,3 +96,17 @@ export function formatJobName(word: string | null) {
       .replace(/\s+/g, " ")
   );
 }
+
+export function toBase64(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  const binString = Array.from(bytes, (byte) =>
+    String.fromCodePoint(byte)
+  ).join("");
+  return window.btoa(binString);
+}
+
+export function fromBase64(value: string): string {
+  const binString = window.atob(value);
+  const bytes = Uint8Array.from(binString, (char) => char.codePointAt(0)!);
+  return new TextDecoder().decode(bytes);
+}

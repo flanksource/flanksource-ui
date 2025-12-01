@@ -1,20 +1,7 @@
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { fromBase64, toBase64 } from "../../utils/common";
 import { Tag } from "./Tag";
-
-/**
- * Base64 encodes tag values to avoid tristate parsing issues.
- */
-function encodeTagValue(value: string): string {
-  return Buffer.from(value).toString("base64");
-}
-
-/**
- * Decodes a base64 encoded tag value.
- */
-function decodeTagValue(value: string): string {
-  return Buffer.from(value, "base64").toString();
-}
 
 type TagsFilterCellProps = {
   tags: Record<string, any>;
@@ -53,9 +40,7 @@ export default function TagsFilterCell({
         currentTags ? currentTags.split(",") : []
       ).filter((value) => {
         const rawTagKey = value.split("____")[0];
-        const tagKey = useBase64Encoding
-          ? decodeTagValue(rawTagKey)
-          : rawTagKey;
+        const tagKey = useBase64Encoding ? fromBase64(rawTagKey) : rawTagKey;
         const tagAction = value.split(":")[1] === "1" ? "include" : "exclude";
 
         if (tagKey === tag.key && tagAction !== action) {
@@ -65,10 +50,8 @@ export default function TagsFilterCell({
       });
 
       // Append the new value, but for same tags, don't allow including and excluding at the same time
-      const keyPart = useBase64Encoding ? encodeTagValue(tag.key) : tag.key;
-      const valuePart = useBase64Encoding
-        ? encodeTagValue(tag.value)
-        : tag.value;
+      const keyPart = useBase64Encoding ? toBase64(tag.key) : tag.key;
+      const valuePart = useBase64Encoding ? toBase64(tag.value) : tag.value;
       const updatedValue = currentTagsArray
         .concat(`${keyPart}____${valuePart}:${action === "include" ? 1 : -1}`)
         .filter((value, index, self) => self.indexOf(value) === index)

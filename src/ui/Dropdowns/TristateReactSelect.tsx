@@ -14,6 +14,7 @@ import Select, {
   OptionProps,
   components
 } from "react-windowed-select";
+import { fromBase64 } from "../../utils/common";
 import { TristateToggle } from "../FormControls/TristateToggle";
 
 export type TriStateOptions = {
@@ -122,12 +123,12 @@ export function tristateToTagSelector(p: string): string {
     if (colonIndex !== -1) {
       const encodedKey = part.slice(0, colonIndex);
       const encodedValue = part.slice(colonIndex + 1);
-      const key = Buffer.from(encodedKey, "base64").toString();
-      const value = Buffer.from(encodedValue, "base64").toString();
+      const key = fromBase64(encodedKey);
+      const value = fromBase64(encodedValue);
       return negated ? `${key}!=${value}` : `${key}=${value}`;
     } else {
       // No value, just a key (e.g., "!namespace" or "namespace")
-      const key = Buffer.from(part, "base64").toString();
+      const key = fromBase64(part);
       return negated ? `${key}!=` : `${key}=`;
     }
   });
