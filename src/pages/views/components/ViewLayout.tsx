@@ -1,3 +1,4 @@
+import type React from "react";
 import { Head } from "../../../ui/Head";
 import { Icon } from "../../../ui/Icons/Icon";
 import { SearchLayout } from "../../../ui/Layout/SearchLayout";

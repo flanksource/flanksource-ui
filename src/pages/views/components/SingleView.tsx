@@ -87,6 +87,9 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           ? [{ namespace: result.data.namespace, name: result.data.name }]
           : [];
 
+    // Also clear the main view query by id so the metadata refetches
+    await queryClient.invalidateQueries({ queryKey: ["view-result", id] });
+
     await Promise.all(
       sectionsToRefresh.map((section) =>
         queryClient.invalidateQueries({
