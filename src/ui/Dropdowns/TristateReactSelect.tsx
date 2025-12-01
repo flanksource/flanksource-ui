@@ -98,6 +98,43 @@ export function setTristateOutputToQueryFilterToURLSearchParam(
   }
 }
 
+/**
+ * Converts a tristate value to a tag selector format.
+ * Expects base64-encoded key and value separated by ":".
+ *
+ * Output: namespace!=cert-manager,namespace!=dbms,namespace=default
+ */
+export function tristateToTagSelector(p: string): string {
+  const val = tristateOutputToQueryParamValue(p);
+  if (!val) {
+    return "";
+  }
+
+  const parts = val.split(",");
+  const result = parts.map((part) => {
+    const negated = part.startsWith("!");
+    if (negated) {
+      part = part.slice(1);
+    }
+
+    // Split on ":" to get base64-encoded key and value
+    const colonIndex = part.indexOf(":");
+    if (colonIndex !== -1) {
+      const encodedKey = part.slice(0, colonIndex);
+      const encodedValue = part.slice(colonIndex + 1);
+      const key = Buffer.from(encodedKey, "base64").toString();
+      const value = Buffer.from(encodedValue, "base64").toString();
+      return negated ? `${key}!=${value}` : `${key}=${value}`;
+    } else {
+      // No value, just a key (e.g., "!namespace" or "namespace")
+      const key = Buffer.from(part, "base64").toString();
+      return negated ? `${key}!=` : `${key}=`;
+    }
+  });
+
+  return result.join(",");
+}
+
 type TriStateToggleState = {
   [key: string]: number;
 };
@@ -277,6 +314,15 @@ type TristateReactSelectProps = {
   value?: string;
   label: string;
   className?: string;
+  /**
+   * When true, allows mixing included and excluded items. However, the same
+   * tag key (the part before "____") cannot be both included and excluded -
+   * selecting a tag with a key that's already selected with a different state
+   * will replace the previous selection for that key.
+   *
+   * When false (default), selecting an item resets all items with a different
+   * state, so you can only have all includes OR all excludes.
+   */
   isTagsDropdown?: boolean;
   minMenuWidth?: string;
 };

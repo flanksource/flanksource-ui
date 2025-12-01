@@ -1,6 +1,7 @@
 import {
   tristateOutputToQueryFilterParam,
-  tristateOutputToQueryParamValue
+  tristateOutputToQueryParamValue,
+  tristateToTagSelector
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { AVATAR_INFO } from "../../constants";
 import { apiBase, IncidentCommander, NotificationAPI } from "../axios";
@@ -79,6 +80,7 @@ type NotificationSendHistorySummaryRequest = {
   status?: string;
   resourceType?: string;
   search?: string;
+  tags?: string;
   includeDeletedResources?: boolean;
   pageIndex?: number;
   pageSize?: number;
@@ -95,11 +97,13 @@ export const getNotificationSendHistorySummary = async ({
   resourceType,
   status,
   search,
+  tags,
   includeDeletedResources
 }: NotificationQueryFilterOptions & {
   status?: string;
   resourceType?: string;
   search?: string;
+  tags?: string;
   includeDeletedResources?: boolean;
 }) => {
   const payload: NotificationSendHistorySummaryRequest = {
@@ -115,6 +119,10 @@ export const getNotificationSendHistorySummary = async ({
 
   if (resourceType) {
     payload.resourceType = tristateOutputToQueryParamValue(resourceType);
+  }
+
+  if (tags) {
+    payload.tags = tristateToTagSelector(tags);
   }
 
   const res = await apiBase.post<NotificationSendHistorySummaryResponse>(

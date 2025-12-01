@@ -120,6 +120,7 @@ export type NotificationSendHistoryResource =
 export type NotificationSendHistorySummary = {
   resource?: NotificationSendHistoryResource; // resource can be null when the resource is deleted, but the notification history is still present
   resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
+  resource_tags: Record<string, string>;
   resource_status: string;
   resource_health_description: string;
   notification_id: string;
