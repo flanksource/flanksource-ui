@@ -3,7 +3,7 @@ import { ConfigItem } from "./configs";
 import { HealthCheck } from "./health";
 import { Topology } from "./topology";
 import { Team, User } from "./users";
-import { PlaybookRunStatus } from "./playbooks";
+import { PlaybookResourceSelector, PlaybookRunStatus } from "./playbooks";
 
 export type NotificationRules = {
   id: string;
@@ -47,22 +47,28 @@ export type NotificationRules = {
   wait_for?: number;
 };
 
-export type SilenceNotificationResponse = {
-  id: string;
+// Source: github.com/flanksource/mission-control/notification/silence.go
+export type SilenceSaveRequest = {
+  id?: string;
   name: string;
+  from?: string;
+  until?: string | null;
+  description?: string;
+  recursive?: boolean;
   filter?: string;
-  selectors?: string;
+  selectors?: PlaybookResourceSelector[];
   component_id?: string;
   config_id?: string;
   check_id?: string;
   canary_id?: string;
-  from: string;
-  until: string | null;
-  description?: string;
-  recursive?: boolean;
   namespace?: string;
-  error?: string;
   source?: "KubernetesCRD" | "UI";
+};
+
+// Form state type - selectors stored as YAML string in the form
+export type SilenceSaveFormValues = Omit<SilenceSaveRequest, "selectors"> & {
+  selectors?: string;
+  error?: string;
 };
 
 export type NotificationSendHistory = {
@@ -147,6 +153,7 @@ export type NotificationSilenceItem = {
   namespace: string;
   description?: string;
   filter?: string;
+  selectors?: string;
   error?: string;
   from: string;
   until: string | null;
