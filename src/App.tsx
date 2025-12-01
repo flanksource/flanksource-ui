@@ -7,7 +7,7 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaCrosshairs, FaTasks } from "react-icons/fa";
+import { FaBell, FaCrosshairs, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -439,6 +439,13 @@ const settingsNav: SettingsNavigationItems = {
       name: "Tokens",
       href: "/settings/tokens",
       icon: VscKey,
+      featureName: features.agents,
+      resourceName: tables.database
+    },
+    {
+      name: "Notifications",
+      href: "/notifications/rules",
+      icon: FaBell,
       featureName: features.agents,
       resourceName: tables.database
     },
