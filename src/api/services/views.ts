@@ -2,6 +2,7 @@ import { ConfigDB, ViewAPI } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult, ViewColumnDef } from "../../pages/audit-report/types";
 import { tristateOutputToQueryFilterParam } from "../../ui/Dropdowns/TristateReactSelect";
+import { buildLabelFilterQueries } from "../utils/labels";
 
 export type View = {
   id: string;
@@ -168,18 +169,7 @@ export const queryViewTable = async (
       // Check if this is a labels column that needs JSONB filtering
       const column = columns.find((c) => c.name === key);
       if (column?.type === "labels") {
-        // Convert key____value:1 format to PostgREST JSONB syntax
-        const filterQueries: string[] = [];
-        value.split(",").forEach((label) => {
-          const [filterValue, operand] = label.split(":");
-          const [k, v] = filterValue.split("____");
-          const operator = parseInt(operand) === -1 ? "neq" : "eq";
-          if (k && v) {
-            filterQueries.push(
-              `${key}->>${k}.${operator}.${encodeURIComponent(v)}`
-            );
-          }
-        });
+        const filterQueries = buildLabelFilterQueries(key, value);
         if (filterQueries.length > 0) {
           queryString += `&or=(and(${filterQueries.join(",")}))`;
         }
