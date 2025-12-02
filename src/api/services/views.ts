@@ -99,6 +99,36 @@ export const getViewDataById = async (
   return response.json();
 };
 
+export const getViewDataByNamespace = async (
+  namespace: string,
+  name: string,
+  variables?: Record<string, string>,
+  headers?: Record<string, string>
+): Promise<ViewResult> => {
+  const body: { variables?: Record<string, string> } = {
+    variables: variables
+  };
+
+  const response = await fetch(`/api/view/${namespace}/${name}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      errorData.error || `HTTP ${response.status}: ${response.statusText}`
+    );
+  }
+
+  return response.json();
+};
+
 /**
  * Get display plugin variables for a view based on a config
  */

@@ -1,82 +1,21 @@
 import React, { useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
-import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
-import View from "../../audit-report/components/View/View";
-import { Head } from "../../../ui/Head";
-import { Icon } from "../../../ui/Icons/Icon";
-import { SearchLayout } from "../../../ui/Layout/SearchLayout";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../../ui/BreadcrumbNav";
+import ViewSection from "./ViewSection";
 import Age from "../../../ui/Age/Age";
 import { toastError } from "../../../components/Toast/toast";
+import ViewLayout from "./ViewLayout";
 
 interface SingleViewProps {
   id: string;
 }
 
-// This is the prefix for all the query params that are related to the view variables.
-const VIEW_VAR_PREFIX = "viewvar";
-
-interface ViewLayoutProps {
-  title: string;
-  icon: string;
-  onRefresh: () => void;
-  loading?: boolean;
-  extra?: React.ReactNode;
-  children: React.ReactNode;
-  centered?: boolean;
-}
-
-const ViewLayout: React.FC<ViewLayoutProps> = ({
-  title,
-  icon,
-  onRefresh,
-  loading,
-  extra,
-  children,
-  centered = false
-}) => (
-  <>
-    <Head prefix={title} />
-    <SearchLayout
-      title={
-        <BreadcrumbNav
-          list={[
-            <BreadcrumbRoot key={"view"} link="/views">
-              <Icon name={icon} className="mr-2 h-4 w-4" />
-              {title}
-            </BreadcrumbRoot>
-          ]}
-        />
-      }
-      onRefresh={onRefresh}
-      contentClass="p-0 h-full"
-      loading={loading}
-      extra={extra}
-    >
-      {centered ? (
-        <div className="flex h-full w-full items-center justify-center">
-          {children}
-        </div>
-      ) : (
-        children
-      )}
-    </SearchLayout>
-  </>
-);
-
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const queryClient = useQueryClient();
   const forceRefreshRef = useRef(false);
 
-  // Use prefixed search params for view variables
-  // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
-  // We must remove the global query parameters from the URL params.
-  const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
-  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
-
-  // Fetch all the view metadata, panel results and the column definitions
-  // NOTE: This doesn't fetch the table rows.
+  // Fetch view metadata only. Each section (including the main view) will fetch
+  // its own data with its own variables using its unique prefix.
   const {
     data: viewResult,
     isLoading,
@@ -84,16 +23,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     error,
     refetch
   } = useQuery({
-    queryKey: ["view-result", id, currentViewVariables],
+    queryKey: ["view-result", id],
     queryFn: () => {
       const headers = forceRefreshRef.current
         ? { "cache-control": "max-age=1" }
         : undefined;
-      return getViewDataById(id, currentViewVariables, headers);
+      return getViewDataById(id, undefined, headers);
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData: any) => previousData
+    keepPreviousData: true
   });
 
   const handleForceRefresh = async () => {
@@ -170,6 +109,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const { icon, title, namespace, name } = viewResult;
 
+  // Render the main view as a section as well.
+  // Doing this due to some CSS issues that I couldn't solve.
+  const mySection = {
+    title: "",
+    viewRef: {
+      namespace: namespace || "",
+      name: name
+    }
+  };
+
   return (
     <ViewLayout
       title={title || name}
@@ -186,18 +135,19 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       }
     >
       <div className="flex h-full w-full flex-1 flex-col overflow-y-auto p-6 pb-0">
-        <View
-          title=""
-          namespace={namespace}
-          name={name}
-          columns={viewResult?.columns}
-          columnOptions={viewResult?.columnOptions}
-          panels={viewResult?.panels}
-          variables={viewResult?.variables}
-          card={viewResult?.card}
-          requestFingerprint={viewResult.requestFingerprint}
-          currentVariables={currentViewVariables}
-        />
+        <div>
+          <ViewSection key={name} section={mySection} />
+        </div>
+
+        {viewResult?.sections && viewResult.sections.length > 0 && (
+          <>
+            {viewResult.sections.map((section) => (
+              <div key={section.viewRef.name} className="mt-6 pt-6">
+                <ViewSection section={section} />
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </ViewLayout>
   );

@@ -376,6 +376,17 @@ export interface ColumnFilterOptions {
   labels?: Record<string, string[]>;
 }
 
+export interface ViewRef {
+  namespace: string;
+  name: string;
+}
+
+export interface ViewSection {
+  title: string;
+  icon?: string;
+  viewRef: ViewRef;
+}
+
 export interface ViewResult {
   title?: string;
   icon?: string;
@@ -390,6 +401,7 @@ export interface ViewResult {
   variables?: ViewVariable[];
   card?: DisplayCard;
   requestFingerprint: string;
+  sections?: ViewSection[];
 }
 
 export interface GaugeThreshold {

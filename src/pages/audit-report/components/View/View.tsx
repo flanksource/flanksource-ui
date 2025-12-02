@@ -27,6 +27,7 @@ import {
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
+import { getViewPrefix } from "../../../../utils/viewHash";
 import ViewCardsDisplay from "./ViewCardsDisplay";
 
 interface ViewProps {
@@ -66,8 +67,11 @@ const View: React.FC<ViewProps> = ({
   // Separate display mode state (frontend only, not sent to backend)
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Create unique prefix for global filters
-  const globalVarPrefix = "viewvar";
+  // Create unique prefix for global filters (same as ViewSection uses)
+  const globalVarPrefix = useMemo(
+    () => getViewPrefix(namespace, name),
+    [namespace, name]
+  );
   const hasDataTable = columns && columns.length > 0;
 
   // Detect if card mode is available (supports both new and old cardPosition field)
@@ -161,94 +165,96 @@ const View: React.FC<ViewProps> = ({
 
   return (
     <>
-      {title !== "" && (
-        <h3 className="mb-4 flex items-center text-xl font-semibold">
-          <Box className="mr-2 text-teal-600" size={20} />
-          {title}
-        </h3>
-      )}
+      <div className="flex-none">
+        {title !== "" && (
+          <h3 className="mb-4 flex items-center text-xl font-semibold">
+            <Box className="mr-2 text-teal-600" size={20} />
+            {title}
+          </h3>
+        )}
 
-      {variables && variables.length > 0 && (
-        <GlobalFiltersForm
-          variables={variables}
-          globalVarPrefix={globalVarPrefix}
-          currentVariables={currentVariables}
-        >
-          <GlobalFilters variables={variables} />
-        </GlobalFiltersForm>
-      )}
-
-      {variables && variables.length > 0 && (
-        <hr className="my-4 border-gray-200" />
-      )}
-
-      <div className="mb-4 space-y-6">
-        {panels && panels.length > 0 && (
-          <div
-            className="grid gap-4"
-            style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gridAutoRows: "minmax(auto, 250px)"
-            }}
+        {variables && variables.length > 0 && (
+          <GlobalFiltersForm
+            variables={variables}
+            globalVarPrefix={globalVarPrefix}
+            currentVariables={currentVariables}
           >
-            {groupAndRenderPanels(panels)}
-          </div>
+            <GlobalFilters variables={variables} />
+          </GlobalFiltersForm>
         )}
-      </div>
 
-      <ViewTableFilterForm
-        filterFields={filterFields}
-        defaultFieldValues={{}}
-        tablePrefix={tablePrefix}
-      >
-        {hasDataTable && (
-          <div className="mb-2">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                {filterableColumns.map(({ column, options }) => (
-                  <ViewColumnDropdown
-                    key={column.name}
-                    label={formatDisplayLabel(column.name)}
-                    paramsKey={column.name}
-                    options={options}
-                    isLabelsColumn={column.type === "labels"}
-                  />
-                ))}
-              </div>
+        {variables && variables.length > 0 && (
+          <hr className="my-4 border-gray-200" />
+        )}
 
-              {/* Display Mode Toggle */}
-              {hasCardMode && (
-                <div className="flex items-center gap-1 rounded-lg border border-gray-300 bg-white p-1">
-                  <button
-                    onClick={() => setDisplayMode("table")}
-                    className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
-                      displayMode === "table"
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                    title="Table view"
-                  >
-                    <Table2 size={16} />
-                    Table
-                  </button>
-                  <button
-                    onClick={() => setDisplayMode("cards")}
-                    className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
-                      displayMode === "cards"
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                    title="Card view"
-                  >
-                    <LayoutGrid size={16} />
-                    Cards
-                  </button>
-                </div>
-              )}
+        <div className="mb-4 space-y-6">
+          {panels && panels.length > 0 && (
+            <div
+              className="grid gap-4"
+              style={{
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gridAutoRows: "minmax(auto, 250px)"
+              }}
+            >
+              {groupAndRenderPanels(panels)}
             </div>
-          </div>
-        )}
-      </ViewTableFilterForm>
+          )}
+        </div>
+
+        <ViewTableFilterForm
+          filterFields={filterFields}
+          defaultFieldValues={{}}
+          tablePrefix={tablePrefix}
+        >
+          {hasDataTable && (
+            <div className="mb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {filterableColumns.map(({ column, options }) => (
+                    <ViewColumnDropdown
+                      key={column.name}
+                      label={formatDisplayLabel(column.name)}
+                      paramsKey={column.name}
+                      options={options}
+                      isLabelsColumn={column.type === "labels"}
+                    />
+                  ))}
+                </div>
+
+                {/* Display Mode Toggle */}
+                {hasCardMode && (
+                  <div className="flex items-center gap-1 rounded-lg border border-gray-300 bg-white p-1">
+                    <button
+                      onClick={() => setDisplayMode("table")}
+                      className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                        displayMode === "table"
+                          ? "bg-blue-100 text-blue-700"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                      title="Table view"
+                    >
+                      <Table2 size={16} />
+                      Table
+                    </button>
+                    <button
+                      onClick={() => setDisplayMode("cards")}
+                      className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
+                        displayMode === "cards"
+                          ? "bg-blue-100 text-blue-700"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                      title="Card view"
+                    >
+                      <LayoutGrid size={16} />
+                      Cards
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </ViewTableFilterForm>
+      </div>
 
       {tableError && (
         <div className="text-center text-red-500">
@@ -270,14 +276,16 @@ const View: React.FC<ViewProps> = ({
             totalRowCount={totalEntries}
           />
         ) : (
-          <DynamicDataTable
-            columns={columns}
-            isLoading={isLoading}
-            rows={rows || []}
-            pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
-            totalRowCount={totalEntries}
-            tablePrefix={tablePrefix}
-          />
+          <div className="min-h-0 flex-1">
+            <DynamicDataTable
+              columns={columns}
+              isLoading={isLoading}
+              rows={rows || []}
+              pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
+              totalRowCount={totalEntries}
+              tablePrefix={tablePrefix}
+            />
+          </div>
         ))}
     </>
   );
