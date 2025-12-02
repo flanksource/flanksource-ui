@@ -286,6 +286,7 @@ export interface ViewColumnDef {
     | "url"
     | "badge"
     | "config_item"
+    | "labels"
     | "row_attributes"
     | "grants";
 
@@ -365,6 +366,16 @@ export interface DisplayCard {
   default?: boolean;
 }
 
+/**
+ * Filter options for a column.
+ * For regular columns, list contains distinct values.
+ * For labels columns, labels contains keys mapped to their possible values.
+ */
+export interface ColumnFilterOptions {
+  list?: string[];
+  labels?: Record<string, string[]>;
+}
+
 export interface ViewResult {
   title?: string;
   icon?: string;
@@ -375,7 +386,7 @@ export interface ViewResult {
   columns?: ViewColumnDef[];
   rows?: ViewRow[];
   panels?: PanelResult[];
-  columnOptions?: Record<string, string[]>;
+  columnOptions?: Record<string, ColumnFilterOptions>;
   variables?: ViewVariable[];
   card?: DisplayCard;
   requestFingerprint: string;

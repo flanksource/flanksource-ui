@@ -3,32 +3,51 @@ import TristateReactSelect, {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
 import { useMemo } from "react";
+import { ColumnFilterOptions } from "../types";
 
 type ViewColumnDropdownProps = {
   label: string;
   paramsKey: string;
-  options: string[];
+  options?: ColumnFilterOptions;
+  isLabelsColumn?: boolean;
 };
 
 export function ViewColumnDropdown({
   label,
   paramsKey,
-  options
+  options,
+  isLabelsColumn = false
 }: ViewColumnDropdownProps) {
   const [field] = useField({
     name: paramsKey
   });
 
   const dropdownOptions = useMemo(() => {
-    return options.map(
-      (option) =>
-        ({
-          value: option,
-          label: option,
-          id: option
-        }) satisfies TriStateOptions
-    );
-  }, [options]);
+    if (!options) return [];
+
+    if (isLabelsColumn && options.labels) {
+      // For labels columns, flatten the key -> values map into options
+      // Format: "key____value" for filtering, display as "key: value"
+      const labelOptions: TriStateOptions[] = [];
+      for (const [key, values] of Object.entries(options.labels)) {
+        for (const value of values) {
+          labelOptions.push({
+            value: `${key}____${value}`,
+            label: `${key}: ${value}`,
+            id: `${key}____${value}`
+          });
+        }
+      }
+      return labelOptions;
+    }
+
+    // For regular columns, use the list
+    return (options.list ?? []).map((option) => ({
+      value: option,
+      label: option,
+      id: option
+    }));
+  }, [options, isLabelsColumn]);
 
   const sortedOptions = useMemo(
     () =>
@@ -39,7 +58,7 @@ export function ViewColumnDropdown({
         if (b.label === "All") {
           return 1;
         }
-        return a.label?.localeCompare(b.label);
+        return String(a.label).localeCompare(String(b.label));
       }),
     [dropdownOptions]
   );

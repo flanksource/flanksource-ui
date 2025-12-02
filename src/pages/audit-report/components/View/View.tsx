@@ -4,7 +4,13 @@ import { Box, Table2, LayoutGrid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
-import { PanelResult, ViewColumnDef, ViewRow, ViewVariable } from "../../types";
+import {
+  ColumnFilterOptions,
+  PanelResult,
+  ViewColumnDef,
+  ViewRow,
+  ViewVariable
+} from "../../types";
 import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import ViewTableFilterForm from "./ViewTableFilterForm";
@@ -29,7 +35,7 @@ interface ViewProps {
   namespace?: string;
   name: string;
   columns?: ViewColumnDef[];
-  columnOptions?: Record<string, string[]>;
+  columnOptions?: Record<string, ColumnFilterOptions>;
   variables?: ViewVariable[];
   card?: {
     columns: number;
@@ -143,13 +149,13 @@ const View: React.FC<ViewProps> = ({
     return columns
       .map((column, index) => {
         if (column.filter?.type !== "multiselect") return null;
-        const uniqueValues = columnOptions?.[column.name]?.sort() ?? [];
-        return { column, columnIndex: index, uniqueValues };
+        const options = columnOptions?.[column.name];
+        return { column, columnIndex: index, options };
       })
       .filter(Boolean) as Array<{
-      column: any;
+      column: ViewColumnDef;
       columnIndex: number;
-      uniqueValues: string[];
+      options?: ColumnFilterOptions;
     }>;
   }, [columns, columnOptions]);
 
@@ -157,7 +163,7 @@ const View: React.FC<ViewProps> = ({
     <>
       {title !== "" && (
         <h3 className="mb-4 flex items-center text-xl font-semibold">
-          <Box className="text-teal-600 mr-2" size={20} />
+          <Box className="mr-2 text-teal-600" size={20} />
           {title}
         </h3>
       )}
@@ -199,12 +205,13 @@ const View: React.FC<ViewProps> = ({
           <div className="mb-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                {filterableColumns.map(({ column, uniqueValues }) => (
+                {filterableColumns.map(({ column, options }) => (
                   <ViewColumnDropdown
                     key={column.name}
                     label={formatDisplayLabel(column.name)}
                     paramsKey={column.name}
-                    options={uniqueValues}
+                    options={options}
+                    isLabelsColumn={column.type === "labels"}
                   />
                 ))}
               </div>

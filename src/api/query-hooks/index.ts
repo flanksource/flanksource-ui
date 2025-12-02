@@ -1,6 +1,5 @@
 import { setTristateOutputToQueryFilterToURLSearchParam } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
-import { isNull } from "lodash";
 import { toastError } from "../../components/Toast/toast";
 import { getIncidentHistory } from "../services/IncidentsHistory";
 import { getAllAgents } from "../services/agents";
@@ -31,6 +30,7 @@ import {
   getTopologyComponentsWithLogs,
   getTopologyNameByID
 } from "../services/topology";
+import { buildLabelFilterQueries } from "../utils/labels";
 import { getPersons, getVersionInfo } from "../services/users";
 import { Analysis } from "../types/configs";
 import { IncidentHistory } from "../types/incident";
@@ -213,20 +213,7 @@ export function prepareConfigListQuery({
       const [k, v] = decodeURI(label).split("__:__");
       filterQueries.push(`labels->>${k}=eq.${encodeURIComponent(v)}`);
     }
-    if (labels) {
-      labels.split(",").forEach((label) => {
-        const [k, v] = label.split("____");
-        const [realValue, operand] = v.split(":");
-        const operator = parseInt(operand) === -1 ? "neq" : "eq";
-        if (!isNull(v)) {
-          filterQueries.push(
-            `labels->>${k}.${operator}.${encodeURIComponent(realValue)}`
-          );
-        } else {
-          filterQueries.push(`labels->>${k}=is.null`);
-        }
-      });
-    }
+    filterQueries.push(...buildLabelFilterQueries("labels", labels));
     if (filterQueries.length) {
       query.append("or", `(and(${filterQueries.join(",")}))`);
     }

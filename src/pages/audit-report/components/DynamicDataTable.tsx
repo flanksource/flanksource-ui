@@ -7,7 +7,7 @@ import { MRT_ColumnDef } from "mantine-react-table";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
 import BadgeCell from "./BadgeCell";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
 import { Status } from "../../../components/Status";
@@ -16,6 +16,7 @@ import ConfigsTypeIcon from "../../../components/Configs/ConfigsTypeIcon";
 import { IconName } from "lucide-react/dynamic";
 import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { formatDisplayLabel } from "./View/panels/utils";
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -56,6 +57,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         minSize: 15,
         maxSize: minWidthForColumnType(col.type),
         header: formatDisplayLabel(col.name),
+        enableSorting: col.type !== "labels",
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original, tablePrefix)
       };
@@ -102,6 +104,68 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       manualPageCount={pageCount}
       totalRowCount={totalRowCount}
     />
+  );
+};
+
+type LabelsCellProps = {
+  entries: [string, any][];
+  hasFilter: boolean;
+  paramKey: string;
+};
+
+const LabelsCell: React.FC<LabelsCellProps> = ({
+  entries,
+  hasFilter,
+  paramKey
+}) => {
+  const [params, setParams] = useSearchParams();
+
+  const onFilterByTag = React.useCallback(
+    (
+      e: React.MouseEvent<HTMLButtonElement>,
+      tag: { key: string; value: string },
+      action: "include" | "exclude"
+    ) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const currentValue = params.get(paramKey);
+      const currentValues = currentValue ? currentValue.split(",") : [];
+
+      // Filter out conflicting values for the same tag
+      const filteredValues = currentValues.filter((val) => {
+        const tagKey = val.split("____")[0];
+        const tagAction = val.split(":")[1] === "1" ? "include" : "exclude";
+        return !(tagKey === tag.key && tagAction !== action);
+      });
+
+      // Add new filter value
+      const newFilterValue = `${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`;
+      const updatedValues = filteredValues
+        .concat(newFilterValue)
+        .filter((val, idx, self) => self.indexOf(val) === idx)
+        .join(",");
+
+      params.set(paramKey, updatedValues);
+      params.delete("pageIndex");
+      setParams(params);
+    },
+    [params, paramKey, setParams]
+  );
+
+  return (
+    <div className="flex flex-wrap gap-1">
+      {entries.map(([key, val]) => (
+        <Tag
+          key={key}
+          tag={{ key, value: String(val) }}
+          variant="gray"
+          onFilterByTag={hasFilter ? onFilterByTag : undefined}
+        >
+          {key}: {String(val)}
+        </Tag>
+      ))}
+    </div>
   );
 };
 
@@ -226,6 +290,31 @@ const renderCellValue = (
       cellContent = <BadgeCell value={String(value)} />;
       break;
 
+    case "labels":
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const entries = Object.entries(value).filter(
+          ([key]) => key !== "toString"
+        );
+        const hasFilter = column.filter?.type === "multiselect";
+        const paramKey = tablePrefix
+          ? `${tablePrefix}__${column.name}`
+          : column.name;
+
+        cellContent =
+          entries.length > 0 ? (
+            <LabelsCell
+              entries={entries}
+              hasFilter={hasFilter}
+              paramKey={paramKey}
+            />
+          ) : (
+            "-"
+          );
+      } else {
+        cellContent = "-";
+      }
+      break;
+
     case "config_item":
       const rowAttributes = row.__rowAttributes as Record<
         string,
@@ -292,7 +381,8 @@ const renderCellValue = (
   }
 
   // Wrap with FilterByCellValue if column has multiselect filter
-  if (column.filter?.type === "multiselect") {
+  // Skip labels columns since they handle filtering individually per tag
+  if (column.filter?.type === "multiselect" && column.type !== "labels") {
     // Use prefixed parameter key if tablePrefix is provided
     const paramKey = tablePrefix
       ? `${tablePrefix}__${column.name}`
