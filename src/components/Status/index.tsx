@@ -9,6 +9,7 @@ function getStatusColor(
     status === "degraded" ||
     status === "missing" ||
     status === "unhealthy" ||
+    status === "failed" ||
     (good !== undefined && !good)
   ) {
     return "bg-red-400";
