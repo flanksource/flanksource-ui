@@ -70,16 +70,16 @@ export const getAllViews = (
 /**
  * Get the data for a view by its id.
  */
-export const getViewDataById = async (
-  viewId: string,
+const fetchViewData = async (
+  path: string,
   variables?: Record<string, string>,
   headers?: Record<string, string>
 ): Promise<ViewResult> => {
   const body: { variables?: Record<string, string> } = {
-    variables: variables
+    variables
   };
 
-  const response = await fetch(`/api/view/${viewId}`, {
+  const response = await fetch(path, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -97,6 +97,31 @@ export const getViewDataById = async (
   }
 
   return response.json();
+};
+
+export const getViewDataById = async (
+  viewId: string,
+  variables?: Record<string, string>,
+  headers?: Record<string, string>
+): Promise<ViewResult> => {
+  return fetchViewData(
+    `/api/view/${encodeURIComponent(viewId)}`,
+    variables,
+    headers
+  );
+};
+
+export const getViewDataByNamespace = async (
+  namespace: string,
+  name: string,
+  variables?: Record<string, string>,
+  headers?: Record<string, string>
+): Promise<ViewResult> => {
+  return fetchViewData(
+    `/api/view/${encodeURIComponent(namespace)}/${encodeURIComponent(name)}`,
+    variables,
+    headers
+  );
 };
 
 /**

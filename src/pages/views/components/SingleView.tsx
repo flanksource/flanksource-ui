@@ -1,82 +1,26 @@
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getViewDataById } from "../../../api/services/views";
-import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
-import View from "../../audit-report/components/View/View";
-import { Head } from "../../../ui/Head";
-import { Icon } from "../../../ui/Icons/Icon";
-import { SearchLayout } from "../../../ui/Layout/SearchLayout";
-import { BreadcrumbNav, BreadcrumbRoot } from "../../../ui/BreadcrumbNav";
+import ViewSection from "./ViewSection";
 import Age from "../../../ui/Age/Age";
 import { toastError } from "../../../components/Toast/toast";
+import ViewLayout from "./ViewLayout";
+import { useAggregatedViewVariables } from "../hooks/useAggregatedViewVariables";
+import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersForm";
+import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
+import { VIEW_VAR_PREFIX } from "../constants";
+import type { ViewRef } from "../../audit-report/types";
 
 interface SingleViewProps {
   id: string;
 }
 
-// This is the prefix for all the query params that are related to the view variables.
-const VIEW_VAR_PREFIX = "viewvar";
-
-interface ViewLayoutProps {
-  title: string;
-  icon: string;
-  onRefresh: () => void;
-  loading?: boolean;
-  extra?: React.ReactNode;
-  children: React.ReactNode;
-  centered?: boolean;
-}
-
-const ViewLayout: React.FC<ViewLayoutProps> = ({
-  title,
-  icon,
-  onRefresh,
-  loading,
-  extra,
-  children,
-  centered = false
-}) => (
-  <>
-    <Head prefix={title} />
-    <SearchLayout
-      title={
-        <BreadcrumbNav
-          list={[
-            <BreadcrumbRoot key={"view"} link="/views">
-              <Icon name={icon} className="mr-2 h-4 w-4" />
-              {title}
-            </BreadcrumbRoot>
-          ]}
-        />
-      }
-      onRefresh={onRefresh}
-      contentClass="p-0 h-full"
-      loading={loading}
-      extra={extra}
-    >
-      {centered ? (
-        <div className="flex h-full w-full items-center justify-center">
-          {children}
-        </div>
-      ) : (
-        children
-      )}
-    </SearchLayout>
-  </>
-);
-
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   const queryClient = useQueryClient();
   const forceRefreshRef = useRef(false);
 
-  // Use prefixed search params for view variables
-  // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
-  // We must remove the global query parameters from the URL params.
-  const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
-  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
-
-  // Fetch all the view metadata, panel results and the column definitions
-  // NOTE: This doesn't fetch the table rows.
+  // Fetch view metadata only. Each section (including the main view) will fetch
+  // its own data with its own variables using its unique prefix.
   const {
     data: viewResult,
     isLoading,
@@ -84,17 +28,39 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     error,
     refetch
   } = useQuery({
-    queryKey: ["view-result", id, currentViewVariables],
+    queryKey: ["view-result", id],
     queryFn: () => {
       const headers = forceRefreshRef.current
         ? { "cache-control": "max-age=1" }
         : undefined;
-      return getViewDataById(id, currentViewVariables, headers);
+      return getViewDataById(id, undefined, headers);
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData: any) => previousData
+    keepPreviousData: true
   });
+
+  // Collect all section refs (main view + additional sections)
+  // Must be called before early returns to satisfy React hooks rules
+  const allSectionRefs = useMemo<ViewRef[]>(() => {
+    if (!viewResult?.namespace || !viewResult?.name) {
+      return [];
+    }
+    const refs = [{ namespace: viewResult.namespace, name: viewResult.name }];
+    if (viewResult?.sections) {
+      viewResult.sections.forEach((section) => {
+        refs.push({
+          namespace: section.viewRef.namespace,
+          name: section.viewRef.name
+        });
+      });
+    }
+    return refs;
+  }, [viewResult?.namespace, viewResult?.name, viewResult?.sections]);
+
+  // Fetch and aggregate variables from all sections
+  const { variables: aggregatedVariables, currentVariables } =
+    useAggregatedViewVariables(allSectionRefs);
 
   const handleForceRefresh = async () => {
     forceRefreshRef.current = true;
@@ -107,11 +73,35 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           ? result.error.message
           : "Failed to refresh view"
       );
-    } else if (result.data?.namespace && result.data?.name) {
-      await queryClient.invalidateQueries({
-        queryKey: ["view-table", result.data.namespace, result.data.name]
-      });
+      return;
     }
+
+    // Invalidate all section data (view results and tables) so they refetch
+    const sectionsToRefresh =
+      allSectionRefs.length > 0 &&
+      allSectionRefs[0].namespace &&
+      allSectionRefs[0].name
+        ? allSectionRefs
+        : result.data?.namespace && result.data.name
+          ? [{ namespace: result.data.namespace, name: result.data.name }]
+          : [];
+
+    // Also clear the main view query by id so the metadata refetches
+    await queryClient.invalidateQueries({ queryKey: ["view-result", id] });
+
+    await Promise.all(
+      sectionsToRefresh.flatMap((section) => [
+        queryClient.invalidateQueries({
+          queryKey: ["view-result", section.namespace, section.name]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["view-table", section.namespace, section.name]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["view-variables", section.namespace, section.name]
+        })
+      ])
+    );
   };
 
   if (isLoading && !viewResult) {
@@ -170,6 +160,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
 
   const { icon, title, namespace, name } = viewResult;
 
+  // Render the main view through ViewSection to reuse its spacing/scroll styling;
+  // rendering the raw View here caused padding/overflow glitches alongside sections.
+  const primaryViewSection = {
+    title: "",
+    viewRef: {
+      namespace: namespace || "",
+      name: name
+    }
+  };
+
   return (
     <ViewLayout
       title={title || name}
@@ -186,18 +186,41 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
       }
     >
       <div className="flex h-full w-full flex-1 flex-col overflow-y-auto p-6 pb-0">
-        <View
-          title=""
-          namespace={namespace}
-          name={name}
-          columns={viewResult?.columns}
-          columnOptions={viewResult?.columnOptions}
-          panels={viewResult?.panels}
-          variables={viewResult?.variables}
-          card={viewResult?.card}
-          requestFingerprint={viewResult.requestFingerprint}
-          currentVariables={currentViewVariables}
-        />
+        {/* Render aggregated variables once at the top */}
+        {aggregatedVariables && aggregatedVariables.length > 0 && (
+          <GlobalFiltersForm
+            variables={aggregatedVariables}
+            globalVarPrefix={VIEW_VAR_PREFIX}
+            currentVariables={currentVariables}
+          >
+            <GlobalFilters variables={aggregatedVariables} />
+          </GlobalFiltersForm>
+        )}
+
+        {aggregatedVariables && aggregatedVariables.length > 0 && (
+          <hr className="my-4 border-gray-200" />
+        )}
+
+        <div>
+          <ViewSection
+            key={`${namespace || "default"}:${name}`}
+            section={primaryViewSection}
+            hideVariables
+          />
+        </div>
+
+        {viewResult?.sections && viewResult.sections.length > 0 && (
+          <>
+            {viewResult.sections.map((section) => (
+              <div
+                key={`${section.viewRef.namespace}:${section.viewRef.name}`}
+                className="mt-6 pt-6"
+              >
+                <ViewSection section={section} hideVariables />
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </ViewLayout>
   );
