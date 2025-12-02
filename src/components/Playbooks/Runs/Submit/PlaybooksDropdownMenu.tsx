@@ -1,14 +1,9 @@
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import CollapsiblePanel from "@flanksource-ui/ui/CollapsiblePanel/CollapsiblePanel";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Transition
-} from "@headlessui/react";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { Fragment, useState } from "react";
+import { useMemo, useState } from "react";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
@@ -43,47 +38,79 @@ export default function PlaybooksDropdownMenu({
     config_id
   });
 
+  const playbooksGroupedByCategory = useMemo(
+    () =>
+      playbooks?.reduce(
+        (acc, playbook) => {
+          const category = playbook.spec?.category || "Uncategorized";
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(playbook);
+          return acc;
+        },
+        {} as Record<
+          string,
+          (RunnablePlaybook & {
+            spec: any;
+          })[]
+        >
+      ),
+    [playbooks]
+  );
+
   if (error || playbooks?.length === 0 || isLoading) {
     return null;
   }
 
   return (
     <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
-      <div className="my-2 text-right">
-        <Menu as="div" className="relative inline-block text-left">
-          <MenuButton className="btn-white px-2 py-1">
+      <>
+        <Popover className="group">
+          <PopoverButton className="btn-white px-2 py-1">
             <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
             Playbooks
-            <ChevronDownIcon
-              className="-mr-1 ml-2 h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
-          </MenuButton>
-
-          {/* @ts-ignore */}
-          <Transition
-            as={Fragment as any}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
+            <ChevronDownIcon className="size-5 group-data-[open]:rotate-180" />
+          </PopoverButton>
+          <PopoverPanel
+            portal
+            className="menu-items absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            anchor="bottom start"
           >
-            <MenuItems portal className="menu-items" anchor="bottom start">
-              {playbooks?.map((playbook) => (
-                <MenuItem
-                  as="button"
-                  className="menu-item w-full"
-                  onClick={() => setSelectedPlaybookSpec(playbook)}
-                  key={playbook.id}
-                >
-                  <PlaybookSpecIcon playbook={playbook} showLabel showTag />
-                </MenuItem>
-              ))}
-            </MenuItems>
-          </Transition>
-        </Menu>
+            {playbooksGroupedByCategory && (
+              <>
+                {Object.entries(playbooksGroupedByCategory).map(
+                  ([category, playbooks]) => (
+                    <CollapsiblePanel
+                      key={category}
+                      Header={
+                        <div className="flex flex-row items-center gap-2 text-sm text-gray-600">
+                          {category}
+                        </div>
+                      }
+                      iconClassName="h-4 w-4"
+                      isCollapsed
+                    >
+                      <div className={`flex flex-col`}>
+                        {playbooks.map((playbook) => (
+                          <div
+                            key={playbook.id}
+                            onClick={() => {
+                              setSelectedPlaybookSpec(playbook);
+                            }}
+                            className={`flex cursor-pointer flex-col justify-between gap-1 px-4 py-2 text-sm`}
+                          >
+                            <PlaybookSpecIcon playbook={playbook} showLabel />
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsiblePanel>
+                  )
+                )}
+              </>
+            )}
+          </PopoverPanel>
+        </Popover>
         {selectedPlaybookSpec && (
           <SubmitPlaybookRunForm
             componentId={component_id}
@@ -96,7 +123,7 @@ export default function PlaybooksDropdownMenu({
             playbook={selectedPlaybookSpec}
           />
         )}
-      </div>
+      </>
     </AuthorizationAccessCheck>
   );
 }
