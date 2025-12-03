@@ -475,21 +475,6 @@ export interface BarGaugeConfig {
   group?: string;
 }
 
-export type TimeseriesSeriesConfig = {
-  /**
-   * Name of the field in each row that contains the numeric value.
-   */
-  dataKey: string;
-  /**
-   * Optional override for the legend/tooltip label. Defaults to the formatted dataKey.
-   */
-  name?: string;
-  /**
-   * Color for the line. Falls back to the shared color palette.
-   */
-  color?: string;
-};
-
 export type TimeseriesConfig = {
   /**
    * Field name that contains the timestamp. If omitted, the panel will try to infer it.
@@ -500,13 +485,9 @@ export type TimeseriesConfig = {
    */
   style?: "lines" | "area" | "points";
   /**
-   * Convenience for single-series charts when series is not provided.
+   * Field that contains the numeric value for each point. If omitted, the panel will try to infer it.
    */
   valueKey?: string;
-  /**
-   * Optional series definitions for multi-line charts.
-   */
-  series?: TimeseriesSeriesConfig[];
 };
 
 export type PanelResult = {
