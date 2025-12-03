@@ -10,12 +10,14 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { PanelResult, TimeseriesSeriesConfig } from "../../../types";
-import { COLOR_PALETTE, formatDisplayLabel } from "./utils";
+import { PanelResult } from "../../../types";
+import { formatDisplayLabel, textToHex } from "./utils";
 
 interface TimeseriesPanelProps {
   summary: PanelResult;
 }
+
+type SeriesMeta = { dataKey: string; name: string; color?: string };
 
 const isNumeric = (value: any) =>
   value !== null && value !== undefined && !Number.isNaN(Number(value));
@@ -25,42 +27,6 @@ const inferTimeKey = (rows: Record<string, any>[], preferred?: string) => {
   const sample = rows[0] || {};
   const candidates = ["timestamp", "time", "date", "ts"];
   return candidates.find((key) => sample[key] !== undefined);
-};
-
-const inferSeries = (
-  rows: Record<string, any>[],
-  timeKey?: string,
-  config?: PanelResult["timeseries"]
-): TimeseriesSeriesConfig[] => {
-  if (config?.series?.length) {
-    return config.series;
-  }
-
-  const sample = rows[0] || {};
-  const numericKeys = Object.keys(sample).filter(
-    (key) => key !== timeKey && isNumeric(sample[key])
-  );
-
-  if (config?.valueKey) {
-    if (numericKeys.includes(config.valueKey)) {
-      return [
-        { dataKey: config.valueKey },
-        ...numericKeys
-          .filter((key) => key !== config.valueKey)
-          .map((key) => ({ dataKey: key }))
-      ];
-    }
-    return [{ dataKey: config.valueKey }];
-  }
-
-  const fallbackKeys =
-    numericKeys.length > 0
-      ? numericKeys
-      : ["value", "count"].filter((key) =>
-          rows.some((row) => isNumeric(row[key]))
-        );
-
-  return fallbackKeys.map((key) => ({ dataKey: key }));
 };
 
 const parseTimestamp = (value: any, index: number) => {
@@ -85,45 +51,90 @@ const parseTimestamp = (value: any, index: number) => {
   return { numericValue: index, label: String(value) };
 };
 
+const inferValueKey = (rows: Record<string, any>[], timeKey?: string) => {
+  const sample = rows[0] || {};
+  const numericKeys = Object.keys(sample).filter(
+    (key) => key !== timeKey && isNumeric(sample[key])
+  );
+  if (numericKeys.length > 0) {
+    return numericKeys[0];
+  }
+  const fallback = ["value", "count"].find((key) =>
+    rows.some((row) => isNumeric(row[key]))
+  );
+  return fallback;
+};
+
+const renderSmallScatterPoint = (props: any) => {
+  const { cx, cy, fill } = props;
+  if (cx == null || cy == null) return <g />;
+  return <circle cx={cx} cy={cy} r={2} fill={fill} />;
+};
+
 const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
   const rows = useMemo(() => summary.rows || [], [summary.rows]);
 
   const chartStyle: "lines" | "area" | "points" =
     summary.timeseries?.style || "lines";
 
-  const timeKey = useMemo(
-    () => inferTimeKey(rows, summary.timeseries?.timeKey),
-    [rows, summary.timeseries]
-  );
+  const timeKey = useMemo(() => {
+    return inferTimeKey(rows, summary.timeseries?.timeKey);
+  }, [rows, summary.timeseries?.timeKey]);
 
-  const series = useMemo(
-    () => inferSeries(rows, timeKey, summary.timeseries),
-    [rows, summary.timeseries, timeKey]
-  );
+  const valueKey = useMemo(() => {
+    const explicit = summary.timeseries?.valueKey;
+    if (explicit) return explicit;
+    return inferValueKey(rows, timeKey);
+  }, [rows, summary.timeseries?.valueKey, timeKey]);
 
-  const chartData = useMemo(() => {
-    return rows.map((row, index) => {
-      const { numericValue, label } = parseTimestamp(
-        timeKey ? row[timeKey] : undefined,
-        index
+  const { chartData, series } = useMemo(() => {
+    if (!timeKey || !valueKey) {
+      return {
+        chartData: [] as Array<Record<string, any>>,
+        series: [] as SeriesMeta[]
+      };
+    }
+
+    const seriesMap = new Map<string, SeriesMeta>();
+    const rowsByTs = new Map<number, Record<string, any>>();
+
+    rows.forEach((row, index) => {
+      const { numericValue, label } = parseTimestamp(row[timeKey], index);
+      if (!Number.isFinite(numericValue)) return;
+
+      const labelKeys = Object.keys(row).filter(
+        (key) => key !== timeKey && key !== valueKey
       );
+      labelKeys.sort();
+      const labelPairs = labelKeys.map((key) => `${key}=${row[key]}`);
+      const seriesKey = labelPairs.join(", ") || "default";
 
-      const entry: Record<string, any> = {
+      if (!seriesMap.has(seriesKey)) {
+        seriesMap.set(seriesKey, { dataKey: seriesKey, name: seriesKey });
+      }
+
+      const bucket = rowsByTs.get(numericValue) || {
         __timestamp: numericValue,
         __label: label
       };
 
-      series.forEach((serie) => {
-        const rawValue = row[serie.dataKey];
-        const numericSeriesValue = Number(rawValue);
-        entry[serie.dataKey] = Number.isFinite(numericSeriesValue)
-          ? numericSeriesValue
-          : 0;
-      });
+      const numericSeriesValue = Number(row[valueKey]);
+      bucket[seriesKey] = Number.isFinite(numericSeriesValue)
+        ? numericSeriesValue
+        : 0;
 
-      return entry;
+      rowsByTs.set(numericValue, bucket);
     });
-  }, [rows, series, timeKey]);
+
+    const sortedData = Array.from(rowsByTs.values()).sort(
+      (a, b) => Number(a.__timestamp) - Number(b.__timestamp)
+    );
+
+    return {
+      chartData: sortedData,
+      series: Array.from(seriesMap.values())
+    };
+  }, [rows, timeKey, valueKey]);
 
   const timestampToLabel = useMemo(() => {
     return new Map<number | string, string>(
@@ -144,7 +155,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
   };
 
   const hasNoRows = rows.length === 0;
-  const hasNoSeries = series.length === 0;
+  const hasNoSeries = series.length === 0 || !timeKey || !valueKey;
 
   return (
     <div className="flex h-full min-h-[320px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
@@ -168,19 +179,27 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
+                tick={{ style: { fontSize: "0.6em" } }}
                 dataKey="__timestamp"
                 domain={["auto", "auto"]}
                 type="number"
                 tickFormatter={formatLabel}
                 minTickGap={20}
               />
-              <YAxis />
+              <YAxis tick={{ style: { fontSize: "0.6em" } }} />
               <Tooltip
                 labelFormatter={(value) => formatLabel(value)}
                 formatter={(value: number) => value}
               />
-              {series.map((serie, index) =>
-                chartStyle === "area" ? (
+              {/* <Legend
+                wrapperStyle={{ fontSize: "0.6em" }}
+                payload={undefined}
+              /> */}
+
+              {series.map((serie, index) => {
+                const color = serie.color || textToHex(serie.name);
+
+                return chartStyle === "area" ? (
                   <Area
                     key={serie.dataKey}
                     type="monotone"
@@ -188,12 +207,8 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     name={
                       serie.name || formatDisplayLabel(serie.dataKey || "value")
                     }
-                    stroke={
-                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
-                    }
-                    fill={
-                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
-                    }
+                    stroke={color}
+                    fill={color}
                     fillOpacity={0.2}
                     isAnimationActive={false}
                     connectNulls
@@ -205,11 +220,10 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     name={
                       serie.name || formatDisplayLabel(serie.dataKey || "value")
                     }
-                    fill={
-                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
-                    }
+                    fill={color}
                     isAnimationActive={false}
                     line={{ strokeWidth: 0 }}
+                    shape={renderSmallScatterPoint}
                   />
                 ) : (
                   <Line
@@ -219,16 +233,14 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     name={
                       serie.name || formatDisplayLabel(serie.dataKey || "value")
                     }
-                    stroke={
-                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
-                    }
+                    stroke={color}
                     strokeWidth={2}
                     dot={false}
                     isAnimationActive={false}
                     connectNulls
                   />
-                )
-              )}
+                );
+              })}
             </ComposedChart>
           </ResponsiveContainer>
         </div>

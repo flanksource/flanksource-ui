@@ -18,19 +18,22 @@ const requestVolumeSummary: PanelResult = {
   type: "timeseries",
   description: "Success vs failure counts over the last 6 intervals",
   rows: [
-    { timestamp: "2024-07-01T00:00:00Z", success: 120, failure: 5 },
-    { timestamp: "2024-07-01T01:00:00Z", success: 132, failure: 8 },
-    { timestamp: "2024-07-01T02:00:00Z", success: 118, failure: 3 },
-    { timestamp: "2024-07-01T03:00:00Z", success: 140, failure: 6 },
-    { timestamp: "2024-07-01T04:00:00Z", success: 150, failure: 4 },
-    { timestamp: "2024-07-01T05:00:00Z", success: 160, failure: 7 }
+    { timestamp: "2024-07-01T00:00:00Z", result: "success", value: 120 },
+    { timestamp: "2024-07-01T00:00:00Z", result: "failure", value: 5 },
+    { timestamp: "2024-07-01T01:00:00Z", result: "success", value: 132 },
+    { timestamp: "2024-07-01T01:00:00Z", result: "failure", value: 8 },
+    { timestamp: "2024-07-01T02:00:00Z", result: "success", value: 118 },
+    { timestamp: "2024-07-01T02:00:00Z", result: "failure", value: 3 },
+    { timestamp: "2024-07-01T03:00:00Z", result: "success", value: 140 },
+    { timestamp: "2024-07-01T03:00:00Z", result: "failure", value: 6 },
+    { timestamp: "2024-07-01T04:00:00Z", result: "success", value: 150 },
+    { timestamp: "2024-07-01T04:00:00Z", result: "failure", value: 4 },
+    { timestamp: "2024-07-01T05:00:00Z", result: "success", value: 160 },
+    { timestamp: "2024-07-01T05:00:00Z", result: "failure", value: 7 }
   ],
   timeseries: {
     timeKey: "timestamp",
-    series: [
-      { dataKey: "success", name: "Success" },
-      { dataKey: "failure", name: "Failure", color: "#ef4444" }
-    ]
+    valueKey: "value"
   }
 };
 
@@ -47,12 +50,19 @@ export const AutoDetectedSeries: Story = {
       type: "timeseries",
       description: "Series and timestamp inferred from numeric columns",
       rows: [
-        { time: "2024-07-01T00:00:00Z", value: 62.5 },
-        { time: "2024-07-01T01:00:00Z", value: 58.1 },
-        { time: "2024-07-01T02:00:00Z", value: 65.3 },
-        { time: "2024-07-01T03:00:00Z", value: 70.2 },
-        { time: "2024-07-01T04:00:00Z", value: 67.8 }
-      ]
+        { time: "2024-07-01T00:00:00Z", kind: "Deployment", value: 62.5 },
+        { time: "2024-07-01T00:00:00Z", kind: "Pod", value: 10.1 },
+        { time: "2024-07-01T01:00:00Z", kind: "Deployment", value: 58.1 },
+        { time: "2024-07-01T01:00:00Z", kind: "Pod", value: 11.4 },
+        { time: "2024-07-01T02:00:00Z", kind: "Deployment", value: 65.3 },
+        { time: "2024-07-01T02:00:00Z", kind: "Pod", value: 9.6 },
+        { time: "2024-07-01T03:00:00Z", kind: "Deployment", value: 70.2 },
+        { time: "2024-07-01T04:00:00Z", kind: "Deployment", value: 67.8 }
+      ],
+      timeseries: {
+        timeKey: "time",
+        valueKey: "value"
+      }
     }
   }
 };

@@ -160,6 +160,7 @@ export const getSeverityOfText = (status: string): Severity => {
 
     case "critical":
     case "failed":
+    case "fail":
       return "critical";
 
     case "high":
@@ -255,18 +256,7 @@ export const severityToHex: Record<Severity, string[]> = {
     "#e65100",
     "#bf360c"
   ],
-  critical: [
-    "#dc2626",
-    "#ef4444",
-    "#f87171",
-    "#991b1b",
-    "#b91c1c",
-    "#7f1d1d",
-    "#fca5a5",
-    "#e11d48",
-    "#be123c",
-    "#9f1239"
-  ],
+  critical: ["#dc2626", "#ef4444", "#f87171", "#b91c1c", "#fca5a5", "#e11d48"],
   unknown: [
     "#8b5cf6",
     "#06b6d4",
@@ -290,5 +280,30 @@ export const severityToHex: Record<Severity, string[]> = {
   ]
 };
 
-/** Default color palette for charts, combining all colors from COLOR_INDEX_TO_HEX flattened */
+/**
+ * Deterministic hash function to convert text to a number.
+ * Same text always produces same hash, different texts are distributed across the range.
+ */
+const hashString = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+};
+
+/**
+ * Converts text to a hex color based on severity classification.
+ * Gets the severity level for the text, then uses a deterministic hash to pick a color from that severity's palette.
+ */
+export const textToHex = (text: string): string => {
+  const severity = getSeverityOfText(text);
+  const colors = severityToHex[severity];
+  const hash = hashString(text);
+  return colors[hash % colors.length];
+};
+
+/** Default color palette for charts (pre-shuffled at build time) */
 export const COLOR_PALETTE = Object.values(severityToHex).flat();
