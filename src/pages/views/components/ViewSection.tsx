@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { IoChevronDownOutline } from "react-icons/io5";
 import { getViewDataByNamespace } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
 import { Icon } from "../../../ui/Icons/Icon";
@@ -16,6 +17,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({
   section,
   hideVariables
 }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
   const { namespace, name } = section.viewRef;
 
   // Use prefixed search params for view variables
@@ -37,50 +39,73 @@ const ViewSection: React.FC<ViewSectionProps> = ({
     staleTime: 5 * 60 * 1000
   });
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse">
-        <div className="mb-4 h-4 w-32 rounded bg-gray-200"></div>
-        <div className="h-64 rounded bg-gray-100"></div>
-      </div>
-    );
-  }
-
   if (error || !sectionViewResult) {
     return (
       <>
-        <div className="mb-4 flex items-center">
+        <div
+          className="mb-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <IoChevronDownOutline
+            className={`h-4 w-4 flex-shrink-0 transform text-gray-600 transition-transform ${!isExpanded ? "-rotate-90" : ""}`}
+          />
           {section.icon && (
-            <Icon name={section.icon} className="mr-2 h-5 w-5" />
+            <Icon
+              name={section.icon}
+              className="h-5 w-5 flex-shrink-0 text-gray-600"
+            />
           )}
-          <h2 className="text-lg font-semibold">{section.title}</h2>
+          <h3 className="text-lg font-semibold text-gray-600">
+            {section.title}
+          </h3>
         </div>
-        <div className="text-red-500">
-          {error instanceof Error ? error.message : "Failed to load section"}
-        </div>
+        {isExpanded && (
+          <div className="text-red-500">
+            {error instanceof Error ? error.message : "Failed to load section"}
+          </div>
+        )}
       </>
     );
   }
 
   return (
     <>
-      <div className="mb-4 flex items-center">
-        {section.icon && <Icon name={section.icon} className="mr-2 h-5 w-5" />}
-        <h2 className="text-lg font-semibold">{section.title}</h2>
+      <div
+        className="mb-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <IoChevronDownOutline
+          className={`h-4 w-4 flex-shrink-0 transform text-gray-600 transition-transform ${!isExpanded ? "-rotate-90" : ""}`}
+        />
+        {section.icon && (
+          <Icon
+            name={section.icon}
+            className="h-5 w-5 flex-shrink-0 text-gray-600"
+          />
+        )}
+        <h3 className="text-lg font-semibold text-gray-600">{section.title}</h3>
       </div>
-      <View
-        title=""
-        namespace={namespace}
-        name={name}
-        columns={sectionViewResult?.columns}
-        columnOptions={sectionViewResult?.columnOptions}
-        panels={sectionViewResult?.panels}
-        variables={sectionViewResult?.variables}
-        card={sectionViewResult?.card}
-        requestFingerprint={sectionViewResult.requestFingerprint}
-        currentVariables={currentViewVariables}
-        hideVariables={hideVariables}
-      />
+      {isExpanded &&
+        (isLoading ? (
+          <div className="animate-pulse">
+            <div className="mb-4 h-4 w-32 rounded bg-gray-200"></div>
+            <div className="h-64 rounded bg-gray-100"></div>
+          </div>
+        ) : (
+          <View
+            title=""
+            namespace={namespace}
+            name={name}
+            columns={sectionViewResult?.columns}
+            columnOptions={sectionViewResult?.columnOptions}
+            panels={sectionViewResult?.panels}
+            variables={sectionViewResult?.variables}
+            card={sectionViewResult?.card}
+            requestFingerprint={sectionViewResult.requestFingerprint}
+            currentVariables={currentViewVariables}
+            hideVariables={hideVariables}
+          />
+        ))}
     </>
   );
 };
