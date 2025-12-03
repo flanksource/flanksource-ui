@@ -2,7 +2,9 @@ import React, { useMemo } from "react";
 import {
   CartesianGrid,
   Line,
-  LineChart,
+  Area,
+  Scatter,
+  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -86,6 +88,9 @@ const parseTimestamp = (value: any, index: number) => {
 const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
   const rows = useMemo(() => summary.rows || [], [summary.rows]);
 
+  const chartStyle: "lines" | "area" | "points" =
+    summary.timeseries?.style || "lines";
+
   const timeKey = useMemo(
     () => inferTimeKey(rows, summary.timeseries?.timeKey),
     [rows, summary.timeseries]
@@ -126,33 +131,17 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
     );
   }, [chartData]);
 
-  const timeSpanMs = useMemo(() => {
-    if (chartData.length < 2) return 0;
-    const first = chartData[0].__timestamp;
-    const last = chartData[chartData.length - 1].__timestamp;
-    return Math.abs(Number(last) - Number(first));
-  }, [chartData]);
+  const formatLabel = (value: number | string) => {
+    const label = timestampToLabel.get(value);
+    if (label) return label;
 
-  const formatLabel = useMemo(() => {
-    const showDate = timeSpanMs > 24 * 60 * 60 * 1000;
-    const options: Intl.DateTimeFormatOptions = showDate
-      ? { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }
-      : { hour: "2-digit", minute: "2-digit" };
-    const formatter = new Intl.DateTimeFormat(undefined, options);
+    const parsedDate = new Date(value);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return parsedDate.toLocaleString();
+    }
 
-    return (value: number | string) => {
-      const ts = typeof value === "number" ? value : Number(value);
-      const parsedDate = new Date(ts);
-      if (!Number.isNaN(parsedDate.getTime())) {
-        return formatter.format(parsedDate);
-      }
-
-      const label = timestampToLabel.get(value);
-      if (label) return label;
-
-      return typeof value === "number" ? `#${value + 1}` : String(value);
-    };
-  }, [timeSpanMs, timestampToLabel]);
+    return typeof value === "number" ? `#${value + 1}` : String(value);
+  };
 
   const hasNoRows = rows.length === 0;
   const hasNoSeries = series.length === 0;
@@ -173,7 +162,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
       ) : (
         <div className="flex-1">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <ComposedChart
               data={chartData}
               margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
             >
@@ -190,24 +179,57 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                 labelFormatter={(value) => formatLabel(value)}
                 formatter={(value: number) => value}
               />
-              {series.map((serie, index) => (
-                <Line
-                  key={serie.dataKey}
-                  type="monotone"
-                  dataKey={serie.dataKey}
-                  name={
-                    serie.name || formatDisplayLabel(serie.dataKey || "value")
-                  }
-                  stroke={
-                    serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
-                  }
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
-                  connectNulls
-                />
-              ))}
-            </LineChart>
+              {series.map((serie, index) =>
+                chartStyle === "area" ? (
+                  <Area
+                    key={serie.dataKey}
+                    type="monotone"
+                    dataKey={serie.dataKey}
+                    name={
+                      serie.name || formatDisplayLabel(serie.dataKey || "value")
+                    }
+                    stroke={
+                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
+                    }
+                    fill={
+                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
+                    }
+                    fillOpacity={0.2}
+                    isAnimationActive={false}
+                    connectNulls
+                  />
+                ) : chartStyle === "points" ? (
+                  <Scatter
+                    key={serie.dataKey}
+                    dataKey={serie.dataKey}
+                    name={
+                      serie.name || formatDisplayLabel(serie.dataKey || "value")
+                    }
+                    fill={
+                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
+                    }
+                    isAnimationActive={false}
+                    line={{ strokeWidth: 0 }}
+                  />
+                ) : (
+                  <Line
+                    key={serie.dataKey}
+                    type="monotone"
+                    dataKey={serie.dataKey}
+                    name={
+                      serie.name || formatDisplayLabel(serie.dataKey || "value")
+                    }
+                    stroke={
+                      serie.color || COLOR_PALETTE[index % COLOR_PALETTE.length]
+                    }
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                    connectNulls
+                  />
+                )
+              )}
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       )}
