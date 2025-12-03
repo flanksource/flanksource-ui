@@ -496,6 +496,10 @@ export type TimeseriesConfig = {
    */
   timeKey?: string;
   /**
+   * Visualization style for the timeseries chart.
+   */
+  style?: "lines" | "area" | "points";
+  /**
    * Convenience for single-series charts when series is not provided.
    */
   valueKey?: string;
