@@ -163,7 +163,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   // Render the main view through ViewSection to reuse its spacing/scroll styling;
   // rendering the raw View here caused padding/overflow glitches alongside sections.
   const primaryViewSection = {
-    title: "",
+    title: title || name,
     viewRef: {
       namespace: namespace || "",
       name: name
@@ -185,7 +185,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         )
       }
     >
-      <div className="flex h-full w-full flex-1 flex-col overflow-y-auto p-6 pb-0">
+      <div className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6">
         {/* Render aggregated variables once at the top */}
         {aggregatedVariables && aggregatedVariables.length > 0 && (
           <GlobalFiltersForm
@@ -201,7 +201,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           <hr className="my-4 border-gray-200" />
         )}
 
-        <div>
+        <div className="mt-2">
           <ViewSection
             key={`${namespace || "default"}:${name}`}
             section={primaryViewSection}
@@ -214,7 +214,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
             {viewResult.sections.map((section) => (
               <div
                 key={`${section.viewRef.namespace}:${section.viewRef.name}`}
-                className="mt-6 pt-6"
+                className="mt-4"
               >
                 <ViewSection section={section} hideVariables />
               </div>
