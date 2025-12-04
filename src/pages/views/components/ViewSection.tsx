@@ -46,7 +46,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({
     }
   };
 
-  if (error || !sectionViewResult) {
+  if (error || (!isLoading && !sectionViewResult)) {
     const errorContentId = `section-${namespace}-${name}-error`;
     return (
       <>
