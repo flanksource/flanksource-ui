@@ -401,21 +401,6 @@ const renderCellValue = (
       }
       break;
 
-    case "url":
-      cellContent = (
-        <Link
-          to={String(value)}
-          className="text-primary underline hover:text-primary/80"
-        >
-          {String(value)}
-        </Link>
-      );
-      break;
-
-    case "badge":
-      cellContent = <Badge variant="outline">{String(value)}</Badge>;
-      break;
-
     case "labels":
       if (value && typeof value === "object" && !Array.isArray(value)) {
         const entries = Object.entries(value).filter(

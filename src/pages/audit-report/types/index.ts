@@ -230,6 +230,33 @@ interface ViewColumnDefFilter {
 }
 
 /**
+ * Color source configuration for badges
+ * @source github.com/flanksource/duty/view/columns.go
+ */
+export interface ColorSource {
+  /**
+   * Auto indicates UI uses heuristics to determine color based on value
+   */
+  auto?: boolean;
+
+  /**
+   * Map defines explicit color mappings for specific values
+   */
+  map?: Record<string, string>;
+}
+
+/**
+ * Badge configuration for columns
+ * @source github.com/flanksource/duty/view/columns.go
+ */
+export interface BadgeConfig {
+  /**
+   * Color configuration for the badge
+   */
+  color?: ColorSource;
+}
+
+/**
  * Card display configuration for columns
  * @source github.com/flanksource/duty/view/columns.go
  */
@@ -283,8 +310,6 @@ export interface ViewColumnDef {
     | "bytes"
     | "decimal"
     | "millicore"
-    | "url"
-    | "badge"
     | "config_item"
     | "labels"
     | "row_attributes"
@@ -304,6 +329,11 @@ export interface ViewColumnDef {
    * Configuration for config item columns
    */
   configItem?: ConfigItemColumnType;
+
+  /**
+   * Badge configuration for the column
+   */
+  badge?: BadgeConfig;
 
   /**
    * Whether the column is hidden from display

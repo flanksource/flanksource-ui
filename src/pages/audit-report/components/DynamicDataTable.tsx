@@ -6,7 +6,6 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
-import BadgeCell from "./BadgeCell";
 import { Link, useSearchParams } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
@@ -15,7 +14,11 @@ import { Icon } from "../../../ui/Icons/Icon";
 import ConfigsTypeIcon from "../../../components/Configs/ConfigsTypeIcon";
 import { IconName } from "lucide-react/dynamic";
 import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
-import { formatDisplayLabel } from "./View/panels/utils";
+import {
+  formatDisplayLabel,
+  getSeverityOfText,
+  severityToHex
+} from "./View/panels/utils";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 
 interface DynamicDataTableProps {
@@ -278,18 +281,6 @@ const renderCellValue = (
       }
       break;
 
-    case "url":
-      cellContent = (
-        <Link to={String(value)} className="underline">
-          {String(value)}
-        </Link>
-      );
-      break;
-
-    case "badge":
-      cellContent = <BadgeCell value={String(value)} />;
-      break;
-
     case "labels":
       if (value && typeof value === "object" && !Array.isArray(value)) {
         const entries = Object.entries(value).filter(
@@ -378,6 +369,31 @@ const renderCellValue = (
         );
       }
     }
+  }
+
+  // Apply badge styling if badge property is configured
+  if (column.badge) {
+    let backgroundColor = "#E5E7EB";
+
+    if (column.badge.color?.auto) {
+      // Use severity-based coloring
+      const severity = getSeverityOfText(String(value));
+      const colors = severityToHex[severity];
+      backgroundColor = colors?.[0] || backgroundColor;
+    } else if (column.badge.color?.map) {
+      // Use explicit color mapping
+      backgroundColor =
+        column.badge.color.map[String(value)] || backgroundColor;
+    }
+
+    cellContent = (
+      <span
+        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-gray-800"
+        style={{ backgroundColor }}
+      >
+        {value}
+      </span>
+    );
   }
 
   // Wrap with FilterByCellValue if column has multiselect filter
@@ -510,8 +526,6 @@ function minWidthForColumnType(type: ViewColumnDef["type"]): number {
     case "decimal":
       return 40;
     case "millicore":
-      return 40;
-    case "badge":
       return 40;
     case "config_item":
       return 150;
