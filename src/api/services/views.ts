@@ -90,13 +90,23 @@ const fetchViewData = async (
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(
-      errorData.error || `HTTP ${response.status}: ${response.statusText}`
+    const errorData = await response.json().catch(() => null);
+    throw (
+      errorData ?? {
+        message: `HTTP ${response.status}: ${response.statusText}`,
+        status: response.status,
+        statusText: response.statusText
+      }
     );
   }
 
-  return response.json();
+  const data = await response.json();
+
+  if (data && typeof data === "object" && (data as Record<string, any>).error) {
+    throw data;
+  }
+
+  return data;
 };
 
 export const getViewDataById = async (

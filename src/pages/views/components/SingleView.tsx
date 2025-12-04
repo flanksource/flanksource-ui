@@ -10,6 +10,7 @@ import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersF
 import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
 import { VIEW_VAR_PREFIX } from "../constants";
 import type { ViewRef } from "../../audit-report/types";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 interface SingleViewProps {
   id: string;
@@ -68,10 +69,13 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     forceRefreshRef.current = false;
 
     if (result.isError) {
+      const err = result.error as any;
       toastError(
-        result.error instanceof Error
-          ? result.error.message
-          : "Failed to refresh view"
+        err?.message ||
+          err?.error ||
+          err?.detail ||
+          err?.msg ||
+          "Failed to refresh view"
       );
       return;
     }
@@ -128,14 +132,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         onRefresh={handleForceRefresh}
         centered
       >
-        <div className="text-center">
-          <div className="mb-4 text-xl text-red-500">Something went wrong</div>
-          <p className="text-gray-600">
-            {error instanceof Error
-              ? error.message
-              : "Failed to fetch view data"}
-          </p>
-        </div>
+        <ErrorViewer error={error} className="mx-auto max-w-3xl" />
       </ViewLayout>
     );
   }
@@ -148,12 +145,10 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         onRefresh={handleForceRefresh}
         centered
       >
-        <div className="text-center">
-          <div className="mb-4 text-xl text-gray-500">View not found</div>
-          <p className="text-gray-600">
-            The requested view could not be found.
-          </p>
-        </div>
+        <ErrorViewer
+          error="The requested view could not be found."
+          className="mx-auto max-w-3xl"
+        />
       </ViewLayout>
     );
   }

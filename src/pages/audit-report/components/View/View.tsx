@@ -15,6 +15,7 @@ import { ViewColumnDropdown } from "../ViewColumnDropdown";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import ViewTableFilterForm from "./ViewTableFilterForm";
 import { queryViewTable } from "../../../../api/services/views";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import {
   NumberPanel,
   TablePanel,
@@ -256,11 +257,8 @@ const View: React.FC<ViewProps> = ({
       </div>
 
       {tableError && (
-        <div className="text-center text-red-500">
-          <p>
-            Error loading table data:{" "}
-            {tableError instanceof Error ? tableError.message : "Unknown error"}
-          </p>
+        <div className="mb-4">
+          <ErrorViewer error={tableError} className="max-w-4xl" />
         </div>
       )}
 
