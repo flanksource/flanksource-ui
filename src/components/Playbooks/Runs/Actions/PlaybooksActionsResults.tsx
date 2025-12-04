@@ -19,7 +19,6 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
 import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
-import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import path from "path";
 import { LogsTable } from "@flanksource-ui/components/Logs/Table/LogsTable";
 
@@ -410,12 +409,7 @@ function renderContent(
     case "application/json":
       return (
         <pre className={className}>
-          <JSONViewer
-            format="json"
-            code={content}
-            convertToYaml
-            theme={darkTheme}
-          />
+          <JSONViewer format="json" code={content} convertToYaml />
         </pre>
       );
 
