@@ -1,8 +1,5 @@
 import { UserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
-import {
-  MissionControlLogoWhite,
-  MissionControlWhite
-} from "@flanksource/icons/mi";
+import { MissionControlLogo, MissionControl } from "@flanksource/icons/mi";
 import { ChevronUp } from "lucide-react";
 import { useContext } from "react";
 import { IconType } from "react-icons";
@@ -205,25 +202,31 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon">
-      {/* Logo Header - Uses --primary color, h-12 matches top bar height */}
-      <SidebarHeader className="border-b border-sidebar-border bg-primary p-0">
+      {/* Logo Header - Uses sidebar background color, h-12 matches top bar height */}
+      <SidebarHeader className="border-b border-sidebar-border bg-sidebar p-0">
         <div className="flex h-12 items-center justify-between">
           {collapsed ? (
             <button
               onClick={toggleSidebar}
               className="flex h-12 w-full items-center justify-center"
             >
-              <MissionControlWhite className="h-4 w-6" size="auto" />
+              <MissionControl
+                className="h-4 w-6 fill-primary text-primary"
+                size="auto"
+              />
             </button>
           ) : (
             <Link to="/" className="block flex-1">
               <div className="py-2 pl-4">
-                <MissionControlLogoWhite className="h-7 w-auto" size="auto" />
+                <MissionControlLogo
+                  className="h-7 w-auto fill-primary text-primary"
+                  size="auto"
+                />
               </div>
             </Link>
           )}
           {!collapsed && (
-            <SidebarTrigger className="mr-2 text-white hover:bg-primary/80 hover:text-white" />
+            <SidebarTrigger className="mr-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900" />
           )}
         </div>
       </SidebarHeader>
