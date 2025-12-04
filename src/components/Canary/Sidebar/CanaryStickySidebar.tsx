@@ -1,8 +1,7 @@
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import clsx from "clsx";
-import { useAtom } from "jotai";
-import { useEffect, useRef } from "react";
-import { isSidebarCollapsedAtom } from "../../../ui/Layout/SidebarLayout";
+import { useEffect, useRef, useContext } from "react";
+import { SidebarContext } from "@flanksource-ui/components/ui/sidebar";
 
 export type SidebarStickyProps = {
   className?: string;
@@ -20,7 +19,9 @@ export function CanaryStickySidebar({
   setMenuItemOpen = () => {},
   ...props
 }: SidebarStickyProps) {
-  const [isSidebarCollapsed] = useAtom(isSidebarCollapsedAtom);
+  // Use context directly to avoid error when outside SidebarProvider
+  const sidebarContext = useContext(SidebarContext);
+  const isSidebarCollapsed = sidebarContext?.state === "collapsed";
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -59,6 +59,22 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    /* Sidebar background color - dark navy blue (#1e3a5f) */
+    --sidebar-background: 210 52% 24%;
+    /* Sidebar text color - white for contrast on dark background */
+    --sidebar-foreground: 0 0% 100%;
+    /* Primary color for active/selected items - bright blue (#3b82f6) */
+    --sidebar-primary: 217 91% 60%;
+    /* Text color on primary/active items - white */
+    --sidebar-primary-foreground: 0 0% 100%;
+    /* Hover/accent background color - bright blue matching primary */
+    --sidebar-accent: 217 91% 60%;
+    /* Text color on hover/accent state - white */
+    --sidebar-accent-foreground: 0 0% 100%;
+    /* Border/divider color - lighter blue for subtle separation */
+    --sidebar-border: 210 50% 40%;
+    /* Focus ring color - bright blue for accessibility */
+    --sidebar-ring: 217 91% 60%;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -85,6 +101,14 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
