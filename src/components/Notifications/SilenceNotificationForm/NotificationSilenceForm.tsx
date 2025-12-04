@@ -366,6 +366,16 @@ export default function NotificationSilenceForm({
                         label="Filter"
                         hint="Resources matching this CEL expression will have their notifications silenced"
                       />
+                      <div className="mt-3">
+                        <a
+                          href="https://flanksource.com/docs/guide/notifications/concepts/silences#filters"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-700"
+                        >
+                          Help: Filter reference
+                        </a>
+                      </div>
                       <FilterExamples />
                     </div>
                   )}
@@ -380,6 +390,16 @@ export default function NotificationSilenceForm({
                         lines={12}
                         saveAsString={true}
                       />
+                      <div className="mt-3">
+                        <a
+                          href="https://flanksource.com/docs/reference/resource-selector"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-700"
+                        >
+                          Help: Resource selectors reference
+                        </a>
+                      </div>
                       <SelectorExamples />
                     </div>
                   )}
