@@ -5,8 +5,7 @@ import { AuthContext } from "../../context";
 import FullPageSkeletonLoader from "../SkeletonLoader/FullPageSkeletonLoader";
 import {
   SidebarInset,
-  SidebarProvider,
-  SidebarTrigger
+  SidebarProvider
 } from "@flanksource-ui/components/ui/sidebar";
 import { AppSidebar } from "@flanksource-ui/components/Layout/AppSidebar";
 
@@ -32,9 +31,6 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
         checkPath={checkPath}
       />
       <SidebarInset className="bg-gray-50">
-        <header className="flex h-12 items-center gap-2 border-b bg-white px-4">
-          <SidebarTrigger className="-ml-1" />
-        </header>
         <div className="flex-1 overflow-auto">
           <React.Suspense fallback={<FullPageSkeletonLoader />}>
             <Outlet />

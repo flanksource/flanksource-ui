@@ -40,8 +40,9 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary button color - blue (#2563eb) */
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
@@ -59,20 +60,20 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    /* Sidebar background color - dark navy blue (#1e3a5f) */
-    --sidebar-background: 210 52% 24%;
-    /* Sidebar text color - white for contrast on dark background */
-    --sidebar-foreground: 0 0% 100%;
-    /* Primary color for active/selected items - bright blue (#3b82f6) */
-    --sidebar-primary: 217 91% 60%;
+    /* Sidebar background color - light gray/white (#f8fafc) */
+    --sidebar-background: 210 40% 98%;
+    /* Sidebar text color - dark gray for contrast on light background */
+    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Primary color for active/selected items - blue (#2563eb) */
+    --sidebar-primary: 221 83% 53%;
     /* Text color on primary/active items - white */
     --sidebar-primary-foreground: 0 0% 100%;
-    /* Hover/accent background color - bright blue matching primary */
-    --sidebar-accent: 217 91% 60%;
+    /* Hover/accent background color - blue (#2563eb) for active items */
+    --sidebar-accent: 221 83% 53%;
     /* Text color on hover/accent state - white */
     --sidebar-accent-foreground: 0 0% 100%;
-    /* Border/divider color - lighter blue for subtle separation */
-    --sidebar-border: 210 50% 40%;
+    /* Border/divider color - light gray for subtle separation */
+    --sidebar-border: 220 13% 91%;
     /* Focus ring color - bright blue for accessibility */
     --sidebar-ring: 217 91% 60%;
   }
