@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import {
   getViewIdByNamespaceAndName,
   getViewIdByName
@@ -22,7 +23,7 @@ export function ViewPage() {
   }>();
   const [viewId, setViewId] = useState<string | undefined>(id);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<unknown | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -57,9 +58,7 @@ export function ViewPage() {
 
         setViewId(fetchedId);
       } catch (err) {
-        setError(
-          `Failed to load view: ${err instanceof Error ? err.message : String(err)}`
-        );
+        setError(err ?? "Failed to load view");
       } finally {
         setIsLoading(false);
       }
@@ -78,22 +77,19 @@ export function ViewPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-red-500">Error</div>
-          <p className="text-gray-600">{error}</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center px-6">
+        <ErrorViewer error={error} className="w-full max-w-2xl" />
       </div>
     );
   }
 
   if (!viewId) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 text-xl text-red-500">Error</div>
-          <p className="text-gray-600">No view identifier provided</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center px-6">
+        <ErrorViewer
+          error="No view identifier provided"
+          className="w-full max-w-2xl"
+        />
       </div>
     );
   }

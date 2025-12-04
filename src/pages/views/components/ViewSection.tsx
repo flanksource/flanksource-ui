@@ -7,6 +7,7 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 import { VIEW_VAR_PREFIX } from "../constants";
 import { ViewSection as Section } from "../../audit-report/types";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 interface ViewSectionProps {
   section: Section;
@@ -73,8 +74,11 @@ const ViewSection: React.FC<ViewSectionProps> = ({
           </h3>
         </div>
         {isExpanded && (
-          <div id={errorContentId} className="text-red-500">
-            {error instanceof Error ? error.message : "Failed to load section"}
+          <div id={errorContentId}>
+            <ErrorViewer
+              error={error ?? "Failed to load section"}
+              className="max-w-3xl"
+            />
           </div>
         )}
       </>
