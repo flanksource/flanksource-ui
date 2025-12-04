@@ -72,7 +72,7 @@ const GlobalFilters: React.FC<GlobalFiltersProps> = ({ variables }) => {
   }
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 mt-4">
       <div className="flex flex-wrap items-center gap-2">
         {filterComponents}
       </div>
