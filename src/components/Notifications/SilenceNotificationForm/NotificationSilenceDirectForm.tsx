@@ -25,6 +25,10 @@ import { FaCircleNotch } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import FormikNotificationDirectResourceField from "./FormikNotificationDirectResourceField";
 import { FormikCodeEditor } from "@flanksource-ui/components/Forms/Formik/FormikCodeEditor";
+import {
+  FilterExamples,
+  SelectorExamples
+} from "./NotificationSilenceExamples";
 
 type NotificationSilenceFormProps = {
   data?: SilenceSaveFormValues;
@@ -228,6 +232,7 @@ export default function NotificationSilenceDirectForm({
                   label="Filter"
                   hint="Notifications for resources matching this CEL expression will be silenced"
                 />
+                <FilterExamples />
 
                 <FormikCodeEditor
                   fieldName="selectors"
@@ -237,6 +242,7 @@ export default function NotificationSilenceDirectForm({
                   className="flex h-auto flex-col" // Override height
                   hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
                 />
+                <SelectorExamples />
 
                 <ErrorMessage
                   message={data?.error}

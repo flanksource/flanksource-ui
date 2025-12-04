@@ -32,6 +32,10 @@ import { Age } from "@flanksource-ui/ui/Age";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import YAML from "yaml";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import {
+  FilterExamples,
+  SelectorExamples
+} from "./NotificationSilenceExamples";
 
 type NotificationSilenceFormProps = {
   data?: SilenceSaveFormValues;
@@ -343,7 +347,6 @@ export default function NotificationSilenceForm({
                   {/* Type-specific content */}
                   {selectedType === "resource" && (
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <h4 className="mb-3 font-medium">Select Resource</h4>
                       <FormikNotificationResourceField />
                       <div className="mt-3">
                         <FormikCheckbox
@@ -358,28 +361,26 @@ export default function NotificationSilenceForm({
 
                   {selectedType === "filter" && (
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <h4 className="mb-3 font-medium">
-                        CEL Filter Expression
-                      </h4>
                       <FormikTextArea
                         name="filter"
                         label="Filter"
-                        hint="Notifications for resources matching this CEL expression will be silenced"
+                        hint="Resources matching this CEL expression will have their notifications silenced"
                       />
+                      <FilterExamples />
                     </div>
                   )}
 
                   {selectedType === "selector" && (
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                      <h4 className="mb-3 font-medium">Resource Selectors</h4>
                       <FormikCodeEditor
                         fieldName="selectors"
                         format={"yaml"}
                         label="Selectors"
-                        hint="List of resource selectors. Notifications for resources matching these selectors will be silenced"
+                        hint="Resources matching these selectors will have their notifications silenced"
                         lines={12}
                         saveAsString={true}
                       />
+                      <SelectorExamples />
                     </div>
                   )}
 
