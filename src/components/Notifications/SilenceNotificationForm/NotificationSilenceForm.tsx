@@ -31,6 +31,7 @@ import { useState, useEffect } from "react";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import YAML from "yaml";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 type NotificationSilenceFormProps = {
   data?: SilenceSaveFormValues;
@@ -52,7 +53,7 @@ export default function NotificationSilenceForm({
     NotificationSendHistorySummary[] | null
   >(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState<unknown | null>(null);
 
   // Convert selectors from JSON (from DB) to YAML for display in editor
   const getSelectorsAsYaml = (selectors?: string): string | undefined => {
@@ -259,7 +260,7 @@ export default function NotificationSilenceForm({
       } catch (error) {
         console.error("Error fetching preview:", error);
         setPreviewData(null);
-        setPreviewError("Failed to fetch preview");
+        setPreviewError((error as AxiosError<any>)?.response?.data ?? error);
       } finally {
         setIsPreviewLoading(false);
       }
@@ -397,9 +398,7 @@ export default function NotificationSilenceForm({
                             </span>
                           </div>
                         ) : previewError ? (
-                          <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                            {previewError}
-                          </div>
+                          <ErrorViewer error={previewError} />
                         ) : previewData ? (
                           <div className="space-y-2">
                             {Array.isArray(previewData) &&
