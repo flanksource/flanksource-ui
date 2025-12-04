@@ -33,7 +33,7 @@ export function SearchLayout({
 
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden">
-      <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white py-3 shadow">
+      <div className="sticky top-0 z-10 flex h-12 flex-shrink-0 bg-gray-50 py-2 shadow">
         <div className="flex flex-1 justify-between px-4">
           <div className="flex items-center">
             <div>{title}</div>
@@ -76,10 +76,7 @@ export function SearchLayout({
         </div>
       </div>
 
-      <main
-        className="h-full overflow-y-hidden bg-warm-gray-50"
-        style={{ zIndex: 0 }}
-      >
+      <main className="h-full overflow-y-hidden bg-white" style={{ zIndex: 0 }}>
         <DashboardErrorBoundary>
           <div className={contentClass || "p-6"}>{children}</div>
         </DashboardErrorBoundary>

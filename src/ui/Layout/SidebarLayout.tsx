@@ -59,9 +59,9 @@ function NavLabel({
         className={clsx(
           active
             ? "fill-white font-bold"
-            : "fill-zinc-200 group-hover:fill-zinc-50",
+            : "fill-black group-hover:fill-gray-700",
           "flex-shrink-0",
-          iconOnly ? "h-7 w-7" : "mr-3 h-6 w-6"
+          iconOnly ? "h-6 w-6" : "mr-2 h-5 w-5"
         )}
         aria-hidden="true"
       />
@@ -87,8 +87,8 @@ function NavItemWrapper(props: NavItemWrapperProps) {
     clsx(
       active || isActive
         ? "bg-blue-500 text-white"
-        : "text-gray-200 hover:bg-blue-500/70 hover:text-white",
-      "group rounded-md py-1.5 px-2 flex items-center text-base font-medium",
+        : "text-black hover:bg-zinc-200 hover:text-black",
+      "group rounded-md py-1 px-1.5 flex items-center text-sm font-medium",
       className
     );
   return Component === "div" ? (
@@ -154,7 +154,7 @@ function SideNavGroup({
         <MenuItems
           anchor={"right start"}
           portal
-          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-1 border border-blue-400/30 bg-[#1e3a5f] shadow-md"
+          className="absolute left-0 top-0 z-10 ml-1 w-48 space-y-0.5 rounded-md border border-zinc-300 bg-zinc-100 shadow-md"
         >
           {submenu.map(({ name, icon, href, featureName, resourceName }) => {
             return !isFeatureDisabled(
@@ -205,7 +205,7 @@ function SideNavGroup({
               </div>
             </NavItemWrapper>
           </Disclosure.Button>
-          <Disclosure.Panel className="-mx-3 mt-1 flex flex-col gap-1 bg-[#0f1f2e] px-3 py-2">
+          <Disclosure.Panel className="-mx-2 mt-0.5 flex flex-col gap-0.5 rounded bg-zinc-200/50 px-2 py-1">
             {submenu.map((item) =>
               !isFeatureDisabled(
                 item.featureName as unknown as keyof typeof features
@@ -238,8 +238,8 @@ function SideNav({
   const { isViewer } = useContext(UserAccessStateContext);
 
   return (
-    <nav className="flex flex-col divide-y divide-blue-400/30">
-      <div className="mb-1 flex flex-col gap-1">
+    <nav className="flex flex-col divide-y divide-zinc-300">
+      <div className="mb-0.5 flex flex-col gap-0.5">
         {navs.map((item) =>
           !isFeatureDisabled(
             item.featureName as unknown as keyof typeof features
@@ -302,24 +302,24 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
     <div className="flex h-screen min-w-[800px] flex-row">
       <div
         className={clsx(
-          "z-10 flex transform flex-col bg-[#1e3a5f] duration-500",
+          "z-10 flex transform flex-col bg-zinc-100 duration-500",
           {
-            "w-56": !collapseSidebar,
-            "w-14": collapseSidebar
+            "w-48": !collapseSidebar,
+            "w-12": collapseSidebar
           }
         )}
         ref={innerRef}
       >
         <div
           className={clsx("flex h-full transform flex-col duration-500", {
-            "w-56": !collapseSidebar,
-            "w-14": collapseSidebar
+            "w-48": !collapseSidebar,
+            "w-12": collapseSidebar
           })}
         >
           <button
             type="button"
             className={clsx(
-              "absolute -right-6 top-20 m-2 transform rounded-full border border-gray-300 bg-white p-1 duration-500 hover:bg-gray-200",
+              "absolute -right-6 top-14 m-2 transform rounded-full border border-gray-300 bg-white p-1 duration-500 hover:bg-gray-200",
               { "rotate-180": !collapseSidebar }
             )}
             onClick={() => setCollapseSidebar((value) => !value)}
@@ -333,15 +333,12 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
             }}
           >
             {collapseSidebar ? (
-              <div className="flex h-16 border-b border-b-blue-400/30 shadow">
-                <MissionControlWhite className="h-auto w-auto" size="auto" />
+              <div className="flex h-12 items-center justify-center bg-blue-500 shadow-sm">
+                <MissionControlWhite className="h-6 w-6" size="auto" />
               </div>
             ) : (
-              <div className="border-b border-b-blue-400/30 p-3 pl-5 shadow">
-                <MissionControlLogoWhite
-                  className="h-auto w-auto"
-                  size="auto"
-                />
+              <div className="flex h-12 items-center bg-blue-500 pl-2 shadow-sm">
+                <MissionControlLogoWhite className="h-9 w-auto" size="auto" />
               </div>
             )}
           </Link>
@@ -349,10 +346,10 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
           <div
             className={clsx(
               "flex flex-1 flex-col overflow-y-auto",
-              collapseSidebar ? "px-1" : "px-3"
+              collapseSidebar ? "px-1" : "px-2"
             )}
           >
-            <div className="mt-5 flex flex-grow flex-col">
+            <div className="mt-3 flex flex-grow flex-col">
               <SideNav
                 navs={navigation}
                 settings={settingsNav}
@@ -363,7 +360,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex h-screen flex-1 flex-col overflow-auto bg-gray-50">
+      <div className="flex h-screen flex-1 flex-col overflow-auto bg-white">
         <React.Suspense fallback={<FullPageSkeletonLoader />}>
           <Outlet />
         </React.Suspense>
