@@ -4,6 +4,7 @@ import { formatDate } from "../utils";
 
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
+import { SortingState } from "@tanstack/react-table";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
 import { Link, useSearchParams } from "react-router-dom";
@@ -29,6 +30,9 @@ interface DynamicDataTableProps {
   totalRowCount?: number;
   isLoading?: boolean;
   tablePrefix?: string;
+  defaultPageSize?: number;
+  defaultSorting?: SortingState;
+  columnWidths?: number[];
 }
 
 interface RowAttributes {
@@ -50,21 +54,65 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   pageCount,
   totalRowCount,
   isLoading,
-  tablePrefix
+  tablePrefix,
+  defaultPageSize,
+  defaultSorting,
+  columnWidths
 }) => {
-  const columnDef: MRT_ColumnDef<any>[] = columns
-    .filter((col) => !col.hidden && !hiddenColumnTypes.includes(col.type))
-    .map((col) => {
+  const visibleColumnsWithRatio = React.useMemo(() => {
+    let visibleIndex = 0;
+    return columns.reduce<
+      {
+        column: ViewColumnDef;
+        ratio?: number;
+      }[]
+    >((acc, col) => {
+      if (col.hidden || hiddenColumnTypes.includes(col.type)) {
+        return acc;
+      }
+      const ratio = columnWidths?.[visibleIndex];
+      acc.push({ column: col, ratio });
+      visibleIndex++;
+      return acc;
+    }, []);
+  }, [columns, columnWidths]);
+
+  const totalRatio = React.useMemo(
+    () =>
+      visibleColumnsWithRatio.reduce((sum, { ratio }) => {
+        return ratio && ratio > 0 ? sum + ratio : sum;
+      }, 0),
+    [visibleColumnsWithRatio]
+  );
+
+  const baseWidth = React.useMemo(
+    () => Math.max(visibleColumnsWithRatio.length * 120, 120),
+    [visibleColumnsWithRatio.length]
+  );
+
+  const columnDef: MRT_ColumnDef<any>[] = visibleColumnsWithRatio.map(
+    ({ column: col, ratio }) => {
+      const calculatedSize =
+        ratio && ratio > 0 && totalRatio > 0
+          ? Math.max(60, Math.round((ratio / totalRatio) * baseWidth))
+          : undefined;
+
       return {
         accessorKey: col.name,
-        minSize: 15,
-        maxSize: minWidthForColumnType(col.type),
+        ...(calculatedSize === undefined
+          ? {
+              minSize: 15,
+              maxSize: minWidthForColumnType(col.type)
+            }
+          : {}),
+        size: calculatedSize,
         header: formatDisplayLabel(col.name),
         enableSorting: col.type !== "labels",
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original, tablePrefix)
       };
-    });
+    }
+  );
 
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
@@ -106,6 +154,9 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       enableServerSidePagination
       manualPageCount={pageCount}
       totalRowCount={totalRowCount}
+      urlParamPrefix={tablePrefix}
+      defaultPageSize={defaultPageSize}
+      defaultSorting={defaultSorting}
     />
   );
 };
