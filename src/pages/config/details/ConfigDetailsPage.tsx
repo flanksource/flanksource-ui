@@ -79,9 +79,9 @@ export function ConfigDetailsPage() {
       activeTabName="Spec"
       className=""
     >
-      <div className={`relative flex h-full flex-1 flex-col pb-0`}>
+      <div className="relative flex min-h-0 flex-1 flex-col">
         {!isLoading ? (
-          <div className="relative flex w-full flex-1 flex-col overflow-x-auto overflow-y-auto border-gray-300 bg-white pt-2">
+          <div className="relative flex min-h-0 w-full flex-1 flex-col border-gray-300 bg-white">
             <JSONViewer
               code={code}
               format={format}

@@ -1,7 +1,7 @@
 import { UserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { MissionControlLogo, MissionControl } from "@flanksource/icons/mi";
 import { ChevronUp } from "lucide-react";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { IconType } from "react-icons";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
@@ -137,21 +137,25 @@ function SettingsNavGroup({
               }
               const SubIcon = subItem.icon as IconType;
               const isActive = location.pathname.startsWith(subItem.href);
-              return withAuthorizationAccessCheck(
-                <DropdownMenuItem key={subItem.href} asChild>
-                  <NavLink
-                    to={subItem.href}
-                    className={clsx(
-                      "flex cursor-pointer items-center gap-2",
-                      isActive && "bg-primary text-white"
-                    )}
-                  >
-                    <SubIcon className="h-4 w-4" />
-                    <span>{subItem.name}</span>
-                  </NavLink>
-                </DropdownMenuItem>,
-                subItem.resourceName,
-                "read"
+              return (
+                <React.Fragment key={subItem.href}>
+                  {withAuthorizationAccessCheck(
+                    <DropdownMenuItem asChild>
+                      <NavLink
+                        to={subItem.href}
+                        className={clsx(
+                          "flex cursor-pointer items-center gap-2",
+                          isActive && "bg-primary text-white"
+                        )}
+                      >
+                        <SubIcon className="h-4 w-4" />
+                        <span>{subItem.name}</span>
+                      </NavLink>
+                    </DropdownMenuItem>,
+                    subItem.resourceName,
+                    "read"
+                  )}
+                </React.Fragment>
               );
             })}
           </DropdownMenuContent>
@@ -175,13 +179,15 @@ function SettingsNavGroup({
             {settings.submenu.map((subItem) =>
               !isFeatureDisabled(
                 subItem.featureName as unknown as keyof typeof features
-              )
-                ? withAuthorizationAccessCheck(
-                    <SubNavItem key={subItem.href} subItem={subItem} />,
+              ) ? (
+                <React.Fragment key={subItem.href}>
+                  {withAuthorizationAccessCheck(
+                    <SubNavItem subItem={subItem} />,
                     subItem.resourceName,
                     "read"
-                  )
-                : null
+                  )}
+                </React.Fragment>
+              ) : null
             )}
           </SidebarMenuSub>
         </CollapsibleContent>
@@ -239,17 +245,15 @@ export function AppSidebar({
               {navigation.map((item) =>
                 !isFeatureDisabled(
                   item.featureName as unknown as keyof typeof features
-                )
-                  ? withAuthorizationAccessCheck(
-                      <NavItem
-                        key={item.name}
-                        item={item}
-                        collapsed={collapsed}
-                      />,
+                ) ? (
+                  <React.Fragment key={item.href}>
+                    {withAuthorizationAccessCheck(
+                      <NavItem item={item} collapsed={collapsed} />,
                       item.resourceName,
                       "read"
-                    )
-                  : null
+                    )}
+                  </React.Fragment>
+                ) : null
               )}
             </SidebarMenu>
           </SidebarGroupContent>

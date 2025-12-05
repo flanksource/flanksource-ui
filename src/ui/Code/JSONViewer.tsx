@@ -1,7 +1,7 @@
 import Editor, { type Monaco } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import githubLight from "monaco-themes/themes/GitHub Light.json";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
@@ -33,6 +33,15 @@ export function JSONViewer({
 }: JSONViewerProps) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
+  // Cleanup resize observer on unmount
+  useEffect(() => {
+    return () => {
+      resizeObserverRef.current?.disconnect();
+    };
+  }, []);
 
   // convert JSON object to YAML string
   const codeForDisplay = useMemo(() => {
@@ -64,17 +73,6 @@ export function JSONViewer({
   }, [convertToYaml, format]);
 
   const copyFn = useCopyToClipboard();
-
-  // Calculate height based on line count
-  const lineCount = useMemo(() => {
-    return codeForDisplay.split("\n").length;
-  }, [codeForDisplay]);
-
-  const editorHeight = useMemo(() => {
-    const lineHeight = 19;
-    const padding = 20;
-    return Math.max(100, lineCount * lineHeight + padding);
-  }, [lineCount]);
 
   const handleEditorDidMount = (
     editorInstance: editor.IStandaloneCodeEditor,
@@ -112,14 +110,30 @@ export function JSONViewer({
         onClick(lineNumber - 1); // Convert to 0-indexed
       }
     });
+
+    // Set up resize observer now that editor is ready
+    if (containerRef.current) {
+      resizeObserverRef.current = new ResizeObserver(() => {
+        editorInstance.layout();
+      });
+      resizeObserverRef.current.observe(containerRef.current);
+    }
+
+    // Force layout after mount with multiple delays to ensure container is sized
+    setTimeout(() => editorInstance.layout(), 0);
+    setTimeout(() => editorInstance.layout(), 50);
+    setTimeout(() => editorInstance.layout(), 150);
   };
 
   return (
-    <div className="relative flex w-full flex-col p-2">
+    <div
+      ref={containerRef}
+      className="relative flex min-h-0 w-full flex-1 flex-col p-2"
+    >
       <Editor
         value={codeForDisplay}
         language={language}
-        height={editorHeight}
+        height="100%"
         onMount={handleEditorDidMount}
         options={{
           readOnly: true,
@@ -134,13 +148,12 @@ export function JSONViewer({
           hideCursorInOverviewRuler: true,
           overviewRulerBorder: false,
           scrollbar: {
-            vertical: "hidden",
-            horizontal: "hidden",
-            handleMouseWheel: false
+            vertical: "auto",
+            horizontal: "auto"
           },
           wordWrap: "on",
           lineHeight: 19,
-          fontSize: 16,
+          fontSize: 14,
           padding: { top: 8, bottom: 8 },
           domReadOnly: true,
           contextmenu: false

@@ -133,13 +133,13 @@ export default function FloatableSlidingSideBar({
   return (
     <div
       className={clsx(
-        `absolute bottom-0 right-0 top-16 z-[99909999999] h-full flex-col border-l border-gray-200 bg-white px-4 lg:static lg:top-0 lg:flex`,
+        `absolute bottom-0 right-0 top-16 z-[99909999999] flex-col border-l border-gray-200 bg-slate-50 px-4 lg:relative lg:top-0 lg:flex lg:self-stretch`,
         open && !hideToggle
           ? "w-[15rem] md:w-[20rem] lg:w-3"
           : "w-[15rem] md:w-[20rem] lg:w-[20rem] xl:w-[30rem]",
         className,
         !hideToggle ? "origin-right transform duration-500" : "",
-        isSidebarOpen ? "" : "hidden"
+        isSidebarOpen ? "flex h-full" : "hidden lg:flex"
       )}
       {...rest}
     >

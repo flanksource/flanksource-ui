@@ -16,7 +16,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <div
         id="root"
-        className="flex h-screen w-screen flex-col overflow-auto"
+        className="flex h-screen w-screen flex-col overflow-auto text-sm"
         suppressHydrationWarning
       >
         {authProvider === "clerk" ? (

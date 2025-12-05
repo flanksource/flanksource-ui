@@ -30,8 +30,8 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
         settingsNav={settingsNav}
         checkPath={checkPath}
       />
-      <SidebarInset className="bg-gray-50">
-        <div className="flex-1 overflow-auto">
+      <SidebarInset className="flex min-h-0 flex-1 flex-col bg-white">
+        <div className="flex min-h-0 flex-1 flex-col">
           <React.Suspense fallback={<FullPageSkeletonLoader />}>
             <Outlet />
           </React.Suspense>
