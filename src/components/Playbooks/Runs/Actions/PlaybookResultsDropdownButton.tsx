@@ -17,6 +17,7 @@ type Props = {
   activeTabContentRef: React.RefObject<HTMLDivElement>;
   artifactID?: string;
   contentType?:
+    | "application/sql"
     | "text/markdown"
     | "text/x-shellscript"
     | "text/plain"
