@@ -117,4 +117,29 @@ describe("PlaybooksRunActionsResults", () => {
     expect(within(table).getByText("alpha")).toBeInTheDocument();
     expect(within(table).getByText("beta")).toBeInTheDocument();
   });
+
+  it("renders sql query as preformatted text", () => {
+    const query = "SELECT *\nFROM tests\nWHERE id = 1";
+    const action = {
+      id: "1",
+      name: "sql action",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "sql" as const,
+      result: {
+        query,
+        rows: [],
+        count: 0
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    fireEvent.click(screen.getByText("Query"));
+
+    expect(screen.getByText(/SELECT/i)).toBeInTheDocument();
+    expect(screen.getByText(/FROM/i)).toBeInTheDocument();
+    expect(screen.getByText(/tests/i)).toBeInTheDocument();
+  });
 });

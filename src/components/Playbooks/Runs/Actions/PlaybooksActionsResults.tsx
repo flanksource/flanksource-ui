@@ -1,6 +1,7 @@
 import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
+import clsx from "clsx";
 import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -16,6 +17,7 @@ import { TbAlertCircle, TbFileDescription } from "react-icons/tb";
 import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import path from "path";
@@ -116,7 +118,8 @@ type PlaybookActionTab = {
     | "text/plain"
     | "application/yaml"
     | "application/log+json"
-    | "application/json";
+    | "application/json"
+    | "application/sql";
 };
 
 export default function PlaybooksRunActionsResults({
@@ -211,6 +214,13 @@ export default function PlaybooksRunActionsResults({
             case "json":
             case "ai":
               tab.displayContentType = "application/yaml";
+              break;
+
+            case "query":
+              if (action.type === "sql") {
+                tab.displayContentType = "application/sql";
+                tab.className = "overflow-auto whitespace-pre";
+              }
               break;
 
             case "rows":
@@ -374,6 +384,17 @@ function renderContent(
     case "text/plain":
     case "text/x-shellscript":
       return <DisplayLogs className={className} logs={String(content)} />;
+
+    case "application/sql":
+      return (
+        <CodeBlock
+          code={String(content)}
+          language="sql"
+          className={clsx("bg-black text-white", className)}
+          codeBlockClassName="whitespace-pre"
+          theme={darkTheme}
+        />
+      );
 
     case "text/markdown":
     case "markdown": // for backwards compatibility
