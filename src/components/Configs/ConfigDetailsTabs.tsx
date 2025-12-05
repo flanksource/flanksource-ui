@@ -68,15 +68,15 @@ export function ConfigDetailsTabs({
           refetch();
         }}
         loading={isLoading}
-        contentClass="p-0 h-full overflow-y-hidden"
+        contentClass="p-0 flex flex-1"
       >
-        <div className={`flex h-full flex-row`}>
-          <div className="flex flex-1 flex-col overflow-x-auto">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-y-hidden">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
               contentClassName={clsx(
-                "bg-white border border-t-0 border-gray-300 flex-1 overflow-y-auto",
+                "bg-white border border-t-0 border-gray-300 flex-1 min-h-0 overflow-auto",
                 className
               )}
             >

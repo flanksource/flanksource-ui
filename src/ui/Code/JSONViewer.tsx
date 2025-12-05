@@ -1,68 +1,18 @@
-import Highlight, {
-  Language,
-  PrismTheme,
-  defaultProps
-} from "prism-react-renderer";
-import { ComponentProps, useMemo } from "react";
+import Editor, { type Monaco } from "@monaco-editor/react";
+import type { editor } from "monaco-editor";
+import githubLight from "monaco-themes/themes/GitHub Light.json";
+import { useEffect, useMemo, useRef } from "react";
 import { GoCopy } from "react-icons/go";
 import { parse, stringify } from "yaml";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { Button } from "../Buttons/Button";
-import { lightTheme } from "./JSONViewerTheme";
-
-type RenderProps = Parameters<
-  ComponentProps<typeof Highlight>["children"]
->[number];
-
-type JSONViewerLineProps = {
-  getTokenProps: RenderProps["getTokenProps"];
-  onClick?: (idx: number) => void;
-  showLineNo?: boolean;
-  idx: number;
-  line: RenderProps["tokens"][number];
-} & React.HTMLAttributes<HTMLDivElement>;
-
-function JSONViewerLine({
-  getTokenProps,
-  onClick = () => {},
-  showLineNo = false,
-  idx,
-  line,
-  ...props
-}: JSONViewerLineProps) {
-  const onSelect = () => onClick(idx);
-  return (
-    <div
-      {...props}
-      role="button"
-      tabIndex={0}
-      onClick={onSelect}
-      onKeyUp={onSelect}
-    >
-      {showLineNo && (
-        <span className="table-cell select-none pr-3 text-xs text-gray-300">
-          {idx + 1}
-        </span>
-      )}
-      <span className="table-cell text-wrap break-all">
-        {line.map((token, key) => (
-          // key is in the getTokenProps responses. Disabling eslint to skip
-          // check for explicit keys.
-          // eslint-disable-next-line react/jsx-key
-          <span {...getTokenProps({ token, key })} />
-        ))}
-      </span>
-    </div>
-  );
-}
 
 type JSONViewerProps = {
   code: string;
-  format: Language;
+  format: string;
   showLineNo?: boolean;
   onClick?: (idx: any) => void;
   selections?: Record<string, boolean>;
-  theme?: PrismTheme;
   /**
    *
    * Convert the content to yaml format
@@ -75,15 +25,26 @@ type JSONViewerProps = {
 export function JSONViewer({
   code,
   format,
-  showLineNo,
+  showLineNo = true,
   selections,
   onClick = () => {},
   convertToYaml = false,
-  hideCopyButton = false,
-  theme = lightTheme
+  hideCopyButton = false
 }: JSONViewerProps) {
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
+  // Cleanup resize observer on unmount
+  useEffect(() => {
+    return () => {
+      resizeObserverRef.current?.disconnect();
+    };
+  }, []);
+
   // convert JSON object to YAML string
-  const codeForHighlight = useMemo(() => {
+  const codeForDisplay = useMemo(() => {
     if (format !== "json" && format !== "yaml") {
       return code;
     }
@@ -101,9 +62,7 @@ export function JSONViewer({
     return code;
   }, [code, convertToYaml, format]);
 
-  const copyFn = useCopyToClipboard();
-
-  const formatDerived = useMemo(() => {
+  const language = useMemo(() => {
     if (format !== "json") {
       return format;
     }
@@ -113,48 +72,100 @@ export function JSONViewer({
     return format;
   }, [convertToYaml, format]);
 
+  const copyFn = useCopyToClipboard();
+
+  const handleEditorDidMount = (
+    editorInstance: editor.IStandaloneCodeEditor,
+    monacoInstance: Monaco
+  ) => {
+    editorRef.current = editorInstance;
+    monacoRef.current = monacoInstance;
+
+    // Define GitHub Light theme
+    monacoInstance.editor.defineTheme("githubLight", githubLight as any);
+    monacoInstance.editor.setTheme("githubLight");
+
+    // Apply initial selections
+    if (selections) {
+      const decorations: editor.IModelDeltaDecoration[] = [];
+      Object.keys(selections).forEach((lineIdx) => {
+        if (selections[lineIdx]) {
+          const lineNumber = parseInt(lineIdx, 10) + 1;
+          decorations.push({
+            range: new monacoInstance.Range(lineNumber, 1, lineNumber, 1),
+            options: {
+              isWholeLine: true,
+              className: "bg-blue-100"
+            }
+          });
+        }
+      });
+      editorInstance.createDecorationsCollection(decorations);
+    }
+
+    // Handle line clicks for selection
+    editorInstance.onMouseDown((e) => {
+      if (e.target.position) {
+        const lineNumber = e.target.position.lineNumber;
+        onClick(lineNumber - 1); // Convert to 0-indexed
+      }
+    });
+
+    // Set up resize observer now that editor is ready
+    if (containerRef.current) {
+      resizeObserverRef.current = new ResizeObserver(() => {
+        editorInstance.layout();
+      });
+      resizeObserverRef.current.observe(containerRef.current);
+    }
+
+    // Force layout after mount with multiple delays to ensure container is sized
+    setTimeout(() => editorInstance.layout(), 0);
+    setTimeout(() => editorInstance.layout(), 50);
+    setTimeout(() => editorInstance.layout(), 150);
+  };
+
   return (
-    <div className="relative flex w-full flex-col p-2">
-      <Highlight
-        {...defaultProps}
-        code={codeForHighlight}
-        theme={theme}
-        language={formatDerived}
-      >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={`${className} text-sm`} style={style}>
-            {tokens.map((line, i) => {
-              const { style, ...props } = getLineProps({ line, key: i });
-              return (
-                <JSONViewerLine
-                  {...props}
-                  key={props.key}
-                  style={{
-                    ...style,
-                    display: showLineNo ? "table-row" : "block",
-                    backgroundColor:
-                      selections && selections[i] ? "#cfe3ff" : ""
-                  }}
-                  onClick={onClick}
-                  getTokenProps={getTokenProps}
-                  showLineNo={showLineNo}
-                  idx={i}
-                  line={line}
-                />
-              );
-            })}
-          </pre>
-        )}
-      </Highlight>
+    <div
+      ref={containerRef}
+      className="relative flex min-h-0 w-full flex-1 flex-col p-2"
+    >
+      <Editor
+        value={codeForDisplay}
+        language={language}
+        height="100%"
+        onMount={handleEditorDidMount}
+        options={{
+          readOnly: true,
+          minimap: { enabled: false },
+          lineNumbers: showLineNo ? "on" : "off",
+          folding: true,
+          foldingStrategy: "indentation",
+          foldingHighlight: true,
+          scrollBeyondLastLine: false,
+          renderLineHighlight: "none",
+          overviewRulerLanes: 0,
+          hideCursorInOverviewRuler: true,
+          overviewRulerBorder: false,
+          scrollbar: {
+            vertical: "auto",
+            horizontal: "auto"
+          },
+          wordWrap: "on",
+          lineHeight: 19,
+          fontSize: 14,
+          padding: { top: 8, bottom: 8 },
+          domReadOnly: true,
+          contextmenu: false
+        }}
+      />
       {!hideCopyButton && (
         <Button
           icon={<GoCopy />}
           title="Copy to clipboard"
-          className={
-            "absolute right-4 z-[99999999999999999] bg-white text-black"
-          }
+          className="absolute right-4 top-4 z-10 bg-white text-black"
           onClick={async () => {
-            await copyFn(codeForHighlight);
+            await copyFn(codeForDisplay);
           }}
         />
       )}

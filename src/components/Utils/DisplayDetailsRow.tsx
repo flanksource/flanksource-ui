@@ -25,9 +25,9 @@ export default function DisplayDetailsRow({
               {label}
             </span>
           </label>
-          <p className="overflow-hidden whitespace-pre-wrap text-wrap break-all text-sm font-medium text-gray-900">
+          <div className="overflow-hidden whitespace-pre-wrap text-wrap break-all text-sm font-medium text-gray-900">
             {value}
-          </p>
+          </div>
         </div>
       ))}
     </div>

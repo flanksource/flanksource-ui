@@ -33,43 +33,56 @@ export function SearchLayout({
 
   return (
     <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden">
-      <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white py-3 shadow">
+      <div className="sticky top-0 z-20 flex h-12 flex-shrink-0 bg-slate-50 py-2 shadow">
         <div className="flex flex-1 justify-between px-4">
           <div className="flex items-center">
             <div>{title}</div>
           </div>
           <div
-            className={`ml-4 flex items-center gap-2 md:ml-6 ${extraClassName}`}
+            className={`ml-4 flex items-center gap-3 md:ml-6 ${extraClassName}`}
           >
             {extra}
-            {onRefresh && (
-              <RefreshButton onClick={onRefresh} animate={loading} />
-            )}
-            <Link
-              to={{
-                pathname: "/notifications"
-              }}
-            >
-              <FaBell className="cursor-pointer text-gray-500" size={20} />
-            </Link>
+            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+              {onRefresh && (
+                <div className="flex h-full w-10 items-center justify-center">
+                  <RefreshButton onClick={onRefresh} animate={loading} />
+                </div>
+              )}
+              <div className="flex h-full w-10 items-center justify-center">
+                <PreferencePopOver
+                  cardSize={topologyCardSize}
+                  setTopologyCardSize={setTopologyCardSize}
+                />
+              </div>
+            </div>
 
-            <PreferencePopOver
-              cardSize={topologyCardSize}
-              setTopologyCardSize={setTopologyCardSize}
-            />
-
-            <HelpDropdown />
-            <UserProfileDropdown />
+            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+              <Link
+                to={{
+                  pathname: "/notifications"
+                }}
+                className="flex h-full w-10 items-center justify-center text-gray-400 hover:text-gray-500"
+              >
+                <FaBell className="h-5 w-5" />
+              </Link>
+              <div className="flex h-full w-10 items-center justify-center">
+                <HelpDropdown />
+              </div>
+              <div className="flex h-full w-10 items-center justify-center">
+                <UserProfileDropdown />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <main
-        className="bg-warm-gray-50 h-full overflow-y-hidden"
-        style={{ zIndex: 0 }}
-      >
+      <main className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
         <DashboardErrorBoundary>
-          <div className={contentClass || "p-6"}>{children}</div>
+          <div
+            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${contentClass || "p-6"}`}
+          >
+            {children}
+          </div>
         </DashboardErrorBoundary>
       </main>
     </div>
