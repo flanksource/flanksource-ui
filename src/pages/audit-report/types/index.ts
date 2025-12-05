@@ -296,6 +296,11 @@ export interface ViewColumnDef {
   filter?: ViewColumnDefFilter;
 
   /**
+   * Width of the column (weight like "2" or fixed like "150px")
+   */
+  width?: string;
+
+  /**
    * The data type of the column
    */
   type:
@@ -399,7 +404,6 @@ export interface DisplayCard {
 export interface DisplayTable {
   sort?: string;
   size?: number;
-  columnWidth?: number[];
 }
 
 /**

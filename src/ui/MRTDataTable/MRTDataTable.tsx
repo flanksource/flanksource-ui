@@ -81,7 +81,6 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   defaultSorting
 }: MRTDataTableProps<T>) {
   const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState({
-    persistToLocalStorage: false,
     paramPrefix: urlParamPrefix,
     defaultPageSize
   });
