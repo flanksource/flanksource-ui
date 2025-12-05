@@ -71,14 +71,15 @@ export default function CodeBlock({
             style={style}
           >
             {tokens.map((line, i) => {
-              const { style: lineStyle, ...lineProps } = getLineProps({
-                line,
-                key: i
-              });
+              const { style: lineStyle, className: lineClassName } =
+                getLineProps({
+                  line,
+                  key: i
+                });
               return (
                 <div
-                  {...lineProps}
-                  key={lineProps.key}
+                  key={i}
+                  className={lineClassName}
                   style={{
                     ...lineStyle,
                     display: showLineNumbers ? "table-row" : "block"
@@ -90,9 +91,11 @@ export default function CodeBlock({
                     </span>
                   )}
                   <span className={showLineNumbers ? "table-cell" : "block"}>
-                    {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token, key })} />
-                    ))}
+                    {line.map((token, key) => {
+                      const tokenProps = getTokenProps({ token, key });
+                      const tokenKey = tokenProps.key ?? key;
+                      return <span key={tokenKey} {...tokenProps} />;
+                    })}
                   </span>
                 </div>
               );
