@@ -312,5 +312,16 @@ export const textToHex = (text: string): string => {
   return colors[hash % colors.length];
 };
 
+/**
+ * Stable categorical color picker that spreads labels across a wide palette.
+ * Falls back to positional assignment when the label is missing.
+ */
+export const getSeriesColor = (label: string, fallbackIndex = 0): string => {
+  const paletteIndex = label
+    ? Math.abs(hashString(label))
+    : Math.abs(fallbackIndex);
+  return COLOR_PALETTE[paletteIndex % COLOR_PALETTE.length];
+};
+
 /** Default color palette for charts (pre-shuffled at build time) */
 export const COLOR_PALETTE = Object.values(severityToHex).flat();

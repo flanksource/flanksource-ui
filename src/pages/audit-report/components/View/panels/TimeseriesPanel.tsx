@@ -12,7 +12,7 @@ import {
   Legend
 } from "recharts";
 import { PanelResult } from "../../../types";
-import { formatDisplayLabel, textToHex } from "./utils";
+import { formatDisplayLabel, getSeriesColor } from "./utils";
 
 interface TimeseriesPanelProps {
   summary: PanelResult;
@@ -246,7 +246,8 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     })
                     .join(", ") || serie.name;
 
-                const color = serie.color || textToHex(valueOnlyLabel);
+                const color =
+                  serie.color || getSeriesColor(valueOnlyLabel, index);
 
                 return chartStyle === "area" ? (
                   <Area
