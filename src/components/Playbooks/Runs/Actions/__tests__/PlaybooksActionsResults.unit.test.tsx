@@ -118,6 +118,32 @@ describe("PlaybooksRunActionsResults", () => {
     expect(within(table).getByText("beta")).toBeInTheDocument();
   });
 
+  it("escapes pipes and newlines in sql rows", () => {
+    const action = {
+      id: "1",
+      name: "sql action",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "sql" as const,
+      result: {
+        rows: [
+          {
+            description: "foo|bar\nbaz"
+          }
+        ]
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    fireEvent.click(screen.getByText("Rows"));
+
+    const table = screen.getByRole("table");
+    const firstCell = within(table).getAllByRole("cell")[0];
+    expect(firstCell.innerHTML).toContain("foo|bar<br>baz");
+  });
+
   it("renders sql query as preformatted text", () => {
     const query = "SELECT *\nFROM tests\nWHERE id = 1";
     const action = {
