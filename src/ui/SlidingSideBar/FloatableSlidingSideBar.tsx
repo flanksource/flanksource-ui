@@ -133,13 +133,15 @@ export default function FloatableSlidingSideBar({
   return (
     <div
       className={clsx(
-        `absolute bottom-0 right-0 top-16 z-[99909999999] flex-col border-l border-gray-200 bg-slate-50 px-4 lg:relative lg:top-0 lg:flex lg:self-stretch`,
+        `flex-col border-l border-gray-200 bg-slate-50 px-4 lg:relative lg:flex lg:shrink-0 lg:self-stretch`,
         open && !hideToggle
-          ? "w-[15rem] md:w-[20rem] lg:w-3"
-          : "w-[15rem] md:w-[20rem] lg:w-[20rem] xl:w-[30rem]",
+          ? "lg:w-3 lg:min-w-3"
+          : "lg:w-[20rem] lg:min-w-[20rem] xl:w-[30rem] xl:min-w-[30rem]",
         className,
-        !hideToggle ? "origin-right transform duration-500" : "",
-        isSidebarOpen ? "flex h-full" : "hidden lg:flex"
+        !hideToggle ? "transition-[width,min-width] duration-500" : "",
+        isSidebarOpen
+          ? "absolute bottom-0 right-0 top-16 flex h-full w-[15rem] md:w-[20rem] lg:relative lg:top-0"
+          : "hidden lg:flex"
       )}
       {...rest}
     >
@@ -149,7 +151,7 @@ export default function FloatableSlidingSideBar({
           type="button"
           aria-label={open ? "Open Side Panel" : "Close Side Panel"}
           title={open ? "Open Side Panel" : "Close Side Panel"}
-          className="absolute -left-6 top-6 z-[99999999] m-2 hidden rotate-180 transform rounded-full border border-gray-300 bg-white p-1 text-xl duration-500 hover:bg-gray-200 lg:block"
+          className="absolute -left-6 top-6 m-2 hidden rotate-180 transform rounded-full border border-gray-300 bg-white p-1 text-xl duration-500 hover:bg-gray-200 lg:block"
           onClick={() => setOpen(!open)}
         >
           {open ? <IoChevronForwardOutline /> : <IoChevronBackOutline />}
