@@ -32,39 +32,22 @@ const filterExamples = [
 
 const selectorsExamples = [
   {
-    title: "Silence notifications from all jobs with low severity",
-    code: `selectors:
-  - types:
-      - Kubernetes::Job
-    tagSelector: severity=low
-`
+    title: "Silence notifications from all pods in the kube-system namespace",
+    code: `- types:
+  - Kubernetes::Pod
+  tagSelector: namespace=kube-system`
   },
   {
     title: "Silence notifications from ap-south-1 region for the test account",
-    code: `selectors:
-  - tagSelector: region=ap-south-1,account=830064254263
-`
+    code: `- tagSelector: region=ap-south-1,account=830064254263`
   },
   {
     title: "Silence health checks expected to fail",
-    code: `selectors:
-  - labelSelector: Expected-Fail=true
-`
-  },
-  {
-    title:
-      "Silence notifications from pods starting with specific name pattern",
-    code: `selectors:
-  - types:
-      - Kubernetes::Pod
-    nameSelector: my-app-*
-`
+    code: `- labelSelector: Expected-Fail=true`
   },
   {
     title: "Silence notifications from resources of a specific Helm chart",
-    code: `selectors:
-  - tagSelector: helm.sh/chart=my-app-1.0.0
-`
+    code: `- tagSelector: helm.sh/chart=my-app-1.0.0`
   }
 ];
 
