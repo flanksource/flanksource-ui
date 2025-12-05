@@ -82,18 +82,16 @@ export function FilterExamples() {
       {filterExamples.map((example, index) => (
         <div
           key={`${example.code}-${index}`}
-          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+          className="overflow-hidden rounded-md"
         >
-          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+          <div className="py-2">
             <p className="text-sm font-medium text-gray-700">
               {example.description}
             </p>
           </div>
-          <div className="p-3">
-            <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-              {example.code}
-            </code>
-          </div>
+          <code className="block overflow-x-auto rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+            {example.code}
+          </code>
         </div>
       ))}
     </ExampleSection>
@@ -106,16 +104,14 @@ export function SelectorExamples() {
       {selectorsExamples.map((example, index) => (
         <div
           key={`${example.title}-${index}`}
-          className="overflow-hidden rounded-md border border-gray-200 bg-white"
+          className="overflow-hidden rounded-md"
         >
-          <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+          <div className="py-2">
             <p className="text-sm font-medium text-gray-700">{example.title}</p>
           </div>
-          <div className="p-3">
-            <pre className="overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
-              {example.code}
-            </pre>
-          </div>
+          <code className="block overflow-x-auto whitespace-pre-wrap rounded border bg-gray-50 p-2 font-mono text-xs text-gray-800">
+            {example.code}
+          </code>
         </div>
       ))}
     </ExampleSection>
