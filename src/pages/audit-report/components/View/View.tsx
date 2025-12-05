@@ -346,7 +346,6 @@ const View: React.FC<ViewProps> = ({
               tablePrefix={tablePrefix}
               defaultPageSize={defaultPageSize}
               defaultSorting={defaultSorting}
-              columnWidths={table?.columnWidth}
             />
           </div>
         ))}

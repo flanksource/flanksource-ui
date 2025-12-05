@@ -32,7 +32,6 @@ interface DynamicDataTableProps {
   tablePrefix?: string;
   defaultPageSize?: number;
   defaultSorting?: SortingState;
-  columnWidths?: number[];
 }
 
 interface RowAttributes {
@@ -56,46 +55,82 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   isLoading,
   tablePrefix,
   defaultPageSize,
-  defaultSorting,
-  columnWidths
+  defaultSorting
 }) => {
   const visibleColumnsWithRatio = React.useMemo(() => {
     let visibleIndex = 0;
     return columns.reduce<
       {
         column: ViewColumnDef;
-        ratio?: number;
+        width?: string;
       }[]
     >((acc, col) => {
       if (col.hidden || hiddenColumnTypes.includes(col.type)) {
         return acc;
       }
-      const ratio = columnWidths?.[visibleIndex];
-      acc.push({ column: col, ratio });
+      const width = col.width;
+      acc.push({ column: col, width });
       visibleIndex++;
       return acc;
     }, []);
-  }, [columns, columnWidths]);
-
-  const totalRatio = React.useMemo(
-    () =>
-      visibleColumnsWithRatio.reduce((sum, { ratio }) => {
-        return ratio && ratio > 0 ? sum + ratio : sum;
-      }, 0),
-    [visibleColumnsWithRatio]
-  );
+  }, [columns]);
 
   const baseWidth = React.useMemo(
     () => Math.max(visibleColumnsWithRatio.length * 120, 120),
     [visibleColumnsWithRatio.length]
   );
 
+  const { customWidths, widthError } = React.useMemo(() => {
+    const widths: Record<string, number> = {};
+    let totalWeight = 0;
+    const weightColumns: { name: string; weight: number }[] = [];
+
+    for (const { column: col, width } of visibleColumnsWithRatio) {
+      if (!width) {
+        continue;
+      }
+      const widthStr = String(width).trim();
+      const match = widthStr.match(/^([0-9]+(?:\.[0-9]+)?)(px)?$/);
+      if (!match) {
+        return {
+          customWidths: {},
+          widthError: `Invalid column width "${widthStr}" for column "${col.name}". Use weight (e.g. "2") or px (e.g. "150px").`
+        };
+      }
+      const value = parseFloat(match[1]);
+      const unit = match[2];
+      if (Number.isNaN(value) || value <= 0) {
+        return {
+          customWidths: {},
+          widthError: `Invalid column width "${widthStr}" for column "${col.name}". Use positive values like "2" or "150px".`
+        };
+      }
+
+      if (unit === "px") {
+        widths[col.name] = Math.max(20, Math.round(value));
+      } else {
+        weightColumns.push({ name: col.name, weight: value });
+        totalWeight += value;
+      }
+    }
+
+    if (weightColumns.length > 0 && totalWeight > 0) {
+      weightColumns.forEach(({ name, weight }) => {
+        widths[name] = Math.max(
+          20,
+          Math.round((weight / totalWeight) * baseWidth)
+        );
+      });
+    }
+    return {
+      customWidths: widths,
+      widthError: undefined as string | undefined
+    };
+  }, [baseWidth, visibleColumnsWithRatio]);
+
   const columnDef: MRT_ColumnDef<any>[] = visibleColumnsWithRatio.map(
-    ({ column: col, ratio }) => {
-      const calculatedSize =
-        ratio && ratio > 0 && totalRatio > 0
-          ? Math.max(60, Math.round((ratio / totalRatio) * baseWidth))
-          : undefined;
+    ({ column: col }) => {
+      const calculatedSize = widthError ? undefined : customWidths[col.name];
 
       return {
         accessorKey: col.name,
@@ -145,19 +180,26 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   });
 
   return (
-    <MRTDataTable
-      enableColumnActions={false}
-      columns={columnDef}
-      isLoading={isLoading}
-      data={adaptedData}
-      enableServerSideSorting
-      enableServerSidePagination
-      manualPageCount={pageCount}
-      totalRowCount={totalRowCount}
-      urlParamPrefix={tablePrefix}
-      defaultPageSize={defaultPageSize}
-      defaultSorting={defaultSorting}
-    />
+    <>
+      {widthError && (
+        <div className="mb-2 text-sm text-red-600">
+          {widthError} Falling back to default column widths.
+        </div>
+      )}
+      <MRTDataTable
+        enableColumnActions={false}
+        columns={columnDef}
+        isLoading={isLoading}
+        data={adaptedData}
+        enableServerSideSorting
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        totalRowCount={totalRowCount}
+        urlParamPrefix={tablePrefix}
+        defaultPageSize={defaultPageSize}
+        defaultSorting={defaultSorting}
+      />
+    </>
   );
 };
 
