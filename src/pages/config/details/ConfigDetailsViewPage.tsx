@@ -98,6 +98,7 @@ export function ConfigDetailsViewPage() {
             panels={viewResult.panels}
             columns={viewResult.columns}
             card={viewResult.card}
+            table={viewResult.table}
             requestFingerprint={viewResult.requestFingerprint}
             columnOptions={viewResult.columnOptions}
           />

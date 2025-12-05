@@ -396,6 +396,12 @@ export interface DisplayCard {
   default?: boolean;
 }
 
+export interface DisplayTable {
+  sort?: string;
+  size?: number;
+  columnWidth?: number[];
+}
+
 /**
  * Filter options for a column.
  * For regular columns, list contains distinct values.
@@ -430,6 +436,7 @@ export interface ViewResult {
   columnOptions?: Record<string, ColumnFilterOptions>;
   variables?: ViewVariable[];
   card?: DisplayCard;
+  table?: DisplayTable;
   requestFingerprint: string;
   sections?: ViewSection[];
 }
