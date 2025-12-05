@@ -16,7 +16,22 @@ export function DisplayMarkdown({
       html: true,
       linkify: true
     });
-    return renderer.render(md);
+    const rendered = renderer.render(md);
+
+    // Add borders/padding to markdown tables for better readability
+    return rendered
+      .replace(
+        /<table>/g,
+        '<table class="w-full border-collapse border border-gray-700">'
+      )
+      .replace(
+        /<th>/g,
+        '<th class="border border-gray-700 bg-gray-900 px-3 py-1 text-left">'
+      )
+      .replace(
+        /<td>/g,
+        '<td class="border border-gray-700 px-3 py-1 align-top">'
+      );
   }, [md]);
 
   if (!html) {

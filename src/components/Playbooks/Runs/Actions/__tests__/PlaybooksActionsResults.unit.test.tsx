@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import PlaybooksRunActionsResults from "../PlaybooksActionsResults";
 
 describe("PlaybooksRunActionsResults", () => {
@@ -88,5 +88,33 @@ describe("PlaybooksRunActionsResults", () => {
         exact: false
       })
     ).toBeInTheDocument();
+  });
+
+  it("renders sql rows as a markdown table", () => {
+    const action = {
+      id: "1",
+      name: "sql action",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "sql" as const,
+      result: {
+        query: "select * from tests",
+        rows: [
+          { id: "123", name: "alpha" },
+          { id: "456", name: "beta" }
+        ],
+        count: 2
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    fireEvent.click(screen.getByText("Rows"));
+
+    const table = screen.getByRole("table");
+    expect(within(table).getByText("id")).toBeInTheDocument();
+    expect(within(table).getByText("alpha")).toBeInTheDocument();
+    expect(within(table).getByText("beta")).toBeInTheDocument();
   });
 });

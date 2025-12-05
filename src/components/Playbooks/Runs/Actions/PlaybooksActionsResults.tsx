@@ -32,6 +32,44 @@ const options = {
 
 const convert = new Convert();
 
+function formatSqlRowsToMarkdown(rows: any[]): string | null {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return null;
+  }
+
+  const headers: string[] = Array.from(
+    rows.reduce((acc, row) => {
+      if (row && typeof row === "object") {
+        Object.keys(row).forEach((key) => acc.add(key));
+      }
+      return acc;
+    }, new Set<string>())
+  );
+
+  if (headers.length === 0) {
+    return null;
+  }
+
+  const headerRow = `| ${headers.join(" | ")} |`;
+  const separatorRow = `|${headers.map(() => "--").join("|")}|`;
+
+  const dataRows = rows.map((row) => {
+    const values = headers.map((header) => {
+      const value = row?.[header];
+      if (value === null || value === undefined) {
+        return "";
+      }
+      if (typeof value === "object") {
+        return JSON.stringify(value);
+      }
+      return String(value);
+    });
+    return `| ${values.join(" | ")} |`;
+  });
+
+  return [headerRow, separatorRow, ...dataRows].join("\n");
+}
+
 function DisplayLogs({
   logs,
   className
@@ -71,6 +109,7 @@ type PlaybookActionTab = {
   contentSize?: string;
   content: any;
   artifactID?: string;
+  className?: string;
   displayContentType:
     | "text/markdown"
     | "text/x-shellscript"
@@ -132,6 +171,9 @@ export default function PlaybooksRunActionsResults({
 
           break;
 
+        case "sql":
+          break;
+
         default:
           break;
       }
@@ -169,6 +211,18 @@ export default function PlaybooksRunActionsResults({
             case "json":
             case "ai":
               tab.displayContentType = "application/yaml";
+              break;
+
+            case "rows":
+              if (action.type === "sql") {
+                tab.content =
+                  formatSqlRowsToMarkdown(result[key]) || "No rows returned";
+                tab.displayContentType = "text/markdown";
+                tab.className = "overflow-auto whitespace-pre";
+              } else if (typeof result[key] === "object") {
+                tab.content = JSON.stringify(result[key], null, 2);
+                tab.displayContentType = "application/yaml";
+              }
               break;
 
             default:
@@ -275,7 +329,7 @@ export default function PlaybooksRunActionsResults({
               }
             >
               <div ref={activeTabContentRef}>
-                {renderTabContent(tab, className)}
+                {renderTabContent(tab, tab.className || className)}
               </div>
             </Tab>
           );
