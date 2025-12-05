@@ -77,8 +77,8 @@ const lightTheme = {
 
 const darkTheme = {
   plain: {
-    color: "##002b5c",
-    backgroundColor: "#fffff"
+    color: "#e1e4e8",
+    backgroundColor: "transparent"
   },
   styles: [
     {
@@ -95,9 +95,9 @@ const darkTheme = {
       }
     },
     {
-      types: ["string", "attr-value", "plain"],
+      types: ["string", "attr-value"],
       style: {
-        color: "#79c0ff"
+        color: "#a5d6ff"
       }
     },
     {
@@ -126,25 +126,25 @@ const darkTheme = {
     {
       types: ["atrule", "keyword", "attr-name", "selector"],
       style: {
-        color: "#4ade80"
+        color: "#ff7b72"
       }
     },
     {
       types: ["function", "deleted", "tag"],
       style: {
-        color: "#d73a49"
+        color: "#d2a8ff"
       }
     },
     {
       types: ["function-variable"],
       style: {
-        color: "#6f42c1"
+        color: "#d2a8ff"
       }
     },
     {
       types: ["tag", "selector", "keyword"],
       style: {
-        color: "#00009f"
+        color: "#ff7b72"
       }
     }
   ]

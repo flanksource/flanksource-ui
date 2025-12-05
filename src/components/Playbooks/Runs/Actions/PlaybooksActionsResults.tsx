@@ -1,6 +1,7 @@
 import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
+import clsx from "clsx";
 import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -16,6 +17,7 @@ import { TbAlertCircle, TbFileDescription } from "react-icons/tb";
 import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import path from "path";
@@ -31,6 +33,50 @@ const options = {
 } satisfies Opts;
 
 const convert = new Convert();
+
+function sanitizeTableCellValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  const str = typeof value === "object" ? JSON.stringify(value) : String(value);
+
+  return str
+    .replace(/\\/g, "\\\\") // escape backslashes first
+    .replace(/\|/g, "\\|") // escape pipe characters
+    .replace(/\r?\n/g, "<br>"); // normalize newlines
+}
+
+function formatSqlRowsToMarkdown(rows: any[]): string | null {
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return null;
+  }
+
+  const headers: string[] = Array.from(
+    rows.reduce((acc, row) => {
+      if (row && typeof row === "object") {
+        Object.keys(row).forEach((key) => acc.add(key));
+      }
+      return acc;
+    }, new Set<string>())
+  );
+
+  if (headers.length === 0) {
+    return null;
+  }
+
+  const headerRow = `| ${headers.join(" | ")} |`;
+  const separatorRow = `|${headers.map(() => "--").join("|")}|`;
+
+  const dataRows = rows.map((row) => {
+    const values = headers.map((header) => {
+      return sanitizeTableCellValue(row?.[header]);
+    });
+    return `| ${values.join(" | ")} |`;
+  });
+
+  return [headerRow, separatorRow, ...dataRows].join("\n");
+}
 
 function DisplayLogs({
   logs,
@@ -71,13 +117,15 @@ type PlaybookActionTab = {
   contentSize?: string;
   content: any;
   artifactID?: string;
+  className?: string;
   displayContentType:
     | "text/markdown"
     | "text/x-shellscript"
     | "text/plain"
     | "application/yaml"
     | "application/log+json"
-    | "application/json";
+    | "application/json"
+    | "application/sql";
 };
 
 export default function PlaybooksRunActionsResults({
@@ -132,6 +180,9 @@ export default function PlaybooksRunActionsResults({
 
           break;
 
+        case "sql":
+          break;
+
         default:
           break;
       }
@@ -169,6 +220,25 @@ export default function PlaybooksRunActionsResults({
             case "json":
             case "ai":
               tab.displayContentType = "application/yaml";
+              break;
+
+            case "query":
+              if (action.type === "sql") {
+                tab.displayContentType = "application/sql";
+                tab.className = "overflow-auto whitespace-pre";
+              }
+              break;
+
+            case "rows":
+              if (action.type === "sql") {
+                tab.content =
+                  formatSqlRowsToMarkdown(result[key]) || "No rows returned";
+                tab.displayContentType = "text/markdown";
+                tab.className = "overflow-auto whitespace-pre";
+              } else if (typeof result[key] === "object") {
+                tab.content = JSON.stringify(result[key], null, 2);
+                tab.displayContentType = "application/yaml";
+              }
               break;
 
             default:
@@ -275,7 +345,7 @@ export default function PlaybooksRunActionsResults({
               }
             >
               <div ref={activeTabContentRef}>
-                {renderTabContent(tab, className)}
+                {renderTabContent(tab, tab.className || className)}
               </div>
             </Tab>
           );
@@ -320,6 +390,17 @@ function renderContent(
     case "text/plain":
     case "text/x-shellscript":
       return <DisplayLogs className={className} logs={String(content)} />;
+
+    case "application/sql":
+      return (
+        <CodeBlock
+          code={String(content)}
+          language="sql"
+          className={clsx("bg-black text-white", className)}
+          codeBlockClassName="whitespace-pre"
+          theme={darkTheme}
+        />
+      );
 
     case "text/markdown":
     case "markdown": // for backwards compatibility
