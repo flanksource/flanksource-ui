@@ -34,6 +34,19 @@ const options = {
 
 const convert = new Convert();
 
+function sanitizeTableCellValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  const str = typeof value === "object" ? JSON.stringify(value) : String(value);
+
+  return str
+    .replace(/\\/g, "\\\\") // escape backslashes first
+    .replace(/\|/g, "\\|") // escape pipe characters
+    .replace(/\r?\n/g, "<br>"); // normalize newlines
+}
+
 function formatSqlRowsToMarkdown(rows: any[]): string | null {
   if (!Array.isArray(rows) || rows.length === 0) {
     return null;
@@ -57,14 +70,7 @@ function formatSqlRowsToMarkdown(rows: any[]): string | null {
 
   const dataRows = rows.map((row) => {
     const values = headers.map((header) => {
-      const value = row?.[header];
-      if (value === null || value === undefined) {
-        return "";
-      }
-      if (typeof value === "object") {
-        return JSON.stringify(value);
-      }
-      return String(value);
+      return sanitizeTableCellValue(row?.[header]);
     });
     return `| ${values.join(" | ")} |`;
   });
