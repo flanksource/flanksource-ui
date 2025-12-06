@@ -296,6 +296,11 @@ export interface ViewColumnDef {
   filter?: ViewColumnDefFilter;
 
   /**
+   * Width of the column (weight like "2" or fixed like "150px")
+   */
+  width?: string;
+
+  /**
    * The data type of the column
    */
   type:
@@ -396,6 +401,11 @@ export interface DisplayCard {
   default?: boolean;
 }
 
+export interface DisplayTable {
+  sort?: string;
+  size?: number;
+}
+
 /**
  * Filter options for a column.
  * For regular columns, list contains distinct values.
@@ -430,6 +440,7 @@ export interface ViewResult {
   columnOptions?: Record<string, ColumnFilterOptions>;
   variables?: ViewVariable[];
   card?: DisplayCard;
+  table?: DisplayTable;
   requestFingerprint: string;
   sections?: ViewSection[];
 }
