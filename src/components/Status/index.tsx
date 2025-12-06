@@ -1,3 +1,5 @@
+import { Badge } from "@flanksource-ui/components/ui/badge";
+
 function getStatusColor(
   status: string | undefined,
   good: boolean | undefined,
@@ -54,14 +56,15 @@ export function Status({
   const color = getStatusColor(status, good, mixed);
 
   return (
-    <div className="inline-flex flex-row items-center">
+    <Badge
+      variant="outline"
+      className={`gap-1.5 text-muted-foreground ${className}`}
+    >
       <span
         className={`inline-block h-3 w-3 flex-shrink-0 rounded-full ${className} ${color}`}
         aria-hidden="true"
       />
-      {!hideText && (
-        <span className="pl-1 capitalize">{statusText ?? status}</span>
-      )}
-    </div>
+      {!hideText && <span className="capitalize">{statusText ?? status}</span>}
+    </Badge>
   );
 }
