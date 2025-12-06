@@ -441,10 +441,7 @@ const renderCellValue = (
         ["healthy", "unknown", "unhealthy", "warning"].includes(attribute.icon)
       ) {
         cellContent = (
-          <span className="inline-flex items-center gap-1">
-            <Status status={attribute.icon} hideText={true} />
-            {cellContent}
-          </span>
+          <Status status={attribute.icon} statusText={String(cellContent)} />
         );
       } else {
         cellContent = (
