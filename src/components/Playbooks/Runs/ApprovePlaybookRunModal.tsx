@@ -1,8 +1,8 @@
 import { approvePlaybookRun } from "@flanksource-ui/api/services/playbooks";
-import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useState } from "react";
 
 type ApprovePlaybookRunModalProps = {
   onClose: () => void;
@@ -19,13 +19,16 @@ export default function ApprovePlaybookRunModal({
   playbookRunId,
   refetch = () => {}
 }: ApprovePlaybookRunModalProps) {
+  const [error, setError] = useState<unknown>(null);
+
   const { mutate: approve, isLoading } = useMutation({
     mutationFn: (id: string) => {
+      setError(null);
       return approvePlaybookRun(id);
     },
     onError: (error: AxiosError) => {
       console.error("Failed to approve playbook run", error);
-      toastError(`Failed to approve playbook run: ${error.message}`);
+      setError(error);
     },
     onSuccess: () => {
       onClose();
@@ -44,6 +47,7 @@ export default function ApprovePlaybookRunModal({
       isOpen={open}
       yesLabel={isLoading ? "Approving..." : "Approve"}
       closeLabel="Cancel"
+      error={error}
     />
   );
 }
