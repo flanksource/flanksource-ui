@@ -31,7 +31,7 @@ export function useAggregatedViewVariables(sections: ViewRef[]) {
       ],
       queryFn: () =>
         getViewDataByNamespace(
-          section.namespace,
+          section.namespace || "",
           section.name,
           currentVariables
         ),

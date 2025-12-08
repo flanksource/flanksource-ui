@@ -66,7 +66,7 @@ export function useViewData({
   });
 
   const allSectionRefs = useMemo<ViewRef[]>(() => {
-    if (!viewResult?.namespace || !viewResult?.name) {
+    if (!viewResult?.name) {
       return [];
     }
     const refs: ViewRef[] = [

@@ -35,7 +35,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({
   } = useQuery({
     queryKey: ["view-result", namespace, name, currentViewVariables],
     queryFn: () =>
-      getViewDataByNamespace(namespace, name, currentViewVariables),
+      getViewDataByNamespace(namespace || "", name, currentViewVariables),
     enabled: !!namespace && !!name,
     staleTime: 5 * 60 * 1000
   });
