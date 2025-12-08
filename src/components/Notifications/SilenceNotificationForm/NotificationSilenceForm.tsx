@@ -252,7 +252,12 @@ export default function NotificationSilenceForm({
         } else if (selectedType === "filter" && values.filter) {
           params.filter = values.filter;
         } else if (selectedType === "selector" && values.selectors) {
-          const result = YAML.parse(values.selectors);
+          // values.selectors can be either a YAML string (from editor) or
+          // an object (if data came from API as parsed JSONB)
+          const result =
+            typeof values.selectors === "string"
+              ? YAML.parse(values.selectors)
+              : values.selectors;
           params.selector = JSON.stringify(result);
         } else {
           throw new Error("unknown selector type");
