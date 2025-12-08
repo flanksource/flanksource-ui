@@ -1,69 +1,27 @@
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import {
-  getViewDataById,
-  getViewDisplayPluginVariables
-} from "@flanksource-ui/api/services/views";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
-import View from "@flanksource-ui/pages/audit-report/components/View/View";
-import { useRef } from "react";
-import { toastError } from "@flanksource-ui/components/Toast/toast";
+import { useViewData } from "@flanksource-ui/pages/views/hooks/useViewData";
+import ViewWithSections from "@flanksource-ui/pages/views/components/ViewWithSections";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
-// Displays the view as a tab in the config details page
 export function ConfigDetailsViewPage() {
-  const queryClient = useQueryClient();
-  const forceRefreshRef = useRef(false);
-
   const { id: configId, viewId } = useParams<{
     id: string;
     viewId: string;
   }>();
 
-  // Fetch display plugin variables from the API
-  const { data: variables } = useQuery({
-    queryKey: ["viewDisplayPluginVariables", viewId, configId],
-    queryFn: () => getViewDisplayPluginVariables(viewId!, configId!),
-    enabled: !!viewId && !!configId
-  });
-
   const {
-    data: viewResult,
+    viewResult,
     isLoading,
     error,
-    refetch
-  } = useQuery({
-    queryKey: ["viewDataById", viewId, configId, variables],
-    queryFn: () => {
-      if (!viewId) {
-        throw new Error("View ID is required");
-      }
-      const headers = forceRefreshRef.current
-        ? { "cache-control": "max-age=1" }
-        : undefined;
-
-      return getViewDataById(viewId, variables, headers);
-    },
-    enabled: !!viewId && !!configId && !!variables
+    aggregatedVariables,
+    currentVariables,
+    handleForceRefresh
+  } = useViewData({
+    viewId: viewId!,
+    configId
   });
-
-  const handleRefresh = async () => {
-    forceRefreshRef.current = true;
-    const result = await refetch();
-    forceRefreshRef.current = false;
-
-    if (result.isError) {
-      toastError(
-        result.error instanceof Error
-          ? result.error.message
-          : "Failed to refresh view"
-      );
-    } else if (result.data?.namespace && result.data?.name) {
-      await queryClient.invalidateQueries({
-        queryKey: ["view-table", result.data.namespace, result.data.name]
-      });
-    }
-  };
 
   const displayName = viewResult?.title || viewResult?.name || "";
 
@@ -72,35 +30,23 @@ export function ConfigDetailsViewPage() {
       pageTitlePrefix={`Config View - ${displayName}`}
       isLoading={isLoading}
       activeTabName={displayName}
-      refetch={handleRefresh}
+      refetch={handleForceRefresh}
     >
-      <div className="flex h-full flex-1 flex-col overflow-auto p-4">
+      <div className="">
         {isLoading ? (
           <div className="flex flex-1 flex-col items-center justify-center">
             <Loading />
           </div>
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center">
-            <div className="text-center">
-              <div className="mb-4 text-xl text-red-500">Error</div>
-              <p className="text-gray-600">
-                {error instanceof Error
-                  ? error.message
-                  : "Failed to load view data"}
-              </p>
-            </div>
+            <ErrorViewer error={error} className="max-w-3xl" />
           </div>
         ) : viewResult ? (
-          <View
-            title=""
-            namespace={viewResult.namespace}
-            name={viewResult.name}
-            panels={viewResult.panels}
-            columns={viewResult.columns}
-            card={viewResult.card}
-            table={viewResult.table}
-            requestFingerprint={viewResult.requestFingerprint}
-            columnOptions={viewResult.columnOptions}
+          <ViewWithSections
+            viewResult={viewResult}
+            aggregatedVariables={aggregatedVariables}
+            currentVariables={currentVariables}
+            hideVariables
           />
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center">
