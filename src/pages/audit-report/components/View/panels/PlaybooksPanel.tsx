@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import { Play, Loader2, ChevronDown, Workflow } from "lucide-react";
+import { Loader2, ChevronDown, Workflow } from "lucide-react";
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import SubmitPlaybookRunForm from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
@@ -32,7 +32,14 @@ type PlaybookRunPanelProps = {
  */
 export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
   const rows = useMemo(
-    () => (summary.rows as PlaybookRunRow[]) || [],
+    () =>
+      (summary.rows || []).filter(
+        (row): row is PlaybookRunRow =>
+          typeof row === "object" &&
+          row !== null &&
+          typeof row.id === "string" &&
+          row.id.length > 0
+      ),
     [summary.rows]
   );
   const [selected, setSelected] = useState<PlaybookRunRow | null>(null);
@@ -123,20 +130,18 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
                         </div>
                         <Button
                           size="sm"
+                          variant="outline"
                           onClick={() => setSelected(row)}
                           disabled={isCurrentlyLoading}
-                          className="flex-shrink-0"
+                          className="h-7 flex-shrink-0 gap-1.5 px-4"
                         >
                           {isCurrentlyLoading ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Loading
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span className="text-xs">Loading</span>
                             </>
                           ) : (
-                            <>
-                              <Play className="mr-2 h-4 w-4" />
-                              Run
-                            </>
+                            <span className="text-xs font-medium">Run</span>
                           )}
                         </Button>
                       </div>
@@ -158,7 +163,7 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
         </div>
       </div>
 
-      {playbookSpec && selected && (
+      {playbookSpec && selected && playbookSpec.id === selected.id && (
         <SubmitPlaybookRunForm
           isOpen={!!selected}
           onClose={handleCloseModal}
