@@ -2,68 +2,162 @@ import { isAxiosError } from "axios";
 import clsx from "clsx";
 import { useMemo, useState } from "react";
 
-type NormalizedError = {
+type ParsedError = {
   message: string;
   raw?: string;
 };
 
-const stringifyObject = (value: Record<string, any>) => {
+function toJSON(value: Record<string, unknown>): string {
   try {
     return JSON.stringify(value, null, 2);
   } catch {
     return String(value);
   }
-};
+}
 
-const normalizeError = (error: unknown): NormalizedError | null => {
+function extractResourceList(
+  permission: string,
+  context: Record<string, unknown>
+): string[] {
+  const objects = context.objects as Record<string, unknown> | undefined;
+  if (!objects) return [];
+
+  const resources: string[] = [];
+  for (const [type, value] of Object.entries(objects)) {
+    // Special handling for playbook:approve permission
+    if (permission === "playbook:approve" && type !== "playbook") {
+      continue;
+    }
+
+    if (value && typeof value === "object") {
+      const obj = value as Record<string, unknown>;
+      const name = obj.name as string | undefined;
+      if (name && name !== "") {
+        const resourceName =
+          (obj.name as string) || (obj.title as string) || name;
+        resources.push(`${type}: ${resourceName}`);
+      }
+    }
+  }
+
+  return resources;
+}
+
+function parsePermissionError(
+  errorData: Record<string, unknown>
+): ParsedError | null {
+  const context = errorData.context as Record<string, unknown> | undefined;
+  const permission = context?.permission;
+  const user = context?.user;
+
+  if (!context || typeof permission !== "string" || typeof user !== "string") {
+    return null;
+  }
+
+  const resources = extractResourceList(permission, context);
+  const resourceInfo =
+    resources.length > 0 ? ` on ${resources.join(", ")}` : "";
+
+  return {
+    message: `User ${user} doesn't have \`${permission}\` permission${resourceInfo}`,
+    raw: toJSON(errorData)
+  };
+}
+
+function parseAxiosError(error: unknown): ParsedError | null {
+  if (!isAxiosError(error)) {
+    return null;
+  }
+
+  const { response } = error;
+  const data = response?.data;
+
+  if (response?.status === 403 && data && typeof data === "object") {
+    const permissionError = parsePermissionError(
+      data as Record<string, unknown>
+    );
+    if (permissionError) {
+      return permissionError;
+    }
+  }
+
+  const parsed = parseError(data);
+  if (parsed) {
+    const statusText = response?.statusText ? ` ${response.statusText}` : "";
+    const status =
+      response?.status != null ? ` (HTTP ${response.status}${statusText})` : "";
+
+    return {
+      message: `${parsed.message}${status}`,
+      raw:
+        parsed.raw ??
+        (data && typeof data === "object"
+          ? toJSON(data as Record<string, unknown>)
+          : typeof data === "string"
+            ? data
+            : undefined)
+    };
+  }
+
+  return { message: error.message || "Request failed" };
+}
+
+function parseError(error: unknown): ParsedError | null {
   if (!error) return null;
 
-  if (isAxiosError(error)) {
-    const data = error.response?.data;
-    const normalizedData = normalizeError(data);
-    if (normalizedData) {
-      const status =
-        error.response?.status != null
-          ? ` (HTTP ${error.response.status}${error.response.statusText ? ` ${error.response.statusText}` : ""})`
-          : "";
-      return {
-        message: `${normalizedData.message}${status}`,
-        raw:
-          normalizedData.raw ??
-          (data && typeof data === "object"
-            ? stringifyObject(data as Record<string, any>)
-            : typeof data === "string"
-              ? data
-              : undefined)
-      };
-    }
-    return { message: error.message || "Request failed" };
-  }
+  const axiosError = parseAxiosError(error);
+  if (axiosError) return axiosError;
 
   if (typeof error === "string") {
     return { message: error, raw: error };
   }
 
   if (error instanceof Error) {
-    return {
-      message: error.message,
-      raw: error.stack
-    };
+    return { message: error.message, raw: error.stack };
   }
 
   if (typeof error === "object") {
-    const value = error as Record<string, any>;
+    const value = error as Record<string, unknown>;
     const message =
-      value.error ||
-      value.message ||
-      value.detail ||
-      value.msg ||
-      stringifyObject(value);
-    return { message, raw: stringifyObject(value) };
+      (value.error as string) ||
+      (value.message as string) ||
+      (value.detail as string) ||
+      (value.msg as string) ||
+      toJSON(value);
+    return { message, raw: toJSON(value) };
   }
 
   return { message: String(error) };
-};
+}
+
+function CollapsibleRawError({ raw }: { raw: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        className="mt-2 flex items-center gap-1 text-xs font-medium text-red-800"
+        onClick={() => setExpanded((v) => !v)}
+      >
+        <span
+          className={clsx(
+            "inline-block transition-transform",
+            expanded && "rotate-90"
+          )}
+        >
+          ▸
+        </span>
+        {expanded ? "Hide details" : "Show details"}
+      </button>
+      {expanded && (
+        <pre className="mt-2 max-h-64 max-w-full overflow-auto whitespace-pre-wrap break-all rounded border border-red-100 bg-white/70 p-2 text-xs text-red-800">
+          {raw}
+        </pre>
+      )}
+    </>
+  );
+}
 
 export function ErrorViewer({
   error,
@@ -72,12 +166,12 @@ export function ErrorViewer({
   error: unknown;
   className?: string;
 }) {
-  const normalized = useMemo(() => normalizeError(error), [error]);
-  const [showDetails, setShowDetails] = useState(false);
+  const parsed = useMemo(() => parseError(error), [error]);
 
-  if (!normalized) return null;
+  if (!parsed) return null;
 
-  const { message, raw } = normalized;
+  const { message, raw } = parsed;
+  const hasDetails = raw && raw !== message;
 
   return (
     <div
@@ -89,27 +183,7 @@ export function ErrorViewer({
     >
       <div className="font-medium">Error</div>
       <div className="mt-1 whitespace-pre-wrap break-words">{message}</div>
-      {raw && raw !== message && (
-        <>
-          <button
-            type="button"
-            className="mt-2 flex items-center gap-1 text-xs font-medium text-red-800"
-            onClick={() => setShowDetails((v) => !v)}
-          >
-            <span
-              className={`inline-block transition-transform ${showDetails ? "rotate-90" : ""}`}
-            >
-              ▸
-            </span>
-            {showDetails ? "Hide details" : "Show details"}
-          </button>
-          {showDetails && (
-            <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded border border-red-100 bg-white/70 p-2 text-xs text-red-800">
-              {raw}
-            </pre>
-          )}
-        </>
-      )}
+      {hasDetails && <CollapsibleRawError raw={raw} />}
     </div>
   );
 }
