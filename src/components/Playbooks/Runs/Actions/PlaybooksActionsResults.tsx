@@ -18,6 +18,7 @@ import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { IoMdDownload } from "react-icons/io";
 import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
+import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import path from "path";
 import { LogsTable } from "@flanksource-ui/components/Logs/Table/LogsTable";
