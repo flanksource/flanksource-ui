@@ -165,6 +165,13 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     }
   };
 
+  // Check if this view only aggregates other views (has sections but no content of its own)
+  const isAggregatorView =
+    viewResult.sections &&
+    viewResult.sections.length > 0 &&
+    !viewResult.panels &&
+    !viewResult.columns;
+
   return (
     <ViewLayout
       title={title || name}
@@ -196,13 +203,16 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           <hr className="my-4 border-gray-200" />
         )}
 
-        <div className="mt-2">
-          <ViewSection
-            key={`${namespace || "default"}:${name}`}
-            section={primaryViewSection}
-            hideVariables
-          />
-        </div>
+        {/* Only show the primary ViewSection if this view has its own content */}
+        {!isAggregatorView && (
+          <div className="mt-2">
+            <ViewSection
+              key={`${namespace || "default"}:${name}`}
+              section={primaryViewSection}
+              hideVariables
+            />
+          </div>
+        )}
 
         {viewResult?.sections && viewResult.sections.length > 0 && (
           <>
