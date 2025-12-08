@@ -36,6 +36,11 @@ export default function ApprovePlaybookRunModal({
     }
   });
 
+  const handleClose = () => {
+    setError(null);
+    onClose();
+  };
+
   return (
     <ConfirmationPromptDialog
       confirmationStyle="approve"
@@ -43,7 +48,7 @@ export default function ApprovePlaybookRunModal({
       description={<p>Are you sure you want to approve this playbook run?</p>}
       onConfirm={() => approve(playbookRunId)}
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       isOpen={open}
       yesLabel={isLoading ? "Approving..." : "Approve"}
       closeLabel="Cancel"
