@@ -2,7 +2,7 @@ import { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 
-type PaginationOptions = {
+type PaginationStateOptions = {
   /**
    * Optional prefix to namespace the search params (e.g. view specific tables).
    */
@@ -25,7 +25,7 @@ type PaginationOptions = {
 };
 
 export default function useReactTablePaginationState(
-  options: PaginationOptions = {}
+  options: PaginationStateOptions = {}
 ) {
   const {
     paramPrefix,
@@ -60,7 +60,7 @@ export default function useReactTablePaginationState(
         typeof param === "function"
           ? param({
               pageIndex: pageIndex ?? 0,
-              pageSize: pageSize ?? 50
+              pageSize: pageSize ?? defaultPageSize
             })
           : param;
       const newParams = new URLSearchParams(params);
@@ -74,7 +74,8 @@ export default function useReactTablePaginationState(
       params,
       setParams,
       pageIndexParamKey,
-      pageSizeParamKey
+      pageSizeParamKey,
+      defaultPageSize
     ]
   );
 

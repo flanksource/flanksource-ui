@@ -102,7 +102,7 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         "200"
       ].filter((value): value is string => Boolean(value))
     )
-  );
+  ).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
   const options = {
     data: data,

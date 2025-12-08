@@ -58,7 +58,6 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   defaultSorting
 }) => {
   const visibleColumnsWithRatio = React.useMemo(() => {
-    let visibleIndex = 0;
     return columns.reduce<
       {
         column: ViewColumnDef;
@@ -70,7 +69,6 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       }
       const width = col.width;
       acc.push({ column: col, width });
-      visibleIndex++;
       return acc;
     }, []);
   }, [columns]);

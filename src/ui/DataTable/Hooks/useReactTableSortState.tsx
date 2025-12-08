@@ -70,7 +70,7 @@ export default function useReactTableSortState(
       defaultSorting &&
       defaultSorting.length > 0
     ) {
-      const nextParams = new URLSearchParams(searchParams);
+      const nextParams = new URLSearchParams(window.location.search);
       const [firstSort] = defaultSorting;
       nextParams.set(sortByParamKey, firstSort.id);
       nextParams.set(sortOrderParamKey, firstSort.desc ? "desc" : "asc");
@@ -78,7 +78,6 @@ export default function useReactTableSortState(
     }
   }, [
     defaultSorting,
-    searchParams,
     setSearchParams,
     sortBy,
     sortOrder,
@@ -97,7 +96,7 @@ export default function useReactTableSortState(
         nextParams.delete(sortByParamKey);
         nextParams.delete(sortOrderParamKey);
       } else {
-        nextParams.set(sortByParamKey, sort[0]?.id);
+        nextParams.set(sortByParamKey, sort[0].id);
         nextParams.set(sortOrderParamKey, sort[0].desc ? "desc" : "asc");
       }
       setSearchParams(nextParams);
