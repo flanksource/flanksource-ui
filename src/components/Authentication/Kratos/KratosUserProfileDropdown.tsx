@@ -31,13 +31,13 @@ export function KratosUserProfileDropdown({
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              className="h-5 w-5 rounded-full"
+              className="h-4 w-4 rounded-full"
               src={user.avatar}
               alt={user.name}
             />
           ) : (
             <ClickableSvg>
-              <FaUserAlt className="h-5 w-5" />
+              <FaUserAlt className="h-4 w-4" />
             </ClickableSvg>
           )}
         </MenuButton>

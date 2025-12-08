@@ -60,8 +60,8 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    /* Sidebar background color - light gray/white (#f8fafc) */
-    --sidebar-background: 210 40% 98%;
+    /* Sidebar background color - slate-100 (#f1f5f9) */
+    --sidebar-background: 210 40% 96%;
     /* Sidebar text color - dark gray for contrast on light background */
     --sidebar-foreground: 240 5.3% 26.1%;
     /* Primary color for active/selected items - blue (#2563eb) */

@@ -27,7 +27,7 @@ export function RefreshButton({
       <span className="sr-only">Refresh</span>
       <ClickableSvg styleFill={false}>
         <HiOutlineRefresh
-          className={clsx("h-5 w-5", animate ? "animate-spin" : "")}
+          className={clsx("h-4 w-4", animate ? "animate-spin" : "")}
           aria-hidden="true"
         />
       </ClickableSvg>

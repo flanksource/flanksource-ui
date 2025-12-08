@@ -9,7 +9,7 @@ export function HelpDropdown() {
       <div>
         <Menu.Button className="flex items-center rounded-full text-sm text-gray-400">
           <ClickableSvg>
-            <IoHelpOutline className="h-5 w-5" />
+            <IoHelpOutline className="h-4 w-4" />
           </ClickableSvg>
         </Menu.Button>
       </div>

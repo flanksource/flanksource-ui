@@ -42,13 +42,13 @@ export function SearchLayout({
             className={`ml-4 flex items-center gap-3 md:ml-6 ${extraClassName}`}
           >
             {extra}
-            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+            <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
               {onRefresh && (
-                <div className="flex h-full w-10 items-center justify-center">
+                <div className="flex h-full w-8 items-center justify-center">
                   <RefreshButton onClick={onRefresh} animate={loading} />
                 </div>
               )}
-              <div className="flex h-full w-10 items-center justify-center">
+              <div className="flex h-full w-8 items-center justify-center">
                 <PreferencePopOver
                   cardSize={topologyCardSize}
                   setTopologyCardSize={setTopologyCardSize}
@@ -56,19 +56,19 @@ export function SearchLayout({
               </div>
             </div>
 
-            <div className="flex h-9 items-center divide-x divide-gray-200 rounded-md border border-gray-200">
+            <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
               <Link
                 to={{
                   pathname: "/notifications"
                 }}
-                className="flex h-full w-10 items-center justify-center text-gray-400 hover:text-gray-500"
+                className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
               >
-                <FaBell className="h-5 w-5" />
+                <FaBell className="h-4 w-4" />
               </Link>
-              <div className="flex h-full w-10 items-center justify-center">
+              <div className="flex h-full w-8 items-center justify-center">
                 <HelpDropdown />
               </div>
-              <div className="flex h-full w-10 items-center justify-center">
+              <div className="flex h-full w-8 items-center justify-center">
                 <UserProfileDropdown />
               </div>
             </div>
