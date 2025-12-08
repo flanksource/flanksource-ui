@@ -131,8 +131,8 @@ const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
     <Card className="transition-shadow hover:shadow-lg">
       <CardHeader className="p-4 pb-3">
         {/* Header with title on left and headerRight on right */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1 basis-full sm:basis-auto">
             {/* Card Title */}
             {titleColumns.map((col) => {
               const value = row[col.name];
