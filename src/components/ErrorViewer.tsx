@@ -31,10 +31,8 @@ function extractResourceList(
 
     if (value && typeof value === "object") {
       const obj = value as Record<string, unknown>;
-      const name = obj.name as string | undefined;
-      if (name && name !== "") {
-        const resourceName =
-          (obj.name as string) || (obj.title as string) || name;
+      const resourceName = (obj.name as string) || (obj.title as string);
+      if (resourceName) {
         resources.push(`${type}: ${resourceName}`);
       }
     }
