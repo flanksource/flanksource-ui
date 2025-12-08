@@ -1,6 +1,6 @@
 import { UserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { MissionControlLogo, MissionControl } from "@flanksource/icons/mi";
-import { ChevronUp } from "lucide-react";
+import { ChevronRight, ChevronUp } from "lucide-react";
 import React, { useContext } from "react";
 import { IconType } from "react-icons";
 import { NavLink, Link, useLocation } from "react-router-dom";
@@ -209,17 +209,18 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       {/* Logo Header - Uses sidebar background color, h-12 matches top bar height */}
-      <SidebarHeader className="border-b border-sidebar-border bg-sidebar p-0">
+      <SidebarHeader className="bg-sidebar p-0">
         <div className="flex h-12 items-center justify-between">
           {collapsed ? (
             <button
               onClick={toggleSidebar}
-              className="flex h-12 w-full items-center justify-center"
+              className="flex h-12 w-full items-center justify-center gap-1"
             >
               <MissionControl
                 className="h-4 w-6 fill-primary text-primary"
                 size="auto"
               />
+              <ChevronRight className="h-3 w-3 text-gray-500" />
             </button>
           ) : (
             <Link to="/" className="block flex-1">
