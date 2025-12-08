@@ -1,6 +1,28 @@
 import { SortingState, Updater } from "@tanstack/react-table";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
+
+type SortStateOptions = {
+  /**
+   * Optional prefix to namespace the sort search params.
+   */
+  paramPrefix?: string;
+
+  /**
+   * Custom sortBy key for search params. Defaults to "sortBy".
+   */
+  sortByKey?: string;
+
+  /**
+   * Custom sortOrder key for search params. Defaults to "sortOrder".
+   */
+  sortOrderKey?: string;
+
+  /**
+   * Default sorting to apply when no sort is present in the URL.
+   */
+  defaultSorting?: SortingState;
+};
 
 /**
  *
@@ -10,13 +32,25 @@ import { useSearchParams } from "react-router-dom";
  *
  */
 export default function useReactTableSortState(
-  sortByKey = "sortBy",
-  sortOrderKey = "sortOrder"
+  options: SortStateOptions = {}
 ): [SortingState, (newSortBy: Updater<SortingState>) => void] {
+  const {
+    paramPrefix,
+    sortByKey = "sortBy",
+    sortOrderKey = "sortOrder",
+    defaultSorting
+  } = options;
+
+  const sortByParamKey = paramPrefix
+    ? `${paramPrefix}__${sortByKey}`
+    : sortByKey;
+  const sortOrderParamKey = paramPrefix
+    ? `${paramPrefix}__${sortOrderKey}`
+    : sortOrderKey;
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const sortBy = searchParams.get(sortByKey) || undefined;
-  const sortOrder = searchParams.get(sortOrderKey) || undefined;
+  const sortBy = searchParams.get(sortByParamKey) || undefined;
+  const sortOrder = searchParams.get(sortOrderParamKey) || undefined;
 
   const tableSortByState = useMemo(() => {
     if (!sortBy || !sortOrder) {
@@ -30,22 +64,50 @@ export default function useReactTableSortState(
     ] satisfies SortingState;
   }, [sortBy, sortOrder]);
 
+  useEffect(() => {
+    if (
+      (!sortBy || !sortOrder) &&
+      defaultSorting &&
+      defaultSorting.length > 0
+    ) {
+      const nextParams = new URLSearchParams(window.location.search);
+      const [firstSort] = defaultSorting;
+      nextParams.set(sortByParamKey, firstSort.id);
+      nextParams.set(sortOrderParamKey, firstSort.desc ? "desc" : "asc");
+      setSearchParams(nextParams);
+    }
+  }, [
+    defaultSorting,
+    setSearchParams,
+    sortBy,
+    sortOrder,
+    sortByParamKey,
+    sortOrderParamKey
+  ]);
+
   const updateSortByFn = useCallback(
     (newSortBy: Updater<SortingState>) => {
       const sort =
         typeof newSortBy === "function"
           ? newSortBy([...tableSortByState])
           : newSortBy;
+      const nextParams = new URLSearchParams(searchParams);
       if (sort.length === 0) {
-        searchParams.delete(sortByKey);
-        searchParams.delete(sortOrderKey);
+        nextParams.delete(sortByParamKey);
+        nextParams.delete(sortOrderParamKey);
       } else {
-        searchParams.set(sortByKey, sort[0]?.id);
-        searchParams.set(sortOrderKey, sort[0].desc ? "desc" : "asc");
+        nextParams.set(sortByParamKey, sort[0].id);
+        nextParams.set(sortOrderParamKey, sort[0].desc ? "desc" : "asc");
       }
-      setSearchParams(searchParams);
+      setSearchParams(nextParams);
     },
-    [searchParams, setSearchParams, sortByKey, sortOrderKey, tableSortByState]
+    [
+      searchParams,
+      setSearchParams,
+      sortByParamKey,
+      sortOrderParamKey,
+      tableSortByState
+    ]
   );
 
   return [tableSortByState, updateSortByFn];

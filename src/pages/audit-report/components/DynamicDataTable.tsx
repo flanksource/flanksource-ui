@@ -4,6 +4,7 @@ import { formatDate } from "../utils";
 
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
+import { SortingState } from "@tanstack/react-table";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
 import { Link, useSearchParams } from "react-router-dom";
@@ -29,6 +30,8 @@ interface DynamicDataTableProps {
   totalRowCount?: number;
   isLoading?: boolean;
   tablePrefix?: string;
+  defaultPageSize?: number;
+  defaultSorting?: SortingState;
 }
 
 interface RowAttributes {
@@ -50,21 +53,99 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   pageCount,
   totalRowCount,
   isLoading,
-  tablePrefix
+  tablePrefix,
+  defaultPageSize,
+  defaultSorting
 }) => {
-  const columnDef: MRT_ColumnDef<any>[] = columns
-    .filter((col) => !col.hidden && !hiddenColumnTypes.includes(col.type))
-    .map((col) => {
+  const visibleColumnsWithRatio = React.useMemo(() => {
+    return columns.reduce<
+      {
+        column: ViewColumnDef;
+        width?: string;
+      }[]
+    >((acc, col) => {
+      if (col.hidden || hiddenColumnTypes.includes(col.type)) {
+        return acc;
+      }
+      const width = col.width;
+      acc.push({ column: col, width });
+      return acc;
+    }, []);
+  }, [columns]);
+
+  const baseWidth = React.useMemo(
+    () => Math.max(visibleColumnsWithRatio.length * 120, 120),
+    [visibleColumnsWithRatio.length]
+  );
+
+  const { customWidths, widthError } = React.useMemo(() => {
+    const widths: Record<string, number> = {};
+    let totalWeight = 0;
+    const weightColumns: { name: string; weight: number }[] = [];
+
+    for (const { column: col, width } of visibleColumnsWithRatio) {
+      if (!width) {
+        continue;
+      }
+      const widthStr = String(width).trim();
+      const match = widthStr.match(/^([0-9]+(?:\.[0-9]+)?)(px)?$/);
+      if (!match) {
+        return {
+          customWidths: {},
+          widthError: `Invalid column width "${widthStr}" for column "${col.name}". Use weight (e.g. "2") or px (e.g. "150px").`
+        };
+      }
+      const value = parseFloat(match[1]);
+      const unit = match[2];
+      if (Number.isNaN(value) || value <= 0) {
+        return {
+          customWidths: {},
+          widthError: `Invalid column width "${widthStr}" for column "${col.name}". Use positive values like "2" or "150px".`
+        };
+      }
+
+      if (unit === "px") {
+        widths[col.name] = Math.max(20, Math.round(value));
+      } else {
+        weightColumns.push({ name: col.name, weight: value });
+        totalWeight += value;
+      }
+    }
+
+    if (weightColumns.length > 0 && totalWeight > 0) {
+      weightColumns.forEach(({ name, weight }) => {
+        widths[name] = Math.max(
+          20,
+          Math.round((weight / totalWeight) * baseWidth)
+        );
+      });
+    }
+    return {
+      customWidths: widths,
+      widthError: undefined as string | undefined
+    };
+  }, [baseWidth, visibleColumnsWithRatio]);
+
+  const columnDef: MRT_ColumnDef<any>[] = visibleColumnsWithRatio.map(
+    ({ column: col }) => {
+      const calculatedSize = widthError ? undefined : customWidths[col.name];
+
       return {
         accessorKey: col.name,
-        minSize: 15,
-        maxSize: minWidthForColumnType(col.type),
+        ...(calculatedSize === undefined
+          ? {
+              minSize: 15,
+              maxSize: minWidthForColumnType(col.type)
+            }
+          : {}),
+        size: calculatedSize,
         header: formatDisplayLabel(col.name),
         enableSorting: col.type !== "labels",
         Cell: ({ cell, row }: { cell: any; row: any }) =>
           renderCellValue(cell.getValue(), col, row.original, tablePrefix)
       };
-    });
+    }
+  );
 
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
@@ -97,16 +178,26 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
   });
 
   return (
-    <MRTDataTable
-      enableColumnActions={false}
-      columns={columnDef}
-      isLoading={isLoading}
-      data={adaptedData}
-      enableServerSideSorting
-      enableServerSidePagination
-      manualPageCount={pageCount}
-      totalRowCount={totalRowCount}
-    />
+    <>
+      {widthError && (
+        <div className="mb-2 text-sm text-red-600">
+          {widthError} Falling back to default column widths.
+        </div>
+      )}
+      <MRTDataTable
+        enableColumnActions={false}
+        columns={columnDef}
+        isLoading={isLoading}
+        data={adaptedData}
+        enableServerSideSorting
+        enableServerSidePagination
+        manualPageCount={pageCount}
+        totalRowCount={totalRowCount}
+        urlParamPrefix={tablePrefix}
+        defaultPageSize={defaultPageSize}
+        defaultSorting={defaultSorting}
+      />
+    </>
   );
 };
 

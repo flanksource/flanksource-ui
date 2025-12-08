@@ -1,30 +1,58 @@
 import { OnChangeFn, PaginationState } from "@tanstack/react-table";
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const persistPageSizeAtom = atomWithStorage(
-  "persistPageSize",
-  "50",
-  undefined,
-  {
-    getOnInit: true
-  }
-);
+type PaginationStateOptions = {
+  /**
+   * Optional prefix to namespace the search params (e.g. view specific tables).
+   */
+  paramPrefix?: string;
+
+  /**
+   * Custom key name for page index in search params. Defaults to "pageIndex".
+   */
+  pageIndexKey?: string;
+
+  /**
+   * Custom key name for page size in search params. Defaults to "pageSize".
+   */
+  pageSizeKey?: string;
+
+  /**
+   * Default page size to use when no query param is present. Defaults to 50.
+   */
+  defaultPageSize?: number;
+};
 
 export default function useReactTablePaginationState(
-  persistToLocalStorage = true
+  options: PaginationStateOptions = {}
 ) {
-  const [pageSizeFromLocalStorage, setPageSize] = useAtom(persistPageSizeAtom);
+  const {
+    paramPrefix,
+    pageIndexKey = "pageIndex",
+    pageSizeKey = "pageSize",
+    defaultPageSize = 50
+  } = options;
+
+  const pageIndexParamKey = paramPrefix
+    ? `${paramPrefix}__${pageIndexKey}`
+    : pageIndexKey;
+  const pageSizeParamKey = paramPrefix
+    ? `${paramPrefix}__${pageSizeKey}`
+    : pageSizeKey;
+
+  const defaultPageSizeValue = defaultPageSize.toString();
 
   const [params, setParams] = useSearchParams({
-    pageIndex: "0",
-    pageSize: persistToLocalStorage ? pageSizeFromLocalStorage : "50"
+    [pageIndexParamKey]: "0",
+    [pageSizeParamKey]: defaultPageSizeValue
   });
 
-  const pageIndex = parseInt(params.get("pageIndex") ?? "0", 10);
-  const pageSize = parseInt(params.get("pageSize") ?? "50", 10);
+  const pageIndex = parseInt(params.get(pageIndexParamKey) ?? "0", 10);
+  const pageSize = parseInt(
+    params.get(pageSizeParamKey) ?? defaultPageSizeValue,
+    10
+  );
 
   const setPageIndex: OnChangeFn<PaginationState> = useCallback(
     (param) => {
@@ -32,17 +60,23 @@ export default function useReactTablePaginationState(
         typeof param === "function"
           ? param({
               pageIndex: pageIndex ?? 0,
-              pageSize: pageSize ?? 50
+              pageSize: pageSize ?? defaultPageSize
             })
           : param;
-      params.set("pageIndex", updated.pageIndex.toString());
-      params.set("pageSize", updated.pageSize.toString());
-      setParams(params);
-      if (persistToLocalStorage) {
-        setPageSize(updated.pageSize.toString());
-      }
+      const newParams = new URLSearchParams(params);
+      newParams.set(pageIndexParamKey, updated.pageIndex.toString());
+      newParams.set(pageSizeParamKey, updated.pageSize.toString());
+      setParams(newParams);
     },
-    [pageIndex, pageSize, params, persistToLocalStorage, setPageSize, setParams]
+    [
+      pageIndex,
+      pageSize,
+      params,
+      setParams,
+      pageIndexParamKey,
+      pageSizeParamKey,
+      defaultPageSize
+    ]
   );
 
   return {

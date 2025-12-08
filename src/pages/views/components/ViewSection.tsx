@@ -124,6 +124,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({
               columns={sectionViewResult?.columns}
               columnOptions={sectionViewResult?.columnOptions}
               panels={sectionViewResult?.panels}
+              table={sectionViewResult?.table}
               variables={sectionViewResult?.variables}
               card={sectionViewResult?.card}
               requestFingerprint={sectionViewResult.requestFingerprint}

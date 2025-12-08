@@ -11,6 +11,7 @@ import {
   MantineReactTable,
   MRT_TableOptions
 } from "mantine-react-table";
+import { SortingState } from "@tanstack/react-table";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
 
@@ -46,6 +47,12 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   displayColumnDefOptions?: {
     "mrt-row-expand"?: Partial<MRT_ColumnDef<T>>;
   };
+  /** Prefix to namespace URL search params for sorting/pagination */
+  urlParamPrefix?: string;
+  /** Default page size for pagination (overrides persisted default when set) */
+  defaultPageSize?: number;
+  /** Default sorting to seed when no sort is present */
+  defaultSorting?: SortingState;
 };
 
 export default function MRTDataTable<T extends Record<string, any> = {}>({
@@ -68,10 +75,34 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
   onGroupingChange = () => {},
   disableHiding = false,
   mantineTableBodyRowProps,
-  displayColumnDefOptions
+  displayColumnDefOptions,
+  urlParamPrefix,
+  defaultPageSize,
+  defaultSorting
 }: MRTDataTableProps<T>) {
-  const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState();
-  const [sortState, setSortState] = useReactTableSortState();
+  const { pageIndex, pageSize, setPageIndex } = useReactTablePaginationState({
+    paramPrefix: urlParamPrefix,
+    defaultPageSize
+  });
+  const [sortState, setSortState] = useReactTableSortState({
+    paramPrefix: urlParamPrefix,
+    defaultSorting
+  });
+
+  const initialState = {
+    ...(expandAllRows ? { expanded: true } : {})
+  };
+
+  const rowsPerPageOptions = Array.from(
+    new Set(
+      [
+        defaultPageSize ? defaultPageSize.toString() : undefined,
+        "50",
+        "100",
+        "200"
+      ].filter((value): value is string => Boolean(value))
+    )
+  ).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
   const options = {
     data: data,
@@ -152,13 +183,10 @@ export default function MRTDataTable<T extends Record<string, any> = {}>({
         return acc;
       }, {})
     },
-    initialState: expandAllRows
-      ? {
-          expanded: true
-        }
-      : undefined,
+    initialState:
+      Object.keys(initialState).length > 0 ? initialState : undefined,
     mantinePaginationProps: {
-      rowsPerPageOptions: ["50", "100", "200"]
+      rowsPerPageOptions
     },
     mantineExpandButtonProps: {
       size: "xs"

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Table2, LayoutGrid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -6,6 +6,7 @@ import DynamicDataTable from "../DynamicDataTable";
 import { formatDisplayLabel } from "./panels/utils";
 import {
   ColumnFilterOptions,
+  DisplayTable,
   PanelResult,
   ViewColumnDef,
   ViewRow,
@@ -38,6 +39,7 @@ interface ViewProps {
   name: string;
   columns?: ViewColumnDef[];
   columnOptions?: Record<string, ColumnFilterOptions>;
+  table?: DisplayTable;
   variables?: ViewVariable[];
   card?: {
     columns: number;
@@ -55,17 +57,48 @@ const View: React.FC<ViewProps> = ({
   columns,
   columnOptions,
   panels,
+  table,
   variables,
   card,
   requestFingerprint,
   currentVariables,
   hideVariables
 }) => {
-  const { pageSize } = useReactTablePaginationState();
+  const tablePrefix = `view_${namespace}_${name}`;
+
+  const defaultPageSize = table?.size;
+
+  const defaultSorting = useMemo(() => {
+    const sort = table?.sort?.trim();
+    if (!sort) {
+      return undefined;
+    }
+
+    const desc = sort.startsWith("-");
+    const id = sort.replace(/^[-+]/, "");
+
+    if (!id) {
+      return undefined;
+    }
+
+    return [
+      {
+        id,
+        desc
+      }
+    ];
+  }, [table?.sort]);
+
+  const { pageSize } = useReactTablePaginationState({
+    paramPrefix: tablePrefix,
+    defaultPageSize: defaultPageSize
+  });
 
   // Create unique prefix for this view's table
-  const tablePrefix = `view_${namespace}_${name}`;
-  const [tableSearchParams] = usePrefixedSearchParams(tablePrefix);
+  const [tableSearchParams, setTableSearchParams] = usePrefixedSearchParams(
+    tablePrefix,
+    false
+  );
 
   // Separate display mode state (frontend only, not sent to backend)
   const [searchParams, setSearchParams] = useSearchParams();
@@ -117,6 +150,36 @@ const View: React.FC<ViewProps> = ({
     // Only include column filters in Formik form, not global filters
     return columnFilterFields;
   }, [columnFilterFields]);
+
+  useEffect(() => {
+    setTableSearchParams((current) => {
+      const updated = new URLSearchParams(current);
+      let changed = false;
+
+      if (defaultPageSize && defaultPageSize > 0 && !updated.get("pageSize")) {
+        updated.set("pageSize", defaultPageSize.toString());
+        changed = true;
+      }
+
+      if (!updated.get("pageIndex")) {
+        updated.set("pageIndex", "0");
+        changed = true;
+      }
+
+      if (
+        defaultSorting &&
+        defaultSorting.length > 0 &&
+        !updated.get("sortBy")
+      ) {
+        const sort = defaultSorting[0];
+        updated.set("sortBy", sort.id);
+        updated.set("sortOrder", sort.desc ? "desc" : "asc");
+        changed = true;
+      }
+
+      return changed ? updated : current;
+    });
+  }, [defaultPageSize, defaultSorting, setTableSearchParams]);
 
   // Fetch table data with only column filters (no global filters)
   const {
@@ -281,6 +344,8 @@ const View: React.FC<ViewProps> = ({
               pageCount={totalEntries ? Math.ceil(totalEntries / pageSize) : 1}
               totalRowCount={totalEntries}
               tablePrefix={tablePrefix}
+              defaultPageSize={defaultPageSize}
+              defaultSorting={defaultSorting}
             />
           </div>
         ))}
