@@ -1,5 +1,5 @@
-import { ChangeEvent, useMemo, useState, useRef, useEffect } from "react";
-import { Search, X, Play, Loader2, ChevronDown, Workflow } from "lucide-react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { Play, Loader2, ChevronDown, Workflow } from "lucide-react";
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { SubmitPlaybookRunFormValues } from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import SubmitPlaybookRunForm from "@flanksource-ui/components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
@@ -7,9 +7,8 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import EmptyState from "@flanksource-ui/components/EmptyState";
 import { PanelResult } from "../../../types";
 import mixins from "@flanksource-ui/utils/mixins.module.css";
-import { Input } from "@flanksource-ui/components/ui/input";
 import { Button } from "@flanksource-ui/components/ui/button";
-import { Badge } from "@flanksource-ui/components/ui/badge";
+import PanelWrapper from "./PanelWrapper";
 
 type PlaybookRunRow = {
   id: string;
@@ -37,24 +36,8 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
     [summary.rows]
   );
   const [selected, setSelected] = useState<PlaybookRunRow | null>(null);
-  const [search, setSearch] = useState("");
-  const [searchExpanded, setSearchExpanded] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const filteredRows = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    if (!term) return rows;
-    return rows.filter((row) => {
-      const title = row.title || row.name || "";
-      return (
-        title.toLowerCase().includes(term) ||
-        (row.name ?? "").toLowerCase().includes(term) ||
-        (row.description ?? "").toLowerCase().includes(term)
-      );
-    });
-  }, [rows, search]);
 
   const { data: playbookSpec, isLoading } = useGetPlaybookSpecsDetails(
     selected?.id ?? "",
@@ -66,22 +49,6 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
   const handleCloseModal = () => {
     setSelected(null);
   };
-
-  const handleClearSearch = () => {
-    setSearch("");
-    setSearchExpanded(false);
-  };
-
-  const handleToggleSearch = () => {
-    setSearchExpanded(!searchExpanded);
-  };
-
-  // Focus input when search is expanded
-  useEffect(() => {
-    if (searchExpanded && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchExpanded]);
 
   // Check scroll position to show/hide indicator
   const checkScrollPosition = () => {
@@ -104,74 +71,11 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
 
     container.addEventListener("scroll", checkScrollPosition);
     return () => container.removeEventListener("scroll", checkScrollPosition);
-  }, [filteredRows]); // Re-check when filtered rows change
+  }, [rows]); // Re-check when rows change
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
-      {/* Header */}
-      <div className="px-4 pb-3 pt-4">
-        <div className="flex items-center gap-2">
-          {/* Title and Badge - always visible */}
-          <div className="flex items-center gap-2">
-            <h4 className="text-sm font-medium text-gray-600">
-              {summary.name}
-            </h4>
-            <Badge variant="secondary">
-              {filteredRows?.length ?? 0}
-              {rows && filteredRows && rows.length !== filteredRows.length
-                ? `/${rows.length}`
-                : ""}
-            </Badge>
-          </div>
-
-          {/* Spacer to push search to the right */}
-          <div className="flex-1"></div>
-
-          {/* Search Input - expands to the left when active */}
-          <div
-            className={`relative transition-all duration-300 ${
-              searchExpanded
-                ? "w-64 opacity-100"
-                : "w-0 overflow-hidden opacity-0"
-            }`}
-          >
-            <Input
-              ref={searchInputRef}
-              id="playbook-panel-search"
-              value={search}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setSearch(e.target.value)
-              }
-              placeholder="Search playbooks..."
-              className="h-9 pr-9 focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-            {search && (
-              <button
-                onClick={handleClearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Search Toggle Button - always on far right */}
-          <button
-            onClick={handleToggleSearch}
-            className="flex-shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-gray-100 hover:text-foreground"
-            aria-label="Toggle search"
-          >
-            <Search className="h-4 w-4" />
-          </button>
-        </div>
-        {summary.description && !searchExpanded && (
-          <p className="mt-2 text-xs text-gray-500">{summary.description}</p>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col overflow-hidden p-4">
+    <PanelWrapper title={summary.name} description={summary.description}>
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Playbook List */}
         <div className="relative min-h-0 flex-1">
           <div
@@ -182,21 +86,9 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
               <EmptyState title="No playbooks" />
             )}
 
-            {rows && rows.length > 0 && filteredRows.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <Search className="mb-2 h-8 w-8 text-muted-foreground" />
-                <p className="text-sm font-medium text-foreground">
-                  No playbooks found
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Try adjusting your search term
-                </p>
-              </div>
-            )}
-
-            {filteredRows && filteredRows.length > 0 && (
+            {rows && rows.length > 0 && (
               <div className="space-y-1">
-                {filteredRows.map((row) => {
+                {rows.map((row) => {
                   const title = row.title || row.name || "Playbook";
                   const isCurrentlyLoading =
                     isLoading && selected?.id === row.id;
@@ -277,6 +169,6 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
           params={selected.params}
         />
       )}
-    </div>
+    </PanelWrapper>
   );
 }
