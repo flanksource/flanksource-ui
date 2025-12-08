@@ -194,7 +194,8 @@ const columns: MRT_ColumnDef<
     Cell: ({ row }) => <MRTJobHistoryStatusColumn row={row} />
   },
   {
-    accessorKey: "last_runtime",
+    id: "last_runtime",
+    accessorFn: (row) => row.last_runtime ?? row.job_time_start,
     header: "Last Run",
     enableResizing: true,
     Cell: MRTDateCell,
