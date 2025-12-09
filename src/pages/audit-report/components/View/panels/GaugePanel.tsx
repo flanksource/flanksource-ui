@@ -122,7 +122,7 @@ const GaugePanel: React.FC<GaugePanelProps> = ({ summary }) => {
     })
     .filter(Boolean);
 
-  return <div>{gaugeElements}</div>;
+  return gaugeElements;
 };
 
 export default GaugePanel;
