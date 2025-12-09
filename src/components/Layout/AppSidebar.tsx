@@ -58,14 +58,7 @@ function NavItem({
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={item.name} isActive={isActive}>
         <NavLink to={item.href}>
-          <Icon
-            className={clsx(
-              "h-5 w-5 transition-colors",
-              isActive
-                ? "fill-white text-white"
-                : "fill-gray-900 text-gray-900 group-hover/menu-item:fill-white group-hover/menu-item:text-white"
-            )}
-          />
+          <Icon className="h-5 w-5 fill-white text-white" />
           {!collapsed && (
             <span className={isActive ? "font-medium" : ""}>{item.name}</span>
           )}
@@ -88,14 +81,7 @@ function SubNavItem({
     <SidebarMenuSubItem>
       <SidebarMenuSubButton asChild isActive={isActive}>
         <NavLink to={subItem.href}>
-          <SubIcon
-            className={clsx(
-              "h-4 w-4 transition-colors",
-              isActive
-                ? "fill-white text-white"
-                : "fill-gray-900 text-gray-900 group-hover/menu-subitem:fill-white group-hover/menu-subitem:text-white"
-            )}
-          />
+          <SubIcon className="h-4 w-4 fill-white text-white" />
           <span className={isActive ? "font-medium" : ""}>{subItem.name}</span>
         </NavLink>
       </SidebarMenuSubButton>
@@ -123,10 +109,14 @@ function SettingsNavGroup({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton tooltip={settings.name}>
-              <Icon className="h-5 w-5" />
+              <Icon className="h-5 w-5 text-white" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start" className="min-w-48">
+          <DropdownMenuContent
+            side="right"
+            align="start"
+            className="max-h-none min-w-48"
+          >
             {settings.submenu.map((subItem) => {
               if (
                 isFeatureDisabled(
@@ -169,9 +159,9 @@ function SettingsNavGroup({
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuButton tooltip={settings.name}>
-            <Icon className="h-5 w-5" />
+            <Icon className="h-5 w-5 text-white" />
             <span>{settings.name}</span>
-            <ChevronUp className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+            <ChevronUp className="ml-auto h-4 w-4 text-white transition-transform group-data-[state=open]/collapsible:rotate-180" />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -209,7 +199,7 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       {/* Logo Header - Uses sidebar background color, h-12 matches top bar height */}
-      <SidebarHeader className="bg-sidebar p-0">
+      <SidebarHeader className="bg-gray-700 p-0">
         <div className="flex h-12 items-center justify-between">
           {collapsed ? (
             <button
@@ -217,23 +207,23 @@ export function AppSidebar({
               className="flex h-12 w-full items-center justify-center gap-1"
             >
               <MissionControl
-                className="h-4 w-6 fill-primary text-primary"
+                className="h-4 w-6 fill-white text-white"
                 size="auto"
               />
-              <ChevronRight className="h-3 w-3 text-gray-500" />
+              <ChevronRight className="h-3 w-3 text-white" />
             </button>
           ) : (
             <Link to="/" className="block flex-1">
               <div className="py-2 pl-4">
                 <MissionControlLogo
-                  className="h-7 w-auto fill-primary text-primary"
+                  className="h-7 w-auto fill-white text-white [&_*]:fill-white"
                   size="auto"
                 />
               </div>
             </Link>
           )}
           {!collapsed && (
-            <SidebarTrigger className="mr-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900" />
+            <SidebarTrigger className="mr-2 text-white hover:bg-gray-600 hover:text-white" />
           )}
         </div>
       </SidebarHeader>

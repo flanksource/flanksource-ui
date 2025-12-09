@@ -56,7 +56,7 @@ export function Status({
   return (
     <div className="inline-flex flex-row items-center">
       <span
-        className={`inline-block h-3 w-3 flex-shrink-0 rounded-full shadow-md ${className} ${color}`}
+        className={`inline-block h-3 w-3 flex-shrink-0 rounded-full ${className} ${color}`}
         aria-hidden="true"
       />
       {!hideText && (

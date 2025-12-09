@@ -32,8 +32,8 @@ export function SearchLayout({
   const [topologyCardSize, setTopologyCardSize] = useAtom(cardPreferenceAtom);
 
   return (
-    <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden bg-sidebar">
-      <div className="sticky top-0 z-20 flex h-12 flex-shrink-0 bg-sidebar py-2">
+    <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-hidden bg-gray-50">
+      <div className="sticky top-0 z-20 flex h-12 flex-shrink-0 bg-white py-2 shadow">
         <div className="flex flex-1 justify-between px-4">
           <div className="flex items-center">
             <div>{title}</div>
@@ -76,7 +76,7 @@ export function SearchLayout({
         </div>
       </div>
 
-      <main className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-tl-3xl bg-white">
+      <main className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
         <DashboardErrorBoundary>
           <div
             className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${contentClass || "p-6"}`}
