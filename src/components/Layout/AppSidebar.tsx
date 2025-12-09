@@ -207,7 +207,7 @@ export function AppSidebar({
               className="flex h-12 w-full items-center justify-center gap-1"
             >
               <MissionControl
-                className="h-4 w-6 fill-white text-white"
+                className="h-4 w-6 fill-white text-white [&_*]:fill-white"
                 size="auto"
               />
               <ChevronRight className="h-3 w-3 text-white" />
