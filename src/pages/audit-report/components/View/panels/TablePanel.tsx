@@ -14,19 +14,20 @@ const TablePanel: React.FC<TablePanelProps> = ({ summary }) => {
       {summary.description && (
         <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
       )}
-      <div className="flex-1 space-y-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         {summary.rows?.map((row, rowIndex) => {
-          const { value, ...rest } = row;
-          const labelKey = Object.keys(rest)[0];
-          const labelValue = rest[labelKey];
-
           return (
             <div
               key={rowIndex}
               className="flex items-center justify-between py-1"
             >
-              <span className="text-sm text-gray-700">{labelValue}</span>
-              <span className="text-sm font-medium text-teal-600">{value}</span>
+              {Object.keys(row).map((key) => {
+                return (
+                  <span key={key} className="text-sm text-gray-500">
+                    {row[key]}
+                  </span>
+                );
+              })}
             </div>
           );
         })}
