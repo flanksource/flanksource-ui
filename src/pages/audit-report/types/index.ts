@@ -484,7 +484,8 @@ export type PanelResult = {
     | "table"
     | "gauge"
     | "duration"
-    | "bargauge";
+    | "bargauge"
+    | "properties";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;

@@ -5,3 +5,4 @@ export { default as GaugePanel } from "./GaugePanel";
 export { default as BarGaugePanel } from "./BarGaugePanel";
 export { default as TextPanel } from "./TextPanel";
 export { default as DurationPanel } from "./DurationPanel";
+export { default as PropertiesPanel } from "./PropertiesPanel";

@@ -24,7 +24,8 @@ import {
   GaugePanel,
   TextPanel,
   DurationPanel,
-  BarGaugePanel
+  BarGaugePanel,
+  PropertiesPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -424,6 +425,8 @@ const renderPanel = (panel: PanelResult, index: number) => {
       return <TextPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "duration":
       return <DurationPanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "properties":
+      return <PropertiesPanel key={`${panel.name}-${index}`} summary={panel} />;
     default:
       return null;
   }
