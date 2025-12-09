@@ -3,6 +3,7 @@ import React, { ComponentProps } from "react";
 import { FaCircleNotch } from "react-icons/fa";
 import { Modal } from "../Modal";
 import clsx from "clsx";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 export type ConfirmationPromptDialogProps = {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export type ConfirmationPromptDialogProps = {
   closeLabel?: string;
   isLoading?: boolean;
   confirmationStyle?: "delete" | "approve";
+  error?: unknown;
 } & ComponentProps<typeof Dialog>;
 
 export function ConfirmationPromptDialog({
@@ -26,6 +28,7 @@ export function ConfirmationPromptDialog({
   yesLabel = "Delete",
   closeLabel = "Cancel",
   isLoading = false,
+  error,
   className,
   ...rest
 }: ConfirmationPromptDialogProps) {
@@ -78,14 +81,19 @@ export function ConfirmationPromptDialog({
             )}
           </div>
           <div className="mb-3 mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-            <h3
-              className="text-base font-semibold text-gray-900"
-              id="modal-title"
-            >
-              {title}
-            </h3>
-            <div className="mt-2">
-              <p className="text-sm text-gray-500">{description}</p>
+            <div>
+              <h3
+                className="text-base font-semibold text-gray-900"
+                id="modal-title"
+              >
+                {title}
+              </h3>
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">{description}</p>
+              </div>
+              <div className="mt-3">
+                {error ? <ErrorViewer error={error} /> : null}
+              </div>
             </div>
           </div>
         </div>
