@@ -67,7 +67,7 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = ({
         <>
           {viewResult.sections.map((section) => (
             <div
-              key={`${section.viewRef.namespace}:${section.viewRef.name}`}
+              key={`${section.viewRef.namespace || "default"}:${section.viewRef.name}`}
               className="mt-4"
             >
               <ViewSection section={section} hideVariables />

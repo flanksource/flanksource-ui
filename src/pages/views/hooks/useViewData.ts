@@ -36,7 +36,12 @@ export function useViewData({
 
   const isDisplayPluginMode = !!configId;
 
-  const { data: displayPluginVariables } = useQuery({
+  const {
+    data: displayPluginVariables,
+    isLoading: isLoadingDisplayPluginVariables,
+    isFetching: isFetchingDisplayPluginVariables,
+    error: displayPluginVariablesError
+  } = useQuery({
     queryKey: ["viewDisplayPluginVariables", viewId, configId],
     queryFn: () => getViewDisplayPluginVariables(viewId, configId!),
     enabled: isDisplayPluginMode
@@ -46,9 +51,9 @@ export function useViewData({
 
   const {
     data: viewResult,
-    isLoading,
-    isFetching,
-    error,
+    isLoading: isLoadingViewResult,
+    isFetching: isFetchingViewResult,
+    error: viewResultError,
     refetch
   } = useQuery({
     queryKey: isDisplayPluginMode
@@ -70,12 +75,12 @@ export function useViewData({
       return [];
     }
     const refs: ViewRef[] = [
-      { namespace: viewResult.namespace, name: viewResult.name }
+      { namespace: viewResult.namespace ?? "", name: viewResult.name }
     ];
     if (viewResult?.sections) {
       viewResult.sections.forEach((section) => {
         refs.push({
-          namespace: section.viewRef.namespace,
+          namespace: section.viewRef.namespace ?? "",
           name: section.viewRef.name
         });
       });
@@ -110,13 +115,17 @@ export function useViewData({
     }
 
     const sectionsToRefresh =
-      allSectionRefs.length > 0 &&
-      allSectionRefs[0].namespace &&
-      allSectionRefs[0].name
+      allSectionRefs.length > 0 && allSectionRefs[0].name
         ? allSectionRefs
-        : result.data?.namespace && result.data.name
-          ? [{ namespace: result.data.namespace, name: result.data.name }]
+        : result.data?.name
+          ? [{ namespace: result.data.namespace ?? "", name: result.data.name }]
           : [];
+
+    if (isDisplayPluginMode) {
+      await queryClient.invalidateQueries({
+        queryKey: ["viewDisplayPluginVariables", viewId, configId]
+      });
+    }
 
     await queryClient.invalidateQueries({
       queryKey: isDisplayPluginMode
@@ -149,9 +158,9 @@ export function useViewData({
 
   return {
     viewResult,
-    isLoading,
-    isFetching,
-    error,
+    isLoading: isLoadingViewResult || isLoadingDisplayPluginVariables,
+    isFetching: isFetchingViewResult || isFetchingDisplayPluginVariables,
+    error: displayPluginVariablesError || viewResultError,
     aggregatedVariables: isDisplayPluginMode ? [] : aggregatedVariables,
     currentVariables,
     handleForceRefresh
