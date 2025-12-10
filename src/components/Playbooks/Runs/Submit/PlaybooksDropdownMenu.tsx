@@ -8,6 +8,7 @@ import {
   Transition
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
+import clsx from "clsx";
 import { Fragment, useState } from "react";
 import { useGetPlaybooksToRun } from "../../../../api/query-hooks/playbooks";
 import { RunnablePlaybook } from "../../../../api/types/playbooks";
@@ -19,13 +20,15 @@ type PlaybooksDropdownMenuProps = {
   config_id?: string;
   check_id?: string;
   className?: string;
+  containerClassName?: string;
 };
 
 export default function PlaybooksDropdownMenu({
   check_id,
   component_id,
   config_id,
-  className = "text-sm btn-white"
+  className = "",
+  containerClassName = "my-2 text-right"
 }: PlaybooksDropdownMenuProps) {
   const [selectedPlaybookSpec, setSelectedPlaybookSpec] = useState<
     RunnablePlaybook & {
@@ -49,9 +52,9 @@ export default function PlaybooksDropdownMenu({
 
   return (
     <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
-      <div className="my-2 text-right">
+      <div className={containerClassName}>
         <Menu as="div" className="relative inline-block text-left">
-          <MenuButton className="btn-white px-2 py-1">
+          <MenuButton className={clsx("btn-white px-2 py-1", className)}>
             <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
             Playbooks
             <ChevronDownIcon

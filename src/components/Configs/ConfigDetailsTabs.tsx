@@ -8,6 +8,7 @@ import { ConfigsDetailsBreadcrumbNav } from "../../ui/BreadcrumbNav/ConfigsDetai
 import { Head } from "../../ui/Head";
 import { refreshButtonClickedTrigger } from "../../ui/SlidingSideBar/SlidingSideBar";
 import TabbedLinks from "../../ui/Tabs/TabbedLinks";
+import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
@@ -46,6 +47,13 @@ export function ConfigDetailsTabs({
     useGetConfigByIdQuery(id!);
 
   const configTabList = useConfigDetailsTabs(configItem?.summary);
+  const playbooksButton = id ? (
+    <PlaybooksDropdownMenu
+      config_id={id}
+      className="text-sm"
+      containerClassName="my-0"
+    />
+  ) : null;
 
   return (
     <>
@@ -68,6 +76,7 @@ export function ConfigDetailsTabs({
           refetch();
         }}
         loading={isLoading}
+        extra={playbooksButton}
         contentClass="p-0 h-full overflow-y-hidden"
       >
         <div className={`flex h-full flex-row`}>
