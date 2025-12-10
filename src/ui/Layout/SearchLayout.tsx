@@ -68,10 +68,8 @@ export function SearchLayout({
               <div className="flex h-full w-8 items-center justify-center">
                 <HelpDropdown />
               </div>
-              <div className="flex h-full w-8 items-center justify-center">
-                <UserProfileDropdown />
-              </div>
             </div>
+            <UserProfileDropdown />
           </div>
         </div>
       </div>
