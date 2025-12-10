@@ -32,7 +32,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
               </p>
             )}
             <div className="flex flex-1 items-center justify-center">
-              <p className="text-teal-600 text-2xl font-semibold md:text-3xl lg:text-4xl">
+              <p className="text-6xl font-bold sm:text-6xl md:text-6xl lg:text-6xl">
                 {summary.number
                   ? formatDisplayValue(
                       numericValue,
