@@ -177,7 +177,7 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-[10rem] items-start gap-2 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
           className
         )}
       >
@@ -228,7 +228,7 @@ const ChartTooltipContent = React.forwardRef<
                       )}
                       <div
                         className={cn(
-                          "flex flex-1 justify-between leading-none",
+                          "flex flex-1 items-center justify-between gap-3 leading-none",
                           nestLabel ? "items-end" : "items-center"
                         )}
                       >
@@ -239,7 +239,7 @@ const ChartTooltipContent = React.forwardRef<
                           </span>
                         </div>
                         {item.value && (
-                          <span className="font-mono font-medium tabular-nums text-foreground">
+                          <span className="pl-1 font-mono font-medium tabular-nums text-foreground">
                             {item.value.toLocaleString()}
                           </span>
                         )}
@@ -280,7 +280,7 @@ const ChartLegendContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "flex items-center justify-center gap-4",
+          "flex w-full flex-wrap items-center gap-3 text-xs",
           verticalAlign === "top" ? "pb-3" : "pt-3",
           className
         )}
@@ -290,6 +290,9 @@ const ChartLegendContent = React.forwardRef<
           .map((item) => {
             const key = `${nameKey || item.dataKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
+            const label =
+              itemConfig?.label ||
+              (typeof item.value === "string" ? item.value : key);
 
             return (
               <div
@@ -308,7 +311,7 @@ const ChartLegendContent = React.forwardRef<
                     }}
                   />
                 )}
-                {itemConfig?.label}
+                <span>{label}</span>
               </div>
             );
           })}
