@@ -8,7 +8,8 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
+  Legend
 } from "recharts";
 import { PanelResult } from "../../../types";
 import { formatDisplayLabel, textToHex } from "./utils";
@@ -17,7 +18,11 @@ interface TimeseriesPanelProps {
   summary: PanelResult;
 }
 
-type SeriesMeta = { dataKey: string; name: string; color?: string };
+type SeriesMeta = {
+  dataKey: string;
+  name: string;
+  color?: string;
+};
 
 const isNumeric = (value: any) =>
   value !== null && value !== undefined && !Number.isNaN(Number(value));
@@ -110,7 +115,10 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
       const seriesKey = labelPairs.join(", ") || "default";
 
       if (!seriesMap.has(seriesKey)) {
-        seriesMap.set(seriesKey, { dataKey: seriesKey, name: seriesKey });
+        seriesMap.set(seriesKey, {
+          dataKey: seriesKey,
+          name: seriesKey
+        });
       }
 
       const bucket = rowsByTs.get(numericValue) || {
@@ -156,6 +164,31 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
 
   const hasNoRows = rows.length === 0;
   const hasNoSeries = series.length === 0 || !timeKey || !valueKey;
+  const legendConfig = summary.timeseries?.legend;
+  const isLegendEnabled = legendConfig?.enable;
+  const legendLayout = legendConfig?.layout || "horizontal";
+
+  const seriesTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    chartData.forEach((point) => {
+      series.forEach(({ dataKey }) => {
+        const numericValue = Number(point[dataKey]);
+        if (Number.isFinite(numericValue)) {
+          totals[dataKey] = (totals[dataKey] || 0) + numericValue;
+        }
+      });
+    });
+
+    return totals;
+  }, [chartData, series]);
+
+  const formatLegendLabel = (value: string, entry: any) => {
+    const dataKey = entry?.dataKey || entry?.payload?.dataKey || value;
+    const total = seriesTotals[dataKey] ?? 0;
+    const label = value || formatDisplayLabel(dataKey || "value");
+    return `${label}: ${total}`;
+  };
 
   return (
     <div className="flex h-full min-h-[320px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
@@ -191,13 +224,29 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                 labelFormatter={(value) => formatLabel(value)}
                 formatter={(value: number) => value}
               />
-              {/* <Legend
-                wrapperStyle={{ fontSize: "0.6em" }}
-                payload={undefined}
-              /> */}
+              {isLegendEnabled && (
+                <Legend
+                  wrapperStyle={{ fontSize: "0.6em" }}
+                  iconSize={4}
+                  formatter={formatLegendLabel}
+                  layout={legendLayout}
+                />
+              )}
 
               {series.map((serie, index) => {
-                const color = serie.color || textToHex(serie.name);
+                const valueOnlyLabel =
+                  serie.name
+                    ?.split(",")
+                    .map((segment) => {
+                      const trimmed = segment.trim();
+                      const eqIndex = trimmed.indexOf("=");
+                      return eqIndex === -1
+                        ? trimmed
+                        : trimmed.slice(eqIndex + 1).trim();
+                    })
+                    .join(", ") || serie.name;
+
+                const color = serie.color || textToHex(valueOnlyLabel);
 
                 return chartStyle === "area" ? (
                   <Area
