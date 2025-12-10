@@ -153,9 +153,9 @@ export const Preference = ({
         }
       `}</style>
       <div ref={popoverRef as LegacyRef<HTMLDivElement>}>
-        <ClickableSvg className="ml-4 mt-1 cursor-pointer md:mt-0">
+        <ClickableSvg className="cursor-pointer">
           <FaCog
-            className="h-6 w-6 content-center"
+            className="h-4 w-4 content-center"
             onClick={() => setIsPopoverActive((val) => !val)}
           />
         </ClickableSvg>

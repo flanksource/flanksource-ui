@@ -5,11 +5,11 @@ import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
 
 export function HelpDropdown() {
   return (
-    <Menu as="div" className="relative ml-3 flex-shrink-0">
+    <Menu as="div" className="relative flex-shrink-0">
       <div>
         <Menu.Button className="flex items-center rounded-full text-sm text-gray-400">
           <ClickableSvg>
-            <IoHelpOutline size={24} />
+            <IoHelpOutline className="h-4 w-4" />
           </ClickableSvg>
         </Menu.Button>
       </div>

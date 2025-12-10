@@ -19,7 +19,7 @@ export function RefreshButton({
       onClick={onClick}
       type="button"
       className={clsx(
-        "mr-2 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none",
+        "rounded-full bg-white text-gray-400 hover:text-gray-500 focus:outline-none",
         className
       )}
       {...rest}
@@ -27,7 +27,7 @@ export function RefreshButton({
       <span className="sr-only">Refresh</span>
       <ClickableSvg styleFill={false}>
         <HiOutlineRefresh
-          className={clsx("h-6 w-6", animate ? "animate-spin" : "")}
+          className={clsx("h-4 w-4", animate ? "animate-spin" : "")}
           aria-hidden="true"
         />
       </ClickableSvg>

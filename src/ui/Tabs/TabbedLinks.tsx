@@ -20,18 +20,13 @@ export default function TabbedLinks({
   children,
   className,
   contentClassName = "bg-white border border-t-0 border-gray-300 flex-1 overflow-y-auto p-2",
-  containerClassName = "px-4 py-6 bg-gray-100",
+  containerClassName = "px-4 py-6 bg-white",
   tabLinks,
   activeTabName,
   ...rest
 }: RoutedTabsLinksProps) {
   return (
-    <div
-      className={clsx(
-        "flex flex-1 flex-col overflow-y-auto",
-        containerClassName
-      )}
-    >
+    <div className={clsx("flex min-h-0 flex-1 flex-col", containerClassName)}>
       <div
         className={`flex flex-wrap border-b border-gray-300 ${className}`}
         aria-label="Tabs"
@@ -60,7 +55,7 @@ export default function TabbedLinks({
           </NavLink>
         ))}
       </div>
-      <div className={contentClassName}>{children}</div>
+      <div className={clsx("flex flex-col", contentClassName)}>{children}</div>
     </div>
   );
 }
