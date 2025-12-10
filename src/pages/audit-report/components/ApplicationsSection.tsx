@@ -29,13 +29,6 @@ interface ApplicationsSectionProps {
   printView: boolean;
 }
 
-// const TYPE_COLORS = {
-//   security: "#ef4444", // red-500
-//   compliance: "#3b82f6", // blue-500
-//   performance: "#8b5cf6", // purple-500
-//   reliability: "#10b981" // emerald-500
-// };
-
 const SEVERITY_COLORS = {
   critical: "#ef4444", // red-500
   high: "#f97316", // orange-500
@@ -256,7 +249,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <GitCommit className="text-teal-600 mr-2" size={20} />
+                <GitCommit className="mr-2 text-teal-600" size={20} />
                 Changes
               </h3>
               <DataTable columns={changeColumns} data={application.changes} />
@@ -269,7 +262,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <AlertOctagon className="text-teal-600 mr-2" size={20} />
+                <AlertOctagon className="mr-2 text-teal-600" size={20} />
                 Incidents
               </h3>
               <div className="space-y-6">
@@ -311,7 +304,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Average Resolution Time
                     </h4>
-                    <p className="text-teal-600 text-2xl font-semibold">
+                    <p className="text-2xl font-semibold text-teal-600">
                       {incidentStats.avgResolutionTime}h
                     </p>
                   </div>
@@ -363,7 +356,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <Save className="text-teal-600 mr-2" size={20} />
+                <Save className="mr-2 text-teal-600" size={20} />
                 Recent Backups
               </h3>
               <div className="space-y-4">
@@ -372,7 +365,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Average Backup Size
                     </h4>
-                    <p className="text-teal-600 text-2xl font-semibold">
+                    <p className="text-2xl font-semibold text-teal-600">
                       {backupStats.avgSize} GB
                     </p>
                   </div>
@@ -380,7 +373,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Backup Success Rate
                     </h4>
-                    <p className="text-teal-600 text-2xl font-semibold">
+                    <p className="text-2xl font-semibold text-teal-600">
                       {backupStats.successRate}%
                     </p>
                   </div>
@@ -388,7 +381,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
                     <h4 className="mb-2 text-sm font-medium text-gray-600">
                       Last Backup Age
                     </h4>
-                    <p className="text-teal-600 text-2xl font-semibold">
+                    <p className="text-2xl font-semibold text-teal-600">
                       {backupStats.backupAge}
                     </p>
                   </div>
@@ -408,7 +401,7 @@ const ApplicationsSection: React.FC<ApplicationsSectionProps> = ({
           <>
             <div>
               <h3 className="mb-4 flex items-center text-xl font-semibold">
-                <RotateCcw className="text-teal-600 mr-2" size={20} />
+                <RotateCcw className="mr-2 text-teal-600" size={20} />
                 Recent Restores
               </h3>
               <DataTable columns={restoreColumns} data={application.restores} />

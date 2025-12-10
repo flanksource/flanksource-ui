@@ -1,26 +1,27 @@
 import React from "react";
-import { ViewColumnDef } from "../types";
-import { formatDate } from "../utils";
-
-import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { SortingState } from "@tanstack/react-table";
+import { Link, useSearchParams } from "react-router-dom";
+import { IconName } from "lucide-react/dynamic";
+
+import { Tag } from "@flanksource-ui/ui/Tags/Tag";
+import { Age } from "@flanksource-ui/ui/Age";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
+
+import { ViewColumnDef } from "../types";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
-import { Link, useSearchParams } from "react-router-dom";
 import { formatBytes } from "../../../utils/common";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
 import { Status } from "../../../components/Status";
 import { Icon } from "../../../ui/Icons/Icon";
 import ConfigsTypeIcon from "../../../components/Configs/ConfigsTypeIcon";
-import { IconName } from "lucide-react/dynamic";
-import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import {
   formatDisplayLabel,
   getSeverityOfText,
   severityToHex
 } from "./View/panels/utils";
-import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -274,13 +275,7 @@ const renderCellValue = (
   let cellContent: any;
   switch (column.type) {
     case "datetime":
-      if (value instanceof Date) {
-        cellContent = formatDate(value.toISOString());
-      } else if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
-        cellContent = formatDate(value);
-      } else {
-        cellContent = String(value);
-      }
+      cellContent = <Age from={value} />;
       break;
 
     case "boolean":
