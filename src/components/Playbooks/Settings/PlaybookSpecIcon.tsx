@@ -20,7 +20,7 @@ export default function PlaybookSpecIcon({
 
   return (
     <div className="flex min-w-min flex-row items-center gap-1">
-      <Icon name={spec?.icon} className="h-auto w-5" />
+      <Icon name={spec?.icon || "playbook"} className="h-auto w-5" />
       {/* fallback to name, when title not there */}
       {showLabel && <span>{title ?? name}</span>}
       {showTag && playbook.spec?.category && (
