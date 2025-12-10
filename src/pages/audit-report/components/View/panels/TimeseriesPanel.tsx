@@ -156,7 +156,6 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
       const labelKeys = Object.keys(row).filter(
         (key) => key !== timeKey && key !== valueKey
       );
-      labelKeys.sort();
       const labelPairs = labelKeys.map((key) => `${key}=${row[key]}`);
       const seriesKey = labelPairs.join(", ") || "default";
 
@@ -218,74 +217,26 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
     setCachedTicks(spaced.ticks);
   }, [timeRange, containerWidth]);
 
-  const timestampToLabel = useMemo(() => {
-    return new Map<number | string, string>(
-      chartData.map((point) => [point.__timestamp, point.__label])
-    );
-  }, [chartData]);
-
-  const formatLabel = (value: number | string) => {
-    const label = timestampToLabel.get(value);
-    if (label) return label;
-
-    const parsedDate = new Date(value);
-    if (!Number.isNaN(parsedDate.getTime())) {
-      return parsedDate.toLocaleString();
-    }
-
-    return typeof value === "number" ? `#${value + 1}` : String(value);
-  };
-
   const hasNoRows = rows.length === 0;
   const hasNoSeries = series.length === 0 || !timeKey || !valueKey;
   const legendConfig = summary.timeseries?.legend;
   const isLegendEnabled = legendConfig?.enable;
   const legendLayout = legendConfig?.layout || "horizontal";
 
-  const seriesTotals = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    chartData.forEach((point) => {
-      series.forEach(({ dataKey }) => {
-        const numericValue = Number(point[dataKey]);
-        if (Number.isFinite(numericValue)) {
-          totals[dataKey] = (totals[dataKey] || 0) + numericValue;
-        }
-      });
-    });
-
-    return totals;
-  }, [chartData, series]);
-
   const seriesWithMeta = useMemo(() => {
     return series.map((serie, index) => {
-      const valueOnlyLabel =
-        serie.name
-          ?.split(",")
-          .map((segment) => {
-            const trimmed = segment.trim();
-            const eqIndex = trimmed.indexOf("=");
-            return eqIndex === -1 ? trimmed : trimmed.slice(eqIndex + 1).trim();
-          })
-          .join(", ") || serie.name;
+      const baseLabel = serie.name || serie.dataKey || "value";
+      const color = serie.color || getSeriesColor(baseLabel, index);
+      const displayLabel = baseLabel;
 
-      const color = serie.color || getSeriesColor(valueOnlyLabel, index);
-      const displayLabel =
-        formatDisplayLabel(valueOnlyLabel || serie.dataKey || "value") ||
-        serie.dataKey;
-      const total = seriesTotals[serie.dataKey];
-
-      return { ...serie, color, displayLabel, total };
+      return { ...serie, color, displayLabel };
     });
-  }, [series, seriesTotals]);
+  }, [series]);
 
   const chartConfig = useMemo<ChartConfig>(() => {
     return seriesWithMeta.reduce<ChartConfig>((acc, serie) => {
       acc[serie.dataKey] = {
-        label:
-          serie.total !== undefined
-            ? `${serie.displayLabel} (${serie.total.toLocaleString()})`
-            : serie.displayLabel,
+        label: serie.displayLabel,
         color: serie.color
       };
       return acc;
@@ -316,6 +267,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
               margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
+
               <XAxis
                 dataKey="__timestamp"
                 type="number"
@@ -328,16 +280,18 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                 minTickGap={20}
                 tickFormatter={(value) => formatTick(value, timeRange)}
               />
+
               <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+
               <ChartTooltip
                 cursor={{ strokeDasharray: "4 4" }}
                 content={
                   <ChartTooltipContent
                     indicator={chartStyle === "points" ? "dot" : "line"}
-                    labelFormatter={(value) => formatLabel(value as any)}
                   />
                 }
               />
+
               {isLegendEnabled && (
                 <ChartLegend
                   layout={legendLayout}
@@ -408,7 +362,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     dataKey={serie.dataKey}
                     name={serie.displayLabel}
                     stroke={serie.color}
-                    strokeWidth={2}
+                    strokeWidth={1}
                     dot={false}
                     isAnimationActive={false}
                     connectNulls
