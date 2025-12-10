@@ -258,7 +258,7 @@ const View: React.FC<ViewProps> = ({
               className="grid gap-4"
               style={{
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gridAutoRows: "minmax(auto, 250px)"
+                gridAutoRows: "minmax(250px, auto)"
               }}
             >
               {groupAndRenderPanels(panels)}

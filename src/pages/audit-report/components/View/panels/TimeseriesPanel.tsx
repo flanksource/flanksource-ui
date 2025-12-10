@@ -1,17 +1,22 @@
 import React, { useMemo } from "react";
 import {
-  CartesianGrid,
-  Line,
   Area,
-  Scatter,
+  CartesianGrid,
   ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
+  Line,
+  Scatter,
   XAxis,
-  YAxis,
-  Legend
+  YAxis
 } from "recharts";
 import { PanelResult } from "../../../types";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@flanksource-ui/components/ui/chart";
 import { formatDisplayLabel, getSeriesColor } from "./utils";
 
 interface TimeseriesPanelProps {
@@ -26,6 +31,8 @@ type SeriesMeta = {
 
 const isNumeric = (value: any) =>
   value !== null && value !== undefined && !Number.isNaN(Number(value));
+
+const toSafeId = (value: string) => value.replace(/[^a-zA-Z0-9_-]/g, "-");
 
 const inferTimeKey = (rows: Record<string, any>[], preferred?: string) => {
   if (preferred) return preferred;
@@ -183,15 +190,43 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
     return totals;
   }, [chartData, series]);
 
-  const formatLegendLabel = (value: string, entry: any) => {
-    const dataKey = entry?.dataKey || entry?.payload?.dataKey || value;
-    const total = seriesTotals[dataKey] ?? 0;
-    const label = value || formatDisplayLabel(dataKey || "value");
-    return `${label}: ${total}`;
-  };
+  const seriesWithMeta = useMemo(() => {
+    return series.map((serie, index) => {
+      const valueOnlyLabel =
+        serie.name
+          ?.split(",")
+          .map((segment) => {
+            const trimmed = segment.trim();
+            const eqIndex = trimmed.indexOf("=");
+            return eqIndex === -1 ? trimmed : trimmed.slice(eqIndex + 1).trim();
+          })
+          .join(", ") || serie.name;
+
+      const color = serie.color || getSeriesColor(valueOnlyLabel, index);
+      const displayLabel =
+        formatDisplayLabel(valueOnlyLabel || serie.dataKey || "value") ||
+        serie.dataKey;
+      const total = seriesTotals[serie.dataKey];
+
+      return { ...serie, color, displayLabel, total };
+    });
+  }, [series, seriesTotals]);
+
+  const chartConfig = useMemo<ChartConfig>(() => {
+    return seriesWithMeta.reduce<ChartConfig>((acc, serie) => {
+      acc[serie.dataKey] = {
+        label:
+          serie.total !== undefined
+            ? `${serie.displayLabel} (${serie.total.toLocaleString()})`
+            : serie.displayLabel,
+        color: serie.color
+      };
+      return acc;
+    }, {});
+  }, [seriesWithMeta]);
 
   return (
-    <div className="flex h-full min-h-[320px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
+    <div className="flex h-full min-h-[250px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
       {summary.description && (
         <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
@@ -204,96 +239,115 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
             : "No numeric data available for timeseries chart."}
         </div>
       ) : (
-        <div className="flex-1">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
-              data={chartData}
-              margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                tick={{ style: { fontSize: "0.6em" } }}
-                dataKey="__timestamp"
-                domain={["auto", "auto"]}
-                type="number"
-                tickFormatter={formatLabel}
-                minTickGap={20}
-              />
-              <YAxis tick={{ style: { fontSize: "0.6em" } }} />
-              <Tooltip
-                labelFormatter={(value) => formatLabel(value)}
-                formatter={(value: number) => value}
-              />
-              {isLegendEnabled && (
-                <Legend
-                  wrapperStyle={{ fontSize: "0.6em" }}
-                  iconSize={4}
-                  formatter={formatLegendLabel}
-                  layout={legendLayout}
+        <ChartContainer
+          config={chartConfig}
+          className="mt-1 flex-1 rounded-lg border border-border/60 bg-background/50 px-2 py-3 sm:px-3"
+        >
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="__timestamp"
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              scale="time"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={20}
+              tickFormatter={formatLabel}
+            />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+            <ChartTooltip
+              cursor={{ strokeDasharray: "4 4" }}
+              content={
+                <ChartTooltipContent
+                  indicator={chartStyle === "points" ? "dot" : "line"}
+                  labelFormatter={(value) => formatLabel(value as any)}
                 />
-              )}
+              }
+            />
+            {isLegendEnabled && (
+              <ChartLegend
+                layout={legendLayout}
+                verticalAlign={legendLayout === "vertical" ? "top" : "bottom"}
+                content={<ChartLegendContent />}
+              />
+            )}
 
-              {series.map((serie, index) => {
-                const valueOnlyLabel =
-                  serie.name
-                    ?.split(",")
-                    .map((segment) => {
-                      const trimmed = segment.trim();
-                      const eqIndex = trimmed.indexOf("=");
-                      return eqIndex === -1
-                        ? trimmed
-                        : trimmed.slice(eqIndex + 1).trim();
-                    })
-                    .join(", ") || serie.name;
+            <defs>
+              {seriesWithMeta.map((serie) => (
+                <linearGradient
+                  key={serie.dataKey}
+                  id={`fill-${toSafeId(serie.dataKey)}`}
+                  x1="0"
+                  x2="0"
+                  y1="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor={serie.color}
+                    stopOpacity={0.25}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={serie.color}
+                    stopOpacity={0.05}
+                  />
+                </linearGradient>
+              ))}
+            </defs>
 
-                const color =
-                  serie.color || getSeriesColor(valueOnlyLabel, index);
-
-                return chartStyle === "area" ? (
+            {seriesWithMeta.map((serie) => {
+              if (chartStyle === "area") {
+                return (
                   <Area
                     key={serie.dataKey}
                     type="monotone"
                     dataKey={serie.dataKey}
-                    name={
-                      serie.name || formatDisplayLabel(serie.dataKey || "value")
-                    }
-                    stroke={color}
-                    fill={color}
-                    fillOpacity={0.2}
-                    isAnimationActive={false}
-                    connectNulls
-                  />
-                ) : chartStyle === "points" ? (
-                  <Scatter
-                    key={serie.dataKey}
-                    dataKey={serie.dataKey}
-                    name={
-                      serie.name || formatDisplayLabel(serie.dataKey || "value")
-                    }
-                    fill={color}
-                    isAnimationActive={false}
-                    line={{ strokeWidth: 0 }}
-                    shape={renderSmallScatterPoint}
-                  />
-                ) : (
-                  <Line
-                    key={serie.dataKey}
-                    type="monotone"
-                    dataKey={serie.dataKey}
-                    name={
-                      serie.name || formatDisplayLabel(serie.dataKey || "value")
-                    }
-                    stroke={color}
+                    name={serie.displayLabel}
+                    stroke={serie.color}
+                    fill={`url(#fill-${toSafeId(serie.dataKey)})`}
                     strokeWidth={2}
-                    dot={false}
                     isAnimationActive={false}
                     connectNulls
                   />
                 );
-              })}
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
+              }
+
+              if (chartStyle === "points") {
+                return (
+                  <Scatter
+                    key={serie.dataKey}
+                    dataKey={serie.dataKey}
+                    name={serie.displayLabel}
+                    fill={serie.color}
+                    isAnimationActive={false}
+                    line={{ strokeWidth: 0 }}
+                    shape={renderSmallScatterPoint}
+                  />
+                );
+              }
+
+              return (
+                <Line
+                  key={serie.dataKey}
+                  type="monotone"
+                  dataKey={serie.dataKey}
+                  name={serie.displayLabel}
+                  stroke={serie.color}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                  connectNulls
+                />
+              );
+            })}
+          </ComposedChart>
+        </ChartContainer>
       )}
     </div>
   );
