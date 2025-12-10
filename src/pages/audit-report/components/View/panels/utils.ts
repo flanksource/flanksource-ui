@@ -142,6 +142,10 @@ export const getSeverityOfText = (status: string): Severity => {
 
   // Specific status mappings
   switch (statusLower) {
+    case "diff":
+    case "healthunknown":
+      return "info";
+
     case "pending":
     case "in-progress":
     case "mitigated":
@@ -155,12 +159,14 @@ export const getSeverityOfText = (status: string): Severity => {
     case "imagepullbackoff":
     case "rollbacksucceeded":
     case "terminating stalled":
+    case "killing":
     case "medium":
       return "medium";
 
     case "critical":
     case "failed":
     case "fail":
+    case "unhealthy":
       return "critical";
 
     case "high":
@@ -302,6 +308,7 @@ export const textToHex = (text: string): string => {
   const severity = getSeverityOfText(text);
   const colors = severityToHex[severity];
   const hash = hashString(text);
+
   return colors[hash % colors.length];
 };
 
