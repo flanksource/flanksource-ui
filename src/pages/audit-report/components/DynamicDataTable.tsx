@@ -411,7 +411,7 @@ const renderCellValue = (
           >
             <ConfigsTypeIcon
               config={{ type: configData.type }}
-              showPrimaryIcon={false}
+              showPrimaryIcon={true}
             >
               <span>{value}</span>
             </ConfigsTypeIcon>
