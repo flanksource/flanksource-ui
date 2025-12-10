@@ -21,6 +21,7 @@ type PlaybooksDropdownMenuProps = {
   check_id?: string;
   className?: string;
   containerClassName?: string;
+  highlight?: boolean;
 };
 
 export default function PlaybooksDropdownMenu({
@@ -28,7 +29,8 @@ export default function PlaybooksDropdownMenu({
   component_id,
   config_id,
   className = "",
-  containerClassName = "my-2 text-right"
+  containerClassName = "my-2 text-right",
+  highlight = false
 }: PlaybooksDropdownMenuProps) {
   const [selectedPlaybookSpec, setSelectedPlaybookSpec] = useState<
     RunnablePlaybook & {
@@ -50,15 +52,26 @@ export default function PlaybooksDropdownMenu({
     return null;
   }
 
+  const buttonClassName = clsx(
+    "inline-flex items-center rounded-md px-2 py-1 text-sm font-medium shadow-sm focus:outline-none transition-colors",
+    highlight
+      ? "border border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100 focus:ring-2 focus:ring-blue-100"
+      : "btn-white px-2 py-1",
+    className
+  );
+
   return (
     <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
       <div className={containerClassName}>
         <Menu as="div" className="relative inline-block text-left">
-          <MenuButton className={clsx("btn-white px-2 py-1", className)}>
+          <MenuButton className={buttonClassName}>
             <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
-            Playbooks
+            <span>Playbooks</span>
             <ChevronDownIcon
-              className="-mr-1 ml-2 h-5 w-5 text-gray-400"
+              className={clsx(
+                "-mr-1 ml-2 h-5 w-5",
+                highlight ? "text-blue-500" : "text-gray-400"
+              )}
               aria-hidden="true"
             />
           </MenuButton>

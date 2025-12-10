@@ -48,11 +48,7 @@ export function ConfigDetailsTabs({
 
   const configTabList = useConfigDetailsTabs(configItem?.summary);
   const playbooksButton = id ? (
-    <PlaybooksDropdownMenu
-      config_id={id}
-      className="text-sm"
-      containerClassName="my-0"
-    />
+    <PlaybooksDropdownMenu config_id={id} highlight containerClassName="my-0" />
   ) : null;
 
   return (
