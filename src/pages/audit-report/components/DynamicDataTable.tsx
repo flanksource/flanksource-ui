@@ -21,6 +21,7 @@ import {
   severityToHex
 } from "./View/panels/utils";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
+import { Age } from "@flanksource-ui/ui/Age";
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
@@ -274,13 +275,7 @@ const renderCellValue = (
   let cellContent: any;
   switch (column.type) {
     case "datetime":
-      if (value instanceof Date) {
-        cellContent = formatDate(value.toISOString());
-      } else if (typeof value === "string" && /\d{4}-\d{2}-\d{2}/.test(value)) {
-        cellContent = formatDate(value);
-      } else {
-        cellContent = String(value);
-      }
+      cellContent = <Age from={value} />;
       break;
 
     case "boolean":
