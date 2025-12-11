@@ -59,6 +59,7 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = ({
             key={`${namespace || "default"}:${name}`}
             section={primaryViewSection}
             hideVariables
+            variables={currentVariables}
           />
         </div>
       )}
@@ -70,7 +71,11 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = ({
               key={`${section.viewRef.namespace || "default"}:${section.viewRef.name}`}
               className="mt-4"
             >
-              <ViewSection section={section} hideVariables />
+              <ViewSection
+                section={section}
+                hideVariables
+                variables={currentVariables}
+              />
             </div>
           ))}
         </>
