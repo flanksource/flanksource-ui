@@ -208,7 +208,11 @@ export function CodeEditor({
           readOnly,
           minimap: { enabled: false },
           lineHeight: lineHeight,
-          scrollBeyondLastLine: false
+          scrollBeyondLastLine: false,
+          // Turn on inline suggestions for schema-backed editors
+          quickSuggestions: { other: true, comments: true, strings: true },
+          suggestOnTriggerCharacters: true,
+          wordBasedSuggestions: "off"
         }}
         {...{
           // high contrast theme for yaml and json
