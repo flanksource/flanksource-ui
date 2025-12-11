@@ -417,7 +417,7 @@ export interface ColumnFilterOptions {
 }
 
 export interface ViewRef {
-  namespace: string;
+  namespace?: string;
   name: string;
 }
 
