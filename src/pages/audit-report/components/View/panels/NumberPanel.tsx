@@ -1,6 +1,7 @@
 import React from "react";
 import { PanelResult } from "../../../types";
 import { formatDisplayValue } from "./utils";
+import PanelWrapper from "./PanelWrapper";
 
 interface NumberPanelProps {
   summary: PanelResult;
@@ -19,18 +20,12 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
         const numericValue = Number(displayValue);
 
         return (
-          <div
+          <PanelWrapper
             key={`${summary.name}-${rowIndex}`}
-            className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
+            title={label || summary.name}
+            description={summary.description}
+            titleClassName="capitalize"
           >
-            <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
-              {label || summary.name}
-            </h4>
-            {summary.description && (
-              <p className="mb-3 text-xs text-gray-500">
-                {summary.description}
-              </p>
-            )}
             <div className="flex flex-1 items-center justify-center">
               <p className="text-6xl font-bold sm:text-6xl md:text-6xl lg:text-6xl">
                 {summary.number
@@ -42,7 +37,7 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
                   : displayValue}
               </p>
             </div>
-          </div>
+          </PanelWrapper>
         );
       })}
     </>

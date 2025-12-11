@@ -7,17 +7,9 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import EmptyState from "@flanksource-ui/components/EmptyState";
 import { PanelResult } from "../../../types";
 import mixins from "@flanksource-ui/utils/mixins.module.css";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@flanksource-ui/components/ui/card";
 import { Input } from "@flanksource-ui/components/ui/input";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Badge } from "@flanksource-ui/components/ui/badge";
-import { Separator } from "@flanksource-ui/components/ui/separator";
 
 type PlaybookRunRow = {
   id: string;
@@ -115,12 +107,15 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
   }, [filteredRows]); // Re-check when filtered rows change
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden">
-      <CardHeader className="pb-3">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
+      {/* Header */}
+      <div className="px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
           {/* Title and Badge - always visible */}
           <div className="flex items-center gap-2">
-            <CardTitle className="text-base">{summary.name}</CardTitle>
+            <h4 className="text-sm font-medium text-gray-600">
+              {summary.name}
+            </h4>
             <Badge variant="secondary">
               {filteredRows?.length ?? 0}
               {rows && filteredRows && rows.length !== filteredRows.length
@@ -171,13 +166,12 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
           </button>
         </div>
         {summary.description && !searchExpanded && (
-          <CardDescription>{summary.description}</CardDescription>
+          <p className="mt-2 text-xs text-gray-500">{summary.description}</p>
         )}
-      </CardHeader>
+      </div>
 
-      <Separator />
-
-      <CardContent className="flex flex-1 flex-col overflow-hidden p-4">
+      {/* Content */}
+      <div className="flex flex-1 flex-col overflow-hidden p-4">
         {/* Playbook List */}
         <div className="relative min-h-0 flex-1">
           <div
@@ -270,7 +264,7 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
             </div>
           )}
         </div>
-      </CardContent>
+      </div>
 
       {playbookSpec && selected && (
         <SubmitPlaybookRunForm
@@ -283,6 +277,6 @@ export default function PlaybooksPanel({ summary }: PlaybookRunPanelProps) {
           params={selected.params}
         />
       )}
-    </Card>
+    </div>
   );
 }
