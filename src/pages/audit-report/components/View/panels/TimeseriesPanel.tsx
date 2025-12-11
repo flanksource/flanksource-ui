@@ -17,7 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from "@flanksource-ui/components/ui/chart";
-import { formatDisplayLabel, getSeriesColor } from "./utils";
+import { getSeriesColor } from "./utils";
 import { buildEvenlySpacedRange } from "./timeRange";
 
 interface TimeseriesPanelProps {
@@ -334,9 +334,8 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                       name={serie.displayLabel}
                       stroke={serie.color}
                       fill={`url(#fill-${toSafeId(serie.dataKey)})`}
-                      strokeWidth={2}
+                      strokeWidth={1}
                       isAnimationActive={false}
-                      connectNulls
                     />
                   );
                 }
@@ -365,7 +364,6 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                     strokeWidth={1}
                     dot={false}
                     isAnimationActive={false}
-                    connectNulls
                   />
                 );
               })}
