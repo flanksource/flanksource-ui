@@ -18,3 +18,15 @@
 .appleScrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.4);
 }
+
+.hoverScrollbar {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.hoverScrollbar::-webkit-scrollbar {
+  display: none; /* Safari/Chrome */
+  width: 0;
+  height: 0;
+}
