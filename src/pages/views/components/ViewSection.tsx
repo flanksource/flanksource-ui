@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { getViewDataByNamespace } from "../../../api/services/views";
@@ -12,11 +12,13 @@ import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 interface ViewSectionProps {
   section: Section;
   hideVariables?: boolean;
+  variables?: Record<string, string>;
 }
 
 const ViewSection: React.FC<ViewSectionProps> = ({
   section,
-  hideVariables
+  hideVariables,
+  variables: defaultVariables
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { namespace, name } = section.viewRef;
@@ -25,7 +27,14 @@ const ViewSection: React.FC<ViewSectionProps> = ({
   // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
   // We must remove the global query parameters from the URL params.
   const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
-  const currentViewVariables = Object.fromEntries(viewVarParams.entries());
+  const paramVariables = useMemo(
+    () => Object.fromEntries(viewVarParams.entries()),
+    [viewVarParams]
+  );
+  const currentViewVariables = useMemo(
+    () => ({ ...(defaultVariables ?? {}), ...paramVariables }),
+    [defaultVariables, paramVariables]
+  );
 
   // Fetch section view data with independent variables
   const {
