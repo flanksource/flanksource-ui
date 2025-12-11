@@ -288,6 +288,13 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
                 content={
                   <ChartTooltipContent
                     indicator={chartStyle === "points" ? "dot" : "line"}
+                    labelFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      });
+                    }}
                   />
                 }
               />
