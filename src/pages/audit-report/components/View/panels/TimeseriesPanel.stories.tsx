@@ -43,12 +43,12 @@ export const RequestVolume: Story = {
   }
 };
 
-export const AutoDetectedSeries: Story = {
+export const InferredSeriesFromLabels: Story = {
   args: {
     summary: {
       name: "CPU Utilization",
       type: "timeseries",
-      description: "Series and timestamp inferred from numeric columns",
+      description: "Series inferred from kind labels; time/value keys provided",
       rows: [
         { time: "2024-07-01T00:00:00Z", kind: "Deployment", value: 62.5 },
         { time: "2024-07-01T00:00:00Z", kind: "Pod", value: 10.1 },
@@ -59,6 +59,7 @@ export const AutoDetectedSeries: Story = {
         { time: "2024-07-01T03:00:00Z", kind: "Deployment", value: 70.2 },
         { time: "2024-07-01T04:00:00Z", kind: "Deployment", value: 67.8 }
       ],
+      // time/value keys are provided; series are inferred from the "kind" label
       timeseries: {
         timeKey: "time",
         valueKey: "value"
