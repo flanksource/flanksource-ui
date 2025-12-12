@@ -475,6 +475,28 @@ export interface BarGaugeConfig {
   group?: string;
 }
 
+export type TimeseriesConfig = {
+  /**
+   * Field name that contains the timestamp. If omitted, the panel will try to infer it.
+   */
+  timeKey?: string;
+  /**
+   * Visualization style for the timeseries chart.
+   */
+  style?: "lines" | "area" | "points";
+  /**
+   * Field that contains the numeric value for each point. If omitted, the panel will try to infer it.
+   */
+  valueKey?: string;
+  /**
+   * Legend configuration for the timeseries chart.
+   */
+  legend?: {
+    enable?: boolean;
+    layout?: "vertical" | "horizontal";
+  };
+};
+
 export type PanelResult = {
   name: string;
   type:
@@ -485,11 +507,13 @@ export type PanelResult = {
     | "gauge"
     | "duration"
     | "bargauge"
-    | "properties";
+    | "properties"
+    | "timeseries";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
   bargauge?: BarGaugeConfig;
+  timeseries?: TimeseriesConfig;
   number?: NumberConfig;
   piechart?: PiechartConfig;
 };

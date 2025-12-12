@@ -25,7 +25,8 @@ import {
   TextPanel,
   DurationPanel,
   BarGaugePanel,
-  PropertiesPanel
+  PropertiesPanel,
+  TimeseriesPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -232,7 +233,7 @@ const View: React.FC<ViewProps> = ({
       <div className="flex-none">
         {title !== "" && (
           <h3 className="mb-4 flex items-center text-xl font-semibold">
-            <Box className="mr-2 text-teal-600" size={20} />
+            <Box className="text-teal-600 mr-2" size={20} />
             {title}
           </h3>
         )}
@@ -257,7 +258,7 @@ const View: React.FC<ViewProps> = ({
               className="grid gap-4"
               style={{
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gridAutoRows: "minmax(auto, 250px)"
+                gridAutoRows: "minmax(250px, auto)"
               }}
             >
               {groupAndRenderPanels(panels)}
@@ -427,6 +428,8 @@ const renderPanel = (panel: PanelResult, index: number) => {
       return <DurationPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "properties":
       return <PropertiesPanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "timeseries":
+      return <TimeseriesPanel key={`${panel.name}-${index}`} summary={panel} />;
     default:
       return null;
   }
