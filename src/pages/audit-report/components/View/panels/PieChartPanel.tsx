@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { PanelResult } from "../../../types";
 import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
+import PanelWrapper from "./PanelWrapper";
 
 interface PieChartPanelProps {
   summary: PanelResult;
@@ -98,11 +99,11 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
   );
 
   return (
-    <div className="flex h-full min-h-[300px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
-      <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
-      {summary.description && (
-        <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
-      )}
+    <PanelWrapper
+      title={summary.name}
+      description={summary.description}
+      className="min-h-[300px]"
+    >
       <div className="flex flex-1 items-center justify-center">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -126,7 +127,7 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
           </PieChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </PanelWrapper>
   );
 };
 
