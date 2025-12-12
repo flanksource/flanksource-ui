@@ -393,13 +393,6 @@ function formatTick(
   const oneDay = 86_400_000;
   const oneHour = 3_600_000;
 
-  if (timeRange.span >= 30 * oneDay) {
-    return date.toLocaleDateString(undefined, {
-      month: "2-digit",
-      day: "2-digit"
-    });
-  }
-
   if (timeRange.span >= 7 * oneDay) {
     return date.toLocaleDateString(undefined, {
       month: "2-digit",
@@ -416,14 +409,6 @@ function formatTick(
       minute: "2-digit",
       hour12: false
     })}`;
-  }
-
-  if (timeRange.span >= oneHour) {
-    return date.toLocaleTimeString(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false
-    });
   }
 
   return date.toLocaleTimeString(undefined, {
