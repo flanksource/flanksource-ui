@@ -394,6 +394,7 @@ export default function NotificationSilenceForm({
                         hint="Resources matching these selectors will have their notifications silenced"
                         lines={12}
                         saveAsString={true}
+                        jsonSchemaUrl="https://raw.githubusercontent.com/flanksource/duty/main/schema/openapi/resource_selectors.schema.json"
                       />
                       <div className="mt-3">
                         <a
