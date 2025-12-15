@@ -225,20 +225,15 @@ export default function PlaybooksRunActionsResults({
             case "query":
               if (action.type === "sql") {
                 tab.displayContentType = "application/sql";
-                tab.className = "overflow-auto whitespace-pre";
+                tab.className = "whitespace-pre";
               }
               break;
 
             case "rows":
-              if (action.type === "sql") {
-                tab.content =
-                  formatSqlRowsToMarkdown(result[key]) || "No rows returned";
-                tab.displayContentType = "text/markdown";
-                tab.className = "overflow-auto whitespace-pre";
-              } else if (typeof result[key] === "object") {
-                tab.content = JSON.stringify(result[key], null, 2);
-                tab.displayContentType = "application/yaml";
-              }
+              tab.content =
+                formatSqlRowsToMarkdown(result[key]) || "No rows returned";
+              tab.displayContentType = "text/markdown";
+              tab.className = "whitespace-pre";
               break;
 
             default:
