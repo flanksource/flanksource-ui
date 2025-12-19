@@ -1,13 +1,18 @@
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@flanksource-ui/components/ui/tabs";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { ReactNode } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetConfigByIdQuery } from "../../api/query-hooks";
 import { ConfigsDetailsBreadcrumbNav } from "../../ui/BreadcrumbNav/ConfigsDetailsBreadCrumb";
 import { Head } from "../../ui/Head";
 import { refreshButtonClickedTrigger } from "../../ui/SlidingSideBar/SlidingSideBar";
-import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
@@ -37,6 +42,7 @@ export function ConfigDetailsTabs({
   className = "p-2"
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
@@ -46,6 +52,13 @@ export function ConfigDetailsTabs({
     useGetConfigByIdQuery(id!);
 
   const configTabList = useConfigDetailsTabs(configItem?.summary);
+
+  const handleTabChange = (value: string) => {
+    const tab = configTabList.find((t) => t.key === value);
+    if (tab) {
+      navigate(tab.path);
+    }
+  };
 
   return (
     <>
@@ -71,17 +84,29 @@ export function ConfigDetailsTabs({
         contentClass="p-0 flex flex-1"
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-y-hidden">
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            <TabbedLinks
-              activeTabName={activeTabName}
-              tabLinks={configTabList}
-              contentClassName={clsx(
-                "bg-white border border-t-0 border-gray-300 flex-1 min-h-0 overflow-auto",
-                className
-              )}
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 py-6">
+            <Tabs
+              value={activeTabName}
+              onValueChange={handleTabChange}
+              className="flex h-full flex-col"
             >
-              <ErrorBoundary>{children}</ErrorBoundary>
-            </TabbedLinks>
+              <TabsList className="w-fit">
+                {configTabList.map((tab) => (
+                  <TabsTrigger key={tab.key} value={tab.key}>
+                    <div className="flex flex-row items-center gap-1">
+                      {tab.icon}
+                      <span>{tab.label}</span>
+                    </div>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <TabsContent
+                value={activeTabName}
+                className={clsx("mt-4 flex-1 overflow-auto", className)}
+              >
+                <ErrorBoundary>{children}</ErrorBoundary>
+              </TabsContent>
+            </Tabs>
           </div>
           <ConfigSidebar />
         </div>
