@@ -46,7 +46,7 @@ export default function FormikResourceSelectorDropdown({
   disabled = false
 }: FormikConfigsDropdownProps) {
   const [inputText, setInputText] = useState<string>("");
-  const [searchText, setSearchText] = useState<string>();
+  const [searchText, setSearchText] = useState<string>("");
   const [isTouched, setIsTouched] = useState(false);
 
   const [field, meta] = useField<string | string[]>({
@@ -63,13 +63,22 @@ export default function FormikResourceSelectorDropdown({
     )
   });
 
+  // Combine user search input with predefined search terms from resource selector
+  const combineSearchTerms = useCallback(
+    (predefinedSearch?: string) => {
+      const parts = [searchText, predefinedSearch].filter(Boolean);
+      return parts.join(" ").trim();
+    },
+    [searchText]
+  );
+
   const resourceSelector: SearchResourcesRequest = useMemo(
     () => ({
       checks: checkResourceSelector
         ? [
             ...checkResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               agent: r.agent || "all"
             }))
           ]
@@ -78,7 +87,7 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...canaryResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               agent: r.agent || "all"
             }))
           ]
@@ -87,7 +96,7 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...componentResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               agent: r.agent || "all"
             }))
           ]
@@ -96,7 +105,7 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...configResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               agent: r.agent || "all"
             }))
           ]
@@ -105,7 +114,7 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...connectionResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               name: r.name || "*"
             }))
           ]
@@ -114,7 +123,7 @@ export default function FormikResourceSelectorDropdown({
         ? [
             ...playbookResourceSelector.map((r) => ({
               ...r,
-              search: searchText,
+              search: combineSearchTerms(r.search),
               name: r.name || "*"
             }))
           ]
@@ -127,7 +136,7 @@ export default function FormikResourceSelectorDropdown({
       canaryResourceSelector,
       connectionResourceSelector,
       playbookResourceSelector,
-      searchText
+      combineSearchTerms
     ]
   );
 
