@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
@@ -12,6 +12,7 @@ import { User } from "../../api/types/users";
 import { useLoader } from "../../hooks";
 import { Avatar } from "../../ui/Avatar";
 import { IconButton } from "../../ui/Buttons/IconButton";
+import { TextInputClearable } from "../../ui/FormControls/TextInputClearable";
 import { Menu } from "../../ui/Menu";
 import { Modal } from "../../ui/Modal";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
@@ -28,7 +29,20 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   const [allTeamMembers, setAllTeamMembers] = useState<User[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<User[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const { loading, setLoading } = useLoader();
+
+  const filteredTeamMembers = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return allTeamMembers;
+    }
+    const query = searchQuery.toLowerCase();
+    return allTeamMembers.filter(
+      (member) =>
+        member.name?.toLowerCase().includes(query) ||
+        member.email?.toLowerCase().includes(query)
+    );
+  }, [allTeamMembers, searchQuery]);
 
   async function fetchTeamMembers(id: string) {
     setLoading(true);
@@ -88,6 +102,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
 
   const openAddMembersModal = () => {
     setSelectedMembers([]);
+    setSearchQuery("");
     setOpen(true);
   };
 
@@ -214,10 +229,18 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
           className="mb-16 flex h-full flex-col overflow-y-auto p-4 py-4"
           style={{ maxHeight: "calc(100vh - 8rem)" }}
         >
+          <TextInputClearable
+            className="mb-4"
+            placeholder="Search by name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onClear={() => setSearchQuery("")}
+            hideButton
+          />
           <MultiSelectList
             className="h-72"
             viewOnly={false}
-            options={allTeamMembers}
+            options={filteredTeamMembers}
             onOptionSelect={(teamMember) => {
               setSelectedMembers((val) => {
                 if (val.includes(teamMember)) {
