@@ -150,23 +150,28 @@ function SendToAiButton({ configId, isLoading }: SendToAiButtonProps) {
       }
 
       const json = (await response.json()) as unknown;
-      switch ((json as Record<string, any>).configs[0].type) {
-        case "Kubernetes::Pod":
-          quickPrompts.push(
-            "Plot a timeseries for the container memory usage (in MB) of this pod in the last 30 minutes with 1m resolution"
-          );
-          break;
-        case "Kubernetes::Deployment":
-          quickPrompts.push(
-            "Plot a timeseries for the container memory usage (in MB) of this deployment in the last 30 minutes with 1m resolution"
-          );
-          break;
+
+      // Safely extract the config type with null/undefined checks
+      const configType = (json as any)?.configs?.[0]?.type;
+      if (configType) {
+        switch (configType) {
+          case "Kubernetes::Pod":
+            quickPrompts.push(
+              "Plot a timeseries for the container memory usage (in MB) of this pod in the last 30 minutes with 1m resolution"
+            );
+            break;
+          case "Kubernetes::Deployment":
+            quickPrompts.push(
+              "Plot a timeseries for the container memory usage (in MB) of this deployment in the last 30 minutes with 1m resolution"
+            );
+            break;
+        }
       }
 
       const jsonText =
         typeof json === "string" ? json : JSON.stringify(json, null, 2);
       const text = [
-        "Config details and it's related configs:",
+        "Config details and its related configs:",
         "```json",
         jsonText,
         "```"
