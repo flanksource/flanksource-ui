@@ -132,6 +132,9 @@ export async function POST(req: Request) {
       onError: async (error) => {
         console.error("Error during streaming:", error);
         await mcpClient?.close();
+      },
+      onFinish: async () => {
+        await mcpClient?.close();
       }
     });
 

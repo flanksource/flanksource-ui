@@ -29,11 +29,9 @@ import {
 import {
   PromptInput,
   PromptInputBody,
-  PromptInputButton,
   PromptInputFooter,
   PromptInputSubmit,
-  PromptInputTextarea,
-  PromptInputTools
+  PromptInputTextarea
 } from "@flanksource-ui/components/ai-elements/prompt-input";
 import {
   Reasoning,
@@ -59,17 +57,6 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-
-function AddAttachmentButton() {
-  return (
-    <PromptInputButton
-      aria-label="Add attachment"
-      size="icon-sm"
-      type="button"
-      variant="ghost"
-    />
-  );
-}
 
 type TimeseriesPoint = { timestamp: string; value: number };
 type PlotTimeseriesOutput = {
@@ -445,11 +432,7 @@ export function AIChat({
               />
             </PromptInputBody>
 
-            <PromptInputFooter className="items-center">
-              <PromptInputTools>
-                <AddAttachmentButton />
-              </PromptInputTools>
-
+            <PromptInputFooter className="items-center justify-end">
               <div className="flex items-center gap-2">
                 {status === "streaming" ? (
                   <Button
