@@ -1,6 +1,7 @@
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState
@@ -17,9 +18,9 @@ const AiFeatureLoaderContext =
 export function AiFeatureLoaderProvider({ children }: { children: ReactNode }) {
   const [aiLoaded, setAiLoaded] = useState(false);
 
-  const requestAiFeatures = () => {
+  const requestAiFeatures = useCallback(() => {
     setAiLoaded(true);
-  };
+  }, [setAiLoaded]);
 
   return (
     <AiFeatureLoaderContext.Provider value={{ requestAiFeatures, aiLoaded }}>

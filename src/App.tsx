@@ -17,7 +17,6 @@ import {
 import { RiShieldUserFill } from "react-icons/ri";
 import { VscKey } from "react-icons/vsc";
 import { VscJson } from "react-icons/vsc";
-import { Sparkles } from "lucide-react";
 import {
   BrowserRouter,
   Navigate,
