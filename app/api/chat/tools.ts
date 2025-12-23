@@ -1,29 +1,50 @@
 import { tool, zodSchema } from "ai";
 import { z } from "zod";
 
-const TOOLS_WITH_NO_APPROVAL_REQUIRED = [
+const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "search_catalog",
   "search_catalog_changes",
+  "describe_catalog",
+  "list_catalog_types",
+  "get_related_configs",
+
+  "list_connections",
+
+  "search_health_checks",
+  "get_check_status",
+  "list_all_checks",
+
   "get_playbook_run_steps",
-  "describe_catalog"
+  "get_playbook_failed_runs",
+  "get_playbook_recent_runs",
+  "get_all_playbooks",
+
+  "get_notifications_for_resource",
+  "get_notification_detail",
+  "read_artifact_metadata"
 ] as const;
 
 type McpTool = Record<string, any>;
 type McpTools = Record<string, McpTool>;
 
 function wrapMcpToolsWithApproval(mcpTools: McpTools): McpTools {
-  const noApprovalTools = TOOLS_WITH_NO_APPROVAL_REQUIRED as readonly string[];
-  return Object.fromEntries(
-    Object.entries(mcpTools).map(([name, toolDefinition]: [string, McpTool]) => {
+  const tools = Object.entries(mcpTools).map(
+    ([name, toolDefinition]: [string, McpTool]) => {
+      const noApproval =
+        TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
+        name.startsWith("view_");
+
       return [
         name,
         {
           ...toolDefinition,
-          needsApproval: !noApprovalTools.includes(name)
+          needsApproval: !noApproval
         }
       ];
-    })
+    }
   );
+
+  return Object.fromEntries(tools);
 }
 
 function createPlotTimeseriesTool() {
@@ -68,7 +89,9 @@ function createPlotTimeseriesTool() {
   });
 }
 
-export async function buildChatTools(mcpClient: { tools: () => Promise<McpTools> }) {
+export async function buildChatTools(mcpClient: {
+  tools: () => Promise<McpTools>;
+}) {
   const mcpTools = await mcpClient.tools();
   const toolsWithApproval = wrapMcpToolsWithApproval(mcpTools);
 
