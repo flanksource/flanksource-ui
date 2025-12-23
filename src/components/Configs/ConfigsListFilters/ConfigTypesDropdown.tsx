@@ -75,6 +75,7 @@ export function ConfigTypesDropdown({
       name="configType"
       isMulti={false}
       closeMenuOnSelect={true}
+      minMenuWidth="250px"
       // @ts-ignore
       onChange={(value: GroupByOptions) => {
         if (value && value.value.toLowerCase() !== "all") {
@@ -97,8 +98,6 @@ export function ConfigTypesDropdown({
               label: "All"
             }
       }
-      className="w-[300px]"
-      dropDownClassNames="w-[300px]"
       label="Config Type"
     />
   );

@@ -152,13 +152,12 @@ export default function ConfigGroupByDropdown({
   return (
     <div className="flex flex-col items-center gap-2">
       <MultiSelectDropdown
+        minMenuWidth="250px"
         options={options}
         isLoading={isLoading}
         value={value}
         onChange={(v) => groupByChange(v as MultiValue<GroupByOptions>)}
         label="Group By"
-        className="w-[300px]"
-        dropDownClassNames="w-[300px]"
       />
     </div>
   );

@@ -69,7 +69,6 @@ export function ConfigStatusDropdown({
       }}
       minMenuWidth="250px"
       value={field.value}
-      className="w-[250px]"
       label={label}
     />
   );

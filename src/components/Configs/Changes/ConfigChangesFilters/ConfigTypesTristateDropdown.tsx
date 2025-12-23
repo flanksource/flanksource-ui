@@ -51,6 +51,7 @@ export default function ConfigTypesTristateDropdown({
       options={configItemsOptionsItems}
       isLoading={isLoading}
       value={field.value}
+      minMenuWidth="20rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({ target: { name: searchParamKey, value: value } });
