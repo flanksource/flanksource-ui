@@ -26,8 +26,8 @@ export interface SearchSelectProps {
   menuPlacement?: "auto" | "bottom" | "top";
 }
 
-function RenderLabel(option: OptionItem) {
-  return option?.label || "";
+function RenderLabel({ label, value }: { label: ReactNode; value: string }) {
+  return <span>{label || ""}</span>;
 }
 
 const Blanket = (props: JSX.IntrinsicElements["div"]) => (
