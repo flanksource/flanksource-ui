@@ -18,6 +18,7 @@ type ConfigGroupByDropdownProps = Omit<
   ComponentProps<typeof Select>,
   "components" | "defaultValue" | "windowThreshold"
 > & {
+  minMenuWidth?: string;
   label?: string;
   containerClassName?: string;
   dropDownClassNames?: string;
@@ -31,6 +32,7 @@ export function MultiSelectDropdown({
   options,
   className = "w-auto max-w-[400px]",
   label,
+  minMenuWidth = "500px",
   containerClassName = "w-full",
   dropDownClassNames = "w-auto max-w-[300px]",
   value,
@@ -174,13 +176,15 @@ export function MultiSelectDropdown({
                       ...provided,
                       padding: 0,
                       margin: 0,
-                      border: 0
+                      border: 0,
+                      minWidth: minMenuWidth
                     }),
                     menu: (provided) => ({
                       ...provided,
                       padding: 0,
                       margin: 0,
                       border: 0,
+                      minWidth: minMenuWidth,
                       borderTop: "1px solid #e2e8f0",
                       boxShadow: "none"
                     })

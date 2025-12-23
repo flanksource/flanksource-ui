@@ -145,9 +145,8 @@ export function ConfigLabelsDropdown({ searchParamKey = "labels" }: Props) {
           });
         }
       }}
-      minMenuWidth="500px"
+      minMenuWidth="300px"
       value={field.value}
-      className="w-[500px]"
       label={"Labels"}
     />
   );

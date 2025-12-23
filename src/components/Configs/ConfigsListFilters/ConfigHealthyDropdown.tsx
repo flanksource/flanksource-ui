@@ -53,9 +53,8 @@ export function ConfigHealthyDropdown({
           });
         }
       }}
-      minMenuWidth="150px"
+      minMenuWidth="200px"
       value={field.value}
-      className="w-[150px]"
       label={label}
     />
   );

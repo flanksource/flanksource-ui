@@ -33,7 +33,7 @@ export default function ConfigsListFilters() {
         <FormikSearchInputClearable
           name="search"
           placeholder="Search for configs"
-          className="w-[400px]"
+          className="w-[250px]"
         />
       </div>
     </FormikFilterForm>
