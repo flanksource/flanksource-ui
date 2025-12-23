@@ -21,15 +21,22 @@ type JSONViewerProps = {
   convertToYaml?: boolean;
   hideCopyButton?: boolean;
   /**
-   * Minimum height for the editor in pixels
+   * Minimum height for the editor in pixels (only used when fillHeight is false)
    * @default 100
    */
   minHeight?: number;
   /**
-   * Maximum height for the editor in pixels
+   * Maximum height for the editor in pixels (only used when fillHeight is false)
    * @default 600
    */
   maxHeight?: number;
+  /**
+   * When true, the editor fills the available height of its container (uses height="100%").
+   * The parent container must have a defined height (e.g., flex-1 with min-h-0).
+   * When false, the editor auto-sizes based on content within minHeight/maxHeight bounds.
+   * @default false
+   */
+  fillHeight?: boolean;
 };
 
 export function JSONViewer({
@@ -41,7 +48,8 @@ export function JSONViewer({
   convertToYaml = false,
   hideCopyButton = false,
   minHeight = 100,
-  maxHeight = 600
+  maxHeight = 600,
+  fillHeight = false
 }: JSONViewerProps) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -84,14 +92,17 @@ export function JSONViewer({
     return format;
   }, [convertToYaml, format]);
 
-  // Calculate editor height based on content lines
+  // Calculate editor height based on content lines (only used when fillHeight is false)
   const editorHeight = useMemo(() => {
+    if (fillHeight) {
+      return "100%";
+    }
     const lineCount = codeForDisplay.split("\n").length;
     const lineHeight = 19;
     const padding = 16; // 8px top + 8px bottom
     const calculatedHeight = lineCount * lineHeight + padding;
     return Math.min(Math.max(calculatedHeight, minHeight), maxHeight);
-  }, [codeForDisplay, minHeight, maxHeight]);
+  }, [codeForDisplay, minHeight, maxHeight, fillHeight]);
 
   const copyFn = useCopyToClipboard();
 
@@ -147,7 +158,10 @@ export function JSONViewer({
   };
 
   return (
-    <div ref={containerRef} className="relative flex w-full flex-col p-2">
+    <div
+      ref={containerRef}
+      className={`relative flex w-full flex-col p-2 ${fillHeight ? "min-h-0 flex-1" : ""}`}
+    >
       <Editor
         value={codeForDisplay}
         language={language}

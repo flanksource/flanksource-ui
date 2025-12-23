@@ -28,12 +28,13 @@ export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {
   }
 
   return (
-    <div key="specs">
+    <div key="specs" className="flex min-h-0 flex-1 flex-col">
       <JSONViewer
         code={code ?? ""}
         format={"json"}
         showLineNo
         convertToYaml
+        fillHeight
         // onClick={handleClick}
         // selections={checked}
       />
