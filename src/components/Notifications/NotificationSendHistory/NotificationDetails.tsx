@@ -173,11 +173,11 @@ export default function NotificationDetails({
       )}
 
       {error && (
-        <div className="relative flex flex-1 flex-col gap-2 overflow-auto">
+        <div className="relative flex min-h-[200px] flex-1 flex-col gap-2 overflow-auto">
           <label className="text-sm text-gray-500">Error:</label>
           <div
             className={clsx(
-              "flex w-full flex-1 overflow-x-auto overflow-y-auto rounded border border-gray-200 text-sm"
+              "flex min-h-[150px] w-full flex-1 overflow-x-auto overflow-y-auto rounded border border-gray-200 text-sm"
             )}
           >
             <JSONViewer format="json" code={error} convertToYaml />

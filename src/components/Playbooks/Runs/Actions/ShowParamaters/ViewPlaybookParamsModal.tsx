@@ -19,10 +19,12 @@ function RenderParamValue({ paramSpec, paramValue }: RenderParamValueProps) {
     // for code, we want to render the code in a JSONViewer
     case "code":
       return (
-        <JSONViewer
-          format={(paramSpec.properties?.language as any) ?? "json"}
-          code={paramValue as any}
-        />
+        <div className="min-h-[150px]">
+          <JSONViewer
+            format={(paramSpec.properties?.language as any) ?? "json"}
+            code={paramValue as any}
+          />
+        </div>
       );
     case "team":
       return <PlaybookTeamDetails teamId={paramValue} />;
