@@ -85,7 +85,6 @@ export function SearchSelect({
           {name && (
             <span className="mr-1 whitespace-nowrap text-gray-500">{name}</span>
           )}
-          {/* @ts-expect-error */}
           <RenderSelection label={value?.label!} value={value?.value!} />
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center text-gray-400">
             <HiOutlineSelector size={24} />

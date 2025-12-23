@@ -299,7 +299,7 @@ const ChartLegendContent = React.forwardRef<
         {payload
           .filter((item) => item.type !== "none")
           .map((item) => {
-            const key = `${nameKey || item.dataKey || "value"}`;
+            const key = `${nameKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const label =
               itemConfig?.label ||

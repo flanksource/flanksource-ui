@@ -57,7 +57,7 @@ const parseTimestamp = (value: any, index: number) => {
   if (typeof value === "number") {
     // Heuristic: values below ~10^11 are likely seconds, convert to ms.
     const numericValue =
-      value > 0 && value < 1e12 ? Math.round(value * 1000) : value;
+      value > 0 && value < 1e11 ? Math.round(value * 1000) : value;
     const dateFromNumber = new Date(numericValue);
     if (!Number.isNaN(dateFromNumber.getTime())) {
       return { numericValue, label: dateFromNumber.toISOString() };
@@ -66,16 +66,19 @@ const parseTimestamp = (value: any, index: number) => {
 
   if (typeof value === "string") {
     // Handle common non-ISO formats like "2025-12-10 12:11:00 +0000 UTC"
-    const parsed =
-      Date.parse(value) ||
-      Date.parse(
-        value
-          .replace(" UTC", "Z")
-          .replace(/\s\+\d{4}\sZ$/, "Z")
-          .replace(" ", "T")
-      );
-    if (!Number.isNaN(parsed)) {
-      const date = new Date(parsed);
+    const parsedOriginal = Date.parse(value);
+    const parsedNormalized = Date.parse(
+      value
+        .replace(" UTC", "Z")
+        .replace(/\s\+\d{4}\sZ$/, "Z")
+        .replace(" ", "T")
+    );
+    if (!Number.isNaN(parsedOriginal)) {
+      const date = new Date(parsedOriginal);
+      return { numericValue: date.getTime(), label: date.toISOString() };
+    }
+    if (!Number.isNaN(parsedNormalized)) {
+      const date = new Date(parsedNormalized);
       return { numericValue: date.getTime(), label: date.toISOString() };
     }
   }
