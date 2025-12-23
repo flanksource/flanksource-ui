@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { Sparkles } from "lucide-react";
 import {
   AiChatPopover,
@@ -12,9 +12,16 @@ function AiChatPopoverWithTrigger({
   shouldAutoOpen?: boolean;
 }) {
   const { open, setOpen } = useAiChatPopover();
+  const hasAutoOpened = useRef(false);
 
   useEffect(() => {
-    if (shouldAutoOpen && !open) {
+    if (!shouldAutoOpen) {
+      hasAutoOpened.current = false;
+      return;
+    }
+
+    if (!hasAutoOpened.current && !open) {
+      hasAutoOpened.current = true;
       setOpen(true);
     }
   }, [shouldAutoOpen, open, setOpen]);
