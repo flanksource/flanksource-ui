@@ -41,12 +41,10 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
             const error = JSON.parse(res.response.data.error);
             setMessage({
               message: (
-                <div className="min-h-[150px]">
-                  <JSONViewer
-                    code={JSON.stringify(error, null, 2)}
-                    format={"json"}
-                  />
-                </div>
+                <JSONViewer
+                  code={JSON.stringify(error, null, 2)}
+                  format={"json"}
+                />
               ),
               kind: "error"
             });

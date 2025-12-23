@@ -101,7 +101,7 @@ function JobHistoryScrapeSummary({
   }
 
   return (
-    <div className="flex min-h-[300px] flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <JSONViewer
         code={JSON.stringify(scrapeSummary, null, 2)}
         convertToYaml
@@ -121,7 +121,7 @@ function JobHistoryReconcileSummary({
   }
 
   return (
-    <div className="flex min-h-[300px] flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <JSONViewer
         code={JSON.stringify(summary, null, 2)}
         convertToYaml

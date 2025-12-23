@@ -20,6 +20,16 @@ type JSONViewerProps = {
    **/
   convertToYaml?: boolean;
   hideCopyButton?: boolean;
+  /**
+   * Minimum height for the editor in pixels
+   * @default 100
+   */
+  minHeight?: number;
+  /**
+   * Maximum height for the editor in pixels
+   * @default 600
+   */
+  maxHeight?: number;
 };
 
 export function JSONViewer({
@@ -29,7 +39,9 @@ export function JSONViewer({
   selections,
   onClick = () => {},
   convertToYaml = false,
-  hideCopyButton = false
+  hideCopyButton = false,
+  minHeight = 100,
+  maxHeight = 600
 }: JSONViewerProps) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -71,6 +83,15 @@ export function JSONViewer({
     }
     return format;
   }, [convertToYaml, format]);
+
+  // Calculate editor height based on content lines
+  const editorHeight = useMemo(() => {
+    const lineCount = codeForDisplay.split("\n").length;
+    const lineHeight = 19;
+    const padding = 16; // 8px top + 8px bottom
+    const calculatedHeight = lineCount * lineHeight + padding;
+    return Math.min(Math.max(calculatedHeight, minHeight), maxHeight);
+  }, [codeForDisplay, minHeight, maxHeight]);
 
   const copyFn = useCopyToClipboard();
 
@@ -126,14 +147,11 @@ export function JSONViewer({
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex min-h-0 w-full flex-1 flex-col p-2"
-    >
+    <div ref={containerRef} className="relative flex w-full flex-col p-2">
       <Editor
         value={codeForDisplay}
         language={language}
-        height="100%"
+        height={editorHeight}
         onMount={handleEditorDidMount}
         options={{
           readOnly: true,

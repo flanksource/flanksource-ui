@@ -28,7 +28,7 @@ export function CanaryCheckDetailsSpecTab({ check }: CanaryCheckDetailsProps) {
   }
 
   return (
-    <div key="specs" className="min-h-[300px]">
+    <div key="specs">
       <JSONViewer
         code={code ?? ""}
         format={"json"}
