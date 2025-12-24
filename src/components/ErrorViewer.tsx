@@ -111,7 +111,21 @@ function parseError(error: unknown): ParsedError | null {
   }
 
   if (error instanceof Error) {
-    return { message: error.message, raw: error.stack };
+    const message = error.message ?? "";
+    const trimmed = message.trim();
+    if (trimmed && (trimmed.startsWith("{") || trimmed.startsWith("["))) {
+      try {
+        const parsed = JSON.parse(trimmed) as unknown;
+        const parsedResult = parseError(parsed);
+        if (parsedResult) {
+          return parsedResult;
+        }
+      } catch {
+        // Fall through to default error handling.
+      }
+    }
+
+    return { message, raw: error.stack };
   }
 
   if (typeof error === "object") {
