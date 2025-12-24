@@ -1,14 +1,15 @@
-import React from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend
-} from "recharts";
+import React, { useMemo } from "react";
+import { PieChart, Pie, Cell } from "recharts";
 import { PanelResult } from "../../../types";
 import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@flanksource-ui/components/ui/chart";
 
 interface PieChartPanelProps {
   summary: PanelResult;
@@ -19,22 +20,17 @@ interface PieChartPanelProps {
  */
 export const generatePieChartData = (
   rows: Record<string, any>[],
-  customColors?: Record<string, string>
+  customColors?: Record<string, string>,
+  maxSlices = 6
 ) => {
-  return rows.map((row, index) => {
+  const entries = rows.map((row, index) => {
     const { count, ...rest } = row;
     const labelKey = Object.keys(rest)[0];
     const labelValue = rest[labelKey];
-
-    if (!labelValue) {
-      return {
-        name: "Unknown",
-        value: count,
-        fill: COLOR_PALETTE[index % COLOR_PALETTE.length]
-      };
-    }
-
-    const customColor = customColors?.[labelValue];
+    const parsedValue = Number(count);
+    const value = Number.isFinite(parsedValue) ? parsedValue : 0;
+    const name = labelValue ? String(labelValue) : "Unknown";
+    const customColor = customColors?.[name];
     let fill: string;
 
     if (customColor) {
@@ -49,34 +45,32 @@ export const generatePieChartData = (
     }
 
     return {
-      name: labelValue,
-      value: count,
+      name,
+      value,
       fill
     };
   });
-};
 
-/**
- * Custom legend renderer for the pie chart displaying color indicators with labels.
- * @param props - Recharts legend props containing payload array
- * @returns JSX element rendering the legend
- */
-const renderLegend = (props: any) => {
-  const { payload } = props;
+  if (entries.length <= maxSlices) {
+    return entries;
+  }
 
-  return (
-    <ul className="mt-1 flex flex-wrap justify-center gap-1 text-xs text-gray-600">
-      {payload.map((entry: any, index: number) => (
-        <li key={`item-${index}`} className="flex items-center">
-          <span
-            className="mr-1 h-1.5 w-1.5 rounded-full"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span>{entry.value}</span>
-        </li>
-      ))}
-    </ul>
-  );
+  const sorted = [...entries].sort((a, b) => b.value - a.value);
+  const keep = sorted.slice(0, Math.max(maxSlices - 1, 1));
+  const overflow = sorted.slice(keep.length);
+  const overflowValue = overflow.reduce((sum, item) => sum + item.value, 0);
+
+  const othersFill =
+    customColors?.others || COLOR_PALETTE[keep.length % COLOR_PALETTE.length];
+
+  return [
+    ...keep,
+    {
+      name: "others",
+      value: overflowValue,
+      fill: othersFill
+    }
+  ];
 };
 
 /**
@@ -92,10 +86,16 @@ const renderLegend = (props: any) => {
  * @param props.summary - Panel data containing rows, title, description, and chart config
  */
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
-  const chartData = generatePieChartData(
-    summary.rows || [],
-    summary.piechart?.colors
-  );
+  const chartData = useMemo(() => {
+    return generatePieChartData(summary.rows || [], summary.piechart?.colors);
+  }, [summary.rows, summary.piechart?.colors]);
+
+  const chartConfig = useMemo<ChartConfig>(() => {
+    return chartData.reduce<ChartConfig>((acc, item) => {
+      acc[item.name] = { label: item.name, color: item.fill };
+      return acc;
+    }, {});
+  }, [chartData]);
 
   return (
     <div className="flex h-full min-h-[300px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
@@ -104,8 +104,12 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
         <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
       )}
       <div className="flex flex-1 items-center justify-center">
-        <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer
+          config={chartConfig}
+          className="flex h-full min-h-[240px] w-full flex-1 items-center justify-center"
+        >
           <PieChart>
+            <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
             <Pie
               data={chartData}
               dataKey="value"
@@ -121,10 +125,9 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
                 <Cell key={`cell-${entryIndex}`} fill={entry.fill} />
               ))}
             </Pie>
-            <Tooltip allowEscapeViewBox={{ x: true, y: true }} />
-            <Legend content={renderLegend} />
+            <ChartLegend content={<ChartLegendContent nameKey="name" />} />
           </PieChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </div>
     </div>
   );
