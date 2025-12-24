@@ -17,6 +17,8 @@ import {
 import { RiShieldUserFill } from "react-icons/ri";
 import { VscKey } from "react-icons/vsc";
 import { VscJson } from "react-icons/vsc";
+import { Sparkles } from "lucide-react";
+import { AiChatPage } from "@flanksource-ui/pages/ai/AiChatPage";
 import {
   BrowserRouter,
   Navigate,
@@ -298,6 +300,13 @@ const navigation: NavigationItems = [
     icon: AiFillHeart,
     featureName: features.health,
     resourceName: tables.canaries
+  },
+  {
+    name: "AI",
+    href: "/ai",
+    icon: Sparkles,
+    featureName: features.topology,
+    resourceName: tables.database
   },
   {
     name: "Incidents",
@@ -606,6 +615,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
+      </Route>
+
+      <Route path="ai" element={sidebar}>
+        <Route index element={<AiChatPage />} />
       </Route>
 
       <Route path="views" element={sidebar}>
