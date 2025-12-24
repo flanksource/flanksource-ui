@@ -19,6 +19,18 @@ type LLMConnection = {
   };
 };
 
+class HttpError extends Error {
+  status: number;
+  body?: string;
+
+  constructor(message: string, status: number, body?: string) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
 async function getBackendUrl() {
   const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
   if (isClerkAuth) {
@@ -70,7 +82,16 @@ async function fetchLLMConnection(backendUrl: string, cookies: string) {
   });
 
   if (!response.ok) {
-    throw new Error(`failed to load LLM config: ${response.status}`);
+    const bodyText = await response.text();
+    if (response.status === 404) {
+      throw new HttpError("LLM connection not found", 404, bodyText);
+    }
+
+    throw new HttpError(
+      `failed to load LLM config: ${response.status}`,
+      response.status,
+      bodyText
+    );
   }
 
   const contentType = response.headers.get("content-type") ?? "";
@@ -187,6 +208,9 @@ export async function POST(req: Request) {
   } catch (error) {
     wideEvent.status = "error";
     wideEvent.error = error instanceof Error ? error.message : String(error);
+    if (error instanceof HttpError) {
+      return new Response(error.body ?? error.message, { status: error.status });
+    }
     return new Response("Internal Server Error", { status: 500 });
   } finally {
     if (wideEvent.status === "error") {

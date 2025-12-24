@@ -48,6 +48,7 @@ import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
 import { useCallback } from "react";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import {
   CartesianGrid,
   Line,
@@ -148,7 +149,9 @@ export function AIChat({
     stop,
     status,
     addToolApprovalResponse,
-    setMessages
+    setMessages,
+    error,
+    clearError
   } = useChat({
     chat,
     id
@@ -178,18 +181,25 @@ export function AIChat({
         return;
       }
 
+      if (error) {
+        clearError();
+      }
+
       await sendMessage({
         text: trimmed,
         files
       });
     },
-    [sendMessage]
+    [clearError, error, sendMessage]
   );
 
   const handleNewChat = useCallback(() => {
     setMessages([]);
+    if (error) {
+      clearError();
+    }
     onNewChat?.();
-  }, [onNewChat, setMessages]);
+  }, [clearError, error, onNewChat, setMessages]);
 
   const handleSuggestionClick = useCallback(
     async (suggestion: string) => {
@@ -198,9 +208,13 @@ export function AIChat({
         return;
       }
 
+      if (error) {
+        clearError();
+      }
+
       await sendMessage({ text: trimmed });
     },
-    [sendMessage]
+    [clearError, error, sendMessage]
   );
 
   const renderReasoningPart = (
@@ -353,6 +367,12 @@ export function AIChat({
     );
   };
 
+  const errorMessage = error
+    ? error instanceof Error
+      ? error.message
+      : String(error)
+    : "";
+
   return (
     <div className={cn("flex h-full flex-1 flex-col gap-4", className)}>
       <Card className="relative flex h-full flex-1 flex-col bg-card">
@@ -393,6 +413,21 @@ export function AIChat({
             ) : (
               messages.map((message) => renderMessage(message))
             )}
+
+            {errorMessage ? (
+              <Message from="assistant" key="error">
+                <MessageContent className="w-full">
+                  <div className="space-y-3">
+                    <ErrorViewer error={error} />
+                    <div className="flex justify-end">
+                      <Button onClick={clearError} size="sm" variant="outline">
+                        Dismiss
+                      </Button>
+                    </div>
+                  </div>
+                </MessageContent>
+              </Message>
+            ) : null}
 
             {(status === "streaming" || status === "submitted") && (
               <Message from="assistant" key="loading">
