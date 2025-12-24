@@ -44,20 +44,19 @@ import {
 } from "@flanksource-ui/components/ai-elements/suggestion";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Card } from "@flanksource-ui/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@flanksource-ui/components/ui/chart";
+import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from "recharts";
+import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
 
 type TimeseriesPoint = { timestamp: string; value: number };
 type PlotTimeseriesOutput = {
@@ -92,36 +91,93 @@ const isPlotTimeseriesOutput = (
 };
 
 function PlotTimeseriesChart({ output }: { output: PlotTimeseriesOutput }) {
-  const data = [...output.timeseries]
-    .map((point) => ({
-      ...point,
-      date: new Date(point.timestamp),
-      label: new Date(point.timestamp).toLocaleString()
-    }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+  const chartConfig = useMemo<ChartConfig>(() => {
+    return {
+      value: {
+        label: output.title ?? "Value",
+        color: "#2563eb"
+      }
+    };
+  }, [output.title]);
+
+  const data = useMemo(() => {
+    return output.timeseries
+      .map((point, index) => {
+        const { numericValue, label } = parseTimestamp(point.timestamp, index);
+        return {
+          __timestamp: numericValue,
+          __label: label,
+          value: point.value
+        };
+      })
+      .filter((point) => Number.isFinite(point.__timestamp))
+      .sort((a, b) => a.__timestamp - b.__timestamp);
+  }, [output.timeseries]);
+
+  const timeRange = useMemo(() => {
+    if (!data.length) return null;
+    const timestamps = data
+      .map((point) => point.__timestamp)
+      .filter((value) => Number.isFinite(value));
+    if (!timestamps.length) return null;
+    const min = Math.min(...timestamps);
+    const max = Math.max(...timestamps);
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+    return { min, max, span: max - min };
+  }, [data]);
 
   return (
     <div className="space-y-2 p-4">
       <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {output.title ?? "Timeseries Chart"}
       </h4>
-      <div className="h-64 w-full">
-        <ResponsiveContainer>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickMargin={8} minTickGap={16} />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#2563eb"
-              dot={false}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      <ChartContainer
+        config={chartConfig}
+        className="h-64 w-full rounded-lg border border-border/60 bg-background/50 px-2 py-3 sm:px-3"
+      >
+        <ComposedChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis
+            dataKey="__timestamp"
+            type="number"
+            scale="time"
+            domain={["auto", "auto"]}
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            minTickGap={20}
+            tickFormatter={(value) => formatTick(value, timeRange)}
+          />
+          <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+          <ChartTooltip
+            cursor={{ strokeDasharray: "4 4" }}
+            content={
+              <ChartTooltipContent
+                indicator="line"
+                labelFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  });
+                }}
+              />
+            }
+          />
+          <Line
+            type="monotone"
+            dataKey="value"
+            name={output.title ?? "Value"}
+            stroke="var(--color-value)"
+            strokeWidth={1}
+            dot={false}
+            isAnimationActive={false}
+          />
+        </ComposedChart>
+      </ChartContainer>
     </div>
   );
 }
