@@ -158,11 +158,13 @@ export async function getPlaybookRunActionById(id: string, playbook: Playbook) {
                 ? "http"
                 : actionSpec?.sql
                   ? "sql"
-                  : actionSpec?.pod
-                    ? "pod"
-                    : actionSpec?.logs
-                      ? "logs"
-                      : "exec";
+                  : actionSpec?.prometheus
+                    ? "prometheus"
+                    : actionSpec?.pod
+                      ? "pod"
+                      : actionSpec?.logs
+                        ? "logs"
+                        : "exec";
 
   return {
     ...action[0],
