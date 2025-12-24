@@ -20,7 +20,7 @@ export default function ViewPlaybookSpecModal({
       title="Run details"
       size="large"
     >
-      <div className="flex h-full flex-1 flex-col px-4 py-4">
+      <div className="flex flex-1 flex-col px-4 py-4">
         {data.playbooks?.spec && (
           <JSONViewer
             code={JSON.stringify(data.playbooks.spec, null, 2)}

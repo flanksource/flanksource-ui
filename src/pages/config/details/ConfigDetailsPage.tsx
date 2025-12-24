@@ -89,6 +89,7 @@ export function ConfigDetailsPage() {
               convertToYaml
               onClick={handleClick}
               selections={checked}
+              fillHeight
             />
           </div>
         ) : (
