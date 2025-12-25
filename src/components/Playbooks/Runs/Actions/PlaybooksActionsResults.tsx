@@ -318,7 +318,8 @@ export default function PlaybooksRunActionsResults({
         activeTab={activeTab || "empty"}
         onSelectTab={(tab) => setActiveTab(tab as string)}
         hoverable={false}
-        contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-300 p-4"
+        variant="dark"
+        contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-600 bg-black p-4"
       >
         {availableTabs.map((tab) => {
           let label = tab.label;

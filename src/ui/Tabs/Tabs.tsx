@@ -9,6 +9,7 @@ type TabItemProps = {
   activeTab: string;
   hoverable?: boolean;
   icon?: React.ReactNode;
+  variant?: "light" | "dark";
 };
 
 function TabItem({
@@ -18,8 +19,11 @@ function TabItem({
   onSelectTab,
   activeTab,
   icon,
-  hoverable = true
+  hoverable = true,
+  variant = "light"
 }: TabItemProps) {
+  const isDark = variant === "dark";
+
   return (
     <div
       key={label}
@@ -29,10 +33,15 @@ function TabItem({
       }}
       className={clsx(
         value === activeTab
-          ? "border-b-0 bg-white text-gray-900"
-          : "border-0 border-b text-gray-500",
-        "cursor-pointer rounded-t-md border border-gray-300 px-4 py-2 text-sm font-medium",
-        hoverable && "hover:text-gray-900"
+          ? isDark
+            ? "border-b-0 bg-black text-gray-100"
+            : "border-b-0 bg-white text-gray-900"
+          : isDark
+            ? "border-0 border-b text-gray-400"
+            : "border-0 border-b text-gray-500",
+        "cursor-pointer rounded-t-md border px-4 py-2 text-sm font-bold",
+        isDark ? "border-gray-600" : "border-gray-300",
+        hoverable && (isDark ? "hover:text-gray-100" : "hover:text-gray-900")
       )}
     >
       {icon && <span className="mr-2 inline-block align-middle">{icon}</span>}
@@ -57,6 +66,7 @@ type TabsProps<Tabs extends string> = React.HTMLProps<HTMLDivElement> & {
   onSelectTab: (label: Tabs) => void;
   contentClassName?: string;
   hoverable?: boolean;
+  variant?: "light" | "dark";
 };
 
 export function Tabs<Tabs extends string = string>({
@@ -64,10 +74,16 @@ export function Tabs<Tabs extends string = string>({
   onSelectTab,
   children,
   className,
-  contentClassName = "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300",
+  contentClassName,
   hoverable = true,
+  variant = "light",
   ...rest
 }: TabsProps<Tabs>) {
+  const isDark = variant === "dark";
+  const defaultContentClassName = isDark
+    ? "flex flex-col flex-1 overflow-y-auto bg-black border border-t-0 border-gray-600"
+    : "flex flex-col flex-1 overflow-y-auto bg-white border border-t-0 border-gray-300";
+  const resolvedContentClassName = contentClassName ?? defaultContentClassName;
   const tabs = useMemo(() => {
     if (!children) {
       return [];
@@ -117,12 +133,18 @@ export function Tabs<Tabs extends string = string>({
             activeTab={activeTab}
             onClick={tab.props?.onClick!}
             hoverable={hoverable}
+            variant={variant}
           />
         ))}
         {/* Add a phantom div to fill border */}
-        <div className="flex-1 border-b border-gray-300" />
+        <div
+          className={clsx(
+            "flex-1 border-b",
+            isDark ? "border-gray-600" : "border-gray-300"
+          )}
+        />
       </div>
-      <div className={contentClassName}>{content}</div>
+      <div className={resolvedContentClassName}>{content}</div>
     </>
   );
 }
