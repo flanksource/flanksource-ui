@@ -16,11 +16,16 @@ type ConfigDetailsTab = {
 
 export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   isLoading: boolean;
+  isError: boolean;
   tabs: ConfigDetailsTab[];
 } {
   const { id } = useParams<{ id: string }>();
 
-  const { data: views = [], isLoading } = useQuery({
+  const {
+    data: views = [],
+    isLoading,
+    isError
+  } = useQuery({
     queryKey: ["views", id],
     queryFn: () => getViewsByConfigId(id!),
     enabled: !!id
@@ -106,9 +111,9 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   }));
 
   if (viewTabs.length === 0) {
-    return { isLoading, tabs: staticTabs };
+    return { isLoading, isError, tabs: staticTabs };
   }
 
   // Views configured for a config should appear ahead of the built-in tabs.
-  return { isLoading, tabs: [...viewTabs, ...staticTabs] };
+  return { isLoading, isError, tabs: [...viewTabs, ...staticTabs] };
 }

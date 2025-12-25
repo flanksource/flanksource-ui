@@ -29,7 +29,7 @@ export function ConfigDetailsViewPage() {
     <ConfigDetailsTabs
       pageTitlePrefix={`Config View - ${displayName}`}
       isLoading={isLoading}
-      activeTabName={displayName}
+      activeTabName={viewId ?? ""}
       refetch={handleForceRefresh}
     >
       <div className="">
