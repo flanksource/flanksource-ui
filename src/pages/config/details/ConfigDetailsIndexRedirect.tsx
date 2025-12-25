@@ -17,9 +17,13 @@ export function ConfigDetailsIndexRedirect() {
     isError: isConfigError
   } = useGetConfigByIdQuery(idParam);
 
-  const tabs = useConfigDetailsTabs(configDetails?.summary);
+  const { tabs, isLoading } = useConfigDetailsTabs(configDetails?.summary);
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
     if (!id || tabs.length === 0) {
       return;
     }
@@ -37,9 +41,9 @@ export function ConfigDetailsIndexRedirect() {
       },
       { replace: true }
     );
-  }, [id, tabs, navigate, location.pathname, location.search]);
+  }, [isLoading, id, tabs, navigate, location.pathname, location.search]);
 
-  if (isConfigLoading) {
+  if (isConfigLoading || isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading />

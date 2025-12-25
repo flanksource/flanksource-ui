@@ -45,7 +45,7 @@ export function ConfigDetailsTabs({
   const { data: configItem, isLoading: isLoadingConfig } =
     useGetConfigByIdQuery(id!);
 
-  const configTabList = useConfigDetailsTabs(configItem?.summary);
+  const { tabs: configTabList } = useConfigDetailsTabs(configItem?.summary);
 
   return (
     <>
