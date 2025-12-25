@@ -14,17 +14,17 @@ type ConfigDetailsTab = {
   search?: string;
 };
 
-export function useConfigDetailsTabs(
+function buildConfigDetailsTabs(
+  id: string | undefined,
+  views: Array<{
+    id: string;
+    title?: string;
+    name: string;
+    icon?: string;
+    ordinal?: number;
+  }>,
   countSummary?: ConfigItem["summary"]
 ): ConfigDetailsTab[] {
-  const { id } = useParams<{ id: string }>();
-
-  const { data: views = [] } = useQuery({
-    queryKey: ["views", id],
-    queryFn: () => getViewsByConfigId(id!),
-    enabled: !!id
-  });
-
   const staticTabs: ConfigDetailsTab[] = [
     { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
     {
@@ -110,4 +110,35 @@ export function useConfigDetailsTabs(
 
   // Views configured for a config should appear ahead of the built-in tabs.
   return [...viewTabs, ...staticTabs];
+}
+
+export function useConfigDetailsTabs(
+  countSummary?: ConfigItem["summary"]
+): ConfigDetailsTab[] {
+  const { id } = useParams<{ id: string }>();
+
+  const { data: views = [] } = useQuery({
+    queryKey: ["views", id],
+    queryFn: () => getViewsByConfigId(id!),
+    enabled: !!id
+  });
+
+  return buildConfigDetailsTabs(id, views, countSummary);
+}
+
+export function useConfigDetailsTabsWithStatus(
+  countSummary?: ConfigItem["summary"]
+): { tabs: ConfigDetailsTab[]; isViewsLoading: boolean } {
+  const { id } = useParams<{ id: string }>();
+
+  const { data: views = [], isLoading: isViewsLoading } = useQuery({
+    queryKey: ["views", id],
+    queryFn: () => getViewsByConfigId(id!),
+    enabled: !!id
+  });
+
+  return {
+    tabs: buildConfigDetailsTabs(id, views, countSummary),
+    isViewsLoading
+  };
 }

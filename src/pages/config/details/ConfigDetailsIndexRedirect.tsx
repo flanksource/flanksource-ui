@@ -1,5 +1,5 @@
 import { useGetConfigByIdQuery } from "@flanksource-ui/api/query-hooks";
-import { useConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
+import { useConfigDetailsTabsWithStatus } from "@flanksource-ui/components/Configs/ConfigTabsLinks";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -17,10 +17,12 @@ export function ConfigDetailsIndexRedirect() {
     isError: isConfigError
   } = useGetConfigByIdQuery(idParam);
 
-  const tabs = useConfigDetailsTabs(configDetails?.summary);
+  const { tabs, isViewsLoading } = useConfigDetailsTabsWithStatus(
+    configDetails?.summary
+  );
 
   useEffect(() => {
-    if (!id || tabs.length === 0) {
+    if (!id || isViewsLoading || tabs.length === 0) {
       return;
     }
 
@@ -37,7 +39,7 @@ export function ConfigDetailsIndexRedirect() {
       },
       { replace: true }
     );
-  }, [id, tabs, navigate, location.pathname, location.search]);
+  }, [id, isViewsLoading, tabs, navigate, location.pathname, location.search]);
 
   if (isConfigLoading) {
     return (
