@@ -14,12 +14,18 @@ type ConfigDetailsTab = {
   search?: string;
 };
 
-export function useConfigDetailsTabs(
-  countSummary?: ConfigItem["summary"]
-): ConfigDetailsTab[] {
+export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
+  isLoading: boolean;
+  isError: boolean;
+  tabs: ConfigDetailsTab[];
+} {
   const { id } = useParams<{ id: string }>();
 
-  const { data: views = [] } = useQuery({
+  const {
+    data: views = [],
+    isLoading,
+    isError
+  } = useQuery({
     queryKey: ["views", id],
     queryFn: () => getViewsByConfigId(id!),
     enabled: !!id
@@ -105,9 +111,9 @@ export function useConfigDetailsTabs(
   }));
 
   if (viewTabs.length === 0) {
-    return staticTabs;
+    return { isLoading, isError, tabs: staticTabs };
   }
 
   // Views configured for a config should appear ahead of the built-in tabs.
-  return [...viewTabs, ...staticTabs];
+  return { isLoading, isError, tabs: [...viewTabs, ...staticTabs] };
 }

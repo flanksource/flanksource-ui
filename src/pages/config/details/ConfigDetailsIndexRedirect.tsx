@@ -17,9 +17,17 @@ export function ConfigDetailsIndexRedirect() {
     isError: isConfigError
   } = useGetConfigByIdQuery(idParam);
 
-  const tabs = useConfigDetailsTabs(configDetails?.summary);
+  const {
+    tabs,
+    isLoading,
+    isError: isViewsError
+  } = useConfigDetailsTabs(configDetails?.summary);
 
   useEffect(() => {
+    if (isLoading || isViewsError) {
+      return;
+    }
+
     if (!id || tabs.length === 0) {
       return;
     }
@@ -37,9 +45,17 @@ export function ConfigDetailsIndexRedirect() {
       },
       { replace: true }
     );
-  }, [id, tabs, navigate, location.pathname, location.search]);
+  }, [
+    isLoading,
+    isViewsError,
+    id,
+    tabs,
+    navigate,
+    location.pathname,
+    location.search
+  ]);
 
-  if (isConfigLoading) {
+  if (isConfigLoading || isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loading />
@@ -47,10 +63,10 @@ export function ConfigDetailsIndexRedirect() {
     );
   }
 
-  if (isConfigError) {
+  if (isConfigError || isViewsError) {
     return (
       <div className="flex h-full items-center justify-center text-gray-500">
-        Failed to load config
+        Failed to load config or views
       </div>
     );
   }
