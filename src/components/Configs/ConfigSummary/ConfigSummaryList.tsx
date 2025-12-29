@@ -17,22 +17,6 @@ import { ConfigSummaryTableVirtualAggregateColumn } from "./Cells/ConfigSummaryT
 import { ConfigSummaryVirtualColumnCell } from "./Cells/ConfigSummaryVirtualColumnCell";
 import ConfigSummaryFavoriteButton from "./ConfigSummaryTypeFavorite";
 
-export function getConfigStatusColor(health?: ConfigSummary["health"]) {
-  if (!health) {
-    return "bg-gray-400/80";
-  }
-  if (health.healthy && health.healthy > 0) {
-    return "bg-green-500/60";
-  }
-  if (health.unhealthy && health.unhealthy > 0) {
-    return "bg-red-500/50";
-  }
-  if (health.warning && health.warning > 0) {
-    return "bg-orange-400/60";
-  }
-  return "bg-gray-500/40";
-}
-
 function ConfigSummaryTypeCell({
   getValue,
   row
@@ -303,7 +287,7 @@ export default function ConfigSummaryList({
 
     // Get the first grouping field
     const primaryGroupingField = groupBy[0];
-    
+
     // Count unique values for the primary grouping field
     const uniqueGroups = new Set(
       data.map((item) => item[primaryGroupingField as keyof ConfigSummary])

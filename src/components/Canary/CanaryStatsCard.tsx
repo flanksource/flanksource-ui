@@ -1,8 +1,8 @@
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import clsx from "clsx";
 import { Tooltip } from "react-tooltip";
-import { StatCard } from "../StatCard";
 import { Status } from "../Status";
+
 type CanaryStatsCardsProps = {
   checks?: HealthCheck[];
   filteredChecks?: HealthCheck[];
@@ -20,65 +20,30 @@ export default function CanaryStatsCards({
   const filteredChecksLength = filteredChecks?.length || 0;
   const isFilterApplied = filteredChecksLength !== checks?.length;
 
-  return (
-    <div className={clsx("flex flex-row gap-2")}>
-      <div className="flex flex-row divide-x-2">
-        <div className="flex flex-col items-center px-2">
-          <StatCard
-            title={<Status good={true} />}
-            customValue={
-              <>
-                <div
-                  className="space-x-1"
-                  data-tooltip-id="passing-tooltip"
-                  data-tooltip-content={`${
-                    isFilterApplied ? passing.filtered : passing.checks
-                  } checks passing`}
-                >
-                  {isFilterApplied ? (
-                    <span className="text-green-500">
-                      {passing.filtered || 0}
-                    </span>
-                  ) : (
-                    <span className="text-green-500">
-                      {passing.checks || 0}
-                    </span>
-                  )}
-                </div>
-                <Tooltip id="passing-tooltip" />
-              </>
-            }
-          />
-        </div>
-        <div className="flex flex-col items-center px-2">
-          <StatCard
-            title={<Status good={false} />}
-            customValue={
-              <div
-                className="space-x-1"
-                data-tooltip-id="failing-tooltip"
-                data-tooltip-content={`${
-                  isFilterApplied
-                    ? filteredChecksLength - passing.filtered
-                    : checks?.length - passing.checks
-                } checks failing`}
-              >
-                {isFilterApplied ? (
-                  <span className="text-red-500">
-                    {filteredChecksLength - passing.filtered || 0}
-                  </span>
-                ) : (
-                  <span className="text-red-500">
-                    {checks!.length - passing.checks || 0}
-                  </span>
-                )}
+  const passingCount = isFilterApplied ? passing.filtered : passing.checks;
+  const failingCount = isFilterApplied
+    ? filteredChecksLength - passing.filtered
+    : (checks?.length ?? 0) - passing.checks;
 
-                <Tooltip id="failing-tooltip" />
-              </div>
-            }
-          />
-        </div>
+  return (
+    <div className={clsx("flex flex-row items-center gap-2")}>
+      <div
+        data-tooltip-id="passing-tooltip"
+        data-tooltip-content={`${passingCount} checks passing`}
+      >
+        <Status good={true} statusText={`Healthy: ${passingCount || 0}`} />
       </div>
+      <Tooltip id="passing-tooltip" />
+
+      <span className="text-gray-400">|</span>
+
+      <div
+        data-tooltip-id="failing-tooltip"
+        data-tooltip-content={`${failingCount} checks failing`}
+      >
+        <Status good={false} statusText={`Unhealthy: ${failingCount || 0}`} />
+      </div>
+      <Tooltip id="failing-tooltip" />
     </div>
   );
 }

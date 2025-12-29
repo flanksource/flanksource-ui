@@ -1,14 +1,22 @@
 import { ConfigSummary } from "@flanksource-ui/api/types/configs";
-
+import { Status } from "@flanksource-ui/components/Status";
 import { CellContext } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getConfigStatusColor } from "../ConfigSummaryList";
-import {
-  Count,
-  CountBar,
-  OrderByColor
-} from "@flanksource-ui/ui/Icons/ChangeCount";
+import { Link, useSearchParams } from "react-router-dom";
+
+// Order health keys by severity (healthy, unhealthy, warning, unknown)
+const healthOrder = ["healthy", "unhealthy", "warning", "unknown"];
+
+function orderByHealth(entries: [string, number][]): [string, number][] {
+  return entries.sort((a, b) => {
+    const indexA = healthOrder.indexOf(a[0]);
+    const indexB = healthOrder.indexOf(b[0]);
+    if (indexA === -1 && indexB === -1) return 0;
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
+}
 
 export function ConfigSummaryHealthCell({
   getValue,
@@ -27,18 +35,12 @@ export function ConfigSummaryHealthCell({
     return `/catalog?configType=${type}`;
   }, [groupBy, type]);
 
-  const statusLines = useMemo(() => {
-    const data: Count[] = Object.entries(value ?? {}).map(([key, value]) => {
-      return {
-        count: value,
-        label: value,
-        url: `${urlBase}&health=${key}:1`,
-        color: getConfigStatusColor({
-          [key]: value
-        } as ConfigSummary["health"])
-      };
-    });
-    return data;
+  const statusItems = useMemo(() => {
+    return orderByHealth(Object.entries(value ?? {})).map(([key, count]) => ({
+      key,
+      count,
+      url: `${urlBase}&health=${key}:1`
+    }));
   }, [urlBase, value]);
 
   if (!value) {
@@ -47,12 +49,17 @@ export function ConfigSummaryHealthCell({
 
   return (
     <div
+      className="flex flex-row gap-1"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
       }}
     >
-      <CountBar items={OrderByColor(statusLines)} barStyle="RAG" />
+      {statusItems.map((item) => (
+        <Link key={item.key} to={item.url}>
+          <Status status={item.key} count={item.count} />
+        </Link>
+      ))}
     </div>
   );
 }
@@ -73,20 +80,22 @@ export function ConfigSummaryHealthAggregateCell({
     {} as Record<string, number>
   );
 
-  const statusLines = useMemo(() => {
-    const data: Count[] = Object.entries(value ?? {}).map(([key, value]) => {
-      return {
-        count: value.toString(),
-        color: getConfigStatusColor({
-          [key]: value
-        } as ConfigSummary["health"])
-      };
-    });
-    return data;
+  const statusItems = useMemo(() => {
+    return orderByHealth(Object.entries(value ?? {})).map(([key, count]) => ({
+      key,
+      count
+    }));
   }, [value]);
 
-  if (!value) {
+  if (!value || Object.keys(value).length === 0) {
     return null;
   }
-  return <CountBar items={OrderByColor(statusLines)} barStyle="RAG" />;
+
+  return (
+    <div className="flex flex-row gap-1">
+      {statusItems.map((item) => (
+        <Status key={item.key} status={item.key} count={item.count} />
+      ))}
+    </div>
+  );
 }

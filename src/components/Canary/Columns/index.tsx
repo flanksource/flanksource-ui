@@ -39,11 +39,11 @@ export function Cell({ state, value, row, column }: any) {
       return empty;
     }
     if (typeof value === "object") {
-      return <Status good={value.good} mixed={value.mixed} />;
+      return <Status good={value.good} mixed={value.mixed} variant="dot" />;
     } else {
       return (
         <div className="flex items-center space-x-1">
-          <Status good={value === "healthy"} />
+          <Status good={value === "healthy"} variant="dot" />
           <LastTransitionCell
             value={row.original.last_runtime}
             min={1000 * 60 * 20 + 1}

@@ -77,7 +77,7 @@ export function getCanaryTableColumns({
         }
         return (
           <div className="flex items-center space-x-1">
-            <Status good={good} mixed={mixed} />
+            <Status good={good} mixed={mixed} variant="dot" />
             <LastTransitionCell
               value={row.original.last_runtime}
               min={1000 * 60 * 60 + 1}

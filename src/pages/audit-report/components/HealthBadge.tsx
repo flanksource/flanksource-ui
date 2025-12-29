@@ -1,4 +1,5 @@
 import React from "react";
+import { Status } from "@flanksource-ui/components/Status";
 
 export type HealthType = "healthy" | "unhealthy" | "warning" | "unknown";
 
@@ -11,56 +12,34 @@ const HealthBadge: React.FC<HealthBadgeProps> = ({
   health,
   printView = false
 }) => {
-  const getHealthColor = (
-    health: HealthType
-  ): { bg: string; dot: string; text: string } => {
-    switch (health.toLowerCase()) {
-      case "healthy":
-        return {
-          bg: "bg-green-100 text-green-800",
-          dot: "bg-green-600",
-          text: "text-green-700"
-        };
-      case "unhealthy":
-        return {
-          bg: "bg-red-100 text-red-800",
-          dot: "bg-red-600",
-          text: "text-red-700"
-        };
-      case "warning":
-        return {
-          bg: "bg-yellow-100 text-yellow-800",
-          dot: "bg-yellow-600",
-          text: "text-yellow-700"
-        };
-      case "unknown":
-      default:
-        return {
-          bg: "bg-gray-100 text-gray-800",
-          dot: "bg-gray-600",
-          text: "text-gray-700"
-        };
-    }
-  };
-
-  const { bg, dot, text } = getHealthColor(health);
-
   if (printView) {
+    // For print view, we want minimal styling - just dot and text
+    const dotColors: Record<HealthType, string> = {
+      healthy: "bg-green-600",
+      unhealthy: "bg-red-600",
+      warning: "bg-yellow-600",
+      unknown: "bg-gray-600"
+    };
+    const textColors: Record<HealthType, string> = {
+      healthy: "text-green-700",
+      unhealthy: "text-red-700",
+      warning: "text-yellow-700",
+      unknown: "text-gray-700"
+    };
+
     return (
       <span className="inline-flex items-center">
-        <span className={`mr-1.5 inline-block h-2 w-2 rounded-full ${dot}`} />
-        <span className={text}>
+        <span
+          className={`mr-1.5 inline-block h-2 w-2 rounded-full ${dotColors[health]}`}
+        />
+        <span className={textColors[health]}>
           {health.charAt(0).toUpperCase() + health.slice(1)}
         </span>
       </span>
     );
   }
 
-  return (
-    <span className={`status-badge ${bg}`}>
-      {health.charAt(0).toUpperCase() + health.slice(1)}
-    </span>
-  );
+  return <Status status={health} />;
 };
 
 export default HealthBadge;
