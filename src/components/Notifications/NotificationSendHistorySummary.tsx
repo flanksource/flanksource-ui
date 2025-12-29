@@ -8,7 +8,6 @@ import NotificationResourceDisplay from "./NotificationResourceDisplay";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import TagsFilterCell from "@flanksource-ui/ui/Tags/TagsFilterCell";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
-import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
 import { Status } from "../Status";
 
 type NotificationSendHistorySummaryProps = {
@@ -27,12 +26,7 @@ function ResourceHealthStatusCell({
   }
 
   const { health, status } = resource;
-  return (
-    <div>
-      <HealthIndicator health={health} />
-      <span className="ml-2">{status || "Unknown"}</span>
-    </div>
-  );
+  return <Status status={health} statusText={status || "Unknown"} />;
 }
 
 const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySummary>[] =
@@ -109,7 +103,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
       maxSize: 250,
       Cell: ({ row }) => {
         return (
-          <div className="flex flex-row gap-1">
+          <div className="flex flex-row flex-wrap items-center gap-1">
             {row.original.sent > 0 && (
               <Status
                 status="healthy"

@@ -49,7 +49,7 @@ export function ConfigSummaryHealthCell({
 
   return (
     <div
-      className="flex flex-row gap-1"
+      className="flex flex-row flex-wrap items-center gap-1"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -92,7 +92,7 @@ export function ConfigSummaryHealthAggregateCell({
   }
 
   return (
-    <div className="flex flex-row gap-1">
+    <div className="flex flex-row flex-wrap items-center gap-1">
       {statusItems.map((item) => (
         <Status key={item.key} status={item.key} count={item.count} />
       ))}
