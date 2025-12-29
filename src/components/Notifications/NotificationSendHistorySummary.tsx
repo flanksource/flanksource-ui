@@ -5,15 +5,11 @@ import NotificationDetailsModal from "./NotificationDetailsModal";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { Age } from "@flanksource-ui/ui/Age";
 import NotificationResourceDisplay from "./NotificationResourceDisplay";
-import {
-  Count,
-  CountBar,
-  OrderByColor
-} from "@flanksource-ui/ui/Icons/ChangeCount";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import TagsFilterCell from "@flanksource-ui/ui/Tags/TagsFilterCell";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
+import { Status } from "../Status";
 
 type NotificationSendHistorySummaryProps = {
   data: NotificationSendHistorySummary[];
@@ -110,38 +106,30 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
     {
       header: "Status",
       minSize: 50,
-      maxSize: 100,
+      maxSize: 250,
       Cell: ({ row }) => {
-        const statusLines: Count[] = [];
-
-        if (row.original.sent > 0) {
-          statusLines.push({
-            count: row.original.sent,
-            suffix: "sent",
-            color: "bg-green-500/60",
-            tooltip: "Sent"
-          });
-        }
-
-        if (row.original.error > 0) {
-          statusLines.push({
-            count: row.original.error,
-            suffix: "failed",
-            color: "bg-red-500/50",
-            tooltip: "Error"
-          });
-        }
-
-        if (row.original.suppressed > 0) {
-          statusLines.push({
-            count: row.original.suppressed,
-            suffix: "suppressed",
-            color: "bg-gray-400/80",
-            tooltip: "Suppressed"
-          });
-        }
-
-        return <CountBar items={OrderByColor(statusLines)} barStyle="RAG" />;
+        return (
+          <div className="flex flex-row gap-1">
+            {row.original.sent > 0 && (
+              <Status
+                status="healthy"
+                statusText={`${row.original.sent} sent`}
+              />
+            )}
+            {row.original.error > 0 && (
+              <Status
+                status="unhealthy"
+                statusText={`${row.original.error} failed`}
+              />
+            )}
+            {row.original.suppressed > 0 && (
+              <Status
+                status="suppressed"
+                statusText={`${row.original.suppressed} suppressed`}
+              />
+            )}
+          </div>
+        );
       }
     }
   ];

@@ -24,8 +24,15 @@ function getStatusColorConfig(
     };
   }
 
-  // Gray: unknown, suspended
-  if (status === "unknown" || status === "suspended") {
+  // Gray: unknown, suspended, suppressed, silenced, skipped, inhibited
+  if (
+    status === "unknown" ||
+    status === "suspended" ||
+    status === "suppressed" ||
+    status === "silenced" ||
+    status === "skipped" ||
+    status === "inhibited"
+  ) {
     return {
       badge: "bg-gray-100 text-gray-600 dark:bg-gray-400/10 dark:text-gray-300",
       dot: "fill-gray-400"

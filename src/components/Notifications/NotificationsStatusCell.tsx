@@ -1,71 +1,71 @@
 import { NotificationSendHistoryApiResponse } from "@flanksource-ui/api/types/notifications";
+import { Status } from "@flanksource-ui/components/Status";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
-import { FaBellSlash, FaDotCircle } from "react-icons/fa";
 
 export const notificationSendHistoryStatus = {
   sent: {
     label: "Sent",
-    Icon: <FaDotCircle className="fill-green-600" />,
+    status: "healthy",
     value: "sent",
     id: "sent"
   },
   error: {
     label: "Error",
-    Icon: <FaDotCircle className="fill-red-600" />,
+    status: "unhealthy",
     value: "error",
     id: "error"
   },
   sending: {
     label: "Sending",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "unknown",
     value: "sending",
     id: "sending"
   },
   pending: {
     label: "Pending",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "unknown",
     value: "pending",
     id: "pending"
   },
   pending_playbook_run: {
     label: "Pending Playbook Run",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "unknown",
     value: "pending_playbook_run",
     id: "pending_playbook_run"
   },
   pending_playbook_completion: {
     label: "Playbook In Progress",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "unknown",
     value: "pending_playbook_completion",
     id: "pending_playbook_completion"
   },
   "evaluating-waitfor": {
     label: "Evaluating WaitFor",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "unknown",
     value: "evaluating-waitfor",
     id: "evaluating-waitfor"
   },
   "repeat-interval": {
     label: "Repeated",
-    Icon: <FaBellSlash className="fill-gray-600" />,
+    status: "suppressed",
     value: "repeat-interval",
     id: "repeat-interval"
   },
   silenced: {
     label: "Silenced",
-    Icon: <FaBellSlash className="fill-gray-600" />,
+    status: "suppressed",
     value: "silenced",
     id: "silenced"
   },
   skipped: {
     label: "Skipped",
-    Icon: <FaBellSlash className="fill-gray-600" />,
+    status: "suppressed",
     value: "skipped",
     id: "skipped"
   },
   inhibited: {
     label: "Inhibited",
-    Icon: <FaDotCircle className="fill-gray-600" />,
+    status: "suppressed",
     value: "inhibited",
     id: "inhibited"
   }
@@ -90,9 +90,6 @@ export function NotificationStatusCell({
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      {statusConfig.Icon}
-      <span>{statusConfig.label}</span>
-    </div>
+    <Status status={statusConfig.status} statusText={statusConfig.label} />
   );
 }
