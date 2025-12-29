@@ -1,48 +1,59 @@
 import { RegisteredUser } from "@flanksource-ui/api/types/users";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { Age } from "@flanksource-ui/ui/Age";
-import { DataTable } from "@flanksource-ui/ui/DataTable";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import { ColumnDef, sortingFns } from "@tanstack/react-table";
-import { CellContext } from "@tanstack/table-core";
+import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import clsx from "clsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BiSolidEdit } from "react-icons/bi";
 import { BsTrash } from "react-icons/bs";
 import { IconButton } from "../../ui/Buttons/IconButton";
 import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 
-const DateCell = ({ getValue }: CellContext<RegisteredUser, any>) => (
-  <Age from={getValue<string>()} />
-);
-
-const userListColumns: ColumnDef<RegisteredUser>[] = [
+const userListColumns: MRT_ColumnDef<RegisteredUser>[] = [
   {
     header: "Name",
-    accessorKey: "name"
+    accessorKey: "name",
+    enableSorting: true
   },
   {
     header: "Email",
-    accessorKey: "email"
+    accessorKey: "email",
+    enableSorting: true
   },
   {
     header: "Roles",
     accessorKey: "roles",
-    size: 50
+    enableSorting: false,
+    Cell: ({ row }) => {
+      const roles = row.getValue<string[] | string | undefined>("roles");
+      if (Array.isArray(roles)) {
+        return roles.length > 0 ? roles.join(", ") : "-";
+      }
+      return roles || "-";
+    }
   },
   {
     header: "State",
     accessorKey: "state",
-    size: 50
+    enableSorting: true
+  },
+  {
+    header: "Last Login",
+    accessorKey: "last_login",
+    Cell: MRTDateCell,
+    sortingFn: "datetime",
+    enableSorting: true
   },
   {
     header: "Created At",
     accessorKey: "created_at",
-    cell: DateCell,
-    sortingFn: sortingFns.datetime,
-    size: 80
+    Cell: MRTDateCell,
+    sortingFn: "datetime",
+    enableSorting: true
   }
 ];
 
@@ -56,10 +67,11 @@ const getColumns = (
       ...userListColumns,
       {
         header: "Actions",
-        accessorKey: "actions",
-        Aggregated: "",
+        id: "actions",
+        enableSorting: false,
+        enableColumnActions: false,
         size: 50,
-        cell: ({ row }: any) => {
+        Cell: ({ row }: { row: MRT_Row<RegisteredUser> }) => {
           const userId = row.original?.id;
           return (
             <ActionMenu
@@ -179,7 +191,6 @@ export function UserList({
 }: UserListProps) {
   const { hasResourceAccess, roles } = useUserAccessStateContext();
   const [canDeleteUser, setCanDeleteUser] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     (async () => {
@@ -193,21 +204,12 @@ export function UserList({
   }, [canDeleteUser, deleteUser, editUser]);
 
   return (
-    <div className={clsx(className)} {...rest} ref={containerRef}>
-      <DataTable
-        stickyHead
-        handleRowClick={(row) => editUser(row.original)}
+    <div className={clsx("min-h-0 flex-1", className)} {...rest}>
+      <MRTDataTable
         columns={columns}
         data={data}
-        tableStyle={{ borderSpacing: "0" }}
         isLoading={isLoading}
-        style={{
-          height: `calc(100vh - ${
-            containerRef.current?.getBoundingClientRect()?.top ?? 0
-          }px)`
-        }}
-        preferencesKey="user-list"
-        savePreferences={false}
+        onRowClick={(row) => editUser(row)}
       />
     </div>
   );

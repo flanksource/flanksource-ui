@@ -53,30 +53,7 @@ export const fetchPeopleWithRoles = (roles?: string[]) => {
 
 export const getRegisteredUsers = () =>
   resolvePostGrestRequestWithPagination<RegisteredUser[]>(
-    IncidentCommander.get(`/identities`).then(async (res) => {
-      const { data: peopleRoles } = await fetchPeopleRoles(
-        res.data.map((item: { id: string }) => item.id)
-      );
-      const data = res.data.map((item: RegisteredUser) => {
-        return {
-          ...item,
-          created_at: item.created_at,
-          state_changed_at: new Date(item.state_changed_at),
-          updated_at: item.updated_at,
-          name: `${item.traits?.name?.first ?? ""} ${
-            item.traits?.name?.last ?? ""
-          }`,
-          email: item.traits.email,
-          roles:
-            peopleRoles?.find((peopleRoles) => peopleRoles.id === item.id)
-              ?.roles ?? []
-        };
-      });
-      return {
-        ...res,
-        data
-      };
-    })
+    IncidentCommander.get(`/users`)
   );
 
 export type InviteUserPayload = {
