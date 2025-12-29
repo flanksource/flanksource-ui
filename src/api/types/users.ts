@@ -1,4 +1,4 @@
-import { Avatar, CreatedAt, Timestamped, UpdatedAt } from "../traits";
+import { Avatar, CreatedAt, Timestamped } from "../traits";
 
 export interface NewUser {
   name: string;
