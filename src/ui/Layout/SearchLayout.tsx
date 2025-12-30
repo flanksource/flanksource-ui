@@ -12,6 +12,8 @@ import { UserProfileDropdown } from "../../components/Users/UserProfile";
 import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
 import PreferencePopOver from "./Preference";
 import { AiFeatureLoaderProvider, useAiFeatureLoader } from "./AiFeatureLoader";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { features } from "../../services/permissions/features";
 
 // Lazy load AI chat components to avoid bundling AI SDK until first use
 const LazyAiChatProvider = lazy(() =>
@@ -48,6 +50,8 @@ function SearchLayoutInner({
   const [topologyCardSize, setTopologyCardSize] = useAtom(cardPreferenceAtom);
   const { requestAiFeatures, aiLoaded } = useAiFeatureLoader();
   const [shouldAutoOpen, setShouldAutoOpen] = useState(false);
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+  const isAiDisabled = isFeatureDisabled(features.ai);
 
   const handleAiButtonClick = () => {
     if (!aiLoaded) {
@@ -82,31 +86,35 @@ function SearchLayoutInner({
             </div>
 
             <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
-              {aiLoaded ? (
-                <Suspense
-                  fallback={
-                    <button
-                      type="button"
-                      className="flex h-full w-8 items-center justify-center text-gray-400"
-                      disabled
-                    >
-                      <Sparkles className="h-4 w-4 animate-pulse" aria-hidden />
-                    </button>
-                  }
-                >
-                  <LazyAiChatButton shouldAutoOpen={shouldAutoOpen} />
-                </Suspense>
-              ) : (
-                <button
-                  type="button"
-                  className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
-                  title="AI Chat"
-                  onClick={handleAiButtonClick}
-                >
-                  <Sparkles className="h-4 w-4" aria-hidden />
-                  <span className="sr-only">AI Chat</span>
-                </button>
-              )}
+              {!isAiDisabled &&
+                (aiLoaded ? (
+                  <Suspense
+                    fallback={
+                      <button
+                        type="button"
+                        className="flex h-full w-8 items-center justify-center text-gray-400"
+                        disabled
+                      >
+                        <Sparkles
+                          className="h-4 w-4 animate-pulse"
+                          aria-hidden
+                        />
+                      </button>
+                    }
+                  >
+                    <LazyAiChatButton shouldAutoOpen={shouldAutoOpen} />
+                  </Suspense>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
+                    title="AI Chat"
+                    onClick={handleAiButtonClick}
+                  >
+                    <Sparkles className="h-4 w-4" aria-hidden />
+                    <span className="sr-only">AI Chat</span>
+                  </button>
+                ))}
               <Link
                 to={{
                   pathname: "/notifications"
@@ -137,7 +145,7 @@ function SearchLayoutInner({
   );
 
   // Wrap everything in the AI provider when loaded so SendToAiButton can access context
-  if (aiLoaded) {
+  if (aiLoaded && !isAiDisabled) {
     return (
       <Suspense fallback={content}>
         <LazyAiChatProvider>{content}</LazyAiChatProvider>

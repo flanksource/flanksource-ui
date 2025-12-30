@@ -15,6 +15,8 @@ import {
 } from "react";
 import { useParams } from "react-router-dom";
 import { AiFeatureRequest } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
+import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
+import { features } from "@flanksource-ui/services/permissions/features";
 
 // Lazy load AI button to avoid bundling AI SDK until needed
 const LazySendToAiButton = lazy(() =>
@@ -33,6 +35,8 @@ export function ConfigDetailsPage() {
     data: configDetails,
     refetch
   } = useGetConfigByIdQuery(id!);
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+  const isAiDisabled = isFeatureDisabled(features.ai);
 
   useEffect(() => {
     if (!configDetails?.config) {
@@ -96,20 +100,22 @@ export function ConfigDetailsPage() {
       activeTabName="Spec"
       className=""
       extra={
-        <AiFeatureRequest>
-          <Suspense
-            fallback={
-              <Button size="sm" variant="outline" disabled>
-                <Sparkles className="h-4 w-4 animate-pulse" />
-              </Button>
-            }
-          >
-            <LazySendToAiButton
-              configId={configDetails?.id}
-              isLoading={isLoading}
-            />
-          </Suspense>
-        </AiFeatureRequest>
+        isAiDisabled ? null : (
+          <AiFeatureRequest>
+            <Suspense
+              fallback={
+                <Button size="sm" variant="outline" disabled>
+                  <Sparkles className="h-4 w-4 animate-pulse" />
+                </Button>
+              }
+            >
+              <LazySendToAiButton
+                configId={configDetails?.id}
+                isLoading={isLoading}
+              />
+            </Suspense>
+          </AiFeatureRequest>
+        )
       }
     >
       <div className="relative flex min-h-0 flex-1 flex-col">
