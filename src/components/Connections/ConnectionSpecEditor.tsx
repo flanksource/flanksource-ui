@@ -6,6 +6,7 @@ import { FaSpinner, FaTrash } from "react-icons/fa";
 import { Button } from "../../ui/Buttons/Button";
 import { FormikCodeEditor } from "../Forms/Formik/FormikCodeEditor";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
+import CanEditResource from "../Settings/CanEditResource";
 import { Connection } from "./ConnectionFormModal";
 import { TestConnection } from "./TestConnection";
 
@@ -49,6 +50,8 @@ export default function ConnectionSpecEditor({
     return null;
   }
 
+  const isReadOnly = formValue?.source === "KubernetesCRD";
+
   return (
     <Formik
       initialValues={
@@ -62,12 +65,25 @@ export default function ConnectionSpecEditor({
         <Form className="flex flex-1 flex-col overflow-y-auto">
           <div
             className={clsx(
-              "my-2 flex flex-1 flex-col overflow-y-auto",
+              "my-2 flex min-h-0 flex-1 flex-col overflow-y-auto",
               className
             )}
             {...props}
           >
-            <FormikCodeEditor fieldName="values" />
+            {isReadOnly && (
+              <div className="mb-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                <p className="font-medium">
+                  Read-Only Mode: This resource is managed by Kubernetes CRD and
+                  cannot be edited from the UI.
+                </p>
+              </div>
+            )}
+            <FormikCodeEditor
+              fieldName="values"
+              className="flex min-h-0 flex-1 flex-col"
+              height="100%"
+              disabled={isReadOnly}
+            />
           </div>
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
             {formValue?.id && (
@@ -75,12 +91,22 @@ export default function ConnectionSpecEditor({
                 resource={tables.connections}
                 action="write"
               >
-                <Button
-                  text="Delete"
-                  icon={<FaTrash />}
-                  onClick={handleDelete}
-                  className="btn-danger"
-                />
+                <CanEditResource
+                  id={formValue?.id}
+                  namespace={formValue?.namespace}
+                  name={formValue?.name}
+                  resourceType={"connections"}
+                  source={formValue?.source}
+                  hideSourceLink
+                  className="flex flex-row gap-2"
+                >
+                  <Button
+                    text="Delete"
+                    icon={<FaTrash />}
+                    onClick={handleDelete}
+                    className="btn-danger"
+                  />
+                </CanEditResource>
               </AuthorizationAccessCheck>
             )}
             {!formValue?.id && (
@@ -98,16 +124,25 @@ export default function ConnectionSpecEditor({
                 resource={tables.connections}
                 action="write"
               >
-                <Button
-                  type="submit"
-                  icon={
-                    isSubmitting ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  text={Boolean(formValue?.id) ? "Update" : "Save"}
-                  className="btn-primary"
-                />
+                <CanEditResource
+                  id={formValue?.id}
+                  namespace={formValue?.namespace}
+                  name={formValue?.name}
+                  resourceType={"connections"}
+                  source={formValue?.source}
+                  className="flex flex-row gap-2"
+                >
+                  <Button
+                    type="submit"
+                    icon={
+                      isSubmitting ? (
+                        <FaSpinner className="animate-spin" />
+                      ) : undefined
+                    }
+                    text={Boolean(formValue?.id) ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                </CanEditResource>
               </AuthorizationAccessCheck>
             </div>
           </div>
