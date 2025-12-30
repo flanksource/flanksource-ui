@@ -16,6 +16,25 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     kind?: "error" | "success";
   }>();
 
+  const formatErrorMessage = (
+    payload: unknown
+  ): React.ReactNode | undefined => {
+    if (payload === undefined || payload === null) {
+      return undefined;
+    }
+    if (typeof payload === "string") {
+      try {
+        const parsed = JSON.parse(payload);
+        return (
+          <JSONViewer code={JSON.stringify(parsed, null, 2)} format="json" />
+        );
+      } catch (e) {
+        return payload;
+      }
+    }
+    return <JSONViewer code={JSON.stringify(payload, null, 2)} format="json" />;
+  };
+
   const { mutate: test, isLoading } = useMutation({
     mutationKey: ["testConnection", connectionId],
     mutationFn: () => {
@@ -35,33 +54,23 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
         error?: string;
       }>
     ) => {
-      if (res?.code === "ERR_BAD_REQUEST") {
-        if (res?.response?.data.error) {
-          try {
-            const error = JSON.parse(res.response.data.error);
-            setMessage({
-              message: (
-                <JSONViewer
-                  code={JSON.stringify(error, null, 2)}
-                  format={"json"}
-                />
-              ),
-              kind: "error"
-            });
-          } catch (e) {
-            setMessage({
-              message: res?.response?.data.error ?? "Connection failed",
-              kind: "error"
-            });
-          }
-          return;
-        }
+      const responseData = res?.response?.data as {
+        error?: string;
+        message?: string;
+      } | null;
+
+      const formattedMessage = formatErrorMessage(
+        responseData?.error ?? responseData?.message ?? responseData
+      );
+
+      if (formattedMessage) {
         setMessage({
-          message: res?.response?.data.error ?? "Testing connection failed!",
+          message: formattedMessage,
           kind: "error"
         });
         return;
       }
+
       if (res?.code === "ERR_NOT_IMPLEMENTED") {
         setMessage({
           message: "We currently do not support testing this connection type",
@@ -69,8 +78,9 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
         });
         return;
       }
+
       setMessage({
-        message: "Testing connection failed!",
+        message: res?.message || "Testing connection failed!",
         kind: "error"
       });
     }
