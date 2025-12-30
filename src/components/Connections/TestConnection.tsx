@@ -1,6 +1,6 @@
 import { testConnection } from "@flanksource-ui/api/services/connections";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { AlertMessageDialog } from "@flanksource-ui/ui/AlertDialog/AlertMessageDialog";
-import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
@@ -16,23 +16,15 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     kind?: "error" | "success";
   }>();
 
-  const formatErrorMessage = (
-    payload: unknown
-  ): React.ReactNode | undefined => {
-    if (payload === undefined || payload === null) {
-      return undefined;
+  const parseMaybeJson = (payload: unknown): unknown => {
+    if (typeof payload !== "string") {
+      return payload;
     }
-    if (typeof payload === "string") {
-      try {
-        const parsed = JSON.parse(payload);
-        return (
-          <JSONViewer code={JSON.stringify(parsed, null, 2)} format="json" />
-        );
-      } catch (e) {
-        return payload;
-      }
+    try {
+      return JSON.parse(payload);
+    } catch (e) {
+      return payload;
     }
-    return <JSONViewer code={JSON.stringify(payload, null, 2)} format="json" />;
   };
 
   const { mutate: test, isLoading } = useMutation({
@@ -52,35 +44,11 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     onError: (
       res: AxiosError<{
         error?: string;
+        message?: string;
       }>
     ) => {
-      const responseData = res?.response?.data as {
-        error?: string;
-        message?: string;
-      } | null;
-
-      const formattedMessage = formatErrorMessage(
-        responseData?.error ?? responseData?.message ?? responseData
-      );
-
-      if (formattedMessage) {
-        setMessage({
-          message: formattedMessage,
-          kind: "error"
-        });
-        return;
-      }
-
-      if (res?.code === "ERR_NOT_IMPLEMENTED") {
-        setMessage({
-          message: "We currently do not support testing this connection type",
-          kind: "error"
-        });
-        return;
-      }
-
       setMessage({
-        message: res?.message || "Testing connection failed!",
+        message: <ErrorViewer error={res} />,
         kind: "error"
       });
     }
