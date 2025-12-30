@@ -241,6 +241,10 @@ const ConfigScrapersPage = dynamic(
   () => import("@flanksource-ui/pages/config/settings/ConfigScrapersPage")
 );
 
+const ConfigPluginsPage = dynamic(
+  () => import("@flanksource-ui/pages/config/settings/ConfigPluginsPage")
+);
+
 const EditIntegrationPage = dynamic(
   () => import("./components/Integrations/EditIntegrationPage")
 );
@@ -923,6 +927,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             )}
           />
         </Route>
+        <Route
+          path="plugins"
+          element={withAuthorizationAccessCheck(
+            <ConfigPluginsPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
         <Route path=":id">
           <Route
             index
