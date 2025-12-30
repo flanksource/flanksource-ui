@@ -125,13 +125,6 @@ export function Status({
       <span
         className={`inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-xs ${colorConfig.badge} ${className}`}
       >
-        <svg
-          viewBox="0 0 6 6"
-          aria-hidden="true"
-          className={`size-1.5 ${colorConfig.dot}`}
-        >
-          <circle r={3} cx={3} cy={3} />
-        </svg>
         <span>{count}</span>
       </span>
     );
@@ -141,13 +134,6 @@ export function Status({
     <span
       className={`inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-xs ${colorConfig.badge} ${className}`}
     >
-      <svg
-        viewBox="0 0 6 6"
-        aria-hidden="true"
-        className={`size-1.5 ${colorConfig.dot}`}
-      >
-        <circle r={3} cx={3} cy={3} />
-      </svg>
       {!hideText && <span className="capitalize">{statusText ?? status}</span>}
     </span>
   );
