@@ -1,6 +1,6 @@
 import { testConnection } from "@flanksource-ui/api/services/connections";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { AlertMessageDialog } from "@flanksource-ui/ui/AlertDialog/AlertMessageDialog";
-import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
@@ -15,6 +15,17 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     message?: React.ReactNode;
     kind?: "error" | "success";
   }>();
+
+  const parseMaybeJson = (payload: unknown): unknown => {
+    if (typeof payload !== "string") {
+      return payload;
+    }
+    try {
+      return JSON.parse(payload);
+    } catch (e) {
+      return payload;
+    }
+  };
 
   const { mutate: test, isLoading } = useMutation({
     mutationKey: ["testConnection", connectionId],
@@ -33,44 +44,11 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     onError: (
       res: AxiosError<{
         error?: string;
+        message?: string;
       }>
     ) => {
-      if (res?.code === "ERR_BAD_REQUEST") {
-        if (res?.response?.data.error) {
-          try {
-            const error = JSON.parse(res.response.data.error);
-            setMessage({
-              message: (
-                <JSONViewer
-                  code={JSON.stringify(error, null, 2)}
-                  format={"json"}
-                />
-              ),
-              kind: "error"
-            });
-          } catch (e) {
-            setMessage({
-              message: res?.response?.data.error ?? "Connection failed",
-              kind: "error"
-            });
-          }
-          return;
-        }
-        setMessage({
-          message: res?.response?.data.error ?? "Testing connection failed!",
-          kind: "error"
-        });
-        return;
-      }
-      if (res?.code === "ERR_NOT_IMPLEMENTED") {
-        setMessage({
-          message: "We currently do not support testing this connection type",
-          kind: "error"
-        });
-        return;
-      }
       setMessage({
-        message: "Testing connection failed!",
+        message: <ErrorViewer error={res} />,
         kind: "error"
       });
     }
