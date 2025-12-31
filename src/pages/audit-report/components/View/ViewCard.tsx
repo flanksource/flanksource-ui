@@ -20,6 +20,7 @@ import { Badge } from "../../../../components/ui/badge";
 import { Separator } from "../../../../components/ui/separator";
 import { formatDisplayLabel } from "./panels/utils";
 import clsx from "clsx";
+import { Status } from "../../../../components/Status";
 
 interface RowAttributes {
   icon?: IconName | "health" | "warning" | "unhealthy" | "unknown";
@@ -376,7 +377,7 @@ const renderCellValue = (
       break;
 
     case "status":
-      cellContent = String(value);
+      cellContent = <Status status={String(value)} />;
       break;
 
     case "gauge":
@@ -459,53 +460,65 @@ const renderCellValue = (
       // Handle icon attribute
       if (attribute.icon) {
         const iconStr = String(attribute.icon);
-        const isBadge =
-          React.isValidElement(cellContent) && cellContent.type === Badge;
+        const isHealthIcon = [
+          "health",
+          "healthy",
+          "unhealthy",
+          "warning",
+          "unknown"
+        ].includes(iconStr);
 
-        let iconElement: React.ReactNode;
-        if (
-          ["health", "healthy", "unhealthy", "warning", "unknown"].includes(
-            iconStr
-          )
-        ) {
-          const iconColor =
-            iconStr === "healthy"
-              ? "bg-green-500"
-              : iconStr === "warning"
-                ? "bg-yellow-500"
-                : iconStr === "unhealthy"
-                  ? "bg-red-500"
-                  : "bg-gray-400";
-          iconElement = (
-            <span className={`h-2 w-2 rounded-full ${iconColor}`} />
-          );
+        // Skip adding health icon for status columns since Status component already has the dot
+        if (isHealthIcon && column.type === "status") {
+          // Status component already handles the colored dot, skip adding another
         } else {
-          iconElement = (
-            <Icon
-              name={attribute.icon}
-              className="h-4 w-4 text-muted-foreground"
-            />
-          );
-        }
+          const isBadge =
+            React.isValidElement(cellContent) && cellContent.type === Badge;
 
-        if (isBadge) {
-          // For badges, inject icon inside the badge
-          cellContent = React.cloneElement(cellContent as React.ReactElement, {
-            children: (
+          let iconElement: React.ReactNode;
+          if (isHealthIcon) {
+            const iconColor =
+              iconStr === "healthy"
+                ? "bg-green-500"
+                : iconStr === "warning"
+                  ? "bg-yellow-500"
+                  : iconStr === "unhealthy"
+                    ? "bg-red-500"
+                    : "bg-gray-400";
+            iconElement = (
+              <span className={`h-2 w-2 rounded-full ${iconColor}`} />
+            );
+          } else {
+            iconElement = (
+              <Icon
+                name={attribute.icon}
+                className="h-4 w-4 text-muted-foreground"
+              />
+            );
+          }
+
+          if (isBadge) {
+            // For badges, inject icon inside the badge
+            cellContent = React.cloneElement(
+              cellContent as React.ReactElement,
+              {
+                children: (
+                  <span className="inline-flex items-center gap-1.5">
+                    {iconElement}
+                    {(cellContent as React.ReactElement).props.children}
+                  </span>
+                )
+              }
+            );
+          } else {
+            // For non-badges, wrap with icon
+            cellContent = (
               <span className="inline-flex items-center gap-1.5">
                 {iconElement}
-                {(cellContent as React.ReactElement).props.children}
+                {cellContent}
               </span>
-            )
-          });
-        } else {
-          // For non-badges, wrap with icon
-          cellContent = (
-            <span className="inline-flex items-center gap-1.5">
-              {iconElement}
-              {cellContent}
-            </span>
-          );
+            );
+          }
         }
       }
 

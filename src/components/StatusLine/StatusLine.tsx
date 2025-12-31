@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Status } from "../Status";
 import { Icon } from "../../ui/Icons/Icon";
-import { Chip } from "../../ui/Tags/Chip";
 
 export type StatusInfo = {
   label: string | number;
@@ -31,6 +31,15 @@ const renderIcon = (icon: string | React.ReactNode) => {
   }
 };
 
+// Map StatusInfo colors to Status status values
+const colorToStatus: Record<StatusInfo["color"], string> = {
+  green: "healthy",
+  red: "unhealthy",
+  orange: "warning",
+  gray: "unknown",
+  yellow: "warning"
+};
+
 const StatusInfoEntry = ({
   statusInfo,
   target
@@ -38,6 +47,8 @@ const StatusInfoEntry = ({
   statusInfo: StatusInfo;
   target?: string;
 }) => {
+  const statusValue = colorToStatus[statusInfo.color];
+
   if (statusInfo.url) {
     return (
       <Link
@@ -47,14 +58,14 @@ const StatusInfoEntry = ({
         target={target || ""}
       >
         {statusInfo.icon && renderIcon(statusInfo.icon)}
-        <Chip text={statusInfo.label} color={statusInfo.color} />
+        <Status status={statusValue} count={statusInfo.label} />
       </Link>
     );
   } else {
     return (
       <span className="inline-flex cursor-pointer space-x-1">
         {statusInfo.icon && renderIcon(statusInfo.icon)}
-        <Chip text={statusInfo.label} color={statusInfo.color} />
+        <Status status={statusValue} count={statusInfo.label} />
       </span>
     );
   }

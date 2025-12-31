@@ -13,6 +13,7 @@ import blockKitToMarkdown, { SlackMessage } from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
 import { useQuery } from "@tanstack/react-query";
+import { Status } from "@flanksource-ui/components/Status";
 
 type NotificationDetailsProps = {
   notification: NotificationSendHistoryApiResponse;
@@ -108,10 +109,10 @@ export default function NotificationDetails({
           <VerticalDescription
             label="Status"
             value={
-              <div className="flex items-center space-x-2">
-                {statusConfig.Icon}
-                <span>{statusConfig.label}</span>
-              </div>
+              <Status
+                status={statusConfig.status}
+                statusText={statusConfig.label}
+              />
             }
           />
         )}

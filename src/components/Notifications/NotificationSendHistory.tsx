@@ -9,10 +9,10 @@ import { NotificationStatusCell } from "./NotificationsStatusCell";
 import NotificationRecipientLink from "./NotificationRecipientLink";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { ConfigItem } from "@flanksource-ui/api/types/configs";
-import { HealthIndicator } from "../Configs/ConfigLink/ConfigLink";
 import { Topology } from "@flanksource-ui/api/types/topology";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { ArrowRightIcon } from "@heroicons/react/solid";
+import { Status } from "../Status";
 
 type NotificationSendHistoryWithSubRows = NotificationSendHistoryApiResponse & {
   subRows?: NotificationSendHistoryApiResponse[];
@@ -64,7 +64,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
     {
       header: "Health/Status",
       Header: () => <span title="Status of the resource">Status</span>,
-      size: 100,
+      size: 150,
       Cell: ({ row }) => {
         const resource = row.original.resource;
         const resourceType = row.original.resource_type;
@@ -78,55 +78,46 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
           row.original.resource.status !== statusAtEvent;
 
         return (
-          <>
+          <div className="flex flex-row items-center gap-1">
             {healthAtEvent && statusAtEvent && isDistinctHealthOrStatus && (
               <>
-                <HealthIndicator health={healthAtEvent} />
-                <span className="ml-2 capitalize">{statusAtEvent}</span>
+                <Status status={healthAtEvent} statusText={statusAtEvent} />
                 <ArrowRightIcon className="mx-1 h-4 w-4 text-gray-500" />
               </>
             )}
 
             {resourceType === "check" && (
-              <>
-                <HealthIndicator health={(resource as HealthCheck).status} />
-                <span className="ml-2 capitalize">
-                  {(resource as HealthCheck).status}
-                </span>
-              </>
+              <Status
+                status={(resource as HealthCheck).status}
+                statusText={(resource as HealthCheck).status}
+              />
             )}
             {resourceType === "config" && (
-              <>
-                <HealthIndicator health={(resource as ConfigItem).health} />
-                <span className="ml-2">
-                  {(resource as ConfigItem).status || "Unknown"}
-                </span>
-              </>
+              <Status
+                status={(resource as ConfigItem).health}
+                statusText={(resource as ConfigItem).status || "Unknown"}
+              />
             )}
             {resourceType === "component" && (
-              <>
-                <HealthIndicator health={(resource as Topology).health} />
-                <span className="ml-2">
-                  {(resource as Topology).status || "Unknown"}
-                </span>
-              </>
+              <Status
+                status={(resource as Topology).health}
+                statusText={(resource as Topology).status || "Unknown"}
+              />
             )}
-          </>
+          </div>
         );
       }
     },
     {
       header: "Notification",
-      size: 60,
+      size: 150,
       Cell: ({ row }) => {
         return (
           <FilterByCellValue
             paramKey={"status"}
             filterValue={row.original.status || ""}
           >
-            <div className="flex items-center gap-2">
-              <NotificationStatusCell row={row} />
-            </div>
+            <NotificationStatusCell row={row} />
           </FilterByCellValue>
         );
       }

@@ -6,12 +6,11 @@ import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import { formatDuration, age } from "@flanksource-ui/utils/date";
 import dayjs from "dayjs";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useState } from "react";
+import { useState, useId } from "react";
 import JobHistoryStatusColumn from "../../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../../JobsHistory/JobsHistoryDetails";
-import { FaDotCircle } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
-import { useId } from "react";
+import { Status } from "../../Status";
 
 export const notificationEvents = [
   // Source: mission-control/api/event.go
@@ -150,11 +149,11 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
       Cell: ({ row }) => {
         const error = row.original.error;
         return (
-          <div className="flex items-center gap-2" title={error || undefined}>
-            <FaDotCircle
-              className={error ? "text-red-500" : "text-green-500"}
+          <div title={error || undefined}>
+            <Status
+              status={error ? "unhealthy" : "healthy"}
+              statusText={error ? "Paused" : "Active"}
             />
-            <span>{error ? "Paused" : "Active"}</span>
           </div>
         );
       }
@@ -162,7 +161,7 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
     {
       header: "Sent / Failed / Pending",
       id: "sent_failed_pending",
-      size: 150,
+      size: 200,
       Cell: ({ row }) => {
         const sent = row.original.sent ?? 0;
         const failed = row.original.failed ?? 0;
@@ -176,30 +175,24 @@ export const notificationsRulesTableColumns: MRT_ColumnDef<NotificationRules>[] 
           : mostCommonError;
 
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-row flex-wrap items-center gap-1">
             {sent > 0 && (
-              <span className="rounded bg-green-500/60 px-2 py-1 text-xs text-black">
-                {sent}
-              </span>
+              <Status status="healthy" statusText={`Sent: ${sent}`} />
             )}
             {failed > 0 && (
-              <>
-                <span
-                  className="rounded bg-red-500/50 px-2 py-1 text-xs text-black"
-                  data-tooltip-id={tooltipId}
-                  data-tooltip-content={tooltipContent}
-                >
-                  {failed}
-                </span>
+              <div
+                className="inline-flex"
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={tooltipContent}
+              >
+                <Status status="unhealthy" statusText={`Failed: ${failed}`} />
                 {tooltipContent && (
                   <Tooltip id={tooltipId} className="z-[999999]" />
                 )}
-              </>
+              </div>
             )}
             {pending > 0 && (
-              <span className="rounded bg-orange-400/60 px-2 py-1 text-xs text-black">
-                {pending}
-              </span>
+              <Status status="warning" statusText={`Pending: ${pending}`} />
             )}
           </div>
         );

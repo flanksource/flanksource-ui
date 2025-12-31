@@ -39,7 +39,7 @@
 }
 
 .status-badge {
-  @apply rounded-full px-2 py-0.5 text-xs font-medium;
+  @apply rounded-full px-2 py-0.5 text-xs;
 }
 
 /* PDF Export Styles */

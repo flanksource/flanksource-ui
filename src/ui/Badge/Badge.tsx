@@ -40,7 +40,7 @@ export function Badge({
   return (
     <>
       <span
-        className={`${className} ${spanClassName} inline items-center ${roundedClass} font-medium ${colorClass}`}
+        className={`${className} ${spanClassName} inline items-center ${roundedClass} ${colorClass}`}
         title={title}
         {...props}
       >

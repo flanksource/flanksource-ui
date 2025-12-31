@@ -19,9 +19,9 @@ type CheckStatusProps = {
 
 export function CanaryStatus({ status, className }: CheckStatusProps) {
   if (status.mixed) {
-    return <Status mixed={status.mixed} className={className} />;
+    return <Status mixed={status.mixed} className={className} variant="dot" />;
   }
-  return <Status good={status.status} className={className} />;
+  return <Status good={status.status} className={className} variant="dot" />;
 }
 
 export function toFormattedDuration(ms: number) {
