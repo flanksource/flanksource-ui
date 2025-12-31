@@ -51,29 +51,53 @@ export const fetchPeopleWithRoles = (roles?: string[]) => {
   );
 };
 
+export const getPeopleLastLogin = (personIds: string[]) => {
+  if (personIds.length === 0) {
+    return Promise.resolve({
+      data: [] as { id: string; last_login?: string | Date }[]
+    });
+  }
+
+  return resolvePostGrestRequestWithPagination<
+    { id: string; last_login?: string | Date }[]
+  >(
+    IncidentCommander.get(
+      `/people?id=in.(${personIds.join(",")})&select=id,last_login`
+    )
+  );
+};
+
 export const getRegisteredUsers = () =>
   resolvePostGrestRequestWithPagination<RegisteredUser[]>(
-    IncidentCommander.get(`/identities`).then(async (res) => {
-      const { data: peopleRoles } = await fetchPeopleRoles(
-        res.data.map((item: { id: string }) => item.id)
+    IncidentCommander.get(`/identities`).then(async (identitiesRes) => {
+      const ids = identitiesRes.data.map((item: { id: string }) => item.id);
+      const [peopleRes, { data: peopleRoles }] = await Promise.all([
+        getPeopleLastLogin(ids),
+        ids.length > 0 ? fetchPeopleRoles(ids) : Promise.resolve({ data: [] })
+      ]);
+      const peopleById = new Map(
+        (peopleRes.data as { id: string; last_login?: string | Date }[]).map(
+          (person) => [person.id, person]
+        )
       );
-      const data = res.data.map((item: RegisteredUser) => {
+      const data = identitiesRes.data.map((item: RegisteredUser) => {
+        const person = peopleById.get(item.id);
+
         return {
           ...item,
           created_at: item.created_at,
-          state_changed_at: new Date(item.state_changed_at),
-          updated_at: item.updated_at,
           name: `${item.traits?.name?.first ?? ""} ${
             item.traits?.name?.last ?? ""
           }`,
           email: item.traits.email,
+          last_login: person?.last_login,
           roles:
-            peopleRoles?.find((peopleRoles) => peopleRoles.id === item.id)
+            peopleRoles?.find((peopleRole) => peopleRole.id === item.id)
               ?.roles ?? []
         };
       });
       return {
-        ...res,
+        ...identitiesRes,
         data
       };
     })

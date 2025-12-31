@@ -1,4 +1,4 @@
-import { Avatar, CreatedAt, Timestamped, UpdatedAt } from "../traits";
+import { Avatar, CreatedAt, Timestamped } from "../traits";
 
 export interface NewUser {
   name: string;
@@ -7,11 +7,9 @@ export interface NewUser {
   roles?: string;
 }
 
-export interface RegisteredUser extends CreatedAt, UpdatedAt {
+export interface RegisteredUser extends CreatedAt {
   id: string;
-  nid: string;
   state: string;
-  state_changed_at: string | Date;
   name: string;
   email: string;
   traits: {
@@ -22,6 +20,7 @@ export interface RegisteredUser extends CreatedAt, UpdatedAt {
     email: string;
   };
   roles?: string[];
+  last_login?: string | Date;
 }
 
 export type PeopleRoles = {

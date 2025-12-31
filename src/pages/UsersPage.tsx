@@ -98,7 +98,7 @@ export function UsersPage() {
         loading={isLoading || updatingUser}
       >
         <div
-          className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col p-6 pb-0"
+          className="flex h-full flex-1 flex-col p-6 pb-0"
           ref={containerRef}
         >
           <div className="flex justify-end">
