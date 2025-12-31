@@ -3,8 +3,27 @@ import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDeta
 import { usePartialUpdateSearchParams } from "@flanksource-ui/hooks/usePartialUpdateSearchParams";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Loading } from "@flanksource-ui/ui/Loading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button } from "@flanksource-ui/components/ui/button";
+import { Sparkles } from "lucide-react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import { useParams } from "react-router-dom";
+import { AiFeatureRequest } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
+import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
+import { features } from "@flanksource-ui/services/permissions/features";
+
+// Lazy load AI button to avoid bundling AI SDK until needed
+const LazySendToAiButton = lazy(() =>
+  import("./SendToAiButton").then((module) => ({
+    default: module.SendToAiButton
+  }))
+);
 
 export function ConfigDetailsPage() {
   const { id } = useParams();
@@ -16,6 +35,8 @@ export function ConfigDetailsPage() {
     data: configDetails,
     refetch
   } = useGetConfigByIdQuery(id!);
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+  const isAiDisabled = isFeatureDisabled(features.ai);
 
   useEffect(() => {
     if (!configDetails?.config) {
@@ -78,6 +99,24 @@ export function ConfigDetailsPage() {
       refetch={refetch}
       activeTabName="Spec"
       className=""
+      extra={
+        isAiDisabled ? null : (
+          <AiFeatureRequest>
+            <Suspense
+              fallback={
+                <Button size="sm" variant="outline" disabled>
+                  <Sparkles className="h-4 w-4 animate-pulse" />
+                </Button>
+              }
+            >
+              <LazySendToAiButton
+                configId={configDetails?.id}
+                isLoading={isLoading}
+              />
+            </Suspense>
+          </AiFeatureRequest>
+        )
+      }
     >
       <div className="relative flex min-h-0 flex-1 flex-col">
         {!isLoading ? (

@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import useDetermineAuthSystem, {
   isClerkSatellite
 } from "../src/components/Authentication/useDetermineAuthSystem";
+import { AiChatPopoverProvider } from "../src/components/ai/AiChatPopover";
 import { queryClient } from "../src/query-client";
 import "./global.css";
 
@@ -11,6 +12,12 @@ const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL;
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const authProvider = useDetermineAuthSystem();
+
+  const appContent = (
+    <AiChatPopoverProvider>
+      <Component {...pageProps} />
+    </AiChatPopoverProvider>
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -27,10 +34,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             {...(isClerkSatellite ? { signInUrl } : {})}
             {...pageProps}
           >
-            <Component {...pageProps} />
+            {appContent}
           </ClerkProvider>
         ) : (
-          <Component {...pageProps} />
+          appContent
         )}
       </div>
     </QueryClientProvider>

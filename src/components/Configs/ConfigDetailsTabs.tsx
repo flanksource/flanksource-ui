@@ -26,6 +26,7 @@ type ConfigDetailsTabsProps = {
     | "Checks"
     | string; // Views
   className?: string;
+  extra?: ReactNode;
 };
 
 export function ConfigDetailsTabs({
@@ -34,7 +35,8 @@ export function ConfigDetailsTabs({
   isLoading = false,
   pageTitlePrefix,
   activeTabName = "Spec",
-  className = "p-2"
+  className = "p-2",
+  extra
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
 
@@ -68,6 +70,7 @@ export function ConfigDetailsTabs({
           refetch();
         }}
         loading={isLoading}
+        extra={extra}
         contentClass="p-0 flex flex-1"
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-y-hidden">
