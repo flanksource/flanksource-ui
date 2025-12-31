@@ -214,7 +214,6 @@
     "@storybook/cli": "^7.6.17",
     "@storybook/nextjs": "^7.6.17",
     "@storybook/node-logger": "^7.6.17",
-    "@storybook/preset-create-react-app": "^7.6.17",
     "@storybook/react": "^7.6.17",
     "@storybook/testing-library": "^0.2.2",
     "@types/d3-scale": "^4.0.2",
