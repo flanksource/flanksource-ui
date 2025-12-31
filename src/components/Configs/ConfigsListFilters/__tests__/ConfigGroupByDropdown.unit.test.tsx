@@ -1,33 +1,31 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import ConfigGroupByDropdown from "../ConfigGroupByDropdown";
 
 const server = setupServer(
-  rest.get("/api/db/config_tags", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          key: "tag1",
-          value: "value1"
-        },
-        {
-          key: "tag2",
-          value: "value2"
-        },
-        {
-          key: "tag3",
-          value: "value3"
-        },
-        {
-          key: "tag4",
-          value: "value4"
-        }
-      ])
-    );
+  http.get("/api/db/config_tags", () => {
+    return HttpResponse.json([
+      {
+        key: "tag1",
+        value: "value1"
+      },
+      {
+        key: "tag2",
+        value: "value2"
+      },
+      {
+        key: "tag3",
+        value: "value3"
+      },
+      {
+        key: "tag4",
+        value: "value4"
+      }
+    ]);
   })
 );
 

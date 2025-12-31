@@ -3,42 +3,37 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import AgentForm from "./../AddAgentForm";
 
 const server = setupServer(
-  rest.post("/api/agent/generate", (req, res, ctx) => {
-    // @ts-ignore
-    return res(ctx.status(201), ctx.json({ id: "123", ...req.body }));
+  http.post("/api/agent/generate", async ({ request }) => {
+    const body = await request.json();
+    return HttpResponse.json({ id: "123", ...body }, { status: 201 });
   }),
-  rest.patch("/api/db/agents", (req, res, ctx) => {
-    // @ts-ignore
-    return res(ctx.status(200), ctx.json({ ...req.body }));
+  http.patch("/api/db/agents", async ({ request }) => {
+    const body = await request.json();
+    return HttpResponse.json({ ...body }, { status: 200 });
   }),
-  rest.get("/api/db/agents_summary", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          id: "123",
-          name: "Test Agent",
-          properties: {}
-        }
-      ])
-    );
+  http.get("/api/db/agents_summary", () => {
+    return HttpResponse.json([
+      {
+        id: "123",
+        name: "Test Agent",
+        properties: {}
+      }
+    ]);
   }),
-  rest.get("/api/db/people_roles", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-          name: "Admin",
-          email: "admin@local",
-          roles: ["admin"]
-        }
-      ])
-    );
+  http.get("/api/db/people_roles", () => {
+    return HttpResponse.json([
+      {
+        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+        name: "Admin",
+        email: "admin@local",
+        roles: ["admin"]
+      }
+    ]);
   })
 );
 

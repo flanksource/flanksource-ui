@@ -3,7 +3,7 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { RunnablePlaybook } from "../../../../../api/types/playbooks";
 import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
@@ -45,23 +45,21 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 
 // Define a mock server to handle PATCH requests
 const server = setupServer(
-  rest.get("/api/playbook/list", (req, res, ctx) => {
-    return res(ctx.json(playbooks));
+  http.get("/api/playbook/list", () => {
+    return HttpResponse.json(playbooks);
   }),
-  rest.get("/api/db/playbooks", (req, res, ctx) => {
-    return res(ctx.json(playbooks));
+  http.get("/api/db/playbooks", () => {
+    return HttpResponse.json(playbooks);
   }),
-  rest.get("/api/db/people_roles", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-          name: "Admin",
-          email: "admin@local",
-          roles: ["admin"]
-        }
-      ])
-    );
+  http.get("/api/db/people_roles", () => {
+    return HttpResponse.json([
+      {
+        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+        name: "Admin",
+        email: "admin@local",
+        roles: ["admin"]
+      }
+    ]);
   })
 );
 

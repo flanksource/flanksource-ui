@@ -3,7 +3,7 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import { PlaybookSpec } from "../../../../api/types/playbooks";
@@ -56,32 +56,28 @@ const mockPlaybook: PlaybookSpec = {
 const client = new QueryClient();
 
 const server = setupServer(
-  rest.get("/api/db/config_items", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "018848bc-78d6-e952-10b7-974497e71bbd",
-          name: "eksctl-mission-control-demo-cluster-cluster/ControlPlane",
-          type: "AWS::EKS::Cluster",
-          config_class: "KubernetesCluster"
-        }
-      ])
-    );
+  http.get("/api/db/config_items", () => {
+    return HttpResponse.json([
+      {
+        id: "018848bc-78d6-e952-10b7-974497e71bbd",
+        name: "eksctl-mission-control-demo-cluster-cluster/ControlPlane",
+        type: "AWS::EKS::Cluster",
+        config_class: "KubernetesCluster"
+      }
+    ]);
   }),
-  rest.get("/api/db/playbooks", (req, res, ctx) => {
-    return res(ctx.json([mockPlaybook]));
+  http.get("/api/db/playbooks", () => {
+    return HttpResponse.json([mockPlaybook]);
   }),
-  rest.get("/api/db/people_roles", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-          name: "Admin",
-          email: "admin@local",
-          roles: ["admin"]
-        }
-      ])
-    );
+  http.get("/api/db/people_roles", () => {
+    return HttpResponse.json([
+      {
+        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+        name: "Admin",
+        email: "admin@local",
+        roles: ["admin"]
+      }
+    ]);
   })
 );
 

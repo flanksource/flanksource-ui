@@ -3,7 +3,7 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import ConnectionFormModal from "../ConnectionFormModal";
 import { ConnectionValueType } from "../connectionTypes";
@@ -15,17 +15,15 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 }));
 
 const server = setupServer(
-  rest.get("/api/db/people_roles", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-          name: "Admin",
-          email: "admin@local",
-          roles: ["admin"]
-        }
-      ])
-    );
+  http.get("/api/db/people_roles", () => {
+    return HttpResponse.json([
+      {
+        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
+        name: "Admin",
+        email: "admin@local",
+        roles: ["admin"]
+      }
+    ]);
   })
 );
 

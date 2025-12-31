@@ -1,31 +1,29 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import { ConfigDetails } from "./../ConfigDetails";
 
 const server = setupServer(
-  rest.get("/api/db/config_detail", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          name: "Test Config",
-          type: "Test Type",
-          created_at: "2022-01-01T00:00:00.000Z",
-          updated_at: "2022-01-02T00:00:00.000Z",
-          scraper: {
-            id: "config_scraper_id",
-            name: "Test Scraper"
-          },
-          labels: {
-            "Tag 1": "Value 1",
-            "Tag 2/Subtag 1": "Value 2",
-            "Tag 2/Subtag 2": "Value 3"
-          }
+  http.get("/api/db/config_detail", () => {
+    return HttpResponse.json([
+      {
+        name: "Test Config",
+        type: "Test Type",
+        created_at: "2022-01-01T00:00:00.000Z",
+        updated_at: "2022-01-02T00:00:00.000Z",
+        scraper: {
+          id: "config_scraper_id",
+          name: "Test Scraper"
+        },
+        labels: {
+          "Tag 1": "Value 1",
+          "Tag 2/Subtag 1": "Value 2",
+          "Tag 2/Subtag 2": "Value 3"
         }
-      ])
-    );
+      }
+    ]);
   })
 );
 

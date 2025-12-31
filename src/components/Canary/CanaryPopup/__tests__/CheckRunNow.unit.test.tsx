@@ -3,22 +3,20 @@ import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import CheckRunNow from "../CheckRunNow";
 
 const queryClient = new QueryClient();
 
 const handlers = [
-  rest.post("/api/canary/run/check/*", (req, res, ctx) => {
-    return res(
-      ctx.json({
-        total: 10,
-        success: 7,
-        failed: 3,
-        errors: []
-      })
-    );
+  http.post("/api/canary/run/check/*", () => {
+    return HttpResponse.json({
+      total: 10,
+      success: 7,
+      failed: 3,
+      errors: []
+    });
   })
 ];
 

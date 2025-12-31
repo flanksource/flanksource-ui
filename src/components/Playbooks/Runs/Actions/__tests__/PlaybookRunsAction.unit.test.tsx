@@ -4,7 +4,7 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import PlaybookRunsActions from "./../PlaybookRunsActions";
@@ -22,8 +22,8 @@ const mockAction: PlaybookRunAction = {
 };
 
 const server = setupServer(
-  rest.get("/api/db/playbook_run_actions", (req, res, ctx) => {
-    return res(ctx.json([mockAction]));
+  http.get("/api/db/playbook_run_actions", () => {
+    return HttpResponse.json([mockAction]);
   })
 );
 

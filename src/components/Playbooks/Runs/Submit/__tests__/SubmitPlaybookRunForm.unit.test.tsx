@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import {
   PlaybookSpec,
@@ -44,25 +44,23 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 
 // Define a mock server to handle PATCH requests
 const server = setupServer(
-  rest.post("/api/playbook/run", (req, res, ctx) => {
-    return res(ctx.json(playbook));
+  http.post("/api/playbook/run", () => {
+    return HttpResponse.json(playbook);
   }),
-  rest.get("/api/db/playbooks", (req, res, ctx) => {
-    return res(ctx.json(playbook));
+  http.get("/api/db/playbooks", () => {
+    return HttpResponse.json(playbook);
   }),
-  rest.post("/api/playbook/:id/params", (req, res, ctx) => {
-    return res(
-      ctx.json({
-        params: [
-          {
-            label: "Label",
-            name: "name",
-            type: "text",
-            default: "default"
-          }
-        ]
-      })
-    );
+  http.post("/api/playbook/:id/params", () => {
+    return HttpResponse.json({
+      params: [
+        {
+          label: "Label",
+          name: "name",
+          type: "text",
+          default: "default"
+        }
+      ]
+    });
   })
 );
 
