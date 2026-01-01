@@ -96,7 +96,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
   }, [refetch, refetchTrigger]);
 
   const uptimeValue = toFixedIfNecessary(
-    getUptimePercentage(data)?.toString()!,
+    getUptimePercentage(data ?? undefined)?.toString()!,
     0
   );
 
