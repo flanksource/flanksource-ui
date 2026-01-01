@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import TopologyDetails from "./../TopologyDetails";
 import { Topology } from "../../../../api/types/topology";
@@ -16,8 +16,8 @@ const mockDataComponent = {
 };
 
 const server = setupServer(
-  rest.get("/api/db/components", (req, res, ctx) => {
-    return res(ctx.json([mockDataComponent]));
+  http.get("/api/db/components", () => {
+    return HttpResponse.json([mockDataComponent]);
   })
 );
 

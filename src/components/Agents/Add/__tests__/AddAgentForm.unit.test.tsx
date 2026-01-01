@@ -3,50 +3,47 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
 import AgentForm from "./../AddAgentForm";
+import * as agentsApi from "../../../../api/services/agents";
 
-const server = setupServer(
-  rest.post("/api/agent/generate", (req, res, ctx) => {
-    // @ts-ignore
-    return res(ctx.status(201), ctx.json({ id: "123", ...req.body }));
-  }),
-  rest.patch("/api/db/agents", (req, res, ctx) => {
-    // @ts-ignore
-    return res(ctx.status(200), ctx.json({ ...req.body }));
-  }),
-  rest.get("/api/db/agents_summary", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          id: "123",
-          name: "Test Agent",
-          properties: {}
-        }
-      ])
-    );
-  }),
-  rest.get("/api/db/people_roles", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-          name: "Admin",
-          email: "admin@local",
-          roles: ["admin"]
-        }
-      ])
-    );
-  })
-);
+// Mock the API functions directly
+jest.mock("../../../../api/services/agents", () => ({
+  ...jest.requireActual("../../../../api/services/agents"),
+  addAgent: jest.fn(),
+  updateAgent: jest.fn(),
+  getAgentsSummaryByID: jest.fn()
+}));
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+const mockAgent = {
+  id: "123",
+  name: "Test Agent",
+  properties: {}
+};
 
-const queryClient = new QueryClient({});
+beforeEach(() => {
+  // Mock addAgent to return the input merged with generated data (matching original MSW behavior)
+  (agentsApi.addAgent as jest.Mock).mockImplementation((agent) =>
+    Promise.resolve({
+      id: "123",
+      ...agent
+    })
+  );
+  (agentsApi.updateAgent as jest.Mock).mockResolvedValue(mockAgent);
+  (agentsApi.getAgentsSummaryByID as jest.Mock).mockResolvedValue(mockAgent);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
@@ -61,6 +58,7 @@ describe("AgentForm", () => {
   const agent = { id: "123", name: "Test Agent", properties: {} };
 
   it("renders the form with the correct title and fields", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={FakeUser([Roles.admin])}>
@@ -82,6 +80,7 @@ describe("AgentForm", () => {
   });
 
   it("renders the form with the correct title and fields when editing an agent", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={FakeUser([Roles.admin])}>
@@ -104,6 +103,7 @@ describe("AgentForm", () => {
   });
 
   it("submits the form and calls the addAgent API when creating a new agent", async () => {
+    const queryClient = createQueryClient();
     const agentData = { name: "New Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>
@@ -136,6 +136,7 @@ describe("AgentForm", () => {
   });
 
   it("submits the form and calls the updateAgent API when editing an agent", async () => {
+    const queryClient = createQueryClient();
     const agentData = { name: "Updated Agent", properties: {} };
     render(
       <QueryClientProvider client={queryClient}>

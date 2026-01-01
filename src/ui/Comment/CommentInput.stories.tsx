@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { useState } from "react";
 
 import { CommentInput } from "./index";
@@ -14,26 +14,24 @@ export default {
     actions: { argTypesRegex: "^on.*" },
     msw: {
       handlers: [
-        rest.get("/people", (req, res, ctx) => {
-          return res(
-            ctx.json([
-              {
-                id: "einstein",
-                name: "Albert Einstein",
-                avatar: "https://i.pravatar.cc/150?u=einstein"
-              },
-              {
-                id: "galileo",
-                name: "Galileo Galilei",
-                avatar: null
-              },
-              {
-                id: "issac",
-                name: "Issac Newton",
-                avatar: "https://i.pravatar.cc/150?u=issac"
-              }
-            ])
-          );
+        http.get("/people", () => {
+          return HttpResponse.json([
+            {
+              id: "einstein",
+              name: "Albert Einstein",
+              avatar: "https://i.pravatar.cc/150?u=einstein"
+            },
+            {
+              id: "galileo",
+              name: "Galileo Galilei",
+              avatar: null
+            },
+            {
+              id: "issac",
+              name: "Issac Newton",
+              avatar: "https://i.pravatar.cc/150?u=issac"
+            }
+          ]);
         })
       ]
     }

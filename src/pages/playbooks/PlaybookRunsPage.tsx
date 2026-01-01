@@ -119,7 +119,7 @@ export default function PlaybookRunsPage() {
                 isLoading={isLoading}
                 playbookId={playbookId}
                 setIsEditPlaybookFormOpen={setIsEditPlaybookFormOpen}
-                playbook={playbook}
+                playbook={playbook ?? undefined}
               />
             </div>
             <div className="flex flex-1 flex-col overflow-y-auto">

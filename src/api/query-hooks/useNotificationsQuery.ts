@@ -54,7 +54,10 @@ export function useGetNotificationsByIDQuery(
 ) {
   return useQuery<NotificationRules | undefined, Error>(
     ["notifications", "settings", id],
-    () => getNotificationById(id),
+    async () => {
+      const result = await getNotificationById(id);
+      return result ?? undefined;
+    },
     options
   );
 }

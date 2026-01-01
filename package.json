@@ -214,7 +214,6 @@
     "@storybook/cli": "^7.6.17",
     "@storybook/nextjs": "^7.6.17",
     "@storybook/node-logger": "^7.6.17",
-    "@storybook/preset-create-react-app": "^7.6.17",
     "@storybook/react": "^7.6.17",
     "@storybook/testing-library": "^0.2.2",
     "@types/d3-scale": "^4.0.2",
@@ -238,8 +237,8 @@
     "husky": "^8.0.1",
     "install": "^0.13.0",
     "lint-staged": "^12.4.2",
-    "msw": "^1.2.3",
-    "msw-storybook-addon": "^1.10.0",
+    "msw": "^2.7.0",
+    "msw-storybook-addon": "^2.0.4",
     "next": "^14.2.2",
     "node-html-parser": "^6.1.12",
     "node-static": "^0.7.11",
@@ -257,7 +256,8 @@
     "svgo": "^3.1.0",
     "ts-jest": "^29.0.3",
     "ts-node-dev": "^2.0.0",
-    "webpack": "^5.73.0"
+    "webpack": "^5.73.0",
+    "whatwg-fetch": "^3.6.20"
   },
   "resolutions": {
     "@svgr/webpack": "6.2.1",

@@ -35,7 +35,7 @@ export function useGetPropertyFromDB(featureFlag?: FeatureFlag) {
     queryKey: ["properties", featureFlag],
     queryFn: async () => {
       const res = await fetchProperty(featureFlag!.name, featureFlag!.value);
-      return res.data?.[0] ?? undefined;
+      return res.data?.[0] ?? null;
     },
     enabled: !!featureFlag,
     cacheTime: 0,

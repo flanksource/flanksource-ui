@@ -1,13 +1,19 @@
 import { fireEvent, render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
 import {
   PlaybookSpec,
   RunnablePlaybook
 } from "../../../../../api/types/playbooks";
 import SubmitPlaybookRunForm from "./../SubmitPlaybookRunForm";
+import * as playbooksApi from "../../../../../api/services/playbooks";
+
+// Mock the API functions directly
+jest.mock("../../../../../api/services/playbooks", () => ({
+  ...jest.requireActual("../../../../../api/services/playbooks"),
+  submitPlaybookRun: jest.fn(),
+  getPlaybookParams: jest.fn()
+}));
 
 const playbook: RunnablePlaybook & {
   spec: PlaybookSpec["spec"];
@@ -42,35 +48,32 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn()
 }));
 
-// Define a mock server to handle PATCH requests
-const server = setupServer(
-  rest.post("/api/playbook/run", (req, res, ctx) => {
-    return res(ctx.json(playbook));
-  }),
-  rest.get("/api/db/playbooks", (req, res, ctx) => {
-    return res(ctx.json(playbook));
-  }),
-  rest.post("/api/playbook/:id/params", (req, res, ctx) => {
-    return res(
-      ctx.json({
-        params: [
-          {
-            label: "Label",
-            name: "name",
-            type: "text",
-            default: "default"
-          }
-        ]
-      })
-    );
-  })
-);
+beforeEach(() => {
+  (playbooksApi.submitPlaybookRun as jest.Mock).mockResolvedValue(playbook);
+  (playbooksApi.getPlaybookParams as jest.Mock).mockResolvedValue({
+    params: [
+      {
+        label: "Label",
+        name: "name",
+        type: "text",
+        default: "default"
+      }
+    ]
+  });
+});
 
-const queryClient = new QueryClient();
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
 describe("SubmitPlaybookRunForm", () => {
   const componentId = "component-1";
@@ -78,6 +81,7 @@ describe("SubmitPlaybookRunForm", () => {
   const configId = "config-1";
 
   it("should render the form with the correct initial values", async () => {
+    const queryClient = createQueryClient();
     const closeFn = jest.fn();
 
     render(
@@ -112,6 +116,7 @@ describe("SubmitPlaybookRunForm", () => {
   });
 
   it("should submit the form when the submit button is clicked", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <SubmitPlaybookRunForm

@@ -1,62 +1,77 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { ConfigDetails } from "./../ConfigDetails";
+import { Provider as JotaiProvider } from "jotai";
+import * as configsApi from "../../../../api/services/configs";
 
-const server = setupServer(
-  rest.get("/api/db/config_detail", (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          name: "Test Config",
-          type: "Test Type",
-          created_at: "2022-01-01T00:00:00.000Z",
-          updated_at: "2022-01-02T00:00:00.000Z",
-          scraper: {
-            id: "config_scraper_id",
-            name: "Test Scraper"
-          },
-          labels: {
-            "Tag 1": "Value 1",
-            "Tag 2/Subtag 1": "Value 2",
-            "Tag 2/Subtag 2": "Value 3"
-          }
-        }
-      ])
-    );
-  })
-);
+const mockConfigDetail = {
+  id: "123",
+  name: "Test Config",
+  type: "Test Type",
+  created_at: "2022-01-01T00:00:00.000Z",
+  updated_at: "2022-01-02T00:00:00.000Z",
+  scraper: {
+    id: "config_scraper_id",
+    name: "Test Scraper"
+  },
+  labels: {
+    "Tag 1": "Value 1",
+    "Tag 2/Subtag 1": "Value 2",
+    "Tag 2/Subtag 2": "Value 3"
+  }
+};
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+// Mock the API functions directly
+jest.mock("../../../../api/services/configs", () => ({
+  ...jest.requireActual("../../../../api/services/configs"),
+  getConfig: jest.fn(),
+  getConfigParentsByLocation: jest.fn()
+}));
 
-const queryClient = new QueryClient({});
+beforeEach(() => {
+  (configsApi.getConfig as jest.Mock).mockResolvedValue({
+    data: [mockConfigDetail],
+    error: null,
+    totalEntries: 1
+  });
+  (configsApi.getConfigParentsByLocation as jest.Mock).mockResolvedValue([]);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+const renderWithProviders = (component: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0
+      }
+    }
+  });
+  return render(
+    <JotaiProvider>
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          {component}
+        </QueryClientProvider>
+      </MemoryRouter>
+    </JotaiProvider>
+  );
+};
 
 describe("ConfigDetails", () => {
   const configId = "123";
 
   it("renders the config name", async () => {
-    render(
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <ConfigDetails configId={configId} />
-        </QueryClientProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<ConfigDetails configId={configId} />);
     expect(await screen.findByText("Test Config")).toBeInTheDocument();
   });
 
   it("renders the tags", async () => {
-    render(
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <ConfigDetails configId={configId} />
-        </QueryClientProvider>
-      </MemoryRouter>
-    );
+    renderWithProviders(<ConfigDetails configId={configId} />);
     expect(await screen.findByText("Tag 1")).toBeInTheDocument();
     expect(await screen.findByText("Subtag 1")).toBeInTheDocument();
     expect(await screen.findByText("Subtag 2")).toBeInTheDocument();

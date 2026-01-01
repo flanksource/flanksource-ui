@@ -36,7 +36,7 @@ export async function getPlaybookSpec(id: string) {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
     `/playbooks?id=eq.${id}&select=*,created_by(${AVATAR_INFO})`
   );
-  return res.data?.[0] ?? undefined;
+  return res.data?.[0] ?? null;
 }
 
 export async function getPlaybookSpecsByIDs(ids: string[]) {
@@ -112,7 +112,7 @@ export async function getPlaybookRunsWithActions(id: string) {
     `/playbook_runs?or=(id.eq.${id},parent_id.eq.${id})&select=${select}`
   );
   if (!data || data.length === 0 || data?.[0] === undefined) {
-    return undefined;
+    return null;
   }
 
   const run = data.find((r) => r.id === id)!;
@@ -137,7 +137,7 @@ export async function getPlaybookRunActionById(id: string, playbook: Playbook) {
     `/playbook_run_actions?id=eq.${id}&select=*,artifacts:artifacts(*)::jsonb,playbook_run:playbook_runs(spec)`
   );
   if (!action || action.length === 0) {
-    return undefined;
+    return null;
   }
 
   // TODO: This doesn't work for actions from a different playbook (child playbooks)

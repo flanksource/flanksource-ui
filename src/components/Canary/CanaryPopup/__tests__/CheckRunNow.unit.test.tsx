@@ -3,33 +3,44 @@ import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
 import CheckRunNow from "../CheckRunNow";
+import * as topologyApi from "../../../../api/services/topology";
 
-const queryClient = new QueryClient();
+// Mock the API function directly
+jest.mock("../../../../api/services/topology", () => ({
+  ...jest.requireActual("../../../../api/services/topology"),
+  runHealthCheckNow: jest.fn()
+}));
 
-const handlers = [
-  rest.post("/api/canary/run/check/*", (req, res, ctx) => {
-    return res(
-      ctx.json({
-        total: 10,
-        success: 7,
-        failed: 3,
-        errors: []
-      })
-    );
-  })
-];
+const mockRunResponse = {
+  total: 10,
+  success: 7,
+  failed: 3,
+  errors: []
+};
 
-const server = setupServer(...handlers);
+beforeEach(() => {
+  (topologyApi.runHealthCheckNow as jest.Mock).mockResolvedValue({
+    data: mockRunResponse
+  });
+});
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
 describe("CheckRunNow", () => {
   it("renders the Run Now button and shows the modal with results when clicked", async () => {
+    const queryClient = createQueryClient();
     const onSuccessfulRun = jest.fn();
     render(
       <QueryClientProvider client={queryClient}>
@@ -72,6 +83,7 @@ describe("CheckRunNow", () => {
   });
 
   it("shouldn't show run now button, if user isn't allowed", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <UserAccessStateContext.Provider

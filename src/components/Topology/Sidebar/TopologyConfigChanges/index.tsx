@@ -92,7 +92,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
         open={open}
         isLoading={changesLoading}
         setOpen={setOpen}
-        changeDetails={changeDetails}
+        changeDetails={changeDetails ?? undefined}
       />
     </>
   );

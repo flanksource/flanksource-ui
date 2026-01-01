@@ -35,5 +35,5 @@ export async function searchResources(input: SearchResourcesRequest) {
     "/resources/search",
     input
   );
-  return res.data ?? undefined;
+  return res.data ?? null;
 }
