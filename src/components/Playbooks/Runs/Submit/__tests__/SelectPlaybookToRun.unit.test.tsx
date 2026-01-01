@@ -3,10 +3,17 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
-import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
 import { RunnablePlaybook } from "../../../../../api/types/playbooks";
 import PlaybooksDropdownMenu from "../PlaybooksDropdownMenu";
+import * as playbooksApi from "../../../../../api/services/playbooks";
+
+// Mock the API functions directly
+jest.mock("../../../../../api/services/playbooks", () => ({
+  ...jest.requireActual("../../../../../api/services/playbooks"),
+  getPlaybookToRunForResource: jest.fn(),
+  getPlaybookSpecsByIDs: jest.fn(),
+  getPlaybookParams: jest.fn()
+}));
 
 const playbooks: (RunnablePlaybook & {
   spec: any;
@@ -43,34 +50,34 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn()
 }));
 
-// Define a mock server to handle PATCH requests
-const server = setupServer(
-  http.get("/api/playbook/list", () => {
-    return HttpResponse.json(playbooks);
-  }),
-  http.get("/api/db/playbooks", () => {
-    return HttpResponse.json(playbooks);
-  }),
-  http.get("/api/db/people_roles", () => {
-    return HttpResponse.json([
-      {
-        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-        name: "Admin",
-        email: "admin@local",
-        roles: ["admin"]
+beforeEach(() => {
+  (playbooksApi.getPlaybookToRunForResource as jest.Mock).mockResolvedValue(
+    playbooks
+  );
+  (playbooksApi.getPlaybookSpecsByIDs as jest.Mock).mockResolvedValue(
+    playbooks.map((p) => ({ id: p.id, title: p.title, spec: p.spec }))
+  );
+  (playbooksApi.getPlaybookParams as jest.Mock).mockResolvedValue({
+    params: []
+  });
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
       }
-    ]);
-  })
-);
-
-const queryClient = new QueryClient();
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+    }
+  });
 
 describe("SelectPlaybookToRun", () => {
   it("should render dropdown list with playbooks", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={FakeUser([Roles.admin])}>
@@ -98,6 +105,7 @@ describe("SelectPlaybookToRun", () => {
   });
 
   it("should open runs page, when you click a playbook item", async () => {
+    const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={FakeUser([Roles.admin])}>

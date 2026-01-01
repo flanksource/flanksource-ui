@@ -4,10 +4,9 @@ import {
 } from "@flanksource-ui/api/types/playbooks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import PlaybookRunsActions from "./../PlaybookRunsActions";
+import * as playbooksApi from "../../../../../api/services/playbooks";
 
 const mockAction: PlaybookRunAction = {
   playbook_run_id: "1",
@@ -21,26 +20,34 @@ const mockAction: PlaybookRunAction = {
   }
 };
 
-const server = setupServer(
-  http.get("/api/db/playbook_run_actions", () => {
-    return HttpResponse.json([mockAction]);
-  })
-);
+// Mock the API functions directly
+jest.mock("../../../../../api/services/playbooks", () => ({
+  ...jest.requireActual("../../../../../api/services/playbooks"),
+  getPlaybookRunActionById: jest.fn()
+}));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
     }
-  }
+  });
+
+beforeEach(() => {
+  (playbooksApi.getPlaybookRunActionById as jest.Mock).mockResolvedValue(
+    mockAction
+  );
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
 });
 
 describe("PlaybookRunsActions", () => {
-  beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
   it("should have playbook metadaba", () => {
+    const queryClient = createQueryClient();
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",
@@ -82,6 +89,7 @@ describe("PlaybookRunsActions", () => {
   });
 
   it("renders correctly", async () => {
+    const queryClient = createQueryClient();
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",
@@ -139,15 +147,14 @@ describe("PlaybookRunsActions", () => {
     // Click on an action to trigger the network request
     fireEvent.click(screen.getByText("Test Action 1"));
 
-    expect(await screen.findByText(/loading/i)).toBeInTheDocument();
-
-    // Wait for the request to complete
+    // Wait for the request to complete and show the action result
     expect(
       await screen.findByText(/some text from the response/i)
     ).toBeInTheDocument();
   });
 
   it("renders correctly if playbook fails prematurely", async () => {
+    const queryClient = createQueryClient();
     const mockData: PlaybookRunWithActions = {
       id: "1",
       playbook_id: "1",

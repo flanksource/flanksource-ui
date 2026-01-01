@@ -3,11 +3,23 @@ import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAcce
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import { PlaybookSpec } from "../../../../api/types/playbooks";
 import PlaybookSpecCard from "./../PlaybookSpecCard";
+import * as playbooksApi from "../../../../api/services/playbooks";
+import * as configsApi from "../../../../api/services/configs";
+
+// Mock the API functions directly
+jest.mock("../../../../api/services/playbooks", () => ({
+  ...jest.requireActual("../../../../api/services/playbooks"),
+  getPlaybookSpec: jest.fn(),
+  getPlaybookParams: jest.fn()
+}));
+
+jest.mock("../../../../api/services/configs", () => ({
+  ...jest.requireActual("../../../../api/services/configs"),
+  getConfigsByIDs: jest.fn()
+}));
 
 const mockPlaybook: PlaybookSpec = {
   id: "018cf7b8-9379-a943-4640-70b80e97c158",
@@ -53,42 +65,50 @@ const mockPlaybook: PlaybookSpec = {
   title: "Test Playbook"
 };
 
-const client = new QueryClient();
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
-const server = setupServer(
-  http.get("/api/db/config_items", () => {
-    return HttpResponse.json([
+beforeEach(() => {
+  (playbooksApi.getPlaybookSpec as jest.Mock).mockResolvedValue(mockPlaybook);
+  (playbooksApi.getPlaybookParams as jest.Mock).mockResolvedValue({
+    params: [
       {
-        id: "018848bc-78d6-e952-10b7-974497e71bbd",
-        name: "eksctl-mission-control-demo-cluster-cluster/ControlPlane",
-        type: "AWS::EKS::Cluster",
-        config_class: "KubernetesCluster"
-      }
-    ]);
-  }),
-  http.get("/api/db/playbooks", () => {
-    return HttpResponse.json([mockPlaybook]);
-  }),
-  http.get("/api/db/people_roles", () => {
-    return HttpResponse.json([
+        name: "text-input",
+        type: "text",
+        label: "Text Input (Default)"
+      },
       {
-        id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
-        name: "Admin",
-        email: "admin@local",
-        roles: ["admin"]
+        name: "checkbox",
+        type: "checkbox",
+        label: "Checkbox"
       }
-    ]);
-  })
-);
+    ]
+  });
+  (configsApi.getConfigsByIDs as jest.Mock).mockResolvedValue([
+    {
+      id: "018848bc-78d6-e952-10b7-974497e71bbd",
+      name: "eksctl-mission-control-demo-cluster-cluster/ControlPlane",
+      type: "AWS::EKS::Cluster",
+      config_class: "KubernetesCluster"
+    }
+  ]);
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("PlaybookSpecCard", () => {
-  beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
   it("renders correctly", async () => {
+    const queryClient = createQueryClient();
     render(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <AuthContext.Provider value={FakeUser([Roles.admin])}>
             {" "}
@@ -117,8 +137,9 @@ describe("PlaybookSpecCard", () => {
   });
 
   it("navigates correctly when the History button is clicked", () => {
+    const queryClient = createQueryClient();
     render(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/playbooks/runs"]}>
           <AuthContext.Provider value={FakeUser([Roles.admin])}>
             <UserAccessStateContextProvider>
@@ -133,8 +154,9 @@ describe("PlaybookSpecCard", () => {
   });
 
   it("opens the SubmitPlaybookRunForm when the Run button is clicked", async () => {
+    const queryClient = createQueryClient();
     render(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={FakeUser([Roles.admin])}>
           <UserAccessStateContextProvider>
             <MemoryRouter>
