@@ -148,7 +148,7 @@ export const getNotificationById = async (id: string) => {
   const res = await IncidentCommander.get<NotificationRules[] | null>(
     `/notifications?id=eq.${id}&select=${selectColumns}`
   );
-  return res.data ? res.data?.[0] : undefined;
+  return res.data ? res.data?.[0] : null;
 };
 
 export const silenceNotification = async (data: SilenceSaveRequest) => {
@@ -274,7 +274,7 @@ export const getNotificationSilencesByID = async (id: string) => {
       }
     }
   );
-  return res.data?.[0] ?? undefined;
+  return res.data?.[0] ?? null;
 };
 
 export const getNotificationSilencesHistory = async ({

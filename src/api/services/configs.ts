@@ -377,7 +377,7 @@ export const getConfigChangeById = async (id: string, configId: string) => {
   const res = await ConfigDB.get<ConfigChange[] | null>(
     `/config_changes?config_id=eq.${configId}&id=eq.${id}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
   );
-  return res.data?.[0] || undefined;
+  return res.data?.[0] ?? null;
 };
 
 type ConfigParams = {

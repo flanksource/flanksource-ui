@@ -29,9 +29,9 @@ export function useAgentsListQuery(
 
 export function useAgentQuery(
   id: string,
-  options?: UseQueryOptions<AgentSummary | undefined, Error>
+  options?: UseQueryOptions<AgentSummary | null, Error>
 ) {
-  return useQuery<AgentSummary | undefined, Error>(
+  return useQuery<AgentSummary | null, Error>(
     ["agents", id],
     () => getAgentsSummaryByID(id),
     options

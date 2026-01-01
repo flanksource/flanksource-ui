@@ -352,7 +352,7 @@ export function useGetConfigByIdQuery(id: string) {
       if (error) {
         throw error;
       }
-      return data?.[0];
+      return data?.[0] ?? null;
     },
     {
       onError: (err: any) => toastError(err),

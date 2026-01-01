@@ -14,7 +14,7 @@ export function useCanaryGraphQuery(
       start: getStartValue(timeRange)
     };
     const res = await getCanaryGraph(payload);
-    return res.data ?? undefined;
+    return res.data ?? null;
   });
 }
 

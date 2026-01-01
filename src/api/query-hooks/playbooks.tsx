@@ -95,9 +95,9 @@ export function useGetPlaybooksToRun(
 
 export function useGetPlaybookSpecsDetails(
   id: string,
-  options: UseQueryOptions<PlaybookSpec | undefined, Error> = {}
+  options: UseQueryOptions<PlaybookSpec | null, Error> = {}
 ) {
-  return useQuery<PlaybookSpec | undefined, Error>(
+  return useQuery<PlaybookSpec | null, Error>(
     ["playbooks", "settings", "specs", id],
     async () => getPlaybookSpec(id),
     {

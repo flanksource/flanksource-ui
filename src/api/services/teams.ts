@@ -2,12 +2,12 @@ import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { Team, User } from "../types/users";
 
-export const getTeam = async (id: string): Promise<Team | undefined> => {
+export const getTeam = async (id: string): Promise<Team | null> => {
   const response = await IncidentCommander.get<Team | null>(
     `/teams?id=eq.${id}`
   );
   const data = response.data;
-  return data || undefined;
+  return data || null;
 };
 
 export const getTeams = async (): Promise<Team[]> => {

@@ -11,5 +11,5 @@ export async function getConnectionByID(id: string) {
   const res = await IncidentCommander.get<
     Pick<Connection, "id" | "name" | "type">[]
   >(`/connections?id=eq.${id}&select=id,name,type`);
-  return res?.data?.[0] ?? undefined;
+  return res?.data?.[0] ?? null;
 }

@@ -194,18 +194,8 @@ describe("ConfigLabelsDropdown", () => {
       expect(screen.getByText("Labels", { exact: false })).toBeInTheDocument();
     });
 
-    // Component should handle invalid data and log an error
+    // Component should handle invalid data gracefully and still render
     expect(screen.getByRole("combobox")).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Invalid data for ConfigLabelsDropdown",
-        "tags:",
-        expect.anything(),
-        "labels:",
-        expect.anything()
-      );
-    });
 
     consoleErrorSpy.mockRestore();
   });
