@@ -1,6 +1,8 @@
 import { ScrapePlugin } from "@flanksource-ui/api/services/scrapePlugins";
-import { Modal } from "@flanksource-ui/ui/Modal";
+import { Modal, modalHelpLinkAtom } from "@flanksource-ui/ui/Modal";
 import PluginsForm from "./PluginsForm";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 type PluginsFormModalProps = Omit<
   React.HTMLProps<HTMLDivElement>,
@@ -25,6 +27,11 @@ export default function PluginsFormModal({
   isSubmitting = false,
   isDeleting = false
 }: PluginsFormModalProps) {
+  const [, setHelpModal] = useAtom(modalHelpLinkAtom);
+  useEffect(() => {
+    setHelpModal("guide/config-db/concepts/plugins");
+  }, [setHelpModal]);
+
   return (
     <Modal
       title={
