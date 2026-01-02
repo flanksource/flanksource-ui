@@ -12,7 +12,7 @@ import {
 import { SortingState } from "@tanstack/react-table";
 import { AxiosResponse } from "axios";
 import { AVATAR_INFO } from "../constants";
-import { CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
+import { Config, CanaryCheckerDB, ConfigDB, IncidentCommander } from "./axios";
 import { resolvePostGrestRequestWithPagination } from "./resolve";
 import { ConfigItem } from "./types/configs";
 
@@ -211,4 +211,8 @@ export async function getIntegrationWithJobStatus(id: string) {
     `integrations_with_status?order=created_at.desc&select=*&deleted_at=is.null&id=eq.${id}`
   );
   return res.data?.[0];
+}
+
+export async function runConfigScraper(scraperId: string) {
+  return Config.post(`/run/${scraperId}`);
 }
