@@ -5,6 +5,7 @@ import { getViewsByConfigId } from "../../api/services/views";
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { ReactNode } from "react";
+import useConfigAccessSummaryQuery from "@flanksource-ui/api/query-hooks/useConfigAccessSummaryQuery";
 
 type ConfigDetailsTab = {
   label: ReactNode;
@@ -30,6 +31,10 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
     queryFn: () => getViewsByConfigId(id!),
     enabled: !!id
   });
+
+  const { data: accessSummary } = useConfigAccessSummaryQuery(id);
+  const accessCount =
+    accessSummary?.totalEntries ?? accessSummary?.data?.length ?? 0;
 
   const staticTabs: ConfigDetailsTab[] = [
     { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
@@ -84,6 +89,19 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
       path: `/catalog/${id}/checks`
     }
   ];
+
+  if (accessCount > 0) {
+    staticTabs.push({
+      label: (
+        <>
+          Access
+          <Badge className="ml-1" text={accessCount} />
+        </>
+      ),
+      key: "Access",
+      path: `/catalog/${id}/access`
+    });
+  }
 
   const hasExplicitOrdering = views.some((view) => view.ordinal != null);
 

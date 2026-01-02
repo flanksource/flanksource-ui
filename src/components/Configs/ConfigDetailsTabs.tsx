@@ -24,6 +24,7 @@ type ConfigDetailsTabsProps = {
     | "Relationships"
     | "Playbooks"
     | "Checks"
+    | "Access"
     | string; // Views
   className?: string;
   extra?: ReactNode;

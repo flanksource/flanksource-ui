@@ -8,6 +8,7 @@ import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
+  ConfigAccessSummary,
   ConfigChange,
   ConfigHealthCheckView,
   ConfigItem,
@@ -160,6 +161,22 @@ type ConfigDetail = ConfigItem & {
 export const getConfig = (id: string) =>
   resolvePostGrestRequestWithPagination<ConfigDetail[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
+  );
+
+export const getConfigAccessSummary = (configId: string) =>
+  resolvePostGrestRequestWithPagination<ConfigAccessSummary[]>(
+    ConfigDB.get(
+      `/config_access_summary?config_id=eq.${encodeURIComponent(
+        configId
+      )}&select=user,email,role,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
+        "user.asc"
+      )}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
   );
 
 export type ConfigsTagList = {

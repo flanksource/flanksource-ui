@@ -97,6 +97,16 @@ export interface ConfigItemGraphData extends ConfigItem {
   isIntermediaryNode?: boolean;
 }
 
+export interface ConfigAccessSummary {
+  user: string;
+  email: string;
+  role?: string | null;
+  external_group_id?: string | null;
+  last_signed_in_at?: string | null;
+  last_reviewed_at?: string | null;
+  created_at: string;
+}
+
 export interface ConfigTypeRelationships extends Timestamped {
   config_id: string;
   related_id: string;
