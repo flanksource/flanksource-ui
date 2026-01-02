@@ -33,6 +33,7 @@ export type Connection = {
   id?: string;
   insecure_tls?: boolean;
   key?: string;
+  keyID?: string;
   maxAge?: number;
   name: string;
   password?: string;
@@ -50,12 +51,18 @@ export type Connection = {
   topic?: string;
   type?: ConnectionValueType;
   url?: string;
+  urls?: string;
   user?: string;
   username?: string;
   webhook?: string;
   workstation?: string;
   properties?: Record<string, any>;
   ref?: string;
+  index?: string;
+  ntlm?: boolean;
+  ntlmv2?: boolean;
+  digest?: boolean;
+  insecureSkipVerify?: boolean;
   namespace?: string;
   source?: string;
 };

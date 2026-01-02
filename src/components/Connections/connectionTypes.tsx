@@ -50,15 +50,19 @@ export const enum ConnectionValueType {
   Anthropic = "anthropic",
   Ollama = "ollama",
   OpenAI = "openai",
+  Gemini = "gemini",
   AWS = "aws",
+  AWSKMS = "aws_kms",
   AWS_S3 = "s3",
   Azure = "azure",
   AzureDevops = "azure_devops",
+  AzureKeyVault = "azure_key_vault",
   Discord = "discord",
   Dynatrace = "dynatrace",
   ElasticSearch = "elasticsearch",
   Email = "email",
   GCP = "google_cloud",
+  GCPKMS = "gcp_kms",
   GenericWebhook = "generic_webhook",
   Git = "git",
   Github = "github",
@@ -73,9 +77,11 @@ export const enum ConnectionValueType {
   Mongo = "mongo",
   MySQL = "mysql",
   Ntfy = "ntfy",
+  Opensearch = "opensearch",
   OpsGenie = "opsgenie",
   Postgres = "postgres",
   Prometheus = "prometheus",
+  Loki = "loki",
   Pushbullet = "pushbullet",
   Pushover = "pushover",
   Redis = "redis",
@@ -205,6 +211,41 @@ export const connectionTypes: ConnectionType[] = [
       return {
         name: data.name,
         url: data.url,
+        password: data.password,
+        properties: {
+          model: data.model
+        }
+      };
+    }
+  },
+  {
+    title: "Gemini",
+    icon: "gemini",
+    value: ConnectionValueType.Gemini,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Model",
+        key: "model",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "API Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        model: data?.properties?.model
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
         password: data.password,
         properties: {
           model: data.model
@@ -395,6 +436,32 @@ export const connectionTypes: ConnectionType[] = [
     ]
   },
   {
+    title: "Loki",
+    icon: "grafana",
+    value: ConnectionValueType.Loki,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "URL",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      }
+    ]
+  },
+  {
     title: "Elasticsearch",
     icon: "elasticsearch",
     value: ConnectionValueType.ElasticSearch,
@@ -486,6 +553,93 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.checkbox
       }
     ]
+  },
+  {
+    title: "Opensearch",
+    icon: "opensearch",
+    value: ConnectionValueType.Opensearch,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "URLs",
+        hint: "comma-separated list",
+        key: "urls",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Index",
+        key: "index",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Username",
+        key: "username",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Password",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "NTLM",
+        key: "ntlm",
+        type: ConnectionsFieldTypes.checkbox
+      },
+      {
+        label: "NTLMv2",
+        key: "ntlmv2",
+        type: ConnectionsFieldTypes.checkbox
+      },
+      {
+        label: "Digest",
+        key: "digest",
+        type: ConnectionsFieldTypes.checkbox
+      },
+      {
+        label: "Insecure Skip Verify",
+        key: "insecureSkipVerify",
+        type: ConnectionsFieldTypes.checkbox
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      const urls = data?.properties?.urls ?? data?.urls;
+      return {
+        ...data,
+        urls: Array.isArray(urls) ? urls.join(", ") : urls,
+        index: data?.properties?.index,
+        ntlm: data?.properties?.ntlm,
+        ntlmv2: data?.properties?.ntlmv2,
+        digest: data?.properties?.digest,
+        insecureSkipVerify: data?.properties?.insecureSkipVerify
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      const urls =
+        typeof data.urls === "string"
+          ? data.urls
+              .split(",")
+              .map((value) => value.trim())
+              .filter(Boolean)
+          : [];
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          urls,
+          index: data.index,
+          ntlm: data.ntlm,
+          ntlmv2: data.ntlmv2,
+          digest: data.digest,
+          insecureSkipVerify: data.insecureSkipVerify
+        }
+      };
+    }
   },
   {
     title: "Redis",
@@ -605,6 +759,49 @@ export const connectionTypes: ConnectionType[] = [
         required: true
       }
     ]
+  },
+  {
+    title: "Google Cloud KMS",
+    icon: "gcp-kms",
+    value: ConnectionValueType.GCPKMS,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Endpoint",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Certificate",
+        key: "certificate",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        variant: variants.large,
+        required: true
+      },
+      {
+        label: "Key ID",
+        key: "keyID",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        keyID: data?.properties?.keyID ?? data?.keyID
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        certificate: data.certificate,
+        properties: {
+          keyID: data.keyID
+        }
+      };
+    }
   },
   {
     title: "Google Cloud Storage",
@@ -730,6 +927,71 @@ export const connectionTypes: ConnectionType[] = [
         properties: {
           region: data.region,
           profile: data.profile,
+          insecureTLS: data.insecure_tls
+        }
+      };
+    }
+  },
+  {
+    title: "AWS KMS",
+    icon: "aws-kms",
+    value: ConnectionValueType.AWSKMS,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Region",
+        key: "region",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Profile",
+        key: "profile",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
+        label: "Access Key",
+        key: "username",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Secret Key",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: false
+      },
+      {
+        label: "Key ID",
+        key: "keyID",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Insecure TLS",
+        key: "insecure_tls",
+        type: ConnectionsFieldTypes.checkbox
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        region: data?.properties?.region,
+        profile: data?.properties?.profile,
+        keyID: data?.properties?.keyID ?? data?.keyID,
+        insecure_tls: data?.properties?.insecureTLS === "true"
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          region: data.region,
+          profile: data.profile,
+          keyID: data.keyID,
           insecureTLS: data.insecure_tls
         }
       };
@@ -873,6 +1135,56 @@ export const connectionTypes: ConnectionType[] = [
         password: data.password,
         properties: {
           tenant: data.tenant
+        }
+      };
+    }
+  },
+  {
+    title: "Azure Key Vault",
+    icon: "azure-key-vault",
+    value: ConnectionValueType.AzureKeyVault,
+    fields: [
+      ...commonConnectionFormFields,
+      {
+        label: "Client ID",
+        key: "username",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Client Secret",
+        key: "password",
+        type: ConnectionsFieldTypes.EnvVarSource,
+        required: true
+      },
+      {
+        label: "Tenant ID",
+        key: "tenant",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      },
+      {
+        label: "Key ID",
+        key: "keyID",
+        type: ConnectionsFieldTypes.input,
+        required: true
+      }
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        tenant: data?.properties?.tenant ?? data?.tenant,
+        keyID: data?.properties?.keyID ?? data?.keyID
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        username: data.username,
+        password: data.password,
+        properties: {
+          tenant: data.tenant,
+          keyID: data.keyID
         }
       };
     }
