@@ -284,7 +284,7 @@ const columns: MRT_ColumnDef<
     }
   },
   {
-    id: "run",
+    id: "action",
     header: "Action",
     enableResizing: false,
     enableSorting: false,
@@ -309,19 +309,19 @@ const permanentlyHiddenColumnsForTableMap: Record<
   SchemaResourceType["table"],
   string[]
 > = {
-  topologies: ["schedule"],
-  connections: ["schedule", "namespace"],
-  logging_backends: ["schedule", "namespace"],
-  notifications: ["schedule", "namespace"],
-  properties: ["schedule", "namespace"],
-  canaries: ["namespace"],
-  config_scrapers: ["schedule", "namespace"],
-  applications: ["schedule", "namespace"],
-  incident_rules: ["schedule", "namespace"],
-  teams: ["schedule", "namespace"],
-  permissions: ["schedule", "namespace"],
-  views: [],
-  scopes: ["namespace"]
+  topologies: ["schedule", "action"],
+  connections: ["schedule", "namespace", "action"],
+  logging_backends: ["schedule", "namespace", "action"],
+  notifications: ["schedule", "namespace", "action"],
+  properties: ["schedule", "namespace", "action"],
+  canaries: ["namespace", "action"],
+  config_scrapers: ["schedule", "namespace", "action"],
+  applications: ["schedule", "namespace", "action"],
+  incident_rules: ["schedule", "namespace", "action"],
+  teams: ["schedule", "namespace", "action", "action"],
+  permissions: ["schedule", "namespace", "action"],
+  views: ["action"],
+  scopes: ["namespace", "action"]
 };
 
 type ResourceTableProps = {
