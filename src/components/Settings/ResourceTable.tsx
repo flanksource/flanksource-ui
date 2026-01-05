@@ -20,7 +20,7 @@ import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import ResourceSettingsSourceLink from "./ResourceSettingsSourceLink";
 import { Play } from "lucide-react";
 
-function MRTJobHistoryStatusColumn({
+export function MRTJobHistoryStatusColumn({
   row
 }: {
   row: MRT_Row<
@@ -77,7 +77,7 @@ function MRTJobHistoryStatusColumn({
   );
 }
 
-function DataTableTagsColumn({
+export function DataTableTagsColumn({
   row
 }: {
   row: MRT_Row<
@@ -131,18 +131,28 @@ function DataTableTagsColumn({
   );
 }
 
-function RunScraperButton({ scraperId }: { scraperId: string }) {
+function RunScraperButton({
+  scraperId,
+  onRunStart,
+  onRunComplete
+}: {
+  scraperId: string;
+  onRunStart?: () => void;
+  onRunComplete?: () => void;
+}) {
   const [isRunning, setIsRunning] = useState(false);
 
   const handleRun = async () => {
+    onRunStart?.();
     setIsRunning(true);
     try {
       await runConfigScraper(scraperId);
-      toastSuccess("Scraper run triggered successfully");
+      toastSuccess("Scraper ran successfully");
     } catch (error) {
       toastError("Failed to trigger scraper run");
     } finally {
       setIsRunning(false);
+      onRunComplete?.();
     }
   };
 
@@ -315,7 +325,7 @@ const permanentlyHiddenColumnsForTableMap: Record<
   notifications: ["schedule", "namespace", "action"],
   properties: ["schedule", "namespace", "action"],
   canaries: ["namespace", "action"],
-  config_scrapers: ["schedule", "namespace", "action"],
+  config_scrapers: ["schedule", "namespace"],
   applications: ["schedule", "namespace", "action"],
   incident_rules: ["schedule", "namespace", "action"],
   teams: ["schedule", "namespace", "action", "action"],
