@@ -31,6 +31,7 @@ import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells"
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useQuery } from "@tanstack/react-query";
 import { Play } from "lucide-react";
+import { Oval } from "react-loading-icons";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -82,7 +83,12 @@ function RunScraperButton({
         }}
         disabled={isRunning}
       >
-        <Play className="mr-2 h-3.5 w-3.5" /> Run
+        {isRunning ? (
+          <Oval stroke="currentColor" className="mr-2 h-3.5 w-3.5" />
+        ) : (
+          <Play className="mr-2 h-3.5 w-3.5" />
+        )}
+        Run
       </Button>
 
       <Modal
