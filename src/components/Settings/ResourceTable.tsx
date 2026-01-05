@@ -1,24 +1,18 @@
-import {
-  runConfigScraper,
-  SchemaResourceWithJobStatus
-} from "@flanksource-ui/api/schemaResources";
+import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import Popover from "@flanksource-ui/ui/Popover/Popover";
 import { TagItem, TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
-import { toastError, toastSuccess } from "../Toast/toast";
 import AgentBadge from "../Agents/AgentBadge";
 import JobHistoryStatusColumn from "../JobsHistory/JobHistoryStatusColumn";
 import { JobsHistoryDetails } from "../JobsHistory/JobsHistoryDetails";
 import ConfigScrapperIcon from "../SchemaResourcePage/ConfigScrapperIcon";
 import { SchemaResourceType } from "../SchemaResourcePage/resourceTypes";
 import ResourceSettingsSourceLink from "./ResourceSettingsSourceLink";
-import { Play } from "lucide-react";
 
 export function MRTJobHistoryStatusColumn({
   row
@@ -128,46 +122,6 @@ export function DataTableTagsColumn({
         </Popover>
       )}
     </>
-  );
-}
-
-function RunScraperButton({
-  scraperId,
-  onRunStart,
-  onRunComplete
-}: {
-  scraperId: string;
-  onRunStart?: () => void;
-  onRunComplete?: () => void;
-}) {
-  const [isRunning, setIsRunning] = useState(false);
-
-  const handleRun = async () => {
-    onRunStart?.();
-    setIsRunning(true);
-    try {
-      await runConfigScraper(scraperId);
-      toastSuccess("Scraper ran successfully");
-    } catch (error) {
-      toastError("Failed to trigger scraper run");
-    } finally {
-      setIsRunning(false);
-      onRunComplete?.();
-    }
-  };
-
-  return (
-    <Button
-      size="xs"
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        handleRun();
-      }}
-      disabled={isRunning}
-    >
-      <Play className="mr-2 h-3.5 w-3.5" /> Run
-    </Button>
   );
 }
 
@@ -292,20 +246,6 @@ const columns: MRT_ColumnDef<
       }
       return <Avatar user={created_by} />;
     }
-  },
-  {
-    id: "action",
-    header: "Action",
-    enableResizing: false,
-    enableSorting: false,
-    size: 80,
-    Cell: ({ row }) => {
-      const { id, table } = row.original;
-      if (table !== tables.config_scrapers) {
-        return null;
-      }
-      return <RunScraperButton scraperId={id} />;
-    }
   }
 ];
 
@@ -319,19 +259,19 @@ const permanentlyHiddenColumnsForTableMap: Record<
   SchemaResourceType["table"],
   string[]
 > = {
-  topologies: ["schedule", "action"],
-  connections: ["schedule", "namespace", "action"],
-  logging_backends: ["schedule", "namespace", "action"],
-  notifications: ["schedule", "namespace", "action"],
-  properties: ["schedule", "namespace", "action"],
-  canaries: ["namespace", "action"],
+  topologies: ["schedule"],
+  connections: ["schedule", "namespace"],
+  logging_backends: ["schedule", "namespace"],
+  notifications: ["schedule", "namespace"],
+  properties: ["schedule", "namespace"],
+  canaries: ["namespace"],
   config_scrapers: ["schedule", "namespace"],
-  applications: ["schedule", "namespace", "action"],
-  incident_rules: ["schedule", "namespace", "action"],
-  teams: ["schedule", "namespace", "action", "action"],
-  permissions: ["schedule", "namespace", "action"],
-  views: ["action"],
-  scopes: ["namespace", "action"]
+  applications: ["schedule", "namespace"],
+  incident_rules: ["schedule", "namespace"],
+  teams: ["schedule", "namespace"],
+  permissions: ["schedule", "namespace"],
+  views: [],
+  scopes: ["namespace"]
 };
 
 type ResourceTableProps = {
@@ -352,7 +292,7 @@ export default function ResourceTable({
     return columns.filter(
       (column) =>
         !permanentlyHiddenColumnsForTableMap[sqlTable].includes(
-          (column.id ?? column.accessorKey) as string
+          column.accessorKey!
         )
     );
   }, [sqlTable]);
