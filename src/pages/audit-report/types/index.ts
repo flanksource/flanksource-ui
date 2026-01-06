@@ -433,6 +433,10 @@ export interface ViewResult {
   namespace?: string;
   name: string;
 
+  refreshStatus?: "cache" | "fresh" | "error";
+  refreshError?: string;
+  responseSource?: "cache" | "fresh";
+
   lastRefreshedAt?: string;
   columns?: ViewColumnDef[];
   rows?: ViewRow[];
