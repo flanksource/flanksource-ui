@@ -49,6 +49,10 @@ export function useViewData({
 
   const variables = isDisplayPluginMode ? displayPluginVariables : undefined;
 
+  const viewQueryKey = isDisplayPluginMode
+    ? ["viewDataById", viewId, configId, variables]
+    : ["view-result", viewId];
+
   const {
     data: viewResult,
     isLoading: isLoadingViewResult,
@@ -56,9 +60,7 @@ export function useViewData({
     error: viewResultError,
     refetch
   } = useQuery({
-    queryKey: isDisplayPluginMode
-      ? ["viewDataById", viewId, configId, variables]
-      : ["view-result", viewId],
+    queryKey: viewQueryKey,
     queryFn: () => {
       const headers = forceRefreshRef.current
         ? { "cache-control": "max-age=1" }
@@ -120,6 +122,16 @@ export function useViewData({
         : result.data?.name
           ? [{ namespace: result.data.namespace ?? "", name: result.data.name }]
           : [];
+    const currentNamespace = result.data?.namespace ?? viewResult?.namespace;
+    const currentName = result.data?.name ?? viewResult?.name;
+    const refsToInvalidate = sectionsToRefresh.filter(
+      (section) =>
+        !(
+          currentName &&
+          section.name === currentName &&
+          section.namespace === (currentNamespace ?? "")
+        )
+    );
 
     if (isDisplayPluginMode) {
       await queryClient.invalidateQueries({
@@ -127,14 +139,8 @@ export function useViewData({
       });
     }
 
-    await queryClient.invalidateQueries({
-      queryKey: isDisplayPluginMode
-        ? ["viewDataById", viewId, configId, variables]
-        : ["view-result", viewId]
-    });
-
     await Promise.all(
-      sectionsToRefresh.flatMap((section) => [
+      refsToInvalidate.flatMap((section) => [
         queryClient.invalidateQueries({
           queryKey: ["view-result", section.namespace, section.name]
         }),
@@ -147,12 +153,13 @@ export function useViewData({
       ])
     );
   }, [
+    viewResult?.namespace,
+    viewResult?.name,
     allSectionRefs,
     configId,
     isDisplayPluginMode,
     queryClient,
     refetch,
-    variables,
     viewId
   ]);
 
