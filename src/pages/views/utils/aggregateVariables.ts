@@ -16,13 +16,30 @@ export function aggregateVariables(
     for (const variable of variables) {
       const existing = variableMap.get(variable.key);
       if (existing) {
-        // Merge options (union of both arrays)
+        const existingOptionItems = existing.optionItems ?? [];
+        const nextOptionItems = variable.optionItems ?? [];
+        const optionItemsByValue = new Map(
+          existingOptionItems.map((item) => [item.value, item])
+        );
+        for (const item of nextOptionItems) {
+          if (!optionItemsByValue.has(item.value)) {
+            optionItemsByValue.set(item.value, item);
+          }
+        }
+
+        const mergedOptionItems = Array.from(optionItemsByValue.values());
         const mergedOptions = [
-          ...new Set([...existing.options, ...variable.options])
+          ...new Set([
+            ...existing.options,
+            ...variable.options,
+            ...mergedOptionItems.map((item) => item.value)
+          ])
         ];
         variableMap.set(variable.key, {
           ...existing,
-          options: mergedOptions
+          options: mergedOptions,
+          optionItems:
+            mergedOptionItems.length > 0 ? mergedOptionItems : undefined
         });
       } else {
         variableMap.set(variable.key, { ...variable });

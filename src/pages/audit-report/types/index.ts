@@ -389,6 +389,10 @@ export interface ViewVariable {
   value: string;
   type: string;
   options: string[];
+  optionItems?: {
+    label: string;
+    value: string;
+  }[];
   default?: string;
   label?: string;
 }
