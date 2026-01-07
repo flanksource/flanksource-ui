@@ -42,9 +42,14 @@ function GlobalFiltersListener({
     variables.forEach((variable) => {
       const urlValue = globalParams.get(variable.key);
       const currentValue = currentVariables[variable.key];
+      const optionItems = variable.optionItems ?? [];
       const defaultValue =
         variable.default ??
-        (variable.options.length > 0 ? variable.options[0] : "");
+        (optionItems.length > 0
+          ? optionItems[0].value
+          : variable.options.length > 0
+            ? variable.options[0]
+            : "");
 
       const valueToUse = urlValue || currentValue || defaultValue;
       if (valueToUse) {

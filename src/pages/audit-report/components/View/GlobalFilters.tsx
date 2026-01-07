@@ -10,30 +10,19 @@ import { useField } from "formik";
 interface DropdownProps {
   label: string;
   paramsKey: string;
-  options: string[];
+  options: GroupByOptions[];
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ label, paramsKey, options }) => {
   const [field] = useField({
     name: paramsKey
   });
-  const dropdownOptions = useMemo(() => {
-    const mappedOptions = options.map(
-      (option) =>
-        ({
-          value: option,
-          label: option
-        }) satisfies GroupByOptions
-    );
-
-    return mappedOptions;
-  }, [options]);
 
   return (
     <MultiSelectDropdown
       label={label}
-      options={dropdownOptions}
-      value={dropdownOptions.find((option) => option.value === field.value)}
+      options={options}
+      value={options.find((option) => option.value === field.value)}
       onChange={(selectedOption: unknown) => {
         const option = selectedOption as GroupByOptions;
         field.onChange({
@@ -62,7 +51,17 @@ const GlobalFilters: React.FC<GlobalFiltersProps> = ({ variables }) => {
         key={variable.key}
         label={variable.label || formatDisplayLabel(variable.key)}
         paramsKey={variable.key}
-        options={variable.options}
+        options={
+          variable.optionItems && variable.optionItems.length > 0
+            ? variable.optionItems.map((item) => ({
+                label: item.label,
+                value: item.value
+              }))
+            : variable.options.map((option) => ({
+                label: option,
+                value: option
+              }))
+        }
       />
     ));
   }, [variables]);
