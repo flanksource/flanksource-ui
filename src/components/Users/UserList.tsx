@@ -37,6 +37,16 @@ const userListColumns: MRT_ColumnDef<RegisteredUser>[] = [
     }
   },
   {
+    header: "Teams",
+    accessorKey: "teams",
+    enableSorting: false,
+    Cell: ({ row }) => {
+      const teams = row.original?.teams ?? [];
+      const teamNames = teams.map((team) => team?.name).filter(Boolean);
+      return teamNames.length > 0 ? teamNames.join(", ") : "-";
+    }
+  },
+  {
     header: "State",
     accessorKey: "state",
     enableSorting: true

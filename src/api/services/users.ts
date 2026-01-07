@@ -8,7 +8,13 @@ import {
 } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
-import { NewUser, PeopleRoles, RegisteredUser, User } from "../types/users";
+import {
+  NewUser,
+  PeopleRoles,
+  RegisteredUser,
+  Team,
+  User
+} from "../types/users";
 import { Permission } from "@flanksource-ui/context";
 
 export const getPerson = (id: string) =>
@@ -71,15 +77,41 @@ export const getRegisteredUsers = () =>
   resolvePostGrestRequestWithPagination<RegisteredUser[]>(
     IncidentCommander.get(`/identities`).then(async (identitiesRes) => {
       const ids = identitiesRes.data.map((item: { id: string }) => item.id);
-      const [peopleRes, { data: peopleRoles }] = await Promise.all([
-        getPeopleLastLogin(ids),
-        ids.length > 0 ? fetchPeopleRoles(ids) : Promise.resolve({ data: [] })
-      ]);
+      const [peopleRes, { data: peopleRoles }, teamMembersRes] =
+        await Promise.all([
+          getPeopleLastLogin(ids),
+          ids.length > 0
+            ? fetchPeopleRoles(ids)
+            : Promise.resolve({ data: [] }),
+          ids.length > 0
+            ? IncidentCommander.get<
+                { person_id: string; team_id: Team | null }[]
+              >(
+                `/team_members?person_id=in.(${ids.join(
+                  ","
+                )})&select=person_id,team_id(id,name,icon)`
+              )
+            : Promise.resolve({
+                data: [] as { person_id: string; team_id: Team | null }[]
+              })
+        ]);
       const peopleById = new Map(
         (peopleRes.data as { id: string; last_login?: string | Date }[]).map(
           (person) => [person.id, person]
         )
       );
+      const teamsByPersonId = new Map<string, Team[]>();
+      (teamMembersRes.data || []).forEach(({ person_id, team_id }) => {
+        if (!team_id) {
+          return;
+        }
+        const existing = teamsByPersonId.get(person_id);
+        if (existing) {
+          existing.push(team_id);
+        } else {
+          teamsByPersonId.set(person_id, [team_id]);
+        }
+      });
       const data = identitiesRes.data.map((item: RegisteredUser) => {
         const person = peopleById.get(item.id);
 
@@ -93,7 +125,8 @@ export const getRegisteredUsers = () =>
           last_login: person?.last_login,
           roles:
             peopleRoles?.find((peopleRole) => peopleRole.id === item.id)
-              ?.roles ?? []
+              ?.roles ?? [],
+          teams: teamsByPersonId.get(item.id) ?? []
         };
       });
       return {
