@@ -14,6 +14,7 @@ import PreferencePopOver from "./Preference";
 import { AiFeatureLoaderProvider, useAiFeatureLoader } from "./AiFeatureLoader";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { features } from "../../services/permissions/features";
+import { ResourceSelectorSearchButton } from "./SearchLayoutResourceSearch";
 
 // Lazy load AI chat components to avoid bundling AI SDK until first use
 const LazyAiChatProvider = lazy(() =>
@@ -86,6 +87,7 @@ function SearchLayoutInner({
             </div>
 
             <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+              <ResourceSelectorSearchButton />
               {!isAiDisabled &&
                 (aiLoaded ? (
                   <Suspense
