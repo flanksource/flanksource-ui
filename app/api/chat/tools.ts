@@ -2,6 +2,8 @@ import { tool, zodSchema } from "ai";
 import { z } from "zod";
 
 const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
+  "run_template",
+  
   "search_catalog",
   "search_catalog_changes",
   "describe_catalog",
