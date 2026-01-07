@@ -21,6 +21,7 @@ export interface RegisteredUser extends CreatedAt {
   };
   roles?: string[];
   last_login?: string | Date;
+  teams?: Team[];
 }
 
 export type PeopleRoles = {
