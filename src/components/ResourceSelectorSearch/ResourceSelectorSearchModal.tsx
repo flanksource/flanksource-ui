@@ -17,7 +17,6 @@ import { Modal } from "@flanksource-ui/ui/Modal";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
-import { TagItem } from "@flanksource-ui/ui/Tags/TagList";
 import { Link } from "react-router-dom";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
@@ -185,6 +184,45 @@ export function ResourceSelectorSearchModal({
     const key = resourceKey as keyof SelectedResources;
     return (results?.[key] ?? []) as SearchedResource[];
   }, [resourceKey, results]);
+
+  const configTagKeys = useMemo(() => {
+    if (resourceKey !== "configs") {
+      return [];
+    }
+
+    const keys = new Set<string>();
+    resultItems.forEach((item) => {
+      Object.keys(item.tags ?? {}).forEach((key) => {
+        if (key !== "toString") {
+          keys.add(key);
+        }
+      });
+    });
+
+    return [...keys].sort((a, b) => {
+      const aKey = a.toLowerCase();
+      const bKey = b.toLowerCase();
+      if (aKey === "account") {
+        return -1;
+      }
+      if (bKey === "account") {
+        return 1;
+      }
+      if (aKey === "namespace") {
+        return -1;
+      }
+      if (bKey === "namespace") {
+        return 1;
+      }
+      if (aKey === "name") {
+        return -1;
+      }
+      if (bKey === "name") {
+        return 1;
+      }
+      return aKey.localeCompare(bKey);
+    });
+  }, [resourceKey, resultItems]);
 
   useEffect(() => {
     if (!open) {
@@ -380,9 +418,14 @@ export function ResourceSelectorSearchModal({
                       resourceKey !== "playbooks" && (
                         <th className="px-4 py-2 font-medium">Type</th>
                       )}
-                    <th className="px-4 py-2 font-medium">Namespace</th>
-                    {resourceKey === "configs" && (
-                      <th className="px-4 py-2 font-medium">Tags</th>
+                    {resourceKey === "configs" &&
+                      configTagKeys.map((key) => (
+                        <th key={key} className="px-4 py-2 font-medium">
+                          {key}
+                        </th>
+                      ))}
+                    {resourceKey !== "configs" && (
+                      <th className="px-4 py-2 font-medium">Namespace</th>
                     )}
                   </tr>
                 </thead>
@@ -397,23 +440,16 @@ export function ResourceSelectorSearchModal({
                         resourceKey !== "playbooks" && (
                           <td className="px-4 py-2">{item.type || "-"}</td>
                         )}
-                      <td className="px-4 py-2">{item.namespace || "-"}</td>
-                      {resourceKey === "configs" && (
-                        <td className="px-4 py-2">
-                          {item.tags && Object.keys(item.tags).length > 0 ? (
-                            <div className="flex flex-wrap items-start gap-1">
-                              {Object.entries(item.tags).map(([key, value]) => (
-                                <TagItem
-                                  key={`${item.id}-${key}`}
-                                  tag={{ key, value }}
-                                  className="bg-gray-100 text-gray-700"
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            "-"
-                          )}
-                        </td>
+                      {resourceKey === "configs" &&
+                        configTagKeys.map((key) => (
+                          <td key={`${item.id}-${key}`} className="px-4 py-2">
+                            {item.tags?.[key] != null
+                              ? String(item.tags[key])
+                              : "-"}
+                          </td>
+                        ))}
+                      {resourceKey !== "configs" && (
+                        <td className="px-4 py-2">{item.namespace || "-"}</td>
                       )}
                     </tr>
                   ))}
