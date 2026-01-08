@@ -8,12 +8,12 @@ import { TopologyLink } from "../Topology/TopologyLink";
 
 type NotificationResourceDisplayProps = {
   resource?: NotificationSendHistoryResource;
-  resourceType?: "config" | "check" | "component";
+  resourceKind?: "config" | "check" | "component" | "canary";
 };
 
 export default function NotificationResourceDisplay({
   resource,
-  resourceType
+  resourceKind
 }: NotificationResourceDisplayProps) {
   if (!resource) {
     return <span>Unknown</span>;
@@ -21,17 +21,17 @@ export default function NotificationResourceDisplay({
 
   return (
     <>
-      {resourceType === "check" && (
+      {resourceKind === "check" && (
         <CheckLink
           className="flex w-full flex-row items-center justify-between space-x-2 rounded-md hover:bg-gray-100"
           check={resource as HealthCheck}
           showHealthIndicator={false}
         />
       )}
-      {resourceType === "config" && (
+      {resourceKind === "config" && (
         <ConfigLink config={resource as ConfigItem} />
       )}
-      {resourceType === "component" && (
+      {resourceKind === "component" && (
         <TopologyLink
           topology={resource as Topology}
           className="h-5 w-5 text-gray-600"
