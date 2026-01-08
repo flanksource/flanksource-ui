@@ -73,7 +73,7 @@ export default function NotificationDetails({
             value={
               <NotificationResourceDisplay
                 resource={notification.resource}
-                resourceType={notification.resource_type}
+                resourceKind={notification.resource_kind}
               />
             }
           />

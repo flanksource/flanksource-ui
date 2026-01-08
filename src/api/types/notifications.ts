@@ -125,7 +125,8 @@ export type NotificationSendHistorySummary = {
   resource_health_description: string;
   notification_id: string;
   created_at: string;
-  resource_type: "component" | "config" | "check";
+  resource_kind?: "component" | "config" | "check" | "canary";
+  resource_type?: string | null;
   first_observed: string;
   last_seen: string;
   total: number;
@@ -135,7 +136,8 @@ export type NotificationSendHistorySummary = {
 };
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
-  resource_type: "component" | "config" | "check";
+  resource_kind?: "component" | "config" | "check" | "canary";
+  resource_type?: string | null;
   resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
   resource_status: string;
   playbook_run: {

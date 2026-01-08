@@ -55,7 +55,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
           >
             <NotificationResourceDisplay
               resource={row.original.resource}
-              resourceType={row.original.resource_type}
+              resourceKind={row.original.resource_kind}
             />
           </div>
         );
@@ -67,7 +67,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
       size: 150,
       Cell: ({ row }) => {
         const resource = row.original.resource;
-        const resourceType = row.original.resource_type;
+        const resourceKind = row.original.resource_kind;
 
         const healthAtEvent = row.original.resource_health;
         const statusAtEvent = row.original.resource_status;
@@ -86,19 +86,19 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
               </>
             )}
 
-            {resourceType === "check" && (
+            {resourceKind === "check" && (
               <Status
                 status={(resource as HealthCheck).status}
                 statusText={(resource as HealthCheck).status}
               />
             )}
-            {resourceType === "config" && (
+            {resourceKind === "config" && (
               <Status
                 status={(resource as ConfigItem).health}
                 statusText={(resource as ConfigItem).status || "Unknown"}
               />
             )}
-            {resourceType === "component" && (
+            {resourceKind === "component" && (
               <Status
                 status={(resource as Topology).health}
                 statusText={(resource as Topology).status || "Unknown"}

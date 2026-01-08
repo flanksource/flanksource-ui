@@ -1,36 +1,38 @@
+import { useGetNotificationResourceTypesQuery } from "@flanksource-ui/api/query-hooks";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
-
-export const jobHistoryResourceTypes: TriStateOptions[] = [
-  {
-    label: "Check",
-    value: "check",
-    id: "check"
-  },
-  {
-    label: "Component",
-    value: "component",
-    id: "component"
-  },
-  {
-    label: "Catalog",
-    value: "config",
-    id: "catalog"
-  }
-].sort((a, b) => a.label.localeCompare(b.label));
+import { useMemo } from "react";
 
 export default function NotificationResourceTypeDropdown() {
   const [field] = useField({
     name: "resource_type"
   });
 
+  const { data: resourceTypes = [], isLoading } =
+    useGetNotificationResourceTypesQuery();
+
+  const options = useMemo(() => {
+    return resourceTypes
+      .map((item) => {
+        const type = item.resource_type;
+        const value = type.replaceAll("::", "__");
+        return {
+          label: type,
+          value,
+          id: value
+        } satisfies TriStateOptions;
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [resourceTypes]);
+
   return (
     <div className="flex flex-col">
       <TristateReactSelect
+        isLoading={isLoading}
         value={field.value}
-        options={jobHistoryResourceTypes}
+        options={options}
         onChange={(val) => {
           if (val && val !== "All") {
             field.onChange({ target: { value: val, name: field.name } });

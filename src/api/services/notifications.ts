@@ -79,6 +79,7 @@ export const getNotificationsSummary = async ({
 type NotificationSendHistorySummaryRequest = {
   status?: string;
   resourceType?: string;
+  resourceKind?: string;
   search?: string;
   tags?: string;
   includeDeletedResources?: boolean;
@@ -95,6 +96,7 @@ export const getNotificationSendHistorySummary = async ({
   pageIndex,
   pageSize,
   resourceType,
+  resourceKind,
   status,
   search,
   tags,
@@ -102,6 +104,7 @@ export const getNotificationSendHistorySummary = async ({
 }: NotificationQueryFilterOptions & {
   status?: string;
   resourceType?: string;
+  resourceKind?: string;
   search?: string;
   tags?: string;
   includeDeletedResources?: boolean;
@@ -118,7 +121,14 @@ export const getNotificationSendHistorySummary = async ({
   }
 
   if (resourceType) {
-    payload.resourceType = tristateOutputToQueryParamValue(resourceType);
+    const resourceTypeValue = tristateOutputToQueryParamValue(resourceType);
+    if (resourceTypeValue) {
+      payload.resourceType = resourceTypeValue.replaceAll("__", "::");
+    }
+  }
+
+  if (resourceKind) {
+    payload.resourceKind = tristateOutputToQueryParamValue(resourceKind);
   }
 
   if (tags) {
@@ -174,6 +184,7 @@ export const getNotificationSendHistory = async ({
   pageIndex,
   pageSize,
   resourceType,
+  resourceKind,
   status,
   resourceID,
   search
@@ -181,12 +192,20 @@ export const getNotificationSendHistory = async ({
   status?: string;
   resourceID?: string;
   resourceType?: string;
+  resourceKind?: string;
   search?: string;
 }) => {
   const pagingParams = getPagingParams({ pageIndex, pageSize });
 
   const resourceTypeParam = resourceType
-    ? tristateOutputToQueryFilterParam(resourceType, "resource_type")
+    ? tristateOutputToQueryFilterParam(
+        resourceType,
+        "resource_type"
+      ).replaceAll("__", "::")
+    : "";
+
+  const resourceKindParam = resourceKind
+    ? tristateOutputToQueryFilterParam(resourceKind, "resource_kind")
     : "";
 
   const statusParam = status
@@ -204,7 +223,7 @@ export const getNotificationSendHistory = async ({
 
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<NotificationSendHistoryApiResponse[] | null>(
-      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${statusParam}${searchFilter}${resourceIDFilter}`,
+      `/notification_send_history_summary?select=${selectColumns}&order=created_at.desc${pagingParams}${resourceTypeParam}${resourceKindParam}${statusParam}${searchFilter}${resourceIDFilter}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -212,6 +231,34 @@ export const getNotificationSendHistory = async ({
       }
     )
   );
+};
+
+export type NotificationResourceTypeItem = {
+  resource_type: string;
+  count?: number;
+};
+
+export const getNotificationResourceTypes = async () => {
+  const res = await IncidentCommander.get<
+    NotificationResourceTypeItem[] | null
+  >(`/notification_send_history_resource_types?select=resource_type`);
+
+  return (res.data ?? [])
+    .map((item) => item.resource_type)
+    .filter((value): value is string => Boolean(value))
+    .map((resource_type) => ({ resource_type }));
+};
+
+export type NotificationResourceTagItem = {
+  key: string;
+  value: string;
+};
+
+export const getNotificationResourceTags = async () => {
+  const res = await IncidentCommander.get<NotificationResourceTagItem[] | null>(
+    `/notification_send_history_resource_tags?select=key,value`
+  );
+  return res.data ?? [];
 };
 
 export const getNotificationSendHistoryById = async (id: string) => {
