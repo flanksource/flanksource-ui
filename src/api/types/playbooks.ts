@@ -108,9 +108,12 @@ export type PlaybookResourceSelector = {
   agent?: string;
   cache?: string;
   includeDeleted?: boolean;
+  limit?: number;
+  scope?: string;
   id?: string;
   name?: string;
   namespace?: string;
+  tagSelector?: string;
   types?: string[];
   statuses?: string[];
   labelSelector?: string;

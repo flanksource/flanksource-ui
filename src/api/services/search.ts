@@ -2,6 +2,7 @@ import { apiBase } from "../axios";
 import { PlaybookResourceSelector } from "../types/playbooks";
 
 export type SearchResourcesRequest = {
+  limit?: number;
   checks?: PlaybookResourceSelector[];
   canaries?: PlaybookResourceSelector[];
   components?: PlaybookResourceSelector[];
@@ -10,7 +11,7 @@ export type SearchResourcesRequest = {
   playbooks?: PlaybookResourceSelector[];
 };
 
-type SearchedResource = {
+export type SearchedResource = {
   id: string;
   name: string;
   type: string;
@@ -21,7 +22,7 @@ type SearchedResource = {
   tags?: Record<string, string>;
 };
 
-type SelectedResources = {
+export type SelectedResources = {
   configs: SearchedResource[];
   checks: SearchedResource[];
   canaries: SearchedResource[];
