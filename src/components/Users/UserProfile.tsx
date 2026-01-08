@@ -1,5 +1,6 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
+import { Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload } from "react-icons/io";
 import { CreateTokenResponse } from "../../api/services/tokens";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
@@ -10,6 +11,14 @@ import CreateTokenForm, {
 } from "../Tokens/Add/CreateTokenForm";
 import TokenDisplayModal from "../Tokens/Add/TokenDisplayModal";
 
+const LazyResourceSelectorSearchModal = lazy(() =>
+  import("../ResourceSelectorSearch/ResourceSelectorSearchModal").then(
+    (module) => ({
+      default: module.ResourceSelectorSearchModal
+    })
+  )
+);
+
 export function UserProfileDropdown() {
   const authSystem = useDetermineAuthSystem();
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
@@ -17,6 +26,10 @@ export function UserProfileDropdown() {
   const [isMcpTokenModalOpen, setIsMcpTokenModalOpen] = useState(false);
   const [isMcpTokenDisplayModalOpen, setIsMcpTokenDisplayModalOpen] =
     useState(false);
+  const [
+    isResourceSelectorSearchModalOpen,
+    setIsResourceSelectorSearchModalOpen
+  ] = useState(false);
   const [mcpTokenResponse, setMcpTokenResponse] =
     useState<CreateTokenResponse>();
   const [mcpTokenFormValues, setMcpTokenFormValues] =
@@ -44,6 +57,11 @@ export function UserProfileDropdown() {
                 labelIcon={<IoMdAirplane />}
                 onClick={() => setIsMcpTokenModalOpen(true)}
               />
+              <UserButton.Action
+                label="Resource selector search"
+                labelIcon={<Search className="h-4 w-4" />}
+                onClick={() => setIsResourceSelectorSearchModalOpen(true)}
+              />
             </UserButton.MenuItems>
           </UserButton>
         </div>
@@ -51,6 +69,9 @@ export function UserProfileDropdown() {
         <KratosUserProfileDropdown
           openKubeConfigModal={() => setIsDownloadKubeConfigModalOpen(true)}
           openMcpTokenModal={() => setIsMcpTokenModalOpen(true)}
+          openResourceSelectorSearchModal={() =>
+            setIsResourceSelectorSearchModalOpen(true)
+          }
         />
       )}
       <AddKubeConfigModal
@@ -76,6 +97,14 @@ export function UserProfileDropdown() {
           formValues={mcpTokenFormValues}
           isMcp={true}
         />
+      )}
+      {isResourceSelectorSearchModalOpen && (
+        <Suspense fallback={null}>
+          <LazyResourceSelectorSearchModal
+            open={isResourceSelectorSearchModalOpen}
+            onClose={() => setIsResourceSelectorSearchModalOpen(false)}
+          />
+        </Suspense>
       )}
     </>
   );
