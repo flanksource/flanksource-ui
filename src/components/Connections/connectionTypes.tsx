@@ -15,6 +15,7 @@ const enum ConnectionsFieldTypes {
 }
 
 type Variant = "small" | "large";
+type CheckboxStyle = "check" | "toggle";
 
 const variants: { [key: string]: Variant } = {
   small: "small",
@@ -30,6 +31,11 @@ export type ConnectionFormFields = {
   hint?: string;
   default?: boolean | number | string;
   hideLabel?: boolean;
+  inline?: boolean;
+  className?: string;
+  labelClassName?: string;
+  checkboxStyle?: CheckboxStyle;
+  containerClassName?: string;
   switchFieldProps?: {
     options: {
       label: string;
@@ -1467,7 +1473,16 @@ export const connectionTypes: ConnectionType[] = [
               key: "port",
               type: ConnectionsFieldTypes.numberInput,
               required: true,
-              default: 587
+              default: 587,
+              containerClassName: "flex-none w-28"
+            },
+            {
+              label: "Insecure TLS",
+              key: "insecure_tls",
+              type: ConnectionsFieldTypes.checkbox,
+              inline: true,
+              labelClassName: "text-sm font-semibold text-gray-700",
+              containerClassName: "flex-none w-40 pt-6"
             }
           ]
         }
@@ -1484,16 +1499,30 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.EnvVarSource
       },
       {
-        label: "From Address",
+        label: "From",
         key: "from",
-        type: ConnectionsFieldTypes.input,
-        required: true
+        type: ConnectionsFieldTypes.GroupField,
+        groupFieldProps: {
+          fields: [
+            {
+              label: "From Address",
+              key: "from",
+              type: ConnectionsFieldTypes.input,
+              required: true
+            },
+            {
+              label: "From Name",
+              key: "fromName",
+              type: ConnectionsFieldTypes.input,
+              required: true
+            }
+          ]
+        }
       },
       {
-        label: "From Name",
-        key: "fromName",
-        type: ConnectionsFieldTypes.input,
-        required: true
+        label: "To Address",
+        key: "to",
+        type: ConnectionsFieldTypes.input
       },
       {
         label: "Encryption method",
@@ -1537,10 +1566,6 @@ export const connectionTypes: ConnectionType[] = [
               key: "Plain"
             },
             {
-              label: "CRAMMD5",
-              key: "CRAMMD5"
-            },
-            {
               label: "Unknown",
               key: "Unknown"
             },
@@ -1552,11 +1577,6 @@ export const connectionTypes: ConnectionType[] = [
         },
         default: "Unknown",
         required: true
-      },
-      {
-        label: "Insecure TLS",
-        key: "insecure_tls",
-        type: ConnectionsFieldTypes.checkbox
       }
     ],
     convertToFormSpecificValue: (data: Record<string, any>) => {
@@ -1567,13 +1587,23 @@ export const connectionTypes: ConnectionType[] = [
         from: data?.properties?.from,
         fromName: data?.properties?.fromName,
         host: data?.properties?.host,
-        port: data?.properties?.port
+        port: data?.properties?.port,
+        to: data?.properties?.to
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
+      const queryParams = [
+        `UseStartTLS=${data.insecure_tls}`,
+        `Encryption=${data.encryptionMethod}`,
+        `Auth=${data.authMethod}`,
+        `from=${data.from}`,
+        data.to ? `to=${data.to}` : null
+      ].filter(Boolean);
       return {
         name: data.name,
-        url: `smtp://$(username):$(password)@${data.host}:${data.port}/?UseStartTLS=${data.insecure_tls}&Encryption=${data.encryptionMethod}&Auth=${data.authMethod}`,
+        url: `smtp://$(username):$(password)@${data.host}:${data.port}/?${queryParams.join(
+          "&"
+        )}`,
         username: data.username,
         password: data.password,
         insecure_tls: data.insecure_tls,
@@ -1583,7 +1613,8 @@ export const connectionTypes: ConnectionType[] = [
           from: data.from,
           fromName: data.fromName,
           host: data.host,
-          port: data.port
+          port: data.port,
+          ...(data.to ? { to: data.to } : {})
         }
       };
     }
