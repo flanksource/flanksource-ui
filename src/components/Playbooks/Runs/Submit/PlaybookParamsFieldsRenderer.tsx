@@ -1,6 +1,7 @@
 import FormikBytesTextField from "@flanksource-ui/components/Forms/Formik/FormikBytesTextField";
 import FormikMillicoresTextField from "@flanksource-ui/components/Forms/Formik/FormikMillicoresTextField";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
+import FormikDurationDropdown from "@flanksource-ui/components/Forms/Formik/FormikDurationDropdown";
 import { ModalSize } from "@flanksource-ui/ui/Modal";
 import { PlaybookParam } from "../../../../api/types/playbooks";
 import FormikCheckbox from "../../../Forms/Formik/FormikCheckbox";
@@ -57,6 +58,16 @@ export default function PlaybookParamsFieldsRenderer({
           name={`params.${fieldName}`}
           required={required}
           options={params.properties?.options ?? []}
+        />
+      );
+    case "duration":
+      return (
+        <FormikDurationDropdown
+          name={`params.${fieldName}`}
+          required={required}
+          options={params.properties?.options}
+          min={params.properties?.min}
+          max={params.properties?.max}
         />
       );
     case "team":
