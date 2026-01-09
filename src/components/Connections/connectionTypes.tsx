@@ -1592,11 +1592,14 @@ export const connectionTypes: ConnectionType[] = [
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
+      const useStartTLS = data.encryptionMethod === "ExplicitTLS";
       const queryParams = [
-        `UseStartTLS=${data.insecure_tls}`,
+        `UseStartTLS=${useStartTLS}`,
+        `SkipTLSVerify=${data.insecure_tls}`,
         `Encryption=${data.encryptionMethod}`,
         `Auth=${data.authMethod}`,
         `from=${data.from}`,
+        `fromName=${data.fromName}`,
         data.to ? `to=${data.to}` : null
       ].filter(Boolean);
       return {
