@@ -233,6 +233,15 @@ type PlaybookParamTextOptions = PlaybookParamCommonFields & {
   };
 };
 
+export type PlaybookParamDuration = PlaybookParamCommonFields & {
+  type: "duration";
+  properties?: ParamProperties & {
+    min?: string;
+    max?: string;
+    options?: string[];
+  };
+};
+
 export type PlaybookParamCodeEditor = PlaybookParamCommonFields & {
   type: "code";
   properties?: ParamProperties & {
@@ -272,6 +281,7 @@ export type PlaybookParamTeam = PlaybookParamCommonFields & {
 export type PlaybookParam =
   | PlaybookParamListOptions
   | PlaybookParamTextOptions
+  | PlaybookParamDuration
   | PlaybookParamCodeEditor
   | PlaybookParamCheckbox
   | PlaybookParamComponentConfigCheck
