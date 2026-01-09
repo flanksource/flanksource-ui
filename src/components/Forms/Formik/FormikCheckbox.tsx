@@ -1,3 +1,4 @@
+import { Checkbox } from "@flanksource-ui/components/ui/checkbox";
 import Hint, { HintPosition } from "@flanksource-ui/ui/FormControls/Hint";
 import { Switch } from "@headlessui/react";
 import { useField } from "formik";
@@ -40,19 +41,18 @@ export default function FormikCheckbox({
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         {checkboxStyle === "check" && (
-          <input
+          <Checkbox
             id={name}
-            type="checkbox"
-            className="rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
-            {...field}
-            checked={assertAsString ? field.value === "true" : field.value}
-            onChange={(e) => {
+            checked={assertAsString ? field.value === "true" : !!field.value}
+            onCheckedChange={(checked) => {
+              const normalizedChecked =
+                checked === "indeterminate" ? false : checked;
               field.onChange({
                 target: {
-                  name: e.target.name,
+                  name: field.name,
                   value: assertAsString
-                    ? e.target.checked.valueOf().toString()
-                    : e.target.checked
+                    ? normalizedChecked.valueOf().toString()
+                    : normalizedChecked
                 }
               });
             }}
@@ -109,19 +109,18 @@ export default function FormikCheckbox({
           </div>
         </label>
         {checkboxStyle === "check" && (
-          <input
+          <Checkbox
             id={name}
-            type="checkbox"
-            className="rounded border-gray-900 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
-            {...field}
-            checked={assertAsString ? field.value === "true" : field.value}
-            onChange={(e) => {
+            checked={assertAsString ? field.value === "true" : !!field.value}
+            onCheckedChange={(checked) => {
+              const normalizedChecked =
+                checked === "indeterminate" ? false : checked;
               field.onChange({
                 target: {
-                  name: e.target.name,
+                  name: field.name,
                   value: assertAsString
-                    ? e.target.checked.valueOf().toString()
-                    : e.target.checked
+                    ? normalizedChecked.valueOf().toString()
+                    : normalizedChecked
                 }
               });
             }}

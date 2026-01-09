@@ -45,10 +45,15 @@ export default function RenderConnectionFormFields({
         <FormikCheckbox
           name={field.key}
           label={field.label}
-          labelClassName="text-sm font-semibold text-gray-700"
+          labelClassName={
+            field.labelClassName ?? "text-sm font-semibold text-gray-700"
+          }
           required={field.required}
           hint={field.hint}
           disabled={disabled}
+          inline={field.inline}
+          className={field.className}
+          checkboxStyle={field.checkboxStyle}
         />
       );
     case "EnvVarSource":
@@ -94,7 +99,12 @@ export default function RenderConnectionFormFields({
       return (
         <div className="flex flex-row gap-2">
           {field.groupFieldProps?.fields.map((f) => (
-            <div className="flex flex-1 flex-col gap-2" key={field.key}>
+            <div
+              className={`flex flex-col gap-2 ${
+                f.containerClassName ?? "flex-1"
+              }`}
+              key={f.key}
+            >
               <RenderConnectionFormFields field={f} disabled={disabled} />
             </div>
           ))}

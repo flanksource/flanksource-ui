@@ -1,10 +1,18 @@
 import { testConnection } from "@flanksource-ui/api/services/connections";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
-import { AlertMessageDialog } from "@flanksource-ui/ui/AlertDialog/AlertMessageDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@flanksource-ui/components/ui/dialog";
+import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { Button } from "..";
+import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 
 type TestConnectionProps = {
   connectionId: string;
@@ -16,15 +24,18 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     kind?: "error" | "success";
   }>();
 
-  const parseMaybeJson = (payload: unknown): unknown => {
-    if (typeof payload !== "string") {
-      return payload;
+  const renderSuccessMessage = (payload: unknown) => {
+    if (payload === undefined || payload === null || payload === "") {
+      return undefined;
     }
-    try {
-      return JSON.parse(payload);
-    } catch (e) {
-      return payload;
-    }
+
+    return (
+      <CodeBlock
+        theme={darkTheme}
+        code={JSON.stringify(payload, null, 2)}
+        language="json"
+      />
+    );
   };
 
   const { mutate: test, isLoading } = useMutation({
@@ -33,13 +44,13 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
       return testConnection(connectionId);
     },
     onSuccess: (res) => {
-      if (res?.status === 200 && res.data?.message === "ok") {
-        setMessage({
-          message: "Connection successful",
-          kind: "success"
-        });
+      if (!res) {
         return;
       }
+      setMessage({
+        message: renderSuccessMessage(res.data?.payload),
+        kind: "success"
+      });
     },
     onError: (
       res: AxiosError<{
@@ -61,17 +72,47 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
         onClick={() => test()}
         className="btn-secondary"
       />
-      {message && (
-        <AlertMessageDialog
-          showDialog={!!message}
-          message={message?.message}
-          kind={message?.kind}
-          title="Test Connection Results"
-          onCloseDialog={() => {
+      <Dialog
+        open={!!message}
+        onOpenChange={(open) => {
+          if (!open) {
             setMessage(undefined);
-          }}
-        />
-      )}
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Test Connection Results</DialogTitle>
+          </DialogHeader>
+          {message?.kind && (
+            <div
+              className={
+                message.kind === "error"
+                  ? "text-sm font-medium text-red-600"
+                  : "text-sm font-medium text-green-700"
+              }
+            >
+              {message.kind === "error"
+                ? "Connection failed"
+                : "Connection successful"}
+            </div>
+          )}
+          {message?.message && (
+            <div className="max-h-[60vh] overflow-auto text-sm">
+              {message.message}
+            </div>
+          )}
+          <DialogFooter className="pt-2">
+            <Button
+              className={
+                message?.kind === "error" ? "btn-danger" : "btn-primary"
+              }
+              text="Close"
+              onClick={() => setMessage(undefined)}
+            />
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

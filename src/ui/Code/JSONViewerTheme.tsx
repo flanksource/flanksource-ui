@@ -78,7 +78,7 @@ const lightTheme = {
 const darkTheme = {
   plain: {
     color: "#e1e4e8",
-    backgroundColor: "transparent"
+    backgroundColor: "#111827"
   },
   styles: [
     {

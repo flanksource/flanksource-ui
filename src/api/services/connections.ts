@@ -2,9 +2,11 @@ import { Connection } from "@flanksource-ui/components/Connections/ConnectionFor
 import { apiBase, IncidentCommander } from "../axios";
 
 export async function testConnection(id: string) {
-  return apiBase.post<{ message?: string; error?: string } | null>(
-    `/connection/test/${id}`
-  );
+  return apiBase.post<{
+    message?: string;
+    error?: string;
+    payload?: unknown;
+  } | null>(`/connection/test/${id}`);
 }
 
 export async function getConnectionByID(id: string) {
