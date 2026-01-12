@@ -395,13 +395,13 @@ export const connectionTypes: ConnectionType[] = [
         label: "Username",
         key: "username",
         type: ConnectionsFieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Password",
         key: "password",
         type: ConnectionsFieldTypes.EnvVarSource,
-        required: true
+        required: false
       },
       {
         label: "Insecure TLS",
