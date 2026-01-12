@@ -11,6 +11,7 @@ import CodeBlock from "@flanksource-ui/ui/Code/CodeBlock";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
+import { stringify } from "yaml";
 import { Button } from "..";
 import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 
@@ -30,11 +31,7 @@ export function TestConnection({ connectionId }: TestConnectionProps) {
     }
 
     return (
-      <CodeBlock
-        theme={darkTheme}
-        code={JSON.stringify(payload, null, 2)}
-        language="json"
-      />
+      <CodeBlock theme={darkTheme} code={stringify(payload)} language="yaml" />
     );
   };
 
