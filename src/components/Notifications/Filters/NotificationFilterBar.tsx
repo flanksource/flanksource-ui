@@ -10,7 +10,7 @@ export default function NotificationFilterBar() {
       paramsToReset={["pageIndex", "pageSize"]}
       filterFields={["status", "resource_type", "search", "tags"]}
       defaultFieldValues={{
-        status: "skipped:-1,silenced:-1"
+        status: "skipped:-1,silenced:-1,inhibited:-1,repeat-interval:-1"
       }}
     >
       <div className="flex flex-row gap-2 py-3">

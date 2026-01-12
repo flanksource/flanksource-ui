@@ -65,7 +65,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
           >
             <NotificationResourceDisplay
               resource={row.original.resource}
-              resourceType={row.original.resource_type}
+              resourceKind={row.original.resource_kind}
             />
             &nbsp;
             <Badge color="blue" size="sm" text={total}></Badge>
