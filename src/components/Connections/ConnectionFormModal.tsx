@@ -27,6 +27,7 @@ export type Connection = {
   encryptionMethod?: string;
   from?: string;
   fromName?: string;
+  to?: string;
   group?: string;
   groupOwner?: string;
   host?: string;
