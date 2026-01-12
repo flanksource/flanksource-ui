@@ -261,6 +261,11 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
   }
 }`
     },
+    "slack-bot": {
+      label: "Slack Bot",
+      config: `MCP_URL=${baseUrl}
+MCP_BEARER_TOKEN=${token}`
+    },
     direct: {
       label: "Direct HTTP",
       config: `curl -X POST ${baseUrl} \\
@@ -334,8 +339,11 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
           {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
             <Tab key={key} label={label} value={key} className="p-4">
               <div className="max-h-64 overflow-y-auto">
-                {key === "direct" ? (
-                  <CodeBlock code={config} language="bash" />
+                {key === "direct" || key === "slack-bot" ? (
+                  <CodeBlock
+                    code={config}
+                    language={key === "slack-bot" ? "bash" : "bash"}
+                  />
                 ) : (
                   <JSONViewer
                     code={config}
