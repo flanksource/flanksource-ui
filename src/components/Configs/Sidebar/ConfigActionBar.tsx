@@ -6,7 +6,6 @@ import clsx from "clsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { MdAlarmAdd } from "react-icons/md";
 import AttachAsEvidenceButton from "../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
-import PlaybooksDropdownMenu from "../../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 
 type ConfigActionBarProps = {
   configId: string;
@@ -78,7 +77,6 @@ export default function ConfigActionBar({
           setChecked({});
         }}
       />
-      <PlaybooksDropdownMenu config_id={configId} />
     </div>
   );
 }
