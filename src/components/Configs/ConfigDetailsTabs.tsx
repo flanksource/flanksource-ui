@@ -52,13 +52,14 @@ export function ConfigDetailsTabs({
   const { tabs: configTabList } = useConfigDetailsTabs(configItem?.summary);
 
   const playbooksButton = id ? (
-    <PlaybooksDropdownMenu config_id={id} highlight containerClassName="my-0" />
+    <PlaybooksDropdownMenu config_id={id} containerClassName="my-0" />
   ) : null;
+
   const layoutExtra =
     extra || playbooksButton ? (
       <div className="flex items-center gap-2">
-        {extra}
         {playbooksButton}
+        {extra}
       </div>
     ) : undefined;
 
