@@ -42,6 +42,33 @@ declare module "react-select/dist/declarations/src/Select" {
 }
 
 /**
+ * Parses a tristate key:state string where the key may contain colons.
+ * The state value (1, -1, or 0) is always after the LAST colon.
+ */
+export function parseTristateKeyState(
+  item: string
+): { key: string; state: number } | null {
+  if (!item || typeof item !== "string") {
+    return null;
+  }
+
+  const lastColonIndex = item.lastIndexOf(":");
+  if (lastColonIndex === -1) {
+    return null;
+  }
+
+  const key = item.slice(0, lastColonIndex);
+  const stateStr = item.slice(lastColonIndex + 1);
+  const state = parseInt(stateStr, 10);
+
+  if (isNaN(state) || !key) {
+    return null;
+  }
+
+  return { key, state };
+}
+
+/**
  *
  * Takes a query param value that looks like this: key:1,key2:-1 and converts it
  * to key,!key2 that can be used in a query string to filter the results.
@@ -54,8 +81,12 @@ export function tristateOutputToQueryParamValue(
   return param
     ?.split(",")
     .map((type) => {
-      const [changeType, symbol] = type.split(":");
-      const symbolFilter = symbol?.toString() === "-1" ? "!" : "";
+      const parsed = parseTristateKeyState(type);
+      if (!parsed) {
+        return null;
+      }
+      const { key: changeType, state: symbol } = parsed;
+      const symbolFilter = symbol === -1 ? "!" : "";
       const filterValue = changeType
         .replaceAll("____", ":")
         .replaceAll("||||", ",");
@@ -64,6 +95,7 @@ export function tristateOutputToQueryParamValue(
       }
       return `${symbolFilter}${filterValue}`;
     })
+    .filter(Boolean)
     .join(",");
 }
 
@@ -212,8 +244,8 @@ function ReactSelectTriStateSingleValue({
   const totalIncluded = useMemo(
     () =>
       value.filter((v) => {
-        const [, value] = v.value.split(":");
-        return +value === 1;
+        const parsed = parseTristateKeyState(v.value);
+        return parsed?.state === 1;
       }),
     [value]
   );
@@ -221,8 +253,8 @@ function ReactSelectTriStateSingleValue({
   const totalExcluded = useMemo(
     () =>
       value.filter((v) => {
-        const [, value] = v.value.split(":");
-        return +value === -1;
+        const parsed = parseTristateKeyState(v.value);
+        return parsed?.state === -1;
       }),
     [value]
   );
@@ -231,13 +263,14 @@ function ReactSelectTriStateSingleValue({
     <div className="flex flex-row gap-1 overflow-hidden text-ellipsis rounded-md text-xs">
       {value.length < 4 ? (
         value.map((v) => {
-          const [, value] = v.value.split(":");
+          const parsed = parseTristateKeyState(v.value);
+          const stateValue = parsed?.state ?? 0;
           return (
             <>
               <div
                 data-tooltip-id={`item-${v.id}`}
                 data-tooltip-content={`${
-                  +value === 1 ? "Include" : "Exclude"
+                  stateValue === 1 ? "Include" : "Exclude"
                 } ${v.label}`}
                 key={v.id}
                 className={clsx(
@@ -247,7 +280,7 @@ function ReactSelectTriStateSingleValue({
                 <span className="flex-1 overflow-hidden text-ellipsis text-nowrap">
                   {v.label}
                 </span>{" "}
-                <span> {+value === 1 ? "" : <FaBan />}</span>
+                <span> {stateValue === 1 ? "" : <FaBan />}</span>
               </div>
               <Tooltip id={`item-${v.id}`} />
             </>
@@ -342,12 +375,15 @@ export function TristateReactSelectComponent({
     () => {
       if (value) {
         return value.split(",").reduce((acc, item) => {
-          const [key, value] = item.split(":");
+          const parsed = parseTristateKeyState(item);
+          if (!parsed) {
+            return acc;
+          }
           return {
             ...acc,
-            [key]: parseInt(value, 10)
+            [parsed.key]: parsed.state
           };
-        }, {});
+        }, {} as TriStateToggleState);
       }
       return {};
     }
@@ -357,12 +393,15 @@ export function TristateReactSelectComponent({
     if (value) {
       setToggleState(
         value.split(",").reduce((acc, item) => {
-          const [key, value] = item.split(":");
+          const parsed = parseTristateKeyState(item);
+          if (!parsed) {
+            return acc;
+          }
           return {
             ...acc,
-            [key]: parseInt(value, 10)
+            [parsed.key]: parsed.state
           };
-        }, {})
+        }, {} as TriStateToggleState)
       );
     } else {
       setToggleState({});
