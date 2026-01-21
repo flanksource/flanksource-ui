@@ -46,6 +46,14 @@ const GlobalFilters: React.FC<GlobalFiltersProps> = ({ variables }) => {
   const filterComponents = useMemo(() => {
     if (!variables || variables.length === 0) return [];
 
+    const withAllOption = (options: GroupByOptions[]) => {
+      if (options.some((option) => option.value === "*")) {
+        return options;
+      }
+
+      return [{ label: "All", value: "*" }, ...options];
+    };
+
     return variables.map((variable) => (
       <Dropdown
         key={variable.key}
@@ -53,14 +61,18 @@ const GlobalFilters: React.FC<GlobalFiltersProps> = ({ variables }) => {
         paramsKey={variable.key}
         options={
           variable.optionItems && variable.optionItems.length > 0
-            ? variable.optionItems.map((item) => ({
-                label: item.label,
-                value: item.value
-              }))
-            : variable.options.map((option) => ({
-                label: option,
-                value: option
-              }))
+            ? withAllOption(
+                variable.optionItems.map((item) => ({
+                  label: item.label,
+                  value: item.value
+                }))
+              )
+            : withAllOption(
+                variable.options.map((option) => ({
+                  label: option,
+                  value: option
+                }))
+              )
         }
       />
     ));
