@@ -14,12 +14,18 @@ export default function NotificationDetailsModal({
   id,
   onClose
 }: NotificationDetailsModalProps) {
-  const { data: notification, isLoading } = useQuery({
-    queryKey: ["notifications_send_history_summary", id],
-    queryFn: () => getNotificationSendHistoryById(id)
-  });
+  const { data: notification, isLoading } = useQuery(
+    ["notification_send_history_detail", id],
+    () => getNotificationSendHistoryById(id),
+    {
+      enabled: isOpen,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: "always"
+    }
+  );
 
-  if (isLoading || !notification) {
+  if (!isOpen || isLoading || !notification) {
     return null;
   }
 

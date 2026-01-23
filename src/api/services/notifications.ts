@@ -9,6 +9,7 @@ import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NotificationRules,
   NotificationSendHistoryApiResponse,
+  NotificationSendHistoryDetailApiResponse,
   NotificationSendHistorySummary,
   NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
@@ -262,15 +263,11 @@ export const getNotificationResourceTags = async () => {
 };
 
 export const getNotificationSendHistoryById = async (id: string) => {
-  const selectColumns = [
-    "*"
-    // `notification:notification_id(*,notification_type)`
-  ].join(",");
-
-  const res = await IncidentCommander.get<NotificationSendHistoryApiResponse[]>(
-    `/notification_send_history_summary?id=eq.${id}&select=${selectColumns}`
-  );
-  return res.data?.[0];
+  const res =
+    await NotificationAPI.get<NotificationSendHistoryDetailApiResponse>(
+      `/send_history/${id}`
+    );
+  return res.data;
 };
 
 export type NotificationQueryFilterOptions = {
