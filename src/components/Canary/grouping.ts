@@ -21,6 +21,20 @@ export function getGroupedChecks(checks: HealthCheck[] = [], groupBy?: string) {
     return groupedChecks;
   }
 
+  if (groupBy === "agent") {
+    const groupedChecks: Record<string, HealthCheck[]> = {};
+    const groupNames: string[] = [];
+    checks.forEach((check) => {
+      const agentName = check.agents?.name || "local";
+      if (groupNames.indexOf(agentName) === -1) {
+        groupNames.push(agentName);
+        groupedChecks[agentName] = [];
+      }
+      groupedChecks[agentName].push(check);
+    });
+    return groupedChecks;
+  }
+
   if (groupBy === "name") {
     // when grouping by name, we want to split name by /, and group each part
     const groupedChecks: Record<string, HealthCheck[]> = {};
