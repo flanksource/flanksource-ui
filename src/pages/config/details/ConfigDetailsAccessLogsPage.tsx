@@ -5,6 +5,7 @@ import { ExternalUserCell } from "@flanksource-ui/components/Configs/ExternalUse
 import { Age } from "@flanksource-ui/ui/Age";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
@@ -27,9 +28,29 @@ const PropertiesCell = ({ cell }: MRTCellProps<ConfigAccessLog>) => {
     return <span className="text-gray-400">—</span>;
   }
 
+  const tags = Object.entries(value)
+    .filter(([key]) => key !== "toString")
+    .map(([key, tagValue]) => ({
+      key,
+      value:
+        tagValue === null || tagValue === undefined
+          ? ""
+          : typeof tagValue === "object"
+            ? JSON.stringify(tagValue)
+            : String(tagValue)
+    }));
+
+  if (tags.length === 0) {
+    return <span className="text-gray-400">—</span>;
+  }
+
   return (
-    <div className="max-w-xs truncate" title={JSON.stringify(value, null, 2)}>
-      {JSON.stringify(value)}
+    <div className="max-w-xs">
+      <TagList
+        className="flex flex-col"
+        tags={tags}
+        minimumItemsToShow={tags.length}
+      />
     </div>
   );
 };
