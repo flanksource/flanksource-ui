@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { ReactNode } from "react";
 import useConfigAccessSummaryQuery from "@flanksource-ui/api/query-hooks/useConfigAccessSummaryQuery";
+import useConfigAccessLogsQuery from "@flanksource-ui/api/query-hooks/useConfigAccessLogsQuery";
 
 type ConfigDetailsTab = {
   label: ReactNode;
@@ -35,6 +36,10 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   const { data: accessSummary } = useConfigAccessSummaryQuery(id);
   const accessCount =
     accessSummary?.totalEntries ?? accessSummary?.data?.length ?? 0;
+
+  const { data: accessLogsData } = useConfigAccessLogsQuery(id);
+  const accessLogsCount =
+    accessLogsData?.totalEntries ?? accessLogsData?.data?.length ?? 0;
 
   const staticTabs: ConfigDetailsTab[] = [
     { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
@@ -100,6 +105,19 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
       ),
       key: "Access",
       path: `/catalog/${id}/access`
+    });
+  }
+
+  if (accessLogsCount > 0) {
+    staticTabs.push({
+      label: (
+        <>
+          Access Logs
+          <Badge className="ml-1" text={accessLogsCount} />
+        </>
+      ),
+      key: "Access Logs",
+      path: `/catalog/${id}/access-logs`
     });
   }
 

@@ -107,6 +107,19 @@ export interface ConfigAccessSummary {
   created_at: string;
 }
 
+export interface ConfigAccessLog {
+  config_id: string;
+  external_user_id: string;
+  scraper_id: string;
+  created_at: string;
+  mfa?: boolean | null;
+  properties?: Record<string, any> | null;
+  external_users?: {
+    name: string;
+    user_email?: string | null;
+  } | null;
+}
+
 export interface ConfigTypeRelationships extends Timestamped {
   config_id: string;
   related_id: string;

@@ -1,6 +1,7 @@
 import useConfigAccessSummaryQuery from "@flanksource-ui/api/query-hooks/useConfigAccessSummaryQuery";
 import { ConfigAccessSummary } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
+import { ExternalUserCell } from "@flanksource-ui/components/Configs/ExternalUserCell";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
@@ -8,6 +9,14 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
+
+const UserCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
+  const user = {
+    name: row.original.user,
+    user_email: row.original.email || null
+  };
+  return <ExternalUserCell user={user} />;
+};
 
 const RoleCell = ({ cell }: MRTCellProps<ConfigAccessSummary>) => {
   const value = cell.getValue<string | null>();
@@ -56,11 +65,7 @@ export function ConfigDetailsAccessPage() {
       {
         header: "User",
         accessorKey: "user",
-        size: 160
-      },
-      {
-        header: "Email",
-        accessorKey: "email",
+        Cell: UserCell,
         size: 220
       },
       {

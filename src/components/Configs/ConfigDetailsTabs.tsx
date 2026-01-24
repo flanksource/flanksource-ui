@@ -26,6 +26,7 @@ type ConfigDetailsTabsProps = {
     | "Playbooks"
     | "Checks"
     | "Access"
+    | "Access Logs"
     | string; // Views
   className?: string;
   extra?: ReactNode;
