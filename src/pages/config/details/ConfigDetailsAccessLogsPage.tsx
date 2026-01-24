@@ -73,13 +73,6 @@ export function ConfigDetailsAccessLogsPage() {
         size: 250
       },
       {
-        header: "Accessed At",
-        accessorKey: "created_at",
-        Cell: ({ cell }) => <Age from={cell.getValue<string>()} />,
-        sortingFn: "datetime",
-        size: 180
-      },
-      {
         header: "MFA",
         accessorKey: "mfa",
         Cell: MFACell,
@@ -90,6 +83,13 @@ export function ConfigDetailsAccessLogsPage() {
         accessorKey: "properties",
         Cell: PropertiesCell,
         size: 250
+      },
+      {
+        header: "Accessed At",
+        accessorKey: "created_at",
+        Cell: ({ cell }) => <Age from={cell.getValue<string>()} />,
+        sortingFn: "datetime",
+        size: 180
       }
     ],
     []
