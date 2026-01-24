@@ -45,13 +45,8 @@ const PropertiesCell = ({ cell }: MRTCellProps<ConfigAccessLog>) => {
   }
 
   return (
-    <div className="max-w-xs">
-      <TagList
-        layout="row"
-        wrap={false}
-        tags={tags}
-        minimumItemsToShow={tags.length}
-      />
+    <div className="flex flex-wrap gap-1">
+      <TagList layout="row" tags={tags} minimumItemsToShow={tags.length} />
     </div>
   );
 };
@@ -75,19 +70,18 @@ export function ConfigDetailsAccessLogsPage() {
         header: "User",
         accessorKey: "external_users",
         Cell: UserCell,
-        size: 25
+        size: 15
       },
       {
         header: "MFA",
         accessorKey: "mfa",
         Cell: MFACell,
-        size: 10
+        size: 5
       },
       {
         header: "Properties",
         accessorKey: "properties",
-        Cell: PropertiesCell,
-        size: 55
+        Cell: PropertiesCell
       },
       {
         header: "Accessed At",
