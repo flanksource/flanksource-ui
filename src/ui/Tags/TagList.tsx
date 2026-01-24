@@ -43,6 +43,7 @@ type TagListProps = React.HTMLProps<HTMLDivElement> & {
   keyClassName?: string;
   valueClassName?: string;
   layout?: "row" | "column";
+  wrap?: boolean;
 };
 
 type TagItemProps = {
@@ -88,6 +89,7 @@ export function TagList({
   keyClassName = "",
   valueClassName = "font-light",
   layout = "column",
+  wrap = true,
   ...rest
 }: TagListProps) {
   const [showAll, setShowAll] = useState(false);
@@ -138,7 +140,12 @@ export function TagList({
         ref={innerContainerRef}
         className={clsx(
           "flex h-auto flex-1",
-          isColumnLayout ? "flex-col space-y-2" : "flex-row flex-wrap gap-1",
+          isColumnLayout
+            ? "flex-col space-y-2"
+            : clsx(
+                "flex-row gap-1",
+                wrap ? "flex-wrap" : "flex-nowrap overflow-x-auto"
+              ),
           !showAll && isColumnLayout ? "overflow-y-hidden" : ""
         )}
         style={
