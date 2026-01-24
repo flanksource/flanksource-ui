@@ -46,11 +46,7 @@ const PropertiesCell = ({ cell }: MRTCellProps<ConfigAccessLog>) => {
 
   return (
     <div className="max-w-xs">
-      <TagList
-        className="flex flex-col"
-        tags={tags}
-        minimumItemsToShow={tags.length}
-      />
+      <TagList layout="row" tags={tags} minimumItemsToShow={tags.length} />
     </div>
   );
 };

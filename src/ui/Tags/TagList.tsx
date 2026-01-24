@@ -42,6 +42,7 @@ type TagListProps = React.HTMLProps<HTMLDivElement> & {
   childClassName?: string;
   keyClassName?: string;
   valueClassName?: string;
+  layout?: "row" | "column";
 };
 
 type TagItemProps = {
@@ -86,6 +87,7 @@ export function TagList({
   childClassName = "bg-gray-200 text-gray-600 mx-1",
   keyClassName = "",
   valueClassName = "font-light",
+  layout = "column",
   ...rest
 }: TagListProps) {
   const [showAll, setShowAll] = useState(false);
@@ -94,9 +96,10 @@ export function TagList({
   const innerContainerRef = useRef<HTMLDivElement>(null);
 
   const [isOverflowing, setIsOverflowing] = useState(false);
-  const containerWidth = `${
-    (innerContainerRef.current?.clientWidth || 0) - 10
-  }px`;
+  const isColumnLayout = layout === "column";
+  const containerWidth = isColumnLayout
+    ? `${(innerContainerRef.current?.clientWidth || 0) - 10}px`
+    : undefined;
 
   useEffect(() => {
     const handleResize = () => {
@@ -116,9 +119,9 @@ export function TagList({
 
   return (
     <div ref={outerContainerRef} className={className} {...rest}>
-      {isOverflowing && (
+      {isColumnLayout && isOverflowing && (
         <button
-          onClick={(e) => {
+          onClick={() => {
             setShowAll((showMore) => !showMore);
           }}
           className="text-sm focus:outline-none"
@@ -134,11 +137,12 @@ export function TagList({
       <div
         ref={innerContainerRef}
         className={clsx(
-          `flex h-auto flex-1 flex-col space-y-2`,
-          !showAll ? `overflow-y-hidden` : ""
+          "flex h-auto flex-1",
+          isColumnLayout ? "flex-col space-y-2" : "flex-row flex-wrap gap-1",
+          !showAll && isColumnLayout ? "overflow-y-hidden" : ""
         )}
         style={
-          !showAll
+          !showAll && isColumnLayout
             ? {
                 maxHeight: `${2.25 * minimumItemsToShow}rem`
               }
