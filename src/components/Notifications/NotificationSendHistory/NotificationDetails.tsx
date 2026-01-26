@@ -17,6 +17,7 @@ import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { Status } from "@flanksource-ui/components/Status";
+import { sanitizeHTMLContent } from "@flanksource-ui/utils/common";
 
 type NotificationDetailsProps = {
   notification:
@@ -184,7 +185,7 @@ export default function NotificationDetails({
           ) : (
             <div
               dangerouslySetInnerHTML={{
-                __html: legacyBody ?? ""
+                __html: sanitizeHTMLContent(legacyBody ?? "")
               }}
             />
           )}
