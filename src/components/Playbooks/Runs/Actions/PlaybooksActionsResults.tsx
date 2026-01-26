@@ -47,19 +47,26 @@ function sanitizeTableCellValue(value: unknown): string {
     .replace(/\r?\n/g, "<br>"); // normalize newlines
 }
 
-function formatSqlRowsToMarkdown(rows: any[]): string | null {
+function formatSqlRowsToMarkdown(
+  rows: any[],
+  columns?: string[]
+): string | null {
   if (!Array.isArray(rows) || rows.length === 0) {
     return null;
   }
 
-  const headers: string[] = Array.from(
-    rows.reduce((acc, row) => {
-      if (row && typeof row === "object") {
-        Object.keys(row).forEach((key) => acc.add(key));
-      }
-      return acc;
-    }, new Set<string>())
-  );
+  // Use provided columns array to maintain order, otherwise extract from rows
+  const headers: string[] =
+    columns && columns.length > 0
+      ? columns
+      : Array.from(
+          rows.reduce((acc, row) => {
+            if (row && typeof row === "object") {
+              Object.keys(row).forEach((key) => acc.add(key));
+            }
+            return acc;
+          }, new Set<string>())
+        );
 
   if (headers.length === 0) {
     return null;
@@ -231,7 +238,8 @@ export default function PlaybooksRunActionsResults({
 
             case "rows":
               tab.content =
-                formatSqlRowsToMarkdown(result[key]) || "No rows returned";
+                formatSqlRowsToMarkdown(result[key], result["columns"]) ||
+                "No rows returned";
               tab.displayContentType = "text/markdown";
               tab.className = "whitespace-pre";
               break;

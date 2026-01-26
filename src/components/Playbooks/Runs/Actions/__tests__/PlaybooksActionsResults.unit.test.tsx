@@ -168,4 +168,35 @@ describe("PlaybooksRunActionsResults", () => {
     expect(screen.getByText(/FROM/i)).toBeInTheDocument();
     expect(screen.getByText(/tests/i)).toBeInTheDocument();
   });
+
+  it("uses columns array to maintain column order in sql results", () => {
+    const action = {
+      id: "1",
+      name: "sql action",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "sql" as const,
+      result: {
+        query: "select name, id from tests",
+        columns: ["name", "id"],
+        rows: [
+          { id: "123", name: "alpha" },
+          { id: "456", name: "beta" }
+        ],
+        count: 2
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    fireEvent.click(screen.getByText("Rows"));
+
+    const table = screen.getByRole("table");
+    const headerCells = within(table).getAllByRole("columnheader");
+
+    // Columns should be in the order specified by columns array: name, id
+    expect(headerCells[0]).toHaveTextContent("name");
+    expect(headerCells[1]).toHaveTextContent("id");
+  });
 });
