@@ -10,14 +10,14 @@ type NotificationDetailsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   id: string;
-  hasBodyPayload: boolean;
+  hasBodyPayload?: boolean;
 };
 
 export default function NotificationDetailsModal({
   isOpen,
   id,
   onClose,
-  hasBodyPayload
+  hasBodyPayload = false
 }: NotificationDetailsModalProps) {
   const { data: notification, isLoading } = useQuery(
     ["notification_send_history_detail", id, hasBodyPayload],
