@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import markdownit from "markdown-it";
+import { sanitizeHTMLContent } from "@flanksource-ui/utils/common";
+
 export function DisplayMarkdown({
   md,
   className
@@ -19,7 +21,7 @@ export function DisplayMarkdown({
     const rendered = renderer.render(md);
 
     // Add borders/padding to markdown tables for better readability
-    return rendered
+    const withTableStyling = rendered
       .replace(
         /<table>/g,
         '<table class="w-full border-collapse border border-gray-700">'
@@ -32,6 +34,9 @@ export function DisplayMarkdown({
         /<td>/g,
         '<td class="border border-gray-700 px-3 py-1 align-top">'
       );
+
+    // Sanitize the rendered HTML to prevent XSS attacks
+    return sanitizeHTMLContent(withTableStyling);
   }, [md]);
 
   if (!html) {
