@@ -262,12 +262,27 @@ export const getNotificationResourceTags = async () => {
   return res.data ?? [];
 };
 
+/**
+ * Fetch a notification send history record with rendered body payloads.
+ * Uses the new detail endpoint which returns body_markdown/body_payload.
+ */
 export const getNotificationSendHistoryById = async (id: string) => {
   const res =
     await NotificationAPI.get<NotificationSendHistoryDetailApiResponse>(
       `/send_history/${id}`
     );
   return res.data;
+};
+
+/**
+ * Fetch a notification send history record from the summary view.
+ * Returns the summary shape where older records may include a rendered body field.
+ */
+export const getNotificationSendHistorySummaryById = async (id: string) => {
+  const res = await IncidentCommander.get<
+    NotificationSendHistoryApiResponse[] | null
+  >(`/notification_send_history_summary?select=*&id=eq.${id}`);
+  return res.data ? res.data[0] : null;
 };
 
 export type NotificationQueryFilterOptions = {

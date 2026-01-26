@@ -1,4 +1,7 @@
-import { NotificationSendHistoryDetailApiResponse } from "@flanksource-ui/api/types/notifications";
+import {
+  NotificationSendHistoryApiResponse,
+  NotificationSendHistoryDetailApiResponse
+} from "@flanksource-ui/api/types/notifications";
 import { Age } from "@flanksource-ui/ui/Age";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
@@ -9,13 +12,16 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import NotificationResourceDisplay from "../NotificationResourceDisplay";
 import { notificationSendHistoryStatus } from "../NotificationsStatusCell";
+import blockKitToMarkdown, { SlackMessage } from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
 import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { Status } from "@flanksource-ui/components/Status";
 
 type NotificationDetailsProps = {
-  notification: NotificationSendHistoryDetailApiResponse;
+  notification:
+    | NotificationSendHistoryApiResponse
+    | NotificationSendHistoryDetailApiResponse;
   onClose?: () => void;
 };
 
@@ -43,6 +49,27 @@ export default function NotificationDetails({
   const readableTime = notification.duration_millis
     ? formatDuration(notification.duration_millis)
     : undefined;
+
+  const bodyMarkdown =
+    "body_markdown" in notification ? notification.body_markdown : undefined;
+
+  // Legacy notifications stored the rendered body directly in the summary view.
+  const legacyBody = notification.body;
+  const isLegacySlackMessage =
+    !bodyMarkdown &&
+    (legacyBody?.startsWith("[{") || legacyBody?.startsWith('{"blocks"'));
+
+  let slackBody: string | undefined;
+  if (isLegacySlackMessage && legacyBody) {
+    try {
+      const parsed = legacyBody.startsWith("[{")
+        ? (JSON.parse(legacyBody) as SlackMessage[])[0]
+        : (JSON.parse(legacyBody) as SlackMessage);
+      slackBody = blockKitToMarkdown(parsed);
+    } catch (error) {
+      slackBody = legacyBody;
+    }
+  }
 
   const { data: silencer } = useQuery({
     queryKey: ["notification_silence", notification.silenced_by],
@@ -141,13 +168,26 @@ export default function NotificationDetails({
         )}
       </div>
 
-      {notification.body_markdown && (
+      {(bodyMarkdown || legacyBody) && (
         <div className="flex flex-col gap-2">
           <label className="truncate text-sm text-gray-500">Body:</label>
-          <DisplayMarkdown
-            md={notification.body_markdown}
-            className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
-          />
+          {bodyMarkdown ? (
+            <DisplayMarkdown
+              md={bodyMarkdown}
+              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+            />
+          ) : isLegacySlackMessage ? (
+            <DisplayMarkdown
+              md={slackBody}
+              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+            />
+          ) : (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: legacyBody ?? ""
+              }}
+            />
+          )}
         </div>
       )}
 
