@@ -3,6 +3,7 @@ import { getLabelSelections } from "@flanksource-ui/components/Dropdown/lib/list
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
 import { useAtom } from "jotai";
 import { ComponentProps } from "react";
+import { HiOutlineServerStack } from "react-icons/hi2";
 import { ImUngroup } from "react-icons/im";
 import { PiTextTBold } from "react-icons/pi";
 import { TbBox } from "react-icons/tb";
@@ -54,6 +55,15 @@ const defaultGroupSelections = {
     value: "type",
     labelValue: null,
     key: "type"
+  },
+  agent: {
+    id: "agent",
+    name: "agent",
+    icon: <HiOutlineServerStack />,
+    description: "Agent",
+    value: "agent",
+    labelValue: null,
+    key: "agent"
   }
 };
 
