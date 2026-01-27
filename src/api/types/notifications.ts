@@ -75,6 +75,7 @@ export type NotificationSendHistory = {
   id: string;
   notification_id: string;
   body?: string | undefined;
+  body_payload?: NotificationMessagePayload | string | null;
   status?:
     | "attempting_fallback"
     | "error"
@@ -102,6 +103,33 @@ export type NotificationSendHistory = {
   resource_health: "healthy" | "unhealthy" | "warning" | "unknown";
   resource_status: string;
   resource_health_description: string;
+};
+
+export type NotificationMessageField = {
+  label: string;
+  value: string;
+};
+
+export type NotificationMessageAction = {
+  label: string;
+  url: string;
+  style?: string;
+};
+
+export type NotificationMessagePayload = {
+  event_name?: string;
+  title?: string;
+  slack_title?: string;
+  summary?: string;
+  description?: string;
+  fields?: NotificationMessageField[];
+  labels?: Record<string, string>;
+  label_fields?: NotificationMessageField[];
+  recent_events?: string[];
+  grouped_resources?: string[];
+  grouped_resources_title?: string;
+  actions?: NotificationMessageAction[];
+  slack_actions_divider?: boolean;
 };
 
 export type NotificationSendHistoryResource =
@@ -149,6 +177,11 @@ export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
   resource: NotificationSendHistoryResource;
   person: User;
 };
+
+export type NotificationSendHistoryDetailApiResponse =
+  NotificationSendHistoryApiResponse & {
+    body_markdown?: string | null;
+  };
 
 export type NotificationSilenceItem = {
   id: string;

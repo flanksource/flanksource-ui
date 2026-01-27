@@ -1,4 +1,7 @@
-import { getNotificationSendHistoryById } from "@flanksource-ui/api/services/notifications";
+import {
+  getNotificationSendHistoryById,
+  getNotificationSendHistorySummaryById
+} from "@flanksource-ui/api/services/notifications";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { useQuery } from "@tanstack/react-query";
 import NotificationDetails from "./NotificationSendHistory/NotificationDetails";
@@ -7,19 +10,30 @@ type NotificationDetailsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   id: string;
+  hasBodyPayload?: boolean;
 };
 
 export default function NotificationDetailsModal({
   isOpen,
   id,
-  onClose
+  onClose,
+  hasBodyPayload = false
 }: NotificationDetailsModalProps) {
-  const { data: notification, isLoading } = useQuery({
-    queryKey: ["notifications_send_history_summary", id],
-    queryFn: () => getNotificationSendHistoryById(id)
-  });
+  const { data: notification, isLoading } = useQuery(
+    ["notification_send_history_detail", id, hasBodyPayload],
+    () =>
+      hasBodyPayload
+        ? getNotificationSendHistoryById(id)
+        : getNotificationSendHistorySummaryById(id),
+    {
+      enabled: isOpen,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchOnMount: "always"
+    }
+  );
 
-  if (isLoading || !notification) {
+  if (!isOpen || isLoading || !notification) {
     return null;
   }
 

@@ -9,6 +9,7 @@ import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
   NotificationRules,
   NotificationSendHistoryApiResponse,
+  NotificationSendHistoryDetailApiResponse,
   NotificationSendHistorySummary,
   NotificationSilenceItem,
   NotificationSilenceItemApiResponse,
@@ -261,16 +262,27 @@ export const getNotificationResourceTags = async () => {
   return res.data ?? [];
 };
 
+/**
+ * Fetch a notification send history record with rendered body payloads.
+ * Uses the new detail endpoint which returns body_markdown/body_payload.
+ */
 export const getNotificationSendHistoryById = async (id: string) => {
-  const selectColumns = [
-    "*"
-    // `notification:notification_id(*,notification_type)`
-  ].join(",");
+  const res =
+    await NotificationAPI.get<NotificationSendHistoryDetailApiResponse>(
+      `/send_history/${id}`
+    );
+  return res.data;
+};
 
-  const res = await IncidentCommander.get<NotificationSendHistoryApiResponse[]>(
-    `/notification_send_history_summary?id=eq.${id}&select=${selectColumns}`
-  );
-  return res.data?.[0];
+/**
+ * Fetch a notification send history record from the summary view.
+ * Returns the summary shape where older records may include a rendered body field.
+ */
+export const getNotificationSendHistorySummaryById = async (id: string) => {
+  const res = await IncidentCommander.get<
+    NotificationSendHistoryApiResponse[] | null
+  >(`/notification_send_history_summary?select=*&id=eq.${id}`);
+  return res.data ? res.data[0] : null;
 };
 
 export type NotificationQueryFilterOptions = {

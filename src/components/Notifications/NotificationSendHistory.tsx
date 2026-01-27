@@ -175,6 +175,7 @@ export default function NotificationSendHistoryList({
 
   const id = searchParams.get("id");
   const isOpen = searchParams.has("id");
+  const hasBodyPayload = searchParams.has("hasBodyPayload");
 
   return (
     <>
@@ -185,6 +186,11 @@ export default function NotificationSendHistoryList({
         enableGrouping={true}
         onRowClick={(row: NotificationSendHistoryWithSubRows) => {
           searchParams.set("id", row.id);
+          if (row.body) {
+            searchParams.delete("hasBodyPayload");
+          } else {
+            searchParams.set("hasBodyPayload", "1");
+          }
           setSearchParam(searchParams);
         }}
         manualPageCount={pageCount}
@@ -197,9 +203,11 @@ export default function NotificationSendHistoryList({
           isOpen={isOpen}
           onClose={() => {
             searchParams.delete("id");
+            searchParams.delete("hasBodyPayload");
             setSearchParam(searchParams);
           }}
           id={id}
+          hasBodyPayload={hasBodyPayload}
         />
       )}
     </>
