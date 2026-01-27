@@ -9,6 +9,7 @@ import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
   ConfigAccessSummary,
+  ConfigAccessLog,
   ConfigChange,
   ConfigHealthCheckView,
   ConfigItem,
@@ -170,6 +171,22 @@ export const getConfigAccessSummary = (configId: string) =>
         configId
       )}&select=user,email,role,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
         "user.asc"
+      )}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+
+export const getConfigAccessLogs = (configId: string) =>
+  resolvePostGrestRequestWithPagination<ConfigAccessLog[]>(
+    ConfigDB.get(
+      `/config_access_logs?config_id=eq.${encodeURIComponent(
+        configId
+      )}&select=*,external_users(name,user_email:email)&order=${encodeURIComponent(
+        "created_at.desc"
       )}`,
       {
         headers: {
