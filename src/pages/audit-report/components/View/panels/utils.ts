@@ -167,6 +167,7 @@ export const getSeverityOfText = (status: string): Severity => {
     case "failed":
     case "fail":
     case "unhealthy":
+    case "inactive":
       return "critical";
 
     case "high":
@@ -192,7 +193,8 @@ export const getSeverityOfText = (status: string): Severity => {
     statusLower.includes("error") ||
     statusLower.includes("fail") ||
     statusLower.includes("reject") ||
-    statusLower.includes("deny")
+    statusLower.includes("deny") ||
+    statusLower.includes("inactive")
   ) {
     return "critical";
   } else if (
