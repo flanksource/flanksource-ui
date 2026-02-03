@@ -139,7 +139,6 @@ type Severity = "critical" | "high" | "medium" | "low" | "info" | "unknown";
  */
 export const getSeverityOfText = (status: string): Severity => {
   const statusLower = status.toLowerCase();
-
   // Specific status mappings
   switch (statusLower) {
     case "diff":
@@ -174,6 +173,9 @@ export const getSeverityOfText = (status: string): Severity => {
     case "unschedulable":
     case "sourcenotready":
       return "high";
+
+    case "active":
+      return "info";
   }
 
   // Dynamic heuristics for substring matches
@@ -193,8 +195,7 @@ export const getSeverityOfText = (status: string): Severity => {
     statusLower.includes("error") ||
     statusLower.includes("fail") ||
     statusLower.includes("reject") ||
-    statusLower.includes("deny") ||
-    statusLower.includes("inactive")
+    statusLower.includes("deny")
   ) {
     return "critical";
   } else if (
