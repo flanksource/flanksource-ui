@@ -16,6 +16,7 @@ function getStatusColorConfig(
     status === "missing" ||
     status === "unhealthy" ||
     status === "failed" ||
+    status === "inactive" ||
     (good !== undefined && !good)
   ) {
     return {
