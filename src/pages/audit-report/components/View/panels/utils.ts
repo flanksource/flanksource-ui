@@ -172,6 +172,7 @@ export const getSeverityOfText = (status: string): Severity => {
     case "high":
     case "unschedulable":
     case "sourcenotready":
+    case "dormant":
       return "high";
 
     case "active":
