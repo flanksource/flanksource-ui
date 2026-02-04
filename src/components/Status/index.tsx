@@ -40,8 +40,8 @@ function getStatusColorConfig(
     };
   }
 
-  // Orange: warning, warn, or mixed=true
-  if (status === "warning" || status === "warn") {
+  // Orange: warning, warn, dormant, or mixed=true
+  if (status === "warning" || status === "warn" || status === "dormant") {
     return {
       badge:
         "bg-orange-100 text-orange-800 dark:bg-orange-400/10 dark:text-orange-500",
