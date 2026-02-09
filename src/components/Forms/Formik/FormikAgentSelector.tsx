@@ -4,7 +4,7 @@
 import { useAllAgentNamesQuery } from "@flanksource-ui/api/query-hooks";
 import { useField } from "formik";
 import { useMemo } from "react";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 type FormikAgentSelectorProps = {
   name: string;
@@ -45,7 +45,7 @@ export default function FormikAgentSelector({
   return (
     <div className={className}>
       <label className="form-label">{label}</label>
-      <Select
+      <CreatableSelect
         isMulti
         isLoading={isLoading}
         options={agentOptions}
@@ -56,10 +56,11 @@ export default function FormikAgentSelector({
           );
         }}
         onBlur={() => helpers.setTouched(true)}
-        placeholder="Select agents..."
+        placeholder="Select or type agent names..."
         className="react-select-container"
         classNamePrefix="react-select"
         isClearable
+        formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
       />
       <p className="mt-1 text-xs text-gray-500">
         Select which agents should run this health check
