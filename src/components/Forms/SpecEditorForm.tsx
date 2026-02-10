@@ -10,6 +10,7 @@ import {
 } from "../SchemaResourcePage/resourceTypes";
 import CanEditResource from "../Settings/CanEditResource";
 import { SpecType } from "../SpecEditor/SpecEditor";
+import FormikAgentSelector from "./Formik/FormikAgentSelector";
 import FormikAutocompleteDropdown from "./Formik/FormikAutocompleteDropdown";
 import { FormikCodeEditor } from "./Formik/FormikCodeEditor";
 import FormikIconPicker from "./Formik/FormikIconPicker";
@@ -158,6 +159,9 @@ export default function SpecEditorForm({
                     }
                   ]}
                 />
+              )}
+              {resourceInfo.table === "canaries" && (
+                <FormikAgentSelector name="spec.agentSelector" label="Agents" />
               )}
             </div>
             <div className="flex flex-col py-2">

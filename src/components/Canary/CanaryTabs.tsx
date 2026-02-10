@@ -33,7 +33,12 @@ export function filterChecksByTabSelection(
       filteredChecks = checks.filter((o) => o.namespace === selectedTab);
     } else if (tabBy === "agent_id") {
       // if filter by agent_id, show only selected agent_id
-      filteredChecks = checks.filter((o) => o.agent_id === selectedTab);
+      // "local" is a special tab for checks without an agent
+      if (selectedTab === "local") {
+        filteredChecks = checks.filter((o) => !o.agent_id);
+      } else {
+        filteredChecks = checks.filter((o) => o.agent_id === selectedTab);
+      }
     } else {
       // filtered by non-boolean labels
       filteredChecks = checks.filter(
@@ -128,7 +133,7 @@ export function CanaryTabs({
 
   const tabs = useMemo(() => {
     if (tabBy === "agent_id") {
-      const tabs = agents.reduce(
+      const agentTabs = agents.reduce(
         (acc, agent) => ({
           ...acc,
           [agent.name]: {
@@ -137,9 +142,18 @@ export function CanaryTabs({
             label: agent.name
           }
         }),
-        {}
+        {} as Record<string, { key: string; value: string; label: string }>
       );
-      return { ...defaultTabs, ...tabs };
+      // Add "local" tab for checks without an agent
+      const hasLocalChecks = checks.some((check) => !check.agent_id);
+      if (hasLocalChecks) {
+        agentTabs["local"] = {
+          key: "local",
+          value: "local",
+          label: "local"
+        };
+      }
+      return { ...defaultTabs, ...agentTabs };
     }
     return generateTabs(tabBy, checks);
   }, [agents, checks, tabBy]);
