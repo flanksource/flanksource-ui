@@ -63,7 +63,7 @@ export default function FormikAgentSelector({
         formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
       />
       <p className="mt-1 text-xs text-gray-500">
-        Select which agents should run this health check
+        Select which agents should run this health check, wildcards are supported with <span className="font-bold">*</span>
       </p>
     </div>
   );
