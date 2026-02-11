@@ -1,7 +1,7 @@
 import { getPlaybookRunsWithActions } from "@flanksource-ui/api/services/playbooks";
 import { CheckLink } from "@flanksource-ui/components/Canary/HealthChecks/CheckLink";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
-import PlaybookRunsActions from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
+import PlaybookRunDetailView from "@flanksource-ui/components/Playbooks/Runs/Actions/PlaybookRunsActions";
 import { playbookRunsPageTabs } from "@flanksource-ui/components/Playbooks/Runs/PlaybookRunsPageTabs";
 import PlaybookSpecIcon from "@flanksource-ui/components/Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "@flanksource-ui/components/Topology/TopologyLink";
@@ -117,7 +117,7 @@ export default function PlaybookRunsDetailsPage() {
         <TabbedLinks activeTabName={`Runs`} tabLinks={playbookRunsPageTabs}>
           <div className={`mx-auto flex h-full w-full flex-col p-4`}>
             {playbookRunsWithActions ? (
-              <PlaybookRunsActions
+              <PlaybookRunDetailView
                 data={playbookRunsWithActions}
                 refetch={refetch}
               />
