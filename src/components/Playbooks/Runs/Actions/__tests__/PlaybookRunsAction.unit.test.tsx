@@ -7,6 +7,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import PlaybookRunDetailView from "./../PlaybookRunsActions";
 import * as playbooksApi from "../../../../../api/services/playbooks";
+import { AiFeatureLoaderProvider } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
 
 const mockAction: PlaybookRunAction = {
   playbook_run_id: "1",
@@ -76,7 +77,9 @@ describe("PlaybookRunDetailView", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunDetailView data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -135,7 +138,9 @@ describe("PlaybookRunDetailView", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunDetailView data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -183,7 +188,9 @@ describe("PlaybookRunDetailView", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunDetailView data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
