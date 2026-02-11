@@ -827,8 +827,30 @@ export const connectionTypes: ConnectionType[] = [
         type: ConnectionsFieldTypes.EnvVarSource,
         variant: variants.large,
         required: true
+      },
+      {
+        label: "Bucket",
+        key: "bucket",
+        type: ConnectionsFieldTypes.input,
+        required: true
       }
-    ]
+    ],
+    convertToFormSpecificValue: (data: Record<string, any>) => {
+      return {
+        ...data,
+        bucket: data?.properties?.bucket
+      } as Connection;
+    },
+    preSubmitConverter: (data: Record<string, string>) => {
+      return {
+        name: data.name,
+        url: data.url,
+        certificate: data.certificate,
+        properties: {
+          bucket: data.bucket
+        }
+      };
+    }
   },
   {
     title: "SFTP",
