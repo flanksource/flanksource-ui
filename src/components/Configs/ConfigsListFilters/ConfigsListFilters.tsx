@@ -5,6 +5,7 @@ import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
 import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
+import { ConfigUnhealthyToggle } from "./ConfigUnhealthyToggle";
 
 export default function ConfigsListFilters() {
   return (
@@ -20,6 +21,9 @@ export default function ConfigsListFilters() {
       ]}
     >
       <div className="mr-4 flex flex-wrap items-center gap-2">
+        {/* Add the new quick filter for unhealthy resources */}
+        <ConfigUnhealthyToggle />
+
         <ConfigTypesDropdown />
 
         <ConfigGroupByDropdown />
