@@ -8,13 +8,17 @@ export type BulkCheckRunContextType = {
   selectedCheckIds: Set<string>;
   toggleCheck: (id: string) => void;
   toggleChecks: (ids: string[], selected: boolean) => void;
+  enterBulkMode: () => void;
+  exitBulkMode: () => void;
 };
 
 const BulkCheckRunContext = createContext<BulkCheckRunContextType>({
   isBulkRunMode: false,
   selectedCheckIds: new Set(),
   toggleCheck: () => {},
-  toggleChecks: () => {}
+  toggleChecks: () => {},
+  enterBulkMode: () => {},
+  exitBulkMode: () => {}
 });
 
 export const useBulkCheckRun = () => useContext(BulkCheckRunContext);
