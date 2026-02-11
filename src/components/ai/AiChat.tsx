@@ -54,7 +54,7 @@ import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
 
@@ -189,6 +189,7 @@ export type AIChatProps = {
   onClose?: () => void;
   onNewChat?: () => void;
   quickPrompts?: string[];
+  initialPrompt?: string;
 };
 
 export function AIChat({
@@ -197,7 +198,8 @@ export function AIChat({
   id,
   onClose,
   onNewChat,
-  quickPrompts
+  quickPrompts,
+  initialPrompt
 }: AIChatProps) {
   const {
     messages,
@@ -212,6 +214,24 @@ export function AIChat({
     chat,
     id
   });
+
+  // Auto-send initial prompt once when chat opens with context.
+  // The ref prevents re-sending after the AI responds (status cycles back to "ready").
+  const hasSentInitialPrompt = useRef(false);
+  useEffect(() => {
+    if (
+      initialPrompt &&
+      !hasSentInitialPrompt.current &&
+      messages.length > 0 &&
+      status === "ready"
+    ) {
+      const trimmed = initialPrompt.trim();
+      if (trimmed) {
+        hasSentInitialPrompt.current = true;
+        sendMessage({ text: trimmed });
+      }
+    }
+  }, [initialPrompt, messages.length, status, sendMessage]);
 
   const handleToolApproval = useCallback(
     async (approvalId: string, approved: boolean) => {

@@ -209,7 +209,9 @@ export async function POST(req: Request) {
     wideEvent.status = "error";
     wideEvent.error = error instanceof Error ? error.message : String(error);
     if (error instanceof HttpError) {
-      return new Response(error.body ?? error.message, { status: error.status });
+      return new Response(error.body ?? error.message, {
+        status: error.status
+      });
     }
     return new Response("Internal Server Error", { status: 500 });
   } finally {

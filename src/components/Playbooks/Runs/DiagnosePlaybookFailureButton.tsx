@@ -17,7 +17,7 @@ const ACTION_RESULT_MAX_CHARS = 10000;
 export function DiagnosePlaybookFailureButton({
   data
 }: DiagnosePlaybookFailureButtonProps) {
-  const { setOpen, setChatMessages, setQuickPrompts } = useAiChatPopover();
+  const { setOpen, setChatMessages, setInitialPrompt } = useAiChatPopover();
 
   const handleDiagnoseFailure = useCallback(() => {
     const playbookName =
@@ -97,14 +97,9 @@ export function DiagnosePlaybookFailureButton({
       }
     ]);
 
-    setQuickPrompts([
-      "Why did this playbook fail?",
-      "How can I fix this error?",
-      "Explain each failed action's output"
-    ]);
-
+    setInitialPrompt("Why did this playbook fail?");
     setOpen(true);
-  }, [data, setChatMessages, setOpen, setQuickPrompts]);
+  }, [data, setChatMessages, setOpen, setInitialPrompt]);
 
   return (
     <Button
