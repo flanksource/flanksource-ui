@@ -1,18 +1,12 @@
 import { useCallback } from "react";
-import dayjs from "dayjs";
 import { type PlaybookRunWithActions } from "@flanksource-ui/api/types/playbooks";
 import { useAiChatPopover } from "@flanksource-ui/components/ai/AiChatPopover";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { truncateText } from "@flanksource-ui/utils/common";
-import { formatDuration } from "@flanksource-ui/utils/date";
 import { Sparkles } from "lucide-react";
 
 type DiagnosePlaybookFailureButtonProps = {
   data: PlaybookRunWithActions;
 };
-
-const SPEC_MAX_CHARS = 5000;
-const ACTION_RESULT_MAX_CHARS = 10000;
 
 export function DiagnosePlaybookFailureButton({
   data
@@ -20,86 +14,57 @@ export function DiagnosePlaybookFailureButton({
   const { setOpen, setChatMessages, setInitialPrompt } = useAiChatPopover();
 
   const handleDiagnoseFailure = useCallback(() => {
-    const playbookName =
-      data.playbooks?.title || data.playbooks?.name || "Unknown";
+    const systemPrompt = `You are helping diagnose why a Playbook run failed in Mission Control.
 
-    const parametersText =
-      data.parameters == null
-        ? "None"
-        : JSON.stringify(data.parameters, null, 2);
-    const parametersSection =
-      parametersText === "None"
-        ? parametersText
-        : ["```json", parametersText, "```"].join("\n");
+Context on Playbooks:
+- A Playbook is an automated workflow that executes a sequence of Actions
+- Each Action in the playbook has a status (scheduled, running, completed, failed, skipped, etc.)
+- Actions can execute shell commands, query logs, send notifications, run GitOps operations, execute SQL, make HTTP requests, or run child playbooks
+- A PlaybookRun is an instance/execution of a Playbook
+- PlaybookRuns can have parameters, child runs, and approvals
 
-    const specText = truncateText(
-      JSON.stringify(data.spec, null, 2),
-      SPEC_MAX_CHARS
-    );
+When analyzing a failed run:
+1. Check the overall run status and error message
+2. Identify which actions failed and their error details
+3. Look at action results to understand what went wrong
+4. Consider the parameters that were passed in
+5. Look at the playbook spec to understand the intended flow
+6. Suggest specific fixes based on the error
 
-    const duration =
-      data.start_time && data.end_time
-        ? formatDuration(dayjs(data.end_time).diff(dayjs(data.start_time)))
-        : "Unknown";
+Be concise and actionable in your diagnosis.`;
 
-    const actionsSection = data.actions?.length
-      ? data.actions
-          .map((action, index) => {
-            const actionResultText =
-              action.result == null
-                ? "None"
-                : truncateText(
-                    JSON.stringify(action.result, null, 2),
-                    ACTION_RESULT_MAX_CHARS
-                  );
+    const failedActions =
+      data.actions?.filter((a) => a.status === "failed") || [];
+    const userPrompt = `Please diagnose why this playbook run failed.${
+      data.error ? ` Run error: ${data.error}` : ""
+    }${
+      failedActions.length > 0
+        ? ` ${failedActions.length} action(s) failed.`
+        : ""
+    } What went wrong and how do we fix it?`;
 
-            const actionResultSection =
-              actionResultText === "None"
-                ? actionResultText
-                : ["```json", actionResultText, "```"].join("\n");
-
-            return [
-              `### Action ${index + 1}: ${action.name || "Unknown"}`,
-              `- **Status**: ${action.status}`,
-              `- **Error**: ${action.error || "None"}`,
-              "- **Result**:",
-              actionResultSection
-            ].join("\n");
-          })
-          .join("\n\n")
-      : "No actions recorded.";
-
-    const text = [
-      "# Diagnose Playbook Failure",
-      `- **Playbook**: ${playbookName}`,
-      `- **Status**: ${data.status}`,
-      `- **Error**: ${data.error || "N/A"}`,
-      `- **Start Time**: ${data.start_time || "Unknown"}`,
-      `- **Duration**: ${duration}`,
-      "",
-      "## Parameters",
-      parametersSection,
-      "",
-      "## Spec",
-      "```json",
-      specText,
-      "```",
-      "",
-      "## Actions",
-      actionsSection
-    ].join("\n");
+    const text = JSON.stringify(data, null, 2);
 
     setChatMessages([
       {
+        id: `system-${Date.now()}`,
+        role: "system",
+        parts: [{ type: "text", text: systemPrompt }]
+      },
+      {
         id: `user-${Date.now()}`,
         role: "user",
-        parts: [{ type: "text", text }]
+        parts: [
+          {
+            type: "text",
+            text: `${userPrompt}\n\nPlaybook Run Data:\n\`\`\`json\n${text}\n\`\`\``
+          }
+        ]
       }
     ]);
 
-    setInitialPrompt("Why did this playbook fail?");
     setOpen(true);
-  }, [data, setChatMessages, setOpen, setInitialPrompt]);
+  }, [data, setChatMessages, setOpen]);
 
   return (
     <Button
