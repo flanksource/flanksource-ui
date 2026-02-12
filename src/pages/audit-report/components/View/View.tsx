@@ -102,6 +102,24 @@ const View: React.FC<ViewProps> = ({
     false
   );
 
+  // Apply display defaults synchronously so the first query uses them,
+  // avoiding a race where useEffect sets them after the initial fetch.
+  const effectiveTableSearchParams = useMemo(() => {
+    const params = new URLSearchParams(tableSearchParams);
+    if (defaultPageSize && defaultPageSize > 0 && !params.get("pageSize")) {
+      params.set("pageSize", defaultPageSize.toString());
+    }
+    if (!params.get("pageIndex")) {
+      params.set("pageIndex", "0");
+    }
+    if (defaultSorting && defaultSorting.length > 0 && !params.get("sortBy")) {
+      const sort = defaultSorting[0];
+      params.set("sortBy", sort.id);
+      params.set("sortOrder", sort.desc ? "desc" : "asc");
+    }
+    return params;
+  }, [tableSearchParams, defaultPageSize, defaultSorting]);
+
   // Separate display mode state (frontend only, not sent to backend)
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -193,7 +211,7 @@ const View: React.FC<ViewProps> = ({
       "view-table",
       namespace,
       name,
-      tableSearchParams.toString(),
+      effectiveTableSearchParams.toString(),
       requestFingerprint
     ],
     queryFn: () =>
@@ -201,7 +219,7 @@ const View: React.FC<ViewProps> = ({
         namespace ?? "",
         name ?? "",
         columns ?? [],
-        tableSearchParams,
+        effectiveTableSearchParams,
         requestFingerprint
       ),
     enabled: !!namespace && !!name && !!columns && columns.length > 0,
