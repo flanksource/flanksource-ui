@@ -22,8 +22,6 @@ type AiChatPopoverContextValue = {
   setChatMessages: (messages: UIMessage[]) => void;
   quickPrompts?: string[];
   setQuickPrompts: (prompts?: string[]) => void;
-  initialPrompt?: string;
-  setInitialPrompt: (prompt?: string) => void;
 };
 
 const AiChatPopoverContext = createContext<AiChatPopoverContextValue | null>(
@@ -46,27 +44,21 @@ export function AiChatPopoverProvider({
   const [quickPrompts, setQuickPrompts] = useState<string[] | undefined>(
     undefined
   );
-  const [initialPrompt, setInitialPrompt] = useState<string | undefined>(
-    undefined
-  );
-
   const setOpen = useCallback(
     (open: boolean) => {
       setOpenState(open);
       if (!open) {
         setQuickPrompts(undefined);
-        setInitialPrompt(undefined);
       }
     },
-    [setOpenState, setQuickPrompts, setInitialPrompt]
+    [setOpenState, setQuickPrompts]
   );
 
   const resetChat = useCallback(() => {
     const newId = `${chatId}-${Date.now()}`;
     setChat(new Chat<UIMessage>({ id: newId }));
     setQuickPrompts(undefined);
-    setInitialPrompt(undefined);
-  }, [chatId, setChat, setInitialPrompt]);
+  }, [chatId, setChat]);
 
   const setChatMessages = useCallback(
     (messages: UIMessage[]) => {
@@ -84,19 +76,9 @@ export function AiChatPopoverProvider({
       resetChat,
       setChatMessages,
       quickPrompts,
-      setQuickPrompts,
-      initialPrompt,
-      setInitialPrompt
+      setQuickPrompts
     }),
-    [
-      open,
-      setOpen,
-      chat,
-      resetChat,
-      setChatMessages,
-      quickPrompts,
-      initialPrompt
-    ]
+    [open, setOpen, chat, resetChat, setChatMessages, quickPrompts]
   );
 
   return (
@@ -143,7 +125,6 @@ export function AiChatPopover({
     (() =>
       setLocalChat(new Chat<UIMessage>({ id: `ai-popover-${Date.now()}` })));
   const quickPrompts = context?.quickPrompts;
-  const initialPrompt = context?.initialPrompt;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -162,7 +143,6 @@ export function AiChatPopover({
           onClose={() => handleOpenChange(false)}
           onNewChat={resetChat}
           quickPrompts={quickPrompts}
-          initialPrompt={initialPrompt}
         />
       </PopoverContent>
     </Popover>

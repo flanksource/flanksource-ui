@@ -11,7 +11,7 @@ type DiagnosePlaybookFailureButtonProps = {
 export function DiagnosePlaybookFailureButton({
   data
 }: DiagnosePlaybookFailureButtonProps) {
-  const { setOpen, setChatMessages, setInitialPrompt } = useAiChatPopover();
+  const { setOpen, setChatMessages } = useAiChatPopover();
 
   const handleDiagnoseFailure = useCallback(() => {
     const systemPrompt = `You are helping diagnose why a Playbook run failed in Mission Control.
@@ -19,9 +19,8 @@ export function DiagnosePlaybookFailureButton({
 Context on Playbooks:
 - A Playbook is an automated workflow that executes a sequence of Actions
 - Each Action in the playbook has a status (scheduled, running, completed, failed, skipped, etc.)
-- Actions can execute shell commands, query logs, send notifications, run GitOps operations, execute SQL, make HTTP requests, or run child playbooks
 - A PlaybookRun is an instance/execution of a Playbook
-- PlaybookRuns can have parameters, child runs, and approvals
+- PlaybookRuns can have parameters and child runs
 
 When analyzing a failed run:
 1. Check the overall run status and error message

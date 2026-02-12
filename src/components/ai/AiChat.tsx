@@ -189,7 +189,6 @@ export type AIChatProps = {
   onClose?: () => void;
   onNewChat?: () => void;
   quickPrompts?: string[];
-  initialPrompt?: string;
 };
 
 export function AIChat({
@@ -198,8 +197,7 @@ export function AIChat({
   id,
   onClose,
   onNewChat,
-  quickPrompts,
-  initialPrompt
+  quickPrompts
 }: AIChatProps) {
   const {
     messages,
@@ -215,23 +213,19 @@ export function AIChat({
     id
   });
 
-  // Auto-send initial prompt once when chat opens with context.
-  // The ref prevents re-sending after the AI responds (status cycles back to "ready").
-  const hasSentInitialPrompt = useRef(false);
+  // Auto-send when chat mounts with a pre-seeded user message (e.g. from setChatMessages).
+  const hasSentOnMount = useRef(false);
   useEffect(() => {
     if (
-      initialPrompt &&
-      !hasSentInitialPrompt.current &&
+      !hasSentOnMount.current &&
       messages.length > 0 &&
+      messages[messages.length - 1].role === "user" &&
       status === "ready"
     ) {
-      const trimmed = initialPrompt.trim();
-      if (trimmed) {
-        hasSentInitialPrompt.current = true;
-        sendMessage({ text: trimmed });
-      }
+      hasSentOnMount.current = true;
+      sendMessage();
     }
-  }, [initialPrompt, messages.length, status, sendMessage]);
+  }, [messages, status, sendMessage]);
 
   const handleToolApproval = useCallback(
     async (approvalId: string, approved: boolean) => {
