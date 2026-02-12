@@ -2,6 +2,29 @@ import { Form, Formik, useFormikContext } from "formik";
 import { useEffect, useMemo, useRef } from "react";
 import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 
+const EMPTY_RECORD: Record<string, string> = {};
+
+function useStableRecord(
+  record: Record<string, string> | undefined
+): Record<string, string> {
+  const signature = record
+    ? Object.entries(record)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}\u001f${v}`)
+        .join("\u001e")
+    : "";
+  const cacheRef = useRef<{
+    signature: string;
+    record: Record<string, string>;
+  }>();
+
+  if (!cacheRef.current || cacheRef.current.signature !== signature) {
+    cacheRef.current = { signature, record: record ?? EMPTY_RECORD };
+  }
+
+  return cacheRef.current.record;
+}
+
 function useStableStringArray(values: string[]) {
   const signature = values.join("\u001f");
   const cacheRef = useRef<{ signature: string; values: string[] }>();
@@ -25,15 +48,16 @@ function FormikChangesListener({
   children,
   filterFields,
   paramsToReset = [],
-  defaultFieldValues = {},
+  defaultFieldValues,
   paramPrefix
 }: FormikChangesListenerProps) {
+  const stableDefaults = useStableRecord(defaultFieldValues);
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();
   const [searchParams, setSearchParams] = usePrefixedSearchParams(
     paramPrefix,
     false,
-    defaultFieldValues
+    stableDefaults
   );
   const valuesRef = useRef(values);
 
@@ -80,12 +104,12 @@ function FormikChangesListener({
   useEffect(() => {
     filterFields.forEach((field) => {
       const value =
-        searchParams.get(field) ?? defaultFieldValues[field] ?? undefined;
+        searchParams.get(field) ?? stableDefaults[field] ?? undefined;
       if (valuesRef.current[field] !== value) {
         setFieldValue(field, value, false);
       }
     });
-  }, [defaultFieldValues, filterFields, searchParams, setFieldValue]);
+  }, [stableDefaults, filterFields, searchParams, setFieldValue]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
@@ -122,18 +146,19 @@ export default function FormikFilterForm({
   const [searchParams] = usePrefixedSearchParams(paramPrefix, false);
   const stableFilterFields = useStableStringArray(filterFields);
   const stableParamsToReset = useStableStringArray(paramsToReset);
+  const stableDefaults = useStableRecord(defaultFieldValues);
 
   const initialValues = useMemo(
     () =>
       stableFilterFields.reduce(
         (acc, field) => {
-          const alternativeValue = defaultFieldValues?.[field] ?? undefined;
+          const alternativeValue = stableDefaults[field] ?? undefined;
           acc[field] = searchParams.get(field) ?? alternativeValue ?? undefined;
           return acc;
         },
         {} as Record<string, string | undefined>
       ),
-    [defaultFieldValues, searchParams, stableFilterFields]
+    [stableDefaults, searchParams, stableFilterFields]
   );
 
   return (
@@ -142,7 +167,7 @@ export default function FormikFilterForm({
         <FormikChangesListener
           filterFields={stableFilterFields}
           paramsToReset={stableParamsToReset}
-          defaultFieldValues={defaultFieldValues}
+          defaultFieldValues={stableDefaults}
           paramPrefix={paramPrefix}
         >
           <Form onSubmit={handleSubmit}>{children}</Form>
