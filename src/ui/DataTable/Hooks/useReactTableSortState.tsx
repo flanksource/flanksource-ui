@@ -1,6 +1,7 @@
 import { SortingState, Updater } from "@tanstack/react-table";
-import { useCallback, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCallback, useMemo } from "react";
+
+import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 
 type SortStateOptions = {
   /**
@@ -41,16 +42,21 @@ export default function useReactTableSortState(
     defaultSorting
   } = options;
 
-  const sortByParamKey = paramPrefix
-    ? `${paramPrefix}__${sortByKey}`
-    : sortByKey;
-  const sortOrderParamKey = paramPrefix
-    ? `${paramPrefix}__${sortOrderKey}`
-    : sortOrderKey;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultSort = defaultSorting?.[0];
 
-  const sortBy = searchParams.get(sortByParamKey) || undefined;
-  const sortOrder = searchParams.get(sortOrderParamKey) || undefined;
+  const [searchParams, setSearchParams] = usePrefixedSearchParams(
+    paramPrefix,
+    false,
+    defaultSort
+      ? {
+          [sortByKey]: defaultSort.id,
+          [sortOrderKey]: defaultSort.desc ? "desc" : "asc"
+        }
+      : undefined
+  );
+
+  const sortBy = searchParams.get(sortByKey) || undefined;
+  const sortOrder = searchParams.get(sortOrderKey) || undefined;
 
   const tableSortByState = useMemo(() => {
     if (!sortBy || !sortOrder) {
@@ -64,50 +70,40 @@ export default function useReactTableSortState(
     ] satisfies SortingState;
   }, [sortBy, sortOrder]);
 
-  useEffect(() => {
-    if (
-      (!sortBy || !sortOrder) &&
-      defaultSorting &&
-      defaultSorting.length > 0
-    ) {
-      const nextParams = new URLSearchParams(window.location.search);
-      const [firstSort] = defaultSorting;
-      nextParams.set(sortByParamKey, firstSort.id);
-      nextParams.set(sortOrderParamKey, firstSort.desc ? "desc" : "asc");
-      setSearchParams(nextParams);
-    }
-  }, [
-    defaultSorting,
-    setSearchParams,
-    sortBy,
-    sortOrder,
-    sortByParamKey,
-    sortOrderParamKey
-  ]);
-
   const updateSortByFn = useCallback(
     (newSortBy: Updater<SortingState>) => {
-      const sort =
-        typeof newSortBy === "function"
-          ? newSortBy([...tableSortByState])
-          : newSortBy;
-      const nextParams = new URLSearchParams(searchParams);
-      if (sort.length === 0) {
-        nextParams.delete(sortByParamKey);
-        nextParams.delete(sortOrderParamKey);
-      } else {
-        nextParams.set(sortByParamKey, sort[0].id);
-        nextParams.set(sortOrderParamKey, sort[0].desc ? "desc" : "asc");
-      }
-      setSearchParams(nextParams);
+      setSearchParams((current) => {
+        const currentSortBy = current.get(sortByKey) || undefined;
+        const currentSortOrder = current.get(sortOrderKey) || undefined;
+
+        const currentTableSortByState =
+          currentSortBy && currentSortOrder
+            ? ([
+                {
+                  id: currentSortBy,
+                  desc: currentSortOrder === "desc"
+                }
+              ] satisfies SortingState)
+            : [];
+
+        const sort =
+          typeof newSortBy === "function"
+            ? newSortBy(currentTableSortByState)
+            : newSortBy;
+
+        const nextParams = new URLSearchParams(current);
+        if (sort.length === 0) {
+          nextParams.delete(sortByKey);
+          nextParams.delete(sortOrderKey);
+        } else {
+          nextParams.set(sortByKey, sort[0].id);
+          nextParams.set(sortOrderKey, sort[0].desc ? "desc" : "asc");
+        }
+
+        return nextParams;
+      });
     },
-    [
-      searchParams,
-      setSearchParams,
-      sortByParamKey,
-      sortOrderParamKey,
-      tableSortByState
-    ]
+    [setSearchParams, sortByKey, sortOrderKey]
   );
 
   return [tableSortByState, updateSortByFn];
