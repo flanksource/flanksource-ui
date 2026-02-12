@@ -66,6 +66,7 @@ export default function useTimeRangeParams(
         nextParams.delete("to");
         nextParams.delete("duration");
         nextParams.delete("timeRange");
+        nextParams.delete("range");
 
         // set the new time range parameters
         if (range.type === "absolute") {
