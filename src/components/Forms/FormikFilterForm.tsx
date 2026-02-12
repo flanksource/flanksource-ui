@@ -17,6 +17,7 @@ type FormikChangesListenerProps = {
   children: React.ReactNode;
   filterFields: string[];
   paramsToReset?: string[];
+  defaultFieldValues?: Record<string, string>;
   paramPrefix?: string;
 };
 
@@ -24,13 +25,15 @@ function FormikChangesListener({
   children,
   filterFields,
   paramsToReset = [],
+  defaultFieldValues = {},
   paramPrefix
 }: FormikChangesListenerProps) {
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();
   const [searchParams, setSearchParams] = usePrefixedSearchParams(
     paramPrefix,
-    false
+    false,
+    defaultFieldValues
   );
   const valuesRef = useRef(values);
 
@@ -76,12 +79,13 @@ function FormikChangesListener({
   // Sync URL params to form values
   useEffect(() => {
     filterFields.forEach((field) => {
-      const value = searchParams.get(field) ?? undefined;
+      const value =
+        searchParams.get(field) ?? defaultFieldValues[field] ?? undefined;
       if (valuesRef.current[field] !== value) {
         setFieldValue(field, value, false);
       }
     });
-  }, [filterFields, searchParams, setFieldValue]);
+  }, [defaultFieldValues, filterFields, searchParams, setFieldValue]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
@@ -138,6 +142,7 @@ export default function FormikFilterForm({
         <FormikChangesListener
           filterFields={stableFilterFields}
           paramsToReset={stableParamsToReset}
+          defaultFieldValues={defaultFieldValues}
           paramPrefix={paramPrefix}
         >
           <Form onSubmit={handleSubmit}>{children}</Form>

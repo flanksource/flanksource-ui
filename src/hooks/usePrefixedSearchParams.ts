@@ -1,5 +1,9 @@
 import { useCallback, useMemo } from "react";
-import { NavigateOptions, useSearchParams } from "react-router-dom";
+import {
+  NavigateOptions,
+  URLSearchParamsInit,
+  useSearchParams
+} from "react-router-dom";
 
 const GLOBAL_PARAM_KEYS = ["sortBy", "sortOrder"] as const;
 
@@ -7,6 +11,52 @@ type SetPrefixedSearchParams = (
   updater: (prev: URLSearchParams) => URLSearchParams,
   options?: NavigateOptions
 ) => void;
+
+function toURLSearchParams(init?: URLSearchParamsInit) {
+  if (!init) {
+    return new URLSearchParams();
+  }
+
+  if (typeof init === "string" || init instanceof URLSearchParams) {
+    return new URLSearchParams(init);
+  }
+
+  return new URLSearchParams(
+    Object.entries(init).flatMap(([key, value]) =>
+      Array.isArray(value) ? value.map((v) => [key, v]) : [[key, value]]
+    )
+  );
+}
+
+function buildDefaultSearchParams(
+  prefix: string | undefined,
+  useGlobalParams: boolean,
+  defaults?: URLSearchParamsInit
+) {
+  if (!defaults) {
+    return undefined;
+  }
+
+  const defaultsParams = toURLSearchParams(defaults);
+
+  if (!prefix) {
+    return defaultsParams;
+  }
+
+  const prefixedDefaults = new URLSearchParams();
+  const prefixWithSeparator = `${prefix}__`;
+
+  Array.from(defaultsParams.entries()).forEach(([key, value]) => {
+    if (useGlobalParams && GLOBAL_PARAM_KEYS.includes(key as any)) {
+      prefixedDefaults.append(key, value);
+      return;
+    }
+
+    prefixedDefaults.append(`${prefixWithSeparator}${key}`, value);
+  });
+
+  return prefixedDefaults;
+}
 
 function filterPrefixedParams(
   params: URLSearchParams,
@@ -62,12 +112,19 @@ function areSearchParamsEqual(a: URLSearchParams, b: URLSearchParams) {
  *
  * @param prefix - The prefix to use for this component's params (e.g., 'viewvar', 'view_namespace_name'). When undefined, passes through to raw useSearchParams behavior.
  * @param useGlobalParams - Whether to include global parameters (e.g., sortBy, sortOrder) in the filtered params. Defaults to true.
+ * @param defaults - Optional default values (unprefixed). These are exposed as fallback values when missing from the URL.
  */
 export function usePrefixedSearchParams(
   prefix?: string,
-  useGlobalParams: boolean = true
+  useGlobalParams: boolean = true,
+  defaults?: URLSearchParamsInit
 ): [URLSearchParams, SetPrefixedSearchParams] {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultSearchParams = useMemo(
+    () => buildDefaultSearchParams(prefix, useGlobalParams, defaults),
+    [defaults, prefix, useGlobalParams]
+  );
+
+  const [searchParams, setSearchParams] = useSearchParams(defaultSearchParams);
 
   const prefixedParams = useMemo(() => {
     return filterPrefixedParams(searchParams, prefix, useGlobalParams);
