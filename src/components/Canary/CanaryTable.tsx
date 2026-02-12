@@ -1,5 +1,6 @@
 import TableSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TableSkeletonLoader";
 import {
+  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -9,16 +10,24 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useSearchParams } from "react-router-dom";
 import { HealthCheck } from "../../api/types/health";
 import { InfoMessage } from "../InfoMessage";
+import { useBulkCheckRun } from "./BulkCheckRun/BulkCheckRunContext";
 import { getCanaryTableColumns } from "./CanaryTableColumns";
 import { prepareRows } from "./Rows/lib";
 import { getAggregatedGroupedChecks } from "./aggregate";
 import { getGroupedChecks } from "./grouping";
 import { useHealthUserSettings } from "./useHealthUserSettings";
+
+function getLeafCheckIds(row: Row<HealthCheck>): string[] {
+  if (row.subRows && row.subRows.length > 0) {
+    return row.subRows.flatMap(getLeafCheckIds);
+  }
+  return row.original?.id ? [row.original.id] : [];
+}
 
 const styles = {
   outerDivClass: "border-l border-r border-gray-300 overflow-y-auto",
@@ -128,6 +137,8 @@ export function ChecksTable({
   ...rest
 }: ChecksTableProps) {
   const [params, setParams] = useSearchParams();
+  const { isBulkRunMode, selectedCheckIds, toggleCheck, toggleChecks } =
+    useBulkCheckRun();
 
   const sortByValue = params.get("sortBy") || "name";
   const sortDesc = params.get("sortDesc") === "true" || false;
@@ -144,6 +155,20 @@ export function ChecksTable({
   useEffect(() => {
     setSortBy([{ id: sortByValue, desc: sortDesc }]);
   }, [setSortBy, sortByValue, sortDesc]);
+
+  const handleCheckboxClick = useCallback(
+    (e: React.MouseEvent, row: Row<HealthCheck>) => {
+      e.stopPropagation();
+      if (row.getCanExpand()) {
+        const leafIds = getLeafCheckIds(row);
+        const allSelected = leafIds.every((id) => selectedCheckIds.has(id));
+        toggleChecks(leafIds, !allSelected);
+      } else if (row.original?.id) {
+        toggleCheck(row.original.id);
+      }
+    },
+    [selectedCheckIds, toggleCheck, toggleChecks]
+  );
 
   const columns = useMemo(
     () =>
@@ -203,6 +228,9 @@ export function ChecksTable({
         <thead className={styles.theadClass} style={theadStyle}>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr className={styles.theadRowClass} key={headerGroup.id}>
+              {isBulkRunMode && (
+                <th className={clsx(styles.theadHeaderClass, "w-10 px-3")} />
+              )}
               {headerGroup.headers.map((column) => (
                 <th
                   className={clsx(styles.theadHeaderClass)}
@@ -250,11 +278,24 @@ export function ChecksTable({
                   }`}
                   style={{}}
                   onClick={
-                    row.getCanExpand()
-                      ? () => row.getToggleExpandedHandler()()
-                      : () => onHealthCheckClick(row.original)
+                    isBulkRunMode
+                      ? row.getCanExpand()
+                        ? () => row.getToggleExpandedHandler()()
+                        : (e) => handleCheckboxClick(e, row)
+                      : row.getCanExpand()
+                        ? () => row.getToggleExpandedHandler()()
+                        : () => onHealthCheckClick(row.original)
                   }
                 >
+                  {isBulkRunMode && (
+                    <td className={`${styles.tbodyDataClass} w-10 px-3`}>
+                      <BulkCheckbox
+                        row={row}
+                        selectedCheckIds={selectedCheckIds}
+                        onClick={handleCheckboxClick}
+                      />
+                    </td>
+                  )}
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.column.id}
@@ -286,5 +327,35 @@ export function ChecksTable({
         </div>
       )}
     </div>
+  );
+}
+
+function BulkCheckbox({
+  row,
+  selectedCheckIds,
+  onClick
+}: {
+  row: Row<HealthCheck>;
+  selectedCheckIds: Set<string>;
+  onClick: (e: React.MouseEvent, row: Row<HealthCheck>) => void;
+}) {
+  const leafIds = getLeafCheckIds(row);
+  const selectedCount = leafIds.filter((id) => selectedCheckIds.has(id)).length;
+  const isChecked = leafIds.length > 0 && selectedCount === leafIds.length;
+  const isIndeterminate = selectedCount > 0 && selectedCount < leafIds.length;
+
+  return (
+    <input
+      type="checkbox"
+      className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600"
+      checked={isChecked}
+      ref={(el) => {
+        if (el) {
+          el.indeterminate = isIndeterminate;
+        }
+      }}
+      onChange={() => {}}
+      onClick={(e) => onClick(e, row)}
+    />
   );
 }

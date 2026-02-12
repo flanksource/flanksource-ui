@@ -8,6 +8,8 @@ import { FaFilter } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
 import { Badge } from "..";
 import useRefreshRateFromLocalStorage from "../../hooks/useRefreshRateFromLocalStorage";
+import BulkCheckRunBar from "./BulkCheckRun/BulkCheckRunBar";
+import { useBulkCheckRun } from "./BulkCheckRun/BulkCheckRunContext";
 import CanaryFiltersBar from "./CanaryFilters/TopBar/CanaryFiltersBar";
 import { CanaryInterfaceMinimal } from "./CanaryInterface";
 import CanarySidebar from "./Sidebar/CanarySidebar";
@@ -67,6 +69,7 @@ export function Canary({
   }, [hidePassing, searchParams]);
 
   const [isLoading, setIsLoading] = useState(true);
+  const { isBulkRunMode, exitBulkMode } = useBulkCheckRun();
 
   const {
     healthState: { checks, filteredChecks },
@@ -212,6 +215,16 @@ export function Canary({
 
           <CanaryFiltersBar checks={checks ?? []} />
         </div>
+
+        {isBulkRunMode && (
+          <div className="mb-2">
+            <BulkCheckRunBar
+              filteredChecks={filteredChecks}
+              onExit={exitBulkMode}
+            />
+          </div>
+        )}
+
         <div className="flex flex-1 flex-col pb-4">
           <CanaryInterfaceMinimal
             checks={checks ?? undefined}
