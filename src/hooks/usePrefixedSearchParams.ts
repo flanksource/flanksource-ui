@@ -160,12 +160,6 @@ export function usePrefixedSearchParams(
           }
         });
 
-        if (useGlobalParams) {
-          GLOBAL_PARAM_KEYS.forEach((key) => {
-            nextParams.delete(key);
-          });
-        }
-
         // Compute filtered params from the latest URL state
         const currentFiltered = filterPrefixedParams(
           baseParams,
