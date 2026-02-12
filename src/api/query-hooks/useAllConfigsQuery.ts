@@ -17,12 +17,16 @@ export const useAllConfigsQuery = ({
   paramPrefix?: string;
   [key: string]: any;
 } = {}) => {
-  const [searchParams] = usePrefixedSearchParams(paramPrefix, false);
+  const [searchParams] = usePrefixedSearchParams(paramPrefix, false, {
+    sortBy: "type",
+    sortOrder: "asc",
+    groupBy: "type"
+  });
 
   const showDeletedConfigs = useShowDeletedConfigs();
   const search = searchParams.get("search") ?? undefined;
-  const sortBy = searchParams.get("sortBy") ?? "type";
-  const sortOrder = searchParams.get("sortOrder") ?? "asc";
+  const sortBy = searchParams.get("sortBy");
+  const sortOrder = searchParams.get("sortOrder");
   const configType = searchParams.get("configType") ?? undefined;
   const labels = searchParams.get("labels") ?? undefined;
   const status = searchParams.get("status") ?? undefined;

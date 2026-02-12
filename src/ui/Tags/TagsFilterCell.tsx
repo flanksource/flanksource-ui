@@ -23,7 +23,7 @@ export default function TagsFilterCell({
   useBase64Encoding = false,
   paramPrefix
 }: TagsFilterCellProps) {
-  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false);
+  const [, setParams] = usePrefixedSearchParams(paramPrefix, false);
 
   const tagEntries = Object.entries(tags).filter(([key]) => key !== "toString");
 

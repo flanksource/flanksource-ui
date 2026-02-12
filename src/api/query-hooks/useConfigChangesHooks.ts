@@ -52,7 +52,10 @@ export function useGetAllConfigsChangesQuery(
     configChangesDefaultDateFilter,
     paramPrefix
   );
-  const [params] = usePrefixedSearchParams(paramPrefix, false);
+  const [params] = usePrefixedSearchParams(paramPrefix, false, {
+    sortBy: "created_at",
+    sortDirection: "desc"
+  });
   const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const configType = params.get("configType") ?? undefined;
@@ -98,7 +101,12 @@ export function useGetConfigChangesByIDQuery(
   const { id } = useParams();
   const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
-  const [params] = usePrefixedSearchParams(undefined, false);
+  const [params] = usePrefixedSearchParams(undefined, false, {
+    downstream: "true",
+    upstream: "false",
+    sortBy: "created_at",
+    sortDirection: "desc"
+  });
   const change_type = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
@@ -106,8 +114,8 @@ export function useGetConfigChangesByIDQuery(
   const configTypes = params.get("configTypes") ?? "all";
   const { pageIndex, pageSize } = useReactTablePaginationState();
   const [sortBy] = useReactTableSortState();
-  const upstream = (params.get("upstream") ?? "false") === "true";
-  const downstream = (params.get("downstream") ?? "true") === "true";
+  const upstream = params.get("upstream") === "true";
+  const downstream = params.get("downstream") === "true";
   const all = upstream && downstream;
 
   const arbitraryFilter = useConfigChangesArbitraryFilters();
