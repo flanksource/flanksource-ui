@@ -6,15 +6,16 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import {
   CatalogChangesSearchResponse,
   GetConfigsRelatedChangesParams,
   getConfigsChanges
 } from "../services/configs";
 
-function useConfigChangesTagsFilter() {
-  const [params] = useSearchParams();
+function useConfigChangesTagsFilter(paramPrefix?: string) {
+  const [params] = usePrefixedSearchParams(paramPrefix, false);
 
   const tags = useMemo(() => {
     const allTags = params.get("tags");
@@ -36,27 +37,34 @@ function useConfigChangesTagsFilter() {
 }
 
 export function useGetAllConfigsChangesQuery(
-  queryOptions: UseQueryOptions<CatalogChangesSearchResponse> = {
+  {
+    paramPrefix,
+    ...queryOptions
+  }: UseQueryOptions<CatalogChangesSearchResponse> & {
+    paramPrefix?: string;
+  } = {
     enabled: true,
     keepPreviousData: true
   }
 ) {
   const showChangesFromDeletedConfigs = useShowDeletedConfigs();
-  const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
-  const [params] = useSearchParams({
-    sortBy: "created_at",
-    sortDirection: "desc"
-  });
+  const { timeRangeValue } = useTimeRangeParams(
+    configChangesDefaultDateFilter,
+    paramPrefix
+  );
+  const [params] = usePrefixedSearchParams(paramPrefix, false);
   const changeType = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const configType = params.get("configType") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
   const to = timeRangeValue?.to ?? undefined;
-  const [sortBy] = useReactTableSortState();
+  const [sortBy] = useReactTableSortState({ paramPrefix });
   const configTypes = params.get("configTypes") ?? "all";
-  const { pageSize, pageIndex } = useReactTablePaginationState();
-  const tags = useConfigChangesTagsFilter();
-  const arbitraryFilter = useConfigChangesArbitraryFilters();
+  const { pageSize, pageIndex } = useReactTablePaginationState({
+    paramPrefix
+  });
+  const tags = useConfigChangesTagsFilter(paramPrefix);
+  const arbitraryFilter = useConfigChangesArbitraryFilters(paramPrefix);
 
   const props = {
     include_deleted_configs: showChangesFromDeletedConfigs,
@@ -90,12 +98,7 @@ export function useGetConfigChangesByIDQuery(
   const { id } = useParams();
   const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(configChangesDefaultDateFilter);
-  const [params] = useSearchParams({
-    downstream: "true",
-    upstream: "false",
-    sortBy: "created_at",
-    sortDirection: "desc"
-  });
+  const [params] = usePrefixedSearchParams(undefined, false);
   const change_type = params.get("changeType") ?? undefined;
   const severity = params.get("severity") ?? undefined;
   const from = timeRangeValue?.from ?? undefined;
@@ -103,8 +106,8 @@ export function useGetConfigChangesByIDQuery(
   const configTypes = params.get("configTypes") ?? "all";
   const { pageIndex, pageSize } = useReactTablePaginationState();
   const [sortBy] = useReactTableSortState();
-  const upstream = params.get("upstream") === "true";
-  const downstream = params.get("downstream") === "true";
+  const upstream = (params.get("upstream") ?? "false") === "true";
+  const downstream = (params.get("downstream") ?? "true") === "true";
   const all = upstream && downstream;
 
   const arbitraryFilter = useConfigChangesArbitraryFilters();

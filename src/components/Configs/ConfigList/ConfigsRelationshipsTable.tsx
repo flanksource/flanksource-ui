@@ -40,7 +40,7 @@ export default function ConfigsRelationshipsTable({
   );
 
   const relationshipsColumns = useMemo(() => {
-    return mrtConfigListColumns.map((column) => {
+    return mrtConfigListColumns().map((column) => {
       if (column.accessorKey === "name") {
         return {
           ...column,

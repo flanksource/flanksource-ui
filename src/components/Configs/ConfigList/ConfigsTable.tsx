@@ -2,7 +2,8 @@ import { ConfigItem } from "@flanksource-ui/api/types/configs";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo, useCallback } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { mrtConfigListColumns } from "./MRTConfigListColumn";
 
 export interface Props {
@@ -13,6 +14,7 @@ export interface Props {
   expandAllRows?: boolean;
   totalRecords?: number;
   pageCount?: number;
+  paramPrefix?: string;
 }
 
 export default function ConfigsTable({
@@ -22,12 +24,10 @@ export default function ConfigsTable({
   groupBy,
   expandAllRows = false,
   totalRecords,
-  pageCount
+  pageCount,
+  paramPrefix
 }: Props) {
-  const [queryParams] = useSearchParams({
-    sortBy: "type",
-    sortOrder: "asc"
-  });
+  const [queryParams] = usePrefixedSearchParams(paramPrefix, false);
   const navigate = useNavigate();
 
   const groupByUserInput = queryParams.get("groupBy") ?? undefined;
@@ -88,8 +88,8 @@ export default function ConfigsTable({
         };
       }
     );
-    return [...virtualColumn, ...mrtConfigListColumns];
-  }, [groupByColumns]);
+    return [...virtualColumn, ...mrtConfigListColumns(paramPrefix)];
+  }, [groupByColumns, paramPrefix]);
 
   const handleRowClick = useCallback(
     (row?: ConfigItem) => {
@@ -115,6 +115,7 @@ export default function ConfigsTable({
       manualPageCount={pageCount}
       enableGrouping
       onRowClick={handleRowClick}
+      urlParamPrefix={paramPrefix}
     />
   );
 }

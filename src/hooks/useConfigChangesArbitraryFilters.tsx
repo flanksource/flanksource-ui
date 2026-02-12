@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 
-export function useConfigChangesArbitraryFilters() {
-  const [params] = useSearchParams();
+export function useConfigChangesArbitraryFilters(paramPrefix?: string) {
+  const [params] = usePrefixedSearchParams(paramPrefix, false);
 
   const configId = params.get("id") ?? undefined;
   const changeSummary = params.get("summary") ?? undefined;

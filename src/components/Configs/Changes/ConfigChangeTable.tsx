@@ -7,7 +7,7 @@ import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { CellContext } from "@tanstack/react-table";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import MRTConfigListTagsCell from "../ConfigList/Cells/MRTConfigListTagsCell";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
@@ -36,7 +36,9 @@ export function ConfigChangeDateCell({
   );
 }
 
-const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
+const configChangesColumn = (
+  paramPrefix?: string
+): MRT_ColumnDef<ConfigChange>[] => [
   {
     header: "Last Seen",
     id: "created_at",
@@ -76,6 +78,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
           filterValue={configId}
           paramKey="id"
           paramsToReset={paramsToReset.configChanges}
+          paramPrefix={paramPrefix}
         >
           <ConfigLink
             config={row.original.config}
@@ -97,6 +100,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
           filterValue={changeType}
           paramKey="changeType"
           paramsToReset={paramsToReset.configChanges}
+          paramPrefix={paramPrefix}
         >
           <div className="space-x-1 overflow-hidden text-ellipsis">
             <ChangeIcon change={row.original} />
@@ -124,6 +128,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
           filterValue={summary}
           paramKey="summary"
           paramsToReset={paramsToReset.configChanges}
+          paramPrefix={paramPrefix}
         >
           {summary}
         </FilterByCellValue>
@@ -133,7 +138,13 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
   {
     header: "Tags",
     accessorKey: "tags",
-    Cell: (props) => <MRTConfigListTagsCell {...props} enableFilterByTag />,
+    Cell: (props) => (
+      <MRTConfigListTagsCell
+        {...props}
+        enableFilterByTag
+        paramPrefix={paramPrefix}
+      />
+    ),
     size: 100
   },
   {
@@ -148,6 +159,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
             filterValue={userID}
             paramKey="created_by"
             paramsToReset={paramsToReset.configChanges}
+            paramPrefix={paramPrefix}
           >
             <GetUserAvatar userID={userID} />
           </FilterByCellValue>
@@ -161,6 +173,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
             filterValue={externalCreatedBy}
             paramKey="external_created_by"
             paramsToReset={paramsToReset.configChanges}
+            paramPrefix={paramPrefix}
           >
             <span>{externalCreatedBy}</span>
           </FilterByCellValue>
@@ -174,6 +187,7 @@ const configChangesColumn: MRT_ColumnDef<ConfigChange>[] = [
             filterValue={source}
             paramKey="source"
             paramsToReset={paramsToReset.configChanges}
+            paramPrefix={paramPrefix}
           >
             <span>{source}</span>
           </FilterByCellValue>
@@ -190,17 +204,23 @@ type ConfigChangeTableProps = {
   isLoading?: boolean;
   totalRecords: number;
   numberOfPages: number;
+  paramPrefix?: string;
 };
 
 export function ConfigChangeTable({
   data,
   isLoading,
   totalRecords,
-  numberOfPages
+  numberOfPages,
+  paramPrefix
 }: ConfigChangeTableProps) {
   const [selectedConfigChange, setSelectedConfigChange] =
     useState<ConfigChange>();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const columns = useMemo(
+    () => configChangesColumn(paramPrefix),
+    [paramPrefix]
+  );
 
   const { data: configChange, isLoading: changeLoading } =
     useGetConfigChangesById(
@@ -214,7 +234,7 @@ export function ConfigChangeTable({
   return (
     <>
       <MRTDataTable
-        columns={configChangesColumn}
+        columns={columns}
         data={data}
         isLoading={isLoading}
         enableServerSideSorting
@@ -226,6 +246,7 @@ export function ConfigChangeTable({
           setSelectedConfigChange(row);
           setModalIsOpen(true);
         }}
+        urlParamPrefix={paramPrefix}
       />
       {configChange && (
         <ConfigDetailChangeModal

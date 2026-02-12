@@ -1,46 +1,86 @@
 import { Form, Formik, useFormikContext } from "formik";
-import { useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useRef } from "react";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
+
+function useStableStringArray(values: string[]) {
+  const signature = values.join("\u001f");
+  const cacheRef = useRef<{ signature: string; values: string[] }>();
+
+  if (!cacheRef.current || cacheRef.current.signature !== signature) {
+    cacheRef.current = { signature, values };
+  }
+
+  return cacheRef.current.values;
+}
 
 type FormikChangesListenerProps = {
   children: React.ReactNode;
   filterFields: string[];
   paramsToReset?: string[];
-  defaultFieldValues?: Record<string, string>;
+  paramPrefix?: string;
 };
 
 function FormikChangesListener({
   children,
   filterFields,
   paramsToReset = [],
-  defaultFieldValues = {}
+  paramPrefix
 }: FormikChangesListenerProps) {
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();
-  const [searchParams, setSearchParams] = useSearchParams({
-    ...defaultFieldValues
-  });
+  const [searchParams, setSearchParams] = usePrefixedSearchParams(
+    paramPrefix,
+    false
+  );
+  const valuesRef = useRef(values);
 
   useEffect(() => {
+    valuesRef.current = values;
+  }, [values]);
+
+  // Sync form values to URL params
+  useEffect(() => {
+    setSearchParams((currentParams) => {
+      let changed = false;
+      const nextParams = new URLSearchParams(currentParams);
+
+      filterFields.forEach((field) => {
+        const value = values[field];
+        const currentValue = nextParams.get(field);
+        if (value && value.toLowerCase() !== "all") {
+          if (currentValue !== value) {
+            nextParams.set(field, value);
+            changed = true;
+          }
+        } else if (currentValue !== null) {
+          nextParams.delete(field);
+          changed = true;
+        }
+      });
+
+      paramsToReset.forEach((param) => {
+        if (nextParams.has(param)) {
+          nextParams.delete(param);
+          changed = true;
+        }
+      });
+
+      if (!changed) {
+        return currentParams;
+      }
+
+      return nextParams;
+    });
+  }, [filterFields, paramsToReset, setSearchParams, values]);
+
+  // Sync URL params to form values
+  useEffect(() => {
     filterFields.forEach((field) => {
-      const value = values[field];
-      if (value && value.toLowerCase() !== "all") {
-        searchParams.set(field, value);
-      } else {
-        searchParams.delete(field);
+      const value = searchParams.get(field) ?? undefined;
+      if (valuesRef.current[field] !== value) {
+        setFieldValue(field, value, false);
       }
     });
-    paramsToReset.forEach((param) => searchParams.delete(param));
-    setSearchParams(searchParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, setFieldValue]);
-
-  // reset form values, if the query params change
-  useEffect(() => {
-    filterFields.forEach((field) => {
-      const value = searchParams.get(field);
-      setFieldValue(field, value);
-    }, []);
   }, [filterFields, searchParams, setFieldValue]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -57,6 +97,7 @@ type FilterFormProps = {
    * configType when available in the changes view
    */
   defaultFieldValues?: Record<string, string>;
+  paramPrefix?: string;
 };
 
 /**
@@ -71,13 +112,16 @@ export default function FormikFilterForm({
   children,
   paramsToReset,
   filterFields,
-  defaultFieldValues
+  defaultFieldValues,
+  paramPrefix
 }: FilterFormProps) {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = usePrefixedSearchParams(paramPrefix, false);
+  const stableFilterFields = useStableStringArray(filterFields);
+  const stableParamsToReset = useStableStringArray(paramsToReset);
 
   const initialValues = useMemo(
     () =>
-      filterFields.reduce(
+      stableFilterFields.reduce(
         (acc, field) => {
           const alternativeValue = defaultFieldValues?.[field] ?? undefined;
           acc[field] = searchParams.get(field) ?? alternativeValue ?? undefined;
@@ -85,16 +129,16 @@ export default function FormikFilterForm({
         },
         {} as Record<string, string | undefined>
       ),
-    [defaultFieldValues, filterFields, searchParams]
+    [defaultFieldValues, searchParams, stableFilterFields]
   );
 
   return (
     <Formik initialValues={initialValues} onSubmit={() => {}}>
       {({ handleSubmit }) => (
         <FormikChangesListener
-          filterFields={filterFields}
-          paramsToReset={paramsToReset}
-          defaultFieldValues={defaultFieldValues}
+          filterFields={stableFilterFields}
+          paramsToReset={stableParamsToReset}
+          paramPrefix={paramPrefix}
         >
           <Form onSubmit={handleSubmit}>{children}</Form>
         </FormikChangesListener>
