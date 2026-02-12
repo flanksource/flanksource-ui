@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import dayjs from "dayjs";
 import { type PlaybookRunWithActions } from "@flanksource-ui/api/types/playbooks";
 import { useAiChatPopover } from "@flanksource-ui/components/ai/AiChatPopover";
-import { Button } from "@flanksource-ui/components/ui/button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { truncateText } from "@flanksource-ui/utils/common";
 import { formatDuration } from "@flanksource-ui/utils/date";
 import { Sparkles } from "lucide-react";
@@ -104,12 +104,11 @@ export function DiagnosePlaybookFailureButton({
   return (
     <Button
       onClick={handleDiagnoseFailure}
-      size="sm"
-      variant="outline"
-      className="flex items-center gap-2"
+      className="btn-white min-w-max space-x-1"
+      title="Diagnose playbook failure with AI"
     >
-      <Sparkles className="h-4 w-4" />
-      Diagnose Failure
+      <Sparkles className="h-5 w-5" />
+      <span>Diagnose Failure</span>
     </Button>
   );
 }

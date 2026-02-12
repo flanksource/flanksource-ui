@@ -35,7 +35,7 @@ import { Sparkles } from "lucide-react";
 import { AiFeatureRequest } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
 import { features } from "@flanksource-ui/services/permissions/features";
-import { Button } from "@flanksource-ui/components/ui/button";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 
 const LazyDiagnoseButton = lazy(() =>
   import("../DiagnosePlaybookFailureButton").then((module) => ({
@@ -259,8 +259,9 @@ export default function PlaybookRunDetailView({
               <AiFeatureRequest>
                 <Suspense
                   fallback={
-                    <Button size="sm" variant="outline" disabled>
-                      <Sparkles className="h-4 w-4 animate-pulse" />
+                    <Button className="btn-white min-w-max space-x-1" disabled>
+                      <Sparkles className="h-5 w-5 animate-pulse" />
+                      <span>Diagnose Failure</span>
                     </Button>
                   }
                 >
