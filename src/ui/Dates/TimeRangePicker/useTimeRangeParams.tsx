@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { URLSearchParamsInit } from "react-router-dom";
 import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { parseDateMath } from "./parseDateMath";
@@ -23,36 +23,11 @@ export default function useTimeRangeParams(
   defaults?: URLSearchParamsInit,
   paramPrefix?: string
 ) {
-  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false);
-
-  useEffect(() => {
-    if (!defaults) {
-      return;
-    }
-
-    let changed = false;
-    const nextParams = new URLSearchParams(params);
-
-    const defaultsParams = new URLSearchParams(
-      typeof defaults === "string" || defaults instanceof URLSearchParams
-        ? defaults
-        : Object.entries(defaults).flatMap(([key, value]) =>
-            Array.isArray(value) ? value.map((v) => [key, v]) : [[key, value]]
-          )
-    );
-    defaultsParams.forEach((value, key) => {
-      if (!nextParams.has(key) && value != null) {
-        nextParams.set(key, String(value));
-        changed = true;
-      }
-    });
-
-    if (!changed) {
-      return;
-    }
-
-    setParams(() => nextParams);
-  }, [defaults, params, setParams]);
+  const [params, setParams] = usePrefixedSearchParams(
+    paramPrefix,
+    false,
+    defaults
+  );
 
   const setTimeRangeParams = useCallback(
     (range: TimeRangeOption, paramsToReset: string[] = []) => {
