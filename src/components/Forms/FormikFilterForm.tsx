@@ -103,13 +103,12 @@ function FormikChangesListener({
   // Sync URL params to form values
   useEffect(() => {
     filterFields.forEach((field) => {
-      const value =
-        searchParams.get(field) ?? stableDefaults[field] ?? undefined;
+      const value = searchParams.get(field) ?? undefined;
       if (valuesRef.current[field] !== value) {
         setFieldValue(field, value, false);
       }
     });
-  }, [stableDefaults, filterFields, searchParams, setFieldValue]);
+  }, [filterFields, searchParams, setFieldValue]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
