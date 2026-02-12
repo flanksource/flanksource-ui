@@ -425,10 +425,49 @@ export interface ViewRef {
   name: string;
 }
 
+/**
+ * Filters for the native Changes UI component
+ * Uses standard formats (Kubernetes-style tag selectors, comma-separated values)
+ * Frontend is responsible for translating to its internal format
+ */
+export interface ChangesUIFilters {
+  configTypes?: string; // e.g. "AWS::Account,-Kubernetes::Pod"
+  changeType?: string; // e.g. "diff,-BackOff"
+  severity?: string; // e.g. "high", "medium", "low", "critical", "info"
+  from?: string; // e.g. "24h", "7d" or ISO timestamp
+  to?: string;
+  tags?: string; // e.g. "env=production,!env=staging" (Kubernetes style)
+  source?: string; // e.g. "kubernetes,-github"
+  summary?: string;
+  createdBy?: string;
+}
+
+/**
+ * Filters for the native Configs UI component
+ * Uses standard formats (Kubernetes-style label selectors, comma-separated values)
+ * Frontend is responsible for translating to its internal format
+ */
+export interface ConfigsUIFilters {
+  search?: string;
+  configType?: string; // e.g. "AWS::RDS::Instance"
+  labels?: string; // e.g. "app=nginx,!team=dev" (Kubernetes style)
+  status?: string; // e.g. "Running,-Stopped"
+  health?: string; // e.g. "-healthy,warning"
+}
+
+/**
+ * Reference to a native Flanksource UI component
+ */
+export interface UIRef {
+  changes?: ChangesUIFilters;
+  configs?: ConfigsUIFilters;
+}
+
 export interface ViewSection {
   title: string;
   icon?: string;
-  viewRef: ViewRef;
+  viewRef?: ViewRef;
+  uiRef?: UIRef;
 }
 
 export interface ViewResult {

@@ -81,10 +81,13 @@ export function useViewData({
     ];
     if (viewResult?.sections) {
       viewResult.sections.forEach((section) => {
-        refs.push({
-          namespace: section.viewRef.namespace ?? "",
-          name: section.viewRef.name
-        });
+        // Only include sections that reference other views (not native UI sections)
+        if (section.viewRef) {
+          refs.push({
+            namespace: section.viewRef.namespace ?? "",
+            name: section.viewRef.name
+          });
+        }
       });
     }
     return refs;
