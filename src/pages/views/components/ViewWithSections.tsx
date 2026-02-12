@@ -66,18 +66,26 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = ({
 
       {viewResult?.sections && viewResult.sections.length > 0 && (
         <>
-          {viewResult.sections.map((section) => (
-            <div
-              key={`${section.viewRef.namespace || "default"}:${section.viewRef.name}`}
-              className="mt-4"
-            >
-              <ViewSection
-                section={section}
-                hideVariables
-                variables={currentVariables}
-              />
-            </div>
-          ))}
+          {viewResult.sections.map((section) => {
+            // Generate a unique key based on section type
+            const sectionKey = section.viewRef
+              ? `${section.viewRef.namespace || "default"}:${section.viewRef.name}`
+              : section.uiRef?.changes
+                ? `changes:${section.title}`
+                : section.uiRef?.configs
+                  ? `configs:${section.title}`
+                  : `section:${section.title}`;
+
+            return (
+              <div key={sectionKey} className="mt-4">
+                <ViewSection
+                  section={section}
+                  hideVariables
+                  variables={currentVariables}
+                />
+              </div>
+            );
+          })}
         </>
       )}
     </div>
