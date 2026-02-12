@@ -1,6 +1,7 @@
 import { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+
+import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 
 type PaginationStateOptions = {
   /**
@@ -34,49 +35,43 @@ export default function useReactTablePaginationState(
     defaultPageSize = 50
   } = options;
 
-  const pageIndexParamKey = paramPrefix
-    ? `${paramPrefix}__${pageIndexKey}`
-    : pageIndexKey;
-  const pageSizeParamKey = paramPrefix
-    ? `${paramPrefix}__${pageSizeKey}`
-    : pageSizeKey;
-
   const defaultPageSizeValue = defaultPageSize.toString();
 
-  const [params, setParams] = useSearchParams({
-    [pageIndexParamKey]: "0",
-    [pageSizeParamKey]: defaultPageSizeValue
+  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false, {
+    [pageIndexKey]: "0",
+    [pageSizeKey]: defaultPageSizeValue
   });
 
-  const pageIndex = parseInt(params.get(pageIndexParamKey) ?? "0", 10);
+  const pageIndex = parseInt(params.get(pageIndexKey) ?? "0", 10);
   const pageSize = parseInt(
-    params.get(pageSizeParamKey) ?? defaultPageSizeValue,
+    params.get(pageSizeKey) ?? defaultPageSizeValue,
     10
   );
 
   const setPageIndex: OnChangeFn<PaginationState> = useCallback(
     (param) => {
-      const updated =
-        typeof param === "function"
-          ? param({
-              pageIndex: pageIndex ?? 0,
-              pageSize: pageSize ?? defaultPageSize
-            })
-          : param;
-      const newParams = new URLSearchParams(params);
-      newParams.set(pageIndexParamKey, updated.pageIndex.toString());
-      newParams.set(pageSizeParamKey, updated.pageSize.toString());
-      setParams(newParams);
+      setParams((current) => {
+        const currentPageIndex = parseInt(current.get(pageIndexKey) ?? "0", 10);
+        const currentPageSize = parseInt(
+          current.get(pageSizeKey) ?? defaultPageSizeValue,
+          10
+        );
+
+        const updated =
+          typeof param === "function"
+            ? param({
+                pageIndex: currentPageIndex,
+                pageSize: currentPageSize
+              })
+            : param;
+
+        const next = new URLSearchParams(current);
+        next.set(pageIndexKey, updated.pageIndex.toString());
+        next.set(pageSizeKey, updated.pageSize.toString());
+        return next;
+      });
     },
-    [
-      pageIndex,
-      pageSize,
-      params,
-      setParams,
-      pageIndexParamKey,
-      pageSizeParamKey,
-      defaultPageSize
-    ]
+    [defaultPageSizeValue, pageIndexKey, pageSizeKey, setParams]
   );
 
   return {

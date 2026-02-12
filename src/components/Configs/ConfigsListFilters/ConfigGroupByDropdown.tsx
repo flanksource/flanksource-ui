@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { BiLabel, BiStats } from "react-icons/bi";
 import { MdDifference } from "react-icons/md";
-import { useSearchParams } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { MultiValue } from "react-select";
 
 type ConfigGroupByDropdownProps = {
@@ -15,6 +15,7 @@ type ConfigGroupByDropdownProps = {
   searchParamKey?: string;
   value?: string;
   paramsToReset?: string[];
+  paramPrefix?: string;
 };
 
 const items: GroupByOptions[] = [
@@ -48,9 +49,10 @@ const items: GroupByOptions[] = [
 export default function ConfigGroupByDropdown({
   searchParamKey = "groupBy",
   onChange = () => {},
-  paramsToReset = []
+  paramsToReset = [],
+  paramPrefix
 }: ConfigGroupByDropdownProps) {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false);
 
   const configType = params.get("configType") ?? undefined;
 
@@ -109,19 +111,24 @@ export default function ConfigGroupByDropdown({
 
   const groupByChange = useCallback(
     (value: MultiValue<GroupByOptions> | undefined) => {
-      if (!value || value.length === 0) {
-        params.delete(searchParamKey);
-      } else {
-        const values = value
-          .map((v) => (v.isTag ? `${v.value}__tag` : v.value))
-          .join(",");
-        params.set(searchParamKey, values);
-      }
-      paramsToReset.forEach((param) => params.delete(param));
-      setParams(params);
+      setParams((currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        if (!value || value.length === 0) {
+          nextParams.delete(searchParamKey);
+        } else {
+          const values = value
+            .map((v) => (v.isTag ? `${v.value}__tag` : v.value))
+            .join(",");
+          nextParams.set(searchParamKey, values);
+        }
+        paramsToReset.forEach((param) => {
+          nextParams.delete(param);
+        });
+        return nextParams;
+      });
       onChange(value?.map((v) => v.value));
     },
-    [onChange, params, paramsToReset, searchParamKey, setParams]
+    [onChange, paramsToReset, searchParamKey, setParams]
   );
 
   const value = useMemo(

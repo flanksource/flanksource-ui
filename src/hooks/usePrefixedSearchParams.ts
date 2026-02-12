@@ -1,70 +1,195 @@
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import {
+  NavigateOptions,
+  URLSearchParamsInit,
+  useSearchParams
+} from "react-router-dom";
 
-// Global parameter keys that don't require prefixing
 const GLOBAL_PARAM_KEYS = ["sortBy", "sortOrder"] as const;
 
+type SetPrefixedSearchParams = (
+  updater: (prev: URLSearchParams) => URLSearchParams,
+  options?: NavigateOptions
+) => void;
+
+function toURLSearchParams(init?: URLSearchParamsInit) {
+  if (!init) {
+    return new URLSearchParams();
+  }
+
+  if (typeof init === "string" || init instanceof URLSearchParams) {
+    return new URLSearchParams(init);
+  }
+
+  return new URLSearchParams(
+    Object.entries(init).flatMap(([key, value]) =>
+      Array.isArray(value) ? value.map((v) => [key, v]) : [[key, value]]
+    )
+  );
+}
+
+function buildDefaultSearchParams(
+  prefix: string | undefined,
+  useGlobalParams: boolean,
+  defaults?: URLSearchParamsInit
+) {
+  if (!defaults) {
+    return undefined;
+  }
+
+  const defaultsParams = toURLSearchParams(defaults);
+
+  if (!prefix) {
+    return defaultsParams;
+  }
+
+  const prefixedDefaults = new URLSearchParams();
+  const prefixWithSeparator = `${prefix}__`;
+
+  Array.from(defaultsParams.entries()).forEach(([key, value]) => {
+    if (useGlobalParams && GLOBAL_PARAM_KEYS.includes(key as any)) {
+      prefixedDefaults.append(key, value);
+      return;
+    }
+
+    prefixedDefaults.append(`${prefixWithSeparator}${key}`, value);
+  });
+
+  return prefixedDefaults;
+}
+
+function filterPrefixedParams(
+  params: URLSearchParams,
+  prefix: string | undefined,
+  useGlobalParams: boolean
+) {
+  if (!prefix) {
+    return new URLSearchParams(params);
+  }
+
+  const filtered = new URLSearchParams();
+  const prefixWithSeparator = `${prefix}__`;
+
+  Array.from(params.entries()).forEach(([key, value]) => {
+    if (useGlobalParams && GLOBAL_PARAM_KEYS.includes(key as any)) {
+      filtered.set(key, value);
+      return;
+    }
+
+    if (key.startsWith(prefixWithSeparator)) {
+      filtered.set(key.substring(prefixWithSeparator.length), value);
+    }
+  });
+
+  return filtered;
+}
+
+function toComparableParamsString(params: URLSearchParams) {
+  return Array.from(params.entries())
+    .sort(([aKey, aValue], [bKey, bValue]) => {
+      if (aKey === bKey) {
+        return aValue.localeCompare(bValue);
+      }
+      return aKey.localeCompare(bKey);
+    })
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+}
+
+function areSearchParamsEqual(a: URLSearchParams, b: URLSearchParams) {
+  return toComparableParamsString(a) === toComparableParamsString(b);
+}
+
 /**
- * Hook that manages URL search params with a specific prefix.
- * Provides filtered params (without prefix) and a setter that adds the prefix.
+ * usePrefixedSearchParams
  *
- * @param prefix - The prefix to use for this component's params (e.g., 'viewvar', 'view_namespace_name')
+ * Allows optionally namespacing URL search params with a prefix. When a prefix
+ * is supplied, only params with that prefix are exposed to the caller and any
+ * updates are written back under the same prefix.
+ *
+ * @param prefix - The prefix to use for this component's params (e.g., 'viewvar', 'view_namespace_name'). When undefined, passes through to raw useSearchParams behavior.
  * @param useGlobalParams - Whether to include global parameters (e.g., sortBy, sortOrder) in the filtered params. Defaults to true.
+ * @param defaults - Optional default values (unprefixed). These are exposed as fallback values when missing from the URL.
  */
 export function usePrefixedSearchParams(
-  prefix: string,
-  useGlobalParams: boolean = true
-): [
-  URLSearchParams,
-  (updater: (prev: URLSearchParams) => URLSearchParams) => void
-] {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const prefixedParams = useMemo(() => {
-    const filtered = new URLSearchParams();
-    const prefixWithSeparator = `${prefix}__`;
-
-    Array.from(searchParams.entries()).forEach(([key, value]) => {
-      if (GLOBAL_PARAM_KEYS.includes(key as any) && useGlobalParams) {
-        filtered.set(key, value);
-      } else if (key.startsWith(prefixWithSeparator)) {
-        const cleanKey = key.substring(prefixWithSeparator.length);
-        filtered.set(cleanKey, value);
-      }
-    });
-
-    return filtered;
-  }, [searchParams, prefix, useGlobalParams]);
-
-  // Setter that adds prefix to keys when updating URL
-  const setPrefixedParams = useCallback(
-    (updater: (prev: URLSearchParams) => URLSearchParams) => {
-      setSearchParams((currentParams) => {
-        const newParams = new URLSearchParams(currentParams);
-        const prefixWithSeparator = `${prefix}__`;
-
-        // Remove all existing params with our prefix
-        Array.from(currentParams.entries()).forEach(([key]) => {
-          if (key.startsWith(prefixWithSeparator)) {
-            newParams.delete(key);
-          }
-        });
-
-        // Get the updated params from the updater
-        const updatedParams = updater(prefixedParams);
-
-        // Add new params with prefix
-        Array.from(updatedParams.entries()).forEach(([key, value]) => {
-          if (value && value.trim() !== "") {
-            newParams.set(`${prefixWithSeparator}${key}`, value);
-          }
-        });
-
-        return newParams;
-      });
-    },
-    [setSearchParams, prefixedParams, prefix]
+  prefix?: string,
+  useGlobalParams: boolean = true,
+  defaults?: URLSearchParamsInit
+): [URLSearchParams, SetPrefixedSearchParams] {
+  const defaultSearchParams = useMemo(
+    () => buildDefaultSearchParams(prefix, useGlobalParams, defaults),
+    [defaults, prefix, useGlobalParams]
   );
 
-  return [prefixedParams, setPrefixedParams];
+  const [searchParams, setSearchParams] = useSearchParams(defaultSearchParams);
+
+  const prefixedParams = useMemo(() => {
+    return filterPrefixedParams(searchParams, prefix, useGlobalParams);
+  }, [prefix, searchParams, useGlobalParams]);
+
+  const setPrefixedSearchParams = useCallback(
+    (
+      updater: (prev: URLSearchParams) => URLSearchParams,
+      options?: NavigateOptions
+    ) => {
+      setSearchParams((currentParams) => {
+        const baseParams =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search)
+            : new URLSearchParams(currentParams);
+
+        if (!prefix) {
+          const updated = updater(new URLSearchParams(baseParams));
+
+          if (areSearchParamsEqual(updated, baseParams)) {
+            return currentParams;
+          }
+
+          return updated;
+        }
+
+        const prefixWithSeparator = `${prefix}__`;
+        const nextParams = new URLSearchParams(baseParams);
+
+        Array.from(baseParams.entries()).forEach(([key]) => {
+          if (key.startsWith(prefixWithSeparator)) {
+            nextParams.delete(key);
+          }
+        });
+
+        // Compute filtered params from the latest URL state
+        const currentFiltered = filterPrefixedParams(
+          baseParams,
+          prefix,
+          useGlobalParams
+        );
+        const updatedFiltered = updater(currentFiltered);
+
+        Array.from(updatedFiltered.entries()).forEach(([key, value]) => {
+          if (!value || value.trim() === "") {
+            return;
+          }
+          if (useGlobalParams && GLOBAL_PARAM_KEYS.includes(key as any)) {
+            nextParams.set(key, value);
+            return;
+          }
+
+          const prefixedKey = `${prefixWithSeparator}${key}`;
+          nextParams.set(prefixedKey, value);
+        });
+
+        if (areSearchParamsEqual(nextParams, baseParams)) {
+          return baseParams;
+        }
+
+        return nextParams;
+      }, options);
+    },
+    [prefix, setSearchParams, useGlobalParams]
+  );
+
+  return [prefixedParams, setPrefixedSearchParams];
 }

@@ -4,6 +4,7 @@ import { URLSearchParamsInit } from "react-router-dom";
 
 type Props = {
   paramsToReset?: string[];
+  paramPrefix?: string;
 };
 
 export const configChangesDefaultDateFilter: URLSearchParamsInit = {
@@ -13,10 +14,12 @@ export const configChangesDefaultDateFilter: URLSearchParamsInit = {
 };
 
 export default function ConfigChangesDateRangeFilter({
-  paramsToReset = []
+  paramsToReset = [],
+  paramPrefix
 }: Props) {
   const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams(
-    configChangesDefaultDateFilter
+    configChangesDefaultDateFilter,
+    paramPrefix
   );
 
   const timeRangeValue = getTimeRangeFromUrl();

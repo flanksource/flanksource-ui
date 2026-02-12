@@ -15,7 +15,9 @@ import { MRTConfigListDateCell } from "./Cells/ConfigListDateCell";
 import MRTConfigListTagsCell from "./Cells/MRTConfigListTagsCell";
 import { Link } from "react-router-dom";
 
-export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
+export const mrtConfigListColumns = (
+  paramPrefix?: string
+): MRT_ColumnDef<ConfigItem>[] => [
   {
     header: "Name",
     accessorKey: "name",
@@ -152,6 +154,7 @@ export const mrtConfigListColumns: MRT_ColumnDef<ConfigItem>[] = [
         {...props}
         enableFilterByTag
         filterByTagParamKey="labels"
+        paramPrefix={paramPrefix}
       />
     ),
     maxSize: 300,

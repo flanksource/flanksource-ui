@@ -3,7 +3,7 @@ import {
   PiMagnifyingGlassMinusThin,
   PiMagnifyingGlassPlusThin
 } from "react-icons/pi";
-import { useSearchParams } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { IconButton } from "../Buttons/IconButton";
 
 type FilterByCellProps = {
@@ -11,44 +11,51 @@ type FilterByCellProps = {
   children: ReactNode;
   filterValue: string;
   paramsToReset?: string[];
+  paramPrefix?: string;
 };
 
 export function FilterByCellValue({
   paramKey,
   children,
   filterValue,
-  paramsToReset = []
+  paramsToReset = [],
+  paramPrefix
 }: FilterByCellProps) {
-  const [params, setParams] = useSearchParams();
+  const [, setParams] = usePrefixedSearchParams(paramPrefix, false);
 
   const onClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, action: "include" | "exclude") => {
       e.preventDefault();
       e.stopPropagation();
-      const currentValue = params.get(paramKey);
-      const arrayValue = currentValue?.split(",") || [];
-      // if include, we need to remove all exclude values and
-      // if exclude, we need to remove all include values
-      const newValues = arrayValue.filter(
-        (value) =>
-          (action === "include" && parseInt(value.split(":")[1]) === 1) ||
-          (action === "exclude" && parseInt(value.split(":")[1]) === -1)
-      );
-      // append the new value
-      const updateValue = newValues
-        .concat(
-          `${filterValue.replaceAll(",", "||||").replaceAll(":", "____")}:${
-            action === "include" ? 1 : -1
-          }`
-        )
-        // remove duplicates
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .join(",");
-      params.set(paramKey, updateValue);
-      paramsToReset.forEach((param) => params.delete(param));
-      setParams(params);
+      setParams((currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        const currentValue = nextParams.get(paramKey);
+        const arrayValue = currentValue?.split(",") || [];
+        // if include, we need to remove all exclude values and
+        // if exclude, we need to remove all include values
+        const newValues = arrayValue.filter(
+          (value) =>
+            (action === "include" && parseInt(value.split(":")[1]) === 1) ||
+            (action === "exclude" && parseInt(value.split(":")[1]) === -1)
+        );
+        // append the new value
+        const updateValue = newValues
+          .concat(
+            `${filterValue.replaceAll(",", "||||").replaceAll(":", "____")}:${
+              action === "include" ? 1 : -1
+            }`
+          )
+          // remove duplicates
+          .filter((value, index, self) => self.indexOf(value) === index)
+          .join(",");
+        nextParams.set(paramKey, updateValue);
+        paramsToReset.forEach((param) => {
+          nextParams.delete(param);
+        });
+        return nextParams;
+      });
     },
-    [filterValue, paramKey, params, paramsToReset, setParams]
+    [filterValue, paramKey, paramsToReset, setParams]
   );
 
   return (

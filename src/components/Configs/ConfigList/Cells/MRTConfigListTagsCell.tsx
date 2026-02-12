@@ -1,6 +1,6 @@
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import TagsFilterCell from "@flanksource-ui/ui/Tags/TagsFilterCell";
-import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
 type MRTConfigListTagsCellProps<
@@ -12,6 +12,10 @@ type MRTConfigListTagsCellProps<
   hideGroupByView?: boolean;
   enableFilterByTag?: boolean;
   filterByTagParamKey?: string;
+  /**
+   * Optional prefix to namespace the search params.
+   */
+  paramPrefix?: string;
 };
 
 export default function MRTConfigListTagsCell<
@@ -20,9 +24,10 @@ export default function MRTConfigListTagsCell<
   cell,
   hideGroupByView = false,
   enableFilterByTag = false,
-  filterByTagParamKey = "tags"
+  filterByTagParamKey = "tags",
+  paramPrefix
 }: MRTConfigListTagsCellProps<T>): JSX.Element | null {
-  const [params] = useSearchParams();
+  const [params] = usePrefixedSearchParams(paramPrefix, false);
 
   const tagMap = cell.getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
@@ -71,6 +76,10 @@ export default function MRTConfigListTagsCell<
   }
 
   return (
-    <TagsFilterCell tags={tagMap} filterByTagParamKey={filterByTagParamKey} />
+    <TagsFilterCell
+      tags={tagMap}
+      filterByTagParamKey={filterByTagParamKey}
+      paramPrefix={paramPrefix}
+    />
   );
 }

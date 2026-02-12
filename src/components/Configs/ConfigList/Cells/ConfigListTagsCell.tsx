@@ -1,7 +1,7 @@
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { Tag } from "@flanksource-ui/ui/Tags/Tag";
 import { CellContext } from "@tanstack/react-table";
 import { useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { ConfigItem } from "../../../../api/types/configs";
 
 type ConfigListTagsCellProps<
@@ -13,18 +13,23 @@ type ConfigListTagsCellProps<
   label?: string;
   enableFilterByTag?: boolean;
   filterByTagParamKey?: string;
+  /**
+   * Optional prefix to namespace the search params.
+   */
+  paramPrefix?: string;
 };
 
 export default function ConfigListTagsCell<
-  T extends { tags?: Record<string, any>; id: string } 
+  T extends { tags?: Record<string, any>; id: string }
 >({
   row,
   getValue,
   hideGroupByView = false,
   enableFilterByTag = false,
-  filterByTagParamKey = "tags"
+  filterByTagParamKey = "tags",
+  paramPrefix
 }: ConfigListTagsCellProps<T>): JSX.Element | null {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false);
 
   const tagMap = getValue<ConfigItem["tags"]>() || {};
   const tagKeys = Object.keys(tagMap)
@@ -47,31 +52,35 @@ export default function ConfigListTagsCell<
       e.preventDefault();
       e.stopPropagation();
 
-      // Get the current tags from the URL
-      const currentTags = params.get("tags");
-      const currentTagsArray = (
-        currentTags ? currentTags.split(",") : []
-      ).filter((value) => {
-        const tagKey = value.split("____")[0];
-        const tagAction = value.split(":")[1] === "1" ? "include" : "exclude";
+      setParams((currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
 
-        if (tagKey === tag.key && tagAction !== action) {
-          return false;
-        }
-        return true;
+        // Get the current tags from the URL
+        const currentTags = nextParams.get(filterByTagParamKey);
+        const currentTagsArray = (
+          currentTags ? currentTags.split(",") : []
+        ).filter((value) => {
+          const tagKey = value.split("____")[0];
+          const tagAction = value.split(":")[1] === "1" ? "include" : "exclude";
+
+          if (tagKey === tag.key && tagAction !== action) {
+            return false;
+          }
+          return true;
+        });
+
+        // Append the new value, but for same tags, don't allow including and excluding at the same time
+        const updatedValue = currentTagsArray
+          .concat(`${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`)
+          .filter((value, index, self) => self.indexOf(value) === index)
+          .join(",");
+
+        // Update the URL
+        nextParams.set(filterByTagParamKey, updatedValue);
+        return nextParams;
       });
-
-      // Append the new value, but for same tags, don't allow including and excluding at the same time
-      const updatedValue = currentTagsArray
-        .concat(`${tag.key}____${tag.value}:${action === "include" ? 1 : -1}`)
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .join(",");
-
-      // Update the URL
-      params.set(filterByTagParamKey, updatedValue);
-      setParams(params);
     },
-    [enableFilterByTag, filterByTagParamKey, params, setParams]
+    [enableFilterByTag, filterByTagParamKey, setParams]
   );
 
   const groupByProp = decodeURIComponent(params.get("groupByProp") ?? "");

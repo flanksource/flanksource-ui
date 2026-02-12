@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useCallback, useMemo } from "react";
-import { URLSearchParamsInit, useSearchParams } from "react-router-dom";
+import { URLSearchParamsInit } from "react-router-dom";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { parseDateMath } from "./parseDateMath";
 import {
   MappedOptionsDisplay,
@@ -18,35 +19,48 @@ import {
  * react-router-dom to manage the URL parameters.
  *
  */
-export default function useTimeRangeParams(defaults?: URLSearchParamsInit) {
-  const [params, setParams] = useSearchParams(defaults);
+export default function useTimeRangeParams(
+  defaults?: URLSearchParamsInit,
+  paramPrefix?: string
+) {
+  const [params, setParams] = usePrefixedSearchParams(
+    paramPrefix,
+    false,
+    defaults
+  );
 
   const setTimeRangeParams = useCallback(
     (range: TimeRangeOption, paramsToReset: string[] = []) => {
-      params.set("rangeType", range.type);
-      params.set("display", range.display);
+      setParams((currentParams) => {
+        const nextParams = new URLSearchParams(currentParams);
+        nextParams.set("rangeType", range.type);
+        nextParams.set("display", range.display);
 
-      // remove the old time range parameters
-      params.delete("from");
-      params.delete("to");
-      params.delete("duration");
-      params.delete("timeRange");
+        // remove the old time range parameters
+        nextParams.delete("from");
+        nextParams.delete("to");
+        nextParams.delete("duration");
+        nextParams.delete("timeRange");
+        nextParams.delete("range");
 
-      // set the new time range parameters
-      if (range.type === "absolute") {
-        params.set("from", range.from);
-        params.set("to", range.to);
-      }
-      if (range.type === "relative") {
-        params.set("range", range.range.toString());
-      }
-      if (range.type === "mapped") {
-        params.set("timeRange", range.display);
-      }
-      paramsToReset.forEach((param) => params.delete(param));
-      setParams(params);
+        // set the new time range parameters
+        if (range.type === "absolute") {
+          nextParams.set("from", range.from);
+          nextParams.set("to", range.to);
+        }
+        if (range.type === "relative") {
+          nextParams.set("range", range.range.toString());
+        }
+        if (range.type === "mapped") {
+          nextParams.set("timeRange", range.display);
+        }
+        paramsToReset.forEach((param) => {
+          nextParams.delete(param);
+        });
+        return nextParams;
+      });
     },
-    [params, setParams]
+    [setParams]
   );
 
   const getTimeRangeFromUrl: () => TimeRangeOption | undefined =
