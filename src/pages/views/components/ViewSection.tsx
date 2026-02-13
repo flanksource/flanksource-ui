@@ -8,6 +8,10 @@ import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams"
 import { VIEW_VAR_PREFIX } from "../constants";
 import { ViewSection as Section } from "../../audit-report/types";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import ChangesUISection from "./ChangesUISection";
+import ConfigsUISection from "./ConfigsUISection";
+
+const toSafeId = (value: string) => value.replace(/[^a-zA-Z0-9_-]/g, "-");
 
 interface ViewSectionProps {
   section: Section;
@@ -21,11 +25,12 @@ const ViewSection: React.FC<ViewSectionProps> = ({
   variables: defaultVariables
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { namespace, name } = section.viewRef;
+
+  // Determine if this is a native UI section or a view reference section
+  const isUIRefSection = !!section.uiRef;
+  const isViewRefSection = !!section.viewRef;
 
   // Use prefixed search params for view variables
-  // NOTE: Backend uses view variables (template parameters) to partition the rows in the view table.
-  // We must remove the global query parameters from the URL params.
   const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
   const paramVariables = useMemo(
     () => Object.fromEntries(viewVarParams.entries()),
@@ -36,7 +41,11 @@ const ViewSection: React.FC<ViewSectionProps> = ({
     [defaultVariables, paramVariables]
   );
 
-  // Fetch section view data with independent variables
+  // Extract namespace and name for view reference sections
+  const namespace = section.viewRef?.namespace ?? "default";
+  const name = section.viewRef?.name ?? "";
+
+  // Fetch section view data - only enabled for viewRef sections
   const {
     data: sectionViewResult,
     isLoading,
@@ -44,8 +53,8 @@ const ViewSection: React.FC<ViewSectionProps> = ({
   } = useQuery({
     queryKey: ["view-result", namespace, name, currentViewVariables],
     queryFn: () =>
-      getViewDataByNamespace(namespace || "", name, currentViewVariables),
-    enabled: !!namespace && !!name,
+      getViewDataByNamespace(namespace, name, currentViewVariables),
+    enabled: isViewRefSection && !!name,
     staleTime: 5 * 60 * 1000
   });
 
@@ -56,34 +65,90 @@ const ViewSection: React.FC<ViewSectionProps> = ({
     }
   };
 
-  if (error || (!isLoading && !sectionViewResult)) {
-    const errorContentId = `section-${namespace}-${name}-error`;
+  // TODO: see if safeTitle is only needed for the prefix.
+  // If yes then remove this and use something simpler for the prefix.
+  const safeTitle = useMemo(() => toSafeId(section.title), [section.title]);
+
+  // Determine the section ID for accessibility
+  const sectionId = useMemo(() => {
+    if (section.viewRef) {
+      return `section-${section.viewRef.namespace || "default"}-${section.viewRef.name}`;
+    }
+    if (section.uiRef?.changes) {
+      return `section-changes-${safeTitle}`;
+    }
+    if (section.uiRef?.configs) {
+      return `section-configs-${safeTitle}`;
+    }
+    return `section-${safeTitle}`;
+  }, [safeTitle, section]);
+
+  // Render section header
+  const renderHeader = () => (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-expanded={isExpanded}
+      aria-controls={sectionId}
+      className="mb-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
+      onClick={() => setIsExpanded(!isExpanded)}
+      onKeyDown={handleHeaderKeyDown}
+    >
+      <IoChevronDownOutline
+        className={`h-4 w-4 flex-shrink-0 transform text-gray-600 transition-transform ${!isExpanded ? "-rotate-90" : ""}`}
+      />
+      {section.icon && (
+        <Icon
+          name={section.icon}
+          className="h-5 w-5 flex-shrink-0 text-gray-600"
+        />
+      )}
+      <h3 className="text-lg font-semibold text-gray-600">{section.title}</h3>
+    </div>
+  );
+
+  // Render native UI section (Changes or Configs)
+  if (isUIRefSection) {
     return (
       <>
-        <div
-          role="button"
-          tabIndex={0}
-          aria-expanded={isExpanded}
-          aria-controls={errorContentId}
-          className="mb-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
-          onClick={() => setIsExpanded(!isExpanded)}
-          onKeyDown={handleHeaderKeyDown}
-        >
-          <IoChevronDownOutline
-            className={`h-4 w-4 flex-shrink-0 transform text-gray-600 transition-transform ${!isExpanded ? "-rotate-90" : ""}`}
-          />
-          {section.icon && (
-            <Icon
-              name={section.icon}
-              className="h-5 w-5 flex-shrink-0 text-gray-600"
-            />
-          )}
-          <h3 className="text-lg font-semibold text-gray-600">
-            {section.title}
-          </h3>
-        </div>
+        {renderHeader()}
         {isExpanded && (
-          <div id={errorContentId}>
+          <div id={sectionId}>
+            {section.uiRef?.changes && (
+              <ChangesUISection
+                filters={section.uiRef.changes}
+                paramPrefix={`changes_${safeTitle}`}
+              />
+            )}
+            {section.uiRef?.configs && (
+              <ConfigsUISection
+                filters={section.uiRef.configs}
+                paramPrefix={`configs_${safeTitle}`}
+              />
+            )}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Render invalid section error
+  if (!isViewRefSection) {
+    return (
+      <ErrorViewer
+        error="Invalid section: must have either viewRef or uiRef"
+        className="max-w-3xl"
+      />
+    );
+  }
+
+  // Render view reference section - error state
+  if (error || (!isLoading && !sectionViewResult)) {
+    return (
+      <>
+        {renderHeader()}
+        {isExpanded && (
+          <div id={sectionId}>
             <ErrorViewer
               error={error ?? "Failed to load section"}
               className="max-w-3xl"
@@ -94,32 +159,12 @@ const ViewSection: React.FC<ViewSectionProps> = ({
     );
   }
 
-  const contentId = `section-${namespace}-${name}`;
-
+  // Render view reference section - success state
   return (
     <>
-      <div
-        role="button"
-        tabIndex={0}
-        aria-expanded={isExpanded}
-        aria-controls={contentId}
-        className="mb-2 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
-        onClick={() => setIsExpanded(!isExpanded)}
-        onKeyDown={handleHeaderKeyDown}
-      >
-        <IoChevronDownOutline
-          className={`h-4 w-4 flex-shrink-0 transform text-gray-600 transition-transform ${!isExpanded ? "-rotate-90" : ""}`}
-        />
-        {section.icon && (
-          <Icon
-            name={section.icon}
-            className="h-5 w-5 flex-shrink-0 text-gray-600"
-          />
-        )}
-        <h3 className="text-lg font-semibold text-gray-600">{section.title}</h3>
-      </div>
+      {renderHeader()}
       {isExpanded && (
-        <div id={contentId}>
+        <div id={sectionId}>
           {isLoading ? (
             <div className="animate-pulse">
               <div className="mb-4 h-4 w-32 rounded bg-gray-200"></div>
@@ -136,7 +181,7 @@ const ViewSection: React.FC<ViewSectionProps> = ({
               table={sectionViewResult?.table}
               variables={sectionViewResult?.variables}
               card={sectionViewResult?.card}
-              requestFingerprint={sectionViewResult.requestFingerprint}
+              requestFingerprint={sectionViewResult?.requestFingerprint ?? ""}
               currentVariables={currentViewVariables}
               hideVariables={hideVariables}
             />
