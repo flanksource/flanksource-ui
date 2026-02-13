@@ -51,7 +51,7 @@ export function translateTristate(
     }
   }
 
-  return result.join(",");
+  return result.length > 0 ? result.join(",") : undefined;
 }
 
 /**

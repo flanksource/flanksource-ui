@@ -112,7 +112,7 @@ export function ChangesUIFilters({
         {Object.entries(arbitraryFilters ?? {}).map(([key, value]) => (
           <FilterBadge
             filters={value}
-            key={value}
+            key={`${key}-${value}`}
             paramKey={key}
             paramPrefix={paramPrefix}
           />

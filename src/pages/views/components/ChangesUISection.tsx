@@ -122,7 +122,9 @@ const ChangesUISection: React.FC<ChangesUISectionProps> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <ChangesUIFilters paramsToReset={["page"]} paramPrefix={paramPrefix} />
+      {isInitialized && (
+        <ChangesUIFilters paramsToReset={["page"]} paramPrefix={paramPrefix} />
+      )}
       <ConfigChangeTable
         data={changes}
         isLoading={isLoading || isRefetching || !isInitialized}
