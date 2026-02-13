@@ -11,7 +11,7 @@ import FormatDuration from "@flanksource-ui/ui/Dates/FormatDuration";
 import VerticalDescription from "@flanksource-ui/ui/description/VerticalDescription";
 import { Menu } from "@flanksource-ui/ui/Menu";
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -31,13 +31,31 @@ import PlaybooksRunActionsResults from "./PlaybooksActionsResults";
 import ViewPlaybookSpecModal from "./ViewPlaybookSpecModal";
 import ViewPlaybookParamsModal from "./ShowParamaters/ViewPlaybookParamsModal";
 import FailedChildRunComponent from "./FailedChildRunComponent";
+import { Sparkles } from "lucide-react";
+import { AiFeatureRequest } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
+import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
+import { features } from "@flanksource-ui/services/permissions/features";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+
+const LazyDiagnoseButton = lazy(() =>
+  import("../DiagnosePlaybookFailureButton").then((module) => ({
+    default: module.DiagnosePlaybookFailureButton
+  }))
+);
 
 type PlaybookRunActionsProps = {
   data: PlaybookRunWithActions;
   refetch?: () => void;
 };
 
-export default function PlaybookRunsActions({
+/**
+ * Displays the detail view for a single playbook run, including run metadata
+ * (status, duration, triggered by, etc.), an action sidebar listing each step,
+ * and a result panel showing the selected action's output. For failed runs,
+ * an AI "Diagnose Failure" button is rendered to open the navbar AI chat
+ * pre-populated with run context.
+ */
+export default function PlaybookRunDetailView({
   data,
   refetch = () => {}
 }: PlaybookRunActionsProps) {
@@ -69,6 +87,9 @@ export default function PlaybookRunsActions({
   const [isParamsModalOpen, setIsParamsModalOpen] = useState(false);
 
   const resource = getResourceForRun(data);
+
+  const { isFeatureDisabled } = useFeatureFlagsContext();
+  const isAiDisabled = isFeatureDisabled(features.ai);
 
   // if the playbook run failed, create an action for the initialization step
   // that shows the error message
@@ -216,6 +237,8 @@ export default function PlaybookRunsActions({
             />
           )}
         </div>
+
+        {/* Run action buttons: approve, cancel, AI diagnose (failed only), rerun, and kebab menu */}
         <div className="ml-auto flex h-auto flex-col justify-center gap-2">
           <div className="flex flex-row items-center gap-2">
             <ApprovePlaybookButton
@@ -231,6 +254,21 @@ export default function PlaybookRunsActions({
               refetch={refetch}
               status={data.status}
             />
+
+            {!isAiDisabled && data.status === "failed" && (
+              <AiFeatureRequest>
+                <Suspense
+                  fallback={
+                    <Button className="btn-white min-w-max space-x-1" disabled>
+                      <Sparkles className="h-5 w-5 animate-pulse" />
+                      <span>Diagnose Failure</span>
+                    </Button>
+                  }
+                >
+                  <LazyDiagnoseButton data={data} />
+                </Suspense>
+              </AiFeatureRequest>
+            )}
 
             <ReRunPlaybookWithParamsButton
               playbook={data.playbooks!}

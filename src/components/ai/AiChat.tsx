@@ -54,7 +54,7 @@ import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
 
@@ -212,6 +212,20 @@ export function AIChat({
     chat,
     id
   });
+
+  // Auto-send when chat mounts with a pre-seeded user message (e.g. from setChatMessages).
+  const hasSentOnMount = useRef(false);
+  useEffect(() => {
+    if (
+      !hasSentOnMount.current &&
+      messages.length > 0 &&
+      messages[messages.length - 1].role === "user" &&
+      status === "ready"
+    ) {
+      hasSentOnMount.current = true;
+      sendMessage();
+    }
+  }, [messages, status, sendMessage]);
 
   const handleToolApproval = useCallback(
     async (approvalId: string, approved: boolean) => {

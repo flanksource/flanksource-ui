@@ -44,7 +44,6 @@ export function AiChatPopoverProvider({
   const [quickPrompts, setQuickPrompts] = useState<string[] | undefined>(
     undefined
   );
-
   const setOpen = useCallback(
     (open: boolean) => {
       setOpenState(open);

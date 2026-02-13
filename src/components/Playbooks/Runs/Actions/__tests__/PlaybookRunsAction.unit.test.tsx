@@ -5,8 +5,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import PlaybookRunsActions from "./../PlaybookRunsActions";
+import PlaybookRunDetailView from "./../PlaybookRunsActions";
 import * as playbooksApi from "../../../../../api/services/playbooks";
+import { AiFeatureLoaderProvider } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
 
 const mockAction: PlaybookRunAction = {
   playbook_run_id: "1",
@@ -45,7 +46,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe("PlaybookRunsActions", () => {
+describe("PlaybookRunDetailView", () => {
   it("should have playbook metadaba", () => {
     const queryClient = createQueryClient();
     const mockData: PlaybookRunWithActions = {
@@ -76,7 +77,9 @@ describe("PlaybookRunsActions", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunsActions data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -135,7 +138,9 @@ describe("PlaybookRunsActions", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunsActions data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
@@ -183,7 +188,9 @@ describe("PlaybookRunsActions", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <PlaybookRunsActions data={mockData} />
+          <AiFeatureLoaderProvider>
+            <PlaybookRunDetailView data={mockData} />
+          </AiFeatureLoaderProvider>
         </MemoryRouter>
       </QueryClientProvider>
     );
