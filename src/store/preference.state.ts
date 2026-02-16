@@ -1,5 +1,6 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { useSearchParams } from "react-router-dom";
 
 export const datetimePreferenceAtom = atomWithStorage<
   "short" | "medium" | "full" | "timestamp"
@@ -25,16 +26,7 @@ export const cardPreferenceAtom = atomWithStorage<string>(
   }
 );
 
-export const showDeletedItemsPreferenceAtom = atomWithStorage<"yes" | "no">(
-  "show_deleted_items_preference",
-  "no",
-  undefined,
-  {
-    getOnInit: true
-  }
-);
-
 export function useShowDeletedConfigs() {
-  const [showDeletedItems] = useAtom(showDeletedItemsPreferenceAtom);
-  return showDeletedItems === "yes";
+  const [searchParams] = useSearchParams();
+  return searchParams.get("showDeletedConfigs") === "true";
 }

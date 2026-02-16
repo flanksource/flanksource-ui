@@ -1,3 +1,4 @@
+import ShowDeletedConfigs from "../../Configs/ConfigsListFilters/ShowDeletedConfigs";
 import FormikFilterForm from "../../Forms/FormikFilterForm";
 import FormikSearchInputClearable from "../../Forms/Formik/FormikSearchInputClearable";
 import NotificationResourceTypeDropdown from "./NotificationResourceTypeDropdown";
@@ -17,6 +18,7 @@ export default function NotificationFilterBar() {
         <NotificationStatusDropdown />
         <NotificationResourceTypeDropdown />
         <NotificationTagsDropdown />
+        <ShowDeletedConfigs />
         <FormikSearchInputClearable
           name="search"
           placeholder="Search by resource name"

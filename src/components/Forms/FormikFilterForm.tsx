@@ -65,9 +65,15 @@ function FormikChangesListener({
     valuesRef.current = values;
   }, [values]);
 
+  // Keep a stable ref so the form→URL effect doesn't re-run on every URL
+  // change. React-router recreates setSearchParams on each URL change, which
+  // would cause this effect to fight external navigations with stale values.
+  const setSearchParamsRef = useRef(setSearchParams);
+  setSearchParamsRef.current = setSearchParams;
+
   // Sync form values to URL params
   useEffect(() => {
-    setSearchParams((currentParams) => {
+    setSearchParamsRef.current((currentParams) => {
       let changed = false;
       const nextParams = new URLSearchParams(currentParams);
 

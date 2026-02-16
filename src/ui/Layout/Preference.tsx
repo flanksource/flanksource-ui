@@ -3,28 +3,17 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
-import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 import { Size } from "@flanksource-ui/types";
 import { FaCog } from "react-icons/fa";
 import { LegacyRef } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useOnMouseActivity } from "@flanksource-ui/hooks/useMouseActivity";
 import { ClickableSvg } from "../ClickableSvg/ClickableSvg";
-import { Toggle } from "@flanksource-ui/components";
 import {
   datetimePreferenceAtom,
-  displayTimezonePreferenceAtom,
-  showDeletedItemsPreferenceAtom
+  displayTimezonePreferenceAtom
 } from "@flanksource-ui/store/preference.state";
 import { useAtom } from "jotai";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
-
-export type SetURLSearchParams = (
-  nextInit?:
-    | URLSearchParamsInit
-    | ((prev: URLSearchParams) => URLSearchParamsInit),
-  navigateOpts?: NavigateOptions
-) => void;
 
 type PreferencePopOverProps = {
   cardSize: string;
@@ -85,8 +74,6 @@ export const Preference = ({
   cardSize: Size | string;
   setCardWidth: (width: string) => void;
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const [dateTimePreference, setDateTimePreference] = useAtom(
     datetimePreferenceAtom
   );
@@ -95,17 +82,11 @@ export const Preference = ({
     displayTimezonePreferenceAtom
   );
 
-  const [showDeletedConfigsPreference, setShowDeletedConfigsPreference] =
-    useAtom(showDeletedItemsPreferenceAtom);
-
   const {
     ref: popoverRef,
     isActive: isPopoverActive,
     setIsActive: setIsPopoverActive
   } = useOnMouseActivity();
-
-  const showHiddenComponents =
-    searchParams.get("showHiddenComponents") !== "no";
 
   const timezoneOptions: Record<string, { label: string; value: string }> =
     Object.fromEntries(
@@ -171,51 +152,6 @@ export const Preference = ({
           <div className="py-1">
             <div className="flex items-center justify-between px-4 py-2 text-base">
               <span className="font-bold text-gray-700">{title}</span>
-            </div>
-          </div>
-
-          {/* Hidden components */}
-          <div className="py-1" role="none">
-            <div className="flex items-center px-4 py-3">
-              <label
-                htmlFor="showHiddenComponents"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Show hidden components: &nbsp;
-              </label>
-              <Toggle
-                className="inline-flex items-center"
-                label=""
-                name="showHiddenComponents"
-                value={showHiddenComponents}
-                onChange={(val) => {
-                  const newValue = val ? "yes" : "no";
-                  setSearchParams({
-                    ...Object.fromEntries(searchParams),
-                    showHiddenComponents: newValue
-                  });
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="py-1" role="none">
-            <div className="flex items-center px-4 py-3">
-              <label
-                htmlFor="showDeletedConfigs"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Show deleted configs: &nbsp;
-              </label>
-              <Toggle
-                className="inline-flex items-center"
-                label=""
-                name="showDeletedConfigs"
-                value={showDeletedConfigsPreference === "yes"}
-                onChange={(val) => {
-                  setShowDeletedConfigsPreference(val ? "yes" : "no");
-                }}
-              />
             </div>
           </div>
 
