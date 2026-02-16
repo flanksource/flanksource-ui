@@ -27,6 +27,7 @@ import {
 import { Canary, Icon } from "./components";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { HomepageRedirect } from "./components/HomepageRedirect";
 import { withAuthorizationAccessCheck } from "./components/Permissions/AuthorizationAccessCheck";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
@@ -506,7 +507,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
   return (
     <Routes>
-      <Route path="" element={<Navigate to="/topology" />} />
+      <Route path="" element={<HomepageRedirect />} />
 
       <Route
         path="/view/topology/:id"
