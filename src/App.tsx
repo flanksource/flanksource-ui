@@ -28,6 +28,11 @@ import { Canary, Icon } from "./components";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HomepageRedirect } from "./components/HomepageRedirect";
+import {
+  DASHBOARD_VIEW_PROPERTY,
+  FALLBACK_VIEW_NAME,
+  UUID_REGEX
+} from "./components/dashboardViewConstants";
 import { withAuthorizationAccessCheck } from "./components/Permissions/AuthorizationAccessCheck";
 import { SchemaResource } from "./components/SchemaResourcePage/SchemaResource";
 import {
@@ -47,7 +52,6 @@ import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
 import { LogsIcon } from "./ui/Icons/LogsIcon";
-import { TopologyIcon } from "./ui/Icons/TopologyIcon";
 import { SidebarLayout } from "./ui/Layout/SidebarLayout";
 import FullPageSkeletonLoader from "./ui/SkeletonLoader/FullPageSkeletonLoader";
 import { ToasterWithCloseButton } from "./ui/ToasterWithCloseButton";
@@ -302,13 +306,6 @@ export type NavigationItems = {
 }[];
 
 const navigation: NavigationItems = [
-  {
-    name: "Dashboard",
-    href: "/topology",
-    icon: TopologyIcon,
-    featureName: features.topology,
-    resourceName: tables.database
-  },
   {
     name: "Health",
     href: "/health",
@@ -1084,30 +1081,75 @@ export function CanaryCheckerApp() {
   );
 }
 
+function findDashboardView(
+  views: ViewSummary[],
+  dashboardViewValue?: string
+): ViewSummary | undefined {
+  if (!dashboardViewValue) {
+    return views.find((v) => v.name === FALLBACK_VIEW_NAME);
+  }
+
+  if (UUID_REGEX.test(dashboardViewValue)) {
+    return views.find((v) => v.id === dashboardViewValue);
+  }
+
+  if (dashboardViewValue.includes("/")) {
+    const [namespace, name] = dashboardViewValue.split("/", 2);
+    return views.find((v) => v.namespace === namespace && v.name === name);
+  }
+
+  return views.find((v) => v.name === dashboardViewValue);
+}
+
 function useDynamicNavigation() {
+  const { featureFlags } = useFeatureFlagsContext();
   const { data: views = [] } = useQuery<ViewSummary[]>({
     queryKey: ["views-sidebar"],
     queryFn: getViewsForSidebar,
     staleTime: 5 * 60 * 1000
   });
 
-  return useMemo(() => {
-    const viewsNavigationItems = views.map((view) => ({
-      name: view.title || view.name,
-      href: `/views/${view.id}`,
-      icon: ({ className }: { className?: string }) => (
-        <Icon
-          name={view.icon || "workflow"}
-          className={`${className} text-white`}
-        />
-      ),
-      featureName: features.views,
-      resourceName: tables.views
-    }));
+  const dashboardViewValue = featureFlags.find(
+    (f) => f.name === DASHBOARD_VIEW_PROPERTY
+  )?.value;
 
-    const navigationWithViews = [...navigation, ...viewsNavigationItems];
-    return navigationWithViews;
-  }, [views]);
+  return useMemo(() => {
+    const dashboardView = findDashboardView(views, dashboardViewValue);
+
+    const viewsNavigationItems = views
+      .filter((view) => view.id !== dashboardView?.id)
+      .map((view) => ({
+        name: view.title || view.name,
+        href: `/views/${view.id}`,
+        icon: ({ className }: { className?: string }) => (
+          <Icon
+            name={view.icon || "workflow"}
+            className={`${className} text-white`}
+          />
+        ),
+        featureName: features.views,
+        resourceName: tables.views
+      }));
+
+    const dashboardNavItem = dashboardView
+      ? [
+          {
+            name: dashboardView.title || dashboardView.name,
+            href: `/views/${dashboardView.id}`,
+            icon: ({ className }: { className?: string }) => (
+              <Icon
+                name={dashboardView.icon || "workflow"}
+                className={`${className} text-white`}
+              />
+            ),
+            featureName: features.views,
+            resourceName: tables.views
+          }
+        ]
+      : [];
+
+    return [...dashboardNavItem, ...navigation, ...viewsNavigationItems];
+  }, [views, dashboardViewValue]);
 }
 
 function SidebarWrapper() {

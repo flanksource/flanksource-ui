@@ -8,6 +8,7 @@ import { HomepageRedirect } from "../HomepageRedirect";
 import { FeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import type { FeatureFlagsState } from "../../context/FeatureFlagsContext";
 import type { FeatureFlag } from "../../services/permissions/permissionsService";
+import { DASHBOARD_VIEW_PROPERTY } from "../dashboardViewConstants";
 
 import {
   getViewIdByName,
@@ -73,7 +74,7 @@ function renderWithProviders(featureFlags: FeatureFlag[] = []) {
 
 function dashboardViewFlag(value: string): FeatureFlag {
   return {
-    name: "defaults.dashboard_view",
+    name: DASHBOARD_VIEW_PROPERTY,
     value,
     description: "",
     source: "",

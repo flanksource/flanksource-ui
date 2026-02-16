@@ -10,10 +10,11 @@ import {
 import { useFeatureFlagsContext } from "../context/FeatureFlagsContext";
 import FullPageSkeletonLoader from "../ui/SkeletonLoader/FullPageSkeletonLoader";
 
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-const FALLBACK_VIEW_NAME = "mission-control-dashboard";
+import {
+  DASHBOARD_VIEW_PROPERTY,
+  FALLBACK_VIEW_NAME,
+  UUID_REGEX
+} from "./dashboardViewConstants";
 
 async function resolveViewId(value: string): Promise<string | undefined> {
   if (value.includes("/")) {
@@ -27,7 +28,7 @@ export function HomepageRedirect() {
   const { featureFlags } = useFeatureFlagsContext();
 
   const dashboardViewValue = featureFlags.find(
-    (f) => f.name === "defaults.dashboard_view"
+    (f) => f.name === DASHBOARD_VIEW_PROPERTY
   )?.value;
 
   const isUUID = dashboardViewValue && UUID_REGEX.test(dashboardViewValue);
