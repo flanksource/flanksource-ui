@@ -1,3 +1,4 @@
+import { isLocalAgent } from "@flanksource-ui/api/services/agents";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { CellContext } from "@tanstack/react-table";
@@ -147,19 +148,33 @@ export function TitleCell({
           rowValues.namespaces ? (
             <Badge
               className="ml-2"
-              text={`${rowValues.namespaces[0]}${
+              text={`${rowValues.namespaces[0]?.replace(/"/g, "")}${
                 rowValues.namespaces.length > 1 ? ", ..." : ""
               }`}
               title={
                 rowValues.namespaces.length > 1
-                  ? rowValues.namespaces.join(", ")
+                  ? rowValues.namespaces
+                      .map((ns: string) => ns.replace(/"/g, ""))
+                      .join(", ")
                   : null
               }
               size="xs"
             />
           ) : rowValues.namespace ? (
-            <Badge className="ml-2" text={rowValues.namespace} size="xs" />
+            <Badge
+              className="ml-2"
+              text={rowValues.namespace.replace(/"/g, "")}
+              size="xs"
+            />
           ) : null
+        ) : null}
+
+        {!isLocalAgent(rowValues.agent_id) && rowValues.agents?.name ? (
+          <Badge
+            className="ml-2"
+            text={`agent:${rowValues.agents.name}`}
+            size="xs"
+          />
         ) : null}
       </span>
     </div>

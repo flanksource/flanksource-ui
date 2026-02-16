@@ -6,6 +6,10 @@ import { AgentItem } from "../types/common";
 
 export const Local = "00000000-0000-0000-0000-000000000000";
 
+export function isLocalAgent(agentId?: string): boolean {
+  return !agentId || agentId === Local;
+}
+
 export const getAgentsList = async (
   params: {
     sortBy?: string;
