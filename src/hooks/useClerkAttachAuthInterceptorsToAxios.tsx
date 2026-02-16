@@ -1,5 +1,6 @@
 import { useAuth, useOrganization } from "@clerk/nextjs";
 import {
+  apiBase,
   Auth,
   CanaryChecker,
   Config,
@@ -11,6 +12,7 @@ import {
   Snapshot
 } from "@flanksource-ui/api/axios";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const allAxiosInstances = [
@@ -45,9 +47,29 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
   // organization set
   const backendUrl = organization?.publicMetadata.backend_url as string;
 
-  // we need to know if th organization supports direct access to the backend or
-  // not so we can set the base URL correctly
-  const direct = parseBoolean(organization?.publicMetadata.direct);
+  // we need to know if the organization supports direct access to the backend
+  // or not so we can set the base URL correctly
+  const orgDirect = parseBoolean(organization?.publicMetadata.direct);
+
+  // Fetch the proxy.disable property from backend properties to allow
+  // toggling direct mode without changing Clerk org metadata
+  const { data: proxyDisableProperty } = useQuery({
+    queryKey: ["properties", "proxy.disable"],
+    queryFn: async () => {
+      const response = await apiBase.get<{ name: string; value: string }[]>(
+        "/properties?name=eq.proxy.disable"
+      );
+      return response.data;
+    },
+    enabled: !!backendUrl
+  });
+
+  // Property overrides org metadata; fall back to org metadata if property
+  // doesn't exist
+  const direct =
+    proxyDisableProperty && proxyDisableProperty.length > 0
+      ? parseBoolean(proxyDisableProperty[0].value)
+      : orgDirect;
 
   useEffect(() => {
     // if the organization does not support direct access to the backend, we
