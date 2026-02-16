@@ -98,7 +98,8 @@ function FormikChangesListener({
 
       return nextParams;
     });
-  }, [filterFields, paramsToReset, setSearchParams, values]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterFields, paramsToReset, values]);
 
   // Sync URL params to form values
   useEffect(() => {
