@@ -7,6 +7,7 @@ import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChang
 import { FilterBadge } from "../../ConfigChangesFilters/ConfigChangesFilters";
 import { ConfigRelatedChangesToggles } from "../../ConfigChangesFilters/ConfigRelatedChangesToggles";
 import { ConfigTagsDropdown } from "../../ConfigChangesFilters/ConfigTagsDropdown";
+import ShowDeletedConfigs from "../../../ConfigsListFilters/ShowDeletedConfigs";
 import ConfigTypesTristateDropdown from "../../ConfigChangesFilters/ConfigTypesTristateDropdown";
 
 type ConfigChangeFiltersProps = {
@@ -33,6 +34,7 @@ export function ConfigRelatedChangesFilters({
           <ConfigTagsDropdown />
           <ConfigRelatedChangesToggles />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
+          <ShowDeletedConfigs />
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">
