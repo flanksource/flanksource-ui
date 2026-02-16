@@ -37,7 +37,7 @@ export default function AgentName({
         className={className}
         size={size}
         title={agent.description}
-        text={agent.name}
+        text={`agent:${agent.name}`}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import { update } from "lodash";
+import { isLocalAgent } from "../../api/services/agents";
 import { HealthCheck } from "../../api/types/health";
 
 // process table groupings, given a list of checks and a 'groupBy' object
@@ -25,7 +26,10 @@ export function getGroupedChecks(checks: HealthCheck[] = [], groupBy?: string) {
     const groupedChecks: Record<string, HealthCheck[]> = {};
     const groupNames: string[] = [];
     checks.forEach((check) => {
-      const agentName = check.agents?.name || "local";
+      const agentName =
+        isLocalAgent(check.agent_id) || !check.agents?.name
+          ? "local"
+          : check.agents.name;
       if (groupNames.indexOf(agentName) === -1) {
         groupNames.push(agentName);
         groupedChecks[agentName] = [];
