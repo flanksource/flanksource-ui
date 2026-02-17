@@ -15,6 +15,7 @@ dist/
 # AI
 .cursor/
 .aider*
+.ai-skills/
 
 # misc
 .DS_Store
