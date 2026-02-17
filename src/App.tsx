@@ -504,7 +504,9 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
 
   return (
     <Routes>
-      <Route path="" element={<HomepageRedirect />} />
+      <Route path="" element={sidebar}>
+        <Route index element={<HomepageRedirect />} />
+      </Route>
 
       <Route
         path="/view/topology/:id"
@@ -1135,7 +1137,7 @@ function useDynamicNavigation() {
       ? [
           {
             name: dashboardView.title || dashboardView.name,
-            href: `/views/${dashboardView.id}`,
+            href: "/",
             icon: ({ className }: { className?: string }) => (
               <Icon
                 name={dashboardView.icon || "workflow"}

@@ -75,6 +75,12 @@ export function ConfigDetailsAccessPage() {
         size: 120
       },
       {
+        header: "Type",
+        accessorKey: "user_type",
+        Cell: RoleCell,
+        size: 120
+      },
+      {
         header: "Access",
         accessorKey: "external_group_id",
         Cell: AccessTypeCell,

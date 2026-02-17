@@ -2,12 +2,13 @@
 // ABOUTME: a well-known view name, or falls back to the health page.
 
 import { useQuery } from "@tanstack/react-query";
-import { Navigate } from "react-router-dom";
+import React, { Suspense } from "react";
 import {
   getViewIdByName,
   getViewIdByNamespaceAndName
 } from "../api/services/views";
 import { useFeatureFlagsContext } from "../context/FeatureFlagsContext";
+import { HealthPage } from "../pages/health";
 import FullPageSkeletonLoader from "../ui/SkeletonLoader/FullPageSkeletonLoader";
 
 import {
@@ -15,6 +16,10 @@ import {
   FALLBACK_VIEW_NAME,
   UUID_REGEX
 } from "./dashboardViewConstants";
+
+const SingleView = React.lazy(
+  () => import("../pages/views/components/SingleView")
+);
 
 async function resolveViewId(value: string): Promise<string | undefined> {
   if (value.includes("/")) {
@@ -33,29 +38,31 @@ export function HomepageRedirect() {
 
   const isUUID = dashboardViewValue && UUID_REGEX.test(dashboardViewValue);
 
-  const { data: redirectPath, isLoading } = useQuery({
+  const { data: viewId, isLoading } = useQuery({
     queryKey: ["homepage-redirect", dashboardViewValue],
     queryFn: async () => {
       if (dashboardViewValue) {
-        const viewId = await resolveViewId(dashboardViewValue);
-        if (viewId) return `/views/${viewId}`;
-        return "/health";
+        return resolveViewId(dashboardViewValue);
       }
-
-      const viewId = await getViewIdByName(FALLBACK_VIEW_NAME);
-      if (viewId) return `/views/${viewId}`;
-      return "/health";
+      return getViewIdByName(FALLBACK_VIEW_NAME);
     },
-    enabled: !isUUID
+    enabled: !isUUID,
+    staleTime: 5 * 60 * 1000
   });
 
-  if (isUUID) {
-    return <Navigate to={`/views/${dashboardViewValue}`} replace />;
-  }
+  const resolvedViewId = isUUID ? dashboardViewValue : viewId;
 
-  if (isLoading || !redirectPath) {
+  if (!isUUID && isLoading) {
     return <FullPageSkeletonLoader />;
   }
 
-  return <Navigate to={redirectPath} replace />;
+  if (resolvedViewId) {
+    return (
+      <Suspense fallback={<FullPageSkeletonLoader />}>
+        <SingleView id={resolvedViewId} />
+      </Suspense>
+    );
+  }
+
+  return <HealthPage url="/api/canary/api/summary" />;
 }

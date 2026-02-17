@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState
 } from "react";
 import { features } from "../services/permissions/features";
@@ -43,23 +44,29 @@ export const FeatureFlagsContextProvider = ({
     setFeatureFlagsLoaded(true);
   }, []);
 
-  const isFeatureDisabled = (featureName: string) => {
-    return permissionService.isFeatureDisabled(featureName, featureFlags);
-  };
+  const isFeatureDisabled = useCallback(
+    (featureName: string) => {
+      return permissionService.isFeatureDisabled(featureName, featureFlags);
+    },
+    [featureFlags]
+  );
 
   useEffect(() => {
     refreshFeatureFlags();
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      featureFlags,
+      featureFlagsLoaded,
+      refreshFeatureFlags,
+      isFeatureDisabled
+    }),
+    [featureFlags, featureFlagsLoaded, refreshFeatureFlags, isFeatureDisabled]
+  );
+
   return (
-    <FeatureFlagsContext.Provider
-      value={{
-        featureFlags,
-        featureFlagsLoaded,
-        refreshFeatureFlags,
-        isFeatureDisabled
-      }}
-    >
+    <FeatureFlagsContext.Provider value={contextValue}>
       {children}
     </FeatureFlagsContext.Provider>
   );
