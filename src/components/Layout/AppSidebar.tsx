@@ -52,7 +52,10 @@ function NavItem({
 }) {
   const Icon = item.icon as IconType;
   const location = useLocation();
-  const isActive = location.pathname.startsWith(item.href);
+  const isActive =
+    item.href === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(item.href);
 
   return (
     <SidebarMenuItem>

@@ -169,7 +169,7 @@ export const getConfigAccessSummary = (configId: string) =>
     ConfigDB.get(
       `/config_access_summary?config_id=eq.${encodeURIComponent(
         configId
-      )}&select=user,email,role,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
+      )}&select=user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
         "user.asc"
       )}`,
       {

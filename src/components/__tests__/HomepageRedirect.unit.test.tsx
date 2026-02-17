@@ -3,7 +3,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { HomepageRedirect } from "../HomepageRedirect";
 import { FeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import type { FeatureFlagsState } from "../../context/FeatureFlagsContext";
@@ -18,6 +18,19 @@ import {
 jest.mock("../../api/services/views", () => ({
   getViewIdByName: jest.fn(),
   getViewIdByNamespaceAndName: jest.fn()
+}));
+
+jest.mock("../../pages/views/components/SingleView", () => ({
+  __esModule: true,
+  default: ({ id }: { id: string }) => (
+    <div data-testid="single-view" data-view-id={id}>
+      View
+    </div>
+  )
+}));
+
+jest.mock("../../pages/health", () => ({
+  HealthPage: () => <div data-testid="health-page">Health</div>
 }));
 
 const mockedGetViewIdByName = getViewIdByName as jest.MockedFunction<
@@ -55,17 +68,7 @@ function renderWithProviders(featureFlags: FeatureFlag[] = []) {
         value={buildFeatureFlagsState(featureFlags)}
       >
         <MemoryRouter initialEntries={["/"]}>
-          <Routes>
-            <Route path="/" element={<HomepageRedirect />} />
-            <Route
-              path="/health"
-              element={<div data-testid="health-page">Health</div>}
-            />
-            <Route
-              path="/views/:id"
-              element={<div data-testid="view-page">View</div>}
-            />
-          </Routes>
+          <HomepageRedirect />
         </MemoryRouter>
       </FeatureFlagsContext.Provider>
     </QueryClientProvider>
@@ -87,14 +90,18 @@ afterEach(() => {
 });
 
 describe("HomepageRedirect", () => {
-  it("redirects to /views/{uuid} when property is a UUID", async () => {
+  it("renders view when property is a UUID", async () => {
     const uuid = "550e8400-e29b-41d4-a716-446655440000";
     renderWithProviders([dashboardViewFlag(uuid)]);
 
     await waitFor(() => {
-      expect(screen.getByTestId("view-page")).toBeInTheDocument();
+      expect(screen.getByTestId("single-view")).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId("single-view")).toHaveAttribute(
+      "data-view-id",
+      uuid
+    );
     expect(mockedGetViewIdByName).not.toHaveBeenCalled();
     expect(mockedGetViewIdByNamespaceAndName).not.toHaveBeenCalled();
   });
@@ -106,9 +113,13 @@ describe("HomepageRedirect", () => {
     renderWithProviders([dashboardViewFlag("my-namespace/my-view")]);
 
     await waitFor(() => {
-      expect(screen.getByTestId("view-page")).toBeInTheDocument();
+      expect(screen.getByTestId("single-view")).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId("single-view")).toHaveAttribute(
+      "data-view-id",
+      viewId
+    );
     expect(mockedGetViewIdByNamespaceAndName).toHaveBeenCalledWith(
       "my-namespace",
       "my-view"
@@ -122,9 +133,13 @@ describe("HomepageRedirect", () => {
     renderWithProviders([dashboardViewFlag("my-dashboard")]);
 
     await waitFor(() => {
-      expect(screen.getByTestId("view-page")).toBeInTheDocument();
+      expect(screen.getByTestId("single-view")).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId("single-view")).toHaveAttribute(
+      "data-view-id",
+      viewId
+    );
     expect(mockedGetViewIdByName).toHaveBeenCalledWith("my-dashboard");
   });
 
@@ -135,15 +150,19 @@ describe("HomepageRedirect", () => {
     renderWithProviders([]);
 
     await waitFor(() => {
-      expect(screen.getByTestId("view-page")).toBeInTheDocument();
+      expect(screen.getByTestId("single-view")).toBeInTheDocument();
     });
 
+    expect(screen.getByTestId("single-view")).toHaveAttribute(
+      "data-view-id",
+      viewId
+    );
     expect(mockedGetViewIdByName).toHaveBeenCalledWith(
       "mission-control-dashboard"
     );
   });
 
-  it("falls back to /health when no property and no mission-control-dashboard view", async () => {
+  it("falls back to health page when no property and no mission-control-dashboard view", async () => {
     mockedGetViewIdByName.mockResolvedValue(undefined);
 
     renderWithProviders([]);
@@ -157,7 +176,7 @@ describe("HomepageRedirect", () => {
     );
   });
 
-  it("falls back to /health when property name lookup fails", async () => {
+  it("falls back to health page when property name lookup fails", async () => {
     mockedGetViewIdByName.mockResolvedValue(undefined);
 
     renderWithProviders([dashboardViewFlag("nonexistent-view")]);
