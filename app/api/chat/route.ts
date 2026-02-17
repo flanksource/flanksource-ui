@@ -10,6 +10,7 @@ import { LanguageModelV3 } from "@ai-sdk/provider";
 import { experimental_createMCPClient as createMCPClient } from "@ai-sdk/mcp";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { buildChatTools, truncateToolResultTransform } from "./tools";
+import { loadSkillTool } from "./skills";
 
 type LLMConnection = {
   type: "anthropic" | "openai";
@@ -180,6 +181,21 @@ export async function POST(req: Request) {
       }
     });
     const tools = await buildChatTools(mcpClient);
+
+    const loadedSkillTool = await loadSkillTool();
+    wideEvent.skills = {
+      enabled: Boolean(loadedSkillTool.skillTool),
+      count: loadedSkillTool.skillsCount,
+      directory: loadedSkillTool.skillsDir
+    };
+
+    if (loadedSkillTool.error) {
+      wideEvent.skills.error = loadedSkillTool.error;
+    }
+
+    if (loadedSkillTool.skillTool) {
+      (tools as Record<string, unknown>).skill = loadedSkillTool.skillTool;
+    }
 
     // Build tools first so convertToModelMessages can resolve tool schemas
     const modelMessages = await convertToModelMessages(messages, { tools });

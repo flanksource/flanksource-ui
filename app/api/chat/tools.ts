@@ -49,6 +49,8 @@ export function truncateToolResultTransform() {
 
 const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "run_template",
+  "web_request",
+
 
   "search_catalog",
   "search_catalog_changes",
