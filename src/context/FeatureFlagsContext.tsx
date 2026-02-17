@@ -25,7 +25,7 @@ const initialState: FeatureFlagsState = {
   isFeatureDisabled: (_) => false
 };
 
-const FeatureFlagsContext = createContext(initialState);
+export const FeatureFlagsContext = createContext(initialState);
 
 export const FeatureFlagsContextProvider = ({
   children
