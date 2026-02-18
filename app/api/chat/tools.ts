@@ -1,9 +1,75 @@
-import { tool, zodSchema } from "ai";
+import { tool, zodSchema, type TextStreamPart } from "ai";
 import { z } from "zod";
+
+export const TOOL_OUTPUT_CHAR_LIMIT = 20_000;
+
+export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
+
+/**
+ * Safely serialize a tool output to a string.
+ * - Strings pass through unchanged.
+ * - Objects are JSON.stringify'd with pretty formatting.
+ * - Everything else is coerced via String().
+ */
+export function safeSerialize(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (value !== null && value !== undefined && typeof value === "object") {
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+}
+
+/**
+ * Truncate a tool output string to TOOL_OUTPUT_CHAR_LIMIT characters.
+ * Returns the original string unchanged if within the limit.
+ * Otherwise returns a truncated version with a clear warning header.
+ */
+export function truncateToolOutput(
+  serialized: string,
+  limit: number = TOOL_OUTPUT_CHAR_LIMIT
+): string {
+  if (serialized.length <= limit) {
+    return serialized;
+  }
+
+  const header = `${TRUNCATION_MARKER} to ${limit} characters (original: ${serialized.length}).\n\n`;
+  return header + serialized.slice(0, limit);
+}
+
+/**
+ * Stream transform that intercepts final tool-result chunks and truncates
+ * oversized outputs. Because this sits in the stream pipeline, the truncated
+ * value is what the UI receives, what gets stored in step history, AND what
+ * the next LLM step sees — guaranteeing no mismatch.
+ *
+ * Preliminary (streaming) tool-result chunks are passed through untouched;
+ * only the final chunk (preliminary !== true) is truncated.
+ */
+export function truncateToolResultTransform() {
+  return new TransformStream<TextStreamPart<any>, TextStreamPart<any>>({
+    transform(chunk, controller) {
+      if (chunk.type === "tool-result" && !chunk.preliminary) {
+        const serialized = safeSerialize(chunk.output);
+        const truncated = truncateToolOutput(serialized);
+        if (truncated !== serialized) {
+          controller.enqueue({ ...chunk, output: truncated });
+          return;
+        }
+      }
+      controller.enqueue(chunk);
+    }
+  });
+}
 
 const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "run_template",
-  
+
   "search_catalog",
   "search_catalog_changes",
   "describe_catalog",
