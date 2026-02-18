@@ -47,9 +47,8 @@ export function truncateToolResultTransform() {
   });
 }
 
-const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
+const NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "run_template",
-  "web_request",
 
 
   "search_catalog",
@@ -74,6 +73,13 @@ const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "read_artifact_metadata"
 ] as const;
 
+// Tool names for playbooks are dependent on the namespace the playbooks are installed.
+// That's why, for playbooks, we use toolDefinition.title instead of the tool name
+// which would look something like (web_request_default)
+// where `web_request` is the .metadata.name
+// and, `default` is the .metadata.namespace
+const PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = ["web-request"];
+
 type McpTool = Record<string, any>;
 type McpTools = Record<string, McpTool>;
 
@@ -81,8 +87,12 @@ function wrapMcpToolsWithApproval(mcpTools: McpTools): McpTools {
   const tools = Object.entries(mcpTools).map(
     ([name, toolDefinition]: [string, McpTool]) => {
       const noApproval =
-        TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
-        name.startsWith("view_");
+        NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
+        (toolDefinition["title"] &&
+          PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(
+            toolDefinition["title"]
+          )) ||
+        name.startsWith("view_"); // views are read-only, so they can be auto-approved
 
       return [
         name,
