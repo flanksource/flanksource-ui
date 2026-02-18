@@ -123,6 +123,12 @@ export function AiChatPopover({
     () => new Chat<UIMessage>({ id: "ai-popover-local" })
   );
 
+  // Size state lives here in the parent so it survives popover close/reopen
+  const [size, setSize] = useState({
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT
+  });
+
   const open = controlledOpen ?? context?.open ?? localOpen;
   const handleOpenChange = onOpenChange ?? context?.setOpen ?? setLocalOpen;
   const chat = context?.chat ?? localChat;
@@ -143,7 +149,13 @@ export function AiChatPopover({
         sideOffset={12}
       >
         <Resizable
-          defaultSize={{ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT }}
+          size={size}
+          onResizeStop={(_e, _direction, _ref, delta) => {
+            setSize((prev) => ({
+              width: prev.width + delta.width,
+              height: prev.height + delta.height
+            }));
+          }}
           minWidth={MIN_WIDTH}
           minHeight={MIN_HEIGHT}
           maxWidth={
