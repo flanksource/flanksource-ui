@@ -7,6 +7,7 @@ import {
   type ReactNode
 } from "react";
 import { Chat, UIMessage } from "@ai-sdk/react";
+import { Resizable } from "re-resizable";
 import { AIChat } from "@flanksource-ui/components/ai/AiChat";
 import {
   Popover,
@@ -100,143 +101,10 @@ export function useAiChatPopover() {
   return context;
 }
 
-// ---------------------------------------------------------------------------
-// Resize logic
-// ---------------------------------------------------------------------------
-
-const MIN_WIDTH = 400;
-const MIN_HEIGHT = 400;
 const DEFAULT_WIDTH = 640;
 const DEFAULT_HEIGHT = 560;
-
-type ResizeMode = "both" | "width" | "height";
-
-function useResizable(
-  defaultWidth = DEFAULT_WIDTH,
-  defaultHeight = DEFAULT_HEIGHT
-) {
-  const [size, setSize] = useState({
-    width: defaultWidth,
-    height: defaultHeight
-  });
-
-  const startResize = useCallback(
-    (e: React.MouseEvent, mode: ResizeMode) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const startX = e.clientX;
-      const startY = e.clientY;
-      const startWidth = size.width;
-      const startHeight = size.height;
-
-      const onMouseMove = (ev: MouseEvent) => {
-        // Left edge drag: moving left increases width
-        const dx = startX - ev.clientX;
-        // Bottom edge drag: moving down increases height
-        const dy = ev.clientY - startY;
-
-        setSize({
-          width:
-            mode !== "height"
-              ? Math.min(
-                  Math.max(startWidth + dx, MIN_WIDTH),
-                  window.innerWidth - 32
-                )
-              : startWidth,
-          height:
-            mode !== "width"
-              ? Math.min(
-                  Math.max(startHeight + dy, MIN_HEIGHT),
-                  window.innerHeight - 80
-                )
-              : startHeight
-        });
-      };
-
-      const onMouseUp = () => {
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-        document.body.style.userSelect = "";
-        document.body.style.cursor = "";
-      };
-
-      // Prevent text selection and fix cursor during drag
-      document.body.style.userSelect = "none";
-      document.body.style.cursor =
-        mode === "width"
-          ? "ew-resize"
-          : mode === "height"
-            ? "ns-resize"
-            : "sw-resize";
-
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-    },
-    [size.width, size.height]
-  );
-
-  return { size, startResize };
-}
-
-// ---------------------------------------------------------------------------
-// Resize handles
-// ---------------------------------------------------------------------------
-
-function ResizeHandles({
-  onResize
-}: {
-  onResize: (e: React.MouseEvent, mode: ResizeMode) => void;
-}) {
-  return (
-    <>
-      {/* Left edge handle */}
-      <div
-        aria-hidden
-        className="group absolute bottom-3 left-0 top-3 z-20 flex w-2.5 cursor-ew-resize items-center justify-center"
-        onMouseDown={(e) => onResize(e, "width")}
-      >
-        <div className="h-8 w-px rounded-full bg-border transition-colors group-hover:bg-muted-foreground/50" />
-      </div>
-
-      {/* Bottom edge handle */}
-      <div
-        aria-hidden
-        className="group absolute bottom-0 left-3 right-3 z-20 flex h-2.5 cursor-ns-resize items-center justify-center"
-        onMouseDown={(e) => onResize(e, "height")}
-      >
-        <div className="h-px w-8 rounded-full bg-border transition-colors group-hover:bg-muted-foreground/50" />
-      </div>
-
-      {/* Bottom-left corner handle */}
-      <div
-        aria-hidden
-        className="absolute bottom-0 left-0 z-20 h-4 w-4 cursor-sw-resize"
-        onMouseDown={(e) => onResize(e, "both")}
-      >
-        {/* Grip dots */}
-        <svg
-          className="absolute bottom-0.5 left-0.5 text-border"
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="currentColor"
-        >
-          <circle cx="2" cy="8" r="1" />
-          <circle cx="5" cy="8" r="1" />
-          <circle cx="5" cy="5" r="1" />
-          <circle cx="8" cy="8" r="1" />
-          <circle cx="8" cy="5" r="1" />
-          <circle cx="8" cy="2" r="1" />
-        </svg>
-      </div>
-    </>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// AiChatPopover
-// ---------------------------------------------------------------------------
+const MIN_WIDTH = 400;
+const MIN_HEIGHT = 400;
 
 type AiChatPopoverProps = {
   open?: boolean;
@@ -264,23 +132,38 @@ export function AiChatPopover({
       setLocalChat(new Chat<UIMessage>({ id: `ai-popover-${Date.now()}` })));
   const quickPrompts = context?.quickPrompts;
 
-  const { size, startResize } = useResizable();
-
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       {trigger ? <PopoverTrigger asChild>{trigger}</PopoverTrigger> : null}
       <PopoverContent
         align="end"
-        className="border-border p-0 shadow-2xl"
-        style={{ width: `${size.width}px` }}
+        className="w-auto border-border p-0 shadow-2xl"
         forceMount
         side="bottom"
         sideOffset={12}
       >
-        {/* Wrapper that owns the explicit height and hosts resize handles */}
-        <div
-          className="relative overflow-hidden rounded-[inherit]"
-          style={{ height: `${size.height}px` }}
+        <Resizable
+          defaultSize={{ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT }}
+          minWidth={MIN_WIDTH}
+          minHeight={MIN_HEIGHT}
+          maxWidth={
+            typeof window !== "undefined" ? window.innerWidth - 32 : 1200
+          }
+          maxHeight={
+            typeof window !== "undefined" ? window.innerHeight - 80 : 900
+          }
+          // Popover is right-anchored, so only allow resizing leftward and downward
+          enable={{
+            top: false,
+            right: false,
+            bottom: true,
+            left: true,
+            topRight: false,
+            bottomRight: false,
+            bottomLeft: true,
+            topLeft: false
+          }}
+          className="overflow-hidden rounded-[inherit]"
         >
           <AIChat
             key={chat.id}
@@ -290,9 +173,7 @@ export function AiChatPopover({
             onNewChat={resetChat}
             quickPrompts={quickPrompts}
           />
-
-          <ResizeHandles onResize={startResize} />
-        </div>
+        </Resizable>
       </PopoverContent>
     </Popover>
   );
