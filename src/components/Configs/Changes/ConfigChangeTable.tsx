@@ -1,13 +1,14 @@
 import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetConfigChangesByConfigChangeIdQuery";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import GetUserAvatar from "@flanksource-ui/components/Users/GetUserAvatar";
+import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
 import { Age } from "@flanksource-ui/ui/Age";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { CellContext } from "@tanstack/react-table";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import ConfigLink from "../ConfigLink/ConfigLink";
 import MRTConfigListTagsCell from "../ConfigList/Cells/MRTConfigListTagsCell";
 import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsChanges";
@@ -15,6 +16,8 @@ import { ConfigDetailChangeModal } from "./ConfigDetailsChanges/ConfigDetailsCha
 export const paramsToReset = {
   configChanges: ["pageIndex", "pageSize"]
 };
+
+const CHANGE_ID_SEARCH_PARAM = "changeId";
 
 export function ConfigChangeDateCell({
   row,
@@ -214,22 +217,29 @@ export function ConfigChangeTable({
   numberOfPages,
   paramPrefix
 }: ConfigChangeTableProps) {
-  const [selectedConfigChange, setSelectedConfigChange] =
-    useState<ConfigChange>();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const columns = useMemo(
     () => configChangesColumn(paramPrefix),
     [paramPrefix]
   );
+  const [params, setParams] = usePrefixedSearchParams(paramPrefix, false);
+
+  const selectedChangeId = params.get(CHANGE_ID_SEARCH_PARAM) ?? undefined;
+
+  const selectedConfigChange = useMemo(
+    () => data.find((change) => change.id === selectedChangeId),
+    [data, selectedChangeId]
+  );
 
   const { data: configChange, isLoading: changeLoading } =
     useGetConfigChangesById(
-      selectedConfigChange?.id!,
-      selectedConfigChange?.config_id!,
+      selectedChangeId ?? "",
+      selectedConfigChange?.config_id,
       {
-        enabled: !!selectedConfigChange
+        enabled: !!selectedChangeId
       }
     );
+
+  const changeDetails = configChange ?? selectedConfigChange;
 
   return (
     <>
@@ -243,19 +253,30 @@ export function ConfigChangeTable({
         enableServerSidePagination
         disableHiding
         onRowClick={(row) => {
-          setSelectedConfigChange(row);
-          setModalIsOpen(true);
+          setParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams);
+            nextParams.set(CHANGE_ID_SEARCH_PARAM, row.id);
+            return nextParams;
+          });
         }}
         urlParamPrefix={paramPrefix}
       />
-      {configChange && (
+      {selectedChangeId && changeDetails && (
         <ConfigDetailChangeModal
           isLoading={changeLoading}
-          open={modalIsOpen}
+          open={!!selectedChangeId}
           setOpen={(open) => {
-            setModalIsOpen(open);
+            if (open) {
+              return;
+            }
+
+            setParams((currentParams) => {
+              const nextParams = new URLSearchParams(currentParams);
+              nextParams.delete(CHANGE_ID_SEARCH_PARAM);
+              return nextParams;
+            });
           }}
-          changeDetails={configChange}
+          changeDetails={changeDetails}
         />
       )}
     </>

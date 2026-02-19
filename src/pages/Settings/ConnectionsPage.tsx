@@ -24,8 +24,9 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { useSearchParams } from "react-router-dom";
 
 const connectionsSchemaConnection: SchemaApi = {
   table: "connections",
@@ -35,8 +36,9 @@ const connectionsSchemaConnection: SchemaApi = {
 
 export function ConnectionsPage() {
   const user = useUser();
-  const [isOpen, setIsOpen] = useState(false);
-  const [editedRow, setEditedRow] = useState<Connection>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const connectionId = searchParams.get("id") ?? undefined;
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [sortState] = useReactTableSortState();
 
   const {
@@ -51,12 +53,55 @@ export function ConnectionsPage() {
     }
   });
 
-  async function onSubmit(data: Connection) {
-    if (!editedRow?.id) {
-      return createConnection(data);
-    } else {
-      return updateConnection({ ...data, id: editedRow.id });
+  const selectedConnection = useMemo(() => {
+    if (!connectionId) {
+      return undefined;
     }
+
+    return connections?.find((connection) => connection.id === connectionId);
+  }, [connectionId, connections]);
+
+  const isOpen = isCreateModalOpen || !!selectedConnection;
+
+  const clearSelectedConnectionFromURL = () => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.delete("id");
+      return nextParams;
+    });
+  };
+
+  const closeModal = () => {
+    setIsCreateModalOpen(false);
+    clearSelectedConnectionFromURL();
+  };
+
+  const openCreateModal = () => {
+    setIsCreateModalOpen(true);
+    clearSelectedConnectionFromURL();
+  };
+
+  const openConnectionModal = (connection: Connection) => {
+    if (!connection.id) {
+      return;
+    }
+
+    const connectionID = connection.id;
+
+    setIsCreateModalOpen(false);
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set("id", connectionID);
+      return nextParams;
+    });
+  };
+
+  async function onSubmit(data: Connection) {
+    if (!selectedConnection?.id || isCreateModalOpen) {
+      return createConnection(data);
+    }
+
+    return updateConnection({ ...data, id: selectedConnection.id });
   }
 
   const { isLoading: isCreatingConnection, mutate: createConnection } =
@@ -70,7 +115,7 @@ export function ConnectionsPage() {
       },
       onSuccess: () => {
         refetch();
-        setIsOpen(false);
+        closeModal();
         toastSuccess("Connection added successfully");
       },
       onError: (ex) => {
@@ -89,7 +134,7 @@ export function ConnectionsPage() {
       },
       onSuccess: () => {
         refetch();
-        setIsOpen(false);
+        closeModal();
         toastSuccess("Connection updated successfully");
       },
       onError: (ex) => {
@@ -107,7 +152,7 @@ export function ConnectionsPage() {
     },
     onSuccess: () => {
       refetch();
-      setIsOpen(false);
+      closeModal();
       toastSuccess("Connection deleted successfully");
     },
     onError: (ex) => {
@@ -116,13 +161,6 @@ export function ConnectionsPage() {
   });
 
   const isSubmitting = isCreatingConnection || isUpdatingConnection;
-
-  useEffect(() => {
-    if (isOpen) {
-      return;
-    }
-    setEditedRow(undefined);
-  }, [isOpen]);
 
   return (
     <>
@@ -139,11 +177,7 @@ export function ConnectionsPage() {
                 action="write"
                 key="add-connection"
               >
-                <button
-                  type="button"
-                  className=""
-                  onClick={() => setIsOpen(true)}
-                >
+                <button type="button" className="" onClick={openCreateModal}>
                   <AiFillPlusCircle size={32} className="text-blue-600" />
                 </button>
               </AuthorizationAccessCheck>
@@ -161,21 +195,24 @@ export function ConnectionsPage() {
             className="mt-6 flex h-full flex-col overflow-y-auto py-1"
             data={connections ?? []}
             isLoading={loading}
-            onRowClick={(val) => {
-              setIsOpen(true);
-              setEditedRow(val);
-            }}
+            onRowClick={openConnectionModal}
           />
         </div>
         <ConnectionFormModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          setIsOpen={(open) => {
+            if (open) {
+              return;
+            }
+
+            closeModal();
+          }}
           onConnectionSubmit={onSubmit}
           onConnectionDelete={(data) => deleteConnection(data)}
           isSubmitting={isSubmitting}
           isDeleting={isDeleting}
-          formValue={editedRow}
-          key={editedRow?.id || "connection-form"}
+          formValue={isCreateModalOpen ? undefined : selectedConnection}
+          key={selectedConnection?.id || "connection-form"}
         />
       </SearchLayout>
     </>
