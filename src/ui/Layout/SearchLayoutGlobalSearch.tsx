@@ -851,6 +851,26 @@ export function SearchLayoutGlobalSearch() {
               )}
             </CommandList>
           </Command>
+          <div className="flex items-center gap-4 border-t px-4 py-2 text-xs text-gray-400">
+            <span className="flex items-center gap-1">
+              <kbd className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-500">
+                Esc
+              </kbd>
+              <span>to close</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-500">
+                ↑↓
+              </kbd>
+              <span>to navigate</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-500">
+                {shortcutHint}
+              </kbd>
+              <span>to open search</span>
+            </span>
+          </div>
         </DialogContent>
       </Dialog>
     </>
