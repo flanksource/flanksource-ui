@@ -70,16 +70,12 @@ type FlattenedSearchResult = {
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
-  { key: "configs", label: "Configs", icon: Database },
-  { key: "canaries", label: "Canaries", icon: HeartPulse },
-  { key: "checks", label: "Checks", icon: ListChecks },
-  {
-    key: "config_changes",
-    label: "Config Changes",
-    icon: GitCompareArrows
-  },
-  { key: "playbooks", label: "Playbooks", icon: BookOpen },
-  { key: "connections", label: "Connections", icon: Cable }
+  { key: "configs", label: "Config", icon: Database },
+  { key: "canaries", label: "Canary", icon: HeartPulse },
+  { key: "checks", label: "Check", icon: ListChecks },
+  { key: "config_changes", label: "Change", icon: GitCompareArrows },
+  { key: "playbooks", label: "Playbook", icon: BookOpen },
+  { key: "connections", label: "Connection", icon: Cable }
 ];
 
 const SUGGESTED_SEARCH_QUERIES = [
@@ -300,6 +296,25 @@ function renderResultIcon(result: FlattenedSearchResult) {
       const FallbackIcon = result.fallbackIcon;
       return <FallbackIcon className="h-4 w-4 text-gray-500" />;
     }
+  }
+}
+
+function getSearchTypeBadgeClass(searchType: SearchResourceType) {
+  switch (searchType) {
+    case "configs":
+      return "border-blue-100 bg-blue-50 text-blue-700 hover:bg-blue-100";
+    case "canaries":
+      return "border-amber-100 bg-amber-50 text-amber-700 hover:bg-amber-100";
+    case "checks":
+      return "border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-100";
+    case "config_changes":
+      return "border-pink-100 bg-pink-50 text-pink-700 hover:bg-pink-100";
+    case "playbooks":
+      return "border-violet-100 bg-violet-50 text-violet-700 hover:bg-violet-100";
+    case "connections":
+      return "border-cyan-100 bg-cyan-50 text-cyan-700 hover:bg-cyan-100";
+    default:
+      return "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100";
   }
 }
 
@@ -602,8 +617,8 @@ export function SearchLayoutGlobalSearch() {
 
                       <div className="flex flex-shrink-0 items-center gap-2 self-center">
                         <Badge
-                          variant="secondary"
-                          className="whitespace-nowrap px-1.5 py-0 text-[10px] uppercase"
+                          variant="outline"
+                          className={`whitespace-nowrap px-1.5 py-0 text-[10px] uppercase ${getSearchTypeBadgeClass(result.resourceType)}`}
                         >
                           {searchTypeLabel}
                         </Badge>
