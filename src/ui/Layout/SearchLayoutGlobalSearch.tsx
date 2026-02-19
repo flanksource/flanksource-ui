@@ -78,18 +78,102 @@ const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
   { key: "connections", label: "Connection", icon: Cable }
 ];
 
+const SEARCH_DIRECTIVE_RESOURCE_TYPE_MAP: Record<string, SearchResourceType> = {
+  config: "configs",
+  configs: "configs",
+  canary: "canaries",
+  canaries: "canaries",
+  check: "checks",
+  checks: "checks",
+  change: "config_changes",
+  changes: "config_changes",
+  config_change: "config_changes",
+  config_changes: "config_changes",
+  "config-change": "config_changes",
+  "config-changes": "config_changes",
+  playbook: "playbooks",
+  playbooks: "playbooks",
+  connection: "connections",
+  connections: "connections"
+};
+
 const SUGGESTED_SEARCH_QUERIES = [
-  "type=ingress tags.namespace=prod",
-  "type=cluster",
-  "change_type=OOMKilled",
-  "prometheus",
-  "labels.app=cert-manager",
-  "health=unhealthy,warning"
+  "type=ingress #config",
+  "change_type=OOMKilled #change",
+  "prometheus #config,change,connections",
+  "labels.app=cert-manager #config",
+  "health=unhealthy,warning #config"
 ] as const;
 
 const SEARCH_HISTORY_STORAGE_KEY = "globalSearchHistory";
 const SEARCH_ENABLED_TYPES_STORAGE_KEY = "globalSearchEnabledTypes";
 const SEARCH_HISTORY_LIMIT = 5;
+
+type ParsedSearchQuery = {
+  queryWithoutDirectives: string;
+  directiveSearchTypes: SearchResourceType[];
+};
+
+function createDisabledSearchTypesState(): EnabledSearchTypeState {
+  return Object.fromEntries(
+    SEARCH_TYPE_OPTIONS.map(({ key }) => [key, false])
+  ) as EnabledSearchTypeState;
+}
+
+function parseSearchQuery(query: string): ParsedSearchQuery {
+  const directiveSearchTypes = new Set<SearchResourceType>();
+
+  const queryWithoutDirectives = query
+    .replace(
+      /(^|\s)#([^\s]+)/g,
+      (_, prefix: string, directiveValue: string) => {
+        directiveValue.split(",").forEach((rawDirectiveToken) => {
+          const normalizedDirectiveToken = rawDirectiveToken
+            .trim()
+            .toLowerCase();
+
+          if (!normalizedDirectiveToken) {
+            return;
+          }
+
+          const resourceType =
+            SEARCH_DIRECTIVE_RESOURCE_TYPE_MAP[normalizedDirectiveToken];
+
+          if (resourceType) {
+            directiveSearchTypes.add(resourceType);
+          }
+        });
+
+        return prefix;
+      }
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    queryWithoutDirectives,
+    directiveSearchTypes: Array.from(directiveSearchTypes)
+  };
+}
+
+function getEnabledSearchTypesFromDirective(
+  directiveSearchTypes: SearchResourceType[]
+): EnabledSearchTypeState {
+  const nextEnabledSearchTypes = createDisabledSearchTypesState();
+
+  directiveSearchTypes.forEach((resourceType) => {
+    nextEnabledSearchTypes[resourceType] = true;
+  });
+
+  return nextEnabledSearchTypes;
+}
+
+function isEnabledSearchTypeStateEqual(
+  left: EnabledSearchTypeState,
+  right: EnabledSearchTypeState
+) {
+  return SEARCH_TYPE_OPTIONS.every(({ key }) => left[key] === right[key]);
+}
 
 function getDefaultEnabledSearchTypes(): EnabledSearchTypeState {
   return {
@@ -217,10 +301,10 @@ function toNameWildcardQuery(query: string) {
 }
 
 function buildSearchRequest(
-  query: string,
+  queryWithoutDirectives: string,
   enabledSearchTypes: EnabledSearchTypeState
 ): SearchResourcesRequest | null {
-  const trimmedQuery = query.trim();
+  const trimmedQuery = queryWithoutDirectives.trim();
   const hasEnabledType = Object.values(enabledSearchTypes).some(Boolean);
 
   if (trimmedQuery.length < 2 || !hasEnabledType) {
@@ -433,14 +517,48 @@ export function SearchLayoutGlobalSearch() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  const parsedQuery = useMemo(() => parseSearchQuery(query), [query]);
+  const parsedDebouncedQuery = useMemo(
+    () => parseSearchQuery(debouncedQuery),
+    [debouncedQuery]
+  );
+
+  const applyDirectiveSearchTypes = (inputQuery: string) => {
+    const { directiveSearchTypes } = parseSearchQuery(inputQuery);
+
+    if (directiveSearchTypes.length === 0) {
+      return;
+    }
+
+    const directiveEnabledSearchTypes =
+      getEnabledSearchTypesFromDirective(directiveSearchTypes);
+
+    setEnabledSearchTypes((previousSearchTypes) => {
+      if (
+        isEnabledSearchTypeStateEqual(
+          previousSearchTypes,
+          directiveEnabledSearchTypes
+        )
+      ) {
+        return previousSearchTypes;
+      }
+
+      return directiveEnabledSearchTypes;
+    });
+  };
+
   const activeTypeCount = useMemo(
     () => Object.values(enabledSearchTypes).filter(Boolean).length,
     [enabledSearchTypes]
   );
 
   const searchRequest = useMemo(
-    () => buildSearchRequest(debouncedQuery, enabledSearchTypes),
-    [debouncedQuery, enabledSearchTypes]
+    () =>
+      buildSearchRequest(
+        parsedDebouncedQuery.queryWithoutDirectives,
+        enabledSearchTypes
+      ),
+    [enabledSearchTypes, parsedDebouncedQuery.queryWithoutDirectives]
   );
 
   const {
@@ -506,7 +624,8 @@ export function SearchLayoutGlobalSearch() {
   }, [enabledSearchTypes, results, searchError, searchRequest]);
 
   const showSuggestions =
-    activeTypeCount > 0 && debouncedQuery.trim().length < 2;
+    activeTypeCount > 0 &&
+    parsedDebouncedQuery.queryWithoutDirectives.length < 2;
 
   const emptyMessage = useMemo(() => {
     if (activeTypeCount === 0) {
@@ -516,7 +635,13 @@ export function SearchLayoutGlobalSearch() {
     return "No matching resources found.";
   }, [activeTypeCount]);
 
+  const handleQueryChange = (nextQuery: string) => {
+    applyDirectiveSearchTypes(nextQuery);
+    setQuery(nextQuery);
+  };
+
   const selectSearchQuery = (selectedQuery: string) => {
+    applyDirectiveSearchTypes(selectedQuery);
     setQuery(selectedQuery);
     setDebouncedQuery(selectedQuery);
   };
@@ -565,7 +690,7 @@ export function SearchLayoutGlobalSearch() {
               autoFocus
               placeholder="Search resources..."
               value={query}
-              onValueChange={setQuery}
+              onValueChange={handleQueryChange}
               className="!border-0 bg-transparent shadow-none outline-none ring-0 focus:border-0 focus:ring-0 focus-visible:ring-0"
             />
 
@@ -605,26 +730,27 @@ export function SearchLayoutGlobalSearch() {
 
               {!searchError && showSuggestions && (
                 <>
-                  {query.trim().length === 0 && searchHistory.length > 0 && (
-                    <>
-                      <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
-                        Recent searches
-                      </div>
-                      {searchHistory.map((historyQuery) => (
-                        <CommandItem
-                          key={`history-${historyQuery}`}
-                          value={`history-${historyQuery}`}
-                          className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
-                          onSelect={() => selectSearchQuery(historyQuery)}
-                        >
-                          <History className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                          <span className="truncate text-sm text-gray-700">
-                            {historyQuery}
-                          </span>
-                        </CommandItem>
-                      ))}
-                    </>
-                  )}
+                  {parsedQuery.queryWithoutDirectives.length === 0 &&
+                    searchHistory.length > 0 && (
+                      <>
+                        <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
+                          Recent searches
+                        </div>
+                        {searchHistory.map((historyQuery) => (
+                          <CommandItem
+                            key={`history-${historyQuery}`}
+                            value={`history-${historyQuery}`}
+                            className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
+                            onSelect={() => selectSearchQuery(historyQuery)}
+                          >
+                            <History className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                            <span className="truncate text-sm text-gray-700">
+                              {historyQuery}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </>
+                    )}
 
                   <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
                     Suggestions
