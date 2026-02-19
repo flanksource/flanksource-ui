@@ -6,26 +6,6 @@ export const TOOL_OUTPUT_CHAR_LIMIT = 20_000;
 export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
 
 /**
- * Safely serialize a tool output to a string.
- * - Strings pass through unchanged.
- * - Objects are JSON.stringify'd with pretty formatting.
- * - Everything else is coerced via String().
- */
-export function safeSerialize(value: unknown): string {
-  if (typeof value === "string") {
-    return value;
-  }
-  if (value !== null && value !== undefined && typeof value === "object") {
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return String(value);
-    }
-  }
-  return String(value);
-}
-
-/**
  * Truncate a tool output string to TOOL_OUTPUT_CHAR_LIMIT characters.
  * Returns the original string unchanged if within the limit.
  * Otherwise returns a truncated version with a clear warning header.
@@ -55,7 +35,7 @@ export function truncateToolResultTransform() {
   return new TransformStream<TextStreamPart<any>, TextStreamPart<any>>({
     transform(chunk, controller) {
       if (chunk.type === "tool-result" && !chunk.preliminary) {
-        const serialized = safeSerialize(chunk.output);
+        const serialized = JSON.stringify(chunk.output);
         const truncated = truncateToolOutput(serialized);
         if (truncated !== serialized) {
           controller.enqueue({ ...chunk, output: truncated });
