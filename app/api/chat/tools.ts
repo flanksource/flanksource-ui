@@ -50,7 +50,6 @@ export function truncateToolResultTransform() {
 const NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "run_template",
 
-
   "search_catalog",
   "search_catalog_changes",
   "describe_catalog",
@@ -78,7 +77,10 @@ const NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
 // which would look something like (web_request_default)
 // where `web_request` is the .metadata.name
 // and, `default` is the .metadata.namespace
-const PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = ["web-request"];
+const PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
+  "curl",
+  "kubectl"
+];
 
 type McpTool = Record<string, any>;
 type McpTools = Record<string, McpTool>;
