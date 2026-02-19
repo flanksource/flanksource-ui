@@ -19,6 +19,7 @@ import {
   Loader2,
   Search,
   Workflow,
+  X,
   type LucideIcon
 } from "lucide-react";
 
@@ -244,6 +245,25 @@ function persistSearchHistory(query: string) {
       (historyItem) => historyItem.toLowerCase() !== normalizedQuery
     )
   ].slice(0, SEARCH_HISTORY_LIMIT);
+
+  window.localStorage.setItem(
+    SEARCH_HISTORY_STORAGE_KEY,
+    JSON.stringify(updatedHistory)
+  );
+
+  return updatedHistory;
+}
+
+function removeSearchHistoryItem(queryToRemove: string): string[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const normalizedQuery = queryToRemove.trim().toLowerCase();
+  const existingHistory = getStoredSearchHistory();
+  const updatedHistory = existingHistory.filter(
+    (item) => item.toLowerCase() !== normalizedQuery
+  );
 
   window.localStorage.setItem(
     SEARCH_HISTORY_STORAGE_KEY,
@@ -935,13 +955,26 @@ export function SearchLayoutGlobalSearch() {
                           <CommandItem
                             key={`history-${historyQuery}`}
                             value={`history-${historyQuery}`}
-                            className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
+                            className="group mb-1 flex items-center gap-2 rounded-md px-3 py-2"
                             onSelect={() => selectSearchQuery(historyQuery)}
                           >
-                            <History className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                            <span className="truncate text-sm text-gray-700">
+                            <History className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                            <span className="min-w-0 flex-1 truncate text-sm text-gray-500">
                               {historyQuery}
                             </span>
+                            <button
+                              type="button"
+                              className="flex-shrink-0 rounded p-0.5 text-gray-400 opacity-0 hover:bg-gray-200 hover:text-gray-600 group-hover:opacity-100 group-data-[selected=true]:opacity-100"
+                              title="Remove from history"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSearchHistory(
+                                  removeSearchHistoryItem(historyQuery)
+                                );
+                              }}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
                           </CommandItem>
                         ))}
                       </>
@@ -957,8 +990,8 @@ export function SearchLayoutGlobalSearch() {
                       className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
                       onSelect={() => selectSearchQuery(suggestionQuery)}
                     >
-                      <Search className="h-4 w-4 flex-shrink-0 text-gray-500" />
-                      <span className="truncate text-sm text-gray-700">
+                      <Search className="h-4 w-4 flex-shrink-0 text-gray-400" />
+                      <span className="truncate text-sm text-gray-500">
                         {suggestionQuery}
                       </span>
                     </CommandItem>
