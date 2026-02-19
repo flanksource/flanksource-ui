@@ -77,6 +77,14 @@ const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
   { key: "connections", label: "Connections", icon: Cable }
 ];
 
+const SUGGESTED_SEARCH_QUERIES = [
+  "type=ingress tags.namespace=prod",
+  "type=cluster",
+  "prometheus",
+  "labels.app=cert-manager",
+  "health=unhealthy,warning"
+] as const;
+
 function toNameWildcardQuery(query: string) {
   const normalized = query.trim().split(/\s+/).filter(Boolean).join("*");
 
@@ -292,17 +300,21 @@ export function SearchLayoutGlobalSearch() {
     return entries;
   }, [enabledSearchTypes, results, searchError, searchRequest]);
 
+  const showSuggestions =
+    activeTypeCount > 0 && debouncedQuery.trim().length < 2;
+
   const emptyMessage = useMemo(() => {
     if (activeTypeCount === 0) {
       return "Select at least one resource type to search.";
     }
 
-    if (debouncedQuery.trim().length < 2) {
-      return "Type at least 2 characters to search.";
-    }
-
     return "No matching resources found.";
-  }, [activeTypeCount, debouncedQuery]);
+  }, [activeTypeCount]);
+
+  const selectSuggestion = (suggestedQuery: string) => {
+    setQuery(suggestedQuery);
+    setDebouncedQuery(suggestedQuery);
+  };
 
   const openResultInNewTab = (href: string) => {
     const absoluteURL = new URL(href, window.location.origin).toString();
@@ -386,7 +398,29 @@ export function SearchLayoutGlobalSearch() {
                 </div>
               )}
 
+              {!searchError && showSuggestions && (
+                <>
+                  <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
+                    Suggestions
+                  </div>
+                  {SUGGESTED_SEARCH_QUERIES.map((suggestionQuery) => (
+                    <CommandItem
+                      key={suggestionQuery}
+                      value={`suggestion-${suggestionQuery}`}
+                      className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
+                      onSelect={() => selectSuggestion(suggestionQuery)}
+                    >
+                      <Search className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                      <span className="truncate text-sm text-gray-700">
+                        {suggestionQuery}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </>
+              )}
+
               {!searchError &&
+                !showSuggestions &&
                 flattenedResults.map((result) => {
                   const ResultIcon = result.icon;
                   const searchTypeLabel =
@@ -428,7 +462,7 @@ export function SearchLayoutGlobalSearch() {
                   );
                 })}
 
-              {!isFetching && !searchError && (
+              {!isFetching && !searchError && !showSuggestions && (
                 <CommandEmpty className="py-10 text-center text-sm text-gray-500">
                   {emptyMessage}
                 </CommandEmpty>
