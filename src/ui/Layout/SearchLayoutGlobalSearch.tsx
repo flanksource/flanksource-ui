@@ -418,9 +418,7 @@ function getResourceDescription(
   item: SearchedResource
 ): string {
   if (type === "config_changes") {
-    return [item.change_type || item.type, item.name]
-      .filter(Boolean)
-      .join(" • ");
+    return item.change_type || item.type || "";
   }
 
   return [item.namespace, item.type].filter(Boolean).join(" • ");
@@ -590,11 +588,6 @@ export function SearchLayoutGlobalSearch() {
       return directiveEnabledSearchTypes;
     });
   };
-
-  const activeTypeCount = useMemo(
-    () => Object.values(enabledSearchTypes).filter(Boolean).length,
-    [enabledSearchTypes]
-  );
 
   const searchRequest = useMemo(
     () =>
