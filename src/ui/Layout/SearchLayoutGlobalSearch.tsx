@@ -7,6 +7,7 @@ import {
   Database,
   GitCompareArrows,
   HeartPulse,
+  History,
   ListChecks,
   Loader2,
   Search,
@@ -88,6 +89,66 @@ const SUGGESTED_SEARCH_QUERIES = [
   "labels.app=cert-manager",
   "health=unhealthy,warning"
 ] as const;
+
+const SEARCH_HISTORY_STORAGE_KEY = "globalSearchHistory";
+const SEARCH_HISTORY_LIMIT = 5;
+
+function getStoredSearchHistory() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const rawHistory = window.localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY);
+
+    if (!rawHistory) {
+      return [];
+    }
+
+    const parsedHistory = JSON.parse(rawHistory);
+
+    if (!Array.isArray(parsedHistory)) {
+      return [];
+    }
+
+    return parsedHistory
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, SEARCH_HISTORY_LIMIT);
+  } catch {
+    return [];
+  }
+}
+
+function persistSearchHistory(query: string) {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return getStoredSearchHistory();
+  }
+
+  const normalizedQuery = trimmedQuery.toLowerCase();
+  const existingHistory = getStoredSearchHistory();
+
+  const updatedHistory = [
+    trimmedQuery,
+    ...existingHistory.filter(
+      (historyItem) => historyItem.toLowerCase() !== normalizedQuery
+    )
+  ].slice(0, SEARCH_HISTORY_LIMIT);
+
+  window.localStorage.setItem(
+    SEARCH_HISTORY_STORAGE_KEY,
+    JSON.stringify(updatedHistory)
+  );
+
+  return updatedHistory;
+}
 
 function toNameWildcardQuery(query: string) {
   const normalized = query.trim().split(/\s+/).filter(Boolean).join("*");
@@ -255,6 +316,7 @@ export function SearchLayoutGlobalSearch() {
       playbooks: false,
       connections: false
     });
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   const shortcutHint = useMemo(() => getShortcutHint(), []);
 
@@ -273,6 +335,14 @@ export function SearchLayoutGlobalSearch() {
 
     setQuery("");
     setDebouncedQuery("");
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    setSearchHistory(getStoredSearchHistory());
   }, [open]);
 
   useEffect(() => {
@@ -311,6 +381,15 @@ export function SearchLayoutGlobalSearch() {
       }
 
       return response;
+    },
+    onSuccess: () => {
+      const trimmedQuery = debouncedQuery.trim();
+
+      if (trimmedQuery.length < 2) {
+        return;
+      }
+
+      setSearchHistory(persistSearchHistory(trimmedQuery));
     },
     enabled: open && searchRequest != null,
     keepPreviousData: true
@@ -361,9 +440,9 @@ export function SearchLayoutGlobalSearch() {
     return "No matching resources found.";
   }, [activeTypeCount]);
 
-  const selectSuggestion = (suggestedQuery: string) => {
-    setQuery(suggestedQuery);
-    setDebouncedQuery(suggestedQuery);
+  const selectSearchQuery = (selectedQuery: string) => {
+    setQuery(selectedQuery);
+    setDebouncedQuery(selectedQuery);
   };
 
   const openResultInNewTab = (href: string) => {
@@ -450,6 +529,27 @@ export function SearchLayoutGlobalSearch() {
 
               {!searchError && showSuggestions && (
                 <>
+                  {query.trim().length === 0 && searchHistory.length > 0 && (
+                    <>
+                      <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
+                        Recent searches
+                      </div>
+                      {searchHistory.map((historyQuery) => (
+                        <CommandItem
+                          key={`history-${historyQuery}`}
+                          value={`history-${historyQuery}`}
+                          className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
+                          onSelect={() => selectSearchQuery(historyQuery)}
+                        >
+                          <History className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                          <span className="truncate text-sm text-gray-700">
+                            {historyQuery}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </>
+                  )}
+
                   <div className="px-3 pb-1 pt-2 text-xs font-medium text-gray-500">
                     Suggestions
                   </div>
@@ -458,7 +558,7 @@ export function SearchLayoutGlobalSearch() {
                       key={suggestionQuery}
                       value={`suggestion-${suggestionQuery}`}
                       className="mb-1 flex items-center gap-2 rounded-md px-3 py-2"
-                      onSelect={() => selectSuggestion(suggestionQuery)}
+                      onSelect={() => selectSearchQuery(suggestionQuery)}
                     >
                       <Search className="h-4 w-4 flex-shrink-0 text-gray-500" />
                       <span className="truncate text-sm text-gray-700">
