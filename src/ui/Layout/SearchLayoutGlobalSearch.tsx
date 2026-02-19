@@ -681,7 +681,7 @@ export function SearchLayoutGlobalSearch() {
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl overflow-hidden p-0 [&>button]:right-7 [&>button]:top-8 [&>button]:inline-flex [&>button]:h-5 [&>button]:w-5 [&>button]:-translate-y-1/2 [&>button]:items-center [&>button]:justify-center [&>button]:p-0">
+        <DialogContent className="max-w-3xl overflow-hidden p-0">
           <Command
             shouldFilter={false}
             className="[&_[cmdk-input-wrapper]]:mx-4 [&_[cmdk-input-wrapper]]:my-2 [&_[cmdk-input-wrapper]]:rounded-md [&_[cmdk-input-wrapper]]:border [&_[cmdk-input-wrapper]]:border-gray-300 [&_[cmdk-input-wrapper]]:px-3 [&_[cmdk-input-wrapper]]:py-1 [&_[cmdk-input-wrapper]]:focus-within:border-gray-300 [&_[cmdk-input-wrapper]]:focus-within:ring-0"
