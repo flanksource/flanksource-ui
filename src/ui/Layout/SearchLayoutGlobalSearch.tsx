@@ -351,12 +351,11 @@ function getResourceHref(type: SearchResourceType, item: SearchableResource) {
     case "configs":
       return `/catalog/${item.id}`;
     case "canaries":
+      return `/settings/canaries/${encodeURIComponent(item.id)}`;
     case "checks":
       return `/health?checkId=${encodeURIComponent(item.id)}&timeRange=1h`;
-    case "config_changes": {
-      const configID = item.config_id || item.id;
-      return `/catalog/changes?id=${encodeURIComponent(configID)}`;
-    }
+    case "config_changes":
+      return `/catalog/changes?changeId=${encodeURIComponent(item.id)}`;
     case "playbooks":
       return `/playbooks/runs?playbook=${encodeURIComponent(item.id)}`;
     case "connections":
