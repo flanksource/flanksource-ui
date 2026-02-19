@@ -113,7 +113,8 @@ const SUGGESTED_SEARCH_QUERIES = [
   "prometheus #config,change,connections",
   "labels.app=cert-manager #config",
   "health=unhealthy,warning #config",
-  "alertmanager @order=-created_at #change "
+  "alertmanager @order=-created_at #change ",
+  "type=postgres #connection"
 ] as const;
 
 const SEARCH_HISTORY_STORAGE_KEY = "globalSearchHistory";
@@ -324,12 +325,6 @@ function persistEnabledSearchTypes(enabledSearchTypes: EnabledSearchTypeState) {
   }
 }
 
-function toNameWildcardQuery(query: string) {
-  const normalized = query.trim().split(/\s+/).filter(Boolean).join("*");
-
-  return `*${normalized}*`;
-}
-
 function buildSearchRequest(
   queryWithoutDirectives: string,
   enabledSearchTypes: EnabledSearchTypeState
@@ -341,8 +336,6 @@ function buildSearchRequest(
     return null;
   }
 
-  const nameQuery = toNameWildcardQuery(trimmedQuery);
-
   const request: SearchResourcesRequest = {
     limit: SEARCH_RESULT_LIMIT
   };
@@ -351,14 +344,12 @@ function buildSearchRequest(
     request.configs = [{ search: trimmedQuery, agent: "all" }];
   }
 
-  // Use name-based selectors for non-config resources to avoid unsupported
-  // query fields (e.g. tags.* on canaries, type on playbooks).
   if (enabledSearchTypes.canaries) {
-    request.canaries = [{ name: nameQuery, agent: "all" }];
+    request.canaries = [{ search: trimmedQuery, agent: "all" }];
   }
 
   if (enabledSearchTypes.checks) {
-    request.checks = [{ name: nameQuery, agent: "all" }];
+    request.checks = [{ search: trimmedQuery, agent: "all" }];
   }
 
   if (enabledSearchTypes.config_changes) {
@@ -366,11 +357,11 @@ function buildSearchRequest(
   }
 
   if (enabledSearchTypes.playbooks) {
-    request.playbooks = [{ name: nameQuery }];
+    request.playbooks = [{ search: trimmedQuery }];
   }
 
   if (enabledSearchTypes.connections) {
-    request.connections = [{ name: nameQuery }];
+    request.connections = [{ search: trimmedQuery }];
   }
 
   return request;
