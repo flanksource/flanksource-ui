@@ -1,9 +1,9 @@
 import { tool, zodSchema, type TextStreamPart } from "ai";
 import { z } from "zod";
 
-export const TOOL_OUTPUT_CHAR_LIMIT = 20_000;
+import { TRUNCATION_MARKER } from "@flanksource-ui/lib/ai-chat-constants";
 
-export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
+export const TOOL_OUTPUT_CHAR_LIMIT = 20_000;
 
 /**
  * Safely serialize a tool output to a string.

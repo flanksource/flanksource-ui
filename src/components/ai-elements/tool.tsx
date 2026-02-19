@@ -21,6 +21,8 @@ import type { ComponentProps, ReactNode } from "react";
 import { isValidElement } from "react";
 import { CodeBlock } from "./code-block";
 
+import { TRUNCATION_MARKER } from "@flanksource-ui/lib/ai-chat-constants";
+
 type ToolPart = ToolUIPart | DynamicToolUIPart;
 
 export type ToolProps = ComponentProps<typeof Collapsible>;
@@ -131,8 +133,6 @@ export type ToolOutputProps = ComponentProps<"div"> & {
   output: ToolPart["output"];
   errorText: ToolPart["errorText"];
 };
-
-const TRUNCATION_MARKER = "⚠️ Tool output truncated";
 
 function isTruncated(output: unknown): boolean {
   if (typeof output === "string") {
