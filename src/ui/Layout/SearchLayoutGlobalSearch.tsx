@@ -690,24 +690,8 @@ export function SearchLayoutGlobalSearch() {
     <>
       <button
         type="button"
-        className="hidden h-8 w-64 items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-sm text-gray-500 hover:bg-gray-50 lg:flex"
-        title="Global search"
-        aria-expanded={open}
-        onClick={() => setOpen(true)}
-      >
-        <span className="flex items-center gap-2">
-          <Search className="h-4 w-4" aria-hidden />
-          <span>Search...</span>
-        </span>
-        <span className="rounded border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-xs text-gray-500">
-          {shortcutHint}
-        </span>
-      </button>
-
-      <button
-        type="button"
-        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 lg:hidden"
-        title="Global search"
+        className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
+        title={`Global search (${shortcutHint})`}
         aria-label="Open global search"
         aria-expanded={open}
         onClick={() => setOpen(true)}
@@ -716,7 +700,7 @@ export function SearchLayoutGlobalSearch() {
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl overflow-hidden p-0">
+        <DialogContent className="top-[20%] max-w-3xl translate-y-0 overflow-hidden p-0 data-[state=closed]:slide-out-to-top-[20%] data-[state=open]:slide-in-from-top-[20%]">
           <DialogTitle className="sr-only">Global search</DialogTitle>
           <DialogDescription className="sr-only">
             Search across configs, canaries, checks, changes, playbooks, and

@@ -71,7 +71,6 @@ function SearchLayoutInner({
           <div
             className={`ml-4 flex items-center gap-3 md:ml-6 ${extraClassName}`}
           >
-            <SearchLayoutGlobalSearch />
             {extra}
             <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
               {onRefresh && (
@@ -88,6 +87,7 @@ function SearchLayoutInner({
             </div>
 
             <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+              <SearchLayoutGlobalSearch />
               {!isAiDisabled &&
                 (aiLoaded ? (
                   <Suspense
