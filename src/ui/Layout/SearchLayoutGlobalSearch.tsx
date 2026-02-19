@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   BookOpen,
@@ -32,7 +39,12 @@ import {
   CommandItem,
   CommandList
 } from "@flanksource-ui/components/ui/command";
-import { Dialog, DialogContent } from "@flanksource-ui/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from "@flanksource-ui/components/ui/dialog";
 
 const SEARCH_RESULT_LIMIT = 10;
 
@@ -52,12 +64,6 @@ type SearchTypeOption = {
   icon: LucideIcon;
 };
 
-type SearchableResource = SearchedResource & {
-  summary?: string;
-  change_type?: string;
-  config_id?: string;
-};
-
 type FlattenedSearchResult = {
   key: string;
   value: string;
@@ -66,7 +72,7 @@ type FlattenedSearchResult = {
   description: string;
   resourceType: SearchResourceType;
   fallbackIcon: LucideIcon;
-  resource: SearchableResource;
+  resource: SearchedResource;
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
@@ -346,7 +352,7 @@ function buildSearchRequest(
   return request;
 }
 
-function getResourceHref(type: SearchResourceType, item: SearchableResource) {
+function getResourceHref(type: SearchResourceType, item: SearchedResource) {
   switch (type) {
     case "configs":
       return `/catalog/${item.id}`;
@@ -365,7 +371,7 @@ function getResourceHref(type: SearchResourceType, item: SearchableResource) {
   }
 }
 
-function getResourceTitle(type: SearchResourceType, item: SearchableResource) {
+function getResourceTitle(type: SearchResourceType, item: SearchedResource) {
   if (type === "config_changes") {
     return item.summary || item.name || item.id;
   }
@@ -374,7 +380,7 @@ function getResourceTitle(type: SearchResourceType, item: SearchableResource) {
 
 function getResourceDescription(
   type: SearchResourceType,
-  item: SearchableResource
+  item: SearchedResource
 ): string {
   if (type === "config_changes") {
     return [item.change_type || item.type, item.name]
@@ -408,6 +414,7 @@ function getFirstSupportedIconName(...candidates: (string | undefined)[]) {
 function renderResultIcon(result: FlattenedSearchResult) {
   switch (result.resourceType) {
     case "configs":
+    case "config_changes":
       return findByName(result.resource.type) ? (
         <ConfigIcon
           config={{ type: result.resource.type }}
@@ -466,12 +473,14 @@ function getSearchTypeBadgeClass(searchType: SearchResourceType) {
 }
 
 export function SearchLayoutGlobalSearch() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [enabledSearchTypes, setEnabledSearchTypes] =
     useState<EnabledSearchTypeState>(() => getStoredEnabledSearchTypes());
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [selectedResultValue, setSelectedResultValue] = useState("");
 
   const shortcutHint = useMemo(() => getShortcutHint(), []);
 
@@ -490,6 +499,7 @@ export function SearchLayoutGlobalSearch() {
 
     setQuery("");
     setDebouncedQuery("");
+    setSelectedResultValue("");
   }, [open]);
 
   useEffect(() => {
@@ -575,18 +585,19 @@ export function SearchLayoutGlobalSearch() {
 
       return response;
     },
-    onSuccess: () => {
-      const trimmedQuery = debouncedQuery.trim();
-
-      if (trimmedQuery.length < 2) {
-        return;
-      }
-
-      setSearchHistory(persistSearchHistory(trimmedQuery));
-    },
     enabled: open && searchRequest != null,
     keepPreviousData: true
   });
+
+  useEffect(() => {
+    const trimmedQuery = debouncedQuery.trim();
+
+    if (!results || trimmedQuery.length < 2) {
+      return;
+    }
+
+    setSearchHistory(persistSearchHistory(trimmedQuery));
+  }, [debouncedQuery, results]);
 
   const flattenedResults = useMemo<FlattenedSearchResult[]>(() => {
     if (searchError || !searchRequest || !results) {
@@ -601,7 +612,7 @@ export function SearchLayoutGlobalSearch() {
         continue;
       }
 
-      const resources = (results[searchType] ?? []) as SearchableResource[];
+      const resources = results[searchType] ?? [];
       resources.forEach((item, index) => {
         const title = getResourceTitle(searchType, item);
         const description = getResourceDescription(searchType, item);
@@ -645,9 +656,34 @@ export function SearchLayoutGlobalSearch() {
     setDebouncedQuery(selectedQuery);
   };
 
-  const openResultInNewTab = (href: string) => {
-    const absoluteURL = new URL(href, window.location.origin).toString();
-    window.open(absoluteURL, "_blank", "noopener,noreferrer");
+  const navigateToResult = (href: string) => {
+    setOpen(false);
+    navigate(href);
+  };
+
+  const handleCommandKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" || showSuggestions || !!searchError) {
+      return;
+    }
+
+    const selectedResult =
+      flattenedResults.find((result) => result.value === selectedResultValue) ??
+      flattenedResults[0];
+
+    if (!selectedResult) {
+      return;
+    }
+
+    event.preventDefault();
+    navigateToResult(selectedResult.href);
+  };
+
+  const handleResultLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -681,8 +717,15 @@ export function SearchLayoutGlobalSearch() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-3xl overflow-hidden p-0">
+          <DialogTitle className="sr-only">Global search</DialogTitle>
+          <DialogDescription className="sr-only">
+            Search across configs, canaries, checks, changes, playbooks, and
+            connections.
+          </DialogDescription>
           <Command
             shouldFilter={false}
+            onValueChange={setSelectedResultValue}
+            onKeyDown={handleCommandKeyDown}
             className="[&_[cmdk-input-wrapper]]:mx-4 [&_[cmdk-input-wrapper]]:my-2 [&_[cmdk-input-wrapper]]:rounded-md [&_[cmdk-input-wrapper]]:border [&_[cmdk-input-wrapper]]:border-gray-300 [&_[cmdk-input-wrapper]]:px-3 [&_[cmdk-input-wrapper]]:py-1 [&_[cmdk-input-wrapper]]:focus-within:border-gray-300 [&_[cmdk-input-wrapper]]:focus-within:ring-0"
           >
             <CommandInput
@@ -780,36 +823,39 @@ export function SearchLayoutGlobalSearch() {
 
                   return (
                     <CommandItem
+                      asChild
                       key={result.key}
                       value={result.value}
-                      className="mb-1 flex items-center gap-3 rounded-md px-3 py-2"
-                      onSelect={() => {
-                        openResultInNewTab(result.href);
-                        setOpen(false);
-                      }}
+                      className="mb-1 flex cursor-pointer items-center gap-3 rounded-md px-3 py-2"
                     >
-                      <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
-                        {renderResultIcon(result)}
-                      </span>
-
-                      <div className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-gray-900">
-                          {result.title}
+                      <Link
+                        to={result.href}
+                        className="w-full text-inherit no-underline"
+                        onClick={handleResultLinkClick}
+                      >
+                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                          {renderResultIcon(result)}
                         </span>
-                        <p className="truncate text-xs text-gray-500">
-                          {result.description || "No additional details"}
-                        </p>
-                      </div>
 
-                      <div className="flex flex-shrink-0 items-center gap-2 self-center">
-                        <Badge
-                          variant="outline"
-                          className={`whitespace-nowrap px-1.5 py-0 text-[10px] uppercase ${getSearchTypeBadgeClass(result.resourceType)}`}
-                        >
-                          {searchTypeLabel}
-                        </Badge>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
-                      </div>
+                        <div className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium text-gray-900">
+                            {result.title}
+                          </span>
+                          <p className="truncate text-xs text-gray-500">
+                            {result.description || "No additional details"}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-shrink-0 items-center gap-2 self-center">
+                          <Badge
+                            variant="outline"
+                            className={`whitespace-nowrap px-1.5 py-0 text-[10px] uppercase ${getSearchTypeBadgeClass(result.resourceType)}`}
+                          >
+                            {searchTypeLabel}
+                          </Badge>
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </Link>
                     </CommandItem>
                   );
                 })}
