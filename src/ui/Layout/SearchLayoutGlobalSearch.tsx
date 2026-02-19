@@ -81,13 +81,26 @@ const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
 const SUGGESTED_SEARCH_QUERIES = [
   "type=ingress tags.namespace=prod",
   "type=cluster",
+  "change_type=OOMKilled",
   "prometheus",
   "labels.app=cert-manager",
   "health=unhealthy,warning"
 ] as const;
 
 const SEARCH_HISTORY_STORAGE_KEY = "globalSearchHistory";
+const SEARCH_ENABLED_TYPES_STORAGE_KEY = "globalSearchEnabledTypes";
 const SEARCH_HISTORY_LIMIT = 5;
+
+function getDefaultEnabledSearchTypes(): EnabledSearchTypeState {
+  return {
+    configs: true,
+    canaries: true,
+    checks: false,
+    config_changes: false,
+    playbooks: false,
+    connections: false
+  };
+}
 
 function getStoredSearchHistory() {
   if (typeof window === "undefined") {
@@ -144,6 +157,57 @@ function persistSearchHistory(query: string) {
   );
 
   return updatedHistory;
+}
+
+function getStoredEnabledSearchTypes(): EnabledSearchTypeState {
+  if (typeof window === "undefined") {
+    return getDefaultEnabledSearchTypes();
+  }
+
+  const defaultEnabledSearchTypes = getDefaultEnabledSearchTypes();
+
+  try {
+    const rawPreference = window.localStorage.getItem(
+      SEARCH_ENABLED_TYPES_STORAGE_KEY
+    );
+
+    if (!rawPreference) {
+      return defaultEnabledSearchTypes;
+    }
+
+    const parsedPreference = JSON.parse(rawPreference);
+
+    if (!parsedPreference || typeof parsedPreference !== "object") {
+      return defaultEnabledSearchTypes;
+    }
+
+    for (const { key } of SEARCH_TYPE_OPTIONS) {
+      const storedValue = (parsedPreference as Record<string, unknown>)[key];
+
+      if (typeof storedValue === "boolean") {
+        defaultEnabledSearchTypes[key] = storedValue;
+      }
+    }
+
+    return defaultEnabledSearchTypes;
+  } catch {
+    return defaultEnabledSearchTypes;
+  }
+}
+
+function persistEnabledSearchTypes(enabledSearchTypes: EnabledSearchTypeState) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      SEARCH_ENABLED_TYPES_STORAGE_KEY,
+      JSON.stringify(enabledSearchTypes)
+    );
+  } catch {
+    // Ignore storage write failures.
+  }
 }
 
 function toNameWildcardQuery(query: string) {
@@ -323,14 +387,7 @@ export function SearchLayoutGlobalSearch() {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [enabledSearchTypes, setEnabledSearchTypes] =
-    useState<EnabledSearchTypeState>({
-      configs: true,
-      canaries: true,
-      checks: false,
-      config_changes: false,
-      playbooks: false,
-      connections: false
-    });
+    useState<EnabledSearchTypeState>(() => getStoredEnabledSearchTypes());
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   const shortcutHint = useMemo(() => getShortcutHint(), []);
@@ -359,6 +416,10 @@ export function SearchLayoutGlobalSearch() {
 
     setSearchHistory(getStoredSearchHistory());
   }, [open]);
+
+  useEffect(() => {
+    persistEnabledSearchTypes(enabledSearchTypes);
+  }, [enabledSearchTypes]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
