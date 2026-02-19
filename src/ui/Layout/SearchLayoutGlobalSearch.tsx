@@ -367,11 +367,7 @@ function buildSearchRequest(
   return request;
 }
 
-function getResourceHref(
-  type: SearchResourceType,
-  item: SearchedResource,
-  configId?: string
-) {
+function getResourceHref(type: SearchResourceType, item: SearchedResource) {
   switch (type) {
     case "configs":
       return `/catalog/${item.id}`;
@@ -379,15 +375,8 @@ function getResourceHref(
       return `/settings/canaries/${encodeURIComponent(item.id)}`;
     case "checks":
       return `/health?checkId=${encodeURIComponent(item.id)}&timeRange=1h`;
-    case "config_changes": {
-      const resolvedConfigId = configId || item.config_id;
-
-      if (resolvedConfigId) {
-        return `/catalog/${encodeURIComponent(resolvedConfigId)}/changes`;
-      }
-
+    case "config_changes":
       return `/catalog/changes?changeId=${encodeURIComponent(item.id)}`;
-    }
     case "playbooks":
       return `/playbooks/runs?playbook=${encodeURIComponent(item.id)}`;
     case "connections":
@@ -768,7 +757,7 @@ export function SearchLayoutGlobalSearch() {
           entries.push({
             key: `${searchType}-${configId}-${change.id}-${index}`,
             value: `${searchType}-${configId}-${change.id}-${title}-${description}`,
-            href: getResourceHref(searchType, change, configId),
+            href: getResourceHref(searchType, change),
             title,
             description,
             resourceType: searchType,
