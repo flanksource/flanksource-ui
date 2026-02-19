@@ -823,16 +823,9 @@ export function SearchLayoutGlobalSearch() {
   ]);
 
   const showSuggestions =
-    activeTypeCount > 0 &&
     parsedDebouncedQuery.queryWithoutDirectives.length < 2;
 
-  const emptyMessage = useMemo(() => {
-    if (activeTypeCount === 0) {
-      return "Select at least one resource type to search.";
-    }
-
-    return "No matching resources found.";
-  }, [activeTypeCount]);
+  const emptyMessage = "No matching resources found.";
 
   const handleQueryChange = (nextQuery: string) => {
     applyDirectiveSearchTypes(nextQuery);
