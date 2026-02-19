@@ -10,6 +10,7 @@ import {
   ListChecks,
   Loader2,
   Search,
+  Workflow,
   type LucideIcon
 } from "lucide-react";
 
@@ -21,6 +22,8 @@ import {
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { Badge } from "@flanksource-ui/components/ui/badge";
 import { Checkbox } from "@flanksource-ui/components/ui/checkbox";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
+import { Icon, findByName } from "@flanksource-ui/ui/Icons/Icon";
 import {
   Command,
   CommandEmpty,
@@ -61,7 +64,8 @@ type FlattenedSearchResult = {
   title: string;
   description: string;
   resourceType: SearchResourceType;
-  icon: LucideIcon;
+  fallbackIcon: LucideIcon;
+  resource: SearchableResource;
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
@@ -193,6 +197,51 @@ function hasSearchPayloadError(value: unknown): value is { error: string } {
   return typeof (value as { error?: unknown }).error === "string";
 }
 
+function getFirstSupportedIconName(...candidates: (string | undefined)[]) {
+  return candidates.find((candidate) => candidate && findByName(candidate));
+}
+
+function renderResultIcon(result: FlattenedSearchResult) {
+  switch (result.resourceType) {
+    case "configs":
+      return findByName(result.resource.type) ? (
+        <ConfigIcon
+          config={{ type: result.resource.type }}
+          className="h-4 w-4 text-gray-500"
+        />
+      ) : (
+        <Database className="h-4 w-4 text-gray-500" />
+      );
+    case "connections": {
+      const connectionIcon = getFirstSupportedIconName(
+        result.resource.icon,
+        result.resource.type,
+        result.resource.type?.replaceAll("_", "-"),
+        result.resource.type?.replaceAll("_", "")
+      );
+
+      return connectionIcon ? (
+        <Icon name={connectionIcon} className="h-4 w-4 text-gray-500" />
+      ) : (
+        <Cable className="h-4 w-4 text-gray-500" />
+      );
+    }
+    case "playbooks": {
+      const playbookIcon = getFirstSupportedIconName(result.resource.icon);
+
+      return playbookIcon ? (
+        <Icon name={playbookIcon} className="h-4 w-4 text-gray-500" />
+      ) : (
+        <Workflow className="h-4 w-4 text-gray-500" />
+      );
+    }
+    default: {
+      const FallbackIcon = result.fallbackIcon;
+      return <FallbackIcon className="h-4 w-4 text-gray-500" />;
+    }
+  }
+}
+
 export function SearchLayoutGlobalSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -292,7 +341,8 @@ export function SearchLayoutGlobalSearch() {
           title,
           description,
           resourceType: searchType,
-          icon: searchTypeOption.icon
+          fallbackIcon: searchTypeOption.icon,
+          resource: item
         });
       });
     }
@@ -422,7 +472,6 @@ export function SearchLayoutGlobalSearch() {
               {!searchError &&
                 !showSuggestions &&
                 flattenedResults.map((result) => {
-                  const ResultIcon = result.icon;
                   const searchTypeLabel =
                     SEARCH_TYPE_OPTIONS.find(
                       (item) => item.key === result.resourceType
@@ -438,7 +487,9 @@ export function SearchLayoutGlobalSearch() {
                         setOpen(false);
                       }}
                     >
-                      <ResultIcon className="h-4 w-4 flex-shrink-0 text-gray-500" />
+                      <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                        {renderResultIcon(result)}
+                      </span>
 
                       <div className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium text-gray-900">
