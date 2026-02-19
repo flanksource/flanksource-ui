@@ -34,11 +34,7 @@ export function TopologyConfigChanges({ topologyID }: Props) {
     >();
 
   const { data: changeDetails, isLoading: changesLoading } =
-    useGetConfigChangesById(
-      selectedConfigChange?.id!,
-      selectedConfigChange?.config_id!,
-      {}
-    );
+    useGetConfigChangesById(selectedConfigChange?.id!, {});
 
   return (
     <>

@@ -231,13 +231,9 @@ export function ConfigChangeTable({
   );
 
   const { data: configChange, isLoading: changeLoading } =
-    useGetConfigChangesById(
-      selectedChangeId ?? "",
-      selectedConfigChange?.config_id,
-      {
-        enabled: !!selectedChangeId
-      }
-    );
+    useGetConfigChangesById(selectedChangeId ?? "", {
+      enabled: !!selectedChangeId
+    });
 
   const changeDetails = configChange ?? selectedConfigChange;
 
