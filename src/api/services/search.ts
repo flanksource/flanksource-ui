@@ -1,4 +1,4 @@
-import { apiBase } from "../axios";
+import { ConfigDB, apiBase } from "../axios";
 import { PlaybookResourceSelector } from "../types/playbooks";
 
 export type SearchResourcesRequest = {
@@ -37,6 +37,11 @@ export type SearchedResource = {
   config_id?: string;
 };
 
+export type ConfigChangeConfigMapping = Pick<
+  SearchedResource,
+  "id" | "config_id"
+>;
+
 export type SelectedResources = {
   configs: SearchedResource[];
   checks: SearchedResource[];
@@ -53,4 +58,22 @@ export async function searchResources(input: SearchResourcesRequest) {
     input
   );
   return res.data ?? null;
+}
+
+export async function getConfigChangeConfigMappings(
+  changeIds: string[]
+): Promise<ConfigChangeConfigMapping[]> {
+  const ids = Array.from(
+    new Set(changeIds.map((id) => id.trim()).filter(Boolean))
+  );
+
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const res = await ConfigDB.get<ConfigChangeConfigMapping[] | null>(
+    `/config_changes?id=in.(${ids.join(",")})&select=id,config_id`
+  );
+
+  return res.data ?? [];
 }

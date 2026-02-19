@@ -23,10 +23,12 @@ import {
 } from "lucide-react";
 
 import {
+  getConfigChangeConfigMappings,
   searchResources,
   SearchResourcesRequest,
   SearchedResource
 } from "@flanksource-ui/api/services/search";
+import { getConfigsByIDs } from "@flanksource-ui/api/services/configs";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { Badge } from "@flanksource-ui/components/ui/badge";
 import { Checkbox } from "@flanksource-ui/components/ui/checkbox";
@@ -73,6 +75,7 @@ type FlattenedSearchResult = {
   resourceType: SearchResourceType;
   fallbackIcon: LucideIcon;
   resource: SearchedResource;
+  indentLevel?: number;
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
@@ -352,7 +355,11 @@ function buildSearchRequest(
   return request;
 }
 
-function getResourceHref(type: SearchResourceType, item: SearchedResource) {
+function getResourceHref(
+  type: SearchResourceType,
+  item: SearchedResource,
+  configId?: string
+) {
   switch (type) {
     case "configs":
       return `/catalog/${item.id}`;
@@ -360,8 +367,15 @@ function getResourceHref(type: SearchResourceType, item: SearchedResource) {
       return `/settings/canaries/${encodeURIComponent(item.id)}`;
     case "checks":
       return `/health?checkId=${encodeURIComponent(item.id)}&timeRange=1h`;
-    case "config_changes":
+    case "config_changes": {
+      const resolvedConfigId = configId || item.config_id;
+
+      if (resolvedConfigId) {
+        return `/catalog/${encodeURIComponent(resolvedConfigId)}/changes`;
+      }
+
       return `/catalog/changes?changeId=${encodeURIComponent(item.id)}`;
+    }
     case "playbooks":
       return `/playbooks/runs?playbook=${encodeURIComponent(item.id)}`;
     case "connections":
@@ -589,6 +603,67 @@ export function SearchLayoutGlobalSearch() {
     keepPreviousData: true
   });
 
+  const configChangeIds = useMemo(
+    () =>
+      (results?.config_changes ?? [])
+        .map((configChange) => configChange.id)
+        .filter(Boolean),
+    [results?.config_changes]
+  );
+
+  const { data: configChangeConfigMappings = [] } = useQuery({
+    queryKey: ["global-search", "config-change-mappings", configChangeIds],
+    queryFn: async () => {
+      try {
+        return await getConfigChangeConfigMappings(configChangeIds);
+      } catch {
+        return [];
+      }
+    },
+    enabled: open && configChangeIds.length > 0,
+    keepPreviousData: true
+  });
+
+  const configIdByChangeId = useMemo(() => {
+    const entries = (results?.config_changes ?? []).map((change) => [
+      change.id,
+      change.config_id
+    ]) as [string, string | undefined][];
+
+    configChangeConfigMappings.forEach((mapping) => {
+      if (mapping.config_id) {
+        entries.push([mapping.id, mapping.config_id]);
+      }
+    });
+
+    return new Map(
+      entries.filter((entry): entry is [string, string] => Boolean(entry[1]))
+    );
+  }, [configChangeConfigMappings, results?.config_changes]);
+
+  const configIds = useMemo(
+    () => Array.from(new Set(Array.from(configIdByChangeId.values()))),
+    [configIdByChangeId]
+  );
+
+  const { data: configsByChange = [] } = useQuery({
+    queryKey: ["global-search", "config-change-configs", configIds],
+    queryFn: async () => {
+      try {
+        return await getConfigsByIDs(configIds);
+      } catch {
+        return [];
+      }
+    },
+    enabled: open && configIds.length > 0,
+    keepPreviousData: true
+  });
+
+  const configById = useMemo(
+    () => new Map(configsByChange.map((config) => [config.id, config])),
+    [configsByChange]
+  );
+
   useEffect(() => {
     const trimmedQuery = debouncedQuery.trim();
 
@@ -613,13 +688,99 @@ export function SearchLayoutGlobalSearch() {
       }
 
       const resources = results[searchType] ?? [];
-      resources.forEach((item, index) => {
+
+      if (searchType !== "config_changes") {
+        resources.forEach((item, index) => {
+          const title = getResourceTitle(searchType, item);
+          const description = getResourceDescription(searchType, item);
+
+          entries.push({
+            key: `${searchType}-${item.id}-${index}`,
+            value: `${searchType}-${item.id}-${title}-${description}`,
+            href: getResourceHref(searchType, item),
+            title,
+            description,
+            resourceType: searchType,
+            fallbackIcon: searchTypeOption.icon,
+            resource: item
+          });
+        });
+
+        continue;
+      }
+
+      const changesByConfig = new Map<string, SearchedResource[]>();
+      const ungroupedChanges: SearchedResource[] = [];
+
+      resources.forEach((change) => {
+        const configId = change.config_id || configIdByChangeId.get(change.id);
+
+        if (!configId) {
+          ungroupedChanges.push(change);
+          return;
+        }
+
+        const changesForConfig = changesByConfig.get(configId) ?? [];
+        changesForConfig.push({
+          ...change,
+          config_id: configId
+        });
+        changesByConfig.set(configId, changesForConfig);
+      });
+
+      changesByConfig.forEach((changesForConfig, configId) => {
+        const config = configById.get(configId);
+        const configResource: SearchedResource = {
+          id: configId,
+          name: config?.name || configId,
+          type: config?.type || "",
+          namespace: "",
+          agent: "",
+          labels: {}
+        };
+
+        const configTitle = getResourceTitle("configs", configResource);
+        const configDescription = getResourceDescription(
+          "configs",
+          configResource
+        );
+
+        entries.push({
+          key: `config-change-group-${configId}`,
+          value: `config-change-group-${configId}-${configTitle}`,
+          href: getResourceHref("configs", configResource),
+          title: configTitle,
+          description: configDescription,
+          resourceType: "configs",
+          fallbackIcon: Database,
+          resource: configResource
+        });
+
+        changesForConfig.forEach((change, index) => {
+          const title = getResourceTitle(searchType, change);
+          const description = getResourceDescription(searchType, change);
+
+          entries.push({
+            key: `${searchType}-${configId}-${change.id}-${index}`,
+            value: `${searchType}-${configId}-${change.id}-${title}-${description}`,
+            href: getResourceHref(searchType, change, configId),
+            title,
+            description,
+            resourceType: searchType,
+            fallbackIcon: searchTypeOption.icon,
+            resource: change,
+            indentLevel: 1
+          });
+        });
+      });
+
+      ungroupedChanges.forEach((item, index) => {
         const title = getResourceTitle(searchType, item);
         const description = getResourceDescription(searchType, item);
 
         entries.push({
-          key: `${searchType}-${item.id}-${index}`,
-          value: `${searchType}-${item.id}-${title}-${description}`,
+          key: `${searchType}-ungrouped-${item.id}-${index}`,
+          value: `${searchType}-ungrouped-${item.id}-${title}-${description}`,
           href: getResourceHref(searchType, item),
           title,
           description,
@@ -631,7 +792,14 @@ export function SearchLayoutGlobalSearch() {
     }
 
     return entries;
-  }, [enabledSearchTypes, results, searchError, searchRequest]);
+  }, [
+    configById,
+    configIdByChangeId,
+    enabledSearchTypes,
+    results,
+    searchError,
+    searchRequest
+  ]);
 
   const showSuggestions =
     activeTypeCount > 0 &&
@@ -810,7 +978,9 @@ export function SearchLayoutGlobalSearch() {
                       asChild
                       key={result.key}
                       value={result.value}
-                      className="mb-1 flex cursor-pointer items-center gap-3 rounded-md px-3 py-2"
+                      className={`mb-1 flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 ${
+                        result.indentLevel ? "pl-9" : ""
+                      }`}
                     >
                       <Link
                         to={result.href}
