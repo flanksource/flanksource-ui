@@ -111,7 +111,8 @@ const SUGGESTED_SEARCH_QUERIES = [
   "change_type=OOMKilled #change",
   "prometheus #config,change,connections",
   "labels.app=cert-manager #config",
-  "health=unhealthy,warning #config"
+  "health=unhealthy,warning #config",
+  "alertmanager @order=-created_at #change "
 ] as const;
 
 const SEARCH_HISTORY_STORAGE_KEY = "globalSearchHistory";
