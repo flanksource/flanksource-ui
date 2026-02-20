@@ -30,6 +30,10 @@ import {
   SearchedResource
 } from "@flanksource-ui/api/services/search";
 import { getConfigsByIDs } from "@flanksource-ui/api/services/configs";
+import {
+  isLocalAgent,
+  getAgentByIDs
+} from "@flanksource-ui/api/services/agents";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { Badge } from "@flanksource-ui/components/ui/badge";
 import { Checkbox } from "@flanksource-ui/components/ui/checkbox";
@@ -393,12 +397,58 @@ function getResourceTitle(type: SearchResourceType, item: SearchedResource) {
   return item.name || item.id;
 }
 
+function sortTagEntries(entries: [string, string][]): [string, string][] {
+  const priority: Record<string, number> = {
+    cluster: 0,
+    account: 1,
+    region: 2,
+    namespace: 3,
+    zone: 4
+  };
+
+  return entries.sort(([a], [b]) => {
+    const pa = priority[a.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    const pb = priority[b.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+
+    if (pa !== pb) {
+      return pa - pb;
+    }
+
+    return a.localeCompare(b);
+  });
+}
+
+function getConfigTagEntries(item: SearchedResource): [string, string][] {
+  if (!item.tags || typeof item.tags !== "object") {
+    return [];
+  }
+
+  return sortTagEntries(
+    Object.entries(item.tags).filter(([key]) => key !== "toString")
+  );
+}
+
 function getResourceDescription(
   type: SearchResourceType,
   item: SearchedResource
 ): string {
   if (type === "config_changes") {
     return item.change_type || item.type || "";
+  }
+
+  if (type === "configs") {
+    const parts: string[] = [item.type].filter(Boolean);
+    const tagEntries = getConfigTagEntries(item);
+
+    if (tagEntries.length > 0) {
+      tagEntries.forEach(([key, value]) => {
+        parts.push(`${key}=${value}`);
+      });
+    } else if (item.namespace) {
+      parts.unshift(item.namespace);
+    }
+
+    return parts.join(" · ");
   }
 
   return [item.namespace, item.type].filter(Boolean).join(" • ");
@@ -657,6 +707,36 @@ export function SearchLayoutGlobalSearch() {
     () => new Map(configsByChange.map((config) => [config.id, config])),
     [configsByChange]
   );
+
+  const nonLocalAgentIds = useMemo(() => {
+    if (!results) {
+      return [];
+    }
+
+    const agentIds = new Set<string>();
+
+    for (const searchTypeOption of SEARCH_TYPE_OPTIONS) {
+      const resources = results[searchTypeOption.key] ?? [];
+
+      resources.forEach((item) => {
+        if (!isLocalAgent(item.agent)) {
+          agentIds.add(item.agent);
+        }
+      });
+    }
+
+    return Array.from(agentIds);
+  }, [results]);
+
+  const { data: agentNamesMap = new Map<string, string>() } = useQuery({
+    queryKey: ["global-search", "agents", nonLocalAgentIds],
+    queryFn: async () => {
+      const agents = await getAgentByIDs(nonLocalAgentIds);
+      return new Map(agents.map((agent) => [agent.id, agent.name]));
+    },
+    enabled: open && nonLocalAgentIds.length > 0,
+    keepPreviousData: true
+  });
 
   useEffect(() => {
     const trimmedQuery = debouncedQuery.trim();
@@ -995,12 +1075,41 @@ export function SearchLayoutGlobalSearch() {
                           <span className="block truncate text-sm font-medium text-gray-900">
                             {result.title}
                           </span>
-                          <p className="truncate text-xs text-gray-500">
-                            {result.description || "No additional details"}
-                          </p>
+                          {result.resourceType === "configs" ? (
+                            <div className="flex items-center gap-1 overflow-hidden">
+                              {result.resource.type && (
+                                <span className="flex-shrink-0 truncate text-xs text-gray-500">
+                                  {result.resource.type}
+                                </span>
+                              )}
+                              {getConfigTagEntries(result.resource).map(
+                                ([key, value]) => (
+                                  <span
+                                    key={key}
+                                    className="flex-shrink-0 rounded-md bg-gray-100 px-1 py-0.5 text-[10px] text-gray-600"
+                                  >
+                                    {key}: {value}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          ) : (
+                            <p className="truncate text-xs text-gray-500">
+                              {result.description || "No additional details"}
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex flex-shrink-0 items-center gap-2 self-center">
+                          {!isLocalAgent(result.resource.agent) &&
+                            agentNamesMap.get(result.resource.agent) && (
+                              <Badge
+                                variant="outline"
+                                className="whitespace-nowrap border-orange-200 bg-orange-50 px-1.5 py-0 text-[10px] text-orange-700"
+                              >
+                                {agentNamesMap.get(result.resource.agent)}
+                              </Badge>
+                            )}
                           <Badge
                             variant="outline"
                             className={`whitespace-nowrap px-1.5 py-0 text-[10px] uppercase ${getSearchTypeBadgeClass(result.resourceType)}`}
