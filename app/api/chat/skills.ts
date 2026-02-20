@@ -4,6 +4,8 @@ import { experimental_createSkillTool as createSkillTool } from "bash-tool";
 
 type LoadedSkillTool = {
   skillTool?: unknown;
+  skillFiles: Record<string, string>;
+  skillInstructions?: string;
   skillsDir: string;
   skillsCount: number;
   error?: string;
@@ -36,6 +38,7 @@ function resolveSkillsDir() {
   return DEFAULT_SKILLS_DIR;
 }
 
+
 export async function loadSkillTool(): Promise<LoadedSkillTool> {
   const skillsDir = resolveSkillsDir();
 
@@ -49,6 +52,7 @@ export async function loadSkillTool(): Promise<LoadedSkillTool> {
 
   if (!fs.existsSync(skillsDir)) {
     const result: LoadedSkillTool = {
+      skillFiles: {},
       skillsDir,
       skillsCount: 0
     };
@@ -62,12 +66,14 @@ export async function loadSkillTool(): Promise<LoadedSkillTool> {
   }
 
   try {
-    const { skill, skills } = await createSkillTool({
+    const { skill, skills, files, instructions } = await createSkillTool({
       skillsDirectory: skillsDir
     });
 
     const result: LoadedSkillTool = {
       skillTool: skill,
+      skillFiles: files,
+      skillInstructions: instructions,
       skillsDir,
       skillsCount: skills.length
     };
@@ -80,6 +86,7 @@ export async function loadSkillTool(): Promise<LoadedSkillTool> {
     return result;
   } catch (error) {
     const result: LoadedSkillTool = {
+      skillFiles: {},
       skillsDir,
       skillsCount: 0,
       error: error instanceof Error ? error.message : String(error)

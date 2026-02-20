@@ -9,6 +9,8 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { LanguageModelV3 } from "@ai-sdk/provider";
 import { experimental_createMCPClient as createMCPClient } from "@ai-sdk/mcp";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { createBashTool } from "bash-tool";
+import { Bash } from "just-bash";
 import { buildChatTools, truncateToolResultTransform } from "./tools";
 import { loadSkillTool } from "./skills";
 
@@ -141,6 +143,7 @@ function buildLLMModel(connection: LLMConnection): LanguageModelV3 {
   }
 }
 
+
 export async function POST(req: Request) {
   const wideEvent: Record<string, any> = {
     event: "llm-conversation",
@@ -195,6 +198,43 @@ export async function POST(req: Request) {
 
     if (loadedSkillTool.skillTool) {
       (tools as Record<string, unknown>).skill = loadedSkillTool.skillTool;
+    }
+
+    try {
+      const sandbox = new Bash({
+        cwd: "/workspace",
+        network: {
+          dangerouslyAllowFullInternetAccess: true,
+          timeoutMs: 30_000,
+          maxRedirects: 10
+        }
+      });
+
+      const bashToolkit = await createBashTool({
+        sandbox,
+        destination: "/workspace",
+        files: loadedSkillTool.skillFiles,
+        extraInstructions: loadedSkillTool.skillInstructions
+      });
+
+      const mutableTools = tools as Record<string, unknown>;
+      mutableTools.bash = bashToolkit.tools.bash;
+      mutableTools.readFile = bashToolkit.tools.readFile;
+      mutableTools.writeFile = bashToolkit.tools.writeFile;
+
+      wideEvent.bash = {
+        enabled: true,
+        tools: ["bash", "readFile", "writeFile"],
+        curl: {
+          enabled: true,
+          policy: "allow all domains"
+        }
+      };
+    } catch (error) {
+      wideEvent.bash = {
+        enabled: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
     }
 
     // Build tools first so convertToModelMessages can resolve tool schemas
