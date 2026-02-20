@@ -21,14 +21,12 @@ import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
 
 type ConfigDetailsChangesProps = {
   id: string;
-  configId: string;
   viewType?: ViewType;
   data?: ConfigChange;
   showConfigLogo?: boolean;
 };
 
 export function ConfigDetailsChanges({
-  configId,
   id,
   viewType = ViewType.summary,
   showConfigLogo,
@@ -36,7 +34,7 @@ export function ConfigDetailsChanges({
 }: ConfigDetailsChangesProps) {
   const [open, setOpen] = useState(false);
 
-  const { data: change, isLoading } = useGetConfigChangesById(id, configId!, {
+  const { data: change, isLoading } = useGetConfigChangesById(id, {
     enabled: open
   });
 
@@ -211,7 +209,6 @@ export function ConfigDetailChangeModal({
 
         {!isLoading && changeDetails && changeDetails?.config_id && (
           <ConfigDetailsChanges
-            configId={changeDetails.config_id}
             id={changeDetails.id}
             viewType={ViewType.detailed}
             data={changeDetails}

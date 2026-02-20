@@ -462,7 +462,6 @@ export function ConfigChangeEvidence({
   return (
     <div className={className}>
       <ConfigDetailsChanges
-        configId={evidence.config_id!}
         id={evidence.config_change_id!}
         viewType={viewType}
         showConfigLogo={true}
