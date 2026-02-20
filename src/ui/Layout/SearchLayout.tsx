@@ -12,6 +12,7 @@ import { UserProfileDropdown } from "../../components/Users/UserProfile";
 import DashboardErrorBoundary from "../../components/Errors/DashboardErrorBoundary";
 import PreferencePopOver from "./Preference";
 import { AiFeatureLoaderProvider, useAiFeatureLoader } from "./AiFeatureLoader";
+import { SearchLayoutGlobalSearch } from "./SearchLayoutGlobalSearch";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { features } from "../../services/permissions/features";
 
@@ -86,6 +87,7 @@ function SearchLayoutInner({
             </div>
 
             <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+              <SearchLayoutGlobalSearch />
               {!isAiDisabled &&
                 (aiLoaded ? (
                   <Suspense
