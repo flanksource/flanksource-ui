@@ -9,8 +9,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { LanguageModelV3 } from "@ai-sdk/provider";
 import { experimental_createMCPClient as createMCPClient } from "@ai-sdk/mcp";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { createBashTool } from "bash-tool";
-import { Bash } from "just-bash";
+import { loadCreateBashTool, loadJustBashConstructor } from "./bash-tool";
 import { buildChatTools, truncateToolResultTransform } from "./tools";
 import { loadSkillTool } from "./skills";
 
@@ -143,7 +142,6 @@ function buildLLMModel(connection: LLMConnection): LanguageModelV3 {
   }
 }
 
-
 export async function POST(req: Request) {
   const wideEvent: Record<string, any> = {
     event: "llm-conversation",
@@ -201,12 +199,19 @@ export async function POST(req: Request) {
     }
 
     try {
-      const sandbox = new Bash({
+      const [createBashTool, JustBash] = await Promise.all([
+        loadCreateBashTool(),
+        loadJustBashConstructor()
+      ]);
+
+      const sandbox = new JustBash({
         cwd: "/workspace",
         network: {
+          // TODO: Consider restricting this to flanksource.com host(s) only.
           dangerouslyAllowFullInternetAccess: true,
           timeoutMs: 30_000,
-          maxRedirects: 10
+          maxRedirects: 10,
+          maxResponseSize: 65_000
         }
       });
 

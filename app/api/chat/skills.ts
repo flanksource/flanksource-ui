@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { experimental_createSkillTool as createSkillTool } from "bash-tool";
+import { loadCreateSkillTool } from "./bash-tool";
 
 type LoadedSkillTool = {
   skillTool?: unknown;
@@ -38,7 +38,6 @@ function resolveSkillsDir() {
   return DEFAULT_SKILLS_DIR;
 }
 
-
 export async function loadSkillTool(): Promise<LoadedSkillTool> {
   const skillsDir = resolveSkillsDir();
 
@@ -66,6 +65,7 @@ export async function loadSkillTool(): Promise<LoadedSkillTool> {
   }
 
   try {
+    const createSkillTool = await loadCreateSkillTool();
     const { skill, skills, files, instructions } = await createSkillTool({
       skillsDirectory: skillsDir
     });
