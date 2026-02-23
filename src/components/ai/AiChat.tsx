@@ -56,6 +56,7 @@ import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
 
 type TimeseriesPoint = { timestamp: string; value: number };
@@ -378,6 +379,13 @@ export function AIChat({
       part.state === "output-denied" || part.state === "output-available";
     const customOutput = renderCustomToolOutput(part);
 
+    const configId =
+      part.input && typeof part.input === "object" && !Array.isArray(part.input)
+        ? ((part.input as Record<string, unknown>).config_id as
+            | string
+            | undefined)
+        : undefined;
+
     return (
       <div className="space-y-3" key={`${messageId}-tool-${index}`}>
         <Tool defaultOpen={isApprovalRequested}>
@@ -387,6 +395,14 @@ export function AIChat({
             toolName={toolName}
             type={part.type}
           />
+          {typeof configId === "string" && configId && (
+            <div className="flex items-center gap-2 border-t px-3 py-1.5 text-sm text-muted-foreground">
+              <span className="text-xs font-medium uppercase tracking-wide">
+                Config:
+              </span>
+              <ConfigLink configId={configId} />
+            </div>
+          )}
           <ToolContent>
             <ToolInput input={part.input} />
 
