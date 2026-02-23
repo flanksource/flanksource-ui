@@ -141,6 +141,36 @@ function isTruncated(output: unknown): boolean {
   return false;
 }
 
+/**
+ * Unwrap MCP protocol envelope: { content: [{ type: "text", text: "..." }], isError: bool }
+ * Returns the inner text, or null if output doesn't match the envelope shape.
+ */
+function unwrapMCPEnvelope(output: unknown): string | null {
+  if (!output || typeof output !== "object" || Array.isArray(output))
+    return null;
+  const obj = output as Record<string, unknown>;
+  if (!Array.isArray(obj.content)) return null;
+  const texts = (obj.content as Array<Record<string, unknown>>)
+    .filter((c) => c?.type === "text" && typeof c?.text === "string")
+    .map((c) => c.text as string);
+  return texts.length > 0 ? texts.join("\n") : null;
+}
+
+function tryParseJSON(text: string): unknown | null {
+  const trimmed = text.trim();
+  if (
+    (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+    (trimmed.startsWith("[") && trimmed.endsWith("]"))
+  ) {
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 export const ToolOutput = ({
   className,
   output,
@@ -153,9 +183,26 @@ export const ToolOutput = ({
 
   const truncated = isTruncated(output);
 
-  let Output = <div>{output as ReactNode}</div>;
+  // Unwrap MCP envelope if present, otherwise use raw output
+  const mcpText = unwrapMCPEnvelope(output);
+  const resolved = mcpText ?? output;
 
-  if (typeof output === "object" && !isValidElement(output)) {
+  let Output = <div>{resolved as ReactNode}</div>;
+
+  if (typeof resolved === "string") {
+    const parsed = tryParseJSON(resolved);
+    if (parsed !== null) {
+      Output = (
+        <CodeBlock code={JSON.stringify(parsed, null, 2)} language="json" />
+      );
+    } else {
+      Output = (
+        <pre className="whitespace-pre-wrap p-4 font-mono text-xs">
+          {resolved}
+        </pre>
+      );
+    }
+  } else if (typeof resolved === "object" && !isValidElement(resolved)) {
     Output = (
       <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />
     );
