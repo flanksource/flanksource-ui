@@ -327,6 +327,33 @@ export function AIChat({
     return null;
   };
 
+  const formatToolArgsSummary = (input: unknown, maxLen = 90): string => {
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
+      return "";
+    }
+
+    const serialize = (val: unknown): string => {
+      if (Array.isArray(val)) return val.join(",");
+      if (val && typeof val === "object" && !Array.isArray(val)) {
+        const entries = Object.entries(val as Record<string, unknown>)
+          .filter(([, v]) => v !== null && v !== undefined && v !== "")
+          .map(([k, v]) => `${k}: ${String(v)}`);
+        return entries.join(",");
+      }
+      return String(val);
+    };
+
+    const result = Object.entries(input as Record<string, unknown>)
+      .filter(([, v]) => v !== null && v !== undefined && v !== "")
+      .map(([k, v]) => `${k}: ${serialize(v)}`)
+      .join(" ");
+
+    if (!result) return "";
+    return result.length > maxLen
+      ? result.substring(0, maxLen - 1) + "…"
+      : result;
+  };
+
   const renderToolPart = (
     part: UIMessage["parts"][number],
     index: number,
@@ -337,7 +364,9 @@ export function AIChat({
     }
 
     const approvalId = part.approval?.id ?? part.toolCallId;
-    const title = part.title ?? getToolName(part);
+    const baseName = part.title ?? getToolName(part);
+    const argsSummary = formatToolArgsSummary(part.input);
+    const title = argsSummary ? `${baseName} (${argsSummary})` : baseName;
     const toolName = part.type === "dynamic-tool" ? part.toolName : undefined;
     const hasOutput = part.output !== undefined && part.output !== "";
     const hasErrorText = Boolean(part.errorText);
