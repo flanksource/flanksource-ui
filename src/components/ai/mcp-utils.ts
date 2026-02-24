@@ -1,4 +1,4 @@
-const TRUNCATION_MARKER = "⚠️ Tool output truncated";
+export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
 
 export function isToolOutputTruncated(output: unknown): boolean {
   if (typeof output === "string") {
