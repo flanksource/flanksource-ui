@@ -23,9 +23,9 @@ import {
   Tool,
   ToolContent,
   ToolHeader,
-  ToolInput,
-  ToolOutput
+  ToolInput
 } from "@flanksource-ui/components/ai-elements/tool";
+import { ToolOutput } from "@flanksource-ui/components/ai/ToolOutput";
 import {
   PromptInput,
   PromptInputBody,

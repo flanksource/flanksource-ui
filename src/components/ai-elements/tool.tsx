@@ -9,7 +9,6 @@ import {
 import { cn } from "@flanksource-ui/lib/utils";
 import type { DynamicToolUIPart, ToolUIPart } from "ai";
 import {
-  AlertTriangleIcon,
   CheckCircleIcon,
   ChevronDownIcon,
   CircleIcon,
@@ -132,45 +131,6 @@ export type ToolOutputProps = ComponentProps<"div"> & {
   errorText: ToolPart["errorText"];
 };
 
-const TRUNCATION_MARKER = "⚠️ Tool output truncated";
-
-function isTruncated(output: unknown): boolean {
-  if (typeof output === "string") {
-    return output.startsWith(TRUNCATION_MARKER);
-  }
-  return false;
-}
-
-/**
- * Unwrap MCP protocol envelope: { content: [{ type: "text", text: "..." }], isError: bool }
- * Returns the inner text, or null if output doesn't match the envelope shape.
- */
-function unwrapMCPEnvelope(output: unknown): string | null {
-  if (!output || typeof output !== "object" || Array.isArray(output))
-    return null;
-  const obj = output as Record<string, unknown>;
-  if (!Array.isArray(obj.content)) return null;
-  const texts = (obj.content as Array<Record<string, unknown>>)
-    .filter((c) => c?.type === "text" && typeof c?.text === "string")
-    .map((c) => c.text as string);
-  return texts.length > 0 ? texts.join("\n") : null;
-}
-
-function tryParseJSON(text: string): unknown | null {
-  const trimmed = text.trim();
-  if (
-    (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-    (trimmed.startsWith("[") && trimmed.endsWith("]"))
-  ) {
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
-
 export const ToolOutput = ({
   className,
   output,
@@ -181,28 +141,9 @@ export const ToolOutput = ({
     return null;
   }
 
-  const truncated = isTruncated(output);
+  let Output = <div>{output as ReactNode}</div>;
 
-  // Unwrap MCP envelope if present, otherwise use raw output
-  const mcpText = unwrapMCPEnvelope(output);
-  const resolved = mcpText ?? output;
-
-  let Output = <div>{resolved as ReactNode}</div>;
-
-  if (typeof resolved === "string") {
-    const parsed = tryParseJSON(resolved);
-    if (parsed !== null) {
-      Output = (
-        <CodeBlock code={JSON.stringify(parsed, null, 2)} language="json" />
-      );
-    } else {
-      Output = (
-        <pre className="whitespace-pre-wrap p-4 font-mono text-xs">
-          {resolved}
-        </pre>
-      );
-    }
-  } else if (typeof resolved === "object" && !isValidElement(resolved)) {
+  if (typeof output === "object" && !isValidElement(output)) {
     Output = (
       <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />
     );
@@ -212,17 +153,9 @@ export const ToolOutput = ({
 
   return (
     <div className={cn("space-y-2 p-4", className)} {...props}>
-      <div className="flex items-center gap-2">
-        <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {errorText ? "Error" : "Result"}
-        </h4>
-        {truncated && (
-          <Badge className="gap-1 rounded-full text-xs" variant="secondary">
-            <AlertTriangleIcon className="size-3 text-yellow-600" />
-            Output truncated
-          </Badge>
-        )}
-      </div>
+      <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {errorText ? "Error" : "Result"}
+      </h4>
       <div
         className={cn(
           "overflow-x-auto rounded-md text-xs [&_table]:w-full",
