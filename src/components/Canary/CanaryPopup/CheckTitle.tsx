@@ -16,10 +16,8 @@ export function CheckTitle({
   size = "large",
   ...rest
 }: CheckTitleProps) {
-  // todo: this is a hack to get the agent id from the check, before it gets
-  // update to a check without the agent id
   const agentID = check?.agent_id;
-  const namespace = check?.namespace;
+  const namespace = check?.namespace?.replace(/"/g, "");
 
   return (
     <div className={`flex flex-row items-center ${className}`} {...rest}>
@@ -60,7 +58,7 @@ export function CheckTitle({
               title={`Namespace for ${check?.name}`}
               style={{ paddingTop: "1px" }}
             >
-              <Badge text={check?.namespace ?? ""} />
+              <Badge text={check?.namespace?.replace(/"/g, "") ?? ""} />
             </span>
           )}
         </div>
@@ -83,6 +81,7 @@ export function CheckTitle({
         <AgentName
           className="bg-blue-100 text-blue-500"
           size="sm"
+          agent={check?.agents}
           agentId={agentID}
         />
       </div>

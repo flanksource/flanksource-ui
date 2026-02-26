@@ -96,6 +96,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [semantic-release, docker]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
+    outputs:
+      release-version: ${{ needs.semantic-release.outputs.release-version }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@446798f8213ac2e75931c1b0769676d927801858 # v2.10.3
@@ -103,44 +105,43 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-      - name: Download yq
-        run: |
-          wget -nv -nc -O yq https://github.com/mikefarah/yq/releases/download/v4.20.2/yq_linux_amd64
-          chmod +x yq
       - name: Update chart version
-        run: ./yq -i e '.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
-      - name: Update app version
-        run: ./yq -i e '.appVersion = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
-      - name: Update image tags
-        run: ./yq -i e '.image.tag = "v${{ needs.semantic-release.outputs.release-version }}"' chart/values.yaml
-      - name: Set up Helm
-        uses: azure/setup-helm@18bc76811624f360dbd7f18c2d4ecb32c7b87bab # v1.1
+        uses: mikefarah/yq@7ccaf8e700ce99eb3f0f6cef7f5930a0b3c827cd # v4.49.2
         with:
-          version: v3.8.0
+          cmd: yq -i '.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
+      - name: Update app version
+        uses: mikefarah/yq@7ccaf8e700ce99eb3f0f6cef7f5930a0b3c827cd # v4.49.2
+        with:
+          cmd: yq -i '.appVersion = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
+      - name: Update image tags
+        uses: mikefarah/yq@7ccaf8e700ce99eb3f0f6cef7f5930a0b3c827cd # v4.49.2
+        with:
+          cmd: yq -i '.image.tag = "v${{ needs.semantic-release.outputs.release-version }}"' chart/values.yaml
+      - name: Set up Helm
+        uses: azure/setup-helm@b9e51907a09c216f16ebe8536097933489208112 # v4.3.0
       - name: Package Helm chart
         run: |
           helm package ./chart
-      - name: Clone charts repo
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - name: Upload helm chart artifact
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
-          repository: "${{ github.repository_owner }}/charts"
-          path: charts
-          token: "${{ secrets.FLANKBOT }}"
-      - name: Update chart repo
-        run: |
-          cd charts
-          cp ../flanksource-ui-*.tgz ./
-          helm repo index --merge index.yaml .
-      - name: Push changes to chart repo
-        uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4.16.0
-        with:
-          commit_message: "Release ${{ needs.semantic-release.outputs.release-version }} of ${{ github.repository }}"
-          branch: gh-pages
-          repository: ./charts
+          name: helm-chart
+          path: flanksource-ui-*.tgz
+
+  push-helm-chart:
+    needs: helm
+    if: always() && needs.helm.result == 'success'
+    uses: flanksource/action-workflows/.github/workflows/push-helm-chart.yml@4b41aaf6cf7727789c0d21cd0bc262e850ba543f # main
+    with:
+      filename_regex: "flanksource-ui-*.tgz"
+      version: ${{ needs.helm.outputs.release-version }}
+      pr_title: "Release ${{ needs.helm.outputs.release-version }} of ${{ github.repository }}"
+    secrets:
+      token: ${{ secrets.FLANKBOT }}
 
   update-canary-checker:
     runs-on: ubuntu-latest
-    needs: [docker, helm, semantic-release]
+    needs: [docker, push-helm-chart, semantic-release]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
       - name: Harden Runner
@@ -175,7 +176,7 @@ jobs:
 
   update-incident-commander:
     runs-on: ubuntu-latest
-    needs: [docker, helm, semantic-release]
+    needs: [docker, push-helm-chart, semantic-release]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
       - name: Harden Runner

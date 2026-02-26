@@ -101,6 +101,7 @@ export interface ConfigAccessSummary {
   user: string;
   email: string;
   role?: string | null;
+  user_type?: string | null;
   external_group_id?: string | null;
   last_signed_in_at?: string | null;
   last_reviewed_at?: string | null;

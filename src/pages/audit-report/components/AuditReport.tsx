@@ -120,7 +120,7 @@ const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
   }
 
   return (
-    <div className="audit-report flex min-h-screen flex-col bg-gray-50">
+    <div className="audit-report flex h-full min-h-0 flex-col bg-gray-50">
       <Header
         onExport={handleExport}
         printView={printView}
@@ -128,18 +128,20 @@ const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
         application={application}
       />
 
-      <main
-        ref={reportRef}
-        className={`container mx-auto flex-grow space-y-6 px-4 py-6 ${printView ? "pdf-export" : ""}`}
-      >
-        {application && (
-          <ApplicationsSection
-            key={application.id}
-            application={application}
-            printView={printView}
-          />
-        )}
-      </main>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <main
+          ref={reportRef}
+          className={`container mx-auto space-y-6 px-4 py-6 ${printView ? "pdf-export" : ""}`}
+        >
+          {application && (
+            <ApplicationsSection
+              key={application.id}
+              application={application}
+              printView={printView}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 };

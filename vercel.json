@@ -1,0 +1,3 @@
+{
+  "buildCommand": "make skills.download && npm run build:clerk"
+}

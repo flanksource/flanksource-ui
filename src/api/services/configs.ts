@@ -169,7 +169,7 @@ export const getConfigAccessSummary = (configId: string) =>
     ConfigDB.get(
       `/config_access_summary?config_id=eq.${encodeURIComponent(
         configId
-      )}&select=user,email,role,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
+      )}&select=user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
         "user.asc"
       )}`,
       {
@@ -407,9 +407,9 @@ export const getConfigListFilteredByType = (types: string[]) => {
   );
 };
 
-export const getConfigChangeById = async (id: string, configId: string) => {
+export const getConfigChangeById = async (id: string) => {
   const res = await ConfigDB.get<ConfigChange[] | null>(
-    `/config_changes?config_id=eq.${configId}&id=eq.${id}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
+    `/config_changes?id=eq.${id}&select=id,config_id,change_type,created_at,external_created_by,source,diff,details,patches,created_by,config:configs(id,name,type,config_class)`
   );
   return res.data?.[0] ?? null;
 };

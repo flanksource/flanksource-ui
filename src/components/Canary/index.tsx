@@ -1,4 +1,11 @@
-import { HealthChecksResponse } from "@flanksource-ui/api/types/health";
+import {
+  getAgentByIDs,
+  isLocalAgent
+} from "@flanksource-ui/api/services/agents";
+import {
+  HealthCheck,
+  HealthChecksResponse
+} from "@flanksource-ui/api/types/health";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
 import HealthPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/HealthPageSkeletonLoader";
@@ -143,10 +150,34 @@ export function Canary({
         signal: abortController.current?.signal
       });
       const data = (await result.json()) as HealthChecksResponse;
+      const summaryChecks = data?.checks_summary || [];
+
+      // Fetch agent names for non-local agent IDs in the summary
+      const uniqueAgentIds = [
+        ...new Set(
+          summaryChecks
+            .map((c) => c.agent_id)
+            .filter((id): id is string => !isLocalAgent(id))
+        )
+      ];
+      const agents =
+        uniqueAgentIds.length > 0
+          ? await getAgentByIDs(uniqueAgentIds).catch(() => [])
+          : [];
+      const agentMap = new Map(agents.map((a) => [a.id, a]));
+
+      const enrichedChecks: HealthCheck[] = summaryChecks.map((check) => {
+        const agent = agentMap.get(check.agent_id!);
+        if (agent) {
+          return { ...check, agents: agent };
+        }
+        return check;
+      });
+
       setHealthState((state) => {
         return {
           ...state,
-          checks: data?.checks_summary || []
+          checks: enrichedChecks
         };
       });
     } catch (ex) {

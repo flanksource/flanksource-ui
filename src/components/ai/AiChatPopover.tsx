@@ -7,6 +7,7 @@ import {
   type ReactNode
 } from "react";
 import { Chat, UIMessage } from "@ai-sdk/react";
+import { Resizable } from "re-resizable";
 import { AIChat } from "@flanksource-ui/components/ai/AiChat";
 import {
   Popover,
@@ -100,6 +101,11 @@ export function useAiChatPopover() {
   return context;
 }
 
+const DEFAULT_WIDTH = 640;
+const DEFAULT_HEIGHT = 560;
+const MIN_WIDTH = 400;
+const MIN_HEIGHT = 400;
+
 type AiChatPopoverProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -117,6 +123,12 @@ export function AiChatPopover({
     () => new Chat<UIMessage>({ id: "ai-popover-local" })
   );
 
+  // Size state lives here in the parent so it survives popover close/reopen
+  const [size, setSize] = useState({
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT
+  });
+
   const open = controlledOpen ?? context?.open ?? localOpen;
   const handleOpenChange = onOpenChange ?? context?.setOpen ?? setLocalOpen;
   const chat = context?.chat ?? localChat;
@@ -131,19 +143,49 @@ export function AiChatPopover({
       {trigger ? <PopoverTrigger asChild>{trigger}</PopoverTrigger> : null}
       <PopoverContent
         align="end"
-        className="w-[640px] max-w-[calc(100vw-2rem)] border-border p-0 shadow-2xl"
+        className="w-auto border-border p-0 shadow-2xl"
         forceMount
         side="bottom"
         sideOffset={12}
       >
-        <AIChat
-          key={chat.id}
-          chat={chat}
-          className="h-[70vh] max-h-[760px] min-h-[480px]"
-          onClose={() => handleOpenChange(false)}
-          onNewChat={resetChat}
-          quickPrompts={quickPrompts}
-        />
+        <Resizable
+          size={size}
+          onResizeStop={(_e, _direction, _ref, delta) => {
+            setSize((prev) => ({
+              width: prev.width + delta.width,
+              height: prev.height + delta.height
+            }));
+          }}
+          minWidth={MIN_WIDTH}
+          minHeight={MIN_HEIGHT}
+          maxWidth={
+            typeof window !== "undefined" ? window.innerWidth - 32 : 1200
+          }
+          maxHeight={
+            typeof window !== "undefined" ? window.innerHeight - 80 : 900
+          }
+          // Popover is right-anchored, so only allow resizing leftward and downward
+          enable={{
+            top: false,
+            right: false,
+            bottom: true,
+            left: true,
+            topRight: false,
+            bottomRight: false,
+            bottomLeft: true,
+            topLeft: false
+          }}
+          className="overflow-hidden rounded-[inherit]"
+        >
+          <AIChat
+            key={chat.id}
+            chat={chat}
+            className="h-full"
+            onClose={() => handleOpenChange(false)}
+            onNewChat={resetChat}
+            quickPrompts={quickPrompts}
+          />
+        </Resizable>
       </PopoverContent>
     </Popover>
   );

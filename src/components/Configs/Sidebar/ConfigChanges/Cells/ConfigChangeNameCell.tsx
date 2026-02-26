@@ -14,7 +14,6 @@ export default function ConfigChangeNameCell({
       <ConfigDetailsChanges
         key={item.id}
         id={item.id}
-        configId={item.config_id}
         viewType={ViewType.summary}
         data={item}
       />

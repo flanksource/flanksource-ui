@@ -5,6 +5,7 @@ import ConfigGraphTableToggle from "./ConfigsListFilters/ConfigGraphTableToggle"
 import { ConfigHealthyDropdown } from "./ConfigsListFilters/ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigsListFilters/ConfigLabelsDropdown";
 import { ConfigStatusDropdown } from "./ConfigsListFilters/ConfigStatusDropdown";
+import ShowDeletedConfigs from "./ConfigsListFilters/ShowDeletedConfigs";
 
 export default function ConfigRelationshipFilterBar() {
   return (
@@ -24,6 +25,7 @@ export default function ConfigRelationshipFilterBar() {
         <ConfigHealthyDropdown />
         <ConfigStatusDropdown />
         <ConfigRelationshipToggles />
+        <ShowDeletedConfigs />
         <ConfigGraphTableToggle />
       </div>
     </FormikFilterForm>

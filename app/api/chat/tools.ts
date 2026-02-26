@@ -1,9 +1,57 @@
-import { tool, zodSchema } from "ai";
+import { tool, zodSchema, type TextStreamPart } from "ai";
 import { z } from "zod";
 
-const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
+// flanksource.com/llms.txt is about 57k characters (~12,500 tokens)
+// https://platform.openai.com/tokenizer
+export const TOOL_OUTPUT_CHAR_LIMIT = 65_000;
+
+export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
+
+/**
+ * Truncate a tool output string to TOOL_OUTPUT_CHAR_LIMIT characters.
+ * Returns the original string unchanged if within the limit.
+ * Otherwise returns a truncated version with a clear warning header.
+ */
+export function truncateToolOutput(
+  serialized: string,
+  limit: number = TOOL_OUTPUT_CHAR_LIMIT
+): string {
+  if (serialized.length <= limit) {
+    return serialized;
+  }
+
+  const header = `${TRUNCATION_MARKER} to ${limit} characters (original: ${serialized.length}).\n\n`;
+  return header + serialized.slice(0, limit);
+}
+
+/**
+ * Stream transform that intercepts final tool-result chunks and truncates
+ * oversized outputs. Because this sits in the stream pipeline, the truncated
+ * value is what the UI receives, what gets stored in step history, AND what
+ * the next LLM step sees — guaranteeing no mismatch.
+ *
+ * Preliminary (streaming) tool-result chunks are passed through untouched;
+ * only the final chunk (preliminary !== true) is truncated.
+ */
+export function truncateToolResultTransform() {
+  return new TransformStream<TextStreamPart<any>, TextStreamPart<any>>({
+    transform(chunk, controller) {
+      if (chunk.type === "tool-result" && !chunk.preliminary) {
+        const serialized = JSON.stringify(chunk.output);
+        const truncated = truncateToolOutput(serialized);
+        if (truncated !== serialized) {
+          controller.enqueue({ ...chunk, output: truncated });
+          return;
+        }
+      }
+      controller.enqueue(chunk);
+    }
+  });
+}
+
+const NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "run_template",
-  
+
   "search_catalog",
   "search_catalog_changes",
   "describe_catalog",
@@ -26,6 +74,16 @@ const TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
   "read_artifact_metadata"
 ] as const;
 
+// Tool names for playbooks are dependent on the namespace the playbooks are installed.
+// That's why, for playbooks, we use toolDefinition.title instead of the tool name
+// which would look something like (web_request_default)
+// where `web_request` is the .metadata.name
+// and, `default` is the .metadata.namespace
+const PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
+  "curl",
+  "kubectl"
+];
+
 type McpTool = Record<string, any>;
 type McpTools = Record<string, McpTool>;
 
@@ -33,8 +91,12 @@ function wrapMcpToolsWithApproval(mcpTools: McpTools): McpTools {
   const tools = Object.entries(mcpTools).map(
     ([name, toolDefinition]: [string, McpTool]) => {
       const noApproval =
-        TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
-        name.startsWith("view_");
+        NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
+        (toolDefinition["title"] &&
+          PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(
+            toolDefinition["title"]
+          )) ||
+        name.startsWith("view_"); // views are read-only, so they can be auto-approved
 
       return [
         name,

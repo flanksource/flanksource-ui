@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { getAgentByIDs } from "../../api/services/agents";
+import { getAgentByIDs, isLocalAgent } from "../../api/services/agents";
 import { HealthCheck } from "../../api/types/health";
 import { Tab, Tabs } from "../../ui/Tabs/Tabs";
 
@@ -35,7 +35,7 @@ export function filterChecksByTabSelection(
       // if filter by agent_id, show only selected agent_id
       // "local" is a special tab for checks without an agent
       if (selectedTab === "local") {
-        filteredChecks = checks.filter((o) => !o.agent_id);
+        filteredChecks = checks.filter((o) => isLocalAgent(o.agent_id));
       } else {
         filteredChecks = checks.filter((o) => o.agent_id === selectedTab);
       }
@@ -116,36 +116,53 @@ export function CanaryTabs({
   children,
   setTabSelection
 }: CanaryTabsProps) {
-  const agentIDs = useMemo(() => {
-    const uniqueIds = new Set(
-      checks.filter((check) => check.agent_id).map((check) => check.agent_id)
-    );
-    return Array.from(uniqueIds) as string[];
+  // Collect unique non-local agent IDs and any names available from check data
+  const { agentIDsToFetch, knownAgents } = useMemo(() => {
+    const names = new Map<string, string>();
+    checks.forEach((check) => {
+      const id = check.agent_id;
+      if (id && !isLocalAgent(id) && !names.has(id)) {
+        names.set(id, check.agents?.name || "");
+      }
+    });
+    // Only fetch agents where we don't already have a name
+    const toFetch = Array.from(names.entries())
+      .filter(([, name]) => !name)
+      .map(([id]) => id);
+    return { agentIDsToFetch: toFetch, knownAgents: names };
   }, [checks]);
 
-  const { data: agents = [] } = useQuery(
-    ["db", "agents", ...agentIDs],
-    () => getAgentByIDs(agentIDs),
+  const { data: fetchedAgents = [] } = useQuery(
+    ["db", "agents", ...agentIDsToFetch],
+    () => getAgentByIDs(agentIDsToFetch),
     {
-      enabled: tabBy === "agent_id" && agentIDs.length > 0
+      enabled: tabBy === "agent_id" && agentIDsToFetch.length > 0
     }
   );
 
   const tabs = useMemo(() => {
     if (tabBy === "agent_id") {
-      const agentTabs = agents.reduce(
-        (acc, agent) => ({
-          ...acc,
-          [agent.name]: {
-            key: agent.name,
-            value: agent.id,
-            label: agent.name
-          }
-        }),
-        {} as Record<string, { key: string; value: string; label: string }>
-      );
+      // Merge fetched names into known agents
+      const agentMap = new Map(knownAgents);
+      fetchedAgents.forEach((agent) => {
+        if (!isLocalAgent(agent.id)) {
+          agentMap.set(agent.id, agent.name);
+        }
+      });
+
+      const agentTabs = {} as Record<
+        string,
+        { key: string; value: string; label: string }
+      >;
+      agentMap.forEach((name, id) => {
+        const label = name || id;
+        agentTabs[label] = { key: label, value: id, label };
+      });
+
       // Add "local" tab for checks without an agent
-      const hasLocalChecks = checks.some((check) => !check.agent_id);
+      const hasLocalChecks = checks.some((check) =>
+        isLocalAgent(check.agent_id)
+      );
       if (hasLocalChecks) {
         agentTabs["local"] = {
           key: "local",
@@ -156,7 +173,7 @@ export function CanaryTabs({
       return { ...defaultTabs, ...agentTabs };
     }
     return generateTabs(tabBy, checks);
-  }, [agents, checks, tabBy]);
+  }, [knownAgents, fetchedAgents, checks, tabBy]);
 
   const [selectedTab, setSelectedTab] = useState(Object.values(tabs)[0].value);
 

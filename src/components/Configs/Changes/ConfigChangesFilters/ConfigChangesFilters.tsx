@@ -10,6 +10,7 @@ import { ChangesTypesDropdown } from "./ChangeTypesDropdown";
 import { ConfigChangeSeverity } from "./ConfigChangeSeverity";
 import ConfigChangesDateRangeFilter from "./ConfigChangesDateRangeFIlter";
 import { ConfigTagsDropdown } from "./ConfigTagsDropdown";
+import ShowDeletedConfigs from "../../ConfigsListFilters/ShowDeletedConfigs";
 import ConfigTypesTristateDropdown from "./ConfigTypesTristateDropdown";
 
 type FilterBadgeProps = {
@@ -98,6 +99,7 @@ export function ConfigChangeFilters({
           <ConfigChangeSeverity />
           <ConfigTagsDropdown />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
+          <ShowDeletedConfigs />
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">

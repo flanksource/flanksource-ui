@@ -5,6 +5,7 @@ import { ConfigHealthyDropdown } from "./ConfigHealthyDropdown";
 import { ConfigLabelsDropdown } from "./ConfigLabelsDropdown";
 import { ConfigStatusDropdown } from "./ConfigStatusDropdown";
 import { ConfigTypesDropdown } from "./ConfigTypesDropdown";
+import ShowDeletedConfigs from "./ShowDeletedConfigs";
 
 export default function ConfigsListFilters() {
   return (
@@ -29,6 +30,8 @@ export default function ConfigsListFilters() {
         <ConfigStatusDropdown />
 
         <ConfigHealthyDropdown />
+
+        <ShowDeletedConfigs />
 
         <FormikSearchInputClearable
           name="search"
