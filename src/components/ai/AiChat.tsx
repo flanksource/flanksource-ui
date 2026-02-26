@@ -66,7 +66,7 @@ import {
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
@@ -266,9 +266,18 @@ export function AIChat({
   onConversationPersisted,
   storageScopeKey
 }: AIChatProps) {
+  // Tools the user has "always allowed" for this chat session.
+  // Sent to the backend so subsequent requests build those tools
+  // with needsApproval: false — no stream pause, no round-trip.
+  const [alwaysAllowedTools, setAlwaysAllowedTools] = useState<Set<string>>(
+    new Set()
+  );
+  const alwaysAllowedRef = useRef(alwaysAllowedTools);
+  alwaysAllowedRef.current = alwaysAllowedTools;
+
   const {
     messages,
-    sendMessage,
+    sendMessage: rawSendMessage,
     stop,
     status,
     addToolApprovalResponse,
@@ -288,6 +297,23 @@ export function AIChat({
     void saveAIConversation(chat.id, messages, storageScopeKey);
     onConversationPersisted?.(chat.id, messages);
   }, [chat.id, messages, onConversationPersisted, storageScopeKey]);
+
+  // Wrap sendMessage to automatically inject alwaysAllowedTools in the body.
+  // The `chat` prop causes useChat to ignore transport/body options, so we
+  // inject via the per-request options instead.
+  const sendMessage = useCallback(
+    (...args: Parameters<typeof rawSendMessage>) => {
+      const [message, options] = args;
+      return rawSendMessage(message, {
+        ...options,
+        body: {
+          ...options?.body,
+          alwaysAllowedTools: Array.from(alwaysAllowedRef.current)
+        }
+      });
+    },
+    [rawSendMessage]
+  );
 
   // Auto-send when chat mounts with a pre-seeded user message (e.g. from setChatMessages).
   const hasSentOnMount = useRef(false);
@@ -318,6 +344,19 @@ export function AIChat({
       }
     },
     [addToolApprovalResponse, sendMessage, status]
+  );
+
+  const handleToolAlwaysAllow = useCallback(
+    async (toolName: string, approvalId: string) => {
+      // Eagerly update the ref so the transport body() reads the new set
+      // when sendMessage() fires inside handleToolApproval — React won't
+      // have re-rendered yet at that point.
+      const next = new Set(alwaysAllowedRef.current).add(toolName);
+      alwaysAllowedRef.current = next;
+      setAlwaysAllowedTools(next);
+      await handleToolApproval(approvalId, true);
+    },
+    [handleToolApproval]
   );
 
   const handleSubmit = useCallback(
@@ -507,8 +546,20 @@ export function AIChat({
                     onClick={() =>
                       approvalId && handleToolApproval(approvalId, true)
                     }
+                    variant="outline"
                   >
-                    Approve
+                    Allow
+                  </ConfirmationAction>
+                  <ConfirmationAction
+                    disabled={!approvalId}
+                    onClick={() => {
+                      const name = getToolName(part);
+                      if (approvalId && name) {
+                        handleToolAlwaysAllow(name, approvalId);
+                      }
+                    }}
+                  >
+                    Always Allow
                   </ConfirmationAction>
                 </ConfirmationActions>
               </ConfirmationRequest>

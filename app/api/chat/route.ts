@@ -148,7 +148,11 @@ export async function POST(req: Request) {
     status: "started"
   };
 
-  const { messages }: { messages?: UIMessage[] } = await req.json();
+  const {
+    messages,
+    alwaysAllowedTools = []
+  }: { messages?: UIMessage[]; alwaysAllowedTools?: string[] } =
+    await req.json();
   if (!Array.isArray(messages)) {
     return new Response("Invalid request body", { status: 400 });
   }
@@ -180,7 +184,7 @@ export async function POST(req: Request) {
         }
       }
     });
-    const tools = await buildChatTools(mcpClient);
+    const tools = await buildChatTools(mcpClient, alwaysAllowedTools);
 
     const loadedSkillTool = await loadSkillTool();
     wideEvent.skills = {
