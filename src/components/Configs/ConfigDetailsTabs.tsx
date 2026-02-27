@@ -12,6 +12,10 @@ import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMen
 import { ErrorBoundary } from "../ErrorBoundary";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
+import {
+  useConfigDetailsBaseRoute,
+  useConfigDetailsEmbedded
+} from "./ConfigDetailsBaseRouteContext";
 
 type ConfigDetailsTabsProps = {
   refetch?: () => void;
@@ -30,6 +34,8 @@ type ConfigDetailsTabsProps = {
     | string; // Views
   className?: string;
   extra?: ReactNode;
+  /** Override the base route for tab links. Defaults to context value (usually "/catalog"). */
+  baseRoute?: string;
 };
 
 export function ConfigDetailsTabs({
@@ -39,8 +45,12 @@ export function ConfigDetailsTabs({
   pageTitlePrefix,
   activeTabName = "Spec",
   className = "p-2",
-  extra
+  extra,
+  baseRoute
 }: ConfigDetailsTabsProps) {
+  const contextBaseRoute = useConfigDetailsBaseRoute();
+  const embedded = useConfigDetailsEmbedded();
+  const resolvedBaseRoute = baseRoute ?? contextBaseRoute;
   const { id } = useParams();
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
@@ -50,7 +60,10 @@ export function ConfigDetailsTabs({
   const { data: configItem, isLoading: isLoadingConfig } =
     useGetConfigByIdQuery(id!);
 
-  const { tabs: configTabList } = useConfigDetailsTabs(configItem?.summary);
+  const { tabs: configTabList } = useConfigDetailsTabs(
+    configItem?.summary,
+    resolvedBaseRoute
+  );
 
   const playbooksButton = id ? (
     <PlaybooksDropdownMenu config_id={id} containerClassName="my-0" />
@@ -87,6 +100,7 @@ export function ConfigDetailsTabs({
         loading={isLoading}
         extra={layoutExtra}
         contentClass="p-0 h-full overflow-y-hidden"
+        hideChrome={embedded}
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-row overflow-y-hidden">
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">

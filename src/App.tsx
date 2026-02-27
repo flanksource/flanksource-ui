@@ -40,6 +40,7 @@ import {
   schemaResourceTypes
 } from "./components/SchemaResourcePage/resourceTypes";
 import { ConfigPageContextProvider } from "./context/ConfigPageContext";
+import { ConfigDetailsBaseRouteProvider } from "./components/Configs/ConfigDetailsBaseRouteContext";
 import { useFeatureFlagsContext } from "./context/FeatureFlagsContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
@@ -59,12 +60,6 @@ import { stringSortHelper } from "./utils/common";
 
 const TopologyPage = dynamic(
   import("@flanksource-ui/pages/TopologyPage").then((mod) => mod.TopologyPage)
-);
-
-const TopologyCardPage = dynamic(
-  import("@flanksource-ui/pages/TopologyCard").then(
-    (mod) => mod.TopologyCardPage
-  )
 );
 
 const IncidentDetailsPage = dynamic(
@@ -495,10 +490,7 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
   const { featureFlagsLoaded } = useFeatureFlagsContext();
 
-  if (
-    !featureFlagsLoaded &&
-    !window.location.pathname.startsWith("/view/topology")
-  ) {
+  if (!featureFlagsLoaded) {
     return <FullPageSkeletonLoader />;
   }
 
@@ -508,17 +500,94 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         <Route index element={<HomepageRedirect />} />
       </Route>
 
+      <Route path="/embed/health" element={<HealthPage url={CANARY_API} />} />
+
+      {/* Config embed routes — no sidebar */}
       <Route
-        path="/view/topology/:id"
+        path="/embed/config/:id"
+        element={
+          <ConfigDetailsBaseRouteProvider baseRoute="/embed/config" embedded>
+            {withAuthorizationAccessCheck(
+              <ConfigDetailsPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          </ConfigDetailsBaseRouteProvider>
+        }
+      />
+      <Route
+        path="/embed/config/:id/changes"
+        element={
+          <ConfigDetailsBaseRouteProvider baseRoute="/embed/config" embedded>
+            {withAuthorizationAccessCheck(
+              <ConfigDetailsChangesPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          </ConfigDetailsBaseRouteProvider>
+        }
+      />
+      <Route
+        path="/embed/config/:id/relationships"
+        element={
+          <ConfigDetailsBaseRouteProvider baseRoute="/embed/config" embedded>
+            {withAuthorizationAccessCheck(
+              <ConfigDetailsRelationshipsPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          </ConfigDetailsBaseRouteProvider>
+        }
+      />
+      <Route
+        path="/embed/config/:id/access"
+        element={
+          <ConfigDetailsBaseRouteProvider baseRoute="/embed/config" embedded>
+            {withAuthorizationAccessCheck(
+              <ConfigDetailsAccessPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          </ConfigDetailsBaseRouteProvider>
+        }
+      />
+      <Route
+        path="/embed/config/:id/playbooks"
+        element={
+          <ConfigDetailsBaseRouteProvider baseRoute="/embed/config" embedded>
+            {withAuthorizationAccessCheck(
+              <ConfigDetailsPlaybooksPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          </ConfigDetailsBaseRouteProvider>
+        }
+      />
+
+      {/* Views embed routes — no sidebar */}
+      <Route
+        path="/embed/views/:namespace/:name"
         element={withAuthorizationAccessCheck(
-          <TopologyCardPage />,
-          tables.topologies,
+          <ViewPage />,
+          tables.views,
           "read",
           true
         )}
       />
-
-      <Route path="/view/health" element={<HealthPage url={CANARY_API} />} />
+      <Route
+        path="/embed/views/:id"
+        element={withAuthorizationAccessCheck(
+          <ViewPage />,
+          tables.views,
+          "read",
+          true
+        )}
+      />
 
       <Route path="topology" element={sidebar}>
         <Route

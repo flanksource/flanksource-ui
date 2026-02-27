@@ -37,6 +37,7 @@ interface IProps {
   loading?: boolean;
   extra?: React.ReactNode;
   extraClassName?: string;
+  hideChrome?: boolean;
 }
 
 function SearchLayoutInner({
@@ -46,7 +47,8 @@ function SearchLayoutInner({
   title,
   extra,
   loading,
-  onRefresh
+  onRefresh,
+  hideChrome = false
 }: IProps) {
   const [topologyCardSize, setTopologyCardSize] = useAtom(cardPreferenceAtom);
   const { requestAiFeatures, aiLoaded } = useAiFeatureLoader();
@@ -72,64 +74,76 @@ function SearchLayoutInner({
             className={`ml-4 flex items-center gap-3 md:ml-6 ${extraClassName}`}
           >
             {extra}
-            <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
-              {onRefresh && (
-                <div className="flex h-full w-8 items-center justify-center">
-                  <RefreshButton onClick={onRefresh} animate={loading} />
+            {hideChrome ? (
+              onRefresh && (
+                <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+                  <div className="flex h-full w-8 items-center justify-center">
+                    <RefreshButton onClick={onRefresh} animate={loading} />
+                  </div>
                 </div>
-              )}
-              <div className="flex h-full w-8 items-center justify-center">
-                <PreferencePopOver
-                  cardSize={topologyCardSize}
-                  setTopologyCardSize={setTopologyCardSize}
-                />
-              </div>
-            </div>
+              )
+            ) : (
+              <>
+                <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+                  {onRefresh && (
+                    <div className="flex h-full w-8 items-center justify-center">
+                      <RefreshButton onClick={onRefresh} animate={loading} />
+                    </div>
+                  )}
+                  <div className="flex h-full w-8 items-center justify-center">
+                    <PreferencePopOver
+                      cardSize={topologyCardSize}
+                      setTopologyCardSize={setTopologyCardSize}
+                    />
+                  </div>
+                </div>
 
-            <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
-              <SearchLayoutGlobalSearch />
-              {!isAiDisabled &&
-                (aiLoaded ? (
-                  <Suspense
-                    fallback={
+                <div className="flex h-8 items-center divide-x divide-gray-300 rounded-md border border-gray-300 bg-white">
+                  <SearchLayoutGlobalSearch />
+                  {!isAiDisabled &&
+                    (aiLoaded ? (
+                      <Suspense
+                        fallback={
+                          <button
+                            type="button"
+                            className="flex h-full w-8 items-center justify-center text-gray-400"
+                            disabled
+                          >
+                            <Sparkles
+                              className="h-4 w-4 animate-pulse"
+                              aria-hidden
+                            />
+                          </button>
+                        }
+                      >
+                        <LazyAiChatButton shouldAutoOpen={shouldAutoOpen} />
+                      </Suspense>
+                    ) : (
                       <button
                         type="button"
-                        className="flex h-full w-8 items-center justify-center text-gray-400"
-                        disabled
+                        className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
+                        title="AI Chat"
+                        onClick={handleAiButtonClick}
                       >
-                        <Sparkles
-                          className="h-4 w-4 animate-pulse"
-                          aria-hidden
-                        />
+                        <Sparkles className="h-4 w-4" aria-hidden />
+                        <span className="sr-only">AI Chat</span>
                       </button>
-                    }
-                  >
-                    <LazyAiChatButton shouldAutoOpen={shouldAutoOpen} />
-                  </Suspense>
-                ) : (
-                  <button
-                    type="button"
+                    ))}
+                  <Link
+                    to={{
+                      pathname: "/notifications"
+                    }}
                     className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
-                    title="AI Chat"
-                    onClick={handleAiButtonClick}
                   >
-                    <Sparkles className="h-4 w-4" aria-hidden />
-                    <span className="sr-only">AI Chat</span>
-                  </button>
-                ))}
-              <Link
-                to={{
-                  pathname: "/notifications"
-                }}
-                className="flex h-full w-8 items-center justify-center text-gray-400 hover:text-gray-500"
-              >
-                <FaBell className="h-4 w-4" />
-              </Link>
-              <div className="flex h-full w-8 items-center justify-center">
-                <HelpDropdown />
-              </div>
-            </div>
-            <UserProfileDropdown />
+                    <FaBell className="h-4 w-4" />
+                  </Link>
+                  <div className="flex h-full w-8 items-center justify-center">
+                    <HelpDropdown />
+                  </div>
+                </div>
+                <UserProfileDropdown />
+              </>
+            )}
           </div>
         </div>
       </div>

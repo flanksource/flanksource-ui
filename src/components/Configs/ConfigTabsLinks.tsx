@@ -16,7 +16,10 @@ type ConfigDetailsTab = {
   search?: string;
 };
 
-export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
+export function useConfigDetailsTabs(
+  countSummary?: ConfigItem["summary"],
+  baseRoute = "/catalog"
+): {
   isLoading: boolean;
   isError: boolean;
   tabs: ConfigDetailsTab[];
@@ -41,8 +44,10 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   const accessLogsCount =
     accessLogsData?.totalEntries ?? accessLogsData?.data?.length ?? 0;
 
+  const base = `${baseRoute}/${id}`;
+
   const staticTabs: ConfigDetailsTab[] = [
-    { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
+    { label: "Spec", key: "Spec", path: `${base}/spec` },
     {
       label: (
         <>
@@ -51,7 +56,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Changes",
-      path: `/catalog/${id}/changes`
+      path: `${base}/changes`
     },
     {
       label: (
@@ -61,7 +66,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Insights",
-      path: `/catalog/${id}/insights`
+      path: `${base}/insights`
     },
     {
       label: (
@@ -71,7 +76,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Relationships",
-      path: `/catalog/${id}/relationships`
+      path: `${base}/relationships`
     },
     {
       label: (
@@ -81,7 +86,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Playbooks",
-      path: `/catalog/${id}/playbooks`
+      path: `${base}/playbooks`
     },
     {
       label: (
@@ -91,7 +96,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Checks",
-      path: `/catalog/${id}/checks`
+      path: `${base}/checks`
     }
   ];
 
@@ -104,7 +109,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Access",
-      path: `/catalog/${id}/access`
+      path: `${base}/access`
     });
   }
 
@@ -117,7 +122,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
         </>
       ),
       key: "Access Logs",
-      path: `/catalog/${id}/access-logs`
+      path: `${base}/access-logs`
     });
   }
 
@@ -142,7 +147,7 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   const viewTabs: ConfigDetailsTab[] = orderedViews.map((view) => ({
     label: view.title || view.name,
     key: view.id,
-    path: `/catalog/${id}/view/${view.id}`,
+    path: `${base}/view/${view.id}`,
     icon: <Icon name={view.icon || "workflow"} />
   }));
 
