@@ -1,11 +1,10 @@
 import { tool, zodSchema, type TextStreamPart } from "ai";
 import { z } from "zod";
+import { TRUNCATION_MARKER } from "@flanksource-ui/components/ai/mcp-utils";
 
 // flanksource.com/llms.txt is about 57k characters (~12,500 tokens)
 // https://platform.openai.com/tokenizer
 export const TOOL_OUTPUT_CHAR_LIMIT = 65_000;
-
-export const TRUNCATION_MARKER = "⚠️ Tool output truncated";
 
 /**
  * Truncate a tool output string to TOOL_OUTPUT_CHAR_LIMIT characters.

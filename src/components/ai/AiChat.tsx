@@ -23,9 +23,9 @@ import {
   Tool,
   ToolContent,
   ToolHeader,
-  ToolInput,
-  ToolOutput
+  ToolInput
 } from "@flanksource-ui/components/ai-elements/tool";
+import { ToolOutput } from "@flanksource-ui/components/ai/ToolOutput";
 import {
   PromptInput,
   PromptInputBody,
@@ -56,6 +56,7 @@ import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import { CartesianGrid, Line, ComposedChart, XAxis, YAxis } from "recharts";
 
 type TimeseriesPoint = { timestamp: string; value: number };
@@ -327,6 +328,33 @@ export function AIChat({
     return null;
   };
 
+  const formatToolArgsSummary = (input: unknown, maxLen = 90): string => {
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
+      return "";
+    }
+
+    const serialize = (val: unknown): string => {
+      if (Array.isArray(val)) return val.join(",");
+      if (val && typeof val === "object" && !Array.isArray(val)) {
+        const entries = Object.entries(val as Record<string, unknown>)
+          .filter(([, v]) => v !== null && v !== undefined && v !== "")
+          .map(([k, v]) => `${k}: ${String(v)}`);
+        return entries.join(",");
+      }
+      return String(val);
+    };
+
+    const result = Object.entries(input as Record<string, unknown>)
+      .filter(([, v]) => v !== null && v !== undefined && v !== "")
+      .map(([k, v]) => `${k}: ${serialize(v)}`)
+      .join(" ");
+
+    if (!result) return "";
+    return result.length > maxLen
+      ? result.substring(0, maxLen - 1) + "…"
+      : result;
+  };
+
   const renderToolPart = (
     part: UIMessage["parts"][number],
     index: number,
@@ -337,7 +365,9 @@ export function AIChat({
     }
 
     const approvalId = part.approval?.id ?? part.toolCallId;
-    const title = part.title ?? getToolName(part);
+    const baseName = part.title ?? getToolName(part);
+    const argsSummary = formatToolArgsSummary(part.input);
+    const title = argsSummary ? `${baseName} (${argsSummary})` : baseName;
     const toolName = part.type === "dynamic-tool" ? part.toolName : undefined;
     const hasOutput = part.output !== undefined && part.output !== "";
     const hasErrorText = Boolean(part.errorText);
@@ -349,6 +379,13 @@ export function AIChat({
       part.state === "output-denied" || part.state === "output-available";
     const customOutput = renderCustomToolOutput(part);
 
+    const configId =
+      part.input && typeof part.input === "object" && !Array.isArray(part.input)
+        ? ((part.input as Record<string, unknown>).config_id as
+            | string
+            | undefined)
+        : undefined;
+
     return (
       <div className="space-y-3" key={`${messageId}-tool-${index}`}>
         <Tool defaultOpen={isApprovalRequested}>
@@ -358,6 +395,14 @@ export function AIChat({
             toolName={toolName}
             type={part.type}
           />
+          {typeof configId === "string" && configId && (
+            <div className="flex items-center gap-2 border-t px-3 py-1.5 text-sm text-muted-foreground">
+              <span className="text-xs font-medium uppercase tracking-wide">
+                Config:
+              </span>
+              <ConfigLink configId={configId} />
+            </div>
+          )}
           <ToolContent>
             <ToolInput input={part.input} />
 

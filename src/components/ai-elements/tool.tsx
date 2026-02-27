@@ -9,7 +9,6 @@ import {
 import { cn } from "@flanksource-ui/lib/utils";
 import type { DynamicToolUIPart, ToolUIPart } from "ai";
 import {
-  AlertTriangleIcon,
   CheckCircleIcon,
   ChevronDownIcon,
   CircleIcon,
@@ -132,15 +131,6 @@ export type ToolOutputProps = ComponentProps<"div"> & {
   errorText: ToolPart["errorText"];
 };
 
-const TRUNCATION_MARKER = "⚠️ Tool output truncated";
-
-function isTruncated(output: unknown): boolean {
-  if (typeof output === "string") {
-    return output.startsWith(TRUNCATION_MARKER);
-  }
-  return false;
-}
-
 export const ToolOutput = ({
   className,
   output,
@@ -150,8 +140,6 @@ export const ToolOutput = ({
   if (!(output || errorText)) {
     return null;
   }
-
-  const truncated = isTruncated(output);
 
   let Output = <div>{output as ReactNode}</div>;
 
@@ -165,17 +153,9 @@ export const ToolOutput = ({
 
   return (
     <div className={cn("space-y-2 p-4", className)} {...props}>
-      <div className="flex items-center gap-2">
-        <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {errorText ? "Error" : "Result"}
-        </h4>
-        {truncated && (
-          <Badge className="gap-1 rounded-full text-xs" variant="secondary">
-            <AlertTriangleIcon className="size-3 text-yellow-600" />
-            Output truncated
-          </Badge>
-        )}
-      </div>
+      <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {errorText ? "Error" : "Result"}
+      </h4>
       <div
         className={cn(
           "overflow-x-auto rounded-md text-xs [&_table]:w-full",
