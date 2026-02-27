@@ -51,6 +51,10 @@ import {
   ChartTooltipContent
 } from "@flanksource-ui/components/ui/chart";
 import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
+import {
+  clearActiveAIConversation,
+  saveActiveAIConversation
+} from "@flanksource-ui/lib/ai-chat-history";
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
@@ -214,6 +218,14 @@ export function AIChat({
     id
   });
 
+  useEffect(() => {
+    if (!chat.id || messages.length === 0) {
+      return;
+    }
+
+    void saveActiveAIConversation(chat.id, messages);
+  }, [chat.id, messages]);
+
   // Auto-send when chat mounts with a pre-seeded user message (e.g. from setChatMessages).
   const hasSentOnMount = useRef(false);
   useEffect(() => {
@@ -265,11 +277,17 @@ export function AIChat({
   );
 
   const handleNewChat = useCallback(() => {
-    setMessages([]);
+    void clearActiveAIConversation();
+
+    if (onNewChat) {
+      onNewChat();
+    } else {
+      setMessages([]);
+    }
+
     if (error) {
       clearError();
     }
-    onNewChat?.();
   }, [clearError, error, onNewChat, setMessages]);
 
   const handleSuggestionClick = useCallback(

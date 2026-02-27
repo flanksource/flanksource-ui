@@ -10,6 +10,7 @@ import {
 import { Chat, UIMessage } from "@ai-sdk/react";
 import { Resizable } from "re-resizable";
 import { AIChat } from "@flanksource-ui/components/ai/AiChat";
+import { loadActiveAIConversation } from "@flanksource-ui/lib/ai-chat-history";
 import {
   Popover,
   PopoverContent,
@@ -20,6 +21,7 @@ type AiChatPopoverContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
   chat: Chat<UIMessage>;
+  chatVersion: number;
   resetChat: () => void;
   setChatMessages: (messages: UIMessage[]) => void;
   quickPrompts?: string[];
@@ -43,9 +45,41 @@ export function AiChatPopoverProvider({
 }: AiChatPopoverProviderProps) {
   const [open, setOpenState] = useState(initialOpen);
   const [chat, setChat] = useState(() => new Chat<UIMessage>({ id: chatId }));
+  const [chatVersion, setChatVersion] = useState(0);
   const [quickPrompts, setQuickPrompts] = useState<string[] | undefined>(
     undefined
   );
+
+  const replaceChat = useCallback((nextChat: Chat<UIMessage>) => {
+    setChat(nextChat);
+    setChatVersion((version) => version + 1);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const hydrateActiveConversation = async () => {
+      const activeConversation = await loadActiveAIConversation();
+
+      if (cancelled || !activeConversation) {
+        return;
+      }
+
+      replaceChat(
+        new Chat<UIMessage>({
+          id: activeConversation.conversationId,
+          messages: activeConversation.messages
+        })
+      );
+    };
+
+    void hydrateActiveConversation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [replaceChat]);
+
   const setOpen = useCallback(
     (open: boolean) => {
       setOpenState(open);
@@ -58,16 +92,16 @@ export function AiChatPopoverProvider({
 
   const resetChat = useCallback(() => {
     const newId = `${chatId}-${Date.now()}`;
-    setChat(new Chat<UIMessage>({ id: newId }));
+    replaceChat(new Chat<UIMessage>({ id: newId }));
     setQuickPrompts(undefined);
-  }, [chatId, setChat]);
+  }, [chatId, replaceChat]);
 
   const setChatMessages = useCallback(
     (messages: UIMessage[]) => {
       const newId = `${chatId}-${Date.now()}`;
-      setChat(new Chat<UIMessage>({ id: newId, messages }));
+      replaceChat(new Chat<UIMessage>({ id: newId, messages }));
     },
-    [chatId, setChat]
+    [chatId, replaceChat]
   );
 
   const value = useMemo(
@@ -75,12 +109,13 @@ export function AiChatPopoverProvider({
       open,
       setOpen,
       chat,
+      chatVersion,
       resetChat,
       setChatMessages,
       quickPrompts,
       setQuickPrompts
     }),
-    [open, setOpen, chat, resetChat, setChatMessages, quickPrompts]
+    [open, setOpen, chat, chatVersion, resetChat, setChatMessages, quickPrompts]
   );
 
   return (
@@ -191,6 +226,7 @@ export function AiChatPopover({
   const open = controlledOpen ?? context?.open ?? localOpen;
   const handleOpenChange = onOpenChange ?? context?.setOpen ?? setLocalOpen;
   const chat = context?.chat ?? localChat;
+  const chatVersion = context?.chatVersion ?? 0;
   const resetChat =
     context?.resetChat ??
     (() =>
@@ -233,7 +269,7 @@ export function AiChatPopover({
           className="overflow-hidden rounded-[inherit]"
         >
           <AIChat
-            key={chat.id}
+            key={`${chat.id}-${chatVersion}`}
             chat={chat}
             className="h-full"
             onClose={() => handleOpenChange(false)}
