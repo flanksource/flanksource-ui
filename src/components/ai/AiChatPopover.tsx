@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode
@@ -101,10 +102,56 @@ export function useAiChatPopover() {
   return context;
 }
 
-const DEFAULT_WIDTH = 640;
-const DEFAULT_HEIGHT = 560;
 const MIN_WIDTH = 400;
 const MIN_HEIGHT = 400;
+const FALLBACK_WIDTH = 768;
+const FALLBACK_HEIGHT = 672;
+const DEFAULT_WIDTH_RATIO = 0.5;
+const DEFAULT_HEIGHT_RATIO = 0.7;
+const VIEWPORT_WIDTH_MARGIN = 32;
+const VIEWPORT_HEIGHT_MARGIN = 80;
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getMaxPopoverWidth() {
+  if (typeof window === "undefined") {
+    return 1200;
+  }
+
+  return Math.max(MIN_WIDTH, window.innerWidth - VIEWPORT_WIDTH_MARGIN);
+}
+
+function getMaxPopoverHeight() {
+  if (typeof window === "undefined") {
+    return 900;
+  }
+
+  return Math.max(MIN_HEIGHT, window.innerHeight - VIEWPORT_HEIGHT_MARGIN);
+}
+
+function getDefaultPopoverSize() {
+  if (typeof window === "undefined") {
+    return {
+      width: FALLBACK_WIDTH,
+      height: FALLBACK_HEIGHT
+    };
+  }
+
+  return {
+    width: clamp(
+      Math.round(window.innerWidth * DEFAULT_WIDTH_RATIO),
+      MIN_WIDTH,
+      getMaxPopoverWidth()
+    ),
+    height: clamp(
+      Math.round(window.innerHeight * DEFAULT_HEIGHT_RATIO),
+      MIN_HEIGHT,
+      getMaxPopoverHeight()
+    )
+  };
+}
 
 type AiChatPopoverProps = {
   open?: boolean;
@@ -124,10 +171,22 @@ export function AiChatPopover({
   );
 
   // Size state lives here in the parent so it survives popover close/reopen
-  const [size, setSize] = useState({
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT
-  });
+  const [size, setSize] = useState(() => getDefaultPopoverSize());
+
+  useEffect(() => {
+    setSize((previousSize) => {
+      const defaultSize = getDefaultPopoverSize();
+
+      if (
+        previousSize.width === defaultSize.width &&
+        previousSize.height === defaultSize.height
+      ) {
+        return previousSize;
+      }
+
+      return defaultSize;
+    });
+  }, []);
 
   const open = controlledOpen ?? context?.open ?? localOpen;
   const handleOpenChange = onOpenChange ?? context?.setOpen ?? setLocalOpen;
@@ -158,12 +217,8 @@ export function AiChatPopover({
           }}
           minWidth={MIN_WIDTH}
           minHeight={MIN_HEIGHT}
-          maxWidth={
-            typeof window !== "undefined" ? window.innerWidth - 32 : 1200
-          }
-          maxHeight={
-            typeof window !== "undefined" ? window.innerHeight - 80 : 900
-          }
+          maxWidth={getMaxPopoverWidth()}
+          maxHeight={getMaxPopoverHeight()}
           // Popover is right-anchored, so only allow resizing leftward and downward
           enable={{
             top: false,
