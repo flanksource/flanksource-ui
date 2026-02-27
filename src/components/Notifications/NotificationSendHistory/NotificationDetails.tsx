@@ -189,12 +189,12 @@ export default function NotificationDetails({
           {bodyMarkdown ? (
             <DisplayMarkdown
               md={bodyMarkdown}
-              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+              className="whitespace-pre-wrap break-all rounded bg-gray-100 p-4"
             />
           ) : slackBody ? (
             <DisplayMarkdown
               md={slackBody}
-              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+              className="whitespace-pre-wrap break-all rounded bg-gray-100 p-4"
             />
           ) : (
             <div
