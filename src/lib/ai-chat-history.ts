@@ -1,24 +1,38 @@
 import type { UIMessage } from "ai";
 
-const DB_NAME = "flanksource-ai-chat";
+const DB_NAME_PREFIX = "flanksource-ai-chat";
 const DB_VERSION = 1;
-const ACTIVE_STORE = "ai_active_conversation";
-const ACTIVE_KEY = "active";
+const CONVERSATIONS_STORE = "ai_conversations";
+const META_STORE = "ai_meta";
+const ACTIVE_CONVERSATION_KEY = "active_conversation_id";
 
-type ActiveConversationRecord = {
+type ConversationMetaRecord = {
   key: string;
-  conversationId: string;
+  value: string | null;
+};
+
+export type AIConversationRecord = {
+  id: string;
   messages: UIMessage[];
+  createdAt: number;
   updatedAt: number;
 };
 
-export type ActiveAIConversation = {
-  conversationId: string;
-  messages: UIMessage[];
-  updatedAt: number;
+export type AIConversationStateSnapshot = {
+  activeConversationId: string | null;
+  conversations: AIConversationRecord[];
 };
 
-let databasePromise: Promise<IDBDatabase | null> | null = null;
+const databasePromises = new Map<string, Promise<IDBDatabase | null>>();
+
+function normalizeScopeKey(scopeKey?: string): string {
+  const normalizedScopeKey = scopeKey?.trim();
+  return normalizedScopeKey ? normalizedScopeKey : "anonymous";
+}
+
+function getDatabaseName(scopeKey?: string): string {
+  return `${DB_NAME_PREFIX}:${normalizeScopeKey(scopeKey)}`;
+}
 
 function isIndexedDBAvailable() {
   return (
@@ -47,53 +61,91 @@ function transactionDone(transaction: IDBTransaction): Promise<void> {
   });
 }
 
-function toActiveConversation(candidate: unknown): ActiveAIConversation | null {
+function normalizeTimestamp(value: unknown): number | null {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return null;
+  }
+
+  return value;
+}
+
+function toConversationRecord(candidate: unknown): AIConversationRecord | null {
   if (!candidate || typeof candidate !== "object") {
     return null;
   }
 
-  const maybeRecord = candidate as Partial<ActiveConversationRecord>;
+  const maybeConversation = candidate as Record<string, unknown>;
+  const id = maybeConversation.id;
 
-  if (typeof maybeRecord.conversationId !== "string") {
+  if (typeof id !== "string" || !id) {
     return null;
   }
 
-  const conversationId = maybeRecord.conversationId.trim();
+  const messages = Array.isArray(maybeConversation.messages)
+    ? (maybeConversation.messages as UIMessage[])
+    : [];
 
-  if (!conversationId) {
-    return null;
-  }
+  const createdAt =
+    normalizeTimestamp(maybeConversation.createdAt) ?? Date.now();
+  const updatedAt =
+    normalizeTimestamp(maybeConversation.updatedAt) ?? createdAt;
 
   return {
-    conversationId,
-    messages: Array.isArray(maybeRecord.messages)
-      ? (maybeRecord.messages as UIMessage[])
-      : [],
-    updatedAt:
-      typeof maybeRecord.updatedAt === "number" &&
-      Number.isFinite(maybeRecord.updatedAt)
-        ? maybeRecord.updatedAt
-        : Date.now()
+    id,
+    messages,
+    createdAt,
+    updatedAt
   };
 }
 
-function openDatabase(): Promise<IDBDatabase | null> {
+function toActiveConversationId(candidate: unknown): string | null {
+  if (!candidate || typeof candidate !== "object") {
+    return null;
+  }
+
+  const maybeMeta = candidate as Partial<ConversationMetaRecord>;
+
+  if (typeof maybeMeta.value !== "string") {
+    return null;
+  }
+
+  const trimmed = maybeMeta.value.trim();
+  return trimmed ? trimmed : null;
+}
+
+function openDatabase(scopeKey?: string): Promise<IDBDatabase | null> {
   if (!isIndexedDBAvailable()) {
     return Promise.resolve(null);
   }
 
-  if (databasePromise) {
-    return databasePromise;
+  const databaseName = getDatabaseName(scopeKey);
+  const existingPromise = databasePromises.get(databaseName);
+
+  if (existingPromise) {
+    return existingPromise;
   }
 
-  databasePromise = new Promise<IDBDatabase>((resolve, reject) => {
-    const request = window.indexedDB.open(DB_NAME, DB_VERSION);
+  const nextPromise = new Promise<IDBDatabase>((resolve, reject) => {
+    const request = window.indexedDB.open(databaseName, DB_VERSION);
 
     request.onupgradeneeded = () => {
       const database = request.result;
 
-      if (!database.objectStoreNames.contains(ACTIVE_STORE)) {
-        database.createObjectStore(ACTIVE_STORE, { keyPath: "key" });
+      if (!database.objectStoreNames.contains(CONVERSATIONS_STORE)) {
+        const conversationStore = database.createObjectStore(
+          CONVERSATIONS_STORE,
+          {
+            keyPath: "id"
+          }
+        );
+
+        if (!conversationStore.indexNames.contains("updatedAt")) {
+          conversationStore.createIndex("updatedAt", "updatedAt");
+        }
+      }
+
+      if (!database.objectStoreNames.contains(META_STORE)) {
+        database.createObjectStore(META_STORE, { keyPath: "key" });
       }
     };
 
@@ -102,63 +154,97 @@ function openDatabase(): Promise<IDBDatabase | null> {
       reject(request.error ?? new Error("Failed to open IndexedDB"));
     };
   }).catch((error) => {
-    databasePromise = null;
+    databasePromises.delete(databaseName);
     throw error;
   });
 
-  return databasePromise;
+  databasePromises.set(databaseName, nextPromise);
+
+  return nextPromise;
 }
 
-export async function loadActiveAIConversation(): Promise<ActiveAIConversation | null> {
+export async function loadAIConversationStateSnapshot(
+  scopeKey?: string
+): Promise<AIConversationStateSnapshot> {
+  const fallbackState: AIConversationStateSnapshot = {
+    activeConversationId: null,
+    conversations: []
+  };
+
   try {
-    const database = await openDatabase();
+    const database = await openDatabase(scopeKey);
 
     if (!database) {
-      return null;
+      return fallbackState;
     }
 
-    const transaction = database.transaction(ACTIVE_STORE, "readonly");
+    const transaction = database.transaction(
+      [CONVERSATIONS_STORE, META_STORE],
+      "readonly"
+    );
     const transactionCompleted = transactionDone(transaction);
-    const store = transaction.objectStore(ACTIVE_STORE);
-    const activeRecord = await requestToPromise(store.get(ACTIVE_KEY));
+    const conversationStore = transaction.objectStore(CONVERSATIONS_STORE);
+    const metaStore = transaction.objectStore(META_STORE);
+
+    const [rawConversations, rawActiveConversation] = await Promise.all([
+      requestToPromise(conversationStore.getAll()),
+      requestToPromise(metaStore.get(ACTIVE_CONVERSATION_KEY))
+    ]);
 
     await transactionCompleted;
 
-    return toActiveConversation(activeRecord);
+    const conversations = rawConversations
+      .map(toConversationRecord)
+      .filter(
+        (conversation): conversation is AIConversationRecord =>
+          conversation !== null
+      )
+      .sort((left, right) => right.updatedAt - left.updatedAt);
+
+    return {
+      activeConversationId: toActiveConversationId(rawActiveConversation),
+      conversations
+    };
   } catch {
-    return null;
+    return fallbackState;
   }
 }
 
-export async function saveActiveAIConversation(
-  conversationId: string,
-  messages: UIMessage[]
+export async function saveAIConversation(
+  id: string,
+  messages: UIMessage[],
+  scopeKey?: string
 ): Promise<void> {
-  const normalizedConversationId = conversationId.trim();
+  const conversationId = id.trim();
 
-  if (!normalizedConversationId || messages.length === 0) {
+  if (!conversationId || messages.length === 0) {
     return;
   }
 
   try {
-    const database = await openDatabase();
+    const database = await openDatabase(scopeKey);
 
     if (!database) {
       return;
     }
 
-    const transaction = database.transaction(ACTIVE_STORE, "readwrite");
+    const transaction = database.transaction(CONVERSATIONS_STORE, "readwrite");
     const transactionCompleted = transactionDone(transaction);
-    const store = transaction.objectStore(ACTIVE_STORE);
+    const store = transaction.objectStore(CONVERSATIONS_STORE);
+    const existingConversation = toConversationRecord(
+      await requestToPromise(store.get(conversationId))
+    );
 
-    const nextRecord: ActiveConversationRecord = {
-      key: ACTIVE_KEY,
-      conversationId: normalizedConversationId,
+    const now = Date.now();
+
+    const nextConversation: AIConversationRecord = {
+      id: conversationId,
       messages,
-      updatedAt: Date.now()
+      createdAt: existingConversation?.createdAt ?? now,
+      updatedAt: now
     };
 
-    await requestToPromise(store.put(nextRecord));
+    await requestToPromise(store.put(nextConversation));
 
     await transactionCompleted;
   } catch {
@@ -166,19 +252,79 @@ export async function saveActiveAIConversation(
   }
 }
 
-export async function clearActiveAIConversation(): Promise<void> {
+export async function deleteAIConversation(
+  conversationId: string,
+  scopeKey?: string
+): Promise<void> {
+  const normalizedConversationId = conversationId.trim();
+
+  if (!normalizedConversationId) {
+    return;
+  }
+
   try {
-    const database = await openDatabase();
+    const database = await openDatabase(scopeKey);
 
     if (!database) {
       return;
     }
 
-    const transaction = database.transaction(ACTIVE_STORE, "readwrite");
+    const transaction = database.transaction(
+      [CONVERSATIONS_STORE, META_STORE],
+      "readwrite"
+    );
     const transactionCompleted = transactionDone(transaction);
-    const store = transaction.objectStore(ACTIVE_STORE);
+    const conversationStore = transaction.objectStore(CONVERSATIONS_STORE);
+    const metaStore = transaction.objectStore(META_STORE);
 
-    await requestToPromise(store.delete(ACTIVE_KEY));
+    const activeConversationRecord = await requestToPromise(
+      metaStore.get(ACTIVE_CONVERSATION_KEY)
+    );
+    const activeConversationId = toActiveConversationId(
+      activeConversationRecord
+    );
+
+    await requestToPromise(conversationStore.delete(normalizedConversationId));
+
+    if (activeConversationId === normalizedConversationId) {
+      await requestToPromise(
+        metaStore.put({
+          key: ACTIVE_CONVERSATION_KEY,
+          value: null
+        } satisfies ConversationMetaRecord)
+      );
+    }
+
+    await transactionCompleted;
+  } catch {
+    // Ignore IndexedDB write failures.
+  }
+}
+
+export async function setActiveAIConversationId(
+  conversationId: string | null,
+  scopeKey?: string
+): Promise<void> {
+  try {
+    const database = await openDatabase(scopeKey);
+
+    if (!database) {
+      return;
+    }
+
+    const normalizedConversationId =
+      typeof conversationId === "string" ? conversationId.trim() || null : null;
+
+    const transaction = database.transaction(META_STORE, "readwrite");
+    const transactionCompleted = transactionDone(transaction);
+    const store = transaction.objectStore(META_STORE);
+
+    const nextMetaRecord: ConversationMetaRecord = {
+      key: ACTIVE_CONVERSATION_KEY,
+      value: normalizedConversationId
+    };
+
+    await requestToPromise(store.put(nextMetaRecord));
 
     await transactionCompleted;
   } catch {

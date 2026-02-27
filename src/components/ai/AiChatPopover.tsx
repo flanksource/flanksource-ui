@@ -4,26 +4,53 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode
 } from "react";
 import { Chat, UIMessage } from "@ai-sdk/react";
 import { Resizable } from "re-resizable";
 import { AIChat } from "@flanksource-ui/components/ai/AiChat";
-import { loadActiveAIConversation } from "@flanksource-ui/lib/ai-chat-history";
+import { useUser } from "@flanksource-ui/context";
+import {
+  deleteAIConversation,
+  loadAIConversationStateSnapshot,
+  setActiveAIConversationId,
+  type AIConversationRecord
+} from "@flanksource-ui/lib/ai-chat-history";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from "@flanksource-ui/components/ui/popover";
 
+const ACTIVE_CONVERSATION_MAX_AGE_MS = 10 * 60 * 1000;
+
+function isConversationRecent(
+  conversation?: AIConversationRecord
+): conversation is AIConversationRecord {
+  if (!conversation) {
+    return false;
+  }
+
+  return Date.now() - conversation.updatedAt <= ACTIVE_CONVERSATION_MAX_AGE_MS;
+}
+
 type AiChatPopoverContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
   chat: Chat<UIMessage>;
   chatVersion: number;
+  conversations: AIConversationRecord[];
   resetChat: () => void;
   setChatMessages: (messages: UIMessage[]) => void;
+  selectConversation: (conversationId: string) => void;
+  deleteConversation: (conversationId: string) => void;
+  onConversationPersisted: (
+    conversationId: string,
+    messages: UIMessage[]
+  ) => void;
+  storageScopeKey: string;
   quickPrompts?: string[];
   setQuickPrompts: (prompts?: string[]) => void;
 };
@@ -43,42 +70,111 @@ export function AiChatPopoverProvider({
   initialOpen = false,
   chatId = "ai-popover"
 }: AiChatPopoverProviderProps) {
+  const { user, orgSlug, backendUrl } = useUser();
+
+  const storageScopeKey = useMemo(() => {
+    const normalizedBackendUrl = backendUrl?.trim() || "default";
+    const normalizedOrgSlug = orgSlug?.trim() || "default";
+    const normalizedUserId = user?.id?.trim() || "anonymous";
+
+    return `${normalizedBackendUrl}:${normalizedOrgSlug}:${normalizedUserId}`;
+  }, [backendUrl, orgSlug, user?.id]);
+
   const [open, setOpenState] = useState(initialOpen);
   const [chat, setChat] = useState(() => new Chat<UIMessage>({ id: chatId }));
   const [chatVersion, setChatVersion] = useState(0);
+  const [conversations, setConversations] = useState<AIConversationRecord[]>(
+    []
+  );
+  const [hasHydratedChatState, setHasHydratedChatState] = useState(false);
   const [quickPrompts, setQuickPrompts] = useState<string[] | undefined>(
     undefined
   );
+  const hasUserMutatedChatRef = useRef(false);
 
-  const replaceChat = useCallback((nextChat: Chat<UIMessage>) => {
-    setChat(nextChat);
-    setChatVersion((version) => version + 1);
-  }, []);
+  const replaceChat = useCallback(
+    (
+      nextChat: Chat<UIMessage>,
+      options: { userAction?: boolean } = { userAction: true }
+    ) => {
+      if (options.userAction !== false) {
+        hasUserMutatedChatRef.current = true;
+      }
+
+      setChat(nextChat);
+      setChatVersion((version) => version + 1);
+    },
+    []
+  );
 
   useEffect(() => {
     let cancelled = false;
 
-    const hydrateActiveConversation = async () => {
-      const activeConversation = await loadActiveAIConversation();
+    hasUserMutatedChatRef.current = false;
+    setHasHydratedChatState(false);
+    setConversations([]);
+    setQuickPrompts(undefined);
 
-      if (cancelled || !activeConversation) {
+    const hydrateChatState = async () => {
+      const { activeConversationId, conversations: storedConversations } =
+        await loadAIConversationStateSnapshot(storageScopeKey);
+
+      if (cancelled) {
         return;
       }
 
-      replaceChat(
-        new Chat<UIMessage>({
-          id: activeConversation.conversationId,
-          messages: activeConversation.messages
-        })
-      );
+      setConversations(storedConversations);
+
+      if (hasUserMutatedChatRef.current) {
+        setHasHydratedChatState(true);
+        return;
+      }
+
+      const storedActiveConversation =
+        (activeConversationId
+          ? storedConversations.find(
+              (conversation) => conversation.id === activeConversationId
+            )
+          : undefined) ?? storedConversations[0];
+
+      if (isConversationRecent(storedActiveConversation)) {
+        const nextConversationId =
+          activeConversationId ?? storedActiveConversation.id;
+
+        replaceChat(
+          new Chat<UIMessage>({
+            id: nextConversationId,
+            messages: storedActiveConversation.messages
+          }),
+          { userAction: false }
+        );
+
+        if (!activeConversationId) {
+          void setActiveAIConversationId(nextConversationId, storageScopeKey);
+        }
+      } else {
+        replaceChat(new Chat<UIMessage>({ id: `${chatId}-${Date.now()}` }), {
+          userAction: false
+        });
+      }
+
+      setHasHydratedChatState(true);
     };
 
-    void hydrateActiveConversation();
+    void hydrateChatState();
 
     return () => {
       cancelled = true;
     };
-  }, [replaceChat]);
+  }, [chatId, replaceChat, storageScopeKey]);
+
+  useEffect(() => {
+    if (!hasHydratedChatState) {
+      return;
+    }
+
+    void setActiveAIConversationId(chat.id, storageScopeKey);
+  }, [chat.id, hasHydratedChatState, storageScopeKey]);
 
   const setOpen = useCallback(
     (open: boolean) => {
@@ -104,18 +200,137 @@ export function AiChatPopoverProvider({
     [chatId, replaceChat]
   );
 
+  const selectConversation = useCallback(
+    (conversationId: string) => {
+      const normalizedConversationId = conversationId.trim();
+      if (!normalizedConversationId) {
+        return;
+      }
+
+      const selectedConversation = conversations.find(
+        (conversation) => conversation.id === normalizedConversationId
+      );
+
+      if (!selectedConversation) {
+        return;
+      }
+
+      replaceChat(
+        new Chat<UIMessage>({
+          id: selectedConversation.id,
+          messages: selectedConversation.messages
+        })
+      );
+      setQuickPrompts(undefined);
+    },
+    [conversations, replaceChat, setQuickPrompts]
+  );
+
+  const deleteConversation = useCallback(
+    (conversationId: string) => {
+      const normalizedConversationId = conversationId.trim();
+
+      if (!normalizedConversationId) {
+        return;
+      }
+
+      const remainingConversations = conversations.filter(
+        (conversation) => conversation.id !== normalizedConversationId
+      );
+
+      setConversations(remainingConversations);
+      void deleteAIConversation(normalizedConversationId, storageScopeKey);
+
+      if (chat.id === normalizedConversationId) {
+        const fallbackConversation = remainingConversations[0];
+
+        if (fallbackConversation) {
+          replaceChat(
+            new Chat<UIMessage>({
+              id: fallbackConversation.id,
+              messages: fallbackConversation.messages
+            })
+          );
+        } else {
+          replaceChat(new Chat<UIMessage>({ id: `${chatId}-${Date.now()}` }));
+        }
+
+        setQuickPrompts(undefined);
+      }
+    },
+    [
+      chat.id,
+      chatId,
+      conversations,
+      replaceChat,
+      setQuickPrompts,
+      storageScopeKey
+    ]
+  );
+
+  const onConversationPersisted = useCallback(
+    (conversationId: string, messages: UIMessage[]) => {
+      const normalizedConversationId = conversationId.trim();
+
+      if (!normalizedConversationId || messages.length === 0) {
+        return;
+      }
+
+      const now = Date.now();
+
+      setConversations((previousConversations) => {
+        const existingConversation = previousConversations.find(
+          (conversation) => conversation.id === normalizedConversationId
+        );
+
+        const nextConversation: AIConversationRecord = {
+          id: normalizedConversationId,
+          messages,
+          createdAt: existingConversation?.createdAt ?? now,
+          updatedAt: now
+        };
+
+        return [
+          nextConversation,
+          ...previousConversations.filter(
+            (conversation) => conversation.id !== normalizedConversationId
+          )
+        ];
+      });
+    },
+    []
+  );
+
   const value = useMemo(
     () => ({
       open,
       setOpen,
       chat,
       chatVersion,
+      conversations,
       resetChat,
       setChatMessages,
+      selectConversation,
+      deleteConversation,
+      onConversationPersisted,
+      storageScopeKey,
       quickPrompts,
       setQuickPrompts
     }),
-    [open, setOpen, chat, chatVersion, resetChat, setChatMessages, quickPrompts]
+    [
+      open,
+      setOpen,
+      chat,
+      chatVersion,
+      conversations,
+      resetChat,
+      setChatMessages,
+      selectConversation,
+      deleteConversation,
+      onConversationPersisted,
+      storageScopeKey,
+      quickPrompts
+    ]
   );
 
   return (
@@ -232,6 +447,11 @@ export function AiChatPopover({
     (() =>
       setLocalChat(new Chat<UIMessage>({ id: `ai-popover-${Date.now()}` })));
   const quickPrompts = context?.quickPrompts;
+  const conversationHistory = context?.conversations;
+  const selectConversation = context?.selectConversation;
+  const deleteConversation = context?.deleteConversation;
+  const onConversationPersisted = context?.onConversationPersisted;
+  const storageScopeKey = context?.storageScopeKey;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
@@ -272,9 +492,15 @@ export function AiChatPopover({
             key={`${chat.id}-${chatVersion}`}
             chat={chat}
             className="h-full"
+            activeConversationId={chat.id}
+            conversationHistory={conversationHistory}
             onClose={() => handleOpenChange(false)}
+            onConversationPersisted={onConversationPersisted}
+            onDeleteConversation={deleteConversation}
             onNewChat={resetChat}
+            onSelectConversation={selectConversation}
             quickPrompts={quickPrompts}
+            storageScopeKey={storageScopeKey}
           />
         </Resizable>
       </PopoverContent>
