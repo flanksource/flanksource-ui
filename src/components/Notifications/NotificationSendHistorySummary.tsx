@@ -116,6 +116,12 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
                 statusText={`${row.original.error} failed`}
               />
             )}
+            {row.original.in_progress > 0 && (
+              <Status
+                status="unknown"
+                statusText={`${row.original.in_progress} in progress`}
+              />
+            )}
             {row.original.suppressed > 0 && (
               <Status
                 status="suppressed"
