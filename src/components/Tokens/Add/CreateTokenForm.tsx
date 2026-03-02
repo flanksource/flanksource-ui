@@ -40,7 +40,7 @@ const expiryOptions = [
   { label: "90 days", value: "90d" },
   { label: "180 days", value: "180d" },
   { label: "1 year", value: "365d" },
-  { label: "Never", value: "never" }
+  { label: "Never", value: "" }
 ];
 
 export default function CreateTokenForm({
