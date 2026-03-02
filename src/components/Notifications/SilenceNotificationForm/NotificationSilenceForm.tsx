@@ -264,7 +264,14 @@ export default function NotificationSilenceForm({
         }
 
         const data = await getNotificationSilencePreview(params);
-        setPreviewData(data || []);
+        const sorted = (data || []).sort(
+          (
+            a: NotificationSendHistorySummary,
+            b: NotificationSendHistorySummary
+          ) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setPreviewData(sorted);
         setPreviewError(null);
       } catch (error) {
         console.error("Error fetching preview:", error);
@@ -433,7 +440,7 @@ export default function NotificationSilenceForm({
                               <>
                                 <div className="mb-2 text-sm text-gray-600">
                                   {previewData.length} notification(s) will be
-                                  silenced:
+                                  silenced :
                                 </div>
                                 <div className="space-y-2">
                                   {previewData.map((notification, index) => (
