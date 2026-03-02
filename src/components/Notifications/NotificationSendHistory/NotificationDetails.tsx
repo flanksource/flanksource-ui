@@ -54,23 +54,37 @@ export default function NotificationDetails({
   const bodyMarkdown =
     "body_markdown" in notification ? notification.body_markdown : undefined;
 
-  // Legacy notifications stored the rendered body directly in the summary view.
+  // Legacy notifications stored Slack BlockKit JSON directly in the summary body field.
   const legacyBody = notification.body;
-  const isLegacySlackMessage =
-    !bodyMarkdown &&
-    (legacyBody?.startsWith("[{") || legacyBody?.startsWith('{"blocks"'));
 
-  let slackBody: string | undefined;
-  if (isLegacySlackMessage && legacyBody) {
-    try {
-      const parsed = legacyBody.startsWith("[{")
-        ? (JSON.parse(legacyBody) as SlackMessage[])[0]
-        : (JSON.parse(legacyBody) as SlackMessage);
-      slackBody = blockKitToMarkdown(parsed);
-    } catch (error) {
-      slackBody = legacyBody;
+  const legacySlackMessage = useMemo<SlackMessage | undefined>(() => {
+    if (bodyMarkdown || !legacyBody) {
+      return undefined;
     }
-  }
+
+    try {
+      const parsed = JSON.parse(legacyBody.trim()) as
+        | SlackMessage
+        | SlackMessage[];
+
+      if (Array.isArray(parsed)) {
+        const [firstMessage] = parsed;
+        return Array.isArray(firstMessage?.blocks) ? firstMessage : undefined;
+      }
+
+      return Array.isArray(parsed?.blocks) ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [bodyMarkdown, legacyBody]);
+
+  const slackBody = useMemo(() => {
+    if (!legacySlackMessage) {
+      return undefined;
+    }
+
+    return blockKitToMarkdown(legacySlackMessage);
+  }, [legacySlackMessage]);
 
   const { data: silencer } = useQuery({
     queryKey: ["notification_silence", notification.silenced_by],
@@ -169,18 +183,18 @@ export default function NotificationDetails({
         )}
       </div>
 
-      {(bodyMarkdown || legacyBody) && (
+      {(bodyMarkdown || slackBody || legacyBody) && (
         <div className="flex flex-col gap-2">
           <label className="truncate text-sm text-gray-500">Body:</label>
           {bodyMarkdown ? (
             <DisplayMarkdown
               md={bodyMarkdown}
-              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+              className="whitespace-pre-wrap break-all rounded bg-gray-100 p-4"
             />
-          ) : isLegacySlackMessage ? (
+          ) : slackBody ? (
             <DisplayMarkdown
               md={slackBody}
-              className="whitespace-pre-wrap break-all rounded bg-black p-4 text-white"
+              className="whitespace-pre-wrap break-all rounded bg-gray-100 p-4"
             />
           ) : (
             <div

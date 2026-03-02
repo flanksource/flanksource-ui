@@ -186,11 +186,14 @@ export default function NotificationSendHistoryList({
         enableGrouping={true}
         onRowClick={(row: NotificationSendHistoryWithSubRows) => {
           searchParams.set("id", row.id);
-          if (row.body) {
-            searchParams.delete("hasBodyPayload");
-          } else {
+
+          const shouldFetchDetail = !!row.body_payload;
+          if (shouldFetchDetail) {
             searchParams.set("hasBodyPayload", "1");
+          } else {
+            searchParams.delete("hasBodyPayload");
           }
+
           setSearchParam(searchParams);
         }}
         manualPageCount={pageCount}
