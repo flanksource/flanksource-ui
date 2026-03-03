@@ -5,7 +5,7 @@ import {
   ConversationEmptyState,
   ConversationScrollButton
 } from "@flanksource-ui/components/ai-elements/conversation";
-import { SquarePen, X } from "lucide-react";
+import { Check, History, SquarePen, Trash2, X } from "lucide-react";
 import { Loader } from "@flanksource-ui/components/ai-elements/loader";
 import {
   Confirmation,
@@ -45,12 +45,24 @@ import {
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Card } from "@flanksource-ui/components/ui/card";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@flanksource-ui/components/ui/dropdown-menu";
+import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent
 } from "@flanksource-ui/components/ui/chart";
 import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
+import {
+  saveAIConversation,
+  type AIConversationRecord
+} from "@flanksource-ui/lib/ai-chat-history";
 import { cn } from "@flanksource-ui/lib/utils";
 import type { FileUIPart, ReasoningUIPart, UIMessage } from "ai";
 import { getToolName, isToolUIPart } from "ai";
@@ -65,6 +77,45 @@ type PlotTimeseriesOutput = {
   timeseries: TimeseriesPoint[];
   title?: string;
 };
+
+const HISTORY_PREVIEW_MAX_LENGTH = 72;
+
+function getConversationPreview(messages: UIMessage[]): string {
+  for (const message of messages) {
+    if (message.role !== "user") {
+      continue;
+    }
+
+    for (const part of message.parts) {
+      if (part.type !== "text") {
+        continue;
+      }
+
+      const normalizedText = part.text.replace(/\s+/g, " ").trim();
+
+      if (!normalizedText) {
+        continue;
+      }
+
+      if (normalizedText.length <= HISTORY_PREVIEW_MAX_LENGTH) {
+        return normalizedText;
+      }
+
+      return `${normalizedText.slice(0, HISTORY_PREVIEW_MAX_LENGTH - 1)}…`;
+    }
+  }
+
+  return "Untitled conversation";
+}
+
+function formatConversationTime(updatedAt: number): string {
+  return new Date(updatedAt).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 
 const isPlotTimeseriesOutput = (
   output: unknown
@@ -190,6 +241,15 @@ export type AIChatProps = {
   onClose?: () => void;
   onNewChat?: () => void;
   quickPrompts?: string[];
+  activeConversationId?: string;
+  conversationHistory?: AIConversationRecord[];
+  onSelectConversation?: (conversationId: string) => void;
+  onDeleteConversation?: (conversationId: string) => void;
+  onConversationPersisted?: (
+    conversationId: string,
+    messages: UIMessage[]
+  ) => void;
+  storageScopeKey?: string;
 };
 
 export function AIChat({
@@ -198,7 +258,13 @@ export function AIChat({
   id,
   onClose,
   onNewChat,
-  quickPrompts
+  quickPrompts,
+  activeConversationId,
+  conversationHistory,
+  onSelectConversation,
+  onDeleteConversation,
+  onConversationPersisted,
+  storageScopeKey
 }: AIChatProps) {
   const {
     messages,
@@ -213,6 +279,15 @@ export function AIChat({
     chat,
     id
   });
+
+  useEffect(() => {
+    if (!chat.id || messages.length === 0) {
+      return;
+    }
+
+    void saveAIConversation(chat.id, messages, storageScopeKey);
+    onConversationPersisted?.(chat.id, messages);
+  }, [chat.id, messages, onConversationPersisted, storageScopeKey]);
 
   // Auto-send when chat mounts with a pre-seeded user message (e.g. from setChatMessages).
   const hasSentOnMount = useRef(false);
@@ -265,11 +340,15 @@ export function AIChat({
   );
 
   const handleNewChat = useCallback(() => {
-    setMessages([]);
+    if (onNewChat) {
+      onNewChat();
+    } else {
+      setMessages([]);
+    }
+
     if (error) {
       clearError();
     }
-    onNewChat?.();
   }, [clearError, error, onNewChat, setMessages]);
 
   const handleSuggestionClick = useCallback(
@@ -482,6 +561,10 @@ export function AIChat({
     );
   };
 
+  const visibleConversationHistory = useMemo(() => {
+    return (conversationHistory ?? []).slice(0, 20);
+  }, [conversationHistory]);
+
   const errorMessage = error
     ? error instanceof Error
       ? error.message
@@ -492,6 +575,75 @@ export function AIChat({
     <div className={cn("flex h-full flex-1 flex-col gap-4", className)}>
       <Card className="relative flex h-full flex-1 flex-col bg-card">
         <div className="absolute left-3 top-3 z-10 flex items-center gap-2">
+          {onSelectConversation ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="View conversation history"
+                  size="sm"
+                  variant="outline"
+                >
+                  <History className="mr-2 h-3.5 w-3.5" />
+                  History
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-80">
+                <DropdownMenuLabel>Conversation History</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {visibleConversationHistory.length > 0 ? (
+                  visibleConversationHistory.map((conversation) => {
+                    const isActive = activeConversationId === conversation.id;
+
+                    return (
+                      <DropdownMenuItem
+                        className="group"
+                        key={conversation.id}
+                        onSelect={() => onSelectConversation(conversation.id)}
+                      >
+                        <div className="flex min-w-0 flex-1 flex-col">
+                          <span className="truncate font-medium">
+                            {getConversationPreview(conversation.messages)}
+                          </span>
+                          <span className="truncate text-xs text-muted-foreground">
+                            {formatConversationTime(conversation.updatedAt)}
+                          </span>
+                        </div>
+                        <div className="ml-2 flex items-center gap-1">
+                          {isActive ? (
+                            <Check className="h-4 w-4 text-primary" />
+                          ) : null}
+                          {onDeleteConversation ? (
+                            <button
+                              type="button"
+                              aria-label="Delete conversation"
+                              className="rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-accent hover:text-foreground group-hover:opacity-100 group-focus:opacity-100"
+                              title="Delete conversation"
+                              onPointerDown={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                              }}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                onDeleteConversation(conversation.id);
+                              }}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          ) : null}
+                        </div>
+                      </DropdownMenuItem>
+                    );
+                  })
+                ) : (
+                  <DropdownMenuItem disabled>
+                    No saved conversations yet
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+
           {onNewChat ? (
             <Button
               aria-label="Start a new conversation"
