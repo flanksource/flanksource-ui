@@ -264,7 +264,15 @@ export default function NotificationSilenceForm({
         }
 
         const data = await getNotificationSilencePreview(params);
-        setPreviewData(data || []);
+        const previewItems = Array.isArray(data) ? data : [];
+        const sorted = [...previewItems].sort(
+          (
+            a: NotificationSendHistorySummary,
+            b: NotificationSendHistorySummary
+          ) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setPreviewData(sorted);
         setPreviewError(null);
       } catch (error) {
         console.error("Error fetching preview:", error);

@@ -407,12 +407,14 @@ export const getNotificationSilencePreview = async ({
   resource_id,
   filter,
   selector,
-  recursive
+  recursive,
+  limit
 }: {
   resource_id?: string;
   filter?: string;
   selector?: string;
   recursive?: boolean;
+  limit?: number;
 }) => {
   const params = new URLSearchParams();
 
@@ -427,6 +429,9 @@ export const getNotificationSilencePreview = async ({
   }
   if (recursive) {
     params.append("recursive", "true");
+  }
+  if (Number.isFinite(limit) && Number.isInteger(limit) && limit! > 0) {
+    params.append("limit", limit!.toString());
   }
 
   const res = await NotificationAPI.get(
