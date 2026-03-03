@@ -430,8 +430,8 @@ export const getNotificationSilencePreview = async ({
   if (recursive) {
     params.append("recursive", "true");
   }
-  if (limit != null) {
-    params.append("limit", limit.toString());
+  if (Number.isFinite(limit) && Number.isInteger(limit) && limit! > 0) {
+    params.append("limit", limit!.toString());
   }
 
   const res = await NotificationAPI.get(

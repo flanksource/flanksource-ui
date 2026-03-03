@@ -264,7 +264,8 @@ export default function NotificationSilenceForm({
         }
 
         const data = await getNotificationSilencePreview(params);
-        const sorted = (data || []).sort(
+        const previewItems = Array.isArray(data) ? data : [];
+        const sorted = [...previewItems].sort(
           (
             a: NotificationSendHistorySummary,
             b: NotificationSendHistorySummary
@@ -440,7 +441,7 @@ export default function NotificationSilenceForm({
                               <>
                                 <div className="mb-2 text-sm text-gray-600">
                                   {previewData.length} notification(s) will be
-                                  silenced :
+                                  silenced:
                                 </div>
                                 <div className="space-y-2">
                                   {previewData.map((notification, index) => (
