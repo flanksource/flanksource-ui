@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Age from "../../../ui/Age/Age";
 import ViewLayout from "./ViewLayout";
 import ViewWithSections from "./ViewWithSections";
@@ -17,6 +18,8 @@ interface SingleViewProps {
 }
 
 const SingleView: React.FC<SingleViewProps> = ({ id }) => {
+  const location = useLocation();
+  const hideChrome = location.pathname.startsWith("/embed/views/");
   const {
     viewResult,
     isLoading,
@@ -45,6 +48,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         icon="workflow"
         onRefresh={handleForceRefresh}
         centered
+        hideChrome={hideChrome}
       >
         <ErrorViewer error={error} className="mx-auto max-w-3xl" />
       </ViewLayout>
@@ -58,6 +62,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         icon="workflow"
         onRefresh={handleForceRefresh}
         centered
+        hideChrome={hideChrome}
       >
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
@@ -74,6 +79,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         icon="workflow"
         onRefresh={handleForceRefresh}
         centered
+        hideChrome={hideChrome}
       >
         <ErrorViewer
           error="The requested view could not be found."
@@ -106,6 +112,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
         icon={icon || "workflow"}
         onRefresh={handleForceRefresh}
         loading={isFetching}
+        hideChrome={hideChrome}
         extra={
           viewResult.lastRefreshedAt && (
             <p className="text-sm text-gray-500">

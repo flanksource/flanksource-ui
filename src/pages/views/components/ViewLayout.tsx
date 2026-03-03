@@ -12,6 +12,7 @@ interface ViewLayoutProps {
   extra?: React.ReactNode;
   children: React.ReactNode;
   centered?: boolean;
+  hideChrome?: boolean;
 }
 
 const ViewLayout: React.FC<ViewLayoutProps> = ({
@@ -21,7 +22,8 @@ const ViewLayout: React.FC<ViewLayoutProps> = ({
   loading,
   extra,
   children,
-  centered = false
+  centered = false,
+  hideChrome = false
 }) => (
   <>
     <Head prefix={title} />
@@ -40,6 +42,7 @@ const ViewLayout: React.FC<ViewLayoutProps> = ({
       contentClass="p-0 h-full"
       loading={loading}
       extra={extra}
+      hideChrome={hideChrome}
     >
       {centered ? (
         <div className="flex h-full w-full items-center justify-center">
