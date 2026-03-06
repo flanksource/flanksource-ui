@@ -86,11 +86,16 @@ const PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED: string[] = [
 type McpTool = Record<string, any>;
 type McpTools = Record<string, McpTool>;
 
-function wrapMcpToolsWithApproval(mcpTools: McpTools): McpTools {
+function wrapMcpToolsWithApproval(
+  mcpTools: McpTools,
+  alwaysAllowedTools: string[] = []
+): McpTools {
+  const alwaysAllowed = new Set(alwaysAllowedTools);
   const tools = Object.entries(mcpTools).map(
     ([name, toolDefinition]: [string, McpTool]) => {
       const noApproval =
         NATIVE_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(name) ||
+        alwaysAllowed.has(name) ||
         (toolDefinition["title"] &&
           PLAYBOOK_MCP_TOOLS_WITH_NO_APPROVAL_REQUIRED.includes(
             toolDefinition["title"]
@@ -152,11 +157,17 @@ function createPlotTimeseriesTool() {
   });
 }
 
-export async function buildChatTools(mcpClient: {
-  tools: () => Promise<McpTools>;
-}) {
+export async function buildChatTools(
+  mcpClient: {
+    tools: () => Promise<McpTools>;
+  },
+  alwaysAllowedTools: string[] = []
+) {
   const mcpTools = await mcpClient.tools();
-  const toolsWithApproval = wrapMcpToolsWithApproval(mcpTools);
+  const toolsWithApproval = wrapMcpToolsWithApproval(
+    mcpTools,
+    alwaysAllowedTools
+  );
 
   return {
     ...toolsWithApproval,
