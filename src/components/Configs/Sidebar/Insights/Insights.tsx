@@ -27,7 +27,7 @@ function useFetchInsights(
     id,
     pageIndex,
     pageSize,
-    false,
+    true,
     type === "configs"
   );
 
@@ -35,7 +35,7 @@ function useFetchInsights(
     id,
     pageIndex,
     pageSize,
-    false,
+    true,
     type === "topologies"
   );
 

@@ -54,7 +54,8 @@ export default function PlaybookRunsPage() {
         starts: timeRange?.from ?? undefined,
         ends: timeRange?.to ?? undefined,
         sort: sortState
-      })
+      }),
+    keepPreviousData: true
   });
 
   const { data: playbook, isLoading: isLoadingPlaybook } =

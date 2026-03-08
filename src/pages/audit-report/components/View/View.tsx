@@ -223,6 +223,7 @@ const View: React.FC<ViewProps> = ({
         requestFingerprint
       ),
     enabled: !!namespace && !!name && !!columns && columns.length > 0,
+    keepPreviousData: true,
     staleTime: 5 * 60 * 1000
   });
 
@@ -251,7 +252,7 @@ const View: React.FC<ViewProps> = ({
       <div className="flex-none">
         {title !== "" && (
           <h3 className="mb-4 flex items-center text-xl font-semibold">
-            <Box className="text-teal-600 mr-2" size={20} />
+            <Box className="mr-2 text-teal-600" size={20} />
             {title}
           </h3>
         )}

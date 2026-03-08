@@ -105,8 +105,8 @@ export default function PermissionsView({
       fetchPermissions(permissionRequest, {
         pageIndex,
         pageSize
-      })
-    // enabled: isEnabled
+      }),
+    keepPreviousData: true
   });
 
   useEffect(() => {

@@ -80,7 +80,10 @@ export function PlaybookRunsSidePanel({
         componentId:
           props.panelType === "topology" ? props.componentId : undefined,
         configId: props.panelType === "config" ? props.configId : undefined
-      })
+      }),
+    {
+      keepPreviousData: true
+    }
   );
 
   const totalEntries = data?.totalEntries ?? 0;

@@ -32,6 +32,7 @@ export function useCheckStattiQuery(
         queryParams.duration
       ),
     {
+      keepPreviousData: true,
       staleTime: 1000 * 10
     }
   );

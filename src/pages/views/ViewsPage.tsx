@@ -41,7 +41,8 @@ export function ViewsPage() {
     queryKey: ["views", "all", sortState, pageIndex, pageSize],
     queryFn: async () => {
       return getAllViews(sortState, pageIndex, pageSize);
-    }
+    },
+    keepPreviousData: true
   });
 
   async function onSubmit(data: View) {

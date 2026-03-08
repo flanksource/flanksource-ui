@@ -17,7 +17,8 @@ export function ConfigDetailsPlaybooksPage() {
         pageIndex,
         pageSize,
         configId: id
-      })
+      }),
+    keepPreviousData: true
   });
 
   const playbookRuns = data?.data;
