@@ -5,6 +5,7 @@ import {
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
+import { LoadingOverlay } from "@mantine/core";
 import {
   MRT_ColumnDef,
   MRT_Row,
@@ -199,7 +200,6 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
         // components on state changes like sorting or pagination.
         memoMode: "cells",
         state: {
-          isLoading,
           showSkeletons: false,
           density: "xs",
           pagination: {
@@ -235,7 +235,6 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       mergedDisplayColumnDefOptions,
       tableBodyRowProps,
       disablePagination,
-      isLoading,
       pageIndex,
       pageSize,
       sortState,
@@ -249,7 +248,21 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
 
   const table = useMantineReactTable(options);
 
-  return <MantineReactTable table={table} />;
+  return (
+    <div style={{ position: "relative" }}>
+      <MantineReactTable table={table} />
+
+      <LoadingOverlay
+        keepMounted
+        visible={isLoading}
+        transitionDuration={120}
+        exitTransitionDuration={80}
+        overlayOpacity={0.15}
+        overlayBlur={1}
+        zIndex={200}
+      />
+    </div>
+  );
 }
 
 // Wrap in React.memo to prevent re-renders from ancestor context changes
