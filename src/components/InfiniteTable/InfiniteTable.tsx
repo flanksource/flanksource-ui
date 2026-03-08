@@ -72,7 +72,7 @@ export function InfiniteTable<T>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true
+    debugTable: process.env.NODE_ENV === "development"
   });
 
   const { rows } = table.getRowModel();
