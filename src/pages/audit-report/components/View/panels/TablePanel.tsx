@@ -5,7 +5,7 @@ interface TablePanelProps {
   summary: PanelResult;
 }
 
-const TablePanel: React.FC<TablePanelProps> = ({ summary }) => {
+const TablePanel: React.FC<TablePanelProps> = React.memo(({ summary }) => {
   return (
     <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
       <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
@@ -34,6 +34,6 @@ const TablePanel: React.FC<TablePanelProps> = ({ summary }) => {
       </div>
     </div>
   );
-};
+});
 
 export default TablePanel;
