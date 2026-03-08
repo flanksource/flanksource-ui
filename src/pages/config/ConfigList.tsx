@@ -39,6 +39,7 @@ export function ConfigListPage() {
   const {
     data: allConfigs,
     isLoading: isLoadingConfigList,
+    isFetching: isFetchingConfigList,
     refetch: refetchConfigList
   } = useAllConfigsQuery({
     cacheTime: 0,
@@ -57,7 +58,7 @@ export function ConfigListPage() {
   });
 
   const isLoading =
-    (isLoadingConfigList && !showConfigSummaryList) ||
+    ((isLoadingConfigList || isFetchingConfigList) && !showConfigSummaryList) ||
     (isLoadingSummary && showConfigSummaryList);
 
   const refetch = showConfigSummaryList ? refetchSummary : refetchConfigList;

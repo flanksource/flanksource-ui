@@ -88,7 +88,11 @@ const ConfigsUISection: React.FC<ConfigsUISectionProps> = ({
   }, [isInitialized, presetParams, searchParams, setSearchParams]);
 
   // Fetch configs data
-  const { data: allConfigs, isLoading } = useAllConfigsQuery({
+  const {
+    data: allConfigs,
+    isLoading,
+    isFetching
+  } = useAllConfigsQuery({
     cacheTime: 0,
     paramPrefix
   });
@@ -101,7 +105,7 @@ const ConfigsUISection: React.FC<ConfigsUISectionProps> = ({
       {isInitialized && <ConfigsUIFilters paramPrefix={paramPrefix} />}
       <ConfigsTable
         data={allConfigs?.data ?? []}
-        isLoading={isLoading || !isInitialized}
+        isLoading={isLoading || isFetching || !isInitialized}
         totalRecords={totalEntries}
         pageCount={pageCount}
         expandAllRows
