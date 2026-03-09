@@ -8,6 +8,7 @@ import { notificationsRulesTableColumns } from "./notificationsRulesTableColumns
 type NotificationsTableProps = {
   notifications: NotificationRules[];
   isLoading?: boolean;
+  isRefetching?: boolean;
   refresh?: () => void;
   totalRecordCount: number;
   pageCount: number;
@@ -16,6 +17,7 @@ type NotificationsTableProps = {
 export default function NotificationsRulesTable({
   notifications,
   isLoading,
+  isRefetching,
   refresh = () => {},
   pageCount,
   totalRecordCount
@@ -39,6 +41,7 @@ export default function NotificationsRulesTable({
         data={notifications ?? []}
         columns={notificationsRulesTableColumns}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         onRowClick={onSelectNotification}
         enableServerSidePagination
         manualPageCount={pageCount}

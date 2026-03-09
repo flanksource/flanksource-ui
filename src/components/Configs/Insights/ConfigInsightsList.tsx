@@ -52,7 +52,8 @@ export default function ConfigInsightsList({
       ) : (
         <MRTDataTable
           data={configInsights}
-          isLoading={isLoading || isRefetching}
+          isLoading={isLoading}
+          isRefetching={isRefetching}
           hiddenColumns={columnsToHide}
           onRowClick={(row) => {
             setClickedInsightItem(row);

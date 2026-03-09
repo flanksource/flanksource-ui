@@ -55,6 +55,7 @@ export type JobHistory = {
 type JobsHistoryTableProps = {
   jobs: JobHistory[];
   isLoading?: boolean;
+  isRefetching?: boolean;
   pageCount: number;
   hiddenColumns?: string[];
   totalJobHistoryItems?: number;
@@ -63,6 +64,7 @@ type JobsHistoryTableProps = {
 export default function JobsHistoryTable({
   jobs,
   isLoading,
+  isRefetching,
   pageCount,
   hiddenColumns = [],
   totalJobHistoryItems
@@ -88,6 +90,7 @@ export default function JobsHistoryTable({
         data={jobs}
         columns={jobsHistoryTableColumn}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         onRowClick={onRowClick}
         enableServerSideSorting
         enableServerSidePagination

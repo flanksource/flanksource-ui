@@ -131,6 +131,7 @@ const silenceNotificationListColumns: MRT_ColumnDef<NotificationSilenceItemApiRe
 type NotificationSendHistoryListProps = {
   data: NotificationSilenceItemApiResponse[];
   isLoading: boolean;
+  isRefetching?: boolean;
   refresh?: () => void;
   pageCount: number;
   recordCount: number;
@@ -139,6 +140,7 @@ type NotificationSendHistoryListProps = {
 export default function SilenceNotificationsList({
   data,
   isLoading,
+  isRefetching,
   pageCount,
   recordCount,
   refresh = () => {}
@@ -164,6 +166,7 @@ export default function SilenceNotificationsList({
           setSearchParams(searchParams);
         }}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         manualPageCount={pageCount}
         enableServerSidePagination
         totalRowCount={recordCount}

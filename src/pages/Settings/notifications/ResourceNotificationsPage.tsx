@@ -51,7 +51,8 @@ export default function ResourceNotificationsPage() {
         <NotificationFilterBar />
         <NotificationSendHistoryList
           data={data?.data ?? []}
-          isLoading={isLoading || isRefetching}
+          isLoading={isLoading}
+          isRefetching={isRefetching}
           pageCount={Math.ceil((data?.totalEntries ?? 0) / pageSize)}
           sendHistoryRowCount={data?.totalEntries ?? 0}
         />

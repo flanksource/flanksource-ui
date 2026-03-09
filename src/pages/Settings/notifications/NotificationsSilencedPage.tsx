@@ -43,7 +43,8 @@ export default function NotificationsSilencedPage() {
         <div className="flex h-full w-full flex-1 flex-col p-3">
           <SilenceNotificationsList
             data={notifications ?? []}
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
+            isRefetching={isRefetching}
             refresh={refetch}
             pageCount={pageCount}
             recordCount={totalEntries ?? 0}

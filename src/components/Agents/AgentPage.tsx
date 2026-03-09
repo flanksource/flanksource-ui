@@ -81,7 +81,8 @@ export default function AgentsPage() {
         <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
           <AgentsTable
             agents={agent ?? []}
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
+            isRefetching={isRefetching}
             pageCount={pageCount}
             pageIndex={pageIndex}
             pageSize={pageSize}

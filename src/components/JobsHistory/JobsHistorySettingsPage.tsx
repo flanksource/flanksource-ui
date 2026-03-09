@@ -42,7 +42,8 @@ export default function JobsHistorySettingsPage() {
 
           <JobsHistoryTable
             jobs={jobs ?? []}
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
+            isRefetching={isRefetching}
             pageCount={pageCount}
             totalJobHistoryItems={totalEntries}
           />
