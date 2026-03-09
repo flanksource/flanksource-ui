@@ -105,7 +105,8 @@ const ConfigsUISection: React.FC<ConfigsUISectionProps> = ({
       {isInitialized && <ConfigsUIFilters paramPrefix={paramPrefix} />}
       <ConfigsTable
         data={allConfigs?.data ?? []}
-        isLoading={isLoading || isFetching || !isInitialized}
+        isLoading={isLoading || !isInitialized}
+        isRefetching={!isLoading && isFetching}
         totalRecords={totalEntries}
         pageCount={pageCount}
         expandAllRows

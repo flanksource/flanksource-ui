@@ -23,6 +23,7 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   columns: MRT_ColumnDef<T>[];
   onRowClick?: (row: T) => void;
   isLoading?: boolean;
+  isRefetching?: boolean;
   disablePagination?: boolean;
   enableColumnActions?: boolean;
   enableServerSideSorting?: boolean;
@@ -62,6 +63,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
   columns,
   onRowClick = () => {},
   isLoading = false,
+  isRefetching = false,
   disablePagination = false,
   enableServerSideSorting = false,
   enableServerSidePagination = false,
@@ -201,6 +203,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
         memoMode: "cells",
         state: {
           showSkeletons: false,
+          showProgressBars: isRefetching,
           density: "xs",
           pagination: {
             pageIndex,
@@ -239,6 +242,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       pageSize,
       sortState,
       groupBy,
+      isRefetching,
       columnVisibility,
       initialState,
       rowsPerPageOptions,
