@@ -210,10 +210,12 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
             pageSize
           },
           sorting: sortState,
-          grouping: groupBy,
+          grouping: groupBy
+        },
+        initialState: {
+          ...initialState,
           columnVisibility
         },
-        initialState,
         mantinePaginationProps: {
           rowsPerPageOptions
         },
@@ -253,7 +255,15 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
   const table = useMantineReactTable(options);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        flex: "1 1 auto",
+        minHeight: 0
+      }}
+    >
       <MantineReactTable table={table} />
 
       <LoadingOverlay

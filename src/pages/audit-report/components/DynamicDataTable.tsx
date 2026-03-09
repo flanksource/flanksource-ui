@@ -141,8 +141,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
           accessorKey: col.name,
           ...(calculatedSize === undefined
             ? {
-                minSize: 15,
-                maxSize: minWidthForColumnType(col.type)
+                minSize: minWidthForColumnType(col.type)
               }
             : {}),
           size: calculatedSize,
