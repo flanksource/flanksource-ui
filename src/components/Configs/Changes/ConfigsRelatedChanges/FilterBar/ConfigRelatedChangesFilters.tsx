@@ -7,6 +7,7 @@ import ConfigChangesDateRangeFilter from "../../ConfigChangesFilters/ConfigChang
 import { FilterBadge } from "../../ConfigChangesFilters/ConfigChangesFilters";
 import { ConfigRelatedChangesToggles } from "../../ConfigChangesFilters/ConfigRelatedChangesToggles";
 import { ConfigTagsDropdown } from "../../ConfigChangesFilters/ConfigTagsDropdown";
+import ConfigChangesViewToggle from "../../ConfigChangesViewToggle";
 import ShowDeletedConfigs from "../../../ConfigsListFilters/ShowDeletedConfigs";
 import ConfigTypesTristateDropdown from "../../ConfigChangesFilters/ConfigTypesTristateDropdown";
 
@@ -27,7 +28,12 @@ export function ConfigRelatedChangesFilters({
         paramsToReset={paramsToReset}
         filterFields={["configTypes", "changeType", "severity", "tags"]}
       >
-        <div className={clsx("flex flex-wrap items-center gap-2", className)}>
+        <div
+          className={clsx(
+            "flex w-full flex-wrap items-center gap-2",
+            className
+          )}
+        >
           <ConfigTypesTristateDropdown />
           <ChangesTypesDropdown />
           <ConfigChangeSeverity />
@@ -35,6 +41,7 @@ export function ConfigRelatedChangesFilters({
           <ConfigRelatedChangesToggles />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
           <ShowDeletedConfigs />
+          <ConfigChangesViewToggle />
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">

@@ -129,6 +129,7 @@
     "react-use-size": "^3.0.3",
     "react-windowed-select": "^5.2.0",
     "reactflow": "^11.11.3",
+    "reaviz": "^16.1.2",
     "recharts": "^2.15.4",
     "shiki": "^3.20.0",
     "streamdown": "^1.6.10",
