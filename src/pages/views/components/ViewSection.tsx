@@ -17,10 +17,16 @@ interface ViewSectionProps {
   section: Section;
   hideVariables?: boolean;
   variables?: Record<string, string>;
+  sectionKeySuffix?: string;
 }
 
 const ViewSection: React.FC<ViewSectionProps> = React.memo(
-  ({ section, hideVariables, variables: defaultVariables }) => {
+  ({
+    section,
+    hideVariables,
+    variables: defaultVariables,
+    sectionKeySuffix
+  }) => {
     const [isExpanded, setIsExpanded] = useState(true);
 
     // Determine if this is a native UI section or a view reference section
@@ -39,7 +45,7 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
     );
 
     // Extract namespace and name for view reference sections
-    const namespace = section.viewRef?.namespace ?? "default";
+    const namespace = section.viewRef?.namespace || "default";
     const name = section.viewRef?.name ?? "";
 
     // Fetch section view data - only enabled for viewRef sections
@@ -68,19 +74,24 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
     // If yes then remove this and use something simpler for the prefix.
     const safeTitle = useMemo(() => toSafeId(section.title), [section.title]);
 
+    const sectionIdSuffix = useMemo(
+      () => (sectionKeySuffix ? `-${toSafeId(sectionKeySuffix)}` : ""),
+      [sectionKeySuffix]
+    );
+
     // Determine the section ID for accessibility
     const sectionId = useMemo(() => {
       if (section.viewRef) {
-        return `section-${section.viewRef.namespace || "default"}-${section.viewRef.name}`;
+        return `section-${namespace}-${section.viewRef.name}${sectionIdSuffix}`;
       }
       if (section.uiRef?.changes) {
-        return `section-changes-${safeTitle}`;
+        return `section-changes-${safeTitle}${sectionIdSuffix}`;
       }
       if (section.uiRef?.configs) {
-        return `section-configs-${safeTitle}`;
+        return `section-configs-${safeTitle}${sectionIdSuffix}`;
       }
-      return `section-${safeTitle}`;
-    }, [safeTitle, section]);
+      return `section-${safeTitle}${sectionIdSuffix}`;
+    }, [namespace, safeTitle, section, sectionIdSuffix]);
 
     // Render section header
     const renderHeader = () => (
@@ -142,7 +153,7 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
     }
 
     // Render view reference section - error state
-    if (error || (!isLoading && !sectionViewResult)) {
+    if (!sectionViewResult && (error || !isLoading)) {
       return (
         <>
           {renderHeader()}

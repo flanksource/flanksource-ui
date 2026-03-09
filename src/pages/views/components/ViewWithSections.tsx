@@ -61,21 +61,23 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
               section={primaryViewSection}
               hideVariables
               variables={currentVariables}
+              sectionKeySuffix={`primary-${namespace || "default"}:${name}`}
             />
           </div>
         )}
 
         {viewResult?.sections && viewResult.sections.length > 0 && (
           <>
-            {viewResult.sections.map((section) => {
+            {viewResult.sections.map((section, index) => {
               // Generate a unique key based on section type
-              const sectionKey = section.viewRef
+              const baseKey = section.viewRef
                 ? `${section.viewRef.namespace || "default"}:${section.viewRef.name}`
                 : section.uiRef?.changes
                   ? `changes:${section.title}`
                   : section.uiRef?.configs
                     ? `configs:${section.title}`
                     : `section:${section.title}`;
+              const sectionKey = `${baseKey}:${index}`;
 
               return (
                 <div key={sectionKey} className="mt-4">
@@ -83,6 +85,7 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
                     section={section}
                     hideVariables
                     variables={currentVariables}
+                    sectionKeySuffix={sectionKey}
                   />
                 </div>
               );

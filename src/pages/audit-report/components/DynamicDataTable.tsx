@@ -176,7 +176,13 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
         });
 
         if (rowAttributesColumnIndex !== -1 && row[rowAttributesColumnIndex]) {
-          rowObj.__rowAttributes = row[rowAttributesColumnIndex];
+          const rowAttributesColumn = columns[rowAttributesColumnIndex];
+          if (rowAttributesColumn) {
+            rowObj.__rowAttributes = convertViewCellToNativeType(
+              row[rowAttributesColumnIndex],
+              rowAttributesColumn
+            );
+          }
         }
 
         return rowObj;
