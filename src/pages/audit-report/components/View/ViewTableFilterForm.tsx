@@ -17,20 +17,40 @@ function ViewTableFilterListener({
 }: ViewTableFilterFormProps): React.ReactElement {
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();
-  const [tableParams, setTableParams] = usePrefixedSearchParams(tablePrefix);
+  const [tableParams, setTableParams] = usePrefixedSearchParams(
+    tablePrefix,
+    false
+  );
 
   useEffect(() => {
-    setTableParams(() => {
-      const newParams = new URLSearchParams();
+    setTableParams((current) => {
+      const newParams = new URLSearchParams(current);
+      let filtersChanged = false;
 
       filterFields.forEach((field) => {
-        const value = values[field];
-        if (value && value.toLowerCase() !== "all") {
-          newParams.set(field, value);
+        const rawValue = values[field];
+        const value =
+          rawValue && rawValue.toLowerCase() !== "all" ? rawValue : undefined;
+        const currentValue = current.get(field) ?? undefined;
+
+        if (value) {
+          if (currentValue !== value) {
+            newParams.set(field, value);
+            filtersChanged = true;
+          }
+          return;
+        }
+
+        if (currentValue != null) {
+          newParams.delete(field);
+          filtersChanged = true;
         }
       });
 
-      // Note: paramsToReset is handled by the prefixed hook
+      if (filtersChanged) {
+        newParams.delete("pageIndex");
+      }
+
       return newParams;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
