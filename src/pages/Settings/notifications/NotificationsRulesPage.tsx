@@ -54,7 +54,8 @@ export default function NotificationRulesPage() {
         <div className="flex h-full w-full flex-1 flex-col p-3">
           <NotificationsRulesTable
             notifications={notifications ?? []}
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
+            isRefetching={isRefetching}
             refresh={refetch}
             totalRecordCount={totalEntries ?? 0}
             pageCount={pageCount}

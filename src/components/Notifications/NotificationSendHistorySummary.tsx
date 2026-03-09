@@ -13,6 +13,7 @@ import { Status } from "../Status";
 type NotificationSendHistorySummaryProps = {
   data: NotificationSendHistorySummary[];
   isLoading: boolean;
+  isRefetching?: boolean;
   pageCount: number;
   sendHistoryRowCount: number;
 };
@@ -131,6 +132,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
 export default function NotificationSendHistorySummaryList({
   data,
   isLoading,
+  isRefetching = false,
   pageCount,
   sendHistoryRowCount
 }: NotificationSendHistorySummaryProps) {
@@ -146,6 +148,7 @@ export default function NotificationSendHistorySummaryList({
         data={data}
         columns={notificationSendHistoryColumns}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         enableGrouping={true}
         onRowClick={(row) => {
           const resourceId = row.resource?.id;

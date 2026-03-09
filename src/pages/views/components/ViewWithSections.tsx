@@ -13,83 +13,88 @@ interface ViewWithSectionsProps {
   hideVariables?: boolean;
 }
 
-const ViewWithSections: React.FC<ViewWithSectionsProps> = ({
-  viewResult,
-  className,
-  aggregatedVariables,
-  currentVariables,
-  hideVariables
-}) => {
-  const { namespace, name, panels, columns } = viewResult;
+const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
+  ({
+    viewResult,
+    className,
+    aggregatedVariables,
+    currentVariables,
+    hideVariables
+  }) => {
+    const { namespace, name, panels, columns } = viewResult;
 
-  const isAggregatorView =
-    viewResult.sections &&
-    viewResult.sections.length > 0 &&
-    !panels &&
-    !columns;
+    const isAggregatorView =
+      viewResult.sections &&
+      viewResult.sections.length > 0 &&
+      !panels &&
+      !columns;
 
-  const primaryViewSection = {
-    title: viewResult.title || name,
-    viewRef: {
-      namespace: namespace || "",
-      name: name
-    }
-  };
+    const primaryViewSection = {
+      title: viewResult.title || name,
+      viewRef: {
+        namespace: namespace || "",
+        name: name
+      }
+    };
 
-  const showVariables =
-    !hideVariables && aggregatedVariables && aggregatedVariables.length > 0;
+    const showVariables =
+      !hideVariables && aggregatedVariables && aggregatedVariables.length > 0;
 
-  return (
-    <div className={className}>
-      {showVariables && (
-        <GlobalFiltersForm
-          variables={aggregatedVariables}
-          globalVarPrefix={VIEW_VAR_PREFIX}
-          currentVariables={currentVariables}
-        >
-          <GlobalFilters variables={aggregatedVariables} />
-        </GlobalFiltersForm>
-      )}
+    return (
+      <div className={className}>
+        {showVariables && (
+          <GlobalFiltersForm
+            variables={aggregatedVariables}
+            globalVarPrefix={VIEW_VAR_PREFIX}
+            currentVariables={currentVariables}
+          >
+            <GlobalFilters variables={aggregatedVariables} />
+          </GlobalFiltersForm>
+        )}
 
-      {showVariables && <hr className="my-4 border-gray-200" />}
+        {showVariables && <hr className="my-4 border-gray-200" />}
 
-      {!isAggregatorView && (
-        <div className="mt-2">
-          <ViewSection
-            key={`${namespace || "default"}:${name}`}
-            section={primaryViewSection}
-            hideVariables
-            variables={currentVariables}
-          />
-        </div>
-      )}
+        {!isAggregatorView && (
+          <div className="mt-2">
+            <ViewSection
+              key={`${namespace || "default"}:${name}`}
+              section={primaryViewSection}
+              hideVariables
+              variables={currentVariables}
+              sectionKeySuffix={`primary-${namespace || "default"}:${name}`}
+            />
+          </div>
+        )}
 
-      {viewResult?.sections && viewResult.sections.length > 0 && (
-        <>
-          {viewResult.sections.map((section) => {
-            // Generate a unique key based on section type
-            const sectionKey = section.viewRef
-              ? `${section.viewRef.namespace || "default"}:${section.viewRef.name}`
-              : section.uiRef?.changes
-                ? `changes:${section.title}`
-                : section.uiRef?.configs
-                  ? `configs:${section.title}`
-                  : `section:${section.title}`;
+        {viewResult?.sections && viewResult.sections.length > 0 && (
+          <>
+            {viewResult.sections.map((section, index) => {
+              // Generate a unique key based on section type
+              const baseKey = section.viewRef
+                ? `${section.viewRef.namespace || "default"}:${section.viewRef.name}`
+                : section.uiRef?.changes
+                  ? `changes:${section.title}`
+                  : section.uiRef?.configs
+                    ? `configs:${section.title}`
+                    : `section:${section.title}`;
+              const sectionKey = `${baseKey}:${index}`;
 
-            return (
-              <div key={sectionKey} className="mt-4">
-                <ViewSection
-                  section={section}
-                  hideVariables
-                  variables={currentVariables}
-                />
-              </div>
-            );
-          })}
-        </>
-      )}
-    </div>
-  );
-};
+              return (
+                <div key={sectionKey} className="mt-4">
+                  <ViewSection
+                    section={section}
+                    hideVariables
+                    variables={currentVariables}
+                    sectionKeySuffix={sectionKey}
+                  />
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+    );
+  }
+);
 
 export default ViewWithSections;

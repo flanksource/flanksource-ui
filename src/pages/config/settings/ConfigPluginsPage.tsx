@@ -151,7 +151,8 @@ export default function ConfigPluginsPage() {
     queryKey: ["catalog", "plugins", sortState, pageIndex, pageSize],
     queryFn: async () => {
       return getAllScrapePlugins(sortState, pageIndex, pageSize);
-    }
+    },
+    keepPreviousData: true
   });
 
   const { mutate: createPlugin, isLoading: isCreating } = useMutation({

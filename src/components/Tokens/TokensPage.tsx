@@ -38,7 +38,8 @@ export default function TokensPage() {
         <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
           <TokensTable
             tokens={tokens ?? []}
-            isLoading={isLoading || isRefetching}
+            isLoading={isLoading}
+            isRefetching={isRefetching}
             refresh={refetch}
           />
         </div>

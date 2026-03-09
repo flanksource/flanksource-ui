@@ -127,56 +127,67 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     };
   }, [baseWidth, visibleColumnsWithRatio]);
 
-  const columnDef: MRT_ColumnDef<any>[] = visibleColumnsWithRatio.map(
-    ({ column: col }) => {
-      const calculatedSize = widthError ? undefined : customWidths[col.name];
-
-      return {
-        accessorKey: col.name,
-        ...(calculatedSize === undefined
-          ? {
-              minSize: 15,
-              maxSize: minWidthForColumnType(col.type)
-            }
-          : {}),
-        size: calculatedSize,
-        header: formatDisplayLabel(col.name),
-        enableSorting: col.type !== "labels",
-        Cell: ({ cell, row }: { cell: any; row: any }) =>
-          renderCellValue(cell.getValue(), col, row.original, tablePrefix)
-      };
-    }
+  const rowAttributesColumnIndex = React.useMemo(
+    () => columns.findIndex((col) => col.type === "row_attributes"),
+    [columns]
   );
 
-  const adaptedData = rows.map((row) => {
-    const rowObj: { [key: string]: any } = {};
-    row.forEach((value, index) => {
-      const column = columns[index];
-      if (!column) {
-        return;
-      }
+  const columnDef = React.useMemo<MRT_ColumnDef<any>[]>(
+    () =>
+      visibleColumnsWithRatio.map(({ column: col }) => {
+        const calculatedSize = widthError ? undefined : customWidths[col.name];
 
-      if (column.hidden || hiddenColumnTypes.includes(column.type)) {
-        // These columns are not displayed in the table
-        return;
-      }
+        return {
+          accessorKey: col.name,
+          ...(calculatedSize === undefined
+            ? {
+                minSize: minWidthForColumnType(col.type)
+              }
+            : {}),
+          size: calculatedSize,
+          header: formatDisplayLabel(col.name),
+          enableSorting: col.type !== "labels",
+          Cell: ({ cell, row }: { cell: any; row: any }) =>
+            renderCellValue(cell.getValue(), col, row.original, tablePrefix)
+        };
+      }),
+    [customWidths, tablePrefix, visibleColumnsWithRatio, widthError]
+  );
 
-      const convertedValue = convertViewCellToNativeType(value, column);
-      rowObj[column.name] = convertedValue;
-    });
+  const adaptedData = React.useMemo(
+    () =>
+      rows.map((row) => {
+        const rowObj: Record<string, any> = {};
 
-    const attributesColumn = columns.find(
-      (col) => col.type === "row_attributes"
-    );
-    if (attributesColumn) {
-      const attributesIndex = columns.indexOf(attributesColumn);
-      if (attributesIndex !== -1 && row[attributesIndex]) {
-        rowObj.__rowAttributes = row[attributesIndex];
-      }
-    }
+        row.forEach((value, index) => {
+          const column = columns[index];
+          if (!column) {
+            return;
+          }
 
-    return rowObj;
-  });
+          if (column.hidden || hiddenColumnTypes.includes(column.type)) {
+            // These columns are not displayed in the table
+            return;
+          }
+
+          const convertedValue = convertViewCellToNativeType(value, column);
+          rowObj[column.name] = convertedValue;
+        });
+
+        if (rowAttributesColumnIndex !== -1 && row[rowAttributesColumnIndex]) {
+          const rowAttributesColumn = columns[rowAttributesColumnIndex];
+          if (rowAttributesColumn) {
+            rowObj.__rowAttributes = convertViewCellToNativeType(
+              row[rowAttributesColumnIndex],
+              rowAttributesColumn
+            );
+          }
+        }
+
+        return rowObj;
+      }),
+    [columns, rowAttributesColumnIndex, rows]
+  );
 
   return (
     <>

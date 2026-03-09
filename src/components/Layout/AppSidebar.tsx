@@ -3,7 +3,7 @@ import { MissionControlLogo, MissionControl } from "@flanksource/icons/mi";
 import { ChevronRight, ChevronUp } from "lucide-react";
 import React, { useContext } from "react";
 import { IconType } from "react-icons";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { useLocation, UNSAFE_NavigationContext } from "react-router-dom";
 import { NavigationItems, SettingsNavigationItems } from "../../App";
 import { withAuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
@@ -43,67 +43,110 @@ interface AppSidebarProps {
   checkPath: boolean;
 }
 
-function NavItem({
+/**
+ * A lightweight link component that does NOT subscribe to LocationContext.
+ *
+ * React Router's `Link` (and `NavLink`) internally call `useLocation()` via
+ * `useHref` / `useResolvedPath` / `useLinkClickHandler`, which means every
+ * instance re-renders on ANY URL change (including search param changes).
+ *
+ * This component reads only from `NavigationContext` (which is `useMemo`'d in
+ * the Router and never changes after mount) to get the `navigator` for
+ * programmatic navigation.  The result: zero re-renders on URL changes.
+ */
+const SidebarLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
+>(function SidebarLink({ to, onClick, children, ...rest }, ref) {
+  const { navigator } = useContext(UNSAFE_NavigationContext);
+
+  return (
+    <a
+      ref={ref}
+      href={to}
+      onClick={(e) => {
+        onClick?.(e);
+        if (
+          !e.defaultPrevented &&
+          e.button === 0 &&
+          !e.metaKey &&
+          !e.ctrlKey &&
+          !e.shiftKey &&
+          !e.altKey
+        ) {
+          e.preventDefault();
+          navigator.push(to);
+        }
+      }}
+      {...rest}
+    >
+      {children}
+    </a>
+  );
+});
+
+const NavItem = React.memo(function NavItem({
   item,
-  collapsed
+  collapsed,
+  pathname
 }: {
   item: NavigationItems[0];
   collapsed: boolean;
+  pathname: string;
 }) {
   const Icon = item.icon as IconType;
-  const location = useLocation();
   const isActive =
-    item.href === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(item.href);
+    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={item.name} isActive={isActive}>
-        <NavLink to={item.href}>
+        <SidebarLink to={item.href}>
           <Icon className="h-5 w-5 fill-white text-white" />
           {!collapsed && (
             <span className={isActive ? "font-medium" : ""}>{item.name}</span>
           )}
-        </NavLink>
+        </SidebarLink>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
-}
+});
 
-function SubNavItem({
-  subItem
+const SubNavItem = React.memo(function SubNavItem({
+  subItem,
+  pathname
 }: {
   subItem: SettingsNavigationItems["submenu"][0];
+  pathname: string;
 }) {
-  const location = useLocation();
-  const isActive = location.pathname.startsWith(subItem.href);
+  const isActive = pathname.startsWith(subItem.href);
   const SubIcon = subItem.icon as IconType;
 
   return (
     <SidebarMenuSubItem>
       <SidebarMenuSubButton asChild isActive={isActive}>
-        <NavLink to={subItem.href}>
+        <SidebarLink to={subItem.href}>
           <SubIcon className="h-4 w-4 fill-white text-white" />
           <span className={isActive ? "font-medium" : ""}>{subItem.name}</span>
-        </NavLink>
+        </SidebarLink>
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   );
-}
+});
 
-function SettingsNavGroup({
+const SettingsNavGroup = React.memo(function SettingsNavGroup({
   settings,
-  checkPath
+  checkPath,
+  pathname
 }: {
   settings: SettingsNavigationItems;
   checkPath: boolean;
+  pathname: string;
 }) {
   const { isFeatureDisabled } = useFeatureFlagsContext();
   const Icon = settings.icon;
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
 
   // When sidebar is collapsed, show a dropdown menu instead of collapsible
   if (collapsed) {
@@ -129,12 +172,12 @@ function SettingsNavGroup({
                 return null;
               }
               const SubIcon = subItem.icon as IconType;
-              const isActive = location.pathname.startsWith(subItem.href);
+              const isActive = pathname.startsWith(subItem.href);
               return (
                 <React.Fragment key={subItem.href}>
                   {withAuthorizationAccessCheck(
                     <DropdownMenuItem asChild>
-                      <NavLink
+                      <SidebarLink
                         to={subItem.href}
                         className={clsx(
                           "flex cursor-pointer items-center gap-2",
@@ -143,7 +186,7 @@ function SettingsNavGroup({
                       >
                         <SubIcon className="h-4 w-4" />
                         <span>{subItem.name}</span>
-                      </NavLink>
+                      </SidebarLink>
                     </DropdownMenuItem>,
                     subItem.resourceName,
                     "read"
@@ -175,7 +218,7 @@ function SettingsNavGroup({
               ) ? (
                 <React.Fragment key={subItem.href}>
                   {withAuthorizationAccessCheck(
-                    <SubNavItem subItem={subItem} />,
+                    <SubNavItem subItem={subItem} pathname={pathname} />,
                     subItem.resourceName,
                     "read"
                   )}
@@ -187,13 +230,24 @@ function SettingsNavGroup({
       </SidebarMenuItem>
     </Collapsible>
   );
+});
+
+interface AppSidebarInnerProps extends AppSidebarProps {
+  pathname: string;
 }
 
-export function AppSidebar({
+/**
+ * The actual sidebar body, memoized so that it only re-renders when
+ * `pathname` (or the other props) actually change.  Because nothing
+ * inside this tree subscribes to LocationContext, search-param-only
+ * URL changes are completely invisible to it.
+ */
+const AppSidebarInner = React.memo(function AppSidebarInner({
   navigation,
   settingsNav,
-  checkPath
-}: AppSidebarProps) {
+  checkPath,
+  pathname
+}: AppSidebarInnerProps) {
   const { isFeatureDisabled } = useFeatureFlagsContext();
   const { isViewer } = useContext(UserAccessStateContext);
   const { state, toggleSidebar } = useSidebar();
@@ -216,14 +270,14 @@ export function AppSidebar({
               <ChevronRight className="h-3 w-3 text-white" />
             </button>
           ) : (
-            <Link to="/" className="block flex-1">
+            <SidebarLink to="/" className="block flex-1">
               <div className="py-2 pl-4">
                 <MissionControlLogo
                   className="h-7 w-auto fill-white text-white [&_*]:fill-white"
                   size="auto"
                 />
               </div>
-            </Link>
+            </SidebarLink>
           )}
           {!collapsed && (
             <SidebarTrigger className="mr-2 text-white hover:bg-gray-600 hover:text-white" />
@@ -242,7 +296,11 @@ export function AppSidebar({
                 ) ? (
                   <React.Fragment key={item.href}>
                     {withAuthorizationAccessCheck(
-                      <NavItem item={item} collapsed={collapsed} />,
+                      <NavItem
+                        item={item}
+                        collapsed={collapsed}
+                        pathname={pathname}
+                      />,
                       item.resourceName,
                       "read"
                     )}
@@ -264,6 +322,7 @@ export function AppSidebar({
                   <SettingsNavGroup
                     settings={settingsNav}
                     checkPath={checkPath}
+                    pathname={pathname}
                   />
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -273,5 +332,27 @@ export function AppSidebar({
           )}
       </SidebarContent>
     </Sidebar>
+  );
+});
+
+/**
+ * Thin wrapper that reads `useLocation()` and passes only `pathname`
+ * to the memoized inner sidebar.  When only search params change,
+ * `pathname` stays the same → memo bails out → nothing re-renders.
+ */
+export function AppSidebar({
+  navigation,
+  settingsNav,
+  checkPath
+}: AppSidebarProps) {
+  const { pathname } = useLocation();
+
+  return (
+    <AppSidebarInner
+      navigation={navigation}
+      settingsNav={settingsNav}
+      checkPath={checkPath}
+      pathname={pathname}
+    />
   );
 }

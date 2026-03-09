@@ -12,6 +12,8 @@ import type {
   ViewVariable
 } from "../../audit-report/types";
 
+const EMPTY_VARIABLES: ViewVariable[] = [];
+
 export interface UseViewDataOptions {
   viewId: string;
   configId?: string;
@@ -171,7 +173,9 @@ export function useViewData({
     isLoading: isLoadingViewResult || isLoadingDisplayPluginVariables,
     isFetching: isFetchingViewResult || isFetchingDisplayPluginVariables,
     error: displayPluginVariablesError || viewResultError,
-    aggregatedVariables: isDisplayPluginMode ? [] : aggregatedVariables,
+    aggregatedVariables: isDisplayPluginMode
+      ? EMPTY_VARIABLES
+      : aggregatedVariables,
     currentVariables,
     handleForceRefresh
   };

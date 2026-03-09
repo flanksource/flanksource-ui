@@ -22,6 +22,7 @@ export default function IntegrationsPage() {
     queryFn: () => {
       return getIntegrationsWithJobStatus(pageIndex, pageSize, sortBy);
     },
+    keepPreviousData: true,
     // disable cache
     staleTime: 0,
     cacheTime: 0

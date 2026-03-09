@@ -14,7 +14,11 @@ export function useAggregatedViewVariables(sections: ViewRef[]) {
   );
   const currentVariables = useMemo(
     () => Object.fromEntries(viewVarParams.entries()),
-    [viewVarParams]
+    // Use the string representation as the dep key — it's a primitive so
+    // Object.is comparison keeps the memo stable when the content hasn't changed,
+    // even though the URLSearchParams reference is new.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [viewVarParamsString]
   );
 
   // Use a stable key for the current variables to avoid needless refetches
@@ -42,8 +46,13 @@ export function useAggregatedViewVariables(sections: ViewRef[]) {
   });
 
   const isLoading = queries.some((q) => q.isLoading);
-  const variableArrays = queries.map((q) => q.data?.variables);
-  const aggregatedVariables = aggregateVariables(variableArrays);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const dataKey = queries.map((q) => q.dataUpdatedAt).join(",");
+  const aggregatedVariables = useMemo(() => {
+    const variableArrays = queries.map((q) => q.data?.variables);
+    return aggregateVariables(variableArrays);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataKey]);
 
   return {
     variables: aggregatedVariables,

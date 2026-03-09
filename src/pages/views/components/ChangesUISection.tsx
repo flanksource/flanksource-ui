@@ -127,7 +127,8 @@ const ChangesUISection: React.FC<ChangesUISectionProps> = ({
       )}
       <ConfigChangeTable
         data={changes}
-        isLoading={isLoading || isRefetching || !isInitialized}
+        isLoading={isLoading || !isInitialized}
+        isRefetching={isRefetching}
         totalRecords={totalChanges}
         numberOfPages={totalChangesPages}
         paramPrefix={paramPrefix}

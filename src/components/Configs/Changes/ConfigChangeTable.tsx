@@ -205,6 +205,7 @@ const configChangesColumn = (
 type ConfigChangeTableProps = {
   data: ConfigChange[];
   isLoading?: boolean;
+  isRefetching?: boolean;
   totalRecords: number;
   numberOfPages: number;
   paramPrefix?: string;
@@ -213,6 +214,7 @@ type ConfigChangeTableProps = {
 export function ConfigChangeTable({
   data,
   isLoading,
+  isRefetching,
   totalRecords,
   numberOfPages,
   paramPrefix
@@ -243,6 +245,7 @@ export function ConfigChangeTable({
         columns={columns}
         data={data}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         enableServerSideSorting
         totalRowCount={totalRecords}
         manualPageCount={numberOfPages}

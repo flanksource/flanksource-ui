@@ -315,7 +315,7 @@ export function useGetConfigChangesByConfigIdQuery(
   id: string,
   pageIndex?: number,
   pageSize?: number,
-  keepPreviousData?: boolean,
+  keepPreviousData: boolean = true,
   starts_at?: string,
   ends_at?: string,
   severity?: string,
@@ -416,7 +416,7 @@ export function useGetConfigInsights(
   configId: string,
   pageIndex?: number,
   pageSize?: number,
-  keepPreviousData?: boolean,
+  keepPreviousData: boolean = true,
   isEnabled?: boolean
 ) {
   return useQuery(
@@ -479,7 +479,7 @@ export function useGetTopologyRelatedInsightsQuery(
   id: string,
   pageIndex?: number,
   pageSize?: number,
-  keepPreviousData?: boolean,
+  keepPreviousData: boolean = true,
   isEnabled?: boolean
 ) {
   return useQuery(

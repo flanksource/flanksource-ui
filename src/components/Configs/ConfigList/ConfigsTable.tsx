@@ -9,6 +9,7 @@ import { mrtConfigListColumns } from "./MRTConfigListColumn";
 export interface Props {
   data: ConfigItem[];
   isLoading: boolean;
+  isRefetching?: boolean;
   columnsToHide?: string[];
   groupBy?: string;
   expandAllRows?: boolean;
@@ -20,6 +21,7 @@ export interface Props {
 export default function ConfigsTable({
   data,
   isLoading,
+  isRefetching = false,
   columnsToHide = ["type"],
   groupBy,
   expandAllRows = false,
@@ -106,6 +108,7 @@ export default function ConfigsTable({
       columns={virtualColumns}
       data={configListWithTagsIncluded}
       isLoading={isLoading}
+      isRefetching={isRefetching}
       groupBy={groupByColumns}
       hiddenColumns={hiddenColumns}
       expandAllRows={expandAllRows}

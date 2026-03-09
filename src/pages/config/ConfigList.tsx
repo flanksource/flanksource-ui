@@ -39,6 +39,7 @@ export function ConfigListPage() {
   const {
     data: allConfigs,
     isLoading: isLoadingConfigList,
+    isFetching: isFetchingConfigList,
     refetch: refetchConfigList
   } = useAllConfigsQuery({
     cacheTime: 0,
@@ -59,6 +60,9 @@ export function ConfigListPage() {
   const isLoading =
     (isLoadingConfigList && !showConfigSummaryList) ||
     (isLoadingSummary && showConfigSummaryList);
+
+  const isRefetching =
+    isFetchingConfigList && !isLoadingConfigList && !showConfigSummaryList;
 
   const refetch = showConfigSummaryList ? refetchSummary : refetchConfigList;
 
@@ -90,7 +94,7 @@ export function ConfigListPage() {
           />
         }
         onRefresh={() => refetch()}
-        loading={isLoading}
+        loading={isLoading || isRefetching}
         contentClass="p-0 h-full"
       >
         <ConfigPageTabs activeTab="Catalog">
@@ -109,6 +113,7 @@ export function ConfigListPage() {
               <ConfigsTable
                 data={allConfigs?.data ?? []}
                 isLoading={isLoading}
+                isRefetching={isRefetching}
                 // We don't want to group by type/class
                 groupBy={
                   groupBy?.filter(

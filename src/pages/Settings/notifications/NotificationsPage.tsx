@@ -59,7 +59,8 @@ export default function NotificationsPage() {
         <NotificationFilterBar />
         <NotificationSendHistorySummaryList
           data={data?.results ?? []}
-          isLoading={isLoading || isRefetching}
+          isLoading={isLoading}
+          isRefetching={isRefetching}
           pageCount={pageCount}
           sendHistoryRowCount={totalEntries ?? 0}
         />

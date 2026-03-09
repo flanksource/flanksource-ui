@@ -83,6 +83,7 @@ export const useAllConfigsQuery = ({
       return getAllConfigsMatchingQuery(query);
     },
     {
+      keepPreviousData: true,
       staleTime,
       enabled,
       ...rest

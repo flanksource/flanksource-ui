@@ -160,6 +160,7 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistoryWithS
 type NotificationSendHistoryListProps = {
   data: NotificationSendHistoryApiResponse[];
   isLoading: boolean;
+  isRefetching?: boolean;
   refresh?: () => void;
   pageCount: number;
   sendHistoryRowCount: number;
@@ -168,6 +169,7 @@ type NotificationSendHistoryListProps = {
 export default function NotificationSendHistoryList({
   data,
   isLoading,
+  isRefetching,
   pageCount,
   sendHistoryRowCount
 }: NotificationSendHistoryListProps) {
@@ -183,6 +185,7 @@ export default function NotificationSendHistoryList({
         data={data}
         columns={notificationSendHistoryColumns}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         enableGrouping={true}
         onRowClick={(row: NotificationSendHistoryWithSubRows) => {
           searchParams.set("id", row.id);

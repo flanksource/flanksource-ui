@@ -8,6 +8,7 @@ import { agentsTableColumns } from "./AgentsTableColumns";
 type AgentsTableProps = {
   agents: AgentSummary[];
   isLoading?: boolean;
+  isRefetching?: boolean;
   pageCount: number;
   pageIndex: number;
   pageSize: number;
@@ -17,6 +18,7 @@ type AgentsTableProps = {
 export default function AgentsTable({
   agents,
   isLoading,
+  isRefetching,
   refresh = () => {}
 }: AgentsTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +33,7 @@ export default function AgentsTable({
         data={agents}
         columns={columns}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         onRowClick={(agent) => {
           searchParams.set("id", agent.id!);
           setSearchParams(searchParams);

@@ -1,6 +1,6 @@
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Token } from "../../../api/services/tokens";
 import { tokensTableColumns } from "./TokensTableColumns";
@@ -9,12 +9,14 @@ import TokenDetailsModal from "../TokenDetailsModal";
 type TokensTableProps = {
   tokens: Token[];
   isLoading?: boolean;
+  isRefetching?: boolean;
   refresh?: () => void;
 };
 
 export default function TokensTable({
   tokens,
   isLoading,
+  isRefetching,
   refresh
 }: TokensTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,6 +51,7 @@ export default function TokensTable({
         data={filteredTokens}
         columns={columns}
         isLoading={isLoading}
+        isRefetching={isRefetching}
         enableServerSideSorting={false}
         onRowClick={(token) => {
           searchParams.set("id", token.id);
