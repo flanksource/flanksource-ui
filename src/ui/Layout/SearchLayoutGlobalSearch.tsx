@@ -53,7 +53,7 @@ import {
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
 
-const SEARCH_RESULT_LIMIT = 10;
+const SEARCH_RESULT_LIMIT = 25;
 
 type SearchResourceType =
   | "configs"
