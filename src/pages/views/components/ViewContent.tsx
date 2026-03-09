@@ -27,11 +27,12 @@ const ViewContent: React.FC<ViewContentProps> = React.memo(
   }) => {
     const { panels, columns } = viewResult;
 
+    const hasPrimaryContent =
+      (Array.isArray(panels) && panels.length > 0) ||
+      (Array.isArray(columns) && columns.length > 0);
+
     const isAggregatorView =
-      viewResult.sections &&
-      viewResult.sections.length > 0 &&
-      !panels &&
-      !columns;
+      Boolean(viewResult.sections?.length) && !hasPrimaryContent;
 
     const showVariables =
       !hideVariables && aggregatedVariables && aggregatedVariables.length > 0;
