@@ -1,1 +1,2 @@
 - Do not hand-write Shadcn components. Use the shadcn CLI to add new components.
+- Use npm run build to build
