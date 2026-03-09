@@ -173,35 +173,3 @@ jobs:
           title: "chore: update flanksource-ui to ${{ needs.semantic-release.outputs.release-version }}"
           branch: "update-flanksource-ui"
           path: ./canary-checker
-
-  update-incident-commander:
-    runs-on: ubuntu-latest
-    needs: [docker, push-helm-chart, semantic-release]
-    if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@446798f8213ac2e75931c1b0769676d927801858 # v2.10.3
-        with:
-          egress-policy: audit
-
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-        with:
-          repository: "${{ github.repository_owner }}/incident-commander-chart"
-          token: ${{ secrets.FLANKBOT }}
-          path: ./incident-commander-chart
-      - name: Install yq
-        run: |
-          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
-          tar xz && sudo mv ${BINARY} /usr/bin/yq
-        env:
-          VERSION: v4.25.1
-          BINARY: yq_linux_amd64
-      - name: Update flanksource-ui version in Incident-commander
-        run: |
-          cd incident-commander-chart
-          yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.release-version }}"' chart/Chart.yaml
-      - name: Push changes to chart repo
-        uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4.16.0
-        with:
-          commit_message: "chore: update flanksource-ui chart dependency to ${{ needs.semantic-release.outputs.release-version }}"
-          repository: ./incident-commander-chart
