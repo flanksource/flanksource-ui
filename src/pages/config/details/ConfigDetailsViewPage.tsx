@@ -2,7 +2,7 @@ import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDeta
 import { useParams } from "react-router-dom";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { useViewData } from "@flanksource-ui/pages/views/hooks/useViewData";
-import ViewWithSections from "@flanksource-ui/pages/views/components/ViewWithSections";
+import ViewContent from "@flanksource-ui/pages/views/components/ViewContent";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 export function ConfigDetailsViewPage() {
@@ -17,6 +17,7 @@ export function ConfigDetailsViewPage() {
     error,
     aggregatedVariables,
     currentVariables,
+    sectionData,
     handleForceRefresh
   } = useViewData({
     viewId: viewId!,
@@ -42,8 +43,9 @@ export function ConfigDetailsViewPage() {
             <ErrorViewer error={error} className="max-w-3xl" />
           </div>
         ) : viewResult ? (
-          <ViewWithSections
+          <ViewContent
             viewResult={viewResult}
+            sectionData={sectionData}
             aggregatedVariables={aggregatedVariables}
             currentVariables={currentVariables}
             hideVariables

@@ -20,7 +20,7 @@ jest.mock("../../api/services/views", () => ({
   getViewIdByNamespaceAndName: jest.fn()
 }));
 
-jest.mock("../../pages/views/components/SingleView", () => ({
+jest.mock("../../pages/views/components/ViewContainer", () => ({
   __esModule: true,
   default: ({ id }: { id: string }) => (
     <div data-testid="single-view" data-view-id={id}>
