@@ -5,6 +5,32 @@ import { Topology } from "./topology";
 import { Team, User } from "./users";
 import { PlaybookResourceSelector, PlaybookRunStatus } from "./playbooks";
 
+export type NotificationInhibition = {
+  // Direction specifies the traversal direction in relation to the "From" resource.
+  // - "outgoing": Looks for child resources originating from the "From" resource.
+  //   Example: If "From" is "Kubernetes::Deployment", "To" could be ["Kubernetes::Pod", "Kubernetes::ReplicaSet"].
+  // - "incoming": Looks for parent resources related to the "From" resource.
+  //   Example: If "From" is "Kubernetes::Deployment", "To" could be ["Kubernetes::HelmRelease", "Kubernetes::Namespace"].
+  // - "all": Considers both incoming and outgoing relationships.
+  direction: "outgoing" | "incoming" | "all";
+
+  // Soft, when true, relates using soft relationships.
+  // Example: Deployment to Pod is hard relationship, But Node to Pod is soft relationship.
+  soft?: boolean;
+
+  // Depth defines how many levels of child or parent resources to traverse.
+  depth?: number;
+
+  // From specifies the starting resource type (for example, "Kubernetes::Deployment").
+  from: string;
+
+  // To specifies the target resource types, which are determined based on the Direction.
+  // Example:
+  //   - If Direction is "outgoing", these are child resources.
+  //   - If Direction is "incoming", these are parent resources.
+  to: string[];
+};
+
 export type NotificationRules = {
   id: string;
   namespace?: string;
@@ -45,6 +71,7 @@ export type NotificationRules = {
   error?: string;
   error_at?: string;
   wait_for?: number;
+  inhibitions?: NotificationInhibition[];
 };
 
 // Source: github.com/flanksource/mission-control/notification/silence.go
