@@ -1,0 +1,105 @@
+import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter, useSearchParams } from "react-router-dom";
+import ViewContainer from "../ViewContainer";
+import * as viewsApi from "../../../../api/services/views";
+
+jest.mock("../../../../api/services/views", () => ({
+  ...jest.requireActual("../../../../api/services/views"),
+  getViewDataById: jest.fn(),
+  getViewDataByNamespace: jest.fn(),
+  getViewDisplayPluginVariables: jest.fn()
+}));
+
+jest.mock("../../../audit-report/components/View/View", () => ({
+  __esModule: true,
+  default: ({ requestFingerprint }: { requestFingerprint: string }) => (
+    <div data-testid="view-fingerprint">{requestFingerprint}</div>
+  )
+}));
+
+const mockedGetViewDataById = viewsApi.getViewDataById as jest.MockedFunction<
+  typeof viewsApi.getViewDataById
+>;
+const mockedGetViewDataByNamespace =
+  viewsApi.getViewDataByNamespace as jest.MockedFunction<
+    typeof viewsApi.getViewDataByNamespace
+  >;
+
+function TestHarness() {
+  const [, setSearchParams] = useSearchParams();
+
+  return (
+    <>
+      <button
+        onClick={() =>
+          setSearchParams(new URLSearchParams("viewvar__namespace=ns-a"))
+        }
+      >
+        Set namespace ns-a
+      </button>
+      <ViewContainer id="view-1" />
+    </>
+  );
+}
+
+function renderWithProviders(initialPath = "/") {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
+
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <QueryClientProvider client={queryClient}>
+        <TestHarness />
+      </QueryClientProvider>
+    </MemoryRouter>
+  );
+}
+
+describe("ViewContainer template variable updates", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockedGetViewDataById.mockImplementation(async (_viewId, variables) => {
+      return {
+        namespace: "mission-control",
+        name: "cluster-view",
+        requestFingerprint: `primary:${variables?.namespace ?? "none"}`
+      };
+    });
+
+    mockedGetViewDataByNamespace.mockImplementation(
+      async (namespace, name, variables) => {
+        return {
+          namespace,
+          name,
+          requestFingerprint: `section:${variables?.namespace ?? "none"}`
+        };
+      }
+    );
+  });
+
+  it("re-renders primary view data when template variable changes", async () => {
+    renderWithProviders("/");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
+        "primary:none"
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Set namespace ns-a" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
+        "primary:ns-a"
+      );
+    });
+  });
+});
