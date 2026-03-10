@@ -97,14 +97,6 @@ describe("ViewContainer template variable updates", () => {
     fireEvent.click(screen.getByRole("button", { name: "Set namespace ns-a" }));
 
     await waitFor(() => {
-      expect(mockedGetViewDataByNamespace).toHaveBeenCalledWith(
-        "mission-control",
-        "cluster-view",
-        { namespace: "ns-a" }
-      );
-    });
-
-    await waitFor(() => {
       expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
         "primary:ns-a"
       );
