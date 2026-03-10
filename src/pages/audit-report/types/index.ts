@@ -486,8 +486,23 @@ export interface ViewResult {
   panels?: PanelResult[];
   columnOptions?: Record<string, ColumnFilterOptions>;
   variables?: ViewVariable[];
+
+  /**
+   * Card display configuration for tabular data.
+   *
+   * This controls presentation (e.g. card layout/default mode) and does not
+   * contain primary result data by itself.
+   */
   card?: DisplayCard;
+
+  /**
+   * Table display configuration (e.g. default sort and page size).
+   *
+   * This controls presentation/query defaults and does not contain primary
+   * result data by itself.
+   */
   table?: DisplayTable;
+
   requestFingerprint: string;
   sections?: ViewSection[];
 }

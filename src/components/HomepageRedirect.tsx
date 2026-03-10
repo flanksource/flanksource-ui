@@ -17,8 +17,8 @@ import {
   UUID_REGEX
 } from "./dashboardViewConstants";
 
-const SingleView = React.lazy(
-  () => import("../pages/views/components/SingleView")
+const ViewContainer = React.lazy(
+  () => import("../pages/views/components/ViewContainer")
 );
 
 async function resolveViewId(value: string): Promise<string | undefined> {
@@ -59,7 +59,7 @@ export function HomepageRedirect() {
   if (resolvedViewId) {
     return (
       <Suspense fallback={<FullPageSkeletonLoader />}>
-        <SingleView id={resolvedViewId} />
+        <ViewContainer id={resolvedViewId} />
       </Suspense>
     );
   }

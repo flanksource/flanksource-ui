@@ -6,7 +6,7 @@ import {
   getViewIdByName
 } from "../../api/services/views";
 
-const SingleView = React.lazy(() => import("./components/SingleView"));
+const ViewContainer = React.lazy(() => import("./components/ViewContainer"));
 
 /**
  * ViewPage supports the following routes:
@@ -102,7 +102,7 @@ export function ViewPage() {
         </div>
       }
     >
-      <SingleView id={viewId} />
+      <ViewContainer id={viewId} />
     </Suspense>
   );
 }

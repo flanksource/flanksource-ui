@@ -2,40 +2,37 @@ import React from "react";
 import ViewSection from "./ViewSection";
 import GlobalFiltersForm from "../../audit-report/components/View/GlobalFiltersForm";
 import GlobalFilters from "../../audit-report/components/View/GlobalFilters";
+import View from "../../audit-report/components/View/View";
 import { VIEW_VAR_PREFIX } from "../constants";
 import type { ViewResult, ViewVariable } from "../../audit-report/types";
+import type { SectionDataEntry } from "../hooks/useAggregatedViewVariables";
 
-interface ViewWithSectionsProps {
+interface ViewContentProps {
   className?: string;
   viewResult: ViewResult;
+  sectionData?: Map<string, SectionDataEntry>;
   aggregatedVariables?: ViewVariable[];
   currentVariables?: Record<string, string>;
   hideVariables?: boolean;
 }
 
-const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
+const ViewContent: React.FC<ViewContentProps> = React.memo(
   ({
     viewResult,
     className,
+    sectionData,
     aggregatedVariables,
     currentVariables,
     hideVariables
   }) => {
-    const { namespace, name, panels, columns } = viewResult;
+    const { panels, columns } = viewResult;
+
+    const hasPrimaryContent =
+      (Array.isArray(panels) && panels.length > 0) ||
+      (Array.isArray(columns) && columns.length > 0);
 
     const isAggregatorView =
-      viewResult.sections &&
-      viewResult.sections.length > 0 &&
-      !panels &&
-      !columns;
-
-    const primaryViewSection = {
-      title: viewResult.title || name,
-      viewRef: {
-        namespace: namespace || "",
-        name: name
-      }
-    };
+      Boolean(viewResult.sections?.length) && !hasPrimaryContent;
 
     const showVariables =
       !hideVariables && aggregatedVariables && aggregatedVariables.length > 0;
@@ -56,12 +53,19 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
 
         {!isAggregatorView && (
           <div className="mt-2">
-            <ViewSection
-              key={`${namespace || "default"}:${name}`}
-              section={primaryViewSection}
+            <View
+              title=""
+              namespace={viewResult.namespace}
+              name={viewResult.name}
+              columns={viewResult.columns}
+              columnOptions={viewResult.columnOptions}
+              panels={viewResult.panels}
+              table={viewResult.table}
+              variables={viewResult.variables}
+              card={viewResult.card}
+              requestFingerprint={viewResult.requestFingerprint}
+              currentVariables={currentVariables}
               hideVariables
-              variables={currentVariables}
-              sectionKeySuffix={`primary-${namespace || "default"}:${name}`}
             />
           </div>
         )}
@@ -69,7 +73,6 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
         {viewResult?.sections && viewResult.sections.length > 0 && (
           <>
             {viewResult.sections.map((section, index) => {
-              // Generate a unique key based on section type
               const baseKey = section.viewRef
                 ? `${section.viewRef.namespace || "default"}:${section.viewRef.name}`
                 : section.uiRef?.changes
@@ -78,14 +81,21 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
                     ? `configs:${section.title}`
                     : `section:${section.title}`;
               const sectionKey = `${baseKey}:${index}`;
+              const viewRefKey = section.viewRef
+                ? `${section.viewRef.namespace || ""}:${section.viewRef.name}`
+                : undefined;
+              const sectionEntry = viewRefKey
+                ? sectionData?.get(viewRefKey)
+                : undefined;
 
               return (
                 <div key={sectionKey} className="mt-4">
                   <ViewSection
                     section={section}
-                    hideVariables
+                    viewData={sectionEntry?.data}
+                    isLoading={sectionEntry?.isLoading}
+                    error={sectionEntry?.error}
                     variables={currentVariables}
-                    sectionKeySuffix={sectionKey}
                   />
                 </div>
               );
@@ -97,4 +107,4 @@ const ViewWithSections: React.FC<ViewWithSectionsProps> = React.memo(
   }
 );
 
-export default ViewWithSections;
+export default ViewContent;

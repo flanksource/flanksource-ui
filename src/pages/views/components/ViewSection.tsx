@@ -1,12 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { IoChevronDownOutline } from "react-icons/io5";
-import { getViewDataByNamespace } from "../../../api/services/views";
 import View from "../../audit-report/components/View/View";
 import { Icon } from "../../../ui/Icons/Icon";
-import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
-import { VIEW_VAR_PREFIX } from "../constants";
-import { ViewSection as Section } from "../../audit-report/types";
+import { ViewSection as Section, ViewResult } from "../../audit-report/types";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import ChangesUISection from "./ChangesUISection";
 import ConfigsUISection from "./ConfigsUISection";
@@ -15,51 +11,18 @@ const toSafeId = (value: string) => value.replace(/[^a-zA-Z0-9_-]/g, "-");
 
 interface ViewSectionProps {
   section: Section;
-  hideVariables?: boolean;
+  viewData?: ViewResult;
+  isLoading?: boolean;
+  error?: unknown;
   variables?: Record<string, string>;
-  sectionKeySuffix?: string;
 }
 
 const ViewSection: React.FC<ViewSectionProps> = React.memo(
-  ({
-    section,
-    hideVariables,
-    variables: defaultVariables,
-    sectionKeySuffix
-  }) => {
+  ({ section, viewData, isLoading, error, variables }) => {
     const [isExpanded, setIsExpanded] = useState(true);
 
-    // Determine if this is a native UI section or a view reference section
     const isUIRefSection = !!section.uiRef;
     const isViewRefSection = !!section.viewRef;
-
-    // Use prefixed search params for view variables
-    const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
-    const paramVariables = useMemo(
-      () => Object.fromEntries(viewVarParams.entries()),
-      [viewVarParams]
-    );
-    const currentViewVariables = useMemo(
-      () => ({ ...(defaultVariables ?? {}), ...paramVariables }),
-      [defaultVariables, paramVariables]
-    );
-
-    // Extract namespace and name for view reference sections
-    const namespace = section.viewRef?.namespace || "default";
-    const name = section.viewRef?.name ?? "";
-
-    // Fetch section view data - only enabled for viewRef sections
-    const {
-      data: sectionViewResult,
-      isLoading,
-      error
-    } = useQuery({
-      queryKey: ["view-result", namespace, name, currentViewVariables],
-      queryFn: () =>
-        getViewDataByNamespace(namespace, name, currentViewVariables),
-      enabled: isViewRefSection && !!name,
-      staleTime: 5 * 60 * 1000
-    });
 
     const handleHeaderKeyDown = (
       event: React.KeyboardEvent<HTMLDivElement>
@@ -70,30 +33,21 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
       }
     };
 
-    // TODO: see if safeTitle is only needed for the prefix.
-    // If yes then remove this and use something simpler for the prefix.
     const safeTitle = useMemo(() => toSafeId(section.title), [section.title]);
 
-    const sectionIdSuffix = useMemo(
-      () => (sectionKeySuffix ? `-${toSafeId(sectionKeySuffix)}` : ""),
-      [sectionKeySuffix]
-    );
-
-    // Determine the section ID for accessibility
     const sectionId = useMemo(() => {
       if (section.viewRef) {
-        return `section-${namespace}-${section.viewRef.name}${sectionIdSuffix}`;
+        return `section-${section.viewRef.namespace || "default"}-${section.viewRef.name}`;
       }
       if (section.uiRef?.changes) {
-        return `section-changes-${safeTitle}${sectionIdSuffix}`;
+        return `section-changes-${safeTitle}`;
       }
       if (section.uiRef?.configs) {
-        return `section-configs-${safeTitle}${sectionIdSuffix}`;
+        return `section-configs-${safeTitle}`;
       }
-      return `section-${safeTitle}${sectionIdSuffix}`;
-    }, [namespace, safeTitle, section, sectionIdSuffix]);
+      return `section-${safeTitle}`;
+    }, [safeTitle, section.uiRef, section.viewRef]);
 
-    // Render section header
     const renderHeader = () => (
       <div
         role="button"
@@ -117,7 +71,6 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
       </div>
     );
 
-    // Render native UI section (Changes or Configs)
     if (isUIRefSection) {
       return (
         <>
@@ -142,7 +95,6 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
       );
     }
 
-    // Render invalid section error
     if (!isViewRefSection) {
       return (
         <ErrorViewer
@@ -152,48 +104,37 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
       );
     }
 
-    // Render view reference section - error state
-    if (!sectionViewResult && (error || !isLoading)) {
-      return (
-        <>
-          {renderHeader()}
-          {isExpanded && (
-            <div id={sectionId}>
-              <ErrorViewer
-                error={error ?? "Failed to load section"}
-                className="max-w-3xl"
-              />
-            </div>
-          )}
-        </>
-      );
-    }
-
-    // Render view reference section - success state
     return (
       <>
         {renderHeader()}
         {isExpanded && (
           <div id={sectionId}>
-            {isLoading ? (
+            {isLoading && !viewData ? (
               <div className="animate-pulse">
                 <div className="mb-4 h-4 w-32 rounded bg-gray-200"></div>
                 <div className="h-64 rounded bg-gray-100"></div>
               </div>
+            ) : error ? (
+              <ErrorViewer error={error} className="max-w-3xl" />
+            ) : !viewData ? (
+              <ErrorViewer
+                error="Failed to load section"
+                className="max-w-3xl"
+              />
             ) : (
               <View
                 title=""
-                namespace={namespace}
-                name={name}
-                columns={sectionViewResult?.columns}
-                columnOptions={sectionViewResult?.columnOptions}
-                panels={sectionViewResult?.panels}
-                table={sectionViewResult?.table}
-                variables={sectionViewResult?.variables}
-                card={sectionViewResult?.card}
-                requestFingerprint={sectionViewResult?.requestFingerprint ?? ""}
-                currentVariables={currentViewVariables}
-                hideVariables={hideVariables}
+                namespace={viewData.namespace}
+                name={viewData.name}
+                columns={viewData.columns}
+                columnOptions={viewData.columnOptions}
+                panels={viewData.panels}
+                table={viewData.table}
+                variables={viewData.variables}
+                card={viewData.card}
+                requestFingerprint={viewData.requestFingerprint}
+                currentVariables={variables}
+                hideVariables
               />
             )}
           </div>

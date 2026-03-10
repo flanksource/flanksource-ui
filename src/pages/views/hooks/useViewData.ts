@@ -4,7 +4,10 @@ import {
   getViewDataById,
   getViewDisplayPluginVariables
 } from "../../../api/services/views";
-import { useAggregatedViewVariables } from "./useAggregatedViewVariables";
+import {
+  useAggregatedViewVariables,
+  type SectionDataEntry
+} from "./useAggregatedViewVariables";
 import { toastError } from "../../../components/Toast/toast";
 import type {
   ViewRef,
@@ -26,9 +29,40 @@ export interface UseViewDataResult {
   error: unknown;
   aggregatedVariables: ViewVariable[];
   currentVariables: Record<string, string>;
+  sectionData: Map<string, SectionDataEntry>;
   handleForceRefresh: () => Promise<void>;
 }
 
+/**
+ * Fetches and manages all data needed to render a view.
+ *
+ * Supports two modes:
+ *
+ * **Standard mode** (`viewId` only): Fetches the top-level view by ID, then
+ * fetches all of its sections (viewRef-based) in parallel via
+ * `useAggregatedViewVariables`. URL search params prefixed with the view
+ * variable prefix are read and forwarded to every request as query-time
+ * variable overrides.
+ *
+ * **Display-plugin mode** (`viewId` + `configId`): Used when a view is
+ * embedded inside a config detail tab. A preliminary request resolves the
+ * config-specific variables (e.g. `{{ .config.id }}`), which are then
+ * forwarded to the view fetch and to section fetches. URL search params are
+ * ignored in this mode — the config variables are the source of truth.
+ * `aggregatedVariables` is intentionally emptied in this mode because the
+ * global variable filter UI should not be shown inside an embedded tab.
+ *
+ * **Fetching strategy** — to avoid duplicate network requests, section data is
+ * fetched exactly once inside `useAggregatedViewVariables` (which needs the
+ * responses for variable aggregation anyway) and the results are surfaced here
+ * as `sectionData`. `ViewSection` components receive that data as props rather
+ * than issuing their own queries.
+ *
+ * **Force-refresh** — `handleForceRefresh` re-fetches the top-level view with
+ * a `cache-control: max-age=1` header to bypass server-side caching, then
+ * invalidates the React Query cache for all related section queries so they
+ * are re-fetched on the next render.
+ */
 export function useViewData({
   viewId,
   configId
@@ -97,8 +131,12 @@ export function useViewData({
 
   const {
     variables: aggregatedVariables,
-    currentVariables: aggregatedCurrentVariables
-  } = useAggregatedViewVariables(allSectionRefs);
+    currentVariables: aggregatedCurrentVariables,
+    sectionData
+  } = useAggregatedViewVariables(
+    allSectionRefs,
+    isDisplayPluginMode ? variables : undefined
+  );
 
   const currentVariables = isDisplayPluginMode
     ? (variables ?? {})
@@ -177,6 +215,7 @@ export function useViewData({
       ? EMPTY_VARIABLES
       : aggregatedVariables,
     currentVariables,
+    sectionData,
     handleForceRefresh
   };
 }

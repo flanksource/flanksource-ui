@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Age from "../../../ui/Age/Age";
 import ViewLayout from "./ViewLayout";
-import ViewWithSections from "./ViewWithSections";
+import ViewContent from "./ViewContent";
 import { useViewData } from "../hooks/useViewData";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import {
@@ -12,11 +12,11 @@ import {
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
 
-interface SingleViewProps {
+interface ViewContainerProps {
   id: string;
 }
 
-const SingleView: React.FC<SingleViewProps> = ({ id }) => {
+const ViewContainer: React.FC<ViewContainerProps> = ({ id }) => {
   const {
     viewResult,
     isLoading,
@@ -24,6 +24,7 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
     error,
     aggregatedVariables,
     currentVariables,
+    sectionData,
     handleForceRefresh
   } = useViewData({ viewId: id });
   const [refreshErrorOpen, setRefreshErrorOpen] = useState(false);
@@ -115,9 +116,10 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
           )
         }
       >
-        <ViewWithSections
+        <ViewContent
           className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6"
           viewResult={viewResult}
+          sectionData={sectionData}
           aggregatedVariables={aggregatedVariables}
           currentVariables={currentVariables}
         />
@@ -126,4 +128,4 @@ const SingleView: React.FC<SingleViewProps> = ({ id }) => {
   );
 };
 
-export default SingleView;
+export default ViewContainer;
