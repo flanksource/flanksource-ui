@@ -1,8 +1,33 @@
-import { ConfigDB, ViewAPI } from "../axios";
+import { ConfigDB, ViewAPI, apiBase } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { ViewResult, ViewColumnDef } from "../../pages/audit-report/types";
 import { tristateOutputToQueryFilterParam } from "../../ui/Dropdowns/TristateReactSelect";
 import { buildLabelFilterQueries } from "../utils/labels";
+
+export interface DashboardResponse extends ViewResult {
+  id: string;
+  /** Pre-resolved section ViewResults keyed by section name */
+  sectionResults?: Record<string, ViewResult>;
+}
+
+/**
+ * Fetches the dashboard view definition in a single call.
+ * The server resolves the configured dashboard property, looks up the view,
+ * and returns the full view spec including pre-resolved section results.
+ *
+ * Returns `null` when no default dashboard view is configured (404).
+ */
+export const getDashboard = async (): Promise<DashboardResponse | null> => {
+  try {
+    const response = await apiBase.get<DashboardResponse>("/dashboard");
+    return response.data;
+  } catch (err: any) {
+    if (err?.response?.status === 404) {
+      return null;
+    }
+    throw err;
+  }
+};
 
 export type View = {
   id: string;

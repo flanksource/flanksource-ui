@@ -1,68 +1,80 @@
-// ABOUTME: Resolves the homepage destination based on a configured view property,
-// ABOUTME: a well-known view name, or falls back to the health page.
+// ABOUTME: Resolves the homepage destination using /api/dashboard which returns
+// ABOUTME: the dashboard view definition and pre-resolved section data in a
+// ABOUTME: single call. Pre-seeds the react-query cache so downstream components
+// ABOUTME: skip their individual fetch round trips.
 
-import { useQuery } from "@tanstack/react-query";
-import React, { Suspense } from "react";
-import {
-  getViewIdByName,
-  getViewIdByNamespaceAndName
-} from "../api/services/views";
-import { useFeatureFlagsContext } from "../context/FeatureFlagsContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { Suspense, useEffect } from "react";
+import { getDashboard, DashboardResponse } from "../api/services/views";
 import { HealthPage } from "../pages/health";
 import FullPageSkeletonLoader from "../ui/SkeletonLoader/FullPageSkeletonLoader";
-
-import {
-  DASHBOARD_VIEW_PROPERTY,
-  FALLBACK_VIEW_NAME,
-  UUID_REGEX
-} from "./dashboardViewConstants";
 
 const ViewContainer = React.lazy(
   () => import("../pages/views/components/ViewContainer")
 );
 
-async function resolveViewId(value: string): Promise<string | undefined> {
-  if (value.includes("/")) {
-    const [namespace, name] = value.split("/", 2);
-    return getViewIdByNamespaceAndName(namespace, name);
-  }
-  return getViewIdByName(value);
+/**
+ * Pre-seed the react-query cache with dashboard data so downstream components
+ * don't make redundant fetch calls:
+ * - ["view-result", viewId] for useViewData's top-level view fetch
+ * - ["view-result", namespace, name, {}] for each section's ViewSection fetch
+ */
+function useSeedDashboardCache(
+  dashboard: DashboardResponse | null | undefined
+) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!dashboard?.id) return;
+
+    // Seed the top-level view cache (skips POST /api/view/{id})
+    queryClient.setQueryData(["view-result", dashboard.id], dashboard);
+
+    // Seed each section result cache (skips POST /api/view/{namespace}/{name})
+    if (dashboard.sectionResults) {
+      for (const [name, sectionResult] of Object.entries(
+        dashboard.sectionResults
+      )) {
+        const section = dashboard.sections?.find(
+          (s) => s.viewRef?.name === name
+        );
+        const namespace =
+          section?.viewRef?.namespace ?? dashboard.namespace ?? "";
+
+        queryClient.setQueryData(
+          ["view-result", namespace, name, {}],
+          sectionResult
+        );
+      }
+    }
+  }, [dashboard, queryClient]);
 }
 
 export function HomepageRedirect() {
-  const { featureFlags } = useFeatureFlagsContext();
-
-  const dashboardViewValue = featureFlags.find(
-    (f) => f.name === DASHBOARD_VIEW_PROPERTY
-  )?.value;
-
-  const isUUID = dashboardViewValue && UUID_REGEX.test(dashboardViewValue);
-
-  const { data: viewId, isLoading } = useQuery({
-    queryKey: ["homepage-redirect", dashboardViewValue],
-    queryFn: async () => {
-      if (dashboardViewValue) {
-        return resolveViewId(dashboardViewValue);
-      }
-      return getViewIdByName(FALLBACK_VIEW_NAME);
-    },
-    enabled: !isUUID,
+  const {
+    data: dashboard,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ["dashboard"],
+    queryFn: getDashboard,
     staleTime: 5 * 60 * 1000
   });
 
-  const resolvedViewId = isUUID ? dashboardViewValue : viewId;
+  useSeedDashboardCache(dashboard);
 
-  if (!isUUID && isLoading) {
+  if (isLoading) {
     return <FullPageSkeletonLoader />;
   }
 
-  if (resolvedViewId) {
-    return (
-      <Suspense fallback={<FullPageSkeletonLoader />}>
-        <ViewContainer id={resolvedViewId} />
-      </Suspense>
-    );
+  // Fall back to health checks page when there's no dashboard view (404) or on error
+  if (error || !dashboard?.id) {
+    return <HealthPage url="/api/canary/api/summary" />;
   }
 
-  return <HealthPage url="/api/canary/api/summary" />;
+  return (
+    <Suspense fallback={<FullPageSkeletonLoader />}>
+      <ViewContainer id={dashboard.id} />
+    </Suspense>
+  );
 }
