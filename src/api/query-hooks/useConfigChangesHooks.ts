@@ -4,7 +4,11 @@ import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfi
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
-import { UseQueryOptions, useQuery } from "@tanstack/react-query";
+import {
+  UseQueryOptions,
+  useInfiniteQuery,
+  useQuery
+} from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
@@ -156,5 +160,56 @@ export function useGetConfigChangesByIDQuery(
     queryKey: ["configs", "changes", props],
     queryFn: () => getConfigsChanges(props),
     ...queryOptions
+  });
+}
+
+export function useGetAllConfigsChangesInfiniteQuery({
+  pageSize = 200,
+  paramPrefix
+}: {
+  pageSize?: number;
+  paramPrefix?: string;
+} = {}) {
+  const showChangesFromDeletedConfigs = useShowDeletedConfigs();
+  const { timeRangeValue } = useTimeRangeParams(
+    configChangesDefaultDateFilter,
+    paramPrefix
+  );
+  const [params] = usePrefixedSearchParams(paramPrefix, false, {
+    sortBy: "created_at",
+    sortDirection: "desc"
+  });
+  const changeType = params.get("changeType") ?? undefined;
+  const severity = params.get("severity") ?? undefined;
+  const configType = params.get("configType") ?? undefined;
+  const from = timeRangeValue?.from ?? undefined;
+  const to = timeRangeValue?.to ?? undefined;
+  const [sortBy] = useReactTableSortState({ paramPrefix });
+  const configTypes = params.get("configTypes") ?? "all";
+  const tags = useConfigChangesTagsFilter(paramPrefix);
+  const arbitraryFilter = useConfigChangesArbitraryFilters(paramPrefix);
+
+  const filterProps = {
+    include_deleted_configs: showChangesFromDeletedConfigs,
+    changeType,
+    severity,
+    from,
+    to,
+    configTypes,
+    configType,
+    sortBy: sortBy[0]?.id,
+    sortOrder: (sortBy[0]?.desc ? "desc" : "asc") as "asc" | "desc",
+    pageSize,
+    arbitraryFilter,
+    tags
+  };
+
+  return useInfiniteQuery({
+    queryKey: ["configs", "changes", "infinite", filterProps],
+    queryFn: ({ pageParam = 0 }) =>
+      getConfigsChanges({ ...filterProps, pageIndex: pageParam }),
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.changes?.length < pageSize ? undefined : allPages.length,
+    keepPreviousData: true
   });
 }

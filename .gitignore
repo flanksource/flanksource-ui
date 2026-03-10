@@ -57,3 +57,6 @@ tsconfig.tsbuildinfo
 .envrc
 default.nix
 .claude
+/*.png
+.playwright-mcp/
+specs/*.md
