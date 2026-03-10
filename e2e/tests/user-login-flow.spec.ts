@@ -5,10 +5,11 @@ dotenv.config();
 
 const {
   // this are the defaults, but we can override them using environment variables
-  TEST_URL = "https://incident-commander.demo.aws.flanksource.com/",
-  USERNAME = "admin@local",
-  PASSWORD = "admin",
-  TEST_TARGET_ENV = "KRATOS"
+  TEST_URL = "http://localhost:3000",
+  TEST_TARGET_ENV = "KRATOS",
+  TEST_USERNAME = "admin@local",
+  TEST_PASSWORD = "admin",
+
 } = process.env;
 
 test.describe("Sing ", () => {
@@ -24,9 +25,9 @@ test.describe("Sing ", () => {
     await page.waitForURL("**/login*", { timeout: 10000 });
     // login as admin
     await page.getByLabel("ID").click();
-    await page.getByLabel("ID").fill(USERNAME);
+    await page.getByLabel("ID").fill(TEST_USERNAME);
     await page.getByLabel("ID").press("Tab");
-    await page.getByLabel("Password").fill(PASSWORD);
+    await page.getByLabel("Password").fill(TEST_PASSWORD);
     await page.getByRole("button", { name: "Sign in" }).click();
 
     // wait for redirect to the topology page
@@ -45,12 +46,12 @@ test.describe("Sing ", () => {
     await page.goto(TEST_URL);
     await page.waitForURL("**/login*", { timeout: 20000 });
     // we should be able to login to the clerk dashboard
-    await page.getByLabel("Email address").fill(PASSWORD);
+    await page.getByLabel("Email address").fill(TEST_USERNAME);
     await page.getByLabel("Email address").press("Enter");
     await page
       .getByLabel("Password", { exact: true })
       // we probably should not hardcode the password here
-      .fill(USERNAME);
+      .fill(TEST_PASSWORD);
     await page.getByRole("button", { name: "Continue" }).click();
 
     // once user is logged in, we should be redirected to the home page,
