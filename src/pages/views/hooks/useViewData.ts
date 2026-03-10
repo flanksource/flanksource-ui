@@ -9,6 +9,8 @@ import {
   type SectionDataEntry
 } from "./useAggregatedViewVariables";
 import { toastError } from "../../../components/Toast/toast";
+import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
+import { VIEW_VAR_PREFIX } from "../constants";
 import type {
   ViewRef,
   ViewResult,
@@ -72,6 +74,28 @@ export function useViewData({
 
   const isDisplayPluginMode = !!configId;
 
+  const [viewVarParams] = usePrefixedSearchParams(VIEW_VAR_PREFIX, false);
+  const viewVarParamsString = useMemo(
+    () => viewVarParams.toString(),
+    [viewVarParams]
+  );
+  const standardModeVariables = useMemo(
+    () => Object.fromEntries(viewVarParams.entries()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [viewVarParamsString]
+  );
+  const standardModeVariablesKey = useMemo(
+    () =>
+      Object.entries(standardModeVariables)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        )
+        .join("&"),
+    [standardModeVariables]
+  );
+
   const {
     data: displayPluginVariables,
     isLoading: isLoadingDisplayPluginVariables,
@@ -83,11 +107,13 @@ export function useViewData({
     enabled: isDisplayPluginMode
   });
 
-  const variables = isDisplayPluginMode ? displayPluginVariables : undefined;
+  const variables = isDisplayPluginMode
+    ? displayPluginVariables
+    : standardModeVariables;
 
   const viewQueryKey = isDisplayPluginMode
     ? ["viewDataById", viewId, configId, variables]
-    : ["view-result", viewId];
+    : ["view-result", viewId, standardModeVariablesKey];
 
   const {
     data: viewResult,
