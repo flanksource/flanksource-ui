@@ -1,6 +1,5 @@
 import { useAuth, useOrganization } from "@clerk/nextjs";
 import {
-  apiBase,
   Auth,
   CanaryChecker,
   Config,
@@ -11,8 +10,8 @@ import {
   redirectToLoginPageOnSessionExpiry,
   Snapshot
 } from "@flanksource-ui/api/axios";
+import { useGetFeatureFlagsFromAPI } from "@flanksource-ui/api/query-hooks/useFeatureFlags";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const allAxiosInstances = [
@@ -53,16 +52,10 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
 
   // Fetch the proxy.disable property from backend properties to allow
   // toggling direct mode without changing Clerk org metadata
-  const { data: proxyDisableProperty } = useQuery({
-    queryKey: ["properties", "proxy.disable"],
-    queryFn: async () => {
-      const response = await apiBase.get<{ name: string; value: string }[]>(
-        "/properties?name=eq.proxy.disable"
-      );
-      return response.data;
-    },
-    enabled: !!backendUrl
-  });
+  const { data: allProperties } = useGetFeatureFlagsFromAPI();
+  const proxyDisableProperty = allProperties?.filter(
+    (p) => p.name === "proxy.disable"
+  );
 
   // Property overrides org metadata; fall back to org metadata if property
   // doesn't exist
