@@ -129,10 +129,10 @@ describe("HomepageRedirect", () => {
 
     // Check that the section result was seeded in the cache
     const cachedSection = queryClient.getQueryData([
-      "view-result",
+      "view-section-result",
       "mc",
       "unhealthy-configs",
-      {}
+      ""
     ]);
     expect(cachedSection).toEqual(
       fakeDashboard.sectionResults!["unhealthy-configs"]
@@ -140,7 +140,7 @@ describe("HomepageRedirect", () => {
 
     // Check that the top-level view was seeded
     const cachedView = queryClient.getQueryData([
-      "view-result",
+      "view-metadata",
       fakeDashboard.id
     ]);
     expect(cachedView).toEqual(fakeDashboard);

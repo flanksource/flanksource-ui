@@ -16,8 +16,8 @@ const ViewContainer = React.lazy(
 /**
  * Pre-seed the react-query cache with dashboard data so downstream components
  * don't make redundant fetch calls:
- * - ["view-result", viewId] for useViewData's top-level view fetch
- * - ["view-result", namespace, name, {}] for each section's ViewSection fetch
+ * - ["view-metadata", viewId] for useViewData's top-level metadata fetch
+ * - ["view-section-result", namespace, name, ""] for section view fetches
  */
 function useSeedDashboardCache(
   dashboard: DashboardResponse | null | undefined
@@ -27,8 +27,8 @@ function useSeedDashboardCache(
   useEffect(() => {
     if (!dashboard?.id) return;
 
-    // Seed the top-level view cache (skips POST /api/view/{id})
-    queryClient.setQueryData(["view-result", dashboard.id], dashboard);
+    // Seed top-level metadata cache (skips GET /api/view/metadata/{id})
+    queryClient.setQueryData(["view-metadata", dashboard.id], dashboard);
 
     // Seed each section result cache (skips POST /api/view/{namespace}/{name})
     if (dashboard.sectionResults) {
@@ -42,7 +42,7 @@ function useSeedDashboardCache(
           section?.viewRef?.namespace ?? dashboard.namespace ?? "";
 
         queryClient.setQueryData(
-          ["view-result", namespace, name, {}],
+          ["view-section-result", namespace, name, ""],
           sectionResult
         );
       }

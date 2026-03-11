@@ -1,8 +1,10 @@
-import { useRef, useMemo, useCallback } from "react";
+import { useRef, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getViewDataById,
-  getViewDisplayPluginVariables
+  getViewDisplayPluginVariables,
+  getViewMetadataById,
+  type DashboardResponse
 } from "../../../api/services/views";
 import {
   useAggregatedViewVariables,
@@ -11,6 +13,7 @@ import {
 import { toastError } from "../../../components/Toast/toast";
 import { usePrefixedSearchParams } from "../../../hooks/usePrefixedSearchParams";
 import { VIEW_VAR_PREFIX } from "../constants";
+import { aggregateVariables } from "../utils/aggregateVariables";
 import type {
   ViewRef,
   ViewResult,
@@ -84,18 +87,6 @@ export function useViewData({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [viewVarParamsString]
   );
-  const standardModeVariablesKey = useMemo(
-    () =>
-      Object.entries(standardModeVariables)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(
-          ([key, value]) =>
-            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-        )
-        .join("&"),
-    [standardModeVariables]
-  );
-
   const {
     data: displayPluginVariables,
     isLoading: isLoadingDisplayPluginVariables,
@@ -113,7 +104,7 @@ export function useViewData({
 
   const viewQueryKey = isDisplayPluginMode
     ? ["viewDataById", viewId, configId, variables]
-    : ["view-result", viewId, standardModeVariablesKey];
+    : ["view-metadata", viewId];
 
   const {
     data: viewResult,
@@ -127,41 +118,84 @@ export function useViewData({
       const headers = forceRefreshRef.current
         ? { "cache-control": "max-age=1" }
         : undefined;
-      return getViewDataById(viewId, variables, headers);
+
+      if (isDisplayPluginMode) {
+        return getViewDataById(viewId, variables, headers);
+      }
+
+      return getViewMetadataById(viewId, headers);
     },
     enabled: isDisplayPluginMode ? !!variables : !!viewId,
     staleTime: 5 * 60 * 1000,
     keepPreviousData: true
   });
 
+  useEffect(() => {
+    if (isDisplayPluginMode || !viewResult?.name) {
+      return;
+    }
+
+    const metadataResult = viewResult as DashboardResponse;
+    if (!metadataResult.id) {
+      return;
+    }
+
+    queryClient.setQueryData(
+      [
+        "view-section-result",
+        metadataResult.namespace ?? "",
+        metadataResult.name,
+        ""
+      ],
+      metadataResult
+    );
+
+    if (!metadataResult.sectionResults) {
+      return;
+    }
+
+    for (const [name, sectionResult] of Object.entries(
+      metadataResult.sectionResults
+    )) {
+      const section = metadataResult.sections?.find(
+        (s) => s.viewRef?.name === name
+      );
+      const namespace = section?.viewRef?.namespace ?? sectionResult.namespace;
+
+      queryClient.setQueryData(
+        ["view-section-result", namespace ?? "", name, ""],
+        sectionResult
+      );
+    }
+  }, [isDisplayPluginMode, queryClient, viewResult]);
+
   const allSectionRefs = useMemo<ViewRef[]>(() => {
-    if (!viewResult?.name) {
+    if (!viewResult?.sections) {
       return [];
     }
-    const refs: ViewRef[] = [
-      { namespace: viewResult.namespace ?? "", name: viewResult.name }
-    ];
-    if (viewResult?.sections) {
-      viewResult.sections.forEach((section) => {
-        // Only include sections that reference other views (not native UI sections)
-        if (section.viewRef) {
-          refs.push({
-            namespace: section.viewRef.namespace ?? "",
-            name: section.viewRef.name
-          });
-        }
-      });
-    }
-    return refs;
-  }, [viewResult?.namespace, viewResult?.name, viewResult?.sections]);
+
+    return viewResult.sections
+      .filter((section) => !!section.viewRef)
+      .map((section) => ({
+        namespace: section.viewRef?.namespace ?? "",
+        name: section.viewRef?.name ?? ""
+      }))
+      .filter((ref) => !!ref.name);
+  }, [viewResult?.sections]);
 
   const {
-    variables: aggregatedVariables,
+    variables: sectionAggregatedVariables,
     currentVariables: aggregatedCurrentVariables,
     sectionData
   } = useAggregatedViewVariables(
     allSectionRefs,
     isDisplayPluginMode ? variables : undefined
+  );
+
+  const aggregatedVariables = useMemo(
+    () =>
+      aggregateVariables([viewResult?.variables, sectionAggregatedVariables]),
+    [sectionAggregatedVariables, viewResult?.variables]
   );
 
   const currentVariables = isDisplayPluginMode
@@ -185,22 +219,7 @@ export function useViewData({
       return;
     }
 
-    const sectionsToRefresh =
-      allSectionRefs.length > 0 && allSectionRefs[0].name
-        ? allSectionRefs
-        : result.data?.name
-          ? [{ namespace: result.data.namespace ?? "", name: result.data.name }]
-          : [];
-    const currentNamespace = result.data?.namespace ?? viewResult?.namespace;
-    const currentName = result.data?.name ?? viewResult?.name;
-    const refsToInvalidate = sectionsToRefresh.filter(
-      (section) =>
-        !(
-          currentName &&
-          section.name === currentName &&
-          section.namespace === (currentNamespace ?? "")
-        )
-    );
+    const refsToInvalidate = allSectionRefs;
 
     if (isDisplayPluginMode) {
       await queryClient.invalidateQueries({
@@ -211,7 +230,7 @@ export function useViewData({
     await Promise.all(
       refsToInvalidate.flatMap((section) => [
         queryClient.invalidateQueries({
-          queryKey: ["view-result", section.namespace, section.name]
+          queryKey: ["view-section-result", section.namespace, section.name]
         }),
         queryClient.invalidateQueries({
           queryKey: ["view-table", section.namespace, section.name]

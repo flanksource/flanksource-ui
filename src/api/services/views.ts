@@ -146,6 +146,21 @@ export const getViewDataById = async (
   );
 };
 
+export const getViewMetadataById = async (
+  viewId: string,
+  headers?: Record<string, string>
+): Promise<DashboardResponse> => {
+  const response = await ViewAPI.get<DashboardResponse>(
+    `/metadata/${encodeURIComponent(viewId)}`,
+    headers
+      ? {
+          headers
+        }
+      : undefined
+  );
+  return response.data;
+};
+
 export const getViewDataByNamespace = async (
   namespace: string,
   name: string,

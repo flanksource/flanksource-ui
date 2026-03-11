@@ -645,6 +645,18 @@ const convertViewCellToNativeType = (
       return value;
 
     case "row_attributes":
+      if (value instanceof Uint8Array || Array.isArray(value)) {
+        try {
+          const jsonString = new TextDecoder().decode(new Uint8Array(value));
+          return JSON.parse(jsonString);
+        } catch (e) {
+          console.warn(
+            "convertViewCellToNativeType: failed to parse attributes JSON:",
+            e
+          );
+          return value;
+        }
+      }
       return value;
 
     case "duration":
