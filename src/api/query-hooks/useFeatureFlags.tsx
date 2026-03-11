@@ -50,8 +50,7 @@ export function useGetFeatureFlagsFromAPI() {
       const res = await fetchFeatureFlagsAPI();
       return res.data ?? [];
     },
-    cacheTime: 0,
-    staleTime: 0
+    staleTime: 30 * 1000
   });
 }
 
