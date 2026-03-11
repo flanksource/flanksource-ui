@@ -103,7 +103,9 @@ const ViewCard: React.FC<ViewCardProps> = ({ columns, row, columnsCount }) => {
     (col) => getCardPosition(col) === "headerRight"
   );
 
-  const rowAttributes = row.__rowAttributes as Record<string, RowAttributes>;
+  const rowAttributes = row.__rowAttributes as
+    | Record<string, RowAttributes>
+    | undefined;
 
   // Get icon
   const firstTitleColumn = titleColumns[0];
@@ -453,10 +455,8 @@ const renderCellValue = (
 
   // Apply row attributes (icons, urls) - skip if this is for the title in header
   if (!skipAttributes) {
-    const hasAttributes = rowAttributes && column.name in rowAttributes;
-    if (hasAttributes) {
-      const attribute = rowAttributes[column.name];
-
+    const attribute = rowAttributes?.[column.name];
+    if (attribute) {
       // Handle icon attribute
       if (attribute.icon) {
         const iconStr = String(attribute.icon);

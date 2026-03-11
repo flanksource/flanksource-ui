@@ -1,11 +1,11 @@
 import React from "react";
-import { ViewColumnDef } from "../../types";
+import { ViewColumnDef, ViewRow } from "../../types";
 import ViewCard from "./ViewCard";
 import { hiddenColumnTypes } from "../DynamicDataTable";
 
 interface ViewCardsDisplayProps {
   columns: ViewColumnDef[];
-  rows: any[][];
+  rows: ViewRow[];
   columnsCount?: number;
   isLoading?: boolean;
   pageCount?: number;
@@ -18,15 +18,16 @@ const ViewCardsDisplay: React.FC<ViewCardsDisplayProps> = ({
   columnsCount,
   isLoading
 }) => {
+  const attributesColumn = React.useMemo(
+    () => columns.find((col) => col.type === "row_attributes"),
+    [columns]
+  );
+
   // Convert rows to objects (same logic as DynamicDataTable)
   const adaptedData = rows.map((row) => {
     const rowObj: { [key: string]: any } = {};
-    row.forEach((value, index) => {
-      const column = columns[index];
-      if (!column) {
-        throw new Error(`Column definition not found for index ${index}`);
-      }
 
+    columns.forEach((column) => {
       if (column.type === "row_attributes") {
         // Row attributes are handled separately
         return;
@@ -37,18 +38,20 @@ const ViewCardsDisplay: React.FC<ViewCardsDisplayProps> = ({
         return;
       }
 
-      const convertedValue = convertViewCellToNativeType(value, column);
+      const rawValue = row[column.name];
+      const convertedValue = convertViewCellToNativeType(rawValue, column);
       rowObj[column.name] = convertedValue;
     });
 
     // Store row attributes separately
-    const attributesColumn = columns.find(
-      (col) => col.type === "row_attributes"
-    );
     if (attributesColumn) {
-      const attributesIndex = columns.indexOf(attributesColumn);
-      if (attributesIndex !== -1 && row[attributesIndex]) {
-        rowObj.__rowAttributes = row[attributesIndex];
+      const attributesValue = row[attributesColumn.name];
+
+      if (attributesValue) {
+        rowObj.__rowAttributes = convertViewCellToNativeType(
+          attributesValue,
+          attributesColumn
+        );
       }
     }
 
@@ -117,18 +120,6 @@ const convertViewCellToNativeType = (
       return value;
 
     case "row_attributes":
-      if (value instanceof Uint8Array || Array.isArray(value)) {
-        try {
-          const jsonString = new TextDecoder().decode(new Uint8Array(value));
-          return JSON.parse(jsonString);
-        } catch (e) {
-          console.warn(
-            "convertViewCellToNativeType: failed to parse attributes JSON:",
-            e
-          );
-          return value;
-        }
-      }
       return value;
 
     case "duration":

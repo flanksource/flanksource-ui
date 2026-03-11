@@ -234,20 +234,10 @@ export const queryViewTable = async (
 
   const data = response.data;
 
-  // Convert PostgREST object rows to array rows based on column order
-  // Example:
-  // data = [{"name": "John", "age": 30, "city": "New York"}]
-  // columns = [{name: "name"}, {name: "age"}, {name: "city"}]
-  // convertedRows = [["John", 30, "New York"]]
-  const convertedRows =
-    Array.isArray(data) && data.length > 0
-      ? data.map((rowObj) => {
-          return columns.map((column) => rowObj[column.name]);
-        })
-      : data || [];
+  const rows = Array.isArray(data) ? data : [];
 
   return {
-    data: convertedRows,
+    data: rows,
     totalEntries: response.totalEntries
   };
 };
