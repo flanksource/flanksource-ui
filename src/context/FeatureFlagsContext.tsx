@@ -1,11 +1,5 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import React, { createContext, useCallback, useContext, useMemo } from "react";
+import { useGetFeatureFlagsFromAPI } from "../api/query-hooks/useFeatureFlags";
 import { features } from "../services/permissions/features";
 import {
   FeatureFlag,
@@ -33,16 +27,15 @@ export const FeatureFlagsContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [featureFlags, setFeatureFlags] = useState(initialState.featureFlags);
-  const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(
-    initialState.featureFlagsLoaded
-  );
+  const {
+    data: featureFlags = [],
+    isSuccess,
+    refetch
+  } = useGetFeatureFlagsFromAPI();
 
-  const refreshFeatureFlags = useCallback(async () => {
-    const { data = [] } = await permissionService.loadProperties();
-    setFeatureFlags(data!);
-    setFeatureFlagsLoaded(true);
-  }, []);
+  const refreshFeatureFlags = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
   const isFeatureDisabled = useCallback(
     (featureName: string) => {
@@ -51,18 +44,14 @@ export const FeatureFlagsContextProvider = ({
     [featureFlags]
   );
 
-  useEffect(() => {
-    refreshFeatureFlags();
-  }, []);
-
   const contextValue = useMemo(
     () => ({
       featureFlags,
-      featureFlagsLoaded,
+      featureFlagsLoaded: isSuccess,
       refreshFeatureFlags,
       isFeatureDisabled
     }),
-    [featureFlags, featureFlagsLoaded, refreshFeatureFlags, isFeatureDisabled]
+    [featureFlags, isSuccess, refreshFeatureFlags, isFeatureDisabled]
   );
 
   return (
