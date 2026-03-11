@@ -1,5 +1,6 @@
 import React from "react";
 import { PanelResult } from "../../../types";
+import PanelHeader from "./PanelHeader";
 import { formatDisplayValue } from "./utils";
 
 interface NumberPanelProps {
@@ -23,14 +24,11 @@ const NumberPanel: React.FC<NumberPanelProps> = ({ summary }) => {
             key={`${summary.name}-${rowIndex}`}
             className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
           >
-            <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
-              {label || summary.name}
-            </h4>
-            {summary.description && (
-              <p className="mb-3 text-xs text-gray-500">
-                {summary.description}
-              </p>
-            )}
+            <PanelHeader
+              title={label || summary.name}
+              description={summary.description}
+              titleClassName="capitalize"
+            />
             <div className="flex flex-1 items-center justify-center">
               <p className="text-6xl font-bold sm:text-6xl md:text-6xl lg:text-6xl">
                 {summary.number
