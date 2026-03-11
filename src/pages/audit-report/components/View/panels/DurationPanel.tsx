@@ -1,6 +1,7 @@
 import React from "react";
 import { formatDuration } from "@flanksource-ui/utils/date";
 import { PanelResult } from "../../../types";
+import PanelHeader from "./PanelHeader";
 
 interface DurationPanelProps {
   summary: PanelResult;
@@ -27,14 +28,11 @@ const DurationPanel: React.FC<DurationPanelProps> = React.memo(
               key={`${summary.name}-${rowIndex}`}
               className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
             >
-              <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
-                {label || summary.name}
-              </h4>
-              {summary.description && (
-                <p className="mb-3 text-xs text-gray-500">
-                  {summary.description}
-                </p>
-              )}
+              <PanelHeader
+                title={label || summary.name}
+                description={summary.description}
+                titleClassName="capitalize"
+              />
               <div className="flex flex-1 items-center justify-center">
                 <p className="text-2xl font-semibold text-teal-600 md:text-3xl lg:text-4xl">
                   {formattedDuration}

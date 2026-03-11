@@ -1,5 +1,6 @@
 import React from "react";
 import { PanelResult } from "../../../types";
+import PanelHeader from "./PanelHeader";
 
 interface PropertiesPanelProps {
   summary: PanelResult;
@@ -8,12 +9,11 @@ interface PropertiesPanelProps {
 const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ summary }) => {
   return (
     <div className="flex h-full w-full flex-col rounded-lg border border-gray-200 bg-white p-4">
-      <h4 className="mb-2 text-sm font-medium capitalize text-gray-600">
-        {summary.name}
-      </h4>
-      {summary.description && (
-        <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
-      )}
+      <PanelHeader
+        title={summary.name}
+        description={summary.description}
+        titleClassName="capitalize"
+      />
       <div className="flex-1 space-y-3 overflow-y-auto">
         {summary.rows?.map((row, rowIndex) => {
           const { value, ...rest } = row;

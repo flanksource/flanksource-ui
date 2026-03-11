@@ -20,6 +20,7 @@ import {
 import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
 import { getSeriesColor } from "./utils";
 import { buildEvenlySpacedRange } from "./timeRange";
+import PanelHeader from "./PanelHeader";
 
 interface TimeseriesPanelProps {
   summary: PanelResult;
@@ -203,10 +204,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
 
   return (
     <div className="flex h-full min-h-[250px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
-      <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
-      {summary.description && (
-        <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
-      )}
+      <PanelHeader title={summary.name} description={summary.description} />
 
       {hasNoRows || hasNoSeries ? (
         <div className="flex flex-1 items-center justify-center text-sm text-gray-500">

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import GaugeComponent, { SubArc } from "react-gauge-component";
 import { PanelResult, GaugeThreshold } from "../../../types";
+import PanelHeader from "./PanelHeader";
 import { formatDisplayValue } from "./utils";
 
 interface GaugePanelProps {
@@ -92,10 +93,7 @@ const GaugeItem: React.FC<GaugeItemProps> = ({ summary, row, rowIndex }) => {
       key={`${summary.name}-${rowIndex}`}
       className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4"
     >
-      <h4 className="mb-1 text-sm font-medium text-gray-600">{summary.name}</h4>
-      {summary.description && (
-        <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
-      )}
+      <PanelHeader title={summary.name} description={summary.description} />
       <div
         ref={containerRef}
         className="flex flex-1 items-center justify-center overflow-hidden"

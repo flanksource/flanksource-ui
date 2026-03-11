@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import { PanelResult } from "../../../types";
+import PanelHeader from "./PanelHeader";
 import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
 import {
   ChartConfig,
@@ -99,16 +100,13 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
 
   return (
     <div className="flex h-full min-h-[300px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
-      <h4 className="mb-2 text-sm font-medium text-gray-600">{summary.name}</h4>
-      {summary.description && (
-        <p className="mb-3 text-xs text-gray-500">{summary.description}</p>
-      )}
+      <PanelHeader title={summary.name} description={summary.description} />
       <div className="flex flex-1 items-center justify-center">
         <ChartContainer
           config={chartConfig}
           className="flex h-full min-h-[240px] w-full flex-1 items-center justify-center"
         >
-          <PieChart>
+          <PieChart margin={{ top: 8, right: 80, bottom: 8, left: 8 }}>
             <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
             <Pie
               data={chartData}
@@ -125,7 +123,17 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
                 <Cell key={`cell-${entryIndex}`} fill={entry.fill} />
               ))}
             </Pie>
-            <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+            <ChartLegend
+              layout="vertical"
+              align="right"
+              verticalAlign="middle"
+              content={
+                <ChartLegendContent
+                  nameKey="name"
+                  className="!w-auto !flex-col !items-start !gap-2 !pt-0"
+                />
+              }
+            />
           </PieChart>
         </ChartContainer>
       </div>
