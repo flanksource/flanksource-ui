@@ -21,9 +21,24 @@ const basicColumns: ViewColumnDef[] = [
 ];
 
 const basicRows = [
-  ["John Doe", 30, true, "2023-01-15T10:00:00Z"],
-  ["Jane Smith", 25, false, "2023-02-20T14:30:00Z"],
-  ["Bob Johnson", 35, true, "2023-03-10T09:15:00Z"]
+  {
+    Name: "John Doe",
+    Age: 30,
+    Active: true,
+    Created: "2023-01-15T10:00:00Z"
+  },
+  {
+    Name: "Jane Smith",
+    Age: 25,
+    Active: false,
+    Created: "2023-02-20T14:30:00Z"
+  },
+  {
+    Name: "Bob Johnson",
+    Age: 35,
+    Active: true,
+    Created: "2023-03-10T09:15:00Z"
+  }
 ];
 
 export const BasicTable: Story = {
@@ -43,10 +58,34 @@ const performanceColumns: ViewColumnDef[] = [
 ];
 
 const performanceRows = [
-  ["API Gateway", 250000000, 45, "healthy", "healthy"],
-  ["Database", 150000000, 78, "warning", "warning"],
-  ["Cache Service", 50000000, 23, "healthy", "healthy"],
-  ["Message Queue", 300000000, 92, "critical", "unhealthy"]
+  {
+    Service: "API Gateway",
+    "Response Time": 250000000,
+    "CPU Usage": 45,
+    Status: "healthy",
+    Health: "healthy"
+  },
+  {
+    Service: "Database",
+    "Response Time": 150000000,
+    "CPU Usage": 78,
+    Status: "warning",
+    Health: "warning"
+  },
+  {
+    Service: "Cache Service",
+    "Response Time": 50000000,
+    "CPU Usage": 23,
+    Status: "healthy",
+    Health: "healthy"
+  },
+  {
+    Service: "Message Queue",
+    "Response Time": 300000000,
+    "CPU Usage": 92,
+    Status: "critical",
+    Health: "unhealthy"
+  }
 ];
 
 export const PerformanceMetrics: Story = {
@@ -101,10 +140,30 @@ const gaugeColumns: ViewColumnDef[] = [
 ];
 
 const gaugeRows = [
-  ["Server 1", 45, 8.2, 450],
-  ["Server 2", 78, 12.5, 720],
-  ["Server 3", 23, 4.1, 280],
-  ["Server 4", 92, 15.8, 980]
+  {
+    Metric: "Server 1",
+    "CPU Usage": 45,
+    Memory: 8.2,
+    "Disk Usage": 450
+  },
+  {
+    Metric: "Server 2",
+    "CPU Usage": 78,
+    Memory: 12.5,
+    "Disk Usage": 720
+  },
+  {
+    Metric: "Server 3",
+    "CPU Usage": 23,
+    Memory: 4.1,
+    "Disk Usage": 280
+  },
+  {
+    Metric: "Server 4",
+    "CPU Usage": 92,
+    Memory: 15.8,
+    "Disk Usage": 980
+  }
 ];
 
 export const GaugeMetrics: Story = {
@@ -125,17 +184,38 @@ const mixedColumns: ViewColumnDef[] = [
 ];
 
 const mixedRows = [
-  [
-    "Web Server",
-    86400000000000,
-    "2024-01-15T10:00:00Z",
-    true,
-    1234567,
-    "healthy"
-  ],
-  ["Database", 172800000000000, "2024-01-15T09:45:00Z", true, 89012, "warning"],
-  ["Cache", 43200000000000, "2024-01-15T10:15:00Z", false, 345678, "unhealthy"],
-  ["API", 259200000000000, "2024-01-15T08:30:00Z", true, 567890, "healthy"]
+  {
+    Service: "Web Server",
+    Uptime: 86400000000000,
+    "Last Check": "2024-01-15T10:00:00Z",
+    Enabled: true,
+    Requests: 1234567,
+    Status: "healthy"
+  },
+  {
+    Service: "Database",
+    Uptime: 172800000000000,
+    "Last Check": "2024-01-15T09:45:00Z",
+    Enabled: true,
+    Requests: 89012,
+    Status: "warning"
+  },
+  {
+    Service: "Cache",
+    Uptime: 43200000000000,
+    "Last Check": "2024-01-15T10:15:00Z",
+    Enabled: false,
+    Requests: 345678,
+    Status: "unhealthy"
+  },
+  {
+    Service: "API",
+    Uptime: 259200000000000,
+    "Last Check": "2024-01-15T08:30:00Z",
+    Enabled: true,
+    Requests: 567890,
+    Status: "healthy"
+  }
 ];
 
 export const MixedDataTypes: Story = {
@@ -168,10 +248,30 @@ const healthColumns: ViewColumnDef[] = [
 ];
 
 const healthRows = [
-  ["Frontend", "healthy", "2024-01-15T10:00:00Z", true],
-  ["Backend API", "warning", "2024-01-15T09:55:00Z", true],
-  ["Database", "unhealthy", "2024-01-15T09:30:00Z", false],
-  ["Message Queue", "healthy", "2024-01-15T10:05:00Z", true]
+  {
+    Component: "Frontend",
+    "Health Status": "healthy",
+    "Last Updated": "2024-01-15T10:00:00Z",
+    "Auto Restart": true
+  },
+  {
+    Component: "Backend API",
+    "Health Status": "warning",
+    "Last Updated": "2024-01-15T09:55:00Z",
+    "Auto Restart": true
+  },
+  {
+    Component: "Database",
+    "Health Status": "unhealthy",
+    "Last Updated": "2024-01-15T09:30:00Z",
+    "Auto Restart": false
+  },
+  {
+    Component: "Message Queue",
+    "Health Status": "healthy",
+    "Last Updated": "2024-01-15T10:05:00Z",
+    "Auto Restart": true
+  }
 ];
 
 export const HealthMonitoring: Story = {
@@ -190,13 +290,13 @@ const largeDataColumns: ViewColumnDef[] = [
   { name: "Created", type: "datetime" }
 ];
 
-const largeDataRows = Array.from({ length: 50 }, (_, i) => [
-  `ID-${String(i + 1).padStart(3, "0")}`,
-  `Item ${i + 1}`,
-  Math.floor(Math.random() * 1000),
-  Math.random() > 0.5,
-  new Date(2024, 0, 1 + (i % 30)).toISOString()
-]);
+const largeDataRows = Array.from({ length: 50 }, (_, i) => ({
+  ID: `ID-${String(i + 1).padStart(3, "0")}`,
+  Name: `Item ${i + 1}`,
+  Value: Math.floor(Math.random() * 1000),
+  Active: Math.random() > 0.5,
+  Created: new Date(2024, 0, 1 + (i % 30)).toISOString()
+}));
 
 export const LargeDataset: Story = {
   args: {

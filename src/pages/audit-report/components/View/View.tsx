@@ -202,6 +202,14 @@ const View: React.FC<ViewProps> = ({
   }, [defaultPageSize, defaultSorting, setTableSearchParams]);
 
   // Fetch table data with only column filters (no global filters)
+  const columnsKey = useMemo(
+    () =>
+      (columns ?? [])
+        .map((column) => `${column.name}:${column.type}`)
+        .join("|"),
+    [columns]
+  );
+
   const {
     data: tableResponse,
     isLoading,
@@ -211,6 +219,7 @@ const View: React.FC<ViewProps> = ({
       "view-table",
       namespace,
       name,
+      columnsKey,
       effectiveTableSearchParams.toString(),
       requestFingerprint
     ],

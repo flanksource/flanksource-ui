@@ -9,7 +9,7 @@ import { Age } from "@flanksource-ui/ui/Age";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { FilterByCellValue } from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 
-import { ViewColumnDef } from "../types";
+import { ViewColumnDef, ViewRow } from "../types";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
 import { formatBytes } from "../../../utils/common";
@@ -25,7 +25,7 @@ import {
 
 interface DynamicDataTableProps {
   columns: ViewColumnDef[];
-  rows: any[][];
+  rows: ViewRow[];
   title?: string;
   pageCount: number;
   totalRowCount?: number;
@@ -127,8 +127,8 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
     };
   }, [baseWidth, visibleColumnsWithRatio]);
 
-  const rowAttributesColumnIndex = React.useMemo(
-    () => columns.findIndex((col) => col.type === "row_attributes"),
+  const rowAttributesColumn = React.useMemo(
+    () => columns.find((col) => col.type === "row_attributes"),
     [columns]
   );
 
@@ -159,26 +159,23 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
       rows.map((row) => {
         const rowObj: Record<string, any> = {};
 
-        row.forEach((value, index) => {
-          const column = columns[index];
-          if (!column) {
-            return;
-          }
-
+        columns.forEach((column) => {
           if (column.hidden || hiddenColumnTypes.includes(column.type)) {
             // These columns are not displayed in the table
             return;
           }
 
-          const convertedValue = convertViewCellToNativeType(value, column);
+          const rawValue = row[column.name];
+          const convertedValue = convertViewCellToNativeType(rawValue, column);
           rowObj[column.name] = convertedValue;
         });
 
-        if (rowAttributesColumnIndex !== -1 && row[rowAttributesColumnIndex]) {
-          const rowAttributesColumn = columns[rowAttributesColumnIndex];
-          if (rowAttributesColumn) {
+        if (rowAttributesColumn) {
+          const rowAttributesValue = row[rowAttributesColumn.name];
+
+          if (rowAttributesValue) {
             rowObj.__rowAttributes = convertViewCellToNativeType(
-              row[rowAttributesColumnIndex],
+              rowAttributesValue,
               rowAttributesColumn
             );
           }
@@ -186,7 +183,7 @@ const DynamicDataTable: React.FC<DynamicDataTableProps> = ({
 
         return rowObj;
       }),
-    [columns, rowAttributesColumnIndex, rows]
+    [columns, rowAttributesColumn, rows]
   );
 
   return (
@@ -283,6 +280,10 @@ const renderCellValue = (
 ) => {
   if (value == null) return "-";
 
+  const rowAttributes = row?.__rowAttributes as
+    | Record<string, RowAttributes>
+    | undefined;
+
   let cellContent: any;
   switch (column.type) {
     case "datetime":
@@ -354,10 +355,6 @@ const renderCellValue = (
         cellContent = String(value);
       } else {
         // Check if row attributes contain a max value for this column
-        const rowAttributes = row.__rowAttributes as Record<
-          string,
-          RowAttributes
-        >;
         const maxFromAttributes = rowAttributes?.[column.name]?.max;
 
         const gaugeConfig =
@@ -404,10 +401,6 @@ const renderCellValue = (
       break;
 
     case "config_item":
-      const rowAttributes = row.__rowAttributes as Record<
-        string,
-        RowAttributes
-      >;
       const configData = rowAttributes?.[column.name]?.config;
       if (configData) {
         cellContent = (
@@ -433,10 +426,8 @@ const renderCellValue = (
       break;
   }
 
-  const rowAttributes = row.__rowAttributes as Record<string, RowAttributes>;
-  const hasAttributes = rowAttributes && column.name in rowAttributes;
-  if (hasAttributes) {
-    const attribute = rowAttributes[column.name];
+  const attribute = rowAttributes?.[column.name];
+  if (attribute) {
     if (attribute.url) {
       const url = attribute.url;
       cellContent = (
@@ -654,18 +645,6 @@ const convertViewCellToNativeType = (
       return value;
 
     case "row_attributes":
-      if (value instanceof Uint8Array || Array.isArray(value)) {
-        try {
-          const jsonString = new TextDecoder().decode(new Uint8Array(value));
-          return JSON.parse(jsonString);
-        } catch (e) {
-          console.warn(
-            "convertViewCellToNativeType: failed to parse attributes JSON:",
-            e
-          );
-          return value;
-        }
-      }
       return value;
 
     case "duration":

@@ -382,7 +382,20 @@ export interface ViewColumnDef {
     | "headerRight";
 }
 
-export type ViewRow = any[];
+/**
+ * A single view table row.
+ *
+ * @example
+ * const row: ViewRow = {
+ *   id: "f8d942bf-14ba-40bb-9f5d-ff3b82bb2ec2",
+ *   name: "silverbullet",
+ *   created: "2025-05-30T23:45:35+05:45",
+ *   __row__attributes: {
+ *     status: { icon: "healthy" }
+ *   }
+ * };
+ */
+export type ViewRow = Record<string, any>;
 
 export interface ViewVariable {
   key: string;
