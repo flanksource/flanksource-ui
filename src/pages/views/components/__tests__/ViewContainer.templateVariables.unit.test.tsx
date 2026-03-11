@@ -8,6 +8,7 @@ import * as viewsApi from "../../../../api/services/views";
 jest.mock("../../../../api/services/views", () => ({
   ...jest.requireActual("../../../../api/services/views"),
   getViewDataById: jest.fn(),
+  getViewMetadataById: jest.fn(),
   getViewDataByNamespace: jest.fn(),
   getViewDisplayPluginVariables: jest.fn()
 }));
@@ -22,6 +23,10 @@ jest.mock("../../../audit-report/components/View/View", () => ({
 const mockedGetViewDataById = viewsApi.getViewDataById as jest.MockedFunction<
   typeof viewsApi.getViewDataById
 >;
+const mockedGetViewMetadataById =
+  viewsApi.getViewMetadataById as jest.MockedFunction<
+    typeof viewsApi.getViewMetadataById
+  >;
 const mockedGetViewDataByNamespace =
   viewsApi.getViewDataByNamespace as jest.MockedFunction<
     typeof viewsApi.getViewDataByNamespace
@@ -62,9 +67,16 @@ function renderWithProviders(initialPath = "/") {
   );
 }
 
-describe("ViewContainer template variable updates", () => {
+describe("ViewContainer metadata loading", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockedGetViewMetadataById.mockResolvedValue({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:none"
+    });
 
     mockedGetViewDataById.mockImplementation(async (_viewId, variables) => {
       return {
@@ -85,7 +97,7 @@ describe("ViewContainer template variable updates", () => {
     );
   });
 
-  it("re-renders primary view data when template variable changes", async () => {
+  it("loads primary view via metadata endpoint", async () => {
     renderWithProviders("/");
 
     await waitFor(() => {
@@ -94,12 +106,17 @@ describe("ViewContainer template variable updates", () => {
       );
     });
 
+    expect(mockedGetViewMetadataById).toHaveBeenCalledWith("view-1", undefined);
+    expect(mockedGetViewDataById).not.toHaveBeenCalled();
+
     fireEvent.click(screen.getByRole("button", { name: "Set namespace ns-a" }));
 
     await waitFor(() => {
       expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
-        "primary:ns-a"
+        "primary:none"
       );
     });
+
+    expect(mockedGetViewDataById).not.toHaveBeenCalled();
   });
 });
