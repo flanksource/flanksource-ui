@@ -1,12 +1,25 @@
 import { fetchFeatureFlagsAPI } from "../../api/services/properties";
 import { featureToParentMap } from "./features";
 
+export type PropertyType = "bool" | "int" | "duration" | "string";
+
+export type PropertyMetadata = {
+  default: string | number | boolean;
+  type: PropertyType;
+  description?: string;
+};
+
+export type PropertyDefinition = {
+  [key: string]: PropertyMetadata;
+};
+
 export type FeatureFlag = {
-  description: string;
+  description?: string;
   name: string;
   source: string;
-  type: string;
+  type: PropertyType | string;
   value: string;
+  default?: string | number | boolean;
 };
 
 export type PropertyDBObject = {

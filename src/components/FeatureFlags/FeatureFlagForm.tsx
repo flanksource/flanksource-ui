@@ -1,3 +1,4 @@
+import { useGetPropertyDefinitions } from "@flanksource-ui/api/query-hooks/useFeatureFlags";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
@@ -5,9 +6,9 @@ import { Modal } from "@flanksource-ui/ui/Modal";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
-import FormikTextInput from "../Forms/Formik/FormikTextInput";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { toastError } from "../Toast/toast";
+import PropertyInput from "./PropertyInput";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
@@ -28,6 +29,12 @@ export default function FeatureFlagForm({
   source,
   ...props
 }: FeatureFlagFormProps) {
+  const { data: propertyDefinitions } = useGetPropertyDefinitions();
+
+  const propertyMetadata = formValue?.name
+    ? propertyDefinitions?.[formValue.name]
+    : undefined;
+
   return (
     <Modal
       title="Add Feature Flag"
@@ -62,17 +69,17 @@ export default function FeatureFlagForm({
             <div className={clsx("mb-2 flex flex-col px-2")}>
               <div className="flex flex-row justify-center gap-4 overflow-y-auto px-2 py-6">
                 <div className="flex-1">
-                  <FormikTextInput
+                  <PropertyInput
                     name="name"
                     label="Feature flag"
-                    className="flex flex-row items-center gap-2"
+                    disabled={Boolean(formValue?.created_at)}
                   />
                 </div>
                 <div className="flex flex-1 flex-col">
-                  <FormikTextInput
+                  <PropertyInput
                     name="value"
                     label="Value"
-                    className="flex flex-row items-center gap-2"
+                    propertyMetadata={propertyMetadata}
                   />
                 </div>
               </div>
