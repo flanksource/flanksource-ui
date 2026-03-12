@@ -81,6 +81,7 @@ type FlattenedSearchResult = {
   fallbackIcon: LucideIcon;
   resource: SearchedResource;
   indentLevel?: number;
+  isGroupHeader?: boolean;
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
@@ -763,6 +764,57 @@ export function SearchLayoutGlobalSearch() {
 
       const resources = results[searchType] ?? [];
 
+      if (searchType === "configs") {
+        const configsByType = new Map<string, SearchedResource[]>();
+
+        resources.forEach((item) => {
+          const configType = item.type || "";
+          const itemsForType = configsByType.get(configType) ?? [];
+          itemsForType.push(item);
+          configsByType.set(configType, itemsForType);
+        });
+
+        configsByType.forEach((configsForType, configType) => {
+          entries.push({
+            key: `configs-type-group-${configType}`,
+            value: `configs-type-group-${configType}`,
+            href: "",
+            title: configType || "Unknown Type",
+            description: "",
+            resourceType: "configs",
+            fallbackIcon: searchTypeOption.icon,
+            resource: {
+              id: "",
+              name: configType || "Unknown Type",
+              type: configType,
+              namespace: "",
+              agent: "",
+              labels: {}
+            },
+            isGroupHeader: true
+          });
+
+          configsForType.forEach((item, index) => {
+            const title = getResourceTitle(searchType, item);
+            const description = getResourceDescription(searchType, item);
+
+            entries.push({
+              key: `${searchType}-${item.id}-${index}`,
+              value: `${searchType}-${item.id}-${title}-${description}`,
+              href: getResourceHref(searchType, item),
+              title,
+              description,
+              resourceType: searchType,
+              fallbackIcon: searchTypeOption.icon,
+              resource: item,
+              indentLevel: 1
+            });
+          });
+        });
+
+        continue;
+      }
+
       if (searchType !== "config_changes") {
         resources.forEach((item, index) => {
           const title = getResourceTitle(searchType, item);
@@ -1048,6 +1100,20 @@ export function SearchLayoutGlobalSearch() {
               {!searchError &&
                 !showSuggestions &&
                 flattenedResults.map((result) => {
+                  if (result.isGroupHeader) {
+                    return (
+                      <div
+                        key={result.key}
+                        className="flex items-center gap-2 px-3 pb-1 pt-3 text-xs font-semibold text-gray-500"
+                      >
+                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                          {renderResultIcon(result)}
+                        </span>
+                        <span>{result.title}</span>
+                      </div>
+                    );
+                  }
+
                   const searchTypeLabel =
                     SEARCH_TYPE_OPTIONS.find(
                       (item) => item.key === result.resourceType
@@ -1077,7 +1143,7 @@ export function SearchLayoutGlobalSearch() {
                           </span>
                           {result.resourceType === "configs" ? (
                             <div className="flex items-center gap-1 overflow-hidden">
-                              {result.resource.type && (
+                              {result.resource.type && !result.indentLevel && (
                                 <span className="flex-shrink-0 truncate text-xs text-gray-500">
                                   {result.resource.type}
                                 </span>
