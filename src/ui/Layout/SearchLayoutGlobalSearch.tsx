@@ -1147,7 +1147,7 @@ export function SearchLayoutGlobalSearch() {
                             {result.title}
                           </span>
                           {result.resourceType === "configs" ? (
-                            <div className="flex flex-wrap items-center gap-1 overflow-hidden">
+                            <div className="flex flex-wrap items-center gap-1">
                               {result.resource.type && !result.indentLevel && (
                                 <span className="flex-shrink-0 truncate text-xs text-gray-500">
                                   {result.resource.type}
