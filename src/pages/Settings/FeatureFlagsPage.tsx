@@ -24,6 +24,7 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { groupPropertiesByPrefix } from "@flanksource-ui/utils/propertyGrouping";
 import { useEffect, useMemo, useState } from "react";
 
@@ -138,12 +139,11 @@ export function FeatureFlagsPage() {
       >
         <div className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col px-6 pb-0">
           <div className="mb-4 mt-4 flex items-center justify-end">
-            <button
-              className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+            <Button
+              text={groupedView ? "Show All" : "Group by Prefix"}
+              className="btn-primary"
               onClick={() => setGroupedView(!groupedView)}
-            >
-              {groupedView ? "Show All" : "Group by Prefix"}
-            </button>
+            />
           </div>
           {groupedView ? (
             <FeatureFlagsGroupedList

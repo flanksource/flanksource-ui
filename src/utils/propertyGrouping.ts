@@ -55,6 +55,7 @@ export function filterProperties(
     (property) =>
       property.name.toLowerCase().includes(lowercaseSearch) ||
       property.description?.toLowerCase().includes(lowercaseSearch) ||
-      property.value?.toLowerCase().includes(lowercaseSearch)
+      (typeof property.value === "string" &&
+        property.value.toLowerCase().includes(lowercaseSearch))
   );
 }
