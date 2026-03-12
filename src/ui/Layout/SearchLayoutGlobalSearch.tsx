@@ -476,16 +476,19 @@ function getFirstSupportedIconName(...candidates: (string | undefined)[]) {
 }
 
 function renderResultIcon(result: FlattenedSearchResult) {
+  const iconSize = result.isGroupHeader ? "h-5 w-5" : "h-4 w-4";
+  const iconColor = result.isGroupHeader ? "text-gray-700" : "text-gray-500";
+  
   switch (result.resourceType) {
     case "configs":
     case "config_changes":
       return findByName(result.resource.type) ? (
         <ConfigIcon
           config={{ type: result.resource.type }}
-          className="h-4 w-4 text-gray-500"
+          className={`${iconSize} ${iconColor}`}
         />
       ) : (
-        <Database className="h-4 w-4 text-gray-500" />
+        <Database className={`${iconSize} ${iconColor}`} />
       );
     case "connections": {
       const connectionIcon = getFirstSupportedIconName(
@@ -496,23 +499,23 @@ function renderResultIcon(result: FlattenedSearchResult) {
       );
 
       return connectionIcon ? (
-        <Icon name={connectionIcon} className="h-4 w-4 text-gray-500" />
+        <Icon name={connectionIcon} className={`${iconSize} ${iconColor}`} />
       ) : (
-        <Cable className="h-4 w-4 text-gray-500" />
+        <Cable className={`${iconSize} ${iconColor}`} />
       );
     }
     case "playbooks": {
       const playbookIcon = getFirstSupportedIconName(result.resource.icon);
 
       return playbookIcon ? (
-        <Icon name={playbookIcon} className="h-4 w-4 text-gray-500" />
+        <Icon name={playbookIcon} className={`${iconSize} ${iconColor}`} />
       ) : (
-        <Workflow className="h-4 w-4 text-gray-500" />
+        <Workflow className={`${iconSize} ${iconColor}`} />
       );
     }
     default: {
       const FallbackIcon = result.fallbackIcon;
-      return <FallbackIcon className="h-4 w-4 text-gray-500" />;
+      return <FallbackIcon className={`${iconSize} ${iconColor}`} />;
     }
   }
 }
@@ -1104,9 +1107,9 @@ export function SearchLayoutGlobalSearch() {
                     return (
                       <div
                         key={result.key}
-                        className="flex items-center gap-2 px-3 pb-1 pt-3 text-xs font-semibold text-gray-500"
+                        className="flex items-center gap-2 px-3 pb-1 pt-3 text-sm font-bold text-gray-700"
                       >
-                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                        <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center">
                           {renderResultIcon(result)}
                         </span>
                         <span>{result.title}</span>
@@ -1124,7 +1127,7 @@ export function SearchLayoutGlobalSearch() {
                       asChild
                       key={result.key}
                       value={result.value}
-                      className={`mb-1 flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 ${
+                      className={`mb-0.5 flex cursor-pointer items-center gap-3 rounded-md px-3 py-1.5 ${
                         result.indentLevel ? "pl-9" : ""
                       }`}
                     >
@@ -1133,16 +1136,18 @@ export function SearchLayoutGlobalSearch() {
                         className="w-full text-inherit no-underline"
                         onClick={handleResultLinkClick}
                       >
-                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
-                          {renderResultIcon(result)}
-                        </span>
+                        {!result.indentLevel && (
+                          <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                            {renderResultIcon(result)}
+                          </span>
+                        )}
 
                         <div className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-medium text-gray-900">
                             {result.title}
                           </span>
                           {result.resourceType === "configs" ? (
-                            <div className="flex items-center gap-1 overflow-hidden">
+                            <div className="flex flex-wrap items-center gap-1 overflow-hidden">
                               {result.resource.type && !result.indentLevel && (
                                 <span className="flex-shrink-0 truncate text-xs text-gray-500">
                                   {result.resource.type}
