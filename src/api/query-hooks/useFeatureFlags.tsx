@@ -13,6 +13,7 @@ import {
   fetchFeatureFlagsAPI,
   fetchProperties,
   fetchProperty,
+  fetchPropertyDefinitions,
   saveProperty,
   updateProperty
 } from "../services/properties";
@@ -51,6 +52,17 @@ export function useGetFeatureFlagsFromAPI() {
       return res.data ?? [];
     },
     staleTime: 30 * 1000
+  });
+}
+
+export function useGetPropertyDefinitions() {
+  return useQuery({
+    queryKey: ["property-definitions"],
+    queryFn: async () => {
+      const res = await fetchPropertyDefinitions();
+      return res.data ?? {};
+    },
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
   });
 }
 

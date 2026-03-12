@@ -81,7 +81,7 @@ function dashboardViewFlag(value: string): FeatureFlag {
     value,
     description: "",
     source: "",
-    type: ""
+    type: "string"
   };
 }
 

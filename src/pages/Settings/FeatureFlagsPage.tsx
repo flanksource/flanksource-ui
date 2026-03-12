@@ -2,12 +2,14 @@ import {
   useAddFeatureFlag,
   useDeleteFeatureFlag,
   useGetFeatureFlagsFromAPI,
+  useGetPropertyDefinitions,
   useGetPropertyFromDB,
   useUpdateFeatureFlag
 } from "@flanksource-ui/api/query-hooks/useFeatureFlags";
 import FeatureFlagAddButton from "@flanksource-ui/components/FeatureFlags/FeatureFlagAddButton";
 import FeatureFlagForm from "@flanksource-ui/components/FeatureFlags/FeatureFlagForm";
 import { FeatureFlagsList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagList";
+import { FeatureFlagsGroupedList } from "@flanksource-ui/components/FeatureFlags/FeatureFlagsGroupedList";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
@@ -22,11 +24,13 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { useEffect, useState } from "react";
+import { groupPropertiesByPrefix } from "@flanksource-ui/utils/propertyGrouping";
+import { useEffect, useMemo, useState } from "react";
 
 export function FeatureFlagsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<FeatureFlag>();
+  const [groupedView, setGroupedView] = useState(true);
   const { refreshFeatureFlags } = useFeatureFlagsContext();
 
   const {
@@ -34,6 +38,29 @@ export function FeatureFlagsPage() {
     isLoading,
     refetch
   } = useGetFeatureFlagsFromAPI();
+
+  const { data: propertyDefinitions } = useGetPropertyDefinitions();
+
+  // Merge property definitions with feature flags to include type and default
+  const enrichedFeatureFlags = useMemo(() => {
+    if (!featureFlags || !propertyDefinitions) {
+      return featureFlags ?? [];
+    }
+
+    return featureFlags.map((flag) => {
+      const metadata = propertyDefinitions[flag.name];
+      return {
+        ...flag,
+        type: metadata?.type || flag.type,
+        default: metadata?.default,
+        description: metadata?.description || flag.description
+      };
+    });
+  }, [featureFlags, propertyDefinitions]);
+
+  const propertyGroups = useMemo(() => {
+    return groupPropertiesByPrefix(enrichedFeatureFlags);
+  }, [enrichedFeatureFlags]);
 
   const { mutate: saveFeatureFlag } = useAddFeatureFlag(() => {
     refetch();
@@ -101,19 +128,43 @@ export function FeatureFlagsPage() {
         loading={isLoading}
       >
         <div className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col px-6 pb-0">
-          <FeatureFlagsList
-            className="mt-6 overflow-y-hidden"
-            data={featureFlags ?? []}
-            isLoading={isLoading}
-            onRowClick={(val) => {
-              if (val.source === "local") {
-                toastError("Cannot edit local feature flags");
-                return;
-              }
-              setIsOpen(true);
-              setEditedRow(val);
-            }}
-          />
+          <div className="mb-4 flex items-center justify-between">
+            <button
+              className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+              onClick={() => setGroupedView(!groupedView)}
+            >
+              {groupedView ? "Show All" : "Group by Prefix"}
+            </button>
+          </div>
+          {groupedView ? (
+            <FeatureFlagsGroupedList
+              className="overflow-y-hidden"
+              groups={propertyGroups}
+              isLoading={isLoading}
+              onRowClick={(val) => {
+                if (val.source === "local") {
+                  toastError("Cannot edit local feature flags");
+                  return;
+                }
+                setIsOpen(true);
+                setEditedRow(val);
+              }}
+            />
+          ) : (
+            <FeatureFlagsList
+              className="mt-6 overflow-y-hidden"
+              data={enrichedFeatureFlags ?? []}
+              isLoading={isLoading}
+              onRowClick={(val) => {
+                if (val.source === "local") {
+                  toastError("Cannot edit local feature flags");
+                  return;
+                }
+                setIsOpen(true);
+                setEditedRow(val);
+              }}
+            />
+          )}
           {property && (
             <FeatureFlagForm
               isOpen={isOpen}
