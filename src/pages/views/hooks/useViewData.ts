@@ -4,6 +4,7 @@ import {
   getViewDataById,
   getViewDisplayPluginVariables,
   getViewMetadataById,
+  getSectionResultByViewRef,
   type DashboardResponse
 } from "../../../api/services/views";
 import {
@@ -57,11 +58,13 @@ export interface UseViewDataResult {
  * `aggregatedVariables` is intentionally emptied in this mode because the
  * global variable filter UI should not be shown inside an embedded tab.
  *
- * **Fetching strategy** — to avoid duplicate network requests, section data is
- * fetched exactly once inside `useAggregatedViewVariables` (which needs the
- * responses for variable aggregation anyway) and the results are surfaced here
- * as `sectionData`. `ViewSection` components receive that data as props rather
- * than issuing their own queries.
+ * **Fetching strategy** — when `sectionResults` are already present on
+ * `/api/dashboard` or `/api/view/metadata/:id`, those prefetched section
+ * payloads are used directly and per-section POST calls are skipped. Otherwise,
+ * section data is fetched exactly once inside `useAggregatedViewVariables`
+ * (which also aggregates section variables) and surfaced here as `sectionData`.
+ * `ViewSection` components receive that data as props rather than issuing their
+ * own queries.
  *
  * **Force-refresh** — `handleForceRefresh` re-fetches the top-level view with
  * a `cache-control: max-age=1` header to bypass server-side caching, then
@@ -101,6 +104,11 @@ export function useViewData({
   const variables = isDisplayPluginMode
     ? displayPluginVariables
     : standardModeVariables;
+
+  const hasStandardModeVariables = useMemo(
+    () => Object.keys(standardModeVariables).length > 0,
+    [standardModeVariables]
+  );
 
   const viewQueryKey = isDisplayPluginMode
     ? ["viewDataById", viewId, configId, variables]
@@ -150,23 +158,30 @@ export function useViewData({
       metadataResult
     );
 
-    if (!metadataResult.sectionResults) {
-      return;
-    }
+    metadataResult.sections?.forEach((section) => {
+      if (!section.viewRef?.name) {
+        return;
+      }
 
-    for (const [name, sectionResult] of Object.entries(
-      metadataResult.sectionResults
-    )) {
-      const section = metadataResult.sections?.find(
-        (s) => s.viewRef?.name === name
+      const sectionResult = getSectionResultByViewRef(
+        metadataResult.sectionResults,
+        section.viewRef
       );
-      const namespace = section?.viewRef?.namespace ?? sectionResult.namespace;
+
+      if (!sectionResult) {
+        return;
+      }
 
       queryClient.setQueryData(
-        ["view-section-result", namespace ?? "", name, ""],
+        [
+          "view-section-result",
+          section.viewRef.namespace ?? "",
+          section.viewRef.name,
+          ""
+        ],
         sectionResult
       );
-    }
+    });
   }, [isDisplayPluginMode, queryClient, viewResult]);
 
   const allSectionRefs = useMemo<ViewRef[]>(() => {
@@ -183,19 +198,103 @@ export function useViewData({
       .filter((ref) => !!ref.name);
   }, [viewResult?.sections]);
 
-  const {
-    variables: sectionAggregatedVariables,
-    currentVariables: aggregatedCurrentVariables,
-    sectionData
-  } = useAggregatedViewVariables(
+  const prefetchedSectionData = useMemo(() => {
+    const sectionDataMap = new Map<string, SectionDataEntry>();
+
+    if (isDisplayPluginMode || !viewResult?.sections) {
+      return sectionDataMap;
+    }
+
+    const metadataResult = viewResult as DashboardResponse;
+
+    metadataResult.sections?.forEach((section) => {
+      if (!section.viewRef?.name) {
+        return;
+      }
+
+      const sectionResult = getSectionResultByViewRef(
+        metadataResult.sectionResults,
+        section.viewRef
+      );
+
+      if (!sectionResult) {
+        return;
+      }
+
+      const namespace = section.viewRef.namespace ?? "";
+      sectionDataMap.set(`${namespace}:${section.viewRef.name}`, {
+        data: sectionResult,
+        isLoading: false
+      });
+    });
+
+    return sectionDataMap;
+  }, [isDisplayPluginMode, viewResult]);
+
+  const sectionsToQuery = useMemo<ViewRef[]>(() => {
+    if (isDisplayPluginMode || hasStandardModeVariables) {
+      return allSectionRefs;
+    }
+
+    return allSectionRefs.filter(
+      (section) =>
+        !prefetchedSectionData.has(`${section.namespace ?? ""}:${section.name}`)
+    );
+  }, [
     allSectionRefs,
+    hasStandardModeVariables,
+    isDisplayPluginMode,
+    prefetchedSectionData
+  ]);
+
+  const {
+    variables: queriedSectionAggregatedVariables,
+    currentVariables: aggregatedCurrentVariables,
+    sectionData: queriedSectionData
+  } = useAggregatedViewVariables(
+    sectionsToQuery,
     isDisplayPluginMode ? variables : undefined
   );
 
+  const prefetchedSectionAggregatedVariables = useMemo(
+    () =>
+      aggregateVariables(
+        Array.from(prefetchedSectionData.values()).map(
+          (entry) => entry.data?.variables
+        )
+      ),
+    [prefetchedSectionData]
+  );
+
+  const sectionData = useMemo(() => {
+    const mergedSectionData = new Map<string, SectionDataEntry>(
+      prefetchedSectionData
+    );
+
+    queriedSectionData.forEach((entry, key) => {
+      mergedSectionData.set(key, entry);
+    });
+
+    return mergedSectionData;
+  }, [prefetchedSectionData, queriedSectionData]);
+
+  const metadataSectionVariables =
+    !isDisplayPluginMode && !hasStandardModeVariables
+      ? prefetchedSectionAggregatedVariables
+      : EMPTY_VARIABLES;
+
   const aggregatedVariables = useMemo(
     () =>
-      aggregateVariables([viewResult?.variables, sectionAggregatedVariables]),
-    [sectionAggregatedVariables, viewResult?.variables]
+      aggregateVariables([
+        viewResult?.variables,
+        metadataSectionVariables,
+        queriedSectionAggregatedVariables
+      ]),
+    [
+      metadataSectionVariables,
+      queriedSectionAggregatedVariables,
+      viewResult?.variables
+    ]
   );
 
   const currentVariables = isDisplayPluginMode
@@ -241,8 +340,6 @@ export function useViewData({
       ])
     );
   }, [
-    viewResult?.namespace,
-    viewResult?.name,
     allSectionRefs,
     configId,
     isDisplayPluginMode,

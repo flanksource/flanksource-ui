@@ -9,6 +9,7 @@ import { getDashboard } from "../../api/services/views";
 import type { DashboardResponse } from "../../api/services/views";
 
 jest.mock("../../api/services/views", () => ({
+  ...jest.requireActual("../../api/services/views"),
   getDashboard: jest.fn()
 }));
 
@@ -66,7 +67,7 @@ const fakeDashboard: DashboardResponse = {
     }
   ],
   sectionResults: {
-    "unhealthy-configs": {
+    "mc/unhealthy-configs": {
       name: "unhealthy-configs",
       namespace: "mc",
       title: "Configs",
@@ -135,7 +136,7 @@ describe("HomepageRedirect", () => {
       ""
     ]);
     expect(cachedSection).toEqual(
-      fakeDashboard.sectionResults!["unhealthy-configs"]
+      fakeDashboard.sectionResults!["mc/unhealthy-configs"]
     );
 
     // Check that the top-level view was seeded
