@@ -157,7 +157,8 @@ export const mrtConfigListColumns = (
         paramPrefix={paramPrefix}
       />
     ),
-    maxSize: 300,
+    size: 350,
+    maxSize: 500,
     minSize: 100
   },
   {
