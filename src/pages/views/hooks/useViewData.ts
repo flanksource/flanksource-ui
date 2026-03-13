@@ -231,8 +231,60 @@ export function useViewData({
     return sectionDataMap;
   }, [isDisplayPluginMode, viewResult]);
 
+  const prefetchedSectionAggregatedVariables = useMemo(
+    () =>
+      aggregateVariables(
+        Array.from(prefetchedSectionData.values()).map(
+          (entry) => entry.data?.variables
+        )
+      ),
+    [prefetchedSectionData]
+  );
+
+  const shouldFetchSectionsForStandardModeVariables = useMemo(() => {
+    if (isDisplayPluginMode || !hasStandardModeVariables) {
+      return false;
+    }
+
+    const metadataVariables = aggregateVariables([
+      viewResult?.variables,
+      prefetchedSectionAggregatedVariables
+    ]);
+
+    if (metadataVariables.length === 0) {
+      return true;
+    }
+
+    const defaultValues = new Map<string, string>();
+
+    metadataVariables.forEach((variable) => {
+      const value =
+        variable.default ??
+        (variable.optionItems && variable.optionItems.length > 0
+          ? variable.optionItems[0].value
+          : variable.options && variable.options.length > 0
+            ? variable.options[0]
+            : "");
+
+      if (value) {
+        defaultValues.set(variable.key, value);
+      }
+    });
+
+    return Object.entries(standardModeVariables).some(([key, value]) => {
+      const defaultValue = defaultValues.get(key);
+      return !defaultValue || defaultValue !== value;
+    });
+  }, [
+    hasStandardModeVariables,
+    isDisplayPluginMode,
+    prefetchedSectionAggregatedVariables,
+    standardModeVariables,
+    viewResult?.variables
+  ]);
+
   const sectionsToQuery = useMemo<ViewRef[]>(() => {
-    if (isDisplayPluginMode || hasStandardModeVariables) {
+    if (isDisplayPluginMode || shouldFetchSectionsForStandardModeVariables) {
       return allSectionRefs;
     }
 
@@ -242,9 +294,9 @@ export function useViewData({
     );
   }, [
     allSectionRefs,
-    hasStandardModeVariables,
     isDisplayPluginMode,
-    prefetchedSectionData
+    prefetchedSectionData,
+    shouldFetchSectionsForStandardModeVariables
   ]);
 
   const {
@@ -254,16 +306,6 @@ export function useViewData({
   } = useAggregatedViewVariables(
     sectionsToQuery,
     isDisplayPluginMode ? variables : undefined
-  );
-
-  const prefetchedSectionAggregatedVariables = useMemo(
-    () =>
-      aggregateVariables(
-        Array.from(prefetchedSectionData.values()).map(
-          (entry) => entry.data?.variables
-        )
-      ),
-    [prefetchedSectionData]
   );
 
   const sectionData = useMemo(() => {
@@ -279,7 +321,7 @@ export function useViewData({
   }, [prefetchedSectionData, queriedSectionData]);
 
   const metadataSectionVariables =
-    !isDisplayPluginMode && !hasStandardModeVariables
+    !isDisplayPluginMode && !shouldFetchSectionsForStandardModeVariables
       ? prefetchedSectionAggregatedVariables
       : EMPTY_VARIABLES;
 

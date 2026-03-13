@@ -200,4 +200,78 @@ describe("ViewContainer metadata loading", () => {
       {}
     );
   });
+
+  it("supports sectionResults keys for same-namespace refs", async () => {
+    mockedGetViewMetadataById.mockResolvedValueOnce({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:none",
+      sections: [
+        {
+          title: "Section A",
+          viewRef: {
+            name: "section-a"
+          }
+        }
+      ],
+      sectionResults: {
+        "/section-a": {
+          namespace: "mission-control",
+          name: "section-a",
+          requestFingerprint: "prefetched-section"
+        }
+      }
+    });
+
+    renderWithProviders("/");
+
+    await waitFor(() => {
+      expect(screen.getByText("prefetched-section")).toBeInTheDocument();
+    });
+
+    expect(mockedGetViewDataByNamespace).not.toHaveBeenCalled();
+  });
+
+  it("does not refetch sections when URL vars match defaults", async () => {
+    mockedGetViewMetadataById.mockResolvedValueOnce({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:none",
+      variables: [
+        {
+          key: "namespace",
+          value: "",
+          type: "select",
+          options: ["ns-a"],
+          default: "ns-a"
+        }
+      ],
+      sections: [
+        {
+          title: "Section A",
+          viewRef: {
+            namespace: "mission-control",
+            name: "section-a"
+          }
+        }
+      ],
+      sectionResults: {
+        "mission-control/section-a": {
+          namespace: "mission-control",
+          name: "section-a",
+          requestFingerprint: "prefetched-section"
+        }
+      }
+    });
+
+    renderWithProviders("/?viewvar__namespace=ns-a");
+
+    await waitFor(() => {
+      expect(screen.getByText("prefetched-section")).toBeInTheDocument();
+    });
+
+    expect(mockedGetViewDataByNamespace).not.toHaveBeenCalled();
+  });
 });
