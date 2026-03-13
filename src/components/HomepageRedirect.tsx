@@ -4,8 +4,13 @@
 // ABOUTME: skip their individual fetch round trips.
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { Suspense, useEffect } from "react";
-import { getDashboard, DashboardResponse } from "../api/services/views";
+import type { QueryClient } from "@tanstack/react-query";
+import React, { Suspense } from "react";
+import {
+  getDashboard,
+  DashboardResponse,
+  getSectionResultByViewRef
+} from "../api/services/views";
 import { HealthPage } from "../pages/health";
 import FullPageSkeletonLoader from "../ui/SkeletonLoader/FullPageSkeletonLoader";
 
@@ -14,54 +19,63 @@ const ViewContainer = React.lazy(
 );
 
 /**
- * Pre-seed the react-query cache with dashboard data so downstream components
- * don't make redundant fetch calls:
- * - ["view-metadata", viewId] for useViewData's top-level metadata fetch
- * - ["view-section-result", namespace, name, ""] for section view fetches
+ * Pre-seed react-query cache with dashboard metadata so ViewContainer can
+ * render without issuing extra metadata/section requests.
  */
-function useSeedDashboardCache(
-  dashboard: DashboardResponse | null | undefined
+function seedDashboardCache(
+  queryClient: QueryClient,
+  dashboard: DashboardResponse | null
 ) {
-  const queryClient = useQueryClient();
+  if (!dashboard?.id) {
+    return;
+  }
 
-  useEffect(() => {
-    if (!dashboard?.id) return;
+  // Seed top-level metadata cache (skips GET /api/view/metadata/{id})
+  queryClient.setQueryData(["view-metadata", dashboard.id], dashboard);
 
-    // Seed top-level metadata cache (skips GET /api/view/metadata/{id})
-    queryClient.setQueryData(["view-metadata", dashboard.id], dashboard);
-
-    // Seed each section result cache (skips POST /api/view/{namespace}/{name})
-    if (dashboard.sectionResults) {
-      for (const [name, sectionResult] of Object.entries(
-        dashboard.sectionResults
-      )) {
-        const section = dashboard.sections?.find(
-          (s) => s.viewRef?.name === name
-        );
-        const namespace =
-          section?.viewRef?.namespace ?? dashboard.namespace ?? "";
-
-        queryClient.setQueryData(
-          ["view-section-result", namespace, name, ""],
-          sectionResult
-        );
-      }
+  // Seed each section result cache (skips POST /api/view/{namespace}/{name})
+  dashboard.sections?.forEach((section) => {
+    if (!section.viewRef?.name) {
+      return;
     }
-  }, [dashboard, queryClient]);
+
+    const sectionResult = getSectionResultByViewRef(
+      dashboard.sectionResults,
+      section.viewRef
+    );
+
+    if (!sectionResult) {
+      return;
+    }
+
+    queryClient.setQueryData(
+      [
+        "view-section-result",
+        section.viewRef.namespace ?? "",
+        section.viewRef.name,
+        ""
+      ],
+      sectionResult
+    );
+  });
 }
 
 export function HomepageRedirect() {
+  const queryClient = useQueryClient();
+
   const {
     data: dashboard,
     isLoading,
     error
   } = useQuery({
     queryKey: ["dashboard"],
-    queryFn: getDashboard,
+    queryFn: async () => {
+      const response = await getDashboard();
+      seedDashboardCache(queryClient, response);
+      return response;
+    },
     staleTime: 5 * 60 * 1000
   });
-
-  useSeedDashboardCache(dashboard);
 
   if (isLoading) {
     return <FullPageSkeletonLoader />;

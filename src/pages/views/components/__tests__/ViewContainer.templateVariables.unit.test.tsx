@@ -119,4 +119,85 @@ describe("ViewContainer metadata loading", () => {
 
     expect(mockedGetViewDataById).not.toHaveBeenCalled();
   });
+
+  it("uses prefetched sectionResults without per-section fetches", async () => {
+    mockedGetViewMetadataById.mockResolvedValueOnce({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:none",
+      sections: [
+        {
+          title: "Section A",
+          viewRef: {
+            namespace: "mission-control",
+            name: "section-a"
+          }
+        }
+      ],
+      sectionResults: {
+        "mission-control/section-a": {
+          namespace: "mission-control",
+          name: "section-a",
+          requestFingerprint: "prefetched-section"
+        }
+      }
+    });
+
+    renderWithProviders("/");
+
+    await waitFor(() => {
+      expect(screen.getByText("prefetched-section")).toBeInTheDocument();
+    });
+
+    expect(mockedGetViewDataByNamespace).not.toHaveBeenCalled();
+  });
+
+  it("fetches only sections missing from prefetched sectionResults", async () => {
+    mockedGetViewMetadataById.mockResolvedValueOnce({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:none",
+      sections: [
+        {
+          title: "Section A",
+          viewRef: {
+            namespace: "mission-control",
+            name: "section-a"
+          }
+        },
+        {
+          title: "Section B",
+          viewRef: {
+            namespace: "mission-control",
+            name: "section-b"
+          }
+        }
+      ],
+      sectionResults: {
+        "mission-control/section-a": {
+          namespace: "mission-control",
+          name: "section-a",
+          requestFingerprint: "prefetched-section-a"
+        }
+      }
+    });
+
+    renderWithProviders("/");
+
+    await waitFor(() => {
+      expect(screen.getByText("prefetched-section-a")).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(mockedGetViewDataByNamespace).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockedGetViewDataByNamespace).toHaveBeenCalledWith(
+      "mission-control",
+      "section-b",
+      {}
+    );
+  });
 });

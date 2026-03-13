@@ -4,10 +4,16 @@ import { ViewResult, ViewColumnDef } from "../../pages/audit-report/types";
 import { tristateOutputToQueryFilterParam } from "../../ui/Dropdowns/TristateReactSelect";
 import { buildLabelFilterQueries } from "../utils/labels";
 
+export type SectionResultsMap = Record<string, ViewResult>;
+
 export interface DashboardResponse extends ViewResult {
   id: string;
-  /** Pre-resolved section ViewResults keyed by section name */
-  sectionResults?: Record<string, ViewResult>;
+  /**
+   * Pre-resolved section ViewResults.
+   *
+   * Backend metadata endpoints currently key this map by "<namespace>/<name>".
+   */
+  sectionResults?: SectionResultsMap;
 }
 
 /**
@@ -27,6 +33,59 @@ export const getDashboard = async (): Promise<DashboardResponse | null> => {
     }
     throw err;
   }
+};
+
+interface SectionViewRef {
+  namespace?: string;
+  name?: string;
+}
+
+/**
+ * Returns a section result from metadata by matching a viewRef.
+ *
+ * Supports both the canonical "<namespace>/<name>" keys and legacy name-only
+ * keys for compatibility.
+ */
+export const getSectionResultByViewRef = (
+  sectionResults: SectionResultsMap | undefined,
+  viewRef: SectionViewRef | undefined
+): ViewResult | undefined => {
+  if (!sectionResults || !viewRef?.name) {
+    return undefined;
+  }
+
+  const namespace = viewRef.namespace ?? "";
+  const name = viewRef.name;
+
+  const keysToTry = namespace ? [`${namespace}/${name}`, name] : [name];
+
+  for (const key of keysToTry) {
+    const result = sectionResults[key];
+    if (result) {
+      return result;
+    }
+  }
+
+  for (const [key, result] of Object.entries(sectionResults)) {
+    if (result?.name !== name) {
+      continue;
+    }
+
+    if (namespace && result.namespace && result.namespace !== namespace) {
+      continue;
+    }
+
+    if (namespace && key.includes("/")) {
+      const [keyNamespace, keyName] = key.split("/", 2);
+      if (keyNamespace !== namespace || keyName !== name) {
+        continue;
+      }
+    }
+
+    return result;
+  }
+
+  return undefined;
 };
 
 export type View = {
