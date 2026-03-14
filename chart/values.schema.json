@@ -1,53 +1,66 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
     "affinity": {
-      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity"
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity",
+      "required": []
     },
     "backendURL": {
       "default": "",
+      "required": [],
       "title": "backendURL"
     },
     "enabled": {
       "default": true,
+      "required": [],
       "title": "enabled"
     },
     "fullnameOverride": {
       "default": "flanksource-ui",
+      "required": [],
       "title": "fullnameOverride"
     },
     "global": {
       "additionalProperties": true,
       "properties": {
         "affinity": {
-          "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity"
+          "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Affinity",
+          "required": []
         },
         "imagePrefix": {
           "default": "flanksource",
+          "required": [],
           "title": "imagePrefix"
         },
         "imageRegistry": {
           "default": "docker.io",
+          "required": [],
           "title": "imageRegistry"
         },
         "labels": {
           "additionalProperties": true,
+          "required": [],
           "title": "labels"
         },
         "nodeSelector": {
           "additionalProperties": true,
           "description": "node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)",
+          "required": [],
           "title": "nodeSelector",
           "type": "object"
         },
         "tolerations": {
           "items": {
-            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration"
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration",
+            "required": []
           },
+          "required": [],
           "title": "tolerations",
           "type": "array"
         }
       },
+      "required": [],
       "title": "global"
     },
     "image": {
@@ -55,26 +68,32 @@
       "properties": {
         "name": {
           "default": "{{.Values.global.imagePrefix}}/incident-manager-ui",
+          "required": [],
           "title": "name",
           "type": "string"
         },
         "pullPolicy": {
           "default": "IfNotPresent",
+          "required": [],
           "title": "pullPolicy"
         },
         "tag": {
           "default": "latest",
           "description": "Overrides the image tag whose default is the chart appVersion.",
+          "required": [],
           "title": "tag"
         }
       },
-      "title": "image",
       "required": [
         "name"
-      ]
+      ],
+      "title": "image"
     },
     "imagePullSecrets": {
-      "items": {},
+      "items": {
+        "required": []
+      },
+      "required": [],
       "title": "imagePullSecrets"
     },
     "ingress": {
@@ -82,89 +101,122 @@
       "properties": {
         "annotations": {
           "additionalProperties": true,
+          "required": [],
           "title": "annotations"
         },
         "className": {
           "default": "",
           "description": "Deprecated: use ingressClassName instead",
+          "required": [],
           "title": "className"
         },
         "enabled": {
           "default": "false",
+          "required": [],
           "title": "enabled"
         },
         "host": {
           "default": "incident-commander-ui.local",
+          "required": [],
           "title": "host"
         },
         "ingressClassName": {
           "default": "",
+          "required": [],
           "title": "ingressClassName"
+        },
+        "path": {
+          "default": "/",
+          "required": [],
+          "title": "path"
+        },
+        "pathType": {
+          "default": "ImplementationSpecific",
+          "required": [],
+          "title": "pathType"
         },
         "tls": {
           "items": {
-            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.networking.v1.IngressTLS"
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.networking.v1.IngressTLS",
+            "required": []
           },
+          "required": [],
           "title": "tls",
           "type": "array"
         }
       },
+      "required": [
+        "path",
+        "pathType"
+      ],
       "title": "ingress"
     },
     "nameOverride": {
       "default": "flanksource-ui",
+      "required": [],
       "title": "nameOverride"
     },
     "nodeSelector": {
       "additionalProperties": true,
       "description": "node's labels for the pod to be scheduled on that node. See [Node Selector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/)",
+      "required": [],
       "title": "nodeSelector",
       "type": "object"
     },
     "oryKratosURL": {
       "default": "",
+      "required": [],
       "title": "oryKratosURL"
     },
     "podAnnotations": {
       "additionalProperties": true,
+      "required": [],
       "title": "podAnnotations"
     },
     "podSecurityContext": {
-      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext"
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSecurityContext",
+      "required": []
     },
     "replicas": {
       "default": 1,
+      "required": [],
       "title": "replicas"
     },
     "resources": {
-      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.ResourceRequirements"
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.ResourceRequirements",
+      "required": []
     },
     "securityContext": {
-      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.SecurityContext"
+      "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.SecurityContext",
+      "required": []
     },
     "service": {
       "additionalProperties": false,
       "properties": {
         "type": {
           "default": "ClusterIP",
-          "title": "type",
           "enum": [
             "ClusterIP",
             "NodePort",
             "LoadBalancer"
-          ]
+          ],
+          "required": [],
+          "title": "type"
         }
       },
+      "required": [],
       "title": "service"
     },
     "tolerations": {
       "items": {
-        "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration"
+        "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.Toleration",
+        "required": []
       },
+      "required": [],
       "title": "tolerations",
       "type": "array"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "required": [],
   "type": "object"
 }
