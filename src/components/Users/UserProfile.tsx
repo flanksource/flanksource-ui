@@ -2,9 +2,11 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useState } from "react";
 import { Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload } from "react-icons/io";
+import { MdSecurity } from "react-icons/md";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
+import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
@@ -24,6 +26,8 @@ export function UserProfileDropdown() {
     isResourceSelectorSearchModalOpen,
     setIsResourceSelectorSearchModalOpen
   ] = useState(false);
+  const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
+    useState(false);
 
   return (
     <>
@@ -52,6 +56,11 @@ export function UserProfileDropdown() {
                 labelIcon={<Search className="h-4 w-4" />}
                 onClick={() => setIsResourceSelectorSearchModalOpen(true)}
               />
+              <UserButton.Action
+                label="Impersonate Scope"
+                labelIcon={<MdSecurity />}
+                onClick={() => setIsScopeImpersonationModalOpen(true)}
+              />
             </UserButton.MenuItems>
           </UserButton>
         </div>
@@ -61,6 +70,9 @@ export function UserProfileDropdown() {
           openMcpTokenModal={() => setIsMcpSetupModalOpen(true)}
           openResourceSelectorSearchModal={() =>
             setIsResourceSelectorSearchModalOpen(true)
+          }
+          openScopeImpersonationModal={() =>
+            setIsScopeImpersonationModalOpen(true)
           }
         />
       )}
@@ -80,6 +92,10 @@ export function UserProfileDropdown() {
           />
         </Suspense>
       )}
+      <ScopeImpersonationModal
+        isOpen={isScopeImpersonationModalOpen}
+        onClose={() => setIsScopeImpersonationModalOpen(false)}
+      />
     </>
   );
 }
