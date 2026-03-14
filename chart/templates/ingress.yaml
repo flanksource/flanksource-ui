@@ -26,8 +26,8 @@ spec:
     - host: {{ tpl .Values.ingress.host .  | quote }}
       http:
         paths:
-          - path: /
-            pathType: ImplementationSpecific
+          - path: {{ .Values.ingress.path }}
+            pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
                 name: {{ $fullName }}
