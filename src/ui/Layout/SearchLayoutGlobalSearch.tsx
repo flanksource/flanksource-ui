@@ -1,8 +1,10 @@
 import {
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent,
+  useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -81,6 +83,8 @@ type FlattenedSearchResult = {
   fallbackIcon: LucideIcon;
   resource: SearchedResource;
   indentLevel?: number;
+  isGroupHeader?: boolean;
+  groupTags?: [string, string][];
 };
 
 const SEARCH_TYPE_OPTIONS: SearchTypeOption[] = [
@@ -331,7 +335,8 @@ function persistEnabledSearchTypes(enabledSearchTypes: EnabledSearchTypeState) {
 
 function buildSearchRequest(
   queryWithoutDirectives: string,
-  enabledSearchTypes: EnabledSearchTypeState
+  enabledSearchTypes: EnabledSearchTypeState,
+  limit: number = SEARCH_RESULT_LIMIT
 ): SearchResourcesRequest | null {
   const trimmedQuery = queryWithoutDirectives.trim();
   const hasEnabledType = Object.values(enabledSearchTypes).some(Boolean);
@@ -341,7 +346,7 @@ function buildSearchRequest(
   }
 
   const request: SearchResourcesRequest = {
-    limit: SEARCH_RESULT_LIMIT
+    limit
   };
 
   if (enabledSearchTypes.configs) {
@@ -428,6 +433,31 @@ function getConfigTagEntries(item: SearchedResource): [string, string][] {
   );
 }
 
+const PRIORITY_TAG_KEYS = new Set(["cluster", "account", "region", "namespace", "zone"]);
+
+function getPriorityTagEntries(item: SearchedResource): [string, string][] {
+  if (!item.tags || typeof item.tags !== "object") {
+    return [];
+  }
+
+  return sortTagEntries(
+    Object.entries(item.tags).filter(
+      ([key]) => key !== "toString" && PRIORITY_TAG_KEYS.has(key.toLowerCase())
+    )
+  );
+}
+
+function getConfigGroupKey(item: SearchedResource): string {
+  const type = item.type || "";
+  const priorityTags = getPriorityTagEntries(item);
+
+  if (priorityTags.length === 0) {
+    return type;
+  }
+
+  return `${type}::${priorityTags.map(([k, v]) => `${k}=${v}`).join(",")}`;
+}
+
 function getResourceDescription(
   type: SearchResourceType,
   item: SearchedResource
@@ -475,16 +505,19 @@ function getFirstSupportedIconName(...candidates: (string | undefined)[]) {
 }
 
 function renderResultIcon(result: FlattenedSearchResult) {
+  const iconSize = result.isGroupHeader ? "h-5 w-5" : "h-4 w-4";
+  const iconColor = result.isGroupHeader ? "text-gray-700" : "text-gray-500";
+  
   switch (result.resourceType) {
     case "configs":
     case "config_changes":
       return findByName(result.resource.type) ? (
         <ConfigIcon
           config={{ type: result.resource.type }}
-          className="h-4 w-4 text-gray-500"
+          className={`${iconSize} ${iconColor}`}
         />
       ) : (
-        <Database className="h-4 w-4 text-gray-500" />
+        <Database className={`${iconSize} ${iconColor}`} />
       );
     case "connections": {
       const connectionIcon = getFirstSupportedIconName(
@@ -495,23 +528,23 @@ function renderResultIcon(result: FlattenedSearchResult) {
       );
 
       return connectionIcon ? (
-        <Icon name={connectionIcon} className="h-4 w-4 text-gray-500" />
+        <Icon name={connectionIcon} className={`${iconSize} ${iconColor}`} />
       ) : (
-        <Cable className="h-4 w-4 text-gray-500" />
+        <Cable className={`${iconSize} ${iconColor}`} />
       );
     }
     case "playbooks": {
       const playbookIcon = getFirstSupportedIconName(result.resource.icon);
 
       return playbookIcon ? (
-        <Icon name={playbookIcon} className="h-4 w-4 text-gray-500" />
+        <Icon name={playbookIcon} className={`${iconSize} ${iconColor}`} />
       ) : (
-        <Workflow className="h-4 w-4 text-gray-500" />
+        <Workflow className={`${iconSize} ${iconColor}`} />
       );
     }
     default: {
       const FallbackIcon = result.fallbackIcon;
-      return <FallbackIcon className="h-4 w-4 text-gray-500" />;
+      return <FallbackIcon className={`${iconSize} ${iconColor}`} />;
     }
   }
 }
@@ -544,6 +577,9 @@ export function SearchLayoutGlobalSearch() {
     useState<EnabledSearchTypeState>(() => getStoredEnabledSearchTypes());
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [selectedResultValue, setSelectedResultValue] = useState("");
+  const [fetchLimit, setFetchLimit] = useState(SEARCH_RESULT_LIMIT);
+  const listRef = useRef<HTMLDivElement>(null);
+  const isFetchingMoreRef = useRef(false);
 
   const shortcutHint = useMemo(() => getShortcutHint(), []);
 
@@ -576,6 +612,23 @@ export function SearchLayoutGlobalSearch() {
   useEffect(() => {
     persistEnabledSearchTypes(enabledSearchTypes);
   }, [enabledSearchTypes]);
+
+  // Reset fetch limit when the query or enabled types change
+  useEffect(() => {
+    setFetchLimit(SEARCH_RESULT_LIMIT);
+    isFetchingMoreRef.current = false;
+  }, [debouncedQuery, enabledSearchTypes]);
+
+  // Infinite scroll: load more results when scrolled to the bottom of the list
+  const handleListScroll = useCallback(() => {
+    const list = listRef.current;
+    if (!list || isFetchingMoreRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = list;
+    if (scrollHeight - scrollTop - clientHeight < 80) {
+      isFetchingMoreRef.current = true;
+      setFetchLimit((prev) => prev + SEARCH_RESULT_LIMIT);
+    }
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -623,9 +676,10 @@ export function SearchLayoutGlobalSearch() {
     () =>
       buildSearchRequest(
         parsedDebouncedQuery.queryWithoutDirectives,
-        enabledSearchTypes
+        enabledSearchTypes,
+        fetchLimit
       ),
-    [enabledSearchTypes, parsedDebouncedQuery.queryWithoutDirectives]
+    [enabledSearchTypes, parsedDebouncedQuery.queryWithoutDirectives, fetchLimit]
   );
 
   const {
@@ -646,6 +700,13 @@ export function SearchLayoutGlobalSearch() {
     enabled: open && searchRequest != null,
     keepPreviousData: true
   });
+
+  // Clear the in-flight flag once a fetch resolves so the next scroll can trigger another load
+  useEffect(() => {
+    if (!isFetching) {
+      isFetchingMoreRef.current = false;
+    }
+  }, [isFetching]);
 
   const configChangeIds = useMemo(
     () =>
@@ -763,6 +824,62 @@ export function SearchLayoutGlobalSearch() {
 
       const resources = results[searchType] ?? [];
 
+      if (searchType === "configs") {
+        const configsByGroup = new Map<string, SearchedResource[]>();
+
+        resources.forEach((item) => {
+          const groupKey = getConfigGroupKey(item);
+          const itemsForGroup = configsByGroup.get(groupKey) ?? [];
+          itemsForGroup.push(item);
+          configsByGroup.set(groupKey, itemsForGroup);
+        });
+
+        configsByGroup.forEach((configsForGroup, groupKey) => {
+          const representativeItem = configsForGroup[0];
+          const configType = representativeItem.type || "";
+          const groupTags = getPriorityTagEntries(representativeItem);
+
+          entries.push({
+            key: `configs-type-group-${groupKey}`,
+            value: `configs-type-group-${groupKey}`,
+            href: "",
+            title: configType || "Unknown Type",
+            description: "",
+            resourceType: "configs",
+            fallbackIcon: searchTypeOption.icon,
+            resource: {
+              id: "",
+              name: configType || "Unknown Type",
+              type: configType,
+              namespace: "",
+              agent: "",
+              labels: {}
+            },
+            isGroupHeader: true,
+            groupTags
+          });
+
+          configsForGroup.forEach((item, index) => {
+            const title = getResourceTitle(searchType, item);
+            const description = getResourceDescription(searchType, item);
+
+            entries.push({
+              key: `${searchType}-${item.id}-${index}`,
+              value: `${searchType}-${item.id}-${title}-${description}`,
+              href: getResourceHref(searchType, item),
+              title,
+              description,
+              resourceType: searchType,
+              fallbackIcon: searchTypeOption.icon,
+              resource: item,
+              indentLevel: 1
+            });
+          });
+        });
+
+        continue;
+      }
+
       if (searchType !== "config_changes") {
         resources.forEach((item, index) => {
           const title = getResourceTitle(searchType, item);
@@ -879,6 +996,8 @@ export function SearchLayoutGlobalSearch() {
     parsedDebouncedQuery.queryWithoutDirectives.length < 2;
 
   const emptyMessage = "No matching resources found.";
+  // True on the first load of a query; false when paginating (results already exist)
+  const isInitialLoad = isFetching && !results;
 
   const handleQueryChange = (nextQuery: string) => {
     applyDirectiveSearchTypes(nextQuery);
@@ -975,8 +1094,12 @@ export function SearchLayoutGlobalSearch() {
               ))}
             </div>
 
-            <CommandList className="max-h-[60vh] p-2">
-              {isFetching && (
+            <CommandList
+              ref={listRef}
+              className="max-h-[60vh] p-2"
+              onScroll={handleListScroll}
+            >
+              {isInitialLoad && (
                 <div className="flex items-center gap-2 px-2 py-2 text-sm text-gray-500">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span>Searching…</span>
@@ -1048,6 +1171,28 @@ export function SearchLayoutGlobalSearch() {
               {!searchError &&
                 !showSuggestions &&
                 flattenedResults.map((result) => {
+                  if (result.isGroupHeader) {
+                    return (
+                      <div
+                        key={result.key}
+                        className="flex flex-wrap items-center gap-1.5 px-3 pb-1 pt-3 text-sm font-bold text-gray-700"
+                      >
+                        <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center">
+                          {renderResultIcon(result)}
+                        </span>
+                        <span className="mr-1">{result.title}</span>
+                        {result.groupTags?.map(([key, value]) => (
+                          <span
+                            key={key}
+                            className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-normal text-gray-600"
+                          >
+                            {key}: {value}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  }
+
                   const searchTypeLabel =
                     SEARCH_TYPE_OPTIONS.find(
                       (item) => item.key === result.resourceType
@@ -1058,7 +1203,7 @@ export function SearchLayoutGlobalSearch() {
                       asChild
                       key={result.key}
                       value={result.value}
-                      className={`mb-1 flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 ${
+                      className={`mb-0.5 flex cursor-pointer items-center gap-3 rounded-md px-3 py-1.5 ${
                         result.indentLevel ? "pl-9" : ""
                       }`}
                     >
@@ -1067,33 +1212,17 @@ export function SearchLayoutGlobalSearch() {
                         className="w-full text-inherit no-underline"
                         onClick={handleResultLinkClick}
                       >
-                        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
-                          {renderResultIcon(result)}
-                        </span>
+                        {!result.indentLevel && (
+                          <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
+                            {renderResultIcon(result)}
+                          </span>
+                        )}
 
                         <div className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-medium text-gray-900">
                             {result.title}
                           </span>
-                          {result.resourceType === "configs" ? (
-                            <div className="flex items-center gap-1 overflow-hidden">
-                              {result.resource.type && (
-                                <span className="flex-shrink-0 truncate text-xs text-gray-500">
-                                  {result.resource.type}
-                                </span>
-                              )}
-                              {getConfigTagEntries(result.resource).map(
-                                ([key, value]) => (
-                                  <span
-                                    key={key}
-                                    className="flex-shrink-0 rounded-md bg-gray-100 px-1 py-0.5 text-[10px] text-gray-600"
-                                  >
-                                    {key}: {value}
-                                  </span>
-                                )
-                              )}
-                            </div>
-                          ) : (
+                          {result.resourceType !== "configs" && (
                             <p className="truncate text-xs text-gray-500">
                               {result.description || "No additional details"}
                             </p>
@@ -1127,6 +1256,13 @@ export function SearchLayoutGlobalSearch() {
                 <CommandEmpty className="py-10 text-center text-sm text-gray-500">
                   {emptyMessage}
                 </CommandEmpty>
+              )}
+
+              {isFetching && !isInitialLoad && !showSuggestions && (
+                <div className="flex items-center justify-center gap-2 py-2 text-xs text-gray-400">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Loading more…</span>
+                </div>
               )}
             </CommandList>
           </Command>
