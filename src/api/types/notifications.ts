@@ -160,6 +160,7 @@ export type NotificationSendHistorySummary = {
   total: number;
   sent: number;
   error: number;
+  in_progress: number;
   suppressed: number;
 };
 
