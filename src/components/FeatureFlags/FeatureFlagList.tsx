@@ -33,6 +33,21 @@ const columns: ColumnDef<FeatureFlag>[] = [
     accessorKey: "value"
   },
   {
+    header: "Type",
+    accessorKey: "type"
+  },
+  {
+    header: "Default",
+    accessorKey: "default",
+    cell: ({ getValue }) => {
+      const value = getValue();
+      if (value === undefined || value === null || value === "") {
+        return "-";
+      }
+      return String(value);
+    }
+  },
+  {
     header: "Source",
     accessorKey: "source"
   },
