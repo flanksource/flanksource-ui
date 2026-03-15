@@ -13,7 +13,7 @@ export default function ConfigChangeDetailSection({
       <div className="flex w-full flex-1 flex-col gap-4 overflow-y-auto">
         <div
           className={clsx(
-            "flex w-full flex-1 overflow-x-auto overflow-y-auto rounded border border-gray-200 text-sm"
+            "flex max-w-[100ch] flex-1 overflow-x-auto overflow-y-auto rounded border border-gray-200 text-sm"
           )}
         >
           {children}

@@ -68,13 +68,12 @@ const KratosLogin = () => {
   );
 
   const createFlow = useCallback(
-    async (refresh: boolean, aal: string, returnTo: string = "/") => {
+    async (refresh: boolean, aal: string, returnTo?: string) => {
       try {
         const { data } = await ory.createBrowserLoginFlow({
           refresh: refresh,
-          // Check for two-factor authentication
           aal: aal,
-          returnTo: returnTo
+          ...(returnTo ? { returnTo } : {})
         });
         setFlow(data);
         if (flowId !== data.id) {
@@ -83,8 +82,17 @@ const KratosLogin = () => {
           replace(`${router.pathname}?${params.toString()}`);
         }
       } catch (error) {
+        const axErr = error as AxiosError<any>;
+        if (
+          axErr.response?.data?.error?.id ===
+            "self_service_flow_return_to_forbidden" &&
+          returnTo
+        ) {
+          // return_to was rejected by Kratos — retry without it
+          return createFlow(refresh, aal);
+        }
         console.error(error);
-        handleError(error as AxiosError);
+        handleError(axErr);
       }
     },
     [flowId, handleError, replace, router.pathname, searchParams]
@@ -97,15 +105,15 @@ const KratosLogin = () => {
 
     if (flowId) {
       getFlow(flowId).catch(() => {
-        createFlow(refresh, aal, String(returnTo ?? "/"));
+        createFlow(refresh, aal, returnTo || undefined);
       });
       return;
     }
 
     // Otherwise we initialize it
-    createFlow(refresh, aal, returnTo ?? "/");
+    createFlow(refresh, aal, returnTo || undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady]);
+  }, [isReady, flowId]);
 
   const submitFlow = useCallback(
     async (values: UpdateLoginFlowBody) => {
@@ -156,7 +164,6 @@ const KratosLogin = () => {
       });
     }
   }, [flow, submitFlow, credentials]);
-
 
   return (
     <div className="w-96">

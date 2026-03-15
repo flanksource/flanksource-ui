@@ -932,6 +932,7 @@ export type IconProps = {
   prefix?: any;
   size?: any;
   iconWithColor?: string;
+  fallback?: React.ReactNode;
 };
 
 type IconCache = {
@@ -993,6 +994,7 @@ export function Icon({
   alt = "",
   prefix,
   iconWithColor,
+  fallback,
   ...props
 }: IconProps) {
   if (name && (name.startsWith("http:") || name.startsWith("https://"))) {

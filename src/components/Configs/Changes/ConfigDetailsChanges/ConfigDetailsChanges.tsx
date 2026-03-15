@@ -68,7 +68,14 @@ export function ConfigDetailsChanges({
             <Stat
               title="Date"
               sizeStyle="sm"
-              value={<Age from={changeDetails?.created_at!} suffix={true} />}
+              value={
+                <span className="flex items-baseline gap-1.5">
+                  <Age from={changeDetails?.created_at!} format="timestamp" />
+                  <span className="text-xs text-gray-500">
+                    (<Age from={changeDetails?.created_at!} suffix={true} />)
+                  </span>
+                </span>
+              }
             />
 
             <Stat
