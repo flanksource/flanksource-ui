@@ -21,6 +21,7 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ id }) => {
     viewResult,
     isLoading,
     isFetching,
+    isPreviousData,
     error,
     aggregatedVariables,
     currentVariables,
@@ -32,6 +33,7 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ id }) => {
   const refreshError =
     viewResult?.refreshStatus === "error" ? viewResult.refreshError : undefined;
   const isCachedResponse = viewResult?.responseSource === "cache";
+  const showTransitionOverlay = isFetching && isPreviousData;
 
   useEffect(() => {
     if (refreshError && isCachedResponse) {
@@ -116,13 +118,24 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ id }) => {
           )
         }
       >
-        <ViewContent
-          className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6"
-          viewResult={viewResult}
-          sectionData={sectionData}
-          aggregatedVariables={aggregatedVariables}
-          currentVariables={currentVariables}
-        />
+        <div className="relative flex h-full w-full flex-1 flex-col overflow-hidden">
+          <ViewContent
+            className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6"
+            viewResult={viewResult}
+            sectionData={sectionData}
+            aggregatedVariables={aggregatedVariables}
+            currentVariables={currentVariables}
+          />
+
+          {showTransitionOverlay && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/55 backdrop-blur-[1px]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                <span className="sr-only">Loading view</span>
+              </div>
+            </div>
+          )}
+        </div>
       </ViewLayout>
     </>
   );

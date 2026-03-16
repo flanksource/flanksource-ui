@@ -32,6 +32,7 @@ export interface UseViewDataResult {
   viewResult: ViewResult | undefined;
   isLoading: boolean;
   isFetching: boolean;
+  isPreviousData: boolean;
   error: unknown;
   aggregatedVariables: ViewVariable[];
   currentVariables: Record<string, string>;
@@ -124,6 +125,7 @@ export function useViewData({
     data: viewResult,
     isLoading: isLoadingViewResult,
     isFetching: isFetchingViewResult,
+    isPreviousData,
     error: viewResultError,
     refetch
   } = useQuery({
@@ -404,6 +406,7 @@ export function useViewData({
     viewResult,
     isLoading: isLoadingViewResult || isLoadingDisplayPluginVariables,
     isFetching: isFetchingViewResult || isFetchingDisplayPluginVariables,
+    isPreviousData,
     error: displayPluginVariablesError || viewResultError,
     aggregatedVariables: isDisplayPluginMode
       ? EMPTY_VARIABLES
