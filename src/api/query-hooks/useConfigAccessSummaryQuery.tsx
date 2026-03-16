@@ -6,7 +6,7 @@ export default function useConfigAccessSummaryQuery(
 ) {
   return useQuery({
     queryKey: ["config", "access-summary", configId],
-    queryFn: () => getConfigAccessSummary(configId!),
+    queryFn: () => getConfigAccessSummary({ configId: configId! }),
     enabled: !!configId,
     keepPreviousData: true
   });

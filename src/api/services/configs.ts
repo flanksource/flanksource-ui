@@ -164,21 +164,81 @@ export const getConfig = (id: string) =>
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
   );
 
-export const getConfigAccessSummary = (configId: string) =>
-  resolvePostGrestRequestWithPagination<ConfigAccessSummary[]>(
-    ConfigDB.get(
-      `/config_access_summary?config_id=eq.${encodeURIComponent(
-        configId
-      )}&select=user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
-        "user.asc"
-      )}`,
-      {
-        headers: {
-          Prefer: "count=exact"
-        }
-      }
-    )
+export type GetConfigAccessSummaryParams = {
+  configId?: string;
+  configType?: string;
+  pageIndex?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  arbitraryFilter?: Record<string, string>;
+};
+
+export const getConfigAccessSummary = ({
+  configId,
+  configType,
+  pageIndex,
+  pageSize,
+  sortBy = "user",
+  sortOrder = "asc",
+  arbitraryFilter
+}: GetConfigAccessSummaryParams = {}) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set(
+    "select",
+    "config_id,config_name,config_type,user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at"
   );
+
+  if (configId) {
+    queryParams.set("config_id", `eq.${configId}`);
+  }
+
+  if (configType) {
+    queryParams.set("config_type", `eq.${configType}`);
+  }
+
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    queryParams.set("limit", pageSize.toString());
+    queryParams.set("offset", `${pageIndex * pageSize}`);
+  }
+
+  if (arbitraryFilter) {
+    Object.entries(arbitraryFilter).forEach(([key, value]) => {
+      const filterExpression = tristateOutputToQueryParamValue(value);
+
+      if (filterExpression) {
+        queryParams.set(`${key}.filter`, filterExpression);
+      }
+    });
+  }
+
+  const sortableFieldMap: Record<string, string> = {
+    config: "config_name",
+    config_name: "config_name",
+    config_type: "config_type",
+    user: "user",
+    email: "email",
+    role: "role",
+    user_type: "user_type",
+    access: "external_group_id",
+    external_group_id: "external_group_id",
+    last_signed_in_at: "last_signed_in_at",
+    last_reviewed_at: "last_reviewed_at",
+    created_at: "created_at"
+  };
+
+  const safeSortBy = sortableFieldMap[sortBy] ?? "user";
+  queryParams.set("order", `${safeSortBy}.${sortOrder}`);
+
+  return resolvePostGrestRequestWithPagination<ConfigAccessSummary[]>(
+    ConfigDB.get(`/config_access_summary?${queryParams.toString()}`, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+};
 
 export const getConfigAccessLogs = (configId: string) =>
   resolvePostGrestRequestWithPagination<ConfigAccessLog[]>(
@@ -195,6 +255,79 @@ export const getConfigAccessLogs = (configId: string) =>
       }
     )
   );
+
+export type ConfigAccessSummaryCatalogFilterItem = {
+  config_id: string;
+  config_name: string;
+  config_type: string;
+};
+
+export const getConfigAccessSummaryCatalogFilter = async () => {
+  const res = await ConfigDB.get<ConfigAccessSummaryCatalogFilterItem[] | null>(
+    `/config_access_summary?select=config_id,config_name,config_type&order=config_name.asc`
+  );
+
+  const deduped = new Map<string, ConfigAccessSummaryCatalogFilterItem>();
+
+  (res.data ?? []).forEach((item) => {
+    if (!item.config_id || !item.config_name) {
+      return;
+    }
+
+    if (!deduped.has(item.config_id)) {
+      deduped.set(item.config_id, item);
+    }
+  });
+
+  return Array.from(deduped.values());
+};
+
+export type ConfigAccessSummaryUserFilterItem = {
+  user: string;
+  email?: string | null;
+};
+
+export const getConfigAccessSummaryUsersFilter = async () => {
+  const res = await ConfigDB.get<ConfigAccessSummaryUserFilterItem[] | null>(
+    `/config_access_summary?select=user,email&order=user.asc`
+  );
+
+  const deduped = new Map<string, ConfigAccessSummaryUserFilterItem>();
+
+  (res.data ?? []).forEach((item) => {
+    if (!item.user) {
+      return;
+    }
+
+    const key = `${item.user}__${item.email ?? ""}`;
+
+    if (!deduped.has(key)) {
+      deduped.set(key, item);
+    }
+  });
+
+  return Array.from(deduped.values());
+};
+
+export type ConfigAccessSummaryRoleFilterItem = {
+  role: string;
+};
+
+export const getConfigAccessSummaryRolesFilter = async () => {
+  const res = await ConfigDB.get<ConfigAccessSummaryRoleFilterItem[] | null>(
+    `/config_access_summary?select=role&role=not.is.null&order=role.asc`
+  );
+
+  const deduped = new Set<string>();
+
+  (res.data ?? []).forEach((item) => {
+    if (item.role) {
+      deduped.add(item.role);
+    }
+  });
+
+  return Array.from(deduped).map((role) => ({ role }));
+};
 
 export type ConfigsTagList = {
   key: string;

@@ -98,6 +98,9 @@ export interface ConfigItemGraphData extends ConfigItem {
 }
 
 export interface ConfigAccessSummary {
+  config_id?: string;
+  config_name?: string | null;
+  config_type?: string | null;
   user: string;
   email: string;
   role?: string | null;
