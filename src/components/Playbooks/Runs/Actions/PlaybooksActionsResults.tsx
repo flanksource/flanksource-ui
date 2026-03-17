@@ -194,6 +194,12 @@ export default function PlaybooksRunActionsResults({
           break;
       }
 
+      // Extract contentType from result to determine how to render output
+      // (e.g., text/markdown, application/json). Remove it so it doesn't
+      // appear as its own tab.
+      const resultContentType = result["contentType"] as string | undefined;
+      delete result["contentType"];
+
       for (const key of Object.keys(result)) {
         if (result[key]) {
           const tab: PlaybookActionTab = {
@@ -249,6 +255,17 @@ export default function PlaybooksRunActionsResults({
                 tab.content = JSON.stringify(result[key], null, 2);
                 tab.displayContentType = "application/yaml";
               }
+          }
+
+          // Apply result-level contentType to primary output fields
+          // when they haven't been explicitly overridden by key-specific handling
+          if (
+            resultContentType &&
+            (key === "stdout" || key === "body") &&
+            tab.displayContentType === "text/plain"
+          ) {
+            tab.displayContentType =
+              resultContentType as PlaybookActionTab["displayContentType"];
           }
 
           if (key === "error") {
