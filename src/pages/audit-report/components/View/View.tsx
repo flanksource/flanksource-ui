@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Table2, LayoutGrid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -26,7 +26,8 @@ import {
   DurationPanel,
   BarGaugePanel,
   PropertiesPanel,
-  TimeseriesPanel
+  TimeseriesPanel,
+  HeatmapPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -50,6 +51,7 @@ interface ViewProps {
   requestFingerprint: string;
   currentVariables?: Record<string, string>;
   hideVariables?: boolean;
+  debugInjectHeatmap?: boolean;
 }
 
 const View: React.FC<ViewProps> = ({
@@ -64,7 +66,8 @@ const View: React.FC<ViewProps> = ({
   card,
   requestFingerprint,
   currentVariables,
-  hideVariables
+  hideVariables,
+  debugInjectHeatmap = false
 }) => {
   const tablePrefix = `view_${namespace}_${name}`;
 
@@ -126,6 +129,17 @@ const View: React.FC<ViewProps> = ({
   // Create unique prefix for global filters (same as ViewSection uses)
   const globalVarPrefix = VIEW_VAR_PREFIX;
   const hasDataTable = columns && columns.length > 0;
+  const [debugHeatmapPanel] = useState<PanelResult>(() =>
+    createDebugHeatmapPanel(name)
+  );
+
+  const effectivePanels = useMemo(() => {
+    if (!debugInjectHeatmap) {
+      return panels;
+    }
+
+    return [...(panels ?? []), debugHeatmapPanel];
+  }, [debugHeatmapPanel, debugInjectHeatmap, panels]);
 
   // Detect if card mode is available (supports both new and old cardPosition field)
   const hasCardMode = useMemo(() => {
@@ -137,7 +151,7 @@ const View: React.FC<ViewProps> = ({
 
   // Determine default display mode: use spec default if available, otherwise "table"
   const defaultDisplayMode =
-    panels && panels.length > 0
+    effectivePanels && effectivePanels.length > 0
       ? "table"
       : card?.default && hasCardMode
         ? "cards"
@@ -281,7 +295,7 @@ const View: React.FC<ViewProps> = ({
         )}
 
         <div className="mb-4 space-y-6">
-          {panels && panels.length > 0 && (
+          {effectivePanels && effectivePanels.length > 0 && (
             <div
               className="grid gap-4"
               style={{
@@ -289,7 +303,7 @@ const View: React.FC<ViewProps> = ({
                 gridAutoRows: "minmax(250px, auto)"
               }}
             >
-              {groupAndRenderPanels(panels)}
+              {groupAndRenderPanels(effectivePanels)}
             </div>
           )}
         </div>
@@ -383,6 +397,33 @@ const View: React.FC<ViewProps> = ({
   );
 };
 
+const createDebugHeatmapPanel = (viewName: string): PanelResult => {
+  const endDate = new Date();
+  const totalDays = 120;
+
+  const rows = Array.from({ length: totalDays }, (_, index) => {
+    const date = new Date(endDate);
+    date.setDate(endDate.getDate() - (totalDays - index - 1));
+
+    const successful = Math.floor(Math.random() * 6);
+    const failed = Math.floor(Math.random() * 3);
+
+    return {
+      date: date.toISOString().slice(0, 10),
+      successful,
+      failed,
+      count: successful + failed
+    };
+  });
+
+  return {
+    name: `${viewName} Heatmap (debug)`,
+    type: "heatmap",
+    description: "Debug panel with randomized daily values (frontend only).",
+    rows
+  };
+};
+
 /**
  * Groups bargauge panels by their group field and merges their rows.
  * Each row preserves its source panel's full bargauge config via _bargauge field.
@@ -458,6 +499,8 @@ const renderPanel = (panel: PanelResult, index: number) => {
       return <PropertiesPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "timeseries":
       return <TimeseriesPanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "heatmap":
+      return <HeatmapPanel key={`${panel.name}-${index}`} summary={panel} />;
     default:
       return null;
   }

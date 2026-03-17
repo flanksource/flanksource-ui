@@ -7,3 +7,4 @@ export { default as TextPanel } from "./TextPanel";
 export { default as DurationPanel } from "./DurationPanel";
 export { default as PropertiesPanel } from "./PropertiesPanel";
 export { default as TimeseriesPanel } from "./TimeseriesPanel";
+export { default as HeatmapPanel } from "./HeatmapPanel";

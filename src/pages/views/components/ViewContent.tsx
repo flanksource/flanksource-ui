@@ -66,6 +66,7 @@ const ViewContent: React.FC<ViewContentProps> = React.memo(
               requestFingerprint={viewResult.requestFingerprint}
               currentVariables={currentVariables}
               hideVariables
+              debugInjectHeatmap
             />
           </div>
         )}

@@ -582,7 +582,8 @@ export type PanelResult = {
     | "duration"
     | "bargauge"
     | "properties"
-    | "timeseries";
+    | "timeseries"
+    | "heatmap";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
