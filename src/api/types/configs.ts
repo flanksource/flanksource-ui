@@ -111,6 +111,29 @@ export interface ConfigAccessSummary {
   created_at: string;
 }
 
+export interface ConfigAccessSummaryByUser {
+  user: string;
+  email: string;
+  access_count: number;
+  distinct_roles: number;
+  distinct_configs: number;
+  last_signed_in_at?: string | null;
+  latest_grant?: string | null;
+}
+
+export interface ConfigAccessSummaryByConfig {
+  config_id: string;
+  config_name: string;
+  config_type: string;
+  access_count: number;
+  distinct_users: number;
+  distinct_roles: number;
+  last_signed_in_at?: string | null;
+  latest_grant?: string | null;
+}
+
+export type ConfigAccessGroupBy = "user" | "config";
+
 export interface ConfigAccessLog {
   config_id: string;
   external_user_id: string;

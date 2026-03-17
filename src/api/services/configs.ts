@@ -9,6 +9,8 @@ import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
   ConfigAccessSummary,
+  ConfigAccessSummaryByUser,
+  ConfigAccessSummaryByConfig,
   ConfigAccessLog,
   ConfigChange,
   ConfigHealthCheckView,
@@ -233,6 +235,93 @@ export const getConfigAccessSummary = ({
 
   return resolvePostGrestRequestWithPagination<ConfigAccessSummary[]>(
     ConfigDB.get(`/config_access_summary?${queryParams.toString()}`, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+};
+
+export type GetConfigAccessGroupedParams = {
+  pageIndex?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
+
+export const getConfigAccessSummaryByUser = ({
+  pageIndex,
+  pageSize,
+  sortBy = "access_count",
+  sortOrder = "desc"
+}: GetConfigAccessGroupedParams = {}) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set(
+    "select",
+    "user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant"
+  );
+
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    queryParams.set("limit", pageSize.toString());
+    queryParams.set("offset", `${pageIndex * pageSize}`);
+  }
+
+  const sortableFieldMap: Record<string, string> = {
+    user: "user",
+    email: "email",
+    access_count: "access_count",
+    distinct_roles: "distinct_roles",
+    distinct_configs: "distinct_configs",
+    last_signed_in_at: "last_signed_in_at",
+    latest_grant: "latest_grant"
+  };
+
+  const safeSortBy = sortableFieldMap[sortBy] ?? "access_count";
+  queryParams.set("order", `${safeSortBy}.${sortOrder}`);
+
+  return resolvePostGrestRequestWithPagination<ConfigAccessSummaryByUser[]>(
+    ConfigDB.get(`/config_access_summary_by_user?${queryParams.toString()}`, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+};
+
+export const getConfigAccessSummaryByConfig = ({
+  pageIndex,
+  pageSize,
+  sortBy = "access_count",
+  sortOrder = "desc"
+}: GetConfigAccessGroupedParams = {}) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set(
+    "select",
+    "config_id,config_name,config_type,access_count,distinct_users,distinct_roles,last_signed_in_at,latest_grant"
+  );
+
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    queryParams.set("limit", pageSize.toString());
+    queryParams.set("offset", `${pageIndex * pageSize}`);
+  }
+
+  const sortableFieldMap: Record<string, string> = {
+    config_name: "config_name",
+    config_type: "config_type",
+    access_count: "access_count",
+    distinct_users: "distinct_users",
+    distinct_roles: "distinct_roles",
+    last_signed_in_at: "last_signed_in_at",
+    latest_grant: "latest_grant"
+  };
+
+  const safeSortBy = sortableFieldMap[sortBy] ?? "access_count";
+  queryParams.set("order", `${safeSortBy}.${sortOrder}`);
+
+  return resolvePostGrestRequestWithPagination<ConfigAccessSummaryByConfig[]>(
+    ConfigDB.get(`/config_access_summary_by_config?${queryParams.toString()}`, {
       headers: {
         Prefer: "count=exact"
       }

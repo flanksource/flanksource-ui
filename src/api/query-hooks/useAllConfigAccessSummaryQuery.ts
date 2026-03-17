@@ -41,7 +41,7 @@ export function useAllConfigAccessSummaryQuery(
   }, [configIdFilter, roleFilter, userFilter]);
 
   const { pageIndex, pageSize } = useReactTablePaginationState({
-    defaultPageSize: 200
+    defaultPageSize: 50
   });
 
   const [sortBy] = useReactTableSortState({

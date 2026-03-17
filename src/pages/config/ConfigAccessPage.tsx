@@ -1,10 +1,19 @@
 import { useAllConfigAccessSummaryQuery } from "@flanksource-ui/api/query-hooks/useAllConfigAccessSummaryQuery";
 import {
+  useConfigAccessGroupedByUserQuery,
+  useConfigAccessGroupedByConfigQuery
+} from "@flanksource-ui/api/query-hooks/useConfigAccessGroupedQuery";
+import {
   getConfigAccessSummaryCatalogFilter,
   getConfigAccessSummaryRolesFilter,
   getConfigAccessSummaryUsersFilter
 } from "@flanksource-ui/api/services/configs";
-import { ConfigAccessSummary } from "@flanksource-ui/api/types/configs";
+import {
+  ConfigAccessGroupBy,
+  ConfigAccessSummary,
+  ConfigAccessSummaryByConfig,
+  ConfigAccessSummaryByUser
+} from "@flanksource-ui/api/types/configs";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
@@ -19,6 +28,10 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
+import {
+  GroupByOptions,
+  MultiSelectDropdown
+} from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
@@ -31,10 +44,54 @@ import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
 import { useAtom } from "jotai";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const paramsToReset = ["pageIndex"];
+
+function toTriStateIncludeParamValue(value: string) {
+  return `${value.replaceAll(",", "||||").replaceAll(":", "____")}:1`;
+}
+
+// ---------------------------------------------------------------------------
+// Filter dropdowns
+// ---------------------------------------------------------------------------
+
+const groupByOptions: GroupByOptions[] = [
+  { label: "None", value: "" },
+  { label: "User", value: "user" },
+  { label: "Catalog", value: "config" }
+];
+
+function GroupByDropdown({ effectiveGroupBy }: { effectiveGroupBy: string }) {
+  const navigate = useNavigate();
+
+  const value =
+    groupByOptions.find((o) => o.value === effectiveGroupBy) ??
+    groupByOptions[0];
+
+  return (
+    <MultiSelectDropdown
+      options={groupByOptions}
+      value={value}
+      isMulti={false}
+      isClearable={false}
+      closeMenuOnSelect
+      onChange={(selected) => {
+        const option = selected as GroupByOptions | null;
+        if (option?.value) {
+          navigate(`/catalog/access?groupBy=${option.value}`);
+        } else {
+          navigate(`/catalog/access?groupBy=none`);
+        }
+      }}
+      label="Group By"
+      className="w-44"
+      minMenuWidth="180px"
+      defaultValue="None"
+    />
+  );
+}
 
 function CatalogDropdown() {
   const [field] = useField({ name: "config_id" });
@@ -152,6 +209,10 @@ function RoleDropdown() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Flat table cell renderers (existing)
+// ---------------------------------------------------------------------------
+
 const ConfigCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
   const configId = row.original.config_id;
   const configType = row.original.config_type;
@@ -255,6 +316,340 @@ const AccessTypeCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
   return <Badge text="Direct" color="gray" />;
 };
 
+// ---------------------------------------------------------------------------
+// Flat table columns
+// ---------------------------------------------------------------------------
+
+const flatColumns: MRT_ColumnDef<ConfigAccessSummary>[] = [
+  {
+    header: "Catalog",
+    accessorKey: "config_name",
+    Cell: ConfigCell,
+    size: 240
+  },
+  {
+    header: "User",
+    accessorKey: "user",
+    Cell: UserCell,
+    size: 220
+  },
+  {
+    header: "Role",
+    accessorKey: "role",
+    Cell: RoleCell,
+    size: 120
+  },
+  {
+    header: "Type",
+    accessorKey: "user_type",
+    Cell: TypeCell,
+    size: 120
+  },
+  {
+    header: "Access",
+    accessorKey: "access",
+    Cell: AccessTypeCell,
+    size: 120
+  },
+  {
+    header: "Last Signed In",
+    accessorKey: "last_signed_in_at",
+    Cell: LastSignedInCell,
+    sortingFn: "datetime",
+    size: 160
+  },
+  {
+    header: "Last Reviewed",
+    accessorKey: "last_reviewed_at",
+    Cell: OptionalDateCell,
+    sortingFn: "datetime",
+    size: 160
+  },
+  {
+    header: "Granted",
+    accessorKey: "created_at",
+    Cell: OptionalDateCell,
+    sortingFn: "datetime",
+    size: 140
+  }
+];
+
+// ---------------------------------------------------------------------------
+// Grouped-by-user columns
+// ---------------------------------------------------------------------------
+
+const groupedByUserColumns: MRT_ColumnDef<ConfigAccessSummaryByUser>[] = [
+  {
+    header: "User",
+    accessorKey: "user",
+    Cell: ({ row }: MRTCellProps<ConfigAccessSummaryByUser>) => {
+      const user = {
+        name: row.original.user,
+        user_email: row.original.email || null
+      };
+      return (
+        <div className="flex flex-row items-center gap-2">
+          <ExternalUserCell user={user} />
+          <Badge text={row.original.access_count} />
+        </div>
+      );
+    },
+    size: 280
+  },
+  {
+    header: "Roles",
+    accessorKey: "distinct_roles",
+    size: 100,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByUser>) => (
+      <span>{cell.getValue<number>()}</span>
+    )
+  },
+  {
+    header: "Catalogs",
+    accessorKey: "distinct_configs",
+    size: 100,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByUser>) => (
+      <span>{cell.getValue<number>()}</span>
+    )
+  },
+  {
+    header: "Last Signed In",
+    accessorKey: "last_signed_in_at",
+    sortingFn: "datetime",
+    size: 160,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByUser>) => {
+      const value = cell.getValue<string | null>();
+      if (!value) {
+        return <span className="text-gray-400">Never</span>;
+      }
+      return <Age from={value} />;
+    }
+  },
+  {
+    header: "Latest Grant",
+    accessorKey: "latest_grant",
+    sortingFn: "datetime",
+    size: 160,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByUser>) => {
+      const value = cell.getValue<string | null>();
+      if (!value) {
+        return <span className="text-gray-400">—</span>;
+      }
+      return <Age from={value} />;
+    }
+  }
+];
+
+// ---------------------------------------------------------------------------
+// Grouped-by-config columns
+// ---------------------------------------------------------------------------
+
+const groupedByConfigColumns: MRT_ColumnDef<ConfigAccessSummaryByConfig>[] = [
+  {
+    header: "Catalog",
+    accessorKey: "config_name",
+    Cell: ({ row }: MRTCellProps<ConfigAccessSummaryByConfig>) => {
+      const { config_id, config_type, config_name, access_count } =
+        row.original;
+      return (
+        <div className="flex flex-row items-center gap-2">
+          <ConfigLink
+            config={{
+              id: config_id,
+              type: config_type,
+              name: config_name
+            }}
+            configId={config_id}
+            showSecondaryIcon
+          />
+          <Badge text={access_count} />
+        </div>
+      );
+    },
+    size: 300
+  },
+  {
+    header: "Users",
+    accessorKey: "distinct_users",
+    size: 100,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByConfig>) => (
+      <span>{cell.getValue<number>()}</span>
+    )
+  },
+  {
+    header: "Roles",
+    accessorKey: "distinct_roles",
+    size: 100,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByConfig>) => (
+      <span>{cell.getValue<number>()}</span>
+    )
+  },
+  {
+    header: "Last Signed In",
+    accessorKey: "last_signed_in_at",
+    sortingFn: "datetime",
+    size: 160,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByConfig>) => {
+      const value = cell.getValue<string | null>();
+      if (!value) {
+        return <span className="text-gray-400">Never</span>;
+      }
+      return <Age from={value} />;
+    }
+  },
+  {
+    header: "Latest Grant",
+    accessorKey: "latest_grant",
+    sortingFn: "datetime",
+    size: 160,
+    Cell: ({ cell }: MRTCellProps<ConfigAccessSummaryByConfig>) => {
+      const value = cell.getValue<string | null>();
+      if (!value) {
+        return <span className="text-gray-400">—</span>;
+      }
+      return <Age from={value} />;
+    }
+  }
+];
+
+// ---------------------------------------------------------------------------
+// Flat (ungrouped) table
+// ---------------------------------------------------------------------------
+
+function FlatAccessTable() {
+  const {
+    data: accessSummary,
+    isLoading,
+    isRefetching
+  } = useAllConfigAccessSummaryQuery({
+    keepPreviousData: true
+  });
+
+  const rows = accessSummary?.data ?? [];
+  const totalRecords = accessSummary?.totalEntries ?? 0;
+  const pageSize = 50;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  return (
+    <MRTDataTable
+      columns={flatColumns}
+      data={rows}
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      enableServerSideSorting
+      enableServerSidePagination
+      totalRowCount={totalRecords}
+      manualPageCount={totalPages}
+      disableHiding
+      defaultSorting={[{ id: "created_at", desc: true }]}
+      defaultPageSize={50}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Grouped-by-user table
+// ---------------------------------------------------------------------------
+
+function GroupedByUserTable() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const { data, isLoading, isRefetching } = useConfigAccessGroupedByUserQuery();
+
+  const rows = data?.data ?? [];
+  const totalRecords = data?.totalEntries ?? 0;
+  const pageSize = 50;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const handleRowClick = useCallback(
+    (row: ConfigAccessSummaryByUser) => {
+      const params = new URLSearchParams();
+      const configType = searchParams.get("configType");
+
+      if (configType) {
+        params.set("configType", configType);
+      }
+
+      params.set("groupBy", "none");
+      params.set("user", toTriStateIncludeParamValue(row.user));
+      navigate(`/catalog/access?${params.toString()}`);
+    },
+    [navigate, searchParams]
+  );
+
+  return (
+    <MRTDataTable
+      columns={groupedByUserColumns}
+      data={rows}
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      enableServerSideSorting
+      enableServerSidePagination
+      totalRowCount={totalRecords}
+      manualPageCount={totalPages}
+      disableHiding
+      defaultSorting={[{ id: "access_count", desc: true }]}
+      defaultPageSize={50}
+      onRowClick={handleRowClick}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Grouped-by-config table
+// ---------------------------------------------------------------------------
+
+function GroupedByConfigTable() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const { data, isLoading, isRefetching } =
+    useConfigAccessGroupedByConfigQuery();
+
+  const rows = data?.data ?? [];
+  const totalRecords = data?.totalEntries ?? 0;
+  const pageSize = 50;
+  const totalPages = Math.ceil(totalRecords / pageSize);
+
+  const handleRowClick = useCallback(
+    (row: ConfigAccessSummaryByConfig) => {
+      const params = new URLSearchParams();
+      const configType = searchParams.get("configType");
+
+      if (configType) {
+        params.set("configType", configType);
+      }
+
+      params.set("groupBy", "none");
+      params.set("config_id", toTriStateIncludeParamValue(row.config_id));
+      navigate(`/catalog/access?${params.toString()}`);
+    },
+    [navigate, searchParams]
+  );
+
+  return (
+    <MRTDataTable
+      columns={groupedByConfigColumns}
+      data={rows}
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      enableServerSideSorting
+      enableServerSidePagination
+      totalRowCount={totalRecords}
+      manualPageCount={totalPages}
+      disableHiding
+      defaultSorting={[{ id: "access_count", desc: true }]}
+      defaultPageSize={50}
+      onRowClick={handleRowClick}
+    />
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+
 export function ConfigAccessPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
@@ -262,78 +657,38 @@ export function ConfigAccessPage() {
 
   const [params] = useSearchParams({});
   const configType = params.get("configType") ?? undefined;
-  const pageSize = parseInt(params.get("pageSize") ?? "200", 10) || 200;
 
+  // Default to grouped-by-config unless the user explicitly chose flat
+  // ("none") or drilled down into a specific filter.
+  const rawGroupBy = params.get("groupBy");
+  const hasDrillDownFilter =
+    params.has("config_id") || params.has("user") || params.has("role");
+  const groupBy: ConfigAccessGroupBy | null =
+    rawGroupBy === "user" || rawGroupBy === "config"
+      ? rawGroupBy
+      : rawGroupBy === "none" || hasDrillDownFilter
+        ? null
+        : "config"; // default
+
+  const isGrouped = groupBy === "user" || groupBy === "config";
+
+  // The flat query only runs when not grouped. When grouped, the
+  // GroupedAccessTable component manages its own query internally.
   const {
-    data: accessSummary,
-    isLoading,
-    isRefetching,
-    error,
-    refetch
+    refetch: refetchFlat,
+    isLoading: isLoadingFlat,
+    isRefetching: isRefetchingFlat,
+    error
   } = useAllConfigAccessSummaryQuery({
-    keepPreviousData: true
+    keepPreviousData: true,
+    enabled: !isGrouped
   });
 
-  const columns = useMemo<MRT_ColumnDef<ConfigAccessSummary>[]>(
-    () => [
-      {
-        header: "Catalog",
-        accessorKey: "config_name",
-        Cell: ConfigCell,
-        size: 240
-      },
-      {
-        header: "User",
-        accessorKey: "user",
-        Cell: UserCell,
-        size: 220
-      },
-      {
-        header: "Role",
-        accessorKey: "role",
-        Cell: RoleCell,
-        size: 120
-      },
-      {
-        header: "Type",
-        accessorKey: "user_type",
-        Cell: TypeCell,
-        size: 120
-      },
-      {
-        header: "Access",
-        accessorKey: "access",
-        Cell: AccessTypeCell,
-        size: 120
-      },
-      {
-        header: "Last Signed In",
-        accessorKey: "last_signed_in_at",
-        Cell: LastSignedInCell,
-        sortingFn: "datetime",
-        size: 160
-      },
-      {
-        header: "Last Reviewed",
-        accessorKey: "last_reviewed_at",
-        Cell: OptionalDateCell,
-        sortingFn: "datetime",
-        size: 160
-      },
-      {
-        header: "Granted",
-        accessorKey: "created_at",
-        Cell: OptionalDateCell,
-        sortingFn: "datetime",
-        size: 140
-      }
-    ],
-    []
-  );
-
-  const rows = accessSummary?.data ?? [];
-  const totalRecords = accessSummary?.totalEntries ?? 0;
-  const totalPages = Math.ceil(totalRecords / pageSize);
+  // When grouped, the child component owns loading state. The refresh button
+  // still needs a refetch handle — we invalidate the grouped query key.
+  const refetch = refetchFlat;
+  const isLoading = isGrouped ? false : isLoadingFlat;
+  const isRefetching = isGrouped ? false : isRefetchingFlat;
 
   const errorMessage =
     typeof error === "string"
@@ -382,32 +737,35 @@ export function ConfigAccessPage() {
             <InfoMessage message={errorMessage} />
           ) : (
             <div className="flex h-full flex-1 flex-col overflow-y-auto">
-              <FormikFilterForm
-                paramsToReset={paramsToReset}
-                filterFields={["config_id", "user", "role"]}
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <CatalogDropdown />
-                  <UserDropdown />
-                  <RoleDropdown />
+              {!hasDrillDownFilter && (
+                <div className="flex flex-wrap items-center gap-2 pb-2">
+                  <GroupByDropdown effectiveGroupBy={groupBy ?? ""} />
                 </div>
-              </FormikFilterForm>
+              )}
 
-              <div className="flex w-full flex-1 flex-col overflow-y-auto">
-                <MRTDataTable
-                  columns={columns}
-                  data={rows}
-                  isLoading={isLoading}
-                  isRefetching={isRefetching}
-                  enableServerSideSorting
-                  enableServerSidePagination
-                  totalRowCount={totalRecords}
-                  manualPageCount={totalPages}
-                  disableHiding
-                  defaultSorting={[{ id: "created_at", desc: true }]}
-                  defaultPageSize={200}
-                />
-              </div>
+              {isGrouped ? (
+                <div className="flex w-full flex-1 flex-col overflow-y-auto">
+                  {groupBy === "user" && <GroupedByUserTable />}
+                  {groupBy === "config" && <GroupedByConfigTable />}
+                </div>
+              ) : (
+                <>
+                  <FormikFilterForm
+                    paramsToReset={paramsToReset}
+                    filterFields={["config_id", "user", "role"]}
+                  >
+                    <div className="flex flex-wrap items-center gap-2 pb-2">
+                      <CatalogDropdown />
+                      <UserDropdown />
+                      <RoleDropdown />
+                    </div>
+                  </FormikFilterForm>
+
+                  <div className="flex w-full flex-1 flex-col overflow-y-auto">
+                    <FlatAccessTable />
+                  </div>
+                </>
+              )}
             </div>
           )}
         </ConfigPageTabs>

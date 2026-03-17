@@ -68,6 +68,14 @@ export function parseTristateKeyState(
   return { key, state };
 }
 
+function encodeTristateKey(key: string) {
+  return key.replaceAll(",", "||||").replaceAll(":", "____");
+}
+
+function decodeTristateKey(key: string) {
+  return key.replaceAll("____", ":").replaceAll("||||", ",");
+}
+
 /**
  *
  * Takes a query param value that looks like this: key:1,key2:-1 and converts it
@@ -87,9 +95,7 @@ export function tristateOutputToQueryParamValue(
       }
       const { key: changeType, state: symbol } = parsed;
       const symbolFilter = symbol === -1 ? "!" : "";
-      const filterValue = changeType
-        .replaceAll("____", ":")
-        .replaceAll("||||", ",");
+      const filterValue = decodeTristateKey(changeType);
       if (encodeValue) {
         return encodeURIComponent(`${symbolFilter}${filterValue}`);
       }
@@ -184,9 +190,17 @@ function ReactSelectTriStateOptions({
   const { toggleState: currentToggleState = {}, updateToggleState = () => {} } =
     selectProps;
 
+  const encodedOptionValue = useMemo(
+    () => encodeTristateKey(data.value ?? ""),
+    [data.value]
+  );
+
   const toggleValue = useMemo(
-    () => currentToggleState[data.value!] || 0,
-    [currentToggleState, data.value]
+    () =>
+      currentToggleState[data.value!] ??
+      currentToggleState[encodedOptionValue] ??
+      0,
+    [currentToggleState, data.value, encodedOptionValue]
   );
 
   // If the option is disabled (like a separator), render without the toggle
@@ -379,9 +393,14 @@ export function TristateReactSelectComponent({
           if (!parsed) {
             return acc;
           }
+
+          const normalizedKey = isTagsDropdown
+            ? parsed.key
+            : encodeTristateKey(parsed.key);
+
           return {
             ...acc,
-            [parsed.key]: parsed.state
+            [normalizedKey]: parsed.state
           };
         }, {} as TriStateToggleState);
       }
@@ -397,16 +416,21 @@ export function TristateReactSelectComponent({
           if (!parsed) {
             return acc;
           }
+
+          const normalizedKey = isTagsDropdown
+            ? parsed.key
+            : encodeTristateKey(parsed.key);
+
           return {
             ...acc,
-            [parsed.key]: parsed.state
+            [normalizedKey]: parsed.state
           };
         }, {} as TriStateToggleState)
       );
     } else {
       setToggleState({});
     }
-  }, [value]);
+  }, [isTagsDropdown, value]);
 
   // When the toggle state changes, update the value, which is a string of comma-separated key:value pairs
   useEffect(() => {
@@ -434,13 +458,27 @@ export function TristateReactSelectComponent({
       return [];
     }
     return Object.entries(currentToggleState).map(([key, value]) => {
-      const option = options.find((x) => x.value === key)!;
+      const decodedKey = decodeTristateKey(key);
+      const option =
+        options.find((x) => x.value === key) ||
+        (!isTagsDropdown
+          ? options.find((x) => x.value === decodedKey)
+          : undefined);
+
+      if (!option) {
+        return {
+          id: decodedKey,
+          label: decodedKey,
+          value: `${key}:${value}`
+        } satisfies TriStateOptions;
+      }
+
       return {
         ...option,
         value: `${key}:${value}`
       } satisfies TriStateOptions;
     });
-  }, [currentToggleState, options, value]);
+  }, [currentToggleState, isTagsDropdown, options, value]);
 
   const sortOptionsFunction = useCallback(
     (options: TriStateOptions[]) => {
@@ -479,11 +517,16 @@ export function TristateReactSelectComponent({
 
   const onItemToggle = useCallback(
     (key: string, value: string) => {
+      const normalizedKey = isTagsDropdown ? key : encodeTristateKey(key);
+      const decodedKey = isTagsDropdown ? key : decodeTristateKey(key);
+
       setToggleState((prev) => {
         if (+value === 0) {
           return {
             ...Object.entries(prev)
-              .filter(([k, v]) => k !== key)
+              .filter(
+                ([k]) => k !== key && k !== normalizedKey && k !== decodedKey
+              )
               .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
           };
         }
@@ -494,7 +537,7 @@ export function TristateReactSelectComponent({
             ...Object.entries(prev)
               .filter(([k, v]) => {
                 const tagKey = k.split("____")[0];
-                if (tagKey === key.split("____")[0]) {
+                if (tagKey === normalizedKey.split("____")[0]) {
                   // if value is different,remove the value else keep it
                   if (v !== +value) {
                     return false;
@@ -503,16 +546,22 @@ export function TristateReactSelectComponent({
                 return true;
               })
               .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-            [key]: +value
+            [normalizedKey]: +value
           };
         }
         return {
           // Reset all other values to 0 that don't have same value, and set the
           // current value to the
           ...Object.entries(prev)
-            .filter(([, v]) => v === +value)
+            .filter(
+              ([k, v]) =>
+                v === +value &&
+                k !== key &&
+                k !== normalizedKey &&
+                k !== decodedKey
+            )
             .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
-          [key]: +value
+          [normalizedKey]: +value
         };
       });
     },
