@@ -20,57 +20,59 @@ type ConfigAccessFlatTableProps = {
 
 const pageSize = 50;
 
+const primaryColumnWidth = 220;
+
 const flatColumns: MRT_ColumnDef<ConfigAccessSummary>[] = [
   {
     header: "Catalog",
     accessorKey: "config_name",
     Cell: FlatConfigCell,
-    size: 240
+    size: primaryColumnWidth
   },
   {
     header: "User",
     accessorKey: "user",
     Cell: FlatUserCell,
-    size: 220
+    size: primaryColumnWidth
   },
   {
     header: "Role",
     accessorKey: "role",
     Cell: FlatRoleCell,
-    size: 120
+    size: primaryColumnWidth
   },
   {
     header: "Type",
     accessorKey: "user_type",
     Cell: FlatTypeCell,
-    size: 120
+    size: 90
   },
   {
     header: "Access",
     accessorKey: "access",
     Cell: FlatAccessTypeCell,
-    size: 120
+    size: 90
   },
   {
     header: "Last Signed In",
     accessorKey: "last_signed_in_at",
     Cell: FlatLastSignedInCell,
     sortingFn: "datetime",
-    size: 160
+    size: 120
   },
   {
     header: "Last Reviewed",
     accessorKey: "last_reviewed_at",
     Cell: FlatOptionalDateCell,
     sortingFn: "datetime",
-    size: 160
+    size: 120
   },
   {
     header: "Granted",
     accessorKey: "created_at",
     Cell: FlatOptionalDateCell,
     sortingFn: "datetime",
-    size: 140
+    size: 110
   }
 ];
 

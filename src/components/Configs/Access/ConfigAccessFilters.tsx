@@ -9,15 +9,48 @@ import TristateReactSelect, {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { paramsToReset } from "./utils";
+
+type ConfigAccessFilterKey = "config_id" | "user" | "role";
+
+const filterCacheOptions = {
+  staleTime: 10 * 60 * 1000,
+  gcTime: 60 * 60 * 1000,
+  refetchOnWindowFocus: false
+} as const;
+
+function useConfigAccessFacetScope(excludeFilter: ConfigAccessFilterKey) {
+  const [searchParams] = useSearchParams();
+
+  return useMemo(() => {
+    const configType = searchParams.get("configType") ?? undefined;
+
+    const filterKeys: ConfigAccessFilterKey[] = ["config_id", "user", "role"];
+
+    const arbitraryFilter = Object.fromEntries(
+      filterKeys
+        .filter((key) => key !== excludeFilter)
+        .map((key) => [key, searchParams.get(key)])
+        .filter(([, value]) => !!value)
+    );
+
+    return {
+      configType,
+      arbitraryFilter
+    };
+  }, [excludeFilter, searchParams]);
+}
 
 function CatalogDropdown() {
   const [field] = useField({ name: "config_id" });
+  const scope = useConfigAccessFacetScope("config_id");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "catalog"],
-    queryFn: getConfigAccessSummaryCatalogFilter,
+    queryKey: ["config", "access-summary", "filter", "catalog", scope],
+    queryFn: () => getConfigAccessSummaryCatalogFilter(scope),
+    ...filterCacheOptions,
     select: useCallback(
       (
         items: Awaited<ReturnType<typeof getConfigAccessSummaryCatalogFilter>>
@@ -54,10 +87,12 @@ function CatalogDropdown() {
 
 function UserDropdown() {
   const [field] = useField({ name: "user" });
+  const scope = useConfigAccessFacetScope("user");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "user"],
-    queryFn: getConfigAccessSummaryUsersFilter,
+    queryKey: ["config", "access-summary", "filter", "user", scope],
+    queryFn: () => getConfigAccessSummaryUsersFilter(scope),
+    ...filterCacheOptions,
     select: useCallback(
       (items: Awaited<ReturnType<typeof getConfigAccessSummaryUsersFilter>>) =>
         items.map(
@@ -92,10 +127,12 @@ function UserDropdown() {
 
 function RoleDropdown() {
   const [field] = useField({ name: "role" });
+  const scope = useConfigAccessFacetScope("role");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "role"],
-    queryFn: getConfigAccessSummaryRolesFilter,
+    queryKey: ["config", "access-summary", "filter", "role", scope],
+    queryFn: () => getConfigAccessSummaryRolesFilter(scope),
+    ...filterCacheOptions,
     select: useCallback(
       (items: Awaited<ReturnType<typeof getConfigAccessSummaryRolesFilter>>) =>
         items.map(

@@ -176,6 +176,30 @@ export type GetConfigAccessSummaryParams = {
   arbitraryFilter?: Record<string, string>;
 };
 
+export type ConfigAccessSummaryFilterParams = Pick<
+  GetConfigAccessSummaryParams,
+  "configType" | "arbitraryFilter"
+>;
+
+function applyConfigAccessSummaryFilters(
+  queryParams: URLSearchParams,
+  { configType, arbitraryFilter }: ConfigAccessSummaryFilterParams = {}
+) {
+  if (configType) {
+    queryParams.set("config_type", `eq.${configType}`);
+  }
+
+  if (arbitraryFilter) {
+    Object.entries(arbitraryFilter).forEach(([key, value]) => {
+      const filterExpression = tristateOutputToQueryParamValue(value);
+
+      if (filterExpression) {
+        queryParams.set(`${key}.filter`, filterExpression);
+      }
+    });
+  }
+}
+
 export const getConfigAccessSummary = ({
   configId,
   configType,
@@ -196,23 +220,11 @@ export const getConfigAccessSummary = ({
     queryParams.set("config_id", `eq.${configId}`);
   }
 
-  if (configType) {
-    queryParams.set("config_type", `eq.${configType}`);
-  }
+  applyConfigAccessSummaryFilters(queryParams, { configType, arbitraryFilter });
 
   if (pageIndex !== undefined && pageSize !== undefined) {
     queryParams.set("limit", pageSize.toString());
     queryParams.set("offset", `${pageIndex * pageSize}`);
-  }
-
-  if (arbitraryFilter) {
-    Object.entries(arbitraryFilter).forEach(([key, value]) => {
-      const filterExpression = tristateOutputToQueryParamValue(value);
-
-      if (filterExpression) {
-        queryParams.set(`${key}.filter`, filterExpression);
-      }
-    });
   }
 
   const sortableFieldMap: Record<string, string> = {
@@ -351,9 +363,17 @@ export type ConfigAccessSummaryCatalogFilterItem = {
   config_type: string;
 };
 
-export const getConfigAccessSummaryCatalogFilter = async () => {
+export const getConfigAccessSummaryCatalogFilter = async (
+  params: ConfigAccessSummaryFilterParams = {}
+) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set("select", "config_id,config_name,config_type");
+  queryParams.set("order", "config_name.asc");
+  applyConfigAccessSummaryFilters(queryParams, params);
+
   const res = await ConfigDB.get<ConfigAccessSummaryCatalogFilterItem[] | null>(
-    `/config_access_summary?select=config_id,config_name,config_type&order=config_name.asc`
+    `/config_access_summary?${queryParams.toString()}`
   );
 
   const deduped = new Map<string, ConfigAccessSummaryCatalogFilterItem>();
@@ -376,9 +396,17 @@ export type ConfigAccessSummaryUserFilterItem = {
   email?: string | null;
 };
 
-export const getConfigAccessSummaryUsersFilter = async () => {
+export const getConfigAccessSummaryUsersFilter = async (
+  params: ConfigAccessSummaryFilterParams = {}
+) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set("select", "user,email");
+  queryParams.set("order", "user.asc");
+  applyConfigAccessSummaryFilters(queryParams, params);
+
   const res = await ConfigDB.get<ConfigAccessSummaryUserFilterItem[] | null>(
-    `/config_access_summary?select=user,email&order=user.asc`
+    `/config_access_summary?${queryParams.toString()}`
   );
 
   const deduped = new Map<string, ConfigAccessSummaryUserFilterItem>();
@@ -402,9 +430,18 @@ export type ConfigAccessSummaryRoleFilterItem = {
   role: string;
 };
 
-export const getConfigAccessSummaryRolesFilter = async () => {
+export const getConfigAccessSummaryRolesFilter = async (
+  params: ConfigAccessSummaryFilterParams = {}
+) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set("select", "role");
+  queryParams.set("role", "not.is.null");
+  queryParams.set("order", "role.asc");
+  applyConfigAccessSummaryFilters(queryParams, params);
+
   const res = await ConfigDB.get<ConfigAccessSummaryRoleFilterItem[] | null>(
-    `/config_access_summary?select=role&role=not.is.null&order=role.asc`
+    `/config_access_summary?${queryParams.toString()}`
   );
 
   const deduped = new Set<string>();
