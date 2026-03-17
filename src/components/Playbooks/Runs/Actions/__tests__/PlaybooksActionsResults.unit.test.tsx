@@ -199,4 +199,61 @@ describe("PlaybooksRunActionsResults", () => {
     expect(headerCells[0]).toHaveTextContent("name");
     expect(headerCells[1]).toHaveTextContent("id");
   });
+
+  it("renders stdout as markdown when contentType is text/markdown", () => {
+    const action = {
+      id: "1",
+      name: "exec with markdown",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: "# My Report",
+        exitCode: 0,
+        contentType: "text/markdown"
+      }
+    };
+    render(<PlaybooksRunActionsResults action={action} />);
+    // Markdown should be rendered as HTML heading
+    expect(screen.getByText("My Report")).toBeInTheDocument();
+    expect(screen.getByText("My Report").tagName).toBe("H1");
+  });
+
+  it("renders stdout as plain text when no contentType is specified", () => {
+    const action = {
+      id: "1",
+      name: "exec plain",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: "hello world",
+        exitCode: 0
+      }
+    };
+    render(<PlaybooksRunActionsResults action={action} />);
+    expect(screen.getByText("hello world")).toBeInTheDocument();
+  });
+
+  it("does not show contentType as its own tab", () => {
+    const action = {
+      id: "1",
+      name: "exec with content type",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: "# My Report",
+        exitCode: 0,
+        contentType: "text/markdown"
+      }
+    };
+    render(<PlaybooksRunActionsResults action={action} />);
+    // contentType should not appear as a tab label
+    expect(screen.queryByText("ContentType")).not.toBeInTheDocument();
+    expect(screen.queryByText("text/markdown")).not.toBeInTheDocument();
+  });
 });
