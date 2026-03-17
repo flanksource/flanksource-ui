@@ -11,7 +11,8 @@ import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
 import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
-import { BsBan } from "react-icons/bs";
+import { BsBan, BsBell } from "react-icons/bs";
+import { UserGroupIcon } from "@heroicons/react/solid";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
 import { PermissionErrorDisplay } from "./PermissionErrorDisplay";
@@ -39,6 +40,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
         const groupName = group.name || subject;
         return (
           <div className="flex flex-row items-center gap-2">
+            <UserGroupIcon className="h-5 w-5 text-gray-600" />
             <span className="truncate font-mono text-sm" title={groupName}>
               {group.name ? "Group: " : "Role: "}
               {groupName}
@@ -69,6 +71,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       if (notification) {
         return (
           <div className="flex flex-row items-center gap-2">
+            <BsBell className="h-5 w-5 text-gray-600" />
             <span>
               <Link
                 className="link"
