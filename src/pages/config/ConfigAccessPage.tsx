@@ -6,11 +6,8 @@ import { ConfigAccessGroupByDropdown } from "@flanksource-ui/components/Configs/
 import { ConfigAccessFlatTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessFlatTable";
 import { ConfigAccessGroupedByCatalogTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByCatalogTable";
 import { ConfigAccessGroupedByUserTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByUserTable";
-import {
-  hasConfigAccessDrillDownFilter,
-  resolveConfigAccessGroupBy
-} from "@flanksource-ui/components/Configs/Access/utils";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -21,7 +18,6 @@ import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
-import { useSearchParams } from "react-router-dom";
 
 export function ConfigAccessPage() {
   const [, setRefreshButtonClickedTrigger] = useAtom(
@@ -29,12 +25,14 @@ export function ConfigAccessPage() {
   );
   const queryClient = useQueryClient();
 
-  const [params] = useSearchParams({});
-  const configType = params.get("configType") ?? undefined;
-  const hasDrillDownFilter = hasConfigAccessDrillDownFilter(params);
-  const groupBy = resolveConfigAccessGroupBy(params);
-
-  const isGrouped = groupBy === "user" || groupBy === "config";
+  const {
+    configType,
+    groupBy,
+    isGrouped,
+    hasDrillDownFilter,
+    mode,
+    actions: { setMode }
+  } = useCatalogAccessUrlState();
 
   const {
     data: flatAccessSummary,
@@ -107,9 +105,7 @@ export function ConfigAccessPage() {
             <div className="flex h-full flex-1 flex-col overflow-y-auto">
               {!hasDrillDownFilter && (
                 <div className="flex flex-wrap items-center gap-2 pb-2">
-                  <ConfigAccessGroupByDropdown
-                    effectiveGroupBy={groupBy ?? ""}
-                  />
+                  <ConfigAccessGroupByDropdown mode={mode} onChange={setMode} />
                 </div>
               )}
 

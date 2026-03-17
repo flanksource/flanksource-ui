@@ -1,8 +1,11 @@
+import {
+  CATALOG_ACCESS_FLAT_TABLE_PREFIX,
+  useCatalogAccessUrlState
+} from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import { getConfigAccessSummary } from "../services/configAccess";
 
 type ConfigAccessSummaryResponse = Awaited<
@@ -15,36 +18,23 @@ export function useAllConfigAccessSummaryQuery(
     keepPreviousData: true
   }
 ) {
-  const [params] = useSearchParams();
-  const configType = params.get("configType") ?? undefined;
+  const { configType, filters } = useCatalogAccessUrlState();
 
-  const configIdFilter = params.get("config_id") ?? undefined;
-  const userFilter = params.get("user") ?? undefined;
-  const roleFilter = params.get("role") ?? undefined;
-
-  const arbitraryFilter = useMemo(() => {
-    const filter = new Map<string, string>();
-
-    if (configIdFilter) {
-      filter.set("config_id", configIdFilter);
-    }
-
-    if (userFilter) {
-      filter.set("user", userFilter);
-    }
-
-    if (roleFilter) {
-      filter.set("role", roleFilter);
-    }
-
-    return Object.fromEntries(filter);
-  }, [configIdFilter, roleFilter, userFilter]);
+  const arbitraryFilter = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(filters).filter(([, value]) => Boolean(value))
+      ) as Record<string, string>,
+    [filters]
+  );
 
   const { pageIndex, pageSize } = useReactTablePaginationState({
+    paramPrefix: CATALOG_ACCESS_FLAT_TABLE_PREFIX,
     defaultPageSize: 50
   });
 
   const [sortBy] = useReactTableSortState({
+    paramPrefix: CATALOG_ACCESS_FLAT_TABLE_PREFIX,
     defaultSorting: [{ id: "created_at", desc: true }]
   });
 

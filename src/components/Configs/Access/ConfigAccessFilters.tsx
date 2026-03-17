@@ -10,7 +10,7 @@ import TristateReactSelect, {
 import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
 import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import { paramsToReset } from "./utils";
 
 type ConfigAccessFilterKey = "config_id" | "user" | "role";
@@ -22,25 +22,23 @@ const filterCacheOptions = {
 } as const;
 
 function useConfigAccessFacetScope(excludeFilter: ConfigAccessFilterKey) {
-  const [searchParams] = useSearchParams();
+  const { configType, filters } = useCatalogAccessUrlState();
 
   return useMemo(() => {
-    const configType = searchParams.get("configType") ?? undefined;
-
     const filterKeys: ConfigAccessFilterKey[] = ["config_id", "user", "role"];
 
     const arbitraryFilter = Object.fromEntries(
       filterKeys
         .filter((key) => key !== excludeFilter)
-        .map((key) => [key, searchParams.get(key)])
+        .map((key) => [key, filters[key]])
         .filter(([, value]) => !!value)
-    );
+    ) as Record<string, string>;
 
     return {
       configType,
       arbitraryFilter
     };
-  }, [excludeFilter, searchParams]);
+  }, [configType, excludeFilter, filters]);
 }
 
 function CatalogDropdown() {

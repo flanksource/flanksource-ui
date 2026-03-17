@@ -1,27 +1,26 @@
+import { CatalogAccessMode } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import {
   GroupByOptions,
   MultiSelectDropdown
 } from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
-import { useNavigate } from "react-router-dom";
 
-const groupByOptions: GroupByOptions[] = [
-  { label: "None", value: "" },
-  { label: "User", value: "user" },
-  { label: "Catalog", value: "config" }
+const groupByOptions: (GroupByOptions & { value: CatalogAccessMode })[] = [
+  { label: "None", value: "flat" },
+  { label: "User", value: "group-user" },
+  { label: "Catalog", value: "group-config" }
 ];
 
 type ConfigAccessGroupByDropdownProps = {
-  effectiveGroupBy: string;
+  mode: CatalogAccessMode;
+  onChange: (mode: CatalogAccessMode) => void;
 };
 
 export function ConfigAccessGroupByDropdown({
-  effectiveGroupBy
+  mode,
+  onChange
 }: ConfigAccessGroupByDropdownProps) {
-  const navigate = useNavigate();
-
   const value =
-    groupByOptions.find((option) => option.value === effectiveGroupBy) ??
-    groupByOptions[0];
+    groupByOptions.find((option) => option.value === mode) ?? groupByOptions[0];
 
   return (
     <MultiSelectDropdown
@@ -32,11 +31,7 @@ export function ConfigAccessGroupByDropdown({
       closeMenuOnSelect
       onChange={(selected) => {
         const option = selected as GroupByOptions | null;
-        if (option?.value) {
-          navigate(`/catalog/access?groupBy=${option.value}`);
-        } else {
-          navigate(`/catalog/access?groupBy=none`);
-        }
+        onChange((option?.value as CatalogAccessMode) ?? "flat");
       }}
       label="Group By"
       className="w-44"

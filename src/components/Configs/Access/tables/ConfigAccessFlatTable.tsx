@@ -1,4 +1,5 @@
 import { ConfigAccessSummary } from "@flanksource-ui/api/types/configs";
+import { CATALOG_ACCESS_FLAT_TABLE_PREFIX } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import {
@@ -97,6 +98,7 @@ export function ConfigAccessFlatTable({
       disableHiding
       defaultSorting={[{ id: "created_at", desc: true }]}
       defaultPageSize={pageSize}
+      urlParamPrefix={CATALOG_ACCESS_FLAT_TABLE_PREFIX}
     />
   );
 }

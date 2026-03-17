@@ -1,11 +1,13 @@
 import { useConfigAccessGroupedByConfigQuery } from "@flanksource-ui/api/query-hooks/useConfigAccessGroupedQuery";
 import { ConfigAccessSummaryByConfig } from "@flanksource-ui/api/types/configs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import {
+  CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX,
+  useCatalogAccessUrlState
+} from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toTriStateIncludeParamValue } from "@flanksource-ui/lib/tristate";
 import {
   GroupedByCatalogIdentityCell,
   GroupedByCatalogLastSignedInCell,
@@ -50,8 +52,9 @@ const groupedByCatalogColumns: MRT_ColumnDef<ConfigAccessSummaryByConfig>[] = [
 ];
 
 export function ConfigAccessGroupedByCatalogTable() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const {
+    actions: { drillDownByConfigId }
+  } = useCatalogAccessUrlState();
 
   const { data, isLoading, isRefetching, error } =
     useConfigAccessGroupedByConfigQuery();
@@ -62,18 +65,9 @@ export function ConfigAccessGroupedByCatalogTable() {
 
   const handleRowClick = useCallback(
     (row: ConfigAccessSummaryByConfig) => {
-      const params = new URLSearchParams();
-      const configType = searchParams.get("configType");
-
-      if (configType) {
-        params.set("configType", configType);
-      }
-
-      params.set("groupBy", "none");
-      params.set("config_id", toTriStateIncludeParamValue(row.config_id));
-      navigate(`/catalog/access?${params.toString()}`);
+      drillDownByConfigId(row.config_id);
     },
-    [navigate, searchParams]
+    [drillDownByConfigId]
   );
 
   if (error) {
@@ -100,6 +94,7 @@ export function ConfigAccessGroupedByCatalogTable() {
       defaultSorting={[{ id: "access_count", desc: true }]}
       defaultPageSize={pageSize}
       onRowClick={handleRowClick}
+      urlParamPrefix={CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX}
     />
   );
 }

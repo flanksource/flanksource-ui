@@ -1,11 +1,13 @@
 import { useConfigAccessGroupedByUserQuery } from "@flanksource-ui/api/query-hooks/useConfigAccessGroupedQuery";
 import { ConfigAccessSummaryByUser } from "@flanksource-ui/api/types/configs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import {
+  CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX,
+  useCatalogAccessUrlState
+} from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toTriStateIncludeParamValue } from "@flanksource-ui/lib/tristate";
 import {
   GroupedByUserIdentityCell,
   GroupedByUserLastSignedInCell,
@@ -50,8 +52,9 @@ const groupedByUserColumns: MRT_ColumnDef<ConfigAccessSummaryByUser>[] = [
 ];
 
 export function ConfigAccessGroupedByUserTable() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const {
+    actions: { drillDownByUser }
+  } = useCatalogAccessUrlState();
 
   const { data, isLoading, isRefetching, error } =
     useConfigAccessGroupedByUserQuery();
@@ -62,18 +65,9 @@ export function ConfigAccessGroupedByUserTable() {
 
   const handleRowClick = useCallback(
     (row: ConfigAccessSummaryByUser) => {
-      const params = new URLSearchParams();
-      const configType = searchParams.get("configType");
-
-      if (configType) {
-        params.set("configType", configType);
-      }
-
-      params.set("groupBy", "none");
-      params.set("user", toTriStateIncludeParamValue(row.user));
-      navigate(`/catalog/access?${params.toString()}`);
+      drillDownByUser(row.user);
     },
-    [navigate, searchParams]
+    [drillDownByUser]
   );
 
   if (error) {
@@ -100,6 +94,7 @@ export function ConfigAccessGroupedByUserTable() {
       defaultSorting={[{ id: "access_count", desc: true }]}
       defaultPageSize={pageSize}
       onRowClick={handleRowClick}
+      urlParamPrefix={CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX}
     />
   );
 }
