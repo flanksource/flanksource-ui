@@ -2,10 +2,6 @@ import { ConfigAccessGroupBy } from "@flanksource-ui/api/types/configs";
 
 export const paramsToReset = ["pageIndex"];
 
-export function toTriStateIncludeParamValue(value: string) {
-  return `${value.replaceAll(",", "||||").replaceAll(":", "____")}:1`;
-}
-
 export function hasConfigAccessDrillDownFilter(params: URLSearchParams) {
   return params.has("config_id") || params.has("user") || params.has("role");
 }

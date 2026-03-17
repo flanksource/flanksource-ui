@@ -1,4 +1,4 @@
-import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import { tristateOutputToQueryParamValue } from "@flanksource-ui/lib/tristate";
 import { ConfigDB } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {

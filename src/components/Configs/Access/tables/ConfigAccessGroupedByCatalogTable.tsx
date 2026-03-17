@@ -5,7 +5,7 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toTriStateIncludeParamValue } from "../utils";
+import { toTriStateIncludeParamValue } from "@flanksource-ui/lib/tristate";
 import {
   GroupedByCatalogIdentityCell,
   GroupedByCatalogLastSignedInCell,
