@@ -3,7 +3,7 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getConfigAccessSummary } from "../services/configs";
+import { getConfigAccessSummary } from "../services/configAccess";
 
 type ConfigAccessSummaryResponse = Awaited<
   ReturnType<typeof getConfigAccessSummary>

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getConfigAccessSummaryByUser,
   getConfigAccessSummaryByConfig
-} from "../services/configs";
+} from "../services/configAccess";
 
 function useGroupedPaginationAndSort() {
   const { pageIndex, pageSize } = useReactTablePaginationState({

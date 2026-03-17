@@ -2,7 +2,7 @@ import {
   getConfigAccessSummaryCatalogFilter,
   getConfigAccessSummaryRolesFilter,
   getConfigAccessSummaryUsersFilter
-} from "@flanksource-ui/api/services/configs";
+} from "@flanksource-ui/api/services/configAccess";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import TristateReactSelect, {
   TriStateOptions

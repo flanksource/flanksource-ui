@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getConfigAccessSummary } from "../services/configs";
+import { getConfigAccessSummary } from "../services/configAccess";
 
 export default function useConfigAccessSummaryQuery(
   configId: string | undefined
