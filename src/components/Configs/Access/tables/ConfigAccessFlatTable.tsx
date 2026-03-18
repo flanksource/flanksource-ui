@@ -1,5 +1,6 @@
 import { ConfigAccessSummary } from "@flanksource-ui/api/types/configs";
 import { CATALOG_ACCESS_FLAT_TABLE_PREFIX } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import {
@@ -17,8 +18,6 @@ type ConfigAccessFlatTableProps = {
   isRefetching?: boolean;
   totalRecords: number;
 };
-
-const pageSize = 50;
 
 const primaryColumnWidth = 220;
 
@@ -76,6 +75,11 @@ export function ConfigAccessFlatTable({
   isRefetching = false,
   totalRecords
 }: ConfigAccessFlatTableProps) {
+  const { pageSize } = useReactTablePaginationState({
+    paramPrefix: CATALOG_ACCESS_FLAT_TABLE_PREFIX,
+    defaultPageSize: 50
+  });
+
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   return (

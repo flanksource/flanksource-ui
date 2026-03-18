@@ -5,6 +5,7 @@ import {
   CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX,
   useCatalogAccessUrlState
 } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
+import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback } from "react";
@@ -13,8 +14,6 @@ import {
   GroupedByCatalogLastSignedInCell,
   GroupedByCatalogLatestGrantCell
 } from "./cells";
-
-const pageSize = 50;
 
 const groupedByCatalogColumns: MRT_ColumnDef<ConfigAccessSummaryByConfig>[] = [
   {
@@ -55,6 +54,11 @@ export function ConfigAccessGroupedByCatalogTable() {
   const {
     actions: { drillDownByConfigId }
   } = useCatalogAccessUrlState();
+
+  const { pageSize } = useReactTablePaginationState({
+    paramPrefix: CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX,
+    defaultPageSize: 50
+  });
 
   const { data, isLoading, isRefetching, error } =
     useConfigAccessGroupedByConfigQuery();
