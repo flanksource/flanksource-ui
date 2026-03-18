@@ -161,13 +161,7 @@ export function ViewsPage() {
         </div>
         <ViewFormModal
           isOpen={isOpen}
-          setIsOpen={(open) => {
-            if (!open) {
-              closeModal();
-            } else {
-              setIsOpen(true);
-            }
-          }}
+          setIsOpen={(open) => (open ? setIsOpen(true) : closeModal())}
           onViewSubmit={onSubmit}
           onViewDelete={(data) => deleteView(data)}
           isSubmitting={isSubmitting}

@@ -56,9 +56,13 @@ export default function GlobalFiltersForm({
 }: GlobalFiltersFormProps) {
   const [globalParams] = usePrefixedSearchParams(globalVarPrefix);
 
-  // Compute initialValues once from URL params + variable defaults so that
-  // the Formik form starts with the correct values without needing a
+  // Compute initialValues from URL params + variable defaults so that the
+  // Formik form starts with the correct values without needing a
   // "read URL → setFieldValue" Effect.
+  // `globalParams` is included in deps so that external URL changes (browser
+  // back/forward) trigger a reinitialisation.  Formik's deep-equality check
+  // in `enableReinitialize` prevents spurious resets when the URL simply
+  // reflects the current form values.
   const initialValues = useMemo<Record<string, string>>(() => {
     const values: Record<string, string> = {};
     variables.forEach((variable) => {
@@ -77,11 +81,7 @@ export default function GlobalFiltersForm({
       if (valueToUse) values[variable.key] = valueToUse;
     });
     return values;
-    // Intentionally omit `globalParams` so we only re-initialise when the
-    // variable definition or external current-variable overrides change, not
-    // on every URL write triggered by the form→URL Effect above.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [variables, currentVariables]);
+  }, [globalParams, variables, currentVariables]);
 
   return (
     <Formik

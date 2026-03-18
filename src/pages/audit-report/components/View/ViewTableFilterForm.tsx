@@ -73,9 +73,12 @@ export default function ViewTableFilterForm({
 }: ViewTableFilterFormProps) {
   const [tableParams] = usePrefixedSearchParams(tablePrefix, false);
 
-  // Compute initialValues once from URL params + provided defaults so that
-  // the Formik form starts populated without a "read URL → setFieldValue"
-  // Effect.
+  // Compute initialValues from URL params + provided defaults so that the
+  // Formik form starts populated without a "read URL → setFieldValue" Effect.
+  // `tableParams` is included in deps so that external URL changes (browser
+  // back/forward) trigger a reinitialisation. Formik's deep-equality check in
+  // `enableReinitialize` prevents spurious resets when the URL merely mirrors
+  // the current form values.
   const initialValues = useMemo<Record<string, string>>(() => {
     const values: Record<string, string> = {};
     filterFields.forEach((field) => {
@@ -83,11 +86,7 @@ export default function ViewTableFilterForm({
       if (value) values[field] = value;
     });
     return values;
-    // Intentionally omit `tableParams` so we only re-initialise when the
-    // field list or default values change, not on every URL write triggered
-    // by the form→URL Effect above.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterFields, defaultFieldValues]);
+  }, [tableParams, filterFields, defaultFieldValues]);
 
   return (
     <Formik
