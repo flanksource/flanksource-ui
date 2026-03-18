@@ -296,3 +296,32 @@ export const getConfigAccessSummaryRolesFilter = async (
 
   return Array.from(deduped).map((role) => ({ role }));
 };
+
+export type ConfigAccessSummaryTypeFilterItem = {
+  user_type: string;
+};
+
+export const getConfigAccessSummaryTypesFilter = async (
+  params: ConfigAccessSummaryFilterParams = {}
+) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set("select", "user_type");
+  queryParams.set("user_type", "not.is.null");
+  queryParams.set("order", "user_type.asc");
+  applyConfigAccessSummaryFilters(queryParams, params);
+
+  const res = await ConfigDB.get<ConfigAccessSummaryTypeFilterItem[] | null>(
+    `/config_access_summary?${queryParams.toString()}`
+  );
+
+  const deduped = new Set<string>();
+
+  (res.data ?? []).forEach((item) => {
+    if (item.user_type) {
+      deduped.add(item.user_type);
+    }
+  });
+
+  return Array.from(deduped).map((user_type) => ({ user_type }));
+};

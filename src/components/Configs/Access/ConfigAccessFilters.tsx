@@ -1,6 +1,7 @@
 import {
   getConfigAccessSummaryCatalogFilter,
   getConfigAccessSummaryRolesFilter,
+  getConfigAccessSummaryTypesFilter,
   getConfigAccessSummaryUsersFilter
 } from "@flanksource-ui/api/services/configAccess";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
@@ -13,7 +14,7 @@ import { useCallback, useMemo } from "react";
 import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import { paramsToReset } from "./utils";
 
-type ConfigAccessFilterKey = "config_id" | "user" | "role";
+type ConfigAccessFilterKey = "config_id" | "user" | "role" | "user_type";
 
 const filterCacheOptions = {
   staleTime: 10 * 60 * 1000,
@@ -25,7 +26,12 @@ function useConfigAccessFacetScope(excludeFilter: ConfigAccessFilterKey) {
   const { configType, filters } = useCatalogAccessUrlState();
 
   return useMemo(() => {
-    const filterKeys: ConfigAccessFilterKey[] = ["config_id", "user", "role"];
+    const filterKeys: ConfigAccessFilterKey[] = [
+      "config_id",
+      "user",
+      "role",
+      "user_type"
+    ];
 
     const arbitraryFilter = Object.fromEntries(
       filterKeys
@@ -163,16 +169,57 @@ function RoleDropdown() {
   );
 }
 
+function TypeDropdown() {
+  const [field] = useField({ name: "user_type" });
+  const scope = useConfigAccessFacetScope("user_type");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["config", "access-summary", "filter", "user_type", scope],
+    queryFn: () => getConfigAccessSummaryTypesFilter(scope),
+    ...filterCacheOptions,
+    select: useCallback(
+      (items: Awaited<ReturnType<typeof getConfigAccessSummaryTypesFilter>>) =>
+        items.map(
+          (item) =>
+            ({
+              id: item.user_type,
+              label: item.user_type,
+              value: item.user_type
+            }) satisfies TriStateOptions
+        ),
+      []
+    )
+  });
+
+  return (
+    <TristateReactSelect
+      options={data ?? []}
+      isLoading={isLoading}
+      value={field.value}
+      minMenuWidth="12rem"
+      onChange={(value) => {
+        if (value && value !== "all") {
+          field.onChange({ target: { name: "user_type", value } });
+        } else {
+          field.onChange({ target: { name: "user_type", value: undefined } });
+        }
+      }}
+      label="Type"
+    />
+  );
+}
+
 export function ConfigAccessFilters() {
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
-      filterFields={["config_id", "user", "role"]}
+      filterFields={["config_id", "user", "role", "user_type"]}
     >
       <div className="flex flex-wrap items-center gap-2 pb-2">
         <CatalogDropdown />
         <UserDropdown />
         <RoleDropdown />
+        <TypeDropdown />
       </div>
     </FormikFilterForm>
   );

@@ -3,7 +3,6 @@ import { ConfigAccessSummary } from "@flanksource-ui/api/types/configs";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { ExternalUserCell } from "@flanksource-ui/components/Configs/ExternalUserCell";
 import { Age } from "@flanksource-ui/ui/Age";
-import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { MRTCellProps } from "@flanksource-ui/ui/MRTDataTable/MRTCellProps";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
@@ -43,15 +42,6 @@ const OptionalDateCell = ({ cell }: MRTCellProps<ConfigAccessSummary>) => {
   return <Age from={value} />;
 };
 
-const AccessTypeCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
-  const groupId = row.original.external_group_id;
-  if (groupId) {
-    return <Badge text="Group" color="yellow" title={`Group ID: ${groupId}`} />;
-  }
-
-  return <Badge text="Direct" color="gray" />;
-};
-
 export function ConfigDetailsAccessPage() {
   const { id } = useParams();
   const {
@@ -78,12 +68,6 @@ export function ConfigDetailsAccessPage() {
         header: "Type",
         accessorKey: "user_type",
         Cell: RoleCell,
-        size: 120
-      },
-      {
-        header: "Access",
-        accessorKey: "external_group_id",
-        Cell: AccessTypeCell,
         size: 120
       },
       {

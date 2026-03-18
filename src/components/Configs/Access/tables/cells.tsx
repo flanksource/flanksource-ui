@@ -86,19 +86,15 @@ export const FlatTypeCell = ({ cell }: MRTCellProps<ConfigAccessSummary>) => {
     return <span className="text-gray-400">—</span>;
   }
 
-  return <span>{value}</span>;
-};
-
-export const FlatAccessTypeCell = ({
-  row
-}: MRTCellProps<ConfigAccessSummary>) => {
-  const groupId = row.original.external_group_id;
-
-  if (groupId) {
-    return <Badge text="Group" color="yellow" title={`Group ID: ${groupId}`} />;
-  }
-
-  return <Badge text="Direct" color="gray" />;
+  return (
+    <FilterByCellValue
+      filterValue={value}
+      paramKey="user_type"
+      paramsToReset={paramsToReset}
+    >
+      <span>{value}</span>
+    </FilterByCellValue>
+  );
 };
 
 export const FlatLastSignedInCell = ({

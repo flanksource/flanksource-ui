@@ -3,7 +3,6 @@ import { CATALOG_ACCESS_FLAT_TABLE_PREFIX } from "@flanksource-ui/hooks/useCatal
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
 import {
-  FlatAccessTypeCell,
   FlatConfigCell,
   FlatLastSignedInCell,
   FlatOptionalDateCell,
@@ -46,12 +45,6 @@ const flatColumns: MRT_ColumnDef<ConfigAccessSummary>[] = [
     header: "Type",
     accessorKey: "user_type",
     Cell: FlatTypeCell,
-    size: 90
-  },
-  {
-    header: "Access",
-    accessorKey: "access",
-    Cell: FlatAccessTypeCell,
     size: 90
   },
   {

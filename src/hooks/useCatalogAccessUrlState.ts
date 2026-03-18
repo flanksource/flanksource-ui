@@ -5,11 +5,16 @@ import { usePrefixedSearchParams } from "./usePrefixedSearchParams";
 
 export type CatalogAccessMode = "flat" | "group-user" | "group-config";
 
-type CatalogAccessFilterKey = "config_id" | "user" | "role";
+type CatalogAccessFilterKey = "config_id" | "user" | "role" | "user_type";
 
 type CatalogAccessFilters = Partial<Record<CatalogAccessFilterKey, string>>;
 
-const FILTER_KEYS: CatalogAccessFilterKey[] = ["config_id", "user", "role"];
+const FILTER_KEYS: CatalogAccessFilterKey[] = [
+  "config_id",
+  "user",
+  "role",
+  "user_type"
+];
 
 export const CATALOG_ACCESS_FLAT_TABLE_PREFIX = "accessFlat";
 export const CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX = "accessGroupUser";
