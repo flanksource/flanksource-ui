@@ -1,8 +1,7 @@
 import {
-  getConfigAccessSummaryCatalogFilter,
-  getConfigAccessSummaryRolesFilter,
-  getConfigAccessSummaryTypesFilter,
-  getConfigAccessSummaryUsersFilter
+  ConfigAccessFilterOptions,
+  ConfigAccessFilterOptionsParams,
+  getConfigAccessFilterOptions
 } from "@flanksource-ui/api/services/configAccess";
 import FormikFilterForm from "@flanksource-ui/components/Forms/FormikFilterForm";
 import TristateReactSelect, {
@@ -10,11 +9,13 @@ import TristateReactSelect, {
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
+import {
+  decodeTristateKey,
+  parseTristateKeyState
+} from "@flanksource-ui/lib/tristate";
 import { paramsToReset } from "./utils";
-
-type ConfigAccessFilterKey = "config_id" | "user" | "role" | "user_type";
 
 const filterCacheOptions = {
   staleTime: 10 * 60 * 1000,
@@ -22,58 +23,110 @@ const filterCacheOptions = {
   refetchOnWindowFocus: false
 } as const;
 
-function useConfigAccessFacetScope(excludeFilter: ConfigAccessFilterKey) {
-  const { configType, filters } = useCatalogAccessUrlState();
-
-  return useMemo(() => {
-    const filterKeys: ConfigAccessFilterKey[] = [
-      "config_id",
-      "user",
-      "role",
-      "user_type"
-    ];
-
-    const arbitraryFilter = Object.fromEntries(
-      filterKeys
-        .filter((key) => key !== excludeFilter)
-        .map((key) => [key, filters[key]])
-        .filter(([, value]) => !!value)
-    ) as Record<string, string>;
-
-    return {
-      configType,
-      arbitraryFilter
-    };
-  }, [configType, excludeFilter, filters]);
+/**
+ * Extracts the plain value from a tristate-encoded URL param (e.g. "someValue:1")
+ * Only returns the value for "include" state (1).
+ */
+function extractIncludeValue(
+  tristateParam: string | undefined
+): string | undefined {
+  if (!tristateParam) return undefined;
+  const parsed = parseTristateKeyState(tristateParam);
+  if (!parsed || parsed.state !== 1) return undefined;
+  return decodeTristateKey(parsed.key);
 }
 
-function CatalogDropdown() {
-  const [field] = useField({ name: "config_id" });
-  const scope = useConfigAccessFacetScope("config_id");
+/**
+ * Shared hook that fetches all filter options via a single RPC call.
+ * The RPC handles faceted exclusion server-side: each facet is computed
+ * without its own filter so that selecting a value in one dropdown
+ * does not remove it from its own option list.
+ */
+function useConfigAccessFilterOptions() {
+  const { configType, filters } = useCatalogAccessUrlState();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "catalog", scope],
-    queryFn: () => getConfigAccessSummaryCatalogFilter(scope),
-    ...filterCacheOptions,
-    select: useCallback(
-      (
-        items: Awaited<ReturnType<typeof getConfigAccessSummaryCatalogFilter>>
-      ) =>
-        items.map(
-          (item) =>
-            ({
-              id: item.config_id,
-              label: item.config_name,
-              value: item.config_id
-            }) satisfies TriStateOptions
-        ),
-      []
-    )
+  const params = useMemo<ConfigAccessFilterOptionsParams>(() => {
+    const result: ConfigAccessFilterOptionsParams = {};
+    if (configType) result.configType = configType;
+    const configId = extractIncludeValue(filters.config_id);
+    if (configId) result.configId = configId;
+    const user = extractIncludeValue(filters.user);
+    if (user) result.user = user;
+    const role = extractIncludeValue(filters.role);
+    if (role) result.role = role;
+    const userType = extractIncludeValue(filters.user_type);
+    if (userType) result.userType = userType;
+    return result;
+  }, [configType, filters]);
+
+  return useQuery({
+    queryKey: ["config", "access-summary", "filter-options", params],
+    queryFn: () => getConfigAccessFilterOptions(params),
+    ...filterCacheOptions
   });
+}
+
+function useCatalogOptions(data: ConfigAccessFilterOptions | undefined) {
+  return useMemo<TriStateOptions[]>(
+    () =>
+      (data?.catalogs ?? []).map((item) => ({
+        id: item.config_id,
+        label: item.config_name,
+        value: item.config_id
+      })),
+    [data?.catalogs]
+  );
+}
+
+function useUserOptions(data: ConfigAccessFilterOptions | undefined) {
+  return useMemo<TriStateOptions[]>(
+    () =>
+      (data?.users ?? []).map((item) => ({
+        id: item.email ?? item.user,
+        label: item.user,
+        value: item.user
+      })),
+    [data?.users]
+  );
+}
+
+function useRoleOptions(data: ConfigAccessFilterOptions | undefined) {
+  return useMemo<TriStateOptions[]>(
+    () =>
+      (data?.roles ?? []).map((item) => ({
+        id: item.role,
+        label: item.role,
+        value: item.role
+      })),
+    [data?.roles]
+  );
+}
+
+function useTypeOptions(data: ConfigAccessFilterOptions | undefined) {
+  return useMemo<TriStateOptions[]>(
+    () =>
+      (data?.user_types ?? []).map((item) => ({
+        id: item.user_type,
+        label: item.user_type,
+        value: item.user_type
+      })),
+    [data?.user_types]
+  );
+}
+
+function CatalogDropdown({
+  data,
+  isLoading
+}: {
+  data: ConfigAccessFilterOptions | undefined;
+  isLoading: boolean;
+}) {
+  const [field] = useField({ name: "config_id" });
+  const options = useCatalogOptions(data);
 
   return (
     <TristateReactSelect
-      options={data ?? []}
+      options={options}
       isLoading={isLoading}
       value={field.value}
       minMenuWidth="20rem"
@@ -89,31 +142,19 @@ function CatalogDropdown() {
   );
 }
 
-function UserDropdown() {
+function UserDropdown({
+  data,
+  isLoading
+}: {
+  data: ConfigAccessFilterOptions | undefined;
+  isLoading: boolean;
+}) {
   const [field] = useField({ name: "user" });
-  const scope = useConfigAccessFacetScope("user");
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "user", scope],
-    queryFn: () => getConfigAccessSummaryUsersFilter(scope),
-    ...filterCacheOptions,
-    select: useCallback(
-      (items: Awaited<ReturnType<typeof getConfigAccessSummaryUsersFilter>>) =>
-        items.map(
-          (item) =>
-            ({
-              id: item.email ?? item.user,
-              label: item.user,
-              value: item.user
-            }) satisfies TriStateOptions
-        ),
-      []
-    )
-  });
+  const options = useUserOptions(data);
 
   return (
     <TristateReactSelect
-      options={data ?? []}
+      options={options}
       isLoading={isLoading}
       value={field.value}
       minMenuWidth="16rem"
@@ -129,31 +170,19 @@ function UserDropdown() {
   );
 }
 
-function RoleDropdown() {
+function RoleDropdown({
+  data,
+  isLoading
+}: {
+  data: ConfigAccessFilterOptions | undefined;
+  isLoading: boolean;
+}) {
   const [field] = useField({ name: "role" });
-  const scope = useConfigAccessFacetScope("role");
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "role", scope],
-    queryFn: () => getConfigAccessSummaryRolesFilter(scope),
-    ...filterCacheOptions,
-    select: useCallback(
-      (items: Awaited<ReturnType<typeof getConfigAccessSummaryRolesFilter>>) =>
-        items.map(
-          (item) =>
-            ({
-              id: item.role,
-              label: item.role,
-              value: item.role
-            }) satisfies TriStateOptions
-        ),
-      []
-    )
-  });
+  const options = useRoleOptions(data);
 
   return (
     <TristateReactSelect
-      options={data ?? []}
+      options={options}
       isLoading={isLoading}
       value={field.value}
       minMenuWidth="16rem"
@@ -169,31 +198,19 @@ function RoleDropdown() {
   );
 }
 
-function TypeDropdown() {
+function TypeDropdown({
+  data,
+  isLoading
+}: {
+  data: ConfigAccessFilterOptions | undefined;
+  isLoading: boolean;
+}) {
   const [field] = useField({ name: "user_type" });
-  const scope = useConfigAccessFacetScope("user_type");
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["config", "access-summary", "filter", "user_type", scope],
-    queryFn: () => getConfigAccessSummaryTypesFilter(scope),
-    ...filterCacheOptions,
-    select: useCallback(
-      (items: Awaited<ReturnType<typeof getConfigAccessSummaryTypesFilter>>) =>
-        items.map(
-          (item) =>
-            ({
-              id: item.user_type,
-              label: item.user_type,
-              value: item.user_type
-            }) satisfies TriStateOptions
-        ),
-      []
-    )
-  });
+  const options = useTypeOptions(data);
 
   return (
     <TristateReactSelect
-      options={data ?? []}
+      options={options}
       isLoading={isLoading}
       value={field.value}
       minMenuWidth="12rem"
@@ -210,16 +227,18 @@ function TypeDropdown() {
 }
 
 export function ConfigAccessFilters() {
+  const { data, isLoading } = useConfigAccessFilterOptions();
+
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
       filterFields={["config_id", "user", "role", "user_type"]}
     >
       <div className="flex flex-wrap items-center gap-2 pb-2">
-        <CatalogDropdown />
-        <UserDropdown />
-        <RoleDropdown />
-        <TypeDropdown />
+        <CatalogDropdown data={data} isLoading={isLoading} />
+        <UserDropdown data={data} isLoading={isLoading} />
+        <RoleDropdown data={data} isLoading={isLoading} />
+        <TypeDropdown data={data} isLoading={isLoading} />
       </div>
     </FormikFilterForm>
   );

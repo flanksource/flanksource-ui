@@ -206,129 +206,42 @@ export const getConfigAccessLogs = (configId: string) =>
     )
   );
 
-export type ConfigAccessSummaryCatalogFilterItem = {
-  config_id: string;
-  config_name: string;
-  config_type: string;
+export type ConfigAccessFilterOptionsParams = {
+  configId?: string;
+  configType?: string;
+  user?: string;
+  role?: string;
+  userType?: string;
 };
 
-export const getConfigAccessSummaryCatalogFilter = async (
-  params: ConfigAccessSummaryFilterParams = {}
-) => {
+export type ConfigAccessFilterOptions = {
+  catalogs: { config_id: string; config_name: string; config_type: string }[];
+  users: { user: string; email?: string | null }[];
+  roles: { role: string }[];
+  user_types: { user_type: string }[];
+};
+
+const emptyFilterOptions: ConfigAccessFilterOptions = {
+  catalogs: [],
+  users: [],
+  roles: [],
+  user_types: []
+};
+
+export const getConfigAccessFilterOptions = async (
+  params: ConfigAccessFilterOptionsParams = {}
+): Promise<ConfigAccessFilterOptions> => {
   const queryParams = new URLSearchParams();
 
-  queryParams.set("select", "config_id,config_name,config_type");
-  queryParams.set("order", "config_name.asc");
-  applyConfigAccessSummaryFilters(queryParams, params);
+  if (params.configId) queryParams.set("p_config_id", params.configId);
+  if (params.configType) queryParams.set("p_config_type", params.configType);
+  if (params.user) queryParams.set("p_user", params.user);
+  if (params.role) queryParams.set("p_role", params.role);
+  if (params.userType) queryParams.set("p_user_type", params.userType);
 
-  const res = await ConfigDB.get<ConfigAccessSummaryCatalogFilterItem[] | null>(
-    `/config_access_summary?${queryParams.toString()}`
+  const res = await ConfigDB.get<ConfigAccessFilterOptions>(
+    `/rpc/config_access_filter_options?${queryParams.toString()}`
   );
 
-  const deduped = new Map<string, ConfigAccessSummaryCatalogFilterItem>();
-
-  (res.data ?? []).forEach((item) => {
-    if (!item.config_id || !item.config_name) {
-      return;
-    }
-
-    if (!deduped.has(item.config_id)) {
-      deduped.set(item.config_id, item);
-    }
-  });
-
-  return Array.from(deduped.values());
-};
-
-export type ConfigAccessSummaryUserFilterItem = {
-  user: string;
-  email?: string | null;
-};
-
-export const getConfigAccessSummaryUsersFilter = async (
-  params: ConfigAccessSummaryFilterParams = {}
-) => {
-  const queryParams = new URLSearchParams();
-
-  queryParams.set("select", "user,email");
-  queryParams.set("order", "user.asc");
-  applyConfigAccessSummaryFilters(queryParams, params);
-
-  const res = await ConfigDB.get<ConfigAccessSummaryUserFilterItem[] | null>(
-    `/config_access_summary?${queryParams.toString()}`
-  );
-
-  const deduped = new Map<string, ConfigAccessSummaryUserFilterItem>();
-
-  (res.data ?? []).forEach((item) => {
-    if (!item.user) {
-      return;
-    }
-
-    const key = `${item.user}__${item.email ?? ""}`;
-
-    if (!deduped.has(key)) {
-      deduped.set(key, item);
-    }
-  });
-
-  return Array.from(deduped.values());
-};
-
-export type ConfigAccessSummaryRoleFilterItem = {
-  role: string;
-};
-
-export const getConfigAccessSummaryRolesFilter = async (
-  params: ConfigAccessSummaryFilterParams = {}
-) => {
-  const queryParams = new URLSearchParams();
-
-  queryParams.set("select", "role");
-  queryParams.set("role", "not.is.null");
-  queryParams.set("order", "role.asc");
-  applyConfigAccessSummaryFilters(queryParams, params);
-
-  const res = await ConfigDB.get<ConfigAccessSummaryRoleFilterItem[] | null>(
-    `/config_access_summary?${queryParams.toString()}`
-  );
-
-  const deduped = new Set<string>();
-
-  (res.data ?? []).forEach((item) => {
-    if (item.role) {
-      deduped.add(item.role);
-    }
-  });
-
-  return Array.from(deduped).map((role) => ({ role }));
-};
-
-export type ConfigAccessSummaryTypeFilterItem = {
-  user_type: string;
-};
-
-export const getConfigAccessSummaryTypesFilter = async (
-  params: ConfigAccessSummaryFilterParams = {}
-) => {
-  const queryParams = new URLSearchParams();
-
-  queryParams.set("select", "user_type");
-  queryParams.set("user_type", "not.is.null");
-  queryParams.set("order", "user_type.asc");
-  applyConfigAccessSummaryFilters(queryParams, params);
-
-  const res = await ConfigDB.get<ConfigAccessSummaryTypeFilterItem[] | null>(
-    `/config_access_summary?${queryParams.toString()}`
-  );
-
-  const deduped = new Set<string>();
-
-  (res.data ?? []).forEach((item) => {
-    if (item.user_type) {
-      deduped.add(item.user_type);
-    }
-  });
-
-  return Array.from(deduped).map((user_type) => ({ user_type }));
+  return res.data ?? emptyFilterOptions;
 };
