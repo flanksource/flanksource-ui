@@ -129,8 +129,8 @@ const View: React.FC<ViewProps> = ({
   // Create unique prefix for global filters (same as ViewSection uses)
   const globalVarPrefix = VIEW_VAR_PREFIX;
   const hasDataTable = columns && columns.length > 0;
-  const [debugHeatmapPanel] = useState<PanelResult>(() =>
-    createDebugHeatmapPanel(name)
+  const [debugHeatmapPanels] = useState<PanelResult[]>(() =>
+    createDebugHeatmapPanels(name)
   );
 
   const effectivePanels = useMemo(() => {
@@ -138,8 +138,8 @@ const View: React.FC<ViewProps> = ({
       return panels;
     }
 
-    return [...(panels ?? []), debugHeatmapPanel];
-  }, [debugHeatmapPanel, debugInjectHeatmap, panels]);
+    return [...(panels ?? []), ...debugHeatmapPanels];
+  }, [debugHeatmapPanels, debugInjectHeatmap, panels]);
 
   // Detect if card mode is available (supports both new and old cardPosition field)
   const hasCardMode = useMemo(() => {
@@ -397,31 +397,56 @@ const View: React.FC<ViewProps> = ({
   );
 };
 
-const createDebugHeatmapPanel = (viewName: string): PanelResult => {
-  const endDate = new Date();
-  const totalDays = 120;
+const createDebugHeatmapPanels = (viewName: string): PanelResult[] => {
+  const startDate = new Date(Date.UTC(2026, 0, 1)); // 2026-01-01
+  const endDate = new Date(Date.UTC(2026, 2, 31)); // 2026-03-31
 
-  const rows = Array.from({ length: totalDays }, (_, index) => {
-    const date = new Date(endDate);
-    date.setDate(endDate.getDate() - (totalDays - index - 1));
+  const rows: Array<Record<string, number | string>> = [];
 
-    const successful = Math.floor(Math.random() * 6);
-    const failed = Math.floor(Math.random() * 3);
+  for (
+    const cursor = new Date(startDate);
+    cursor <= endDate;
+    cursor.setUTCDate(cursor.getUTCDate() + 1)
+  ) {
+    const day = cursor.getUTCDate();
+    const month = cursor.getUTCMonth() + 1;
+    const weekday = cursor.getUTCDay();
 
-    return {
-      date: date.toISOString().slice(0, 10),
+    const isWeekend = weekday === 0 || weekday === 6;
+    const hasFailure = day % 13 === 0;
+
+    const failed = hasFailure ? ((day + month) % 2) + 1 : 0;
+    const successful = isWeekend
+      ? 0
+      : Math.max(0, 2 + ((day + month) % 3) - failed);
+
+    rows.push({
+      date: cursor.toISOString().slice(0, 10),
       successful,
       failed,
       count: successful + failed
-    };
-  });
+    });
+  }
 
-  return {
-    name: `${viewName} Heatmap (debug)`,
-    type: "heatmap",
-    description: "Debug panel with randomized daily values (frontend only).",
-    rows
-  };
+  return [
+    {
+      name: `${viewName} Heatmap (calendar debug)`,
+      type: "heatmap",
+      description:
+        "Debug panel with synthetic daily values for January through March 2026.",
+      rows
+    },
+    {
+      name: `${viewName} Heatmap (compact debug)`,
+      type: "heatmap",
+      description:
+        "Debug compact heatmap for synthetic daily values (January through March 2026).",
+      heatmap: {
+        variant: "compact"
+      },
+      rows
+    }
+  ];
 };
 
 /**
