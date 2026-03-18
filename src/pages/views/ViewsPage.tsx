@@ -15,7 +15,7 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { ViewsList } from "./ViewsList";
 import {
@@ -31,6 +31,13 @@ export function ViewsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<View>();
   const [sortState] = useReactTableSortState();
+
+  // Centralise close logic so editedRow is always cleared at the event site
+  // rather than via a reactive Effect watching isOpen.
+  const closeModal = useCallback(() => {
+    setIsOpen(false);
+    setEditedRow(undefined);
+  }, []);
   const { pageIndex, pageSize } = useReactTablePaginationState();
 
   const {
@@ -64,7 +71,7 @@ export function ViewsPage() {
     },
     onSuccess: () => {
       refetch();
-      setIsOpen(false);
+      closeModal();
       toastSuccess("View added successfully");
     },
     onError: (ex) => {
@@ -82,7 +89,7 @@ export function ViewsPage() {
     },
     onSuccess: () => {
       refetch();
-      setIsOpen(false);
+      closeModal();
       toastSuccess("View updated successfully");
     },
     onError: (ex) => {
@@ -97,7 +104,7 @@ export function ViewsPage() {
     },
     onSuccess: () => {
       refetch();
-      setIsOpen(false);
+      closeModal();
       toastSuccess("View deleted successfully");
     },
     onError: (ex) => {
@@ -106,13 +113,6 @@ export function ViewsPage() {
   });
 
   const isSubmitting = isCreatingView || isUpdatingView;
-
-  useEffect(() => {
-    if (isOpen) {
-      return;
-    }
-    setEditedRow(undefined);
-  }, [isOpen]);
 
   return (
     <>
@@ -161,7 +161,13 @@ export function ViewsPage() {
         </div>
         <ViewFormModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          setIsOpen={(open) => {
+            if (!open) {
+              closeModal();
+            } else {
+              setIsOpen(true);
+            }
+          }}
           onViewSubmit={onSubmit}
           onViewDelete={(data) => deleteView(data)}
           isSubmitting={isSubmitting}
