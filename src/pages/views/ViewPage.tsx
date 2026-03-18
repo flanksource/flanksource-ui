@@ -21,50 +21,65 @@ export function ViewPage() {
     namespace?: string;
     name?: string;
   }>();
-  const [viewId, setViewId] = useState<string | undefined>(id);
+  // `id` is directly available from the route — no need to duplicate it in state.
+  // `fetchedId` holds the resolved ID when we had to look it up by name/namespace.
+  const [fetchedId, setFetchedId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown | null>(null);
 
+  // Derived: prefer the direct `id` param; fall back to whatever we fetched.
+  const viewId = id ?? fetchedId;
+
   useEffect(() => {
-    if (id) {
-      setViewId(id);
-      return;
-    }
+    // When a direct `id` is present there is nothing to fetch.
+    if (id) return;
 
     if (!name) {
       setError("No view identifier provided");
       return;
     }
 
+    // AbortController lets us cancel the in-flight request if the component
+    // unmounts or the route params change before the response arrives,
+    // preventing stale-closure / race-condition state updates.
+    const controller = new AbortController();
+
     const fetchViewId = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        let fetchedId: string | undefined;
+        let resolved: string | undefined;
 
         if (namespace) {
-          fetchedId = await getViewIdByNamespaceAndName(namespace, name);
+          resolved = await getViewIdByNamespaceAndName(namespace, name);
         } else {
-          fetchedId = await getViewIdByName(name);
+          resolved = await getViewIdByName(name);
         }
 
-        if (!fetchedId) {
+        if (controller.signal.aborted) return;
+
+        if (!resolved) {
           setError(
             `View not found: ${namespace ? `${namespace}/${name}` : name}`
           );
           return;
         }
 
-        setViewId(fetchedId);
+        setFetchedId(resolved);
       } catch (err) {
+        if (controller.signal.aborted) return;
         setError(err ?? "Failed to load view");
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchViewId();
+
+    return () => controller.abort();
   }, [id, namespace, name]);
 
   if (isLoading) {
