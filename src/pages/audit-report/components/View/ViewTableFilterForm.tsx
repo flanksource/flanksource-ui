@@ -1,5 +1,5 @@
 import { Form, Formik, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 
 type ViewTableFilterFormProps = {
@@ -12,16 +12,18 @@ type ViewTableFilterFormProps = {
 function ViewTableFilterListener({
   children,
   filterFields,
-  defaultFieldValues = {},
   tablePrefix
-}: ViewTableFilterFormProps): React.ReactElement {
-  const { values, setFieldValue } =
-    useFormikContext<Record<string, string | undefined>>();
-  const [tableParams, setTableParams] = usePrefixedSearchParams(
-    tablePrefix,
-    false
-  );
+}: Omit<
+  ViewTableFilterFormProps,
+  "defaultFieldValues"
+>): React.ReactElement {
+  const { values } = useFormikContext<Record<string, string | undefined>>();
+  const [, setTableParams] = usePrefixedSearchParams(tablePrefix, false);
 
+  // Sync form → URL whenever values change.
+  // The reverse direction (URL → form) is handled by initialValues in the
+  // parent so we avoid a write-URL → read-URL → setFieldValue → write-URL
+  // Effect chain.
   useEffect(() => {
     setTableParams((current) => {
       const newParams = new URLSearchParams(current);
@@ -54,16 +56,7 @@ function ViewTableFilterListener({
       return newParams;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, setFieldValue, setTableParams]);
-
-  // Reset form values when table filter params change
-  useEffect(() => {
-    filterFields.forEach((field) => {
-      const value = tableParams.get(field) || defaultFieldValues[field];
-      setFieldValue(field, value);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableParams.toString(), filterFields, setFieldValue]);
+  }, [values, setTableParams]);
 
   return children as React.ReactElement;
 }
@@ -78,9 +71,27 @@ export default function ViewTableFilterForm({
   defaultFieldValues = {},
   tablePrefix
 }: ViewTableFilterFormProps) {
+  const [tableParams] = usePrefixedSearchParams(tablePrefix, false);
+
+  // Compute initialValues once from URL params + provided defaults so that
+  // the Formik form starts populated without a "read URL → setFieldValue"
+  // Effect.
+  const initialValues = useMemo<Record<string, string>>(() => {
+    const values: Record<string, string> = {};
+    filterFields.forEach((field) => {
+      const value = tableParams.get(field) || defaultFieldValues[field];
+      if (value) values[field] = value;
+    });
+    return values;
+    // Intentionally omit `tableParams` so we only re-initialise when the
+    // field list or default values change, not on every URL write triggered
+    // by the form→URL Effect above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterFields, defaultFieldValues]);
+
   return (
     <Formik
-      initialValues={{}}
+      initialValues={initialValues}
       onSubmit={() => {
         // Form submission is handled by the listener
       }}
@@ -89,7 +100,6 @@ export default function ViewTableFilterForm({
       <Form>
         <ViewTableFilterListener
           filterFields={filterFields}
-          defaultFieldValues={defaultFieldValues}
           tablePrefix={tablePrefix}
         >
           {children}
