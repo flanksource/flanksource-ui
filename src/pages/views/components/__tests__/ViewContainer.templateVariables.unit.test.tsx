@@ -567,7 +567,9 @@ describe("ViewContainer global filter changes", () => {
     await waitFor(() => {
       expect(screen.getByText("section-a:ns-a")).toBeInTheDocument();
     });
-    expect(screen.getByText("section-b:ns-a")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("section-b:ns-a")).toBeInTheDocument();
+    });
 
     // Change global filter
     fireEvent.click(screen.getByTestId("set-ns-b"));
@@ -576,6 +578,8 @@ describe("ViewContainer global filter changes", () => {
     await waitFor(() => {
       expect(screen.getByText("section-a:ns-b")).toBeInTheDocument();
     });
-    expect(screen.getByText("section-b:ns-b")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("section-b:ns-b")).toBeInTheDocument();
+    });
   });
 });
