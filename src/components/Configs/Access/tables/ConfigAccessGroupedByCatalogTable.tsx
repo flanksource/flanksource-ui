@@ -91,7 +91,6 @@ export function ConfigAccessGroupedByCatalogTable() {
       totalRowCount={totalRecords}
       manualPageCount={totalPages}
       disableHiding
-      defaultSorting={[{ id: "access_count", desc: true }]}
       defaultPageSize={pageSize}
       onRowClick={handleRowClick}
       urlParamPrefix={CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX}
