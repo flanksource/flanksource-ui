@@ -10,11 +10,13 @@ type GlobalFiltersFormProps = {
   currentVariables?: Record<string, string>;
 };
 
+const EMPTY_VARIABLES: Record<string, string> = {};
+
 function GlobalFiltersListener({
   children,
   variables,
   globalVarPrefix,
-  currentVariables = {}
+  currentVariables = EMPTY_VARIABLES
 }: GlobalFiltersFormProps): React.ReactElement {
   const { values, setFieldValue } =
     useFormikContext<Record<string, string | undefined>>();

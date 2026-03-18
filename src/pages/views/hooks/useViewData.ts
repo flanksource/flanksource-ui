@@ -110,9 +110,15 @@ export function useViewData({
     [standardModeVariables]
   );
 
+  // Include standard-mode variables in the query key so that the primary
+  // view data (panels, table, fingerprint) is re-fetched whenever the
+  // global filter values change.  The metadata endpoint does not accept
+  // variables, so we switch to the data endpoint when any are present.
   const viewQueryKey = isDisplayPluginMode
     ? ["viewDataById", viewId, configId, variables]
-    : ["view-metadata", viewId];
+    : hasStandardModeVariables
+      ? ["viewDataById", viewId, viewVarParamsString]
+      : ["view-metadata", viewId];
 
   const {
     data: viewResult,
@@ -129,6 +135,10 @@ export function useViewData({
 
       if (isDisplayPluginMode) {
         return getViewDataById(viewId, variables, headers);
+      }
+
+      if (hasStandardModeVariables) {
+        return getViewDataById(viewId, standardModeVariables, headers);
       }
 
       return getViewMetadataById(viewId, headers);
