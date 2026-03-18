@@ -18,7 +18,7 @@ type ConfigAccessFilterKey = "config_id" | "user" | "role" | "user_type";
 
 const filterCacheOptions = {
   staleTime: 10 * 60 * 1000,
-  gcTime: 60 * 60 * 1000,
+  cacheTime: 60 * 60 * 1000,
   refetchOnWindowFocus: false
 } as const;
 

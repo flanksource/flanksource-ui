@@ -97,6 +97,7 @@ export const getConfigAccessSummary = ({
 };
 
 export type GetConfigAccessGroupedParams = {
+  configType?: string;
   pageIndex?: number;
   pageSize?: number;
   sortBy?: string;
@@ -104,6 +105,7 @@ export type GetConfigAccessGroupedParams = {
 };
 
 export const getConfigAccessSummaryByUser = ({
+  configType,
   pageIndex,
   pageSize,
   sortBy = "access_count",
@@ -115,6 +117,8 @@ export const getConfigAccessSummaryByUser = ({
     "select",
     "user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant"
   );
+
+  applyConfigAccessSummaryFilters(queryParams, { configType });
 
   if (pageIndex !== undefined && pageSize !== undefined) {
     queryParams.set("limit", pageSize.toString());
@@ -144,6 +148,7 @@ export const getConfigAccessSummaryByUser = ({
 };
 
 export const getConfigAccessSummaryByConfig = ({
+  configType,
   pageIndex,
   pageSize,
   sortBy = "access_count",
@@ -155,6 +160,8 @@ export const getConfigAccessSummaryByConfig = ({
     "select",
     "config_id,config_name,config_type,access_count,distinct_users,distinct_roles,last_signed_in_at,latest_grant"
   );
+
+  applyConfigAccessSummaryFilters(queryParams, { configType });
 
   if (pageIndex !== undefined && pageSize !== undefined) {
     queryParams.set("limit", pageSize.toString());

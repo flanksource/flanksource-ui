@@ -94,6 +94,9 @@ export function ConfigAccessPage() {
           }
 
           void refetchFlat();
+          void queryClient.invalidateQueries({
+            queryKey: ["config", "access-summary", "filter"]
+          });
         }}
         loading={isGrouped ? false : isLoadingFlat || isRefetchingFlat}
         contentClass="p-0 h-full flex flex-col flex-1"
