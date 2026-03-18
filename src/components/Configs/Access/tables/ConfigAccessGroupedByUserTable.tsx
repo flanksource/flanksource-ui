@@ -65,7 +65,7 @@ export function ConfigAccessGroupedByUserTable() {
 
   const handleRowClick = useCallback(
     (row: ConfigAccessSummaryByUser) => {
-      drillDownByUser(row.user);
+      drillDownByUser(row.external_user_id);
     },
     [drillDownByUser]
   );

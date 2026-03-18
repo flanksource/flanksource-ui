@@ -50,8 +50,8 @@ function useConfigAccessFilterOptions() {
     if (configType) result.configType = configType;
     const configId = extractIncludeValue(filters.config_id);
     if (configId) result.configId = configId;
-    const user = extractIncludeValue(filters.user);
-    if (user) result.user = user;
+    const userId = extractIncludeValue(filters.external_user_id);
+    if (userId) result.userId = userId;
     const role = extractIncludeValue(filters.role);
     if (role) result.role = role;
     const userType = extractIncludeValue(filters.user_type);
@@ -82,9 +82,9 @@ function useUserOptions(data: ConfigAccessFilterOptions | undefined) {
   return useMemo<TriStateOptions[]>(
     () =>
       (data?.users ?? []).map((item) => ({
-        id: item.email ?? item.user,
-        label: item.user,
-        value: item.user
+        id: item.external_user_id,
+        label: item.email ? `${item.user} (${item.email})` : item.user,
+        value: item.external_user_id
       })),
     [data?.users]
   );
@@ -149,7 +149,7 @@ function UserDropdown({
   data: ConfigAccessFilterOptions | undefined;
   isLoading: boolean;
 }) {
-  const [field] = useField({ name: "user" });
+  const [field] = useField({ name: "external_user_id" });
   const options = useUserOptions(data);
 
   return (
@@ -160,9 +160,11 @@ function UserDropdown({
       minMenuWidth="16rem"
       onChange={(value) => {
         if (value && value !== "all") {
-          field.onChange({ target: { name: "user", value } });
+          field.onChange({ target: { name: "external_user_id", value } });
         } else {
-          field.onChange({ target: { name: "user", value: undefined } });
+          field.onChange({
+            target: { name: "external_user_id", value: undefined }
+          });
         }
       }}
       label="User"
@@ -232,7 +234,7 @@ export function ConfigAccessFilters() {
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
-      filterFields={["config_id", "user", "role", "user_type"]}
+      filterFields={["config_id", "external_user_id", "role", "user_type"]}
     >
       <div className="flex flex-wrap items-center gap-2 pb-2">
         <CatalogDropdown data={data} isLoading={isLoading} />

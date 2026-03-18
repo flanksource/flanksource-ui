@@ -52,8 +52,8 @@ export const FlatUserCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
 
   return (
     <FilterByCellValue
-      filterValue={userName}
-      paramKey="user"
+      filterValue={row.original.external_user_id}
+      paramKey="external_user_id"
       paramsToReset={paramsToReset}
     >
       <ExternalUserCell user={user} />

@@ -5,13 +5,17 @@ import { usePrefixedSearchParams } from "./usePrefixedSearchParams";
 
 export type CatalogAccessMode = "flat" | "group-user" | "group-config";
 
-type CatalogAccessFilterKey = "config_id" | "user" | "role" | "user_type";
+type CatalogAccessFilterKey =
+  | "config_id"
+  | "external_user_id"
+  | "role"
+  | "user_type";
 
 type CatalogAccessFilters = Partial<Record<CatalogAccessFilterKey, string>>;
 
 const FILTER_KEYS: CatalogAccessFilterKey[] = [
   "config_id",
-  "user",
+  "external_user_id",
   "role",
   "user_type"
 ];
@@ -163,7 +167,8 @@ export function useCatalogAccessUrlState() {
       setMode,
       drillDownByConfigId: (configId: string) =>
         setDrillDown("config_id", configId),
-      drillDownByUser: (user: string) => setDrillDown("user", user)
+      drillDownByUser: (userId: string) =>
+        setDrillDown("external_user_id", userId)
     }
   };
 }

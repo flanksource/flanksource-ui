@@ -101,6 +101,7 @@ export interface ConfigAccessSummary {
   config_id?: string;
   config_name?: string | null;
   config_type?: string | null;
+  external_user_id: string;
   user: string;
   email: string;
   role?: string | null;
@@ -112,6 +113,7 @@ export interface ConfigAccessSummary {
 }
 
 export interface ConfigAccessSummaryByUser {
+  external_user_id: string;
   user: string;
   email: string;
   access_count: number;

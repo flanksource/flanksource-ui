@@ -55,7 +55,7 @@ export const getConfigAccessSummary = ({
 
   queryParams.set(
     "select",
-    "config_id,config_name,config_type,user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at"
+    "config_id,config_name,config_type,external_user_id,user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at"
   );
 
   if (configId) {
@@ -115,7 +115,7 @@ export const getConfigAccessSummaryByUser = ({
 
   queryParams.set(
     "select",
-    "user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant"
+    "external_user_id,user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant"
   );
 
   applyConfigAccessSummaryFilters(queryParams, { configType });
@@ -209,14 +209,18 @@ export const getConfigAccessLogs = (configId: string) =>
 export type ConfigAccessFilterOptionsParams = {
   configId?: string;
   configType?: string;
-  user?: string;
+  userId?: string;
   role?: string;
   userType?: string;
 };
 
 export type ConfigAccessFilterOptions = {
   catalogs: { config_id: string; config_name: string; config_type: string }[];
-  users: { user: string; email?: string | null }[];
+  users: {
+    external_user_id: string;
+    user: string;
+    email?: string | null;
+  }[];
   roles: { role: string }[];
   user_types: { user_type: string }[];
 };
@@ -235,7 +239,7 @@ export const getConfigAccessFilterOptions = async (
 
   if (params.configId) queryParams.set("p_config_id", params.configId);
   if (params.configType) queryParams.set("p_config_type", params.configType);
-  if (params.user) queryParams.set("p_user", params.user);
+  if (params.userId) queryParams.set("p_user_id", params.userId);
   if (params.role) queryParams.set("p_role", params.role);
   if (params.userType) queryParams.set("p_user_type", params.userType);
 
