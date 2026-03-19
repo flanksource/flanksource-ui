@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Table2, LayoutGrid } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -51,7 +51,6 @@ interface ViewProps {
   requestFingerprint: string;
   currentVariables?: Record<string, string>;
   hideVariables?: boolean;
-  debugInjectHeatmap?: boolean;
 }
 
 const View: React.FC<ViewProps> = ({
@@ -66,8 +65,7 @@ const View: React.FC<ViewProps> = ({
   card,
   requestFingerprint,
   currentVariables,
-  hideVariables,
-  debugInjectHeatmap = false
+  hideVariables
 }) => {
   const tablePrefix = `view_${namespace}_${name}`;
 
@@ -129,17 +127,6 @@ const View: React.FC<ViewProps> = ({
   // Create unique prefix for global filters (same as ViewSection uses)
   const globalVarPrefix = VIEW_VAR_PREFIX;
   const hasDataTable = columns && columns.length > 0;
-  const [debugHeatmapPanels] = useState<PanelResult[]>(() =>
-    createDebugHeatmapPanels(name)
-  );
-
-  const effectivePanels = useMemo(() => {
-    if (!debugInjectHeatmap) {
-      return panels;
-    }
-
-    return [...(panels ?? []), ...debugHeatmapPanels];
-  }, [debugHeatmapPanels, debugInjectHeatmap, panels]);
 
   // Detect if card mode is available (supports both new and old cardPosition field)
   const hasCardMode = useMemo(() => {
@@ -151,7 +138,7 @@ const View: React.FC<ViewProps> = ({
 
   // Determine default display mode: use spec default if available, otherwise "table"
   const defaultDisplayMode =
-    effectivePanels && effectivePanels.length > 0
+    panels && panels.length > 0
       ? "table"
       : card?.default && hasCardMode
         ? "cards"
@@ -295,7 +282,7 @@ const View: React.FC<ViewProps> = ({
         )}
 
         <div className="mb-4 space-y-6">
-          {effectivePanels && effectivePanels.length > 0 && (
+          {panels && panels.length > 0 && (
             <div
               className="grid gap-4"
               style={{
@@ -303,7 +290,7 @@ const View: React.FC<ViewProps> = ({
                 gridAutoRows: "minmax(250px, auto)"
               }}
             >
-              {groupAndRenderPanels(effectivePanels)}
+              {groupAndRenderPanels(panels)}
             </div>
           )}
         </div>
@@ -395,58 +382,6 @@ const View: React.FC<ViewProps> = ({
         ))}
     </>
   );
-};
-
-const createDebugHeatmapPanels = (viewName: string): PanelResult[] => {
-  const startDate = new Date(Date.UTC(2026, 0, 1)); // 2026-01-01
-  const endDate = new Date(Date.UTC(2026, 2, 31)); // 2026-03-31
-
-  const rows: Array<Record<string, number | string>> = [];
-
-  for (
-    const cursor = new Date(startDate);
-    cursor <= endDate;
-    cursor.setUTCDate(cursor.getUTCDate() + 1)
-  ) {
-    const day = cursor.getUTCDate();
-    const month = cursor.getUTCMonth() + 1;
-    const weekday = cursor.getUTCDay();
-
-    const isWeekend = weekday === 0 || weekday === 6;
-    const hasFailure = day % 13 === 0;
-
-    const failed = hasFailure ? ((day + month) % 2) + 1 : 0;
-    const successful = isWeekend
-      ? 0
-      : Math.max(0, 2 + ((day + month) % 3) - failed);
-
-    rows.push({
-      date: cursor.toISOString().slice(0, 10),
-      successful,
-      failed,
-      count: successful + failed
-    });
-  }
-
-  return [
-    {
-      name: `${viewName} Heatmap (calendar debug)`,
-      type: "heatmap",
-      description:
-        "Debug panel with synthetic daily values for January through March 2026.",
-      rows
-    },
-    {
-      name: `${viewName} Heatmap (compact debug)`,
-      type: "heatmap",
-      description:
-        "Debug compact heatmap for synthetic daily values (January through March 2026).",
-      heatmap: {
-        variant: "compact"
-      },
-      rows
-    }
-  ];
 };
 
 /**

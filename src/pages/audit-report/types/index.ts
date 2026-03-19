@@ -579,11 +579,6 @@ export type HeatmapConfig = {
    * calendar: month grid similar to backups calendar
    * compact: github-style compact heatmap
    */
-  variant?: HeatmapVariant;
-
-  /**
-   * Backwards-compatible alias for variant.
-   */
   mode?: HeatmapVariant;
 };
 

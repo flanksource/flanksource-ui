@@ -135,7 +135,6 @@ const ViewSection: React.FC<ViewSectionProps> = React.memo(
                 requestFingerprint={viewData.requestFingerprint}
                 currentVariables={variables}
                 hideVariables
-                debugInjectHeatmap
               />
             )}
           </div>

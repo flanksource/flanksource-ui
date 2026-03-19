@@ -102,8 +102,8 @@ const toStatus = (value: unknown): CalendarStatus | undefined => {
 };
 
 const resolveVariant = (summary: PanelResult): HeatmapVariant => {
-  const variant = summary.heatmap?.variant ?? summary.heatmap?.mode;
-  return variant === "compact" ? "compact" : "calendar";
+  const mode = summary.heatmap?.mode;
+  return mode === "compact" ? "compact" : "calendar";
 };
 
 const buildHeatmapValues = (
