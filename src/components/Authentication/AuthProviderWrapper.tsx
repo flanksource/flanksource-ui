@@ -1,3 +1,4 @@
+import BasicAuthContextProvider from "./Basic/BasicAuthContextProvider";
 import ClerkAuthContextProvider from "./Clerk/ClerkAuthContextProvider";
 import KratosAuthContextProvider from "./Kratos/KratosAuthContextProvider";
 import useDetermineAuthSystem from "./useDetermineAuthSystem";
@@ -11,7 +12,10 @@ export default function AuthProviderWrapper({
 }: AuthProviderWrapperProps) {
   const authSystem = useDetermineAuthSystem();
 
-  // we need access to Clerk's organization context
+  if (authSystem === "basic") {
+    return <BasicAuthContextProvider>{children}</BasicAuthContextProvider>;
+  }
+
   if (authSystem === "clerk") {
     return <ClerkAuthContextProvider>{children}</ClerkAuthContextProvider>;
   }

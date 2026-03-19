@@ -39,9 +39,11 @@ const config = {
     ];
   },
   async rewrites() {
-    // if clerk is enabled, we will use next API routes to proxy requests to
-    // the backend
-    if (process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true") {
+    // clerk and basic auth use next API routes to proxy requests to the backend
+    if (
+      process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true" ||
+      process.env.NEXT_PUBLIC_AUTH_IS_BASIC === "true"
+    ) {
       return [];
     }
 
