@@ -15,8 +15,9 @@ const EMPTY_VARIABLES: Record<string, string> = {};
 function GlobalFiltersListener({
   children,
   variables,
-  globalVarPrefix
-}: Omit<GlobalFiltersFormProps, "currentVariables">): React.ReactElement {
+  globalVarPrefix,
+  currentVariables = EMPTY_VARIABLES
+}: GlobalFiltersFormProps): React.ReactElement {
   const { values } = useFormikContext<Record<string, string | undefined>>();
   const [, setGlobalParams] = usePrefixedSearchParams(globalVarPrefix);
 
