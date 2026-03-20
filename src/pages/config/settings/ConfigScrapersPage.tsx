@@ -19,6 +19,7 @@ import {
 import { toastSuccess } from "@flanksource-ui/components/Toast/toast";
 import {
   BreadcrumbNav,
+  BreadcrumbChild,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
@@ -259,25 +260,27 @@ export default function ConfigScrapersPage() {
               <BreadcrumbRoot link="/catalog" key={"/catalog"}>
                 Catalog
               </BreadcrumbRoot>,
-              <BreadcrumbRoot
+              <BreadcrumbChild
                 link="/catalog/scrapers"
                 key={"/catalog/scrapers"}
               >
                 Scrapers
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                resource={catalogScraperResourceInfo.table}
-                action="write"
-                key="add-button"
-              >
-                <AddSchemaResourceModal
-                  key={"add-resource"}
-                  onClose={() => refetch()}
-                  resourceInfo={catalogScraperResourceInfo!}
-                />
-              </AuthorizationAccessCheck>
+              </BreadcrumbChild>
             ]}
           />
+        }
+        extra={
+          <AuthorizationAccessCheck
+            resource={catalogScraperResourceInfo.table}
+            action="write"
+            key="add-button"
+          >
+            <AddSchemaResourceModal
+              key={"add-resource"}
+              onClose={() => refetch()}
+              resourceInfo={catalogScraperResourceInfo!}
+            />
+          </AuthorizationAccessCheck>
         }
         onRefresh={() => refetch()}
         loading={isLoading || isRefetching}

@@ -16,6 +16,7 @@ import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   BreadcrumbNav,
+  BreadcrumbChild,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
@@ -236,24 +237,22 @@ export default function ConfigPluginsPage() {
               <BreadcrumbRoot key="/catalog" link="/catalog">
                 Catalog
               </BreadcrumbRoot>,
-              <BreadcrumbRoot key="/catalog/plugins" link="/catalog/plugins">
+              <BreadcrumbChild key="/catalog/plugins" link="/catalog/plugins">
                 Plugins
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                resource={tables.database}
-                action="write"
-                key="add-plugin"
-              >
-                <button
-                  type="button"
-                  className=""
-                  onClick={() => setIsOpen(true)}
-                >
-                  <AiFillPlusCircle size={32} className="text-blue-600" />
-                </button>
-              </AuthorizationAccessCheck>
+              </BreadcrumbChild>
             ]}
           />
+        }
+        extra={
+          <AuthorizationAccessCheck
+            resource={tables.database}
+            action="write"
+            key="add-plugin"
+          >
+            <button type="button" className="" onClick={() => setIsOpen(true)}>
+              <AiFillPlusCircle size={32} className="text-blue-600" />
+            </button>
+          </AuthorizationAccessCheck>
         }
         onRefresh={() => refetch()}
         loading={isLoading}
