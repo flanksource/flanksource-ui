@@ -24,20 +24,47 @@ export function ViewPage() {
   // `id` is directly available from the route — no need to duplicate it in state.
   // `fetchedId` holds the resolved ID when we had to look it up by name/namespace.
   const [fetchedId, setFetchedId] = useState<string | undefined>();
+  const [fetchedLookupKey, setFetchedLookupKey] = useState<
+    string | undefined
+  >();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown | null>(null);
 
+  const lookupKey = name
+    ? namespace
+      ? `${namespace}/${name}`
+      : name
+    : undefined;
+
+  // Only use fetched IDs for the route that produced them.
+  const scopedFetchedId =
+    lookupKey && fetchedLookupKey === lookupKey ? fetchedId : undefined;
+
   // Derived: prefer the direct `id` param; fall back to whatever we fetched.
-  const viewId = id ?? fetchedId;
+  const viewId = id ?? scopedFetchedId;
 
   useEffect(() => {
     // When a direct `id` is present there is nothing to fetch.
-    if (id) return;
+    // Clear lookup-only state so route transitions cannot leak stale values.
+    if (id) {
+      setFetchedId(undefined);
+      setFetchedLookupKey(undefined);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
 
-    if (!name) {
+    if (!name || !lookupKey) {
+      setFetchedId(undefined);
+      setFetchedLookupKey(undefined);
+      setIsLoading(false);
       setError("No view identifier provided");
       return;
     }
+
+    // Reset stale lookup value for the previous route while this route resolves.
+    setFetchedLookupKey(lookupKey);
+    setFetchedId(undefined);
 
     // AbortController lets us cancel the in-flight request if the component
     // unmounts or the route params change before the response arrives,
@@ -64,15 +91,18 @@ export function ViewPage() {
         if (controller.signal.aborted) return;
 
         if (!resolved) {
+          setFetchedId(undefined);
           setError(
             `View not found: ${namespace ? `${namespace}/${name}` : name}`
           );
           return;
         }
 
+        setFetchedLookupKey(lookupKey);
         setFetchedId(resolved);
       } catch (err) {
         if (controller.signal.aborted) return;
+        setFetchedId(undefined);
         setError(err ?? "Failed to load view");
       } finally {
         if (!controller.signal.aborted) {
@@ -84,7 +114,7 @@ export function ViewPage() {
     fetchViewId();
 
     return () => controller.abort();
-  }, [id, namespace, name]);
+  }, [id, namespace, name, lookupKey]);
 
   if (isLoading) {
     return (
