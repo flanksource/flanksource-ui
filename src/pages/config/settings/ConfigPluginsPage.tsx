@@ -232,27 +232,31 @@ export default function ConfigPluginsPage() {
       <Head prefix="Catalog Plugins" />
       <SearchLayout
         title={
-          <BreadcrumbNav
-            list={[
-              <BreadcrumbRoot key="/catalog" link="/catalog">
-                Catalog
-              </BreadcrumbRoot>,
-              <BreadcrumbChild key="/catalog/plugins" link="/catalog/plugins">
-                Plugins
-              </BreadcrumbChild>
-            ]}
-          />
-        }
-        extra={
-          <AuthorizationAccessCheck
-            resource={tables.database}
-            action="write"
-            key="add-plugin"
-          >
-            <button type="button" className="" onClick={() => setIsOpen(true)}>
-              <AiFillPlusCircle size={32} className="text-blue-600" />
-            </button>
-          </AuthorizationAccessCheck>
+          <div className="flex items-center gap-2">
+            <BreadcrumbNav
+              list={[
+                <BreadcrumbRoot key="/catalog" link="/catalog">
+                  Catalog
+                </BreadcrumbRoot>,
+                <BreadcrumbChild key="/catalog/plugins" link="/catalog/plugins">
+                  Plugins
+                </BreadcrumbChild>
+              ]}
+            />
+            <AuthorizationAccessCheck
+              resource={tables.database}
+              action="write"
+              key="add-plugin"
+            >
+              <button
+                type="button"
+                className=""
+                onClick={() => setIsOpen(true)}
+              >
+                <AiFillPlusCircle size={32} className="text-blue-600" />
+              </button>
+            </AuthorizationAccessCheck>
+          </div>
         }
         onRefresh={() => refetch()}
         loading={isLoading}
