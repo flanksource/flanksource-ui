@@ -419,12 +419,16 @@ function sortTagEntries(entries: [string, string][]): [string, string][] {
 }
 
 function getConfigTagEntries(item: SearchedResource): [string, string][] {
-  if (!item.tags || typeof item.tags !== "object") {
+  const tags = item.tags ?? item.labels;
+
+  if (!tags || typeof tags !== "object") {
     return [];
   }
 
   return sortTagEntries(
-    Object.entries(item.tags).filter(([key]) => key !== "toString")
+    Object.entries(tags)
+      .filter(([key, value]) => key !== "toString" && value != null)
+      .map(([key, value]) => [key, String(value)])
   );
 }
 
@@ -810,7 +814,8 @@ export function SearchLayoutGlobalSearch() {
           type: config?.type || "",
           namespace: "",
           agent: "",
-          labels: {}
+          labels: config?.labels ?? {},
+          tags: config?.tags ?? config?.labels
         };
 
         const configTitle = getResourceTitle("configs", configResource);

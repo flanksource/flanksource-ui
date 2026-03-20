@@ -80,7 +80,9 @@ export const getConfigsSummary = async (request: ConfigSummaryRequest) => {
 export const getConfigsByIDs = async (ids: string[]) => {
   const res = await resolvePostGrestRequestWithPagination<ConfigItem[] | null>(
     ConfigDB.get(
-      `/configs?id=in.(${ids.join(",")})&select=id,name,config_class,type`
+      `/configs?id=in.(${ids.join(
+        ","
+      )})&select=id,name,config_class,type,tags,labels`
     )
   );
   return res.data ?? [];
