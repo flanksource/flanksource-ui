@@ -52,9 +52,13 @@ export function ViewPage() {
         let resolved: string | undefined;
 
         if (namespace) {
-          resolved = await getViewIdByNamespaceAndName(namespace, name);
+          resolved = await getViewIdByNamespaceAndName(
+            namespace,
+            name,
+            controller.signal
+          );
         } else {
-          resolved = await getViewIdByName(name);
+          resolved = await getViewIdByName(name, controller.signal);
         }
 
         if (controller.signal.aborted) return;
