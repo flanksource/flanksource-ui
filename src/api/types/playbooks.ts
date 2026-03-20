@@ -123,6 +123,7 @@ export type PlaybookResourceSelector = {
 
 export interface PlaybookAction {
   name: string;
+  delay?: string;
 
   // Action type specific fields
   ai?: any;

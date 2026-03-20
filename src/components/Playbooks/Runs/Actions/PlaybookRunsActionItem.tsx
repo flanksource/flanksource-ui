@@ -8,6 +8,61 @@ import { PlaybookStatusIcon } from "../../../../ui/Icons/PlaybookStatusIcon";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { TbCornerDownRight } from "react-icons/tb";
 
+function ActionTimestampTooltip({
+  action
+}: {
+  action: Pick<
+    PlaybookRunAction,
+    "id" | "status" | "scheduled_time" | "start_time" | "end_time"
+  >;
+}) {
+  const fmt = (t?: string) =>
+    t ? dayjs(t).local().format("YYYY-MM-DD HH:mm:ss") : null;
+
+  const scheduledFmt = fmt(action.scheduled_time);
+  const startFmt = fmt(action.start_time);
+  const endFmt = fmt(action.end_time);
+
+  const delayMs =
+    action.scheduled_time && action.start_time
+      ? dayjs(action.start_time).diff(dayjs(action.scheduled_time))
+      : 0;
+
+  const showDelay = delayMs > 1000;
+
+  if (!scheduledFmt && !startFmt && !endFmt) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col gap-1 text-xs">
+      {scheduledFmt && (
+        <div className="flex gap-2">
+          <span className="min-w-[65px] text-gray-400">Scheduled:</span>
+          <span>{scheduledFmt}</span>
+        </div>
+      )}
+      {startFmt && (
+        <div className="flex gap-2">
+          <span className="min-w-[65px] text-gray-400">Started:</span>
+          <span>{startFmt}</span>
+          {showDelay && action.scheduled_time && (
+            <span className="text-gray-400">
+              (Δ {relativeDateTime(action.scheduled_time, action.start_time)})
+            </span>
+          )}
+        </div>
+      )}
+      {endFmt && (
+        <div className="flex gap-2">
+          <span className="min-w-[65px] text-gray-400">Ended:</span>
+          <span>{endFmt}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 type PlaybookRunsActionItemProps = {
   agent?: string;
   action: Pick<
@@ -44,6 +99,7 @@ export default function PlaybookRunsActionItem({
       <div
         data-tooltip-id={action.id}
         role="button"
+        title={action.status}
         onClick={() => {
           if (action.status !== "skipped") {
             onClick();
@@ -55,7 +111,6 @@ export default function PlaybookRunsActionItem({
           isSelected ? "bg-gray-200" : "bg-white",
           action.status === "skipped" ? "cursor-not-allowed" : "cursor-pointer"
         )}
-        data-tooltip-content={action.status}
       >
         <div className="flex flex-col">
           <div className="flex flex-row gap-2 text-sm text-gray-600">
@@ -74,14 +129,9 @@ export default function PlaybookRunsActionItem({
         <div className="flex flex-row gap-2">
           <div className="text-sm text-gray-600">
             {action.status === "sleeping" ? (
-              <span
-                data-tooltip-id="scheduled-tooltip"
-                data-tooltip-content={`Scheduled to run in ${relativeDateTime(
-                  dayjs().toISOString(),
-                  action.scheduled_time
-                )}`}
-              >
-                -
+              <span className="text-blue-400">
+                in{" "}
+                {relativeDateTime(dayjs().toISOString(), action.scheduled_time)}
               </span>
             ) : (
               <FormatDuration
@@ -90,10 +140,11 @@ export default function PlaybookRunsActionItem({
               />
             )}
           </div>
-          <Tooltip id="scheduled-tooltip" />
         </div>
       </div>
-      <Tooltip id={action.id} />
+      <Tooltip id={action.id}>
+        <ActionTimestampTooltip action={action} />
+      </Tooltip>
     </div>
   );
 }
