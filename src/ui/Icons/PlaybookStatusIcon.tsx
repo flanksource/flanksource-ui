@@ -4,6 +4,7 @@ import {
   BsCircle,
   BsClock,
   BsHourglassSplit,
+  BsMoon,
   BsSlashCircle,
   BsStopCircle,
   BsXCircle
@@ -67,7 +68,7 @@ export function PlaybookStatusIcon({
 
     case "sleeping":
       return (
-        <BsClock className="inline h-5 w-auto object-center pr-1 text-gray-400" />
+        <BsMoon className="inline h-5 w-auto object-center pr-1 text-blue-400" />
       );
 
     case "skipped":
