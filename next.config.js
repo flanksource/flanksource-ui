@@ -39,22 +39,61 @@ const config = {
     ];
   },
   async rewrites() {
-    // if clerk is enabled, we will use next API routes to proxy requests to
-    // the backend
-    if (process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true") {
-      return [];
-    }
+    const isClerkAuth = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
+    const isBasicAuth = process.env.NEXT_PUBLIC_AUTH_IS_BASIC === "true";
 
     // Read at build time. See Dockerfile for deployment related steps.
     const backendURL = process.env.BACKEND_URL || "http://localhost:3000/";
     const isCanary =
       process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
+    // OIDC protocol endpoints are mounted at the root of the backend (matching the
+    // issuer URL). These rewrites let the browser reach those endpoints through the
+    // Next.js server without authentication interference.
+    const OIDC_REWRITES = [
+      {
+        source: "/.well-known/:path*",
+        destination: `${backendURL}/.well-known/:path*`
+      },
+      { source: "/authorize", destination: `${backendURL}/authorize` },
+      {
+        source: "/authorize/:path*",
+        destination: `${backendURL}/authorize/:path*`
+      },
+      { source: "/oauth/token", destination: `${backendURL}/oauth/token` },
+      {
+        source: "/oauth/introspect",
+        destination: `${backendURL}/oauth/introspect`
+      },
+      { source: "/userinfo", destination: `${backendURL}/userinfo` },
+      { source: "/revoke", destination: `${backendURL}/revoke` },
+      {
+        source: "/device_authorization",
+        destination: `${backendURL}/device_authorization`
+      },
+      { source: "/keys", destination: `${backendURL}/keys` },
+      { source: "/end_session", destination: `${backendURL}/end_session` },
+      // Some clients use /endsession (no underscore) — proxy both.
+      { source: "/endsession", destination: `${backendURL}/endsession` },
+      // All OIDC sub-routes (login, callback, …)
+      { source: "/oidc/:path*", destination: `${backendURL}/oidc/:path*` },
+      // MCP transport endpoint
+      { source: "/mcp", destination: `${backendURL}/mcp` },
+      { source: "/mcp/:path*", destination: `${backendURL}/mcp/:path*` }
+    ];
+
+    // clerk and basic auth use next API routes for app endpoints, but OIDC protocol
+    // endpoints still need explicit rewrites.
+    if (isClerkAuth || isBasicAuth) {
+      return OIDC_REWRITES;
+    }
+
     const LOCALHOST_ENV_URL_REWRITES = [
       {
         source: "/api/:path*",
         destination: `${backendURL}/api/:path*`
-      }
+      },
+      ...OIDC_REWRITES
     ];
 
     const URL_REWRITES = [
@@ -71,7 +110,8 @@ const config = {
       {
         source: "/api/:path*",
         destination: `${backendURL}/:path*`
-      }
+      },
+      ...OIDC_REWRITES
     ];
     // NODE_ENV is set to "development" when running locally, so we can use it
     // to determine if we are running in a local environment.
