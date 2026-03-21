@@ -31,6 +31,12 @@ export default function ConfigPageTabs({
         search: `${query}`
       },
       {
+        label: "Access",
+        key: "Access",
+        path: `/catalog/access`,
+        search: `${query}`
+      },
+      {
         label: "Insights",
         key: "Insights",
         path: `/catalog/insights`,

@@ -98,6 +98,10 @@ export interface ConfigItemGraphData extends ConfigItem {
 }
 
 export interface ConfigAccessSummary {
+  config_id?: string;
+  config_name?: string | null;
+  config_type?: string | null;
+  external_user_id: string;
   user: string;
   email: string;
   role?: string | null;
@@ -107,6 +111,30 @@ export interface ConfigAccessSummary {
   last_reviewed_at?: string | null;
   created_at: string;
 }
+
+export interface ConfigAccessSummaryByUser {
+  external_user_id: string;
+  user: string;
+  email: string;
+  access_count: number;
+  distinct_roles: number;
+  distinct_configs: number;
+  last_signed_in_at?: string | null;
+  latest_grant?: string | null;
+}
+
+export interface ConfigAccessSummaryByConfig {
+  config_id: string;
+  config_name: string;
+  config_type: string;
+  access_count: number;
+  distinct_users: number;
+  distinct_roles: number;
+  last_signed_in_at?: string | null;
+  latest_grant?: string | null;
+}
+
+export type ConfigAccessGroupBy = "user" | "config";
 
 export interface ConfigAccessLog {
   config_id: string;

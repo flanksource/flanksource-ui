@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getConfigAccessLogs } from "../services/configs";
+import { getConfigAccessLogs } from "../services/configAccess";
 
 export default function useConfigAccessLogsQuery(configId: string | undefined) {
   return useQuery({

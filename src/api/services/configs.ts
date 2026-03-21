@@ -8,14 +8,14 @@ import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PaginationInfo } from "../types/common";
 import {
   ConfigAnalysis,
-  ConfigAccessSummary,
-  ConfigAccessLog,
   ConfigChange,
   ConfigHealthCheckView,
   ConfigItem,
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
+
+export * from "./configAccess";
 
 export const getAllConfigs = () =>
   resolvePostGrestRequestWithPagination<ConfigItem[]>(ConfigDB.get(`/configs`));
@@ -162,38 +162,6 @@ type ConfigDetail = ConfigItem & {
 export const getConfig = (id: string) =>
   resolvePostGrestRequestWithPagination<ConfigDetail[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
-  );
-
-export const getConfigAccessSummary = (configId: string) =>
-  resolvePostGrestRequestWithPagination<ConfigAccessSummary[]>(
-    ConfigDB.get(
-      `/config_access_summary?config_id=eq.${encodeURIComponent(
-        configId
-      )}&select=user,email,role,user_type,external_group_id,last_signed_in_at,last_reviewed_at,created_at&order=${encodeURIComponent(
-        "user.asc"
-      )}`,
-      {
-        headers: {
-          Prefer: "count=exact"
-        }
-      }
-    )
-  );
-
-export const getConfigAccessLogs = (configId: string) =>
-  resolvePostGrestRequestWithPagination<ConfigAccessLog[]>(
-    ConfigDB.get(
-      `/config_access_logs?config_id=eq.${encodeURIComponent(
-        configId
-      )}&select=*,external_users(name,user_email:email)&order=${encodeURIComponent(
-        "created_at.desc"
-      )}`,
-      {
-        headers: {
-          Prefer: "count=exact"
-        }
-      }
-    )
   );
 
 export type ConfigsTagList = {

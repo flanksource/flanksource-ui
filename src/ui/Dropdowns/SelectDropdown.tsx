@@ -20,6 +20,9 @@ export default function SelectDropdown<TValue = string>({
   onChange = () => {},
   ...props
 }: SelectDropdownProps<TValue>) {
+  const menuPortalTarget =
+    typeof document !== "undefined" ? document.body : undefined;
+
   return (
     <Select
       {...props}
@@ -30,6 +33,19 @@ export default function SelectDropdown<TValue = string>({
       }}
       openMenuOnClick
       openMenuOnFocus
+      menuPortalTarget={menuPortalTarget}
+      menuPosition="fixed"
+      menuShouldBlockScroll
+      styles={{
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 500
+        }),
+        menu: (base) => ({
+          ...base,
+          zIndex: 500
+        })
+      }}
       components={{
         SingleValue: ({ className, ...props }: any) => {
           return (

@@ -139,6 +139,12 @@ const ConfigChangesPage = dynamic(
   )
 );
 
+const ConfigAccessPage = dynamic(
+  import("@flanksource-ui/pages/config/ConfigAccessPage").then(
+    (mod) => mod.ConfigAccessPage
+  )
+);
+
 const PlaybookRunsPage = dynamic(
   import("@flanksource-ui/pages/playbooks/PlaybookRunsPage").then(
     (mod) => mod.default
@@ -904,6 +910,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="changes"
           element={withAuthorizationAccessCheck(
             <ConfigChangesPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path="access"
+          element={withAuthorizationAccessCheck(
+            <ConfigAccessPage />,
             tables.database,
             "read",
             true
