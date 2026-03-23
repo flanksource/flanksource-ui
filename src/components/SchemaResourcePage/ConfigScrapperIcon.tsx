@@ -9,6 +9,8 @@ export const configSpecTypesIconMap = new Map<string, string>([
   ["trivy", "trivy"],
   ["aws", "aws"],
   ["file", "folder"],
+  ["gcp", "gcp"],
+  ["github", "github"],
   ["githubActions", "github"],
   ["http", "http"],
   ["azureDevops", "azure-devops"],
