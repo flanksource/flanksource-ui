@@ -13,6 +13,7 @@ import { ViewColumnDef, ViewRow } from "../types";
 import HealthBadge, { HealthType } from "./HealthBadge";
 import GaugeCell from "./GaugeCell";
 import { formatBytes } from "../../../utils/common";
+import { formatMillicore } from "./View/panels/utils";
 import { formatDuration as formatDurationMs } from "../../../utils/date";
 import { Status } from "../../../components/Status";
 import { Icon } from "../../../ui/Icons/Icon";
@@ -532,32 +533,6 @@ const formatValueWithUnit = (value: any, unit?: string): any => {
     default:
       return value;
   }
-};
-
-// Format millicore values following the existing pattern from topology formatting
-const formatMillicore = (value: string | number): string => {
-  let millicoreValue: number;
-
-  if (typeof value === "string") {
-    // Handle string format like "100m" or "1500m"
-    const numericValue = value.replace(/m$/, "");
-    millicoreValue = parseInt(numericValue, 10);
-    if (isNaN(millicoreValue)) {
-      return String(value);
-    }
-  } else if (typeof value === "number") {
-    millicoreValue = value;
-  } else {
-    return String(value);
-  }
-
-  if (millicoreValue >= 1000) {
-    return `${(millicoreValue / 1000).toFixed(2)} cores`;
-  }
-
-  // values < 1000 means it's a millicore.
-  // No need to display decimal values for a millicore.
-  return `${Math.round(millicoreValue)}m`;
 };
 
 // Parse Kubernetes memory units (e.g., "192Mi", "1Gi", "512Ki") to bytes
