@@ -1,30 +1,36 @@
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
 import React from "react";
-import { defaultSelections, severityItems } from "../../../Incidents/data";
-import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
+import { severityItems } from "../../../Incidents/data";
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  prefix?: string;
-  dropDownClassNames?: string;
-  hideControlBorder?: boolean;
-  showAllOption?: boolean;
+  label?: string;
 };
 
 export default function ConfigInsightsSeverityDropdown({
-  prefix = "Severity:",
-  name = "severity",
-  className,
-  showAllOption,
-  dropDownClassNames,
-  hideControlBorder
+  label = "Severity",
+  name = "severity"
 }: Props) {
   const [field] = useField({
     name
   });
 
+  const options = Object.values(severityItems)
+    .map((item) => ({
+      id: item.id,
+      label: item.name,
+      value: item.value.toLowerCase(),
+      icon: item.icon
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label)) satisfies TriStateOptions[];
+
   return (
-    <ReactSelectDropdown
-      prefix={<span className="text-xs text-gray-500">{prefix}</span>}
+    <TristateReactSelect
+      options={options}
+      value={field.value}
+      minMenuWidth="14rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({
@@ -36,17 +42,7 @@ export default function ConfigInsightsSeverityDropdown({
           });
         }
       }}
-      name={name}
-      className={className}
-      dropDownClassNames={dropDownClassNames}
-      value={field.value ?? "all"}
-      items={{
-        ...(showAllOption ? defaultSelections : {}),
-        ...Object.values(severityItems).sort((a, b) =>
-          a.name > b.name ? 1 : -1
-        )
-      }}
-      hideControlBorder={hideControlBorder}
+      label={label}
     />
   );
 }

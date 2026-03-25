@@ -174,11 +174,12 @@ export interface ConfigAnalysis extends Analysis, CreatedAt, Avatar {
   status: string;
   message: string;
   properties?: Property[] | null;
+  analysis?: Record<string, any> | string | null;
   sanitizedMessageHTML?: string;
   sanitizedMessageTxt?: string;
   first_observed: string;
   last_observed: string;
-  source: any;
+  source?: string | null;
   config?: ConfigItem;
 }
 
