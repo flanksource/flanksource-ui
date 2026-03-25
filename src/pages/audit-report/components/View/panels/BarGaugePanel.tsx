@@ -21,7 +21,7 @@ const getRowConfig = (row: any, globalConfig: BarGaugeConfig): RowConfig => {
 
   return {
     max: rowBargauge.max ?? row.max ?? globalConfig.max ?? 100,
-    min: globalConfig.min || 0,
+    min: rowBargauge.min ?? row.min ?? globalConfig.min ?? 0,
     unit: (rowBargauge.unit ?? globalConfig.unit) || "",
     thresholds:
       rowBargauge.thresholds || row._thresholds || globalConfig.thresholds,
