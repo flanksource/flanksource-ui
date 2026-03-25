@@ -3,6 +3,7 @@ import { ViewColumnDef } from "../../types";
 import GaugeCell from "../GaugeCell";
 import { Link } from "react-router-dom";
 import { formatBytes } from "../../../../utils/common";
+import { formatMillicore } from "./panels/utils";
 import { formatDuration as formatDurationMs } from "../../../../utils/date";
 import { Icon } from "../../../../ui/Icons/Icon";
 import ConfigsTypeIcon from "../../../../components/Configs/ConfigsTypeIcon";
@@ -585,28 +586,6 @@ const formatValueWithUnit = (value: any, unit?: string): any => {
     default:
       return value;
   }
-};
-
-const formatMillicore = (value: string | number): string => {
-  let millicoreValue: number;
-
-  if (typeof value === "string") {
-    const numericValue = value.replace(/m$/, "");
-    millicoreValue = parseInt(numericValue, 10);
-    if (isNaN(millicoreValue)) {
-      return String(value);
-    }
-  } else if (typeof value === "number") {
-    millicoreValue = value;
-  } else {
-    return String(value);
-  }
-
-  if (millicoreValue >= 1000) {
-    return `${(millicoreValue / 1000).toFixed(2)} cores`;
-  }
-
-  return `${Math.round(millicoreValue)}m`;
 };
 
 const parseMemoryUnit = (value: string): number | null => {

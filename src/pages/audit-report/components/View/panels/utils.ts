@@ -69,6 +69,40 @@ export const generateGaugeData = (
 };
 
 /**
+ * Formats a millicore value for display, accepting both numeric and string inputs.
+ *
+ * Rules:
+ * - 0 → "0" (no unit)
+ * - sub-millicore (0 < v < 1) → "1m" (rounded up)
+ * - millicores (1–999) → rounded integer with "m" suffix (e.g. "500m")
+ * - cores (≥ 1000) → converted to cores, no unit (e.g. "2", "1.5")
+ *
+ * @param value - Millicore value as a number or string (e.g. 500, "1500m")
+ */
+export const formatMillicore = (value: string | number): string => {
+  let mc: number;
+
+  if (typeof value === "string") {
+    mc = parseInt(value.replace(/m$/, ""), 10);
+    if (isNaN(mc)) return String(value);
+  } else if (typeof value === "number") {
+    mc = value;
+  } else {
+    return String(value);
+  }
+
+  if (mc === 0) return "0";
+  if (mc > 0 && mc < 1) return "1m";
+  if (mc >= 1000) {
+    const cores = mc / 1000;
+    return cores === Math.round(cores)
+      ? `${Math.round(cores)}`
+      : `${cores.toFixed(1)}`;
+  }
+  return `${Math.round(mc)}m`;
+};
+
+/**
  * Formats a numeric value for display with optional unit and precision handling.
  * Provides special handling for common units like bytes and millicores.
  *
@@ -98,15 +132,7 @@ export const formatDisplayValue = (
       return formatBytes(value);
     case "millicores":
     case "millicore":
-      if (value === 0) return "0";
-      if (value > 0 && value < 1) return `1m`;
-      if (value >= 1000) {
-        const cores = value / 1000;
-        return cores === Math.round(cores)
-          ? `${Math.round(cores)}`
-          : `${cores.toFixed(1)}`;
-      }
-      return `${Math.round(value)}m`;
+      return formatMillicore(value);
     default:
       const rounded = Number(value.toFixed(precision || 0));
       return `${rounded} ${unit}`;
