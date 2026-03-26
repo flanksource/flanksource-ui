@@ -815,7 +815,6 @@ export const getAllConfigInsights = async (
     severity?: string;
     analyzer?: string;
     source?: string;
-    component?: string;
     configId?: string;
     configType?: string;
   },
@@ -824,16 +823,8 @@ export const getAllConfigInsights = async (
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const {
-    status,
-    type,
-    severity,
-    analyzer,
-    source,
-    component,
-    configId,
-    configType
-  } = queryParams;
+  const { status, type, severity, analyzer, source, configId, configType } =
+    queryParams;
 
   const toFilterParam = (value: string | undefined, key: string) => {
     if (!value) {
@@ -853,9 +844,11 @@ export const getAllConfigInsights = async (
     severity: toFilterParam(severity, "severity"),
     analyzer: toFilterParam(analyzer, "analyzer"),
     source: toFilterParam(source, "source"),
-    component: component && `&component_id=eq.${component}`,
     configId: configId && `&config_id=eq.${configId}`,
     configType: toFilterParam(configType, "config_type")
+      ?.split(",")
+      .map((v) => v.replaceAll("__", "::"))
+      .join(",")
   };
 
   const queryParamsString = Object.values(params)
@@ -896,13 +889,6 @@ export const getConfigComponentRelationships = async <T>(configID: string) => {
 export const getComponentConfigChanges = async (topologyID: string) => {
   const res = await ConfigDB.get<ConfigChange[]>(
     `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at:configs(id, name, type, config_class)`
-  );
-  return res.data;
-};
-
-export const getConfigAnalysisByComponent = async (componentId: string) => {
-  const res = await ConfigDB.get<ConfigAnalysis[]>(
-    `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;
 };

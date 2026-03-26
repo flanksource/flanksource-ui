@@ -11,7 +11,7 @@ type ConfigInsightsFiltersProps = {
 };
 
 export function ConfigInsightsFilters({
-  paramsToReset = ["pageIndex", "pageSize"]
+  paramsToReset = ["pageIndex"]
 }: ConfigInsightsFiltersProps) {
   return (
     <FormikFilterForm

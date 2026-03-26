@@ -102,7 +102,8 @@ export default function ConfigInsightsDetailsModal({
     ["config", "insights", id],
     () => getConfigInsightsByID(id!),
     {
-      enabled: isOpen && !!id
+      enabled: isOpen && !!id,
+      onError: () => onClose()
     }
   );
 
