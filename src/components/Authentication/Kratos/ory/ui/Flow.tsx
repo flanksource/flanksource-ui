@@ -85,20 +85,22 @@ export class Flow<T extends Values> extends Component<Props<T>, State<T>> {
   }
 
   initializeValues = (nodes: Array<UiNode> = []) => {
-    // Compute the values
     const values = emptyState<T>();
     nodes.forEach((node) => {
       // This only makes sense for text nodes
       if (isUiNodeInputAttributes(node.attributes)) {
-        if (
-          node.attributes.type === "button" ||
-          node.attributes.type === "submit"
-        ) {
-          // In order to mimic real HTML forms, we need to skip setting the value
-          // for buttons as the button value will (in normal HTML forms) only trigger
-          // if the user clicks it.
+        const nodeType = node.attributes.type;
+        const isSubmitNode = nodeType === "button" || nodeType === "submit";
+        if (isSubmitNode && node.group === "oidc") {
+          // Skip OIDC buttons — the user must click one explicitly so we know
+          // which provider they chose.
+          //
+          // Non-oidc submit buttons (e.g. method=password)
+          // are pre-populated so they're included even when the form is submitted
+          // programmatically (e.g. 1Password auto-fill bypasses the onClick handler).
           return;
         }
+
         values[node.attributes.name as keyof Values] = node.attributes.value;
       }
     });
