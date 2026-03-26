@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
 import { useMemo } from "react";
+import { FiExternalLink } from "react-icons/fi";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
+import { Property } from "../../../../api/types/topology";
+import { Badge, badgeVariants } from "../../../ui/badge";
+import { cn } from "../../../../lib/utils";
 import { Modal } from "../../../../ui/Modal";
 import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
 import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
@@ -11,6 +15,70 @@ import { DescriptionCard } from "../../../DescriptionCard";
 import AttachAsEvidenceButton from "../../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+
+/** A single badge-type property rendered as an inline pill. */
+function AnalysisBadge({ property }: { property: Property }) {
+  const primaryLink = property.links?.[0]?.url;
+
+  let displayText: string | undefined;
+  if (property.value != null && property.max != null) {
+    // Normalise both CVSS (75/100) and OpenSSF (7/10) to a /10 display.
+    const scaled = (Number(property.value) / Number(property.max)) * 10;
+    const formatted = Number.isInteger(scaled)
+      ? String(scaled)
+      : scaled.toFixed(1);
+    displayText = `${formatted}/10`;
+  } else if (property.value != null) {
+    displayText = String(property.value);
+  } else {
+    displayText = property.text;
+  }
+
+  if (!displayText) return null;
+
+  const colorClass =
+    property.color ?? "bg-gray-100 border-gray-200 text-gray-700";
+
+  const pill = (
+    <Badge variant="outline" className={cn("gap-1 font-normal", colorClass)}>
+      <span className="font-medium opacity-70">{property.name}:</span>
+      <span>{displayText}</span>
+      {primaryLink && <FiExternalLink size={9} className="opacity-50" />}
+    </Badge>
+  );
+
+  return primaryLink ? (
+    <a
+      href={primaryLink}
+      target="_blank"
+      rel="noreferrer"
+      className={cn(
+        badgeVariants({ variant: "outline" }),
+        "gap-1 font-normal transition-opacity hover:opacity-75",
+        colorClass
+      )}
+    >
+      <span className="font-medium opacity-70">{property.name}:</span>
+      <span>{displayText}</span>
+      <FiExternalLink size={9} className="opacity-50" />
+    </a>
+  ) : (
+    pill
+  );
+}
+
+/** All badge-type properties rendered as a flex-wrap row of pills. */
+function AnalysisBadges({ properties }: { properties: Property[] }) {
+  const badges = properties.filter((p) => p.type === "badge");
+  if (badges.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-2">
+      {badges.map((property, idx) => (
+        <AnalysisBadge key={property.name ?? idx} property={property} />
+      ))}
+    </div>
+  );
+}
 
 type Props = {
   id?: string;
@@ -31,7 +99,11 @@ export default function ConfigInsightsDetailsModal({
     }
   );
 
-  const properties = useMemo(() => {
+  const descriptionItems = useMemo(() => {
+    // Find the URL property to link the source field.
+    const urlProp = configInsight?.properties?.find((p) => p.type === "url");
+    const sourceHref = urlProp?.links?.[0]?.url ?? urlProp?.text;
+
     return [
       {
         label: "Type",
@@ -56,17 +128,29 @@ export default function ConfigInsightsDetailsModal({
       },
       {
         label: "Severity",
-        value: configInsight?.severity! || ""
+        value: configInsight?.severity ?? ""
       },
       {
         label: "Source",
-        value: configInsight?.source! || ""
+        value: sourceHref ? (
+          <a
+            href={sourceHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+          >
+            {configInsight?.source}
+            <FiExternalLink size={12} />
+          </a>
+        ) : (
+          (configInsight?.source ?? "")
+        )
       }
     ];
   }, [configInsight]);
 
   const sanitizedMessageHTML = useMemo(() => {
-    return sanitize(configInsight?.message! || "");
+    return sanitize(configInsight?.message ?? "");
   }, [configInsight]);
 
   if (!configInsight) {
@@ -80,7 +164,7 @@ export default function ConfigInsightsDetailsModal({
           items={[
             <div
               className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap"
-              key={"analyzer"}
+              key="analyzer"
             >
               <ConfigInsightsIcon analysis={configInsight} />
               <span>{configInsight.analyzer}</span>
@@ -89,38 +173,46 @@ export default function ConfigInsightsDetailsModal({
               <ConfigLink
                 className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-blue-600"
                 config={configInsight.config}
-                key={"config"}
+                key="config"
               />
             ) : null
           ]}
         />
       }
       open={isOpen}
-      onClose={() => {
-        onClose();
-      }}
+      onClose={onClose}
     >
       {isLoading ? (
         <TextSkeletonLoader />
       ) : (
         <>
           <div className="flex flex-col space-y-6 px-4 py-4">
-            <DescriptionCard items={properties} labelStyle="top" columns={3} />
             <DescriptionCard
-              items={[
-                {
-                  label: "",
-                  value: (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: sanitizedMessageHTML
-                      }}
-                    ></div>
-                  )
-                }
-              ]}
+              items={descriptionItems}
               labelStyle="top"
+              columns={3}
             />
+            {configInsight.properties &&
+              configInsight.properties.length > 0 && (
+                <AnalysisBadges properties={configInsight.properties} />
+              )}
+            {sanitizedMessageHTML && (
+              <DescriptionCard
+                items={[
+                  {
+                    label: "",
+                    value: (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizedMessageHTML
+                        }}
+                      />
+                    )
+                  }
+                ]}
+                labelStyle="top"
+              />
+            )}
           </div>
 
           <div className="mt-4 flex items-center justify-end rounded bg-gray-100 px-4 py-2">

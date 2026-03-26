@@ -681,7 +681,7 @@ export const getConfigInsights = (
         | "first_observed"
       >[]
     >(
-      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
+      `/config_analysis?select=id,analyzer,analysis_type,message,severity,analysis,properties,first_observed,config:configs(id,name,config_class,type)&config_id=eq.${configId}${paginationQueryParams}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -693,7 +693,7 @@ export const getConfigInsights = (
 
 export const getConfigInsightsByID = async (id: string) => {
   const res = await ConfigDB.get<ConfigAnalysis[] | null>(
-    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,first_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,properties,first_observed,last_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
     {
       headers: {
         Prefer: "count=exact"
