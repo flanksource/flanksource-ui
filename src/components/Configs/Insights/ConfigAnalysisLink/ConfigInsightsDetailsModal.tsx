@@ -2,14 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
 import { useMemo } from "react";
 import { FiExternalLink } from "react-icons/fi";
-import { GoCopy, GoLinkExternal } from "react-icons/go";
-import { Link, useLocation } from "react-router-dom";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
 import { Property } from "../../../../api/types/topology";
 import { Badge, badgeVariants } from "../../../ui/badge";
 import { cn } from "../../../../lib/utils";
-import { useCopyToClipboard } from "../../../../hooks/useCopyToClipboard";
 import { JSONViewer } from "../../../../ui/Code/JSONViewer";
 import { Modal } from "../../../../ui/Modal";
 import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
@@ -95,9 +92,6 @@ export default function ConfigInsightsDetailsModal({
   isOpen,
   onClose
 }: Props) {
-  const location = useLocation();
-  const copyToClipboard = useCopyToClipboard();
-
   const { data: configInsight, isLoading } = useQuery(
     ["config", "insights", id],
     () => getConfigInsightsByID(id!),
@@ -106,22 +100,6 @@ export default function ConfigInsightsDetailsModal({
       onError: () => onClose()
     }
   );
-
-  const sharePath = useMemo(() => {
-    if (!configInsight) {
-      return "";
-    }
-    const params = new URLSearchParams(location.search);
-    params.set("insightId", configInsight.id);
-    return `${location.pathname}?${params.toString()}`;
-  }, [configInsight, location.pathname, location.search]);
-
-  const shareLink = useMemo(() => {
-    if (!sharePath || typeof window === "undefined") {
-      return sharePath;
-    }
-    return `${window.location.origin}${sharePath}`;
-  }, [sharePath]);
 
   const descriptionItems = useMemo(() => {
     if (!configInsight) {
@@ -132,42 +110,6 @@ export default function ConfigInsightsDetailsModal({
     const sourceHref = urlProp?.links?.[0]?.url ?? urlProp?.text;
 
     return [
-      {
-        label: "ID",
-        value: (
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs">{configInsight.id}</span>
-            <button
-              type="button"
-              onClick={() => copyToClipboard(configInsight.id)}
-              className="text-gray-500 hover:text-gray-900"
-              title="Copy insight ID"
-            >
-              <GoCopy className="h-4 w-4" />
-            </button>
-            {sharePath && (
-              <>
-                <Link
-                  to={sharePath}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-blue-600"
-                  title="Open insight link"
-                >
-                  <GoLinkExternal className="h-4 w-4" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => shareLink && copyToClipboard(shareLink)}
-                  className="text-gray-500 hover:text-gray-900"
-                  title="Copy insight link"
-                >
-                  <GoCopy className="h-4 w-4" />
-                </button>
-              </>
-            )}
-          </div>
-        )
-      },
       {
         label: "Type",
         value: (
@@ -210,7 +152,7 @@ export default function ConfigInsightsDetailsModal({
         )
       }
     ];
-  }, [configInsight, copyToClipboard, shareLink, sharePath]);
+  }, [configInsight]);
 
   const sanitizedMessageHTML = useMemo(() => {
     return sanitize(configInsight?.message ?? "");
