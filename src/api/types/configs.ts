@@ -1,5 +1,6 @@
 import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
 import { HealthCheckSummary } from "./health";
+import { Property } from "./topology";
 
 export interface ConfigChange extends CreatedAt {
   id: string;
@@ -172,6 +173,7 @@ export interface ConfigAnalysis extends Analysis, CreatedAt, Avatar {
   summary: string;
   status: string;
   message: string;
+  properties?: Property[] | null;
   sanitizedMessageHTML?: string;
   sanitizedMessageTxt?: string;
   first_observed: string;
