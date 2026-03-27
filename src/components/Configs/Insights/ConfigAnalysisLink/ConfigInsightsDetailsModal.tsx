@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
@@ -94,6 +94,12 @@ export default function ConfigInsightsDetailsModal({
   onClose
 }: Props) {
   const [activeTab, setActiveTab] = useState<"message" | "analysis">("message");
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab("message");
+    }
+  }, [isOpen]);
 
   const { data: configInsight, isLoading } = useQuery(
     ["config", "insights", id],
