@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { useMemo } from "react";
 import {
   CiBandage,
   CiClock2,
@@ -20,16 +19,6 @@ type Props = {
   analysis: Pick<ConfigAnalysis, "severity" | "analysis_type">;
   size?: number;
 };
-
-function insightSeverityToColorMap(severity: string) {
-  if (severity === "critical") {
-    return "text-red-500";
-  }
-  if (severity === "warning") {
-    return "text-yellow-500";
-  }
-  return "text-gray-600";
-}
 
 type InsightTypeToIconProps = {
   type: string;
@@ -127,15 +116,5 @@ export function InsightTypeToIcon({
  *
  */
 export default function ConfigInsightsIcon({ analysis, size = 22 }: Props) {
-  const colorClass = useMemo(() => {
-    return insightSeverityToColorMap(analysis.severity);
-  }, [analysis.severity]);
-
-  return (
-    <InsightTypeToIcon
-      type={analysis.analysis_type}
-      size={size}
-      colorClass={colorClass}
-    />
-  );
+  return <InsightTypeToIcon type={analysis.analysis_type} size={size} />;
 }

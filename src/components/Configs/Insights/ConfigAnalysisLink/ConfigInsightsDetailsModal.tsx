@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
-import { useEffect, useMemo, useState } from "react";
-import { FiExternalLink } from "react-icons/fi";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  FiCheckCircle,
+  FiCircle,
+  FiExternalLink,
+  FiXCircle
+} from "react-icons/fi";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
 import { Property } from "../../../../api/types/topology";
@@ -9,13 +14,28 @@ import { Badge, badgeVariants } from "../../../ui/badge";
 import { cn } from "../../../../lib/utils";
 import { JSONViewer } from "../../../../ui/Code/JSONViewer";
 import { Modal } from "../../../../ui/Modal";
-import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
-import { formatISODate, isValidDate } from "../../../../utils/date";
+import Age from "../../../../ui/Age/Age";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import { DescriptionCard } from "../../../DescriptionCard";
 import AttachAsEvidenceButton from "../../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
+
+const statusConfig: Record<string, { icon: React.ReactNode }> = {
+  open: { icon: <FiCircle size={13} className="text-blue-500" /> },
+  resolved: { icon: <FiCheckCircle size={13} className="text-green-500" /> },
+  closed: { icon: <FiXCircle size={13} className="text-gray-400" /> }
+};
+
+const severityBadgeClass: Record<string, string> = {
+  info: "bg-gray-100 border-gray-300 text-gray-700",
+  low: "bg-green-50 border-green-300 text-green-700",
+  medium: "bg-yellow-50 border-yellow-300 text-yellow-700",
+  warning: "bg-yellow-100 border-yellow-400 text-yellow-800",
+  high: "bg-orange-50 border-orange-300 text-orange-700",
+  blocker: "bg-red-50 border-red-300 text-red-700",
+  critical: "bg-red-100 border-red-400 text-red-800"
+};
 
 /** A single badge-type property rendered as an inline pill. */
 function AnalysisBadge({ property }: { property: Property }) {
@@ -123,25 +143,67 @@ export default function ConfigInsightsDetailsModal({
         value: (
           <div className="flex flex-row gap-2">
             <ConfigInsightsIcon analysis={configInsight} />
-            {configInsight.analysis_type}
+            {configInsight.analysis_type
+              ? configInsight.analysis_type.charAt(0).toUpperCase() +
+                configInsight.analysis_type.slice(1)
+              : ""}
           </div>
         )
       },
       {
         label: "First Observed",
-        value: isValidDate(configInsight.first_observed)
-          ? formatISODate(configInsight.first_observed)
-          : ""
+        value: <Age from={configInsight.first_observed} />
       },
       {
         label: "Last Observed",
-        value: isValidDate(configInsight.last_observed)
-          ? formatISODate(configInsight.last_observed)
-          : ""
+        value: <Age from={configInsight.last_observed} />
       },
       {
         label: "Severity",
-        value: configInsight?.severity ?? ""
+        value: configInsight?.severity ? (
+          <Badge
+            variant="outline"
+            className={cn(
+              severityBadgeClass[configInsight.severity] ??
+                "border-gray-300 bg-gray-100 text-gray-700"
+            )}
+          >
+            {configInsight.severity.charAt(0).toUpperCase() +
+              configInsight.severity.slice(1)}
+          </Badge>
+        ) : (
+          ""
+        )
+      },
+      ...(configInsight?.config != null
+        ? [
+            {
+              label: "Config",
+              value: (
+                <ConfigLink
+                  className="overflow-hidden overflow-ellipsis whitespace-nowrap"
+                  config={configInsight.config}
+                />
+              )
+            }
+          ]
+        : []),
+      {
+        label: "Status",
+        value: configInsight?.status
+          ? (() => {
+              const cfg = statusConfig[configInsight.status];
+              return (
+                <div className="flex items-center gap-1">
+                  {cfg?.icon}
+                  <span>
+                    {configInsight.status.charAt(0).toUpperCase() +
+                      configInsight.status.slice(1)}
+                  </span>
+                </div>
+              );
+            })()
+          : ""
       },
       {
         label: "Source",
@@ -210,26 +272,12 @@ export default function ConfigInsightsDetailsModal({
         isLoading ? (
           <div className="h-5 w-48 animate-pulse rounded bg-gray-200" />
         ) : (
-          <ModalTitleListItems
-            items={[
-              <div
-                className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap"
-                key="analyzer"
-              >
-                {configInsight ? (
-                  <ConfigInsightsIcon analysis={configInsight} />
-                ) : null}
-                <span>{configInsight?.analyzer}</span>
-              </div>,
-              configInsight?.config != null ? (
-                <ConfigLink
-                  className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-blue-600"
-                  config={configInsight.config}
-                  key="config"
-                />
-              ) : null
-            ]}
-          />
+          <div className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap">
+            {configInsight ? (
+              <ConfigInsightsIcon analysis={configInsight} />
+            ) : null}
+            <span>{configInsight?.analyzer}</span>
+          </div>
         )
       }
       open={isOpen}
@@ -270,7 +318,7 @@ export default function ConfigInsightsDetailsModal({
             <DescriptionCard
               items={descriptionItems}
               labelStyle="top"
-              columns={3}
+              columns={4}
             />
             {configInsight.properties &&
               configInsight.properties.length > 0 && (
