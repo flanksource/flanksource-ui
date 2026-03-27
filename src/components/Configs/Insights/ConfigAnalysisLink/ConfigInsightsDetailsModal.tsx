@@ -247,7 +247,10 @@ export default function ConfigInsightsDetailsModal({
                 <AnalysisBadges properties={configInsight.properties} />
               )}
             {configInsight.summary && (
-              <p className="text-sm text-gray-700">{configInsight.summary}</p>
+              <p className="text-sm text-blue-600">
+                {configInsight.summary.charAt(0).toUpperCase() +
+                  configInsight.summary.slice(1)}
+              </p>
             )}
             {(sanitizedMessageHTML || analysisDetails) && (
               <div>
