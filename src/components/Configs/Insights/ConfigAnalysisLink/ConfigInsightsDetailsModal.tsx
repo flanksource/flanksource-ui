@@ -248,7 +248,7 @@ export default function ConfigInsightsDetailsModal({
                 <Tabs
                   activeTab={resolvedActiveTab}
                   onSelectTab={setActiveTab}
-                  contentClassName="flex flex-col flex-1 bg-white pt-4"
+                  contentClassName="flex flex-col flex-1 bg-white"
                 >
                   {[
                     ...(sanitizedMessageHTML
