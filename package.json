@@ -162,12 +162,13 @@
     ]
   },
   "scripts": {
-    "dev": "cross-env next dev",
+    "dev": "dotenv run cross-env next dev",
     "dev:canary": "cross-env NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER next dev",
-    "dev:clerk": "cp clerk.middleware.ts middleware.ts && cross-env next dev",
+    "dev:basic": "cp middleware.basic.ts middleware.ts && dotenv run cross-env next dev",
+    "dev:clerk": "cp middleware.clerk.ts middleware.ts && cross-env next dev",
     "start": "cross-env next start",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 node -v && cross-env NODE_OPTIONS=--max-old-space-size=8192 NODE_ENV=production next build",
-    "build:clerk": "cross-env NODE_OPTIONS=--max-old-space-size=8192 node -v && cp clerk.middleware.ts middleware.ts && cross-env NODE_OPTIONS=--max-old-space-size=8192 NODE_ENV=production next build",
+    "build:clerk": "cross-env NODE_OPTIONS=--max-old-space-size=8192 node -v && cp middleware.clerk.ts middleware.ts && cross-env NODE_OPTIONS=--max-old-space-size=8192 NODE_ENV=production next build",
     "serve-build": "gzip -f --keep build/static/*/*.{js,css} && node scripts/serve-build.js",
     "test": "jest --watch",
     "test:ci": "jest --ci",
