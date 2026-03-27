@@ -741,7 +741,7 @@ export const getConfigInsights = (
 
 export const getConfigInsightsByID = async (id: string) => {
   const res = await ConfigDB.get<ConfigAnalysis[] | null>(
-    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,properties,first_observed,last_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    `/config_analysis?select=id,source,analyzer,analysis_type,summary,message,severity,status,analysis,properties,first_observed,last_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
     {
       headers: {
         Prefer: "count=exact"

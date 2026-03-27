@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { sanitize } from "dompurify";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { getConfigInsightsByID } from "../../../../api/services/configs";
 import { EvidenceType } from "../../../../api/types/evidence";
@@ -12,6 +12,7 @@ import { Modal } from "../../../../ui/Modal";
 import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
 import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { formatISODate, isValidDate } from "../../../../utils/date";
+import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import { DescriptionCard } from "../../../DescriptionCard";
 import AttachAsEvidenceButton from "../../../Incidents/AttachEvidenceDialog/AttachAsEvidenceDialogButton";
 import ConfigLink from "../../ConfigLink/ConfigLink";
@@ -92,6 +93,8 @@ export default function ConfigInsightsDetailsModal({
   isOpen,
   onClose
 }: Props) {
+  const [activeTab, setActiveTab] = useState<"message" | "analysis">("message");
+
   const { data: configInsight, isLoading } = useQuery(
     ["config", "insights", id],
     () => getConfigInsightsByID(id!),
@@ -184,6 +187,14 @@ export default function ConfigInsightsDetailsModal({
     return JSON.stringify(analysis);
   }, [configInsight?.analysis]);
 
+  // If there's no message but there is analysis, default to the analysis tab
+  const resolvedActiveTab = useMemo(() => {
+    if (activeTab === "message" && !sanitizedMessageHTML && analysisDetails) {
+      return "analysis" as const;
+    }
+    return activeTab;
+  }, [activeTab, sanitizedMessageHTML, analysisDetails]);
+
   if (!isOpen || !id) {
     return null;
   }
@@ -229,31 +240,44 @@ export default function ConfigInsightsDetailsModal({
               configInsight.properties.length > 0 && (
                 <AnalysisBadges properties={configInsight.properties} />
               )}
-            {sanitizedMessageHTML && (
-              <DescriptionCard
-                items={[
-                  {
-                    label: "",
-                    value: (
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: sanitizedMessageHTML
-                        }}
-                      />
-                    )
-                  }
-                ]}
-                labelStyle="top"
-              />
+            {configInsight.summary && (
+              <p className="text-sm text-gray-700">{configInsight.summary}</p>
             )}
-            {analysisDetails && (
-              <JSONViewer
-                code={analysisDetails}
-                format="json"
-                convertToYaml
-                minHeight={80}
-                maxHeight={400}
-              />
+            {(sanitizedMessageHTML || analysisDetails) && (
+              <div>
+                <Tabs
+                  activeTab={resolvedActiveTab}
+                  onSelectTab={setActiveTab}
+                  contentClassName="flex flex-col flex-1 bg-white pt-4"
+                >
+                  {[
+                    ...(sanitizedMessageHTML
+                      ? [
+                          <Tab key="message" label="Message" value="message">
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: sanitizedMessageHTML
+                              }}
+                            />
+                          </Tab>
+                        ]
+                      : []),
+                    ...(analysisDetails
+                      ? [
+                          <Tab key="analysis" label="Analysis" value="analysis">
+                            <JSONViewer
+                              code={analysisDetails}
+                              format="json"
+                              convertToYaml
+                              minHeight={80}
+                              maxHeight={400}
+                            />
+                          </Tab>
+                        ]
+                      : [])
+                  ]}
+                </Tabs>
+              </div>
             )}
           </div>
 
