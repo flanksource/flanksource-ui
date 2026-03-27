@@ -862,7 +862,7 @@ export const getAllConfigInsights = async (
 
   return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigAnalysis[] | null>(
-      `/config_analysis_items?select=id,analysis_type,analyzer,severity,status,source,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis_items?select=id,analysis_type,analyzer,summary,severity,status,source,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"

@@ -34,7 +34,7 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     header: "Type",
     id: "analysis_type",
     accessorKey: "analysis_type",
-    size: 50,
+    size: 80,
     Cell: ({ cell }) => {
       const data = cell.row.original;
 
@@ -77,6 +77,22 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
       );
     },
     enableSorting: false
+  },
+  {
+    header: "Summary",
+    id: "summary",
+    accessorKey: "summary",
+    size: 300,
+    enableSorting: false,
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string>();
+      if (!value) return null;
+      return (
+        <span className="overflow-hidden overflow-ellipsis text-gray-600">
+          {value.charAt(0).toUpperCase() + value.slice(1)}
+        </span>
+      );
+    }
   },
   {
     header: "Severity",
