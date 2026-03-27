@@ -10,7 +10,6 @@ import { cn } from "../../../../lib/utils";
 import { JSONViewer } from "../../../../ui/Code/JSONViewer";
 import { Modal } from "../../../../ui/Modal";
 import ModalTitleListItems from "../../../../ui/Modal/ModalTitleListItems";
-import TextSkeletonLoader from "../../../../ui/SkeletonLoader/TextSkeletonLoader";
 import { formatISODate, isValidDate } from "../../../../utils/date";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import { DescriptionCard } from "../../../DescriptionCard";
@@ -208,32 +207,63 @@ export default function ConfigInsightsDetailsModal({
   return (
     <Modal
       title={
-        <ModalTitleListItems
-          items={[
-            <div
-              className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap"
-              key="analyzer"
-            >
-              {configInsight ? (
-                <ConfigInsightsIcon analysis={configInsight} />
-              ) : null}
-              <span>{configInsight?.analyzer}</span>
-            </div>,
-            configInsight?.config != null ? (
-              <ConfigLink
-                className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-blue-600"
-                config={configInsight.config}
-                key="config"
-              />
-            ) : null
-          ]}
-        />
+        isLoading ? (
+          <div className="h-5 w-48 animate-pulse rounded bg-gray-200" />
+        ) : (
+          <ModalTitleListItems
+            items={[
+              <div
+                className="flex flex-grow-0 flex-row items-center gap-1 whitespace-nowrap"
+                key="analyzer"
+              >
+                {configInsight ? (
+                  <ConfigInsightsIcon analysis={configInsight} />
+                ) : null}
+                <span>{configInsight?.analyzer}</span>
+              </div>,
+              configInsight?.config != null ? (
+                <ConfigLink
+                  className="overflow-hidden overflow-ellipsis whitespace-nowrap text-xl font-semibold text-blue-600"
+                  config={configInsight.config}
+                  key="config"
+                />
+              ) : null
+            ]}
+          />
+        )
       }
       open={isOpen}
       onClose={onClose}
     >
       {isLoading ? (
-        <TextSkeletonLoader />
+        <div className="flex animate-pulse flex-col gap-4 px-4 py-4">
+          {/* properties grid */}
+          <div className="grid grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-1">
+                <div className="h-3 w-16 rounded bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-100" />
+              </div>
+            ))}
+          </div>
+          {/* summary */}
+          <div className="h-4 w-2/3 rounded bg-gray-200" />
+          {/* tabs */}
+          <div className="flex gap-4 border-b border-gray-200 pb-2">
+            <div className="h-4 w-16 rounded bg-gray-200" />
+            <div className="h-4 w-16 rounded bg-gray-100" />
+          </div>
+          {/* content */}
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-3 rounded bg-gray-100"
+                style={{ width: `${80 - i * 8}%` }}
+              />
+            ))}
+          </div>
+        </div>
       ) : !configInsight ? null : (
         <>
           <div className="flex flex-col space-y-6 px-4 py-4">
