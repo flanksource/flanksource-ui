@@ -61,6 +61,7 @@ export default function ConfigInsightsList({
             });
           }}
           enableServerSideSorting
+          enableServerSidePagination
           totalRowCount={totalEntries}
           manualPageCount={pageCount}
           columns={configInsightsColumns}
