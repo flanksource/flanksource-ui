@@ -255,6 +255,7 @@ export default function ConfigInsightsDetailsModal({
                       ? [
                           <Tab key="message" label="Message" value="message">
                             <div
+                              className="pt-3 text-sm text-gray-700"
                               dangerouslySetInnerHTML={{
                                 __html: sanitizedMessageHTML
                               }}
