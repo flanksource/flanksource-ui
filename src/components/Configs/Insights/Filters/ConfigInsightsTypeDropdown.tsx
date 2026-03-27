@@ -1,7 +1,8 @@
+import TristateReactSelect, {
+  TriStateOptions
+} from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
 import React from "react";
-import { defaultSelections } from "../../../Incidents/data";
-import { ReactSelectDropdown } from "../../../ReactSelectDropdown";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
 export const configAnalysisTypeItems = {
@@ -13,8 +14,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Cost",
-    description: "Cost",
+    label: "Cost",
     value: "cost"
   },
   Availability: {
@@ -25,8 +25,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Availability",
-    description: "Availability",
+    label: "Availability",
     value: "availability"
   },
   Performance: {
@@ -37,8 +36,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Performance",
-    description: "Performance",
+    label: "Performance",
     value: "performance"
   },
   Security: {
@@ -49,11 +47,10 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Security",
-    description: "Security",
+    label: "Security",
     value: "security"
   },
-  integration: {
+  Integration: {
     id: "dropdown-type-integration",
     icon: (
       <ConfigInsightsIcon
@@ -61,8 +58,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Integration",
-    description: "Integration",
+    label: "Integration",
     value: "integration"
   },
   Compliance: {
@@ -73,8 +69,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Compliance",
-    description: "Compliance",
+    label: "Compliance",
     value: "compliance"
   },
   TechnicalDebt: {
@@ -85,8 +80,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Technical Debt",
-    description: "Technical Debt",
+    label: "Technical Debt",
     value: "technical_debt"
   },
   Reliability: {
@@ -97,8 +91,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Reliability",
-    description: "Reliability",
+    label: "Reliability",
     value: "reliability"
   },
   Recommendation: {
@@ -109,8 +102,7 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Recommendation",
-    description: "Recommendation",
+    label: "Recommendation",
     value: "recommendation"
   },
   Other: {
@@ -121,33 +113,37 @@ export const configAnalysisTypeItems = {
         size={18}
       />
     ),
-    name: "Other",
-    description: "Other",
+    label: "Other",
     value: "other"
   }
 } as const;
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  prefix?: string;
-  dropDownClassNames?: string;
-  hideControlBorder?: boolean;
-  showAllOption?: boolean;
+  label?: string;
 };
 
 export default function ConfigInsightsTypeDropdown({
-  prefix = "Type:",
-  name = "type",
-  className,
-  showAllOption,
-  dropDownClassNames,
-  hideControlBorder
+  label = "Type",
+  name = "type"
 }: Props) {
   const [field] = useField({
     name
   });
 
+  const options = Object.values(configAnalysisTypeItems)
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map((item) => ({
+      id: item.id,
+      label: item.label,
+      value: item.value,
+      icon: item.icon
+    })) satisfies TriStateOptions[];
+
   return (
-    <ReactSelectDropdown
+    <TristateReactSelect
+      options={options}
+      value={field.value}
+      minMenuWidth="16rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({
@@ -159,20 +155,7 @@ export default function ConfigInsightsTypeDropdown({
           });
         }
       }}
-      prefix={
-        <div className="whitespace-nowrap text-xs text-gray-500">{prefix}</div>
-      }
-      name={name}
-      className={className}
-      dropDownClassNames={dropDownClassNames}
-      value={field.value ?? "all"}
-      items={{
-        ...(showAllOption ? defaultSelections : {}),
-        ...Object.values(configAnalysisTypeItems).sort((a, b) =>
-          a.name > b.name ? 1 : -1
-        )
-      }}
-      hideControlBorder={hideControlBorder}
+      label={label}
     />
   );
 }

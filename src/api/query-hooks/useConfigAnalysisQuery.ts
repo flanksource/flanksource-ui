@@ -1,10 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { AxiosResponseWithTotalEntries } from "../../types";
-import {
-  getAllConfigInsights,
-  getConfigAnalysisByComponent,
-  getConfigsByIDs
-} from "../services/configs";
+import { getAllConfigInsights } from "../services/configs";
 import { PaginationInfo } from "../types/common";
 import { ConfigAnalysis } from "../types/configs";
 
@@ -14,7 +10,7 @@ export function useConfigInsightsQuery(
     severity?: string;
     type?: string;
     analyzer?: string;
-    component?: string;
+    source?: string;
     configId?: string;
     configType?: string;
   },
@@ -30,41 +26,7 @@ export function useConfigInsightsQuery(
 ) {
   return useQuery<AxiosResponseWithTotalEntries<ConfigAnalysis[]>, Error>(
     ["configs", "insights", pageInfo, queryParams, sortBy],
-    async () => {
-      if (queryParams.component) {
-        const res = await getConfigAnalysisByComponent(queryParams.component);
-        const insights = res.filter((item) => {
-          if (queryParams.status && item.status !== queryParams.status) {
-            return false;
-          }
-          if (queryParams.severity && item.severity !== queryParams.severity) {
-            return false;
-          }
-          if (queryParams.type && item.analysis_type !== queryParams.type) {
-            return false;
-          }
-          if (queryParams.analyzer && item.analyzer !== queryParams.analyzer) {
-            return false;
-          }
-          return true;
-        });
-        const configIds = insights.map((item) => item.config_id);
-        const configs = await getConfigsByIDs(configIds);
-        return {
-          data: insights.map((item) => {
-            const config = configs.find(
-              (config) => config.id === item.config_id
-            );
-            return {
-              ...item,
-              config
-            };
-          }),
-          error: null
-        };
-      }
-      return getAllConfigInsights(queryParams, sortBy, pageInfo);
-    },
+    () => getAllConfigInsights(queryParams, sortBy, pageInfo),
     options
   );
 }

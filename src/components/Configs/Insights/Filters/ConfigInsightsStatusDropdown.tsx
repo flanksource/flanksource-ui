@@ -1,4 +1,4 @@
-import { getConfigsAnalysisAnalyzers } from "@flanksource-ui/api/services/configs";
+import { getConfigInsightsStatuses } from "@flanksource-ui/api/services/configs";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
@@ -10,37 +10,37 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   label?: string;
 };
 
-export default function ConfigInsightsAnalyzerDropdown({
-  label = "Analyzer",
-  name = "analyzer"
+export default function ConfigInsightsStatusDropdown({
+  label = "Status",
+  name = "status"
 }: Props) {
   const [field] = useField({
     name
   });
 
-  const { data: analyzers, isLoading } = useQuery(
-    ["config_analysis_analyzers"],
-    () => getConfigsAnalysisAnalyzers()
+  const { data: statuses, isLoading } = useQuery(
+    ["config_analysis_statuses"],
+    () => getConfigInsightsStatuses()
   );
 
   const options = useMemo(() => {
-    return (analyzers ?? [])
+    return (statuses ?? [])
       .map((item) => {
         return {
-          id: item.analyzer,
-          label: item.analyzer,
-          value: item.analyzer
+          id: item.status,
+          label: item.status,
+          value: item.status
         } satisfies TriStateOptions;
       })
       .sort((a, b) => a.label.localeCompare(b.label));
-  }, [analyzers]);
+  }, [statuses]);
 
   return (
     <TristateReactSelect
       options={options}
       isLoading={isLoading}
       value={field.value}
-      minMenuWidth="16rem"
+      minMenuWidth="14rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({

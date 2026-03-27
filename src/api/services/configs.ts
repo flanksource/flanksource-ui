@@ -644,6 +644,54 @@ export const getConfigsAnalysisAnalyzers = async () => {
   return res.data ?? [];
 };
 
+export type ConfigAnalysisStatusItem = {
+  status: string;
+};
+
+export const getConfigInsightsStatuses = async () => {
+  const res = await resolvePostGrestRequestWithPagination<
+    ConfigAnalysisStatusItem[] | null
+  >(
+    ConfigDB.get(
+      `/config_analysis_items?select=status&status=not.is.null&order=status.asc`
+    )
+  );
+
+  const uniqueStatuses = Array.from(
+    new Set(
+      (res.data ?? [])
+        .map((item) => item.status)
+        .filter((item): item is string => !!item)
+    )
+  );
+
+  return uniqueStatuses.map((status) => ({ status }));
+};
+
+export type ConfigAnalysisSourceItem = {
+  source: string;
+};
+
+export const getConfigInsightsSources = async () => {
+  const res = await resolvePostGrestRequestWithPagination<
+    ConfigAnalysisSourceItem[] | null
+  >(
+    ConfigDB.get(
+      `/config_analysis_items?select=source&source=not.is.null&order=source.asc`
+    )
+  );
+
+  const uniqueSources = Array.from(
+    new Set(
+      (res.data ?? [])
+        .map((item) => item.source)
+        .filter((item): item is string => !!item)
+    )
+  );
+
+  return uniqueSources.map((source) => ({ source }));
+};
+
 export type ConfigChangesTypeItem = {
   change_type: string;
 };
@@ -693,7 +741,7 @@ export const getConfigInsights = (
 
 export const getConfigInsightsByID = async (id: string) => {
   const res = await ConfigDB.get<ConfigAnalysis[] | null>(
-    `/config_analysis?select=id,source,analyzer,analysis_type,message,severity,status,analysis,properties,first_observed,last_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
+    `/config_analysis?select=id,source,analyzer,analysis_type,summary,message,severity,status,analysis,properties,first_observed,last_observed,config:configs(id,name,config_class,type)&id=eq.${id}`,
     {
       headers: {
         Prefer: "count=exact"
@@ -766,7 +814,7 @@ export const getAllConfigInsights = async (
     type?: string;
     severity?: string;
     analyzer?: string;
-    component?: string;
+    source?: string;
     configId?: string;
     configType?: string;
   },
@@ -775,17 +823,32 @@ export const getAllConfigInsights = async (
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer, component, configId, configType } =
+  const { status, type, severity, analyzer, source, configId, configType } =
     queryParams;
 
+  const toFilterParam = (value: string | undefined, key: string) => {
+    if (!value) {
+      return undefined;
+    }
+
+    if (/(^|,).+:(-1|1)(,|$)/.test(value)) {
+      return tristateOutputToQueryFilterParam(value, key);
+    }
+
+    return `&${key}=eq.${value}`;
+  };
+
   const params = {
-    status: status && `&status=eq.${status}`,
-    type: type && `&analysis_type=eq.${type}`,
-    severity: severity && `&severity=eq.${severity}`,
-    analyzer: analyzer && `&analyzer=eq.${analyzer}`,
-    component: component && `&component_id=eq.${component}`,
+    status: toFilterParam(status, "status"),
+    type: toFilterParam(type, "analysis_type"),
+    severity: toFilterParam(severity, "severity"),
+    analyzer: toFilterParam(analyzer, "analyzer"),
+    source: toFilterParam(source, "source"),
     configId: configId && `&config_id=eq.${configId}`,
-    configType: configType && `&config_type=eq.${configType}`
+    configType: toFilterParam(configType, "config_type")
+      ?.split(",")
+      .map((v) => v.replaceAll("__", "::"))
+      .join(",")
   };
 
   const queryParamsString = Object.values(params)
@@ -799,7 +862,7 @@ export const getAllConfigInsights = async (
 
   return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigAnalysis[] | null>(
-      `/config_analysis_items?select=id,analysis_type,analyzer,severity,status,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis_items?select=id,analysis_type,analyzer,summary,severity,status,source,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"
@@ -826,13 +889,6 @@ export const getConfigComponentRelationships = async <T>(configID: string) => {
 export const getComponentConfigChanges = async (topologyID: string) => {
   const res = await ConfigDB.get<ConfigChange[]>(
     `/changes_by_component?component_id=eq.${topologyID}&select=id,type,config_id,name,change_type,config_class,created_at:configs(id, name, type, config_class)`
-  );
-  return res.data;
-};
-
-export const getConfigAnalysisByComponent = async (componentId: string) => {
-  const res = await ConfigDB.get<ConfigAnalysis[]>(
-    `/rpc/lookup_analysis_by_component?id=${componentId}`
   );
   return res.data;
 };

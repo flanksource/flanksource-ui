@@ -1,10 +1,13 @@
 import { ConfigAnalysis, ConfigItem } from "@flanksource-ui/api/types/configs";
+import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { Link } from "react-router-dom";
 import { ConfigIcon } from "../../../ui/Icons/ConfigIcon";
 import ConfigInsightsIcon from "./ConfigInsightsIcon";
 import ConfigInsightsSeverityIcons from "./ConfigInsightsSeverityIcons";
+
+const paramsToReset = ["pageIndex", "pageSize"];
 
 export const ConfigInsightsColumns: MRT_ColumnDef<
   ConfigAnalysis & { config?: ConfigItem }
@@ -31,17 +34,23 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     header: "Type",
     id: "analysis_type",
     accessorKey: "analysis_type",
-    size: 50,
+    size: 80,
     Cell: ({ cell }) => {
       const data = cell.row.original;
 
       return (
-        <div className="flex max-w-full items-center space-x-2">
-          <span className="w-auto">
-            <ConfigInsightsIcon analysis={data} />
-          </span>
-          <span className="capitalize">{data.analysis_type}</span>
-        </div>
+        <FilterByCellValue
+          paramKey="type"
+          filterValue={data.analysis_type}
+          paramsToReset={paramsToReset}
+        >
+          <div className="flex max-w-full items-center space-x-2">
+            <span className="w-auto">
+              <ConfigInsightsIcon analysis={data} />
+            </span>
+            <span className="capitalize">{data.analysis_type}</span>
+          </div>
+        </FilterByCellValue>
       );
     },
     enableSorting: false
@@ -56,12 +65,34 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
       const value = cell.getValue<string>();
 
       return (
-        <span className="flex-1 overflow-hidden overflow-ellipsis">
-          {value}
-        </span>
+        <FilterByCellValue
+          paramKey="analyzer"
+          filterValue={value}
+          paramsToReset={paramsToReset}
+        >
+          <span className="flex-1 overflow-hidden overflow-ellipsis">
+            {value}
+          </span>
+        </FilterByCellValue>
       );
     },
     enableSorting: false
+  },
+  {
+    header: "Summary",
+    id: "summary",
+    accessorKey: "summary",
+    size: 300,
+    enableSorting: false,
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string>();
+      if (!value) return null;
+      return (
+        <span className="overflow-hidden overflow-ellipsis text-gray-600">
+          {value.charAt(0).toUpperCase() + value.slice(1)}
+        </span>
+      );
+    }
   },
   {
     header: "Severity",
@@ -73,10 +104,16 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
       const value = cell.getValue<string>();
 
       return (
-        <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden overflow-ellipsis capitalize">
-          <ConfigInsightsSeverityIcons severity={value} />
-          <span>{value}</span>
-        </div>
+        <FilterByCellValue
+          paramKey="severity"
+          filterValue={value}
+          paramsToReset={paramsToReset}
+        >
+          <div className="flex flex-1 flex-row items-center gap-1 overflow-hidden overflow-ellipsis capitalize">
+            <ConfigInsightsSeverityIcons severity={value} />
+            <span>{value}</span>
+          </div>
+        </FilterByCellValue>
       );
     }
   },
@@ -85,7 +122,48 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     id: "status",
     accessorKey: "status",
     size: 50,
-    enableSorting: false
+    enableSorting: false,
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string>();
+
+      if (!value) {
+        return <span className="text-gray-400">—</span>;
+      }
+
+      return (
+        <FilterByCellValue
+          paramKey="status"
+          filterValue={value}
+          paramsToReset={paramsToReset}
+        >
+          <span className="capitalize">{value}</span>
+        </FilterByCellValue>
+      );
+    }
+  },
+  {
+    header: "Source",
+    id: "source",
+    accessorKey: "source",
+    size: 80,
+    enableSorting: false,
+    Cell: ({ cell }) => {
+      const value = cell.getValue<string | null | undefined>() ?? "";
+
+      if (!value) {
+        return <span className="text-gray-400">—</span>;
+      }
+
+      return (
+        <FilterByCellValue
+          paramKey="source"
+          filterValue={value}
+          paramsToReset={paramsToReset}
+        >
+          <span className="overflow-hidden text-ellipsis">{value}</span>
+        </FilterByCellValue>
+      );
+    }
   },
   {
     header: "First Observed",

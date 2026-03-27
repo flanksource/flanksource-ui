@@ -20,18 +20,20 @@ export default function ConfigInsightsSeverityIcons({
   switch (severity) {
     case "info":
       return <HiInformationCircle className="text-gray-500" size={size} />;
+    case "low":
+      return (
+        <HiOutlineChevronDoubleDown className="text-green-500" size={size} />
+      );
+    case "medium":
+      return <HiOutlineChevronDown className="text-yellow-400" size={size} />;
     case "warning":
       return <HiExclamation className="text-yellow-500" size={size} />;
-    case "low":
-      return <HiOutlineChevronDoubleDown color="green" size={size} />;
-    case "medium":
-      return <HiOutlineChevronDown color="green" size={size} />;
     case "high":
-      return <HiOutlineMinus color="orange" size={size} />;
+      return <HiOutlineMinus className="text-orange-500" size={size} />;
     case "blocker":
-      return <HiOutlineChevronUp color="red" size={size} />;
+      return <HiOutlineChevronUp className="text-red-500" size={size} />;
     case "critical":
-      return <HiOutlineChevronDoubleUp className="text-red-500" size={size} />;
+      return <HiOutlineChevronDoubleUp className="text-red-600" size={size} />;
     default:
       return null;
   }

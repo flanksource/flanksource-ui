@@ -1,7 +1,6 @@
 import useFetchConfigInsights from "@flanksource-ui/api/query-hooks/useFetchConfigInsights";
-import { ConfigAnalysis } from "@flanksource-ui/api/types/configs";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InfoMessage } from "../../InfoMessage";
 import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
@@ -14,18 +13,17 @@ type Props = {
   columnsToHide?: string[];
 };
 
+const INSIGHT_ID_SEARCH_PARAM = "insightId";
+
 export default function ConfigInsightsList({
   setIsLoading,
   triggerRefresh,
   configId,
   columnsToHide = []
 }: Props) {
-  const [params] = useSearchParams();
-  const [clickedInsightItem, setClickedInsightItem] =
-    useState<ConfigAnalysis>();
-  const [isInsightDetailsModalOpen, setIsInsightDetailsModalOpen] =
-    useState(false);
+  const [params, setParams] = useSearchParams();
 
+  const selectedInsightId = params.get(INSIGHT_ID_SEARCH_PARAM) ?? undefined;
   const pageSize = +(params.get("pageSize") ?? 50);
 
   const { data, isLoading, refetch, isRefetching, error } =
@@ -56,10 +54,14 @@ export default function ConfigInsightsList({
           isRefetching={isRefetching}
           hiddenColumns={columnsToHide}
           onRowClick={(row) => {
-            setClickedInsightItem(row);
-            setIsInsightDetailsModalOpen(true);
+            setParams((currentParams) => {
+              const nextParams = new URLSearchParams(currentParams);
+              nextParams.set(INSIGHT_ID_SEARCH_PARAM, row.id);
+              return nextParams;
+            });
           }}
           enableServerSideSorting
+          enableServerSidePagination
           totalRowCount={totalEntries}
           manualPageCount={pageCount}
           columns={configInsightsColumns}
@@ -68,9 +70,15 @@ export default function ConfigInsightsList({
       )}
 
       <ConfigInsightsDetailsModal
-        id={clickedInsightItem?.id}
-        isOpen={isInsightDetailsModalOpen}
-        onClose={() => setIsInsightDetailsModalOpen(false)}
+        id={selectedInsightId}
+        isOpen={!!selectedInsightId}
+        onClose={() => {
+          setParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams);
+            nextParams.delete(INSIGHT_ID_SEARCH_PARAM);
+            return nextParams;
+          });
+        }}
       />
     </>
   );

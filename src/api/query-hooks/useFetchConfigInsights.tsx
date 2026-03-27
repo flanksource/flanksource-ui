@@ -12,17 +12,17 @@ export default function useFetchConfigInsights(
   const type = params.get("type") ?? undefined;
   const configType = params.get("configType") ?? undefined;
   const analyzer = params.get("analyzer") ?? undefined;
-  const component = params.get("component") ?? undefined;
+  const source = params.get("source") ?? undefined;
   const pageSize = +(params.get("pageSize") ?? 50);
   const pageIndex = +(params.get("pageIndex") ?? 0);
 
   return useConfigInsightsQuery(
     {
       status,
-      severity: severity?.toLowerCase(),
+      severity,
       type,
       analyzer,
-      component,
+      source,
       configId,
       configType
     },
