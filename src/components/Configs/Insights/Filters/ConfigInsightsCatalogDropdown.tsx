@@ -1,3 +1,5 @@
+import { ConfigInsightsCatalogOption } from "@flanksource-ui/api/services/configs";
+import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
@@ -7,13 +9,13 @@ import { useMemo } from "react";
 type Props = {
   name?: string;
   label?: string;
-  options?: string[];
+  options?: ConfigInsightsCatalogOption[];
   isLoading?: boolean;
 };
 
-export default function ConfigInsightsAnalyzerDropdown({
-  name = "analyzer",
-  label = "Analyzer",
+export default function ConfigInsightsCatalogDropdown({
+  name = "catalogId",
+  label = "Catalog",
   options: rawOptions = [],
   isLoading = false
 }: Props) {
@@ -22,8 +24,13 @@ export default function ConfigInsightsAnalyzerDropdown({
   const options = useMemo(
     () =>
       rawOptions.map(
-        (value) =>
-          ({ id: value, label: value, value }) satisfies TriStateOptions
+        (config) =>
+          ({
+            id: config.id,
+            label: config.name,
+            value: config.id,
+            icon: <ConfigIcon config={config} />
+          }) satisfies TriStateOptions
       ),
     [rawOptions]
   );
@@ -33,7 +40,7 @@ export default function ConfigInsightsAnalyzerDropdown({
       options={options}
       isLoading={isLoading}
       value={field.value}
-      minMenuWidth="16rem"
+      minMenuWidth="20rem"
       onChange={(value) => {
         if (value && value !== "all") {
           field.onChange({ target: { name, value } });

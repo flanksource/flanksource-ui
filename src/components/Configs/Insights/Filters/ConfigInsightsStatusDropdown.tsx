@@ -1,55 +1,46 @@
-import { getConfigInsightsStatuses } from "@flanksource-ui/api/services/configs";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
-type Props = React.HTMLProps<HTMLDivElement> & {
+// Fixed domain list — these are the only valid analysis statuses.
+const STATUS_OPTIONS = ["open", "resolved", "silenced"];
+
+type Props = {
+  name?: string;
   label?: string;
 };
 
 export default function ConfigInsightsStatusDropdown({
-  label = "Status",
-  name = "status"
+  name = "status",
+  label = "Status"
 }: Props) {
-  const [field] = useField({
-    name
-  });
+  const [field] = useField({ name });
 
-  const { data: statuses, isLoading } = useQuery(
-    ["config_analysis_statuses"],
-    () => getConfigInsightsStatuses()
+  const options = useMemo(
+    () =>
+      STATUS_OPTIONS.map(
+        (value) =>
+          ({
+            id: value,
+            label: value.charAt(0).toUpperCase() + value.slice(1),
+            value
+          }) satisfies TriStateOptions
+      ),
+    []
   );
-
-  const options = useMemo(() => {
-    return (statuses ?? [])
-      .map((item) => {
-        return {
-          id: item.status,
-          label: item.status,
-          value: item.status
-        } satisfies TriStateOptions;
-      })
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [statuses]);
 
   return (
     <TristateReactSelect
       options={options}
-      isLoading={isLoading}
       value={field.value}
       minMenuWidth="14rem"
       onChange={(value) => {
         if (value && value !== "all") {
-          field.onChange({
-            target: { name, value }
-          });
+          field.onChange({ target: { name, value } });
         } else {
-          field.onChange({
-            target: { name, value: undefined }
-          });
+          field.onChange({ target: { name, value: undefined } });
         }
       }}
       label={label}

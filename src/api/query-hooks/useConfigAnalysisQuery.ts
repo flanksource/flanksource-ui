@@ -13,6 +13,7 @@ export function useConfigInsightsQuery(
     source?: string;
     configId?: string;
     configType?: string;
+    catalogId?: string;
   },
   sortBy: {
     sortBy?: string;

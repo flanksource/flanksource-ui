@@ -15,18 +15,25 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
   {
     header: "Catalog",
     id: "catalog",
+    accessorFn: (row) => row.config?.name ?? "",
     enableHiding: true,
     size: 100,
     Cell: ({ cell }) => {
       const config = cell.row.original.config;
 
       return (
-        <div className="flex max-w-full">
-          <Link className="items-center" to={`/catalog/${config?.id}`}>
-            <ConfigIcon config={config} />
-            <span>{config?.name}</span>
-          </Link>
-        </div>
+        <FilterByCellValue
+          paramKey="catalogId"
+          filterValue={config?.id ?? ""}
+          paramsToReset={paramsToReset}
+        >
+          <div className="flex max-w-full">
+            <Link className="items-center" to={`/catalog/${config?.id}`}>
+              <ConfigIcon config={config} />
+              <span>{config?.name}</span>
+            </Link>
+          </div>
+        </FilterByCellValue>
       );
     }
   },
@@ -52,8 +59,7 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
           </div>
         </FilterByCellValue>
       );
-    },
-    enableSorting: false
+    }
   },
   {
     header: "Analyzer",
@@ -75,15 +81,13 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
           </span>
         </FilterByCellValue>
       );
-    },
-    enableSorting: false
+    }
   },
   {
     header: "Summary",
     id: "summary",
     accessorKey: "summary",
     size: 300,
-    enableSorting: false,
     Cell: ({ cell }) => {
       const value = cell.getValue<string>();
       if (!value) return null;
@@ -99,7 +103,6 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     id: "severity",
     accessorKey: "severity",
     size: 50,
-    enableSorting: false,
     Cell: ({ cell }) => {
       const value = cell.getValue<string>();
 
@@ -122,7 +125,6 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     id: "status",
     accessorKey: "status",
     size: 50,
-    enableSorting: false,
     Cell: ({ cell }) => {
       const value = cell.getValue<string>();
 
@@ -146,7 +148,6 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     id: "source",
     accessorKey: "source",
     size: 80,
-    enableSorting: false,
     Cell: ({ cell }) => {
       const value = cell.getValue<string | null | undefined>() ?? "";
 

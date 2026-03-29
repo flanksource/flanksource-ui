@@ -7,12 +7,14 @@ export default function useFetchConfigInsights(
 ) {
   const [params] = useSearchParams();
 
-  const status = params.get("status") ?? undefined;
+  // Default status to "open" when not explicitly set in the URL
+  const status = params.get("status") ?? "open";
   const severity = params.get("severity") ?? undefined;
   const type = params.get("type") ?? undefined;
   const configType = params.get("configType") ?? undefined;
   const analyzer = params.get("analyzer") ?? undefined;
   const source = params.get("source") ?? undefined;
+  const catalogId = params.get("catalogId") ?? undefined;
   const pageSize = +(params.get("pageSize") ?? 50);
   const pageIndex = +(params.get("pageIndex") ?? 0);
 
@@ -23,8 +25,10 @@ export default function useFetchConfigInsights(
       type,
       analyzer,
       source,
+      // configId prop (config details page) takes precedence over catalogId URL param
       configId,
-      configType
+      configType,
+      catalogId: configId ? undefined : catalogId
     },
     {
       sortBy: params.get("sortBy") ?? undefined,
