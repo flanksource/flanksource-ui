@@ -24,7 +24,7 @@ export function ConfigDetailsInsightsPage() {
     >
       <div className={`flex h-full flex-1 flex-col space-y-2`}>
         <div className="flex flex-row items-center">
-          <ConfigInsightsFilters />
+          <ConfigInsightsFilters configId={id} />
         </div>
         <div className="flex h-full flex-col overflow-y-hidden">
           <ConfigInsightsList

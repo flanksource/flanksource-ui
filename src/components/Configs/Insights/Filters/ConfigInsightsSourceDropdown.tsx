@@ -1,39 +1,32 @@
-import { getConfigInsightsSources } from "@flanksource-ui/api/services/configs";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
-type Props = React.HTMLProps<HTMLDivElement> & {
+type Props = {
+  name?: string;
   label?: string;
+  options?: string[];
+  isLoading?: boolean;
 };
 
 export default function ConfigInsightsSourceDropdown({
+  name = "source",
   label = "Source",
-  name = "source"
+  options: rawOptions = [],
+  isLoading = false
 }: Props) {
-  const [field] = useField({
-    name
-  });
+  const [field] = useField({ name });
 
-  const { data: sources, isLoading } = useQuery(
-    ["config_analysis_sources"],
-    () => getConfigInsightsSources()
+  const options = useMemo(
+    () =>
+      rawOptions.map(
+        (value) =>
+          ({ id: value, label: value, value }) satisfies TriStateOptions
+      ),
+    [rawOptions]
   );
-
-  const options = useMemo(() => {
-    return (sources ?? [])
-      .map((item) => {
-        return {
-          id: item.source,
-          label: item.source,
-          value: item.source
-        } satisfies TriStateOptions;
-      })
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [sources]);
 
   return (
     <TristateReactSelect
@@ -43,13 +36,9 @@ export default function ConfigInsightsSourceDropdown({
       minMenuWidth="14rem"
       onChange={(value) => {
         if (value && value !== "all") {
-          field.onChange({
-            target: { name, value }
-          });
+          field.onChange({ target: { name, value } });
         } else {
-          field.onChange({
-            target: { name, value: undefined }
-          });
+          field.onChange({ target: { name, value: undefined } });
         }
       }}
       label={label}

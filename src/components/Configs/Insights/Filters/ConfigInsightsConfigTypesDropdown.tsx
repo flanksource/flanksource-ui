@@ -1,36 +1,33 @@
-import {
-  ConfigTypeItem,
-  getConfigsTypes
-} from "@flanksource-ui/api/services/configs";
 import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useQuery } from "@tanstack/react-query";
 import { useField } from "formik";
-import { useCallback } from "react";
+import { useMemo } from "react";
 import ConfigsTypeIcon from "../../ConfigsTypeIcon";
 
 type Props = {
   name?: string;
   label?: string;
+  options?: string[];
+  isLoading?: boolean;
 };
 
 export default function ConfigInsightsConfigTypesDropdown({
   name = "configType",
-  label = "Config Type"
+  label = "Config Type",
+  options: rawOptions = [],
+  isLoading = false
 }: Props) {
   const [field] = useField({ name });
 
-  const { isLoading, data: configTypeOptions } = useQuery({
-    queryKey: ["db", "config_types"],
-    queryFn: getConfigsTypes,
-    select: useCallback((data: ConfigTypeItem[] | null) => {
-      return data?.map(({ type }) => {
+  const options = useMemo(
+    () =>
+      rawOptions.map((type) => {
         const typeLabel =
-          type?.split("::").length === 1
+          type.split("::").length === 1
             ? type
             : type
-                ?.substring(type.indexOf("::") + 2)
+                .substring(type.indexOf("::") + 2)
                 .replaceAll("::", " ")
                 .trim();
 
@@ -40,13 +37,13 @@ export default function ConfigInsightsConfigTypesDropdown({
           value: type,
           icon: <ConfigsTypeIcon config={{ type }} />
         } satisfies TriStateOptions;
-      });
-    }, [])
-  });
+      }),
+    [rawOptions]
+  );
 
   return (
     <TristateReactSelect
-      options={configTypeOptions || []}
+      options={options}
       isLoading={isLoading}
       value={field.value}
       minMenuWidth="20rem"
@@ -54,9 +51,7 @@ export default function ConfigInsightsConfigTypesDropdown({
         if (value && value !== "all") {
           field.onChange({ target: { name, value } });
         } else {
-          field.onChange({
-            target: { name, value: undefined }
-          });
+          field.onChange({ target: { name, value: undefined } });
         }
       }}
       label={label}

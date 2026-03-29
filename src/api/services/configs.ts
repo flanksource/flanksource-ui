@@ -626,6 +626,51 @@ export type ConfigAnalysisTypeItem = {
   analysis_type: string;
 };
 
+// ---------------------------------------------------------------------------
+// config_analysis_filter_options RPC
+// ---------------------------------------------------------------------------
+
+export type ConfigInsightsCatalogOption = {
+  id: string;
+  name: string;
+  type: string;
+  config_class: string;
+};
+
+export type ConfigInsightsFilterOptions = {
+  types: string[];
+  analyzers: string[];
+  sources: string[];
+  config_types: string[];
+  catalogs: ConfigInsightsCatalogOption[];
+};
+
+const emptyInsightsFilterOptions: ConfigInsightsFilterOptions = {
+  types: [],
+  analyzers: [],
+  sources: [],
+  config_types: [],
+  catalogs: []
+};
+
+/**
+ * Calls the config_analysis_filter_options stored procedure which returns all
+ * distinct filter values in a single round-trip. When configId is provided the
+ * results are scoped to that config's analysis rows.
+ */
+export const getConfigInsightsFilterOptions = async (
+  configId?: string
+): Promise<ConfigInsightsFilterOptions> => {
+  const params = new URLSearchParams();
+  if (configId) params.set("p_config_id", configId);
+
+  const res = await ConfigDB.get<ConfigInsightsFilterOptions>(
+    `/rpc/config_analysis_filter_options?${params.toString()}`
+  );
+
+  return res.data ?? emptyInsightsFilterOptions;
+};
+
 export const getConfigsAnalysisTypesFilter = async () => {
   const res = await IncidentCommander.get<ConfigAnalysisTypeItem[] | null>(
     `/analysis_types`
@@ -694,6 +739,40 @@ export const getConfigInsightsSources = async () => {
 
 export type ConfigChangesTypeItem = {
   change_type: string;
+};
+
+export type ConfigInsightsCatalogItem = Pick<
+  ConfigItem,
+  "id" | "name" | "config_class" | "type"
+>;
+
+/**
+ * Returns the distinct set of configs that have at least one config_analysis
+ * entry, joining config metadata (id, name, config_class, type) from the
+ * configs table.  Deduplication by config id is done client-side.
+ */
+export const getConfigInsightsCatalogs = async (): Promise<
+  ConfigInsightsCatalogItem[]
+> => {
+  const res = await resolvePostGrestRequestWithPagination<
+    { config: ConfigInsightsCatalogItem | null }[] | null
+  >(
+    ConfigDB.get(
+      `/config_analysis_items?select=config:configs(id,name,config_class,type)&config_id=not.is.null`,
+      { headers: { Prefer: "count=none" } }
+    )
+  );
+
+  const seen = new Set<string>();
+  return (res.data ?? [])
+    .map((row) => row.config)
+    .filter((c): c is ConfigInsightsCatalogItem => !!c?.id)
+    .filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    })
+    .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
 };
 
 export const getConfigsChangesTypesFilter = async () => {
@@ -817,14 +896,23 @@ export const getAllConfigInsights = async (
     source?: string;
     configId?: string;
     configType?: string;
+    catalogId?: string;
   },
   sortBy: { sortBy?: string; sortOrder?: "asc" | "desc" },
   { pageIndex, pageSize }: PaginationInfo
 ) => {
   const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
-  const { status, type, severity, analyzer, source, configId, configType } =
-    queryParams;
+  const {
+    status,
+    type,
+    severity,
+    analyzer,
+    source,
+    configId,
+    configType,
+    catalogId
+  } = queryParams;
 
   const toFilterParam = (value: string | undefined, key: string) => {
     if (!value) {
@@ -848,21 +936,40 @@ export const getAllConfigInsights = async (
     configType: toFilterParam(configType, "config_type")
       ?.split(",")
       .map((v) => v.replaceAll("__", "::"))
-      .join(",")
+      .join(","),
+    catalogId: toFilterParam(catalogId, "config_id")
   };
 
   const queryParamsString = Object.values(params)
     .filter((value) => !!value)
     .join("");
 
-  const sortString = sortBy.sortBy
-    ? `&order=${sortBy.sortBy}.${sortBy.sortOrder}`
+  // Map column IDs to their actual DB field names for sorting
+  const sortColumnMap: Record<string, string> = {
+    // Sort catalog by config name exposed by config_analysis_items view
+    catalog: "config_name",
+    analysis_type: "analysis_type",
+    analyzer: "analyzer",
+    summary: "summary",
+    severity: "severity",
+    status: "status",
+    source: "source",
+    first_observed: "first_observed",
+    last_observed: "last_observed"
+  };
+
+  const resolvedSortBy = sortBy.sortBy
+    ? (sortColumnMap[sortBy.sortBy] ?? sortBy.sortBy)
+    : undefined;
+
+  const sortString = resolvedSortBy
+    ? `&order=${resolvedSortBy}.${sortBy.sortOrder}`
     : // default sort by first_observed
       "&order=first_observed.desc";
 
   return resolvePostGrestRequestWithPagination(
     ConfigDB.get<ConfigAnalysis[] | null>(
-      `/config_analysis_items?select=id,analysis_type,analyzer,summary,severity,status,source,first_observed,last_observed,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
+      `/config_analysis_items?select=id,analysis_type,analyzer,summary,severity,status,source,first_observed,last_observed,config_name,config:configs(id,name,config_class,type)${pagingParams}${queryParamsString}${sortString}`,
       {
         headers: {
           Prefer: "count=exact"

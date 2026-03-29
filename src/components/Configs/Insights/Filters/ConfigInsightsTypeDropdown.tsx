@@ -2,22 +2,15 @@ import TristateReactSelect, {
   TriStateOptions
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useField } from "formik";
-import React from "react";
+import { useMemo } from "react";
 import ConfigInsightsIcon from "../ConfigInsightsIcon";
 
-export const configAnalysisTypeItems = {
-  Cost: {
-    id: "dropdown-type-cost",
-    icon: (
-      <ConfigInsightsIcon
-        analysis={{ analysis_type: "cost", severity: "" }}
-        size={18}
-      />
-    ),
-    label: "Cost",
-    value: "cost"
-  },
-  Availability: {
+// Full set of analysis type definitions with icons, keyed by value.
+export const configAnalysisTypeItems: Record<
+  string,
+  { id: string; label: string; value: string; icon: React.ReactNode }
+> = {
+  availability: {
     id: "dropdown-type-availability",
     icon: (
       <ConfigInsightsIcon
@@ -28,40 +21,7 @@ export const configAnalysisTypeItems = {
     label: "Availability",
     value: "availability"
   },
-  Performance: {
-    id: "dropdown-type-performance",
-    icon: (
-      <ConfigInsightsIcon
-        analysis={{ analysis_type: "performance", severity: "" }}
-        size={18}
-      />
-    ),
-    label: "Performance",
-    value: "performance"
-  },
-  Security: {
-    id: "dropdown-type-security",
-    icon: (
-      <ConfigInsightsIcon
-        analysis={{ analysis_type: "security", severity: "" }}
-        size={18}
-      />
-    ),
-    label: "Security",
-    value: "security"
-  },
-  Integration: {
-    id: "dropdown-type-integration",
-    icon: (
-      <ConfigInsightsIcon
-        analysis={{ analysis_type: "integration", severity: "" }}
-        size={18}
-      />
-    ),
-    label: "Integration",
-    value: "integration"
-  },
-  Compliance: {
+  compliance: {
     id: "dropdown-type-compliance",
     icon: (
       <ConfigInsightsIcon
@@ -72,29 +32,51 @@ export const configAnalysisTypeItems = {
     label: "Compliance",
     value: "compliance"
   },
-  TechnicalDebt: {
-    id: "dropdown-type-technical-debt",
+  cost: {
+    id: "dropdown-type-cost",
     icon: (
       <ConfigInsightsIcon
-        analysis={{ analysis_type: "technical_debt", severity: "" }}
+        analysis={{ analysis_type: "cost", severity: "" }}
         size={18}
       />
     ),
-    label: "Technical Debt",
-    value: "technical_debt"
+    label: "Cost",
+    value: "cost"
   },
-  Reliability: {
-    id: "dropdown-type-reliability",
+  integration: {
+    id: "dropdown-type-integration",
     icon: (
       <ConfigInsightsIcon
-        analysis={{ analysis_type: "reliability", severity: "" }}
+        analysis={{ analysis_type: "integration", severity: "" }}
         size={18}
       />
     ),
-    label: "Reliability",
-    value: "reliability"
+    label: "Integration",
+    value: "integration"
   },
-  Recommendation: {
+  other: {
+    id: "dropdown-type-other",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "other", severity: "" }}
+        size={18}
+      />
+    ),
+    label: "Other",
+    value: "other"
+  },
+  performance: {
+    id: "dropdown-type-performance",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "performance", severity: "" }}
+        size={18}
+      />
+    ),
+    label: "Performance",
+    value: "performance"
+  },
+  recommendation: {
     id: "dropdown-type-recommendation",
     icon: (
       <ConfigInsightsIcon
@@ -105,54 +87,81 @@ export const configAnalysisTypeItems = {
     label: "Recommendation",
     value: "recommendation"
   },
-  Other: {
-    id: "dropdown-type-other",
+  reliability: {
+    id: "dropdown-type-reliability",
     icon: (
       <ConfigInsightsIcon
-        analysis={{ analysis_type: "other", severity: "" }}
+        analysis={{ analysis_type: "reliability", severity: "" }}
         size={18}
       />
     ),
-    label: "Other",
-    value: "other"
+    label: "Reliability",
+    value: "reliability"
+  },
+  security: {
+    id: "dropdown-type-security",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "security", severity: "" }}
+        size={18}
+      />
+    ),
+    label: "Security",
+    value: "security"
+  },
+  technical_debt: {
+    id: "dropdown-type-technical-debt",
+    icon: (
+      <ConfigInsightsIcon
+        analysis={{ analysis_type: "technical_debt", severity: "" }}
+        size={18}
+      />
+    ),
+    label: "Technical Debt",
+    value: "technical_debt"
   }
-} as const;
+};
 
-type Props = React.HTMLProps<HTMLDivElement> & {
+type Props = {
+  name?: string;
   label?: string;
+  /** Values returned by the SP — only types present in the data are shown. */
+  options?: string[];
+  isLoading?: boolean;
 };
 
 export default function ConfigInsightsTypeDropdown({
+  name = "type",
   label = "Type",
-  name = "type"
+  options: availableTypes = [],
+  isLoading = false
 }: Props) {
-  const [field] = useField({
-    name
-  });
+  const [field] = useField({ name });
 
-  const options = Object.values(configAnalysisTypeItems)
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .map((item) => ({
-      id: item.id,
-      label: item.label,
-      value: item.value,
-      icon: item.icon
-    })) satisfies TriStateOptions[];
+  const options = useMemo(() => {
+    const typeSet = new Set(availableTypes);
+    return Object.values(configAnalysisTypeItems)
+      .filter(({ value }) => typeSet.size === 0 || typeSet.has(value))
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map(({ id, label, value, icon }) => ({
+        id,
+        label,
+        value,
+        icon
+      })) satisfies TriStateOptions[];
+  }, [availableTypes]);
 
   return (
     <TristateReactSelect
       options={options}
+      isLoading={isLoading}
       value={field.value}
       minMenuWidth="16rem"
       onChange={(value) => {
         if (value && value !== "all") {
-          field.onChange({
-            target: { name, value }
-          });
+          field.onChange({ target: { name, value } });
         } else {
-          field.onChange({
-            target: { name, value: undefined }
-          });
+          field.onChange({ target: { name, value: undefined } });
         }
       }}
       label={label}
