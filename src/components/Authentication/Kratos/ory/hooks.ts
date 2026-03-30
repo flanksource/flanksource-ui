@@ -32,10 +32,14 @@ export function handleGetFlowError<S>(
         }
         await router.push("/login?aal=aal2&return_to=" + window.location.href);
         return;
-      case "session_already_available":
-        // User is already signed in, let's redirect them home!
-        await router.push("/");
+      case "session_already_available": {
+        // User is already signed in; continue the requested flow when return_to is present.
+        const returnTo = new URLSearchParams(window.location.search).get(
+          "return_to"
+        );
+        await router.push(returnTo || "/");
         return;
+      }
       case "session_refresh_required":
         // We need to re-authenticate to perform this action
         window.location.href = err.response?.data.redirect_browser_to;
