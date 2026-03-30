@@ -937,14 +937,15 @@ export const getAllConfigInsights = async (
       ?.split(",")
       .map((v) => v.replaceAll("__", "::"))
       .join(","),
-    catalogId: toFilterParam(catalogId, "config_id")
+    // Prefer explicit configId when both are present.
+    catalogId: !configId ? toFilterParam(catalogId, "config_id") : undefined
   };
 
   const queryParamsString = Object.values(params)
     .filter((value) => !!value)
     .join("");
 
-  // Map column IDs to their actual DB field names for sorting
+  // Map allowed UI sort column IDs to DB field names.
   const sortColumnMap: Record<string, string> = {
     // Sort catalog by config name exposed by config_analysis_items view
     catalog: "config_name",
@@ -959,11 +960,12 @@ export const getAllConfigInsights = async (
   };
 
   const resolvedSortBy = sortBy.sortBy
-    ? (sortColumnMap[sortBy.sortBy] ?? sortBy.sortBy)
+    ? sortColumnMap[sortBy.sortBy]
     : undefined;
 
+  const resolvedSortOrder = sortBy.sortOrder ?? "desc";
   const sortString = resolvedSortBy
-    ? `&order=${resolvedSortBy}.${sortBy.sortOrder}`
+    ? `&order=${resolvedSortBy}.${resolvedSortOrder}`
     : // default sort by first_observed
       "&order=first_observed.desc";
 

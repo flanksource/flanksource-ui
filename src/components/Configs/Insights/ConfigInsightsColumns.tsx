@@ -21,16 +21,20 @@ export const ConfigInsightsColumns: MRT_ColumnDef<
     Cell: ({ cell }) => {
       const config = cell.row.original.config;
 
+      if (!config?.id) {
+        return <span className="text-gray-400">—</span>;
+      }
+
       return (
         <FilterByCellValue
           paramKey="catalogId"
-          filterValue={config?.id ?? ""}
+          filterValue={config.id}
           paramsToReset={paramsToReset}
         >
           <div className="flex max-w-full">
-            <Link className="items-center" to={`/catalog/${config?.id}`}>
+            <Link className="items-center" to={`/catalog/${config.id}`}>
               <ConfigIcon config={config} />
-              <span>{config?.name}</span>
+              <span>{config.name}</span>
             </Link>
           </div>
         </FilterByCellValue>
