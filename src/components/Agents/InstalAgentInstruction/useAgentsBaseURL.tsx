@@ -8,7 +8,11 @@ export function useAgentsBaseURL() {
   // if we are on the SaaS platform, we need to use the backend URL from the user
   // profile, not the current URL
   const baseUrl =
-    authSystem === "clerk" ? backendUrl : window.location.origin + "/api";
+    authSystem === "clerk"
+      ? backendUrl
+      : typeof window !== "undefined"
+        ? window.location.origin + "/api"
+        : "";
 
   return baseUrl;
 }

@@ -10,6 +10,7 @@ import CreateTokenForm, {
   TokenFormValues
 } from "../Tokens/Add/CreateTokenForm";
 import TokenDisplayModal from "../Tokens/Add/TokenDisplayModal";
+import SetupMcpModal from "./SetupMcpModal";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
   import("../ResourceSelectorSearch/ResourceSelectorSearchModal").then(
@@ -23,6 +24,7 @@ export function UserProfileDropdown() {
   const authSystem = useDetermineAuthSystem();
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
     useState(false);
+  const [isMcpSetupModalOpen, setIsMcpSetupModalOpen] = useState(false);
   const [isMcpTokenModalOpen, setIsMcpTokenModalOpen] = useState(false);
   const [isMcpTokenDisplayModalOpen, setIsMcpTokenDisplayModalOpen] =
     useState(false);
@@ -55,7 +57,7 @@ export function UserProfileDropdown() {
               <UserButton.Action
                 label="Setup MCP"
                 labelIcon={<IoMdAirplane />}
-                onClick={() => setIsMcpTokenModalOpen(true)}
+                onClick={() => setIsMcpSetupModalOpen(true)}
               />
               <UserButton.Action
                 label="Resource selector search"
@@ -68,7 +70,7 @@ export function UserProfileDropdown() {
       ) : (
         <KratosUserProfileDropdown
           openKubeConfigModal={() => setIsDownloadKubeConfigModalOpen(true)}
-          openMcpTokenModal={() => setIsMcpTokenModalOpen(true)}
+          openMcpTokenModal={() => setIsMcpSetupModalOpen(true)}
           openResourceSelectorSearchModal={() =>
             setIsResourceSelectorSearchModalOpen(true)
           }
@@ -77,6 +79,11 @@ export function UserProfileDropdown() {
       <AddKubeConfigModal
         isOpen={isDownloadKubeConfigModalOpen}
         onClose={() => setIsDownloadKubeConfigModalOpen(false)}
+      />
+      <SetupMcpModal
+        isOpen={isMcpSetupModalOpen}
+        onClose={() => setIsMcpSetupModalOpen(false)}
+        onSelectAccessTokenMode={() => setIsMcpTokenModalOpen(true)}
       />
       <CreateTokenForm
         isOpen={isMcpTokenModalOpen}
