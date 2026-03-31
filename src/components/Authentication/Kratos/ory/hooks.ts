@@ -8,6 +8,7 @@ import {
   useState
 } from "react";
 import toast from "react-hot-toast";
+import { sanitizeReturnTo } from "./returnTo";
 import ory from "./sdk";
 
 export function handleGetFlowError<S>(
@@ -37,7 +38,7 @@ export function handleGetFlowError<S>(
         const returnTo = new URLSearchParams(window.location.search).get(
           "return_to"
         );
-        await router.push(returnTo || "/");
+        await router.push(sanitizeReturnTo(returnTo));
         return;
       }
       case "session_refresh_required":
