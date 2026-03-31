@@ -18,7 +18,7 @@ export function createAuthorizer(ctx: WhoamiResponse["payload"]): Authorizer {
   const authorizer = new casbinAuthorizer("manual");
   const builtPerms: Record<string, any> = {};
 
-  ctx.roles.forEach((role) => {
+  (ctx.roles ?? []).forEach((role) => {
     const permissions = permDefs[role as keyof typeof permDefs] ?? {};
     Object.entries(permissions).forEach(([key, value]) => {
       builtPerms[key] = [...(builtPerms[key] || []), ...value];
