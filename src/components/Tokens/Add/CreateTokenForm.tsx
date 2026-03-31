@@ -25,7 +25,7 @@ export type TokenFormValues = CreateTokenRequest & {
   objectActions: Record<string, boolean>;
 };
 
-type Props = {
+type CreateTokenFormProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: (
@@ -33,6 +33,16 @@ type Props = {
     formValues: TokenFormValues
   ) => void;
   isMcpSetup?: boolean;
+};
+
+type CreateTokenFormContentProps = {
+  onSuccess?: (
+    response: CreateTokenResponse,
+    formValues: TokenFormValues
+  ) => void;
+  isMcpSetup?: boolean;
+  showFooter?: boolean;
+  formId?: string;
 };
 
 const expiryOptions = [
@@ -43,12 +53,12 @@ const expiryOptions = [
   { label: "Never", value: "" }
 ];
 
-export default function CreateTokenForm({
-  isOpen,
-  onClose,
+export function CreateTokenFormContent({
   onSuccess = () => {},
-  isMcpSetup = false
-}: Props) {
+  isMcpSetup = false,
+  showFooter = true,
+  formId
+}: CreateTokenFormContentProps) {
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
     onSuccess: (data) => {
@@ -119,60 +129,56 @@ export default function CreateTokenForm({
   };
 
   return (
-    <Modal
-      title="Create new token"
-      onClose={onClose}
-      open={isOpen}
-      bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+    <Formik<TokenFormValues>
+      initialValues={{
+        name: "",
+        expiry: "90d",
+        autoRenew: false,
+        objectActions: getInitialObjectActions()
+      }}
+      enableReinitialize
+      onSubmit={handleFormSubmit}
+      validate={(values) => {
+        const errors: any = {};
+        if (!values.name.trim()) {
+          errors.name = "Name is required";
+        }
+        return errors;
+      }}
     >
-      <Formik<TokenFormValues>
-        initialValues={{
-          name: "",
-          expiry: "90d",
-          autoRenew: false,
-          objectActions: getInitialObjectActions()
-        }}
-        enableReinitialize
-        onSubmit={handleFormSubmit}
-        validate={(values) => {
-          const errors: any = {};
-          if (!values.name.trim()) {
-            errors.name = "Name is required";
-          }
-          return errors;
-        }}
-      >
-        {({ handleSubmit, isValid }) => (
-          <Form
-            className="flex flex-1 flex-col overflow-y-auto"
-            onSubmit={handleSubmit}
-          >
-            <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
-              <div className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}>
-                <div className="flex flex-col space-y-4 overflow-y-auto p-4">
-                  <FormikTextInput
-                    name="name"
-                    label="Name"
-                    required
-                    hint="A descriptive name for this token"
-                  />
-                  <FormikSelectDropdown
-                    name="expiry"
-                    label="Expiry"
-                    options={expiryOptions}
-                    hint="When this token should expire"
-                  />
-                  <FormikCheckbox
-                    name="autoRenew"
-                    label="Auto Renew"
-                    hint="If the token is being used continuously, it's expiry is renewed"
-                    checkboxStyle="toggle"
-                  />
+      {({ handleSubmit, isValid }) => (
+        <Form
+          id={formId}
+          className="flex flex-1 flex-col overflow-y-auto"
+          onSubmit={handleSubmit}
+        >
+          <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
+            <div className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}>
+              <div className="flex flex-col space-y-4 overflow-y-auto p-4">
+                <FormikTextInput
+                  name="name"
+                  label="Name"
+                  required
+                  hint="A descriptive name for this token"
+                />
+                <FormikSelectDropdown
+                  name="expiry"
+                  label="Expiry"
+                  options={expiryOptions}
+                  hint="When this token should expire"
+                />
+                <FormikCheckbox
+                  name="autoRenew"
+                  label="Auto Renew"
+                  hint="If the token is being used continuously, it's expiry is renewed"
+                  checkboxStyle="toggle"
+                />
 
-                  <TokenScopeFieldsGroup isMcpSetup={isMcpSetup} />
-                </div>
+                <TokenScopeFieldsGroup isMcpSetup={isMcpSetup} />
               </div>
             </div>
+          </div>
+          {showFooter && (
             <div
               className={clsx(
                 "flex items-center justify-end bg-gray-100 px-5 py-4"
@@ -188,9 +194,27 @@ export default function CreateTokenForm({
                 disabled={!isValid || isLoading}
               />
             </div>
-          </Form>
-        )}
-      </Formik>
+          )}
+        </Form>
+      )}
+    </Formik>
+  );
+}
+
+export default function CreateTokenForm({
+  isOpen,
+  onClose,
+  onSuccess = () => {},
+  isMcpSetup = false
+}: CreateTokenFormProps) {
+  return (
+    <Modal
+      title="Create new token"
+      onClose={onClose}
+      open={isOpen}
+      bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
+    >
+      <CreateTokenFormContent onSuccess={onSuccess} isMcpSetup={isMcpSetup} />
     </Modal>
   );
 }

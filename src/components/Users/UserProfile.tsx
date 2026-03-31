@@ -2,14 +2,9 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useState } from "react";
 import { Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload } from "react-icons/io";
-import { CreateTokenResponse } from "../../api/services/tokens";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
-import CreateTokenForm, {
-  TokenFormValues
-} from "../Tokens/Add/CreateTokenForm";
-import TokenDisplayModal from "../Tokens/Add/TokenDisplayModal";
 import SetupMcpModal from "./SetupMcpModal";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
@@ -25,17 +20,10 @@ export function UserProfileDropdown() {
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
     useState(false);
   const [isMcpSetupModalOpen, setIsMcpSetupModalOpen] = useState(false);
-  const [isMcpTokenModalOpen, setIsMcpTokenModalOpen] = useState(false);
-  const [isMcpTokenDisplayModalOpen, setIsMcpTokenDisplayModalOpen] =
-    useState(false);
   const [
     isResourceSelectorSearchModalOpen,
     setIsResourceSelectorSearchModalOpen
   ] = useState(false);
-  const [mcpTokenResponse, setMcpTokenResponse] =
-    useState<CreateTokenResponse>();
-  const [mcpTokenFormValues, setMcpTokenFormValues] =
-    useState<TokenFormValues>();
 
   return (
     <>
@@ -83,28 +71,7 @@ export function UserProfileDropdown() {
       <SetupMcpModal
         isOpen={isMcpSetupModalOpen}
         onClose={() => setIsMcpSetupModalOpen(false)}
-        onSelectAccessTokenMode={() => setIsMcpTokenModalOpen(true)}
       />
-      <CreateTokenForm
-        isOpen={isMcpTokenModalOpen}
-        onClose={() => setIsMcpTokenModalOpen(false)}
-        onSuccess={(response, formValues) => {
-          setMcpTokenResponse(response);
-          setMcpTokenFormValues(formValues);
-          setIsMcpTokenModalOpen(false);
-          setIsMcpTokenDisplayModalOpen(true);
-        }}
-        isMcpSetup={true}
-      />
-      {mcpTokenResponse && (
-        <TokenDisplayModal
-          isOpen={isMcpTokenDisplayModalOpen}
-          onClose={() => setIsMcpTokenDisplayModalOpen(false)}
-          tokenResponse={mcpTokenResponse}
-          formValues={mcpTokenFormValues}
-          isMcp={true}
-        />
-      )}
       {isResourceSelectorSearchModalOpen && (
         <Suspense fallback={null}>
           <LazyResourceSelectorSearchModal

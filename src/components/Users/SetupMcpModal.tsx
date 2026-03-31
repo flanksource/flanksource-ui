@@ -1,5 +1,11 @@
 import { useState } from "react";
+import { CreateTokenResponse } from "@flanksource-ui/api/services/tokens";
 import { useAgentsBaseURL } from "@flanksource-ui/components/Agents/InstalAgentInstruction/useAgentsBaseURL";
+import {
+  CreateTokenFormContent,
+  TokenFormValues
+} from "@flanksource-ui/components/Tokens/Add/CreateTokenForm";
+import { TokenDisplayContent } from "@flanksource-ui/components/Tokens/Add/TokenDisplayModal";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { Modal } from "@flanksource-ui/ui/Modal";
@@ -8,7 +14,6 @@ import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSelectAccessTokenMode: () => void;
 };
 
 type SetupMode = "as-user" | "access-token";
@@ -20,14 +25,23 @@ const mcpUsageInstructionsByClient: Partial<Record<ClientKey, string>> = {
   "vscode-copilot": "Add this to .vscode/mcp.json in your project root"
 };
 
-export default function SetupMcpModal({
-  isOpen,
-  onClose,
-  onSelectAccessTokenMode
-}: Props) {
+const ACCESS_TOKEN_FORM_ID = "setup-mcp-access-token-form";
+
+export default function SetupMcpModal({ isOpen, onClose }: Props) {
   const [mode, setMode] = useState<SetupMode>("as-user");
   const [activeClient, setActiveClient] = useState<ClientKey>("claude-code");
   const baseUrl = useAgentsBaseURL() + "/mcp";
+  const [mcpTokenResponse, setMcpTokenResponse] =
+    useState<CreateTokenResponse>();
+  const [mcpTokenFormValues, setMcpTokenFormValues] =
+    useState<TokenFormValues>();
+
+  const handleClose = () => {
+    setMode("as-user");
+    setMcpTokenResponse(undefined);
+    setMcpTokenFormValues(undefined);
+    onClose();
+  };
 
   const asUserConfigs: Record<ClientKey, { label: string; config: string }> = {
     "claude-code": {
@@ -61,11 +75,11 @@ export default function SetupMcpModal({
   return (
     <Modal
       title="Setup MCP"
-      onClose={onClose}
+      onClose={handleClose}
       open={isOpen}
-      bodyClass="flex h-full w-full flex-1 flex-col overflow-y-auto"
+      bodyClass="flex h-[70vh] min-h-[620px] max-h-[70vh] w-full flex-1 flex-col overflow-hidden"
     >
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex h-full flex-1 flex-col gap-4 overflow-hidden p-4">
         <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
           <h3 className="text-base font-semibold text-gray-900">
             Choose how MCP should authenticate
@@ -76,27 +90,17 @@ export default function SetupMcpModal({
           </p>
         </div>
 
-        <Tabs activeTab={mode} onSelectTab={(tab) => setMode(tab as SetupMode)}>
-          <Tab
-            value="as-user"
-            label="As me (full user permissions)"
-            className="p-4"
+        <div className="flex min-h-0 flex-1 flex-col">
+          <Tabs
+            activeTab={mode}
+            onSelectTab={(tab) => setMode(tab as SetupMode)}
+            contentClassName="flex min-h-0 flex-1 flex-col overflow-y-auto border border-t-0 border-gray-300 bg-white"
           >
-            <div className="space-y-4 p-2">
-              <div className="rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                <p className="font-medium">Recommended for personal usage</p>
-                <p className="mt-1">
-                  MCP will run with your own user identity and all permissions
-                  you already have in Mission Control.
-                </p>
-              </div>
-
-              <div className="rounded-md border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
-                OIDC is currently supported only for <b>VS Code</b> and{" "}
-                <b>Claude Code</b>. Use one of these configurations and
-                authenticate as yourself when prompted.
-              </div>
-
+            <Tab
+              value="as-user"
+              label="As me (full user permissions)"
+              className="h-full overflow-y-auto p-4"
+            >
               <Tabs
                 activeTab={activeClient}
                 onSelectTab={(tab) => setActiveClient(tab as ClientKey)}
@@ -122,45 +126,45 @@ export default function SetupMcpModal({
                   {mcpUsageInstructionsByClient[activeClient]}
                 </div>
               )}
-            </div>
-          </Tab>
+            </Tab>
 
-          <Tab
-            value="access-token"
-            label="Access token (restricted permissions)"
-            className="p-4"
-          >
-            <div className="space-y-4 p-2">
-              <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                <p className="font-medium">Recommended for automation/bots</p>
-                <p className="mt-1">
-                  Create a dedicated token with only the MCP scopes you want.
-                  This is safer than using your full user permissions.
-                </p>
-              </div>
-
-              <div className="rounded-md border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
-                Continue to token setup to configure expiry, auto-renew, and
-                restricted scopes.
-              </div>
-
-              <div>
-                <Button
-                  onClick={() => {
-                    onClose();
-                    onSelectAccessTokenMode();
-                  }}
-                  className="btn-primary"
-                  text="Continue to access token setup"
+            <Tab
+              value="access-token"
+              label="Access token (restricted permissions)"
+              className="h-full overflow-y-auto p-4"
+            >
+              {mcpTokenResponse ? (
+                <TokenDisplayContent
+                  tokenResponse={mcpTokenResponse}
+                  formValues={mcpTokenFormValues}
+                  isMcp
                 />
-              </div>
-            </div>
-          </Tab>
-        </Tabs>
+              ) : (
+                <CreateTokenFormContent
+                  formId={ACCESS_TOKEN_FORM_ID}
+                  showFooter={false}
+                  isMcpSetup
+                  onSuccess={(response, formValues) => {
+                    setMcpTokenResponse(response);
+                    setMcpTokenFormValues(formValues);
+                  }}
+                />
+              )}
+            </Tab>
+          </Tabs>
+        </div>
       </div>
 
       <div className="flex flex-row justify-end gap-4 p-4">
-        <Button text="Close" onClick={onClose} className="btn-secondary" />
+        <Button text="Close" onClick={handleClose} className="btn-secondary" />
+        {mode === "access-token" && !mcpTokenResponse && (
+          <Button
+            type="submit"
+            form={ACCESS_TOKEN_FORM_ID}
+            text="Create Token"
+            className="btn-primary"
+          />
+        )}
       </div>
     </Modal>
   );
