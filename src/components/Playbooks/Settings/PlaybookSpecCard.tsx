@@ -20,6 +20,7 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
 import PlaybookCardMenu from "./PlaybookCardMenu";
+import PlaybookPermissionsModal from "./PlaybookPermissionsModal";
 import PlaybookSpecFormModal from "./PlaybookSpecFormModal";
 
 type PlaybookSpecCardProps = {
@@ -34,9 +35,13 @@ export default function PlaybookSpecCard({
   const [isEditPlaybookFormOpen, setIsEditPlaybookFormOpen] = useState(false);
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
 
   const { data: playbookSpec } = useGetPlaybookSpecsDetails(playbook.id, {
-    enabled: isEditPlaybookFormOpen || isSubmitPlaybookRunFormOpen
+    enabled:
+      isEditPlaybookFormOpen ||
+      isSubmitPlaybookRunFormOpen ||
+      isPermissionsModalOpen
   });
 
   const { permissions, roles } = useUser();
@@ -65,7 +70,7 @@ export default function PlaybookSpecCard({
       <Card className="relative flex h-full w-full flex-col">
         <CardHeader className="flex flex-row items-center gap-2 px-3 py-2">
           <Icon name={playbook.icon} className="h-6 w-6" />
-          <CardTitle className="flex-1 text-base">
+          <CardTitle className="flex-1 text-lg">
             {/* For now, default to name, when title isn't there */}
             {playbook.title || playbook.name}
           </CardTitle>
@@ -76,6 +81,7 @@ export default function PlaybookSpecCard({
           >
             <PlaybookCardMenu
               onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
+              onManagePermissions={() => setIsPermissionsModalOpen(true)}
               onDeletePlaybook={() => deletePlaybook(playbook.id)}
             />
           </AuthorizationAccessCheck>
@@ -120,6 +126,14 @@ export default function PlaybookSpecCard({
             setIsEditPlaybookFormOpen(false);
           }}
           refresh={refetch}
+          playbook={playbookSpec}
+        />
+      )}
+
+      {playbookSpec && (
+        <PlaybookPermissionsModal
+          isOpen={isPermissionsModalOpen}
+          onClose={() => setIsPermissionsModalOpen(false)}
           playbook={playbookSpec}
         />
       )}
