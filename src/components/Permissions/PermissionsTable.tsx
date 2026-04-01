@@ -15,6 +15,7 @@ import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
 import { PermissionErrorDisplay } from "./PermissionErrorDisplay";
+import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 
 interface ScopeObject {
   namespace?: string;
@@ -29,8 +30,10 @@ const formatScopeText = (scope: ScopeObject): string => {
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
+    id: "subject",
+    accessorFn: (row) => row.subject,
     header: "Subject",
-    size: 100,
+    size: 80,
     Cell: ({ row }) => {
       const { team, group, person, subject, notification, playbook } =
         row.original;
@@ -108,6 +111,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "Resource",
     header: "Resource",
     enableHiding: true,
+    enableSorting: false,
     size: 150,
     Cell: ({ row }) => {
       const config = row.original.config_object;
@@ -243,8 +247,9 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
 
   {
     id: "action",
+    accessorFn: (row) => row.action,
     header: "Action",
-    size: 40,
+    size: 60,
     Cell: ({ row }) => {
       const action = row.original.action;
       const deny = row.original.deny;
@@ -254,7 +259,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
       )?.label;
 
       return (
-        <div>
+        <FilterByCellValue paramKey="action" filterValue={action}>
           <span
             className="truncate font-mono text-sm"
             title={action} // Provides full text on hover
@@ -267,32 +272,34 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
               />
             )}
           </span>
-        </div>
+        </FilterByCellValue>
       );
     }
   },
   {
     id: "description",
     header: "Description",
+    enableSorting: false,
     size: 200,
     accessorFn: (row) => row.description
   },
   {
-    id: "updated",
+    id: "updated_at",
     size: 40,
     header: "Updated",
     accessorFn: (row) => row.updated_at,
     Cell: MRTDateCell
   },
   {
-    id: "created",
+    id: "created_at",
     size: 40,
     header: "Created",
     accessorFn: (row) => row.created_at,
     Cell: MRTDateCell
   },
   {
-    id: "createdBy",
+    id: "created_by",
+    accessorFn: (row) => row.created_by,
     header: "Created By",
     size: 40,
     Cell: ({ row }) => {
@@ -338,6 +345,7 @@ export default function PermissionsTable({
       manualPageCount={pageCount}
       totalRowCount={totalEntries}
       enableServerSidePagination
+      enableServerSideSorting
       onRowClick={handleRowClick}
       hiddenColumns={hideResourceColumn ? ["Resource"] : []}
     />

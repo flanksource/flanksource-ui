@@ -7,6 +7,7 @@ import {
   PermissionTable
 } from "@flanksource-ui/api/types/permissions";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
+import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Button } from "..";
@@ -90,7 +91,17 @@ export default function PermissionsView({
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionsSummary>();
   const { pageSize, pageIndex } = useReactTablePaginationState();
+  const [sortState] = useReactTableSortState();
   const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+
+  const mappedSortBy =
+    sortState[0]?.id === "created"
+      ? "created_at"
+      : sortState[0]?.id === "updated"
+        ? "updated_at"
+        : sortState[0]?.id === "createdBy"
+          ? "created_by"
+          : sortState[0]?.id;
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: [
@@ -98,13 +109,17 @@ export default function PermissionsView({
       permissionRequest,
       {
         pageIndex,
-        pageSize
+        pageSize,
+        sortBy: mappedSortBy,
+        sortOrder: sortState[0]?.desc ? "desc" : "asc"
       }
     ],
     queryFn: () =>
       fetchPermissions(permissionRequest, {
         pageIndex,
-        pageSize
+        pageSize,
+        sortBy: mappedSortBy,
+        sortOrder: sortState[0]?.desc ? "desc" : "asc"
       }),
     keepPreviousData: true
   });
