@@ -36,7 +36,7 @@ export default function FlatTabs<T extends string>({
       </div>
       <div className="hidden flex-1 flex-col sm:flex">
         <div className="border-b border-gray-200">
-          <nav aria-label="Tabs" className="-mb-px flex space-x-8 px-4">
+          <nav aria-label="Tabs" className="-mb-px flex space-x-4 px-4">
             {tabs.map((tab) => (
               <button
                 key={tab.label}
@@ -46,7 +46,7 @@ export default function FlatTabs<T extends string>({
                   tab.current
                     ? "border-indigo-500 text-indigo-600"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                  "group inline-flex items-center border-b-2 px-2 py-4 text-sm font-medium"
+                  "group inline-flex items-center border-b-2 px-2 py-2 text-base"
                 )}
               >
                 <span>{tab.label}</span>
