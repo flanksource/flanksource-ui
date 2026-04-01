@@ -1,6 +1,7 @@
 import { useGetPlaybookSpecsDetails } from "@flanksource-ui/api/query-hooks/playbooks";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { Button } from "@flanksource-ui/components/ui/button";
+import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 import {
   Card,
   CardContent,
@@ -36,6 +37,7 @@ export default function PlaybookSpecCard({
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const { data: playbookSpec } = useGetPlaybookSpecsDetails(playbook.id, {
     enabled:
@@ -57,7 +59,8 @@ export default function PlaybookSpecCard({
       return res;
     },
     onSuccess: () => {
-      toastSuccess("Playbook Spec updated successfully");
+      toastSuccess("Playbook Spec deleted successfully");
+      setIsDeleteConfirmOpen(false);
       refetch();
     },
     onError: (err: Error) => {
@@ -82,7 +85,7 @@ export default function PlaybookSpecCard({
             <PlaybookCardMenu
               onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
               onManagePermissions={() => setIsPermissionsModalOpen(true)}
-              onDeletePlaybook={() => deletePlaybook(playbook.id)}
+              onDeletePlaybook={() => setIsDeleteConfirmOpen(true)}
             />
           </AuthorizationAccessCheck>
         </CardHeader>
@@ -145,6 +148,16 @@ export default function PlaybookSpecCard({
           playbook={playbookSpec}
         />
       )}
+
+      <ConfirmationPromptDialog
+        isOpen={isDeleteConfirmOpen}
+        title="Delete Playbook"
+        description={`Are you sure you want to delete ${playbook.title || playbook.name}?`}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={() => deletePlaybook(playbook.id)}
+        confirmationStyle="delete"
+        yesLabel="Delete"
+      />
     </>
   );
 }
