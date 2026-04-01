@@ -142,7 +142,7 @@ export default function PermissionsView({
   return (
     <>
       {showAddPermission && (
-        <div className="flex flex-row items-center justify-between p-2">
+        <div className="flex flex-row items-center justify-between py-2">
           <Button
             onClick={() => {
               setIsPermissionModalOpen(true);

@@ -9,12 +9,14 @@ type FlatTabsProps<T extends string> = {
   }[];
   activeTab: string;
   setActiveTab: (tab: T) => void;
+  contentClassName?: string;
 };
 
 export default function FlatTabs<T extends string>({
   tabs,
   activeTab,
-  setActiveTab
+  setActiveTab,
+  contentClassName = "px-4 pb-4"
 }: FlatTabsProps<T>) {
   return (
     <div className="flex flex-1 flex-col">
@@ -46,7 +48,7 @@ export default function FlatTabs<T extends string>({
                   tab.current
                     ? "border-indigo-500 text-indigo-600"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                  "group inline-flex items-center border-b-2 px-2 py-2 text-base"
+                  "group inline-flex items-center border-b-2 px-2 py-3 text-sm font-semibold"
                 )}
               >
                 <span>{tab.label}</span>
@@ -54,7 +56,9 @@ export default function FlatTabs<T extends string>({
             ))}
           </nav>
         </div>
-        {tabs.find((tab) => tab.current)?.content}
+        <div className={contentClassName}>
+          {tabs.find((tab) => tab.current)?.content}
+        </div>
       </div>
     </div>
   );

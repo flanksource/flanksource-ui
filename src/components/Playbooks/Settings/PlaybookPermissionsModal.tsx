@@ -40,7 +40,7 @@ export default function PlaybookPermissionsModal({
         setActiveTab={(label) => setActiveTab(label)}
         tabs={[
           {
-            label: "Who can run this playbook",
+            label: "Inbound",
             key: "who-can-run",
             current: activeTab === "who-can-run",
             content: (
@@ -57,7 +57,7 @@ export default function PlaybookPermissionsModal({
             )
           },
           {
-            label: "What this playbook can do",
+            label: "Outbound",
             key: "what-it-can-do",
             current: activeTab === "what-it-can-do",
             content: (

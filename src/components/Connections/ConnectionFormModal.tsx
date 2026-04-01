@@ -178,9 +178,23 @@ export default function ConnectionFormModal({
             ]}
           />
         ) : (
-          <ConnectionForm
+          <div className="px-4 pb-4">
+            <ConnectionForm
+              handleBack={() => setConnectionType(undefined)}
+              connectionType={type}
+              onConnectionSubmit={onConnectionSubmit}
+              onConnectionDelete={onConnectionDelete}
+              formValue={formValue}
+              className={className}
+              isSubmitting={isSubmitting}
+              isDeleting={isDeleting}
+            />
+          </div>
+        )
+      ) : formValue?.id ? (
+        <div className="px-4 pb-4">
+          <ConnectionSpecEditor
             handleBack={() => setConnectionType(undefined)}
-            connectionType={type}
             onConnectionSubmit={onConnectionSubmit}
             onConnectionDelete={onConnectionDelete}
             formValue={formValue}
@@ -188,17 +202,7 @@ export default function ConnectionFormModal({
             isSubmitting={isSubmitting}
             isDeleting={isDeleting}
           />
-        )
-      ) : formValue?.id ? (
-        <ConnectionSpecEditor
-          handleBack={() => setConnectionType(undefined)}
-          onConnectionSubmit={onConnectionSubmit}
-          onConnectionDelete={onConnectionDelete}
-          formValue={formValue}
-          className={className}
-          isSubmitting={isSubmitting}
-          isDeleting={isDeleting}
-        />
+        </div>
       ) : (
         <ConnectionListView setConnectionType={setConnectionType} />
       )}
