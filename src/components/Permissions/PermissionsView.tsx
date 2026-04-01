@@ -26,7 +26,8 @@ export const permissionsActionsList: FormikSelectDropdownOption[] = [
   { value: "playbook:run", label: "playbook:run" },
   { value: "playbook:approve", label: "playbook:approve" },
   { value: "playbook:*", label: "playbook:*" },
-  { value: "mcp:run", label: "mcp:run" }
+  { value: "mcp:run", label: "mcp:run" },
+  { value: "mcp:use", label: "mcp:use" }
 ];
 
 const commonActions: FormikSelectDropdownOption[] = [

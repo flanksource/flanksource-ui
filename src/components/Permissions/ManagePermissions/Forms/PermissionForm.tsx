@@ -53,9 +53,14 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
   }, [values]);
 
   const availableActions = useMemo(() => {
+    // MCP channel-level permission is only valid on the global MCP object.
+    if (values.object === "mcp") {
+      return [{ value: "mcp:use", label: "mcp:use" }];
+    }
+
     const actions = getActionsForResourceType(resourceType);
 
-    // Add mcp:run when: playbook resource + specific playbook selected + person/team subject
+    // mcp:run is only valid for playbook permissions assigned to person/team subjects.
     if (
       resourceType === "playbook" &&
       values.playbook_id &&
@@ -65,7 +70,7 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     }
 
     return actions;
-  }, [resourceType, values.playbook_id, values.subject_type]);
+  }, [resourceType, values.object, values.playbook_id, values.subject_type]);
 
   if (!resourceType) {
     return null;
