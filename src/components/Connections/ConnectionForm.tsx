@@ -132,8 +132,8 @@ export function ConnectionForm({
             )}
             {...props}
           >
-            <div className={clsx("mb-2 flex flex-col px-2")}>
-              <div className="flex flex-col overflow-y-auto p-4">
+            <div className={clsx("mb-2 flex flex-col")}>
+              <div className="flex flex-col overflow-y-auto">
                 {isReadOnly && (
                   <div className="mb-4 rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
                     <p className="font-medium">
