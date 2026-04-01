@@ -19,7 +19,8 @@ export const permissionObjectList = [
   { label: "RBAC", value: "rbac" },
   { label: "Logs", value: "logs" },
   { label: "Agent", value: "agent" },
-  { label: "Artifact", value: "artifact" }
+  { label: "Artifact", value: "artifact" },
+  { label: "MCP", value: "mcp" }
 ];
 
 export default function FormikPermissionSelectResourceFields() {

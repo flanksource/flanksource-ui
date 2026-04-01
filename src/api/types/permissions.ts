@@ -11,7 +11,8 @@ export type PermissionGlobalObject =
   | "canaries"
   | "connection"
   | "playbook"
-  | "topology";
+  | "topology"
+  | "mcp";
 
 type PermissionObjectSelector = {
   playbooks?: Selectors[];
