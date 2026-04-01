@@ -1,15 +1,19 @@
 // ABOUTME: Tests for the scope impersonation sessionStorage helpers.
 // ABOUTME: Validates read/write/clear, payload building, and custom event dispatching.
 
-import { ScopeDB } from "@flanksource-ui/api/types/scopes";
+import { ScopeDB, ScopeTargetForm } from "@flanksource-ui/api/types/scopes";
 import {
   buildPayload,
+  buildPayloadFromTargets,
   clearImpersonatedScopes,
   getImpersonatedPayload,
   getImpersonatedScopeIds,
+  getImpersonatedTargets,
+  getImpersonationMode,
   hasImpersonatedScopes,
   SCOPE_IMPERSONATION_CHANGE_EVENT,
-  setImpersonatedScopes
+  setImpersonatedScopes,
+  setImpersonatedTargets
 } from "../scopeImpersonationStore";
 
 beforeEach(() => {
@@ -68,15 +72,22 @@ describe("setImpersonatedScopes", () => {
     expect(payload.scopes).toEqual(["abc"]);
   });
 
+  it("sets mode to scopes", () => {
+    setImpersonatedScopes([makeScope()]);
+    expect(getImpersonationMode()).toBe("scopes");
+  });
+
   it("removes keys when given empty array", () => {
-    sessionStorage.setItem("flanksource-impersonated-scope-ids", "[]");
-    sessionStorage.setItem("flanksource-impersonated-scope-payload", "{}");
+    setImpersonatedScopes([makeScope()]);
     setImpersonatedScopes([]);
     expect(
       sessionStorage.getItem("flanksource-impersonated-scope-ids")
     ).toBeNull();
     expect(
       sessionStorage.getItem("flanksource-impersonated-scope-payload")
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-mode")
     ).toBeNull();
   });
 
@@ -89,8 +100,47 @@ describe("setImpersonatedScopes", () => {
   });
 });
 
+describe("setImpersonatedTargets", () => {
+  it("stores payload and targets", () => {
+    const targets: ScopeTargetForm[] = [
+      { config: { name: "cfg", tags: { env: "prod" } } }
+    ];
+    setImpersonatedTargets(targets);
+
+    expect(getImpersonationMode()).toBe("targets");
+    expect(getImpersonatedTargets()).toEqual(targets);
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-ids")
+    ).toBeNull();
+
+    const payload = getImpersonatedPayload();
+    expect(payload?.config).toEqual([
+      { names: ["cfg"], tags: { env: "prod" } }
+    ]);
+  });
+
+  it("removes keys when given empty array", () => {
+    setImpersonatedTargets([{ config: { name: "x" } }]);
+    setImpersonatedTargets([]);
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-payload")
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-targets")
+    ).toBeNull();
+  });
+
+  it("dispatches a change event", () => {
+    const handler = jest.fn();
+    window.addEventListener(SCOPE_IMPERSONATION_CHANGE_EVENT, handler);
+    setImpersonatedTargets([{ config: { name: "x" } }]);
+    expect(handler).toHaveBeenCalledTimes(1);
+    window.removeEventListener(SCOPE_IMPERSONATION_CHANGE_EVENT, handler);
+  });
+});
+
 describe("clearImpersonatedScopes", () => {
-  it("removes from sessionStorage and dispatches event", () => {
+  it("removes all keys from sessionStorage and dispatches event", () => {
     setImpersonatedScopes([makeScope()]);
     const handler = jest.fn();
     window.addEventListener(SCOPE_IMPERSONATION_CHANGE_EVENT, handler);
@@ -103,6 +153,12 @@ describe("clearImpersonatedScopes", () => {
     expect(
       sessionStorage.getItem("flanksource-impersonated-scope-payload")
     ).toBeNull();
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-mode")
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem("flanksource-impersonated-scope-targets")
+    ).toBeNull();
     expect(handler).toHaveBeenCalledTimes(1);
     window.removeEventListener(SCOPE_IMPERSONATION_CHANGE_EVENT, handler);
   });
@@ -113,8 +169,13 @@ describe("hasImpersonatedScopes", () => {
     expect(hasImpersonatedScopes()).toBe(false);
   });
 
-  it("returns true when scopes are set", () => {
+  it("returns true when scopes mode is active", () => {
     setImpersonatedScopes([makeScope()]);
+    expect(hasImpersonatedScopes()).toBe(true);
+  });
+
+  it("returns true when targets mode is active", () => {
+    setImpersonatedTargets([{ config: { name: "x" } }]);
     expect(hasImpersonatedScopes()).toBe(true);
   });
 });
@@ -124,7 +185,7 @@ describe("getImpersonatedPayload", () => {
     expect(getImpersonatedPayload()).toBeNull();
   });
 
-  it("returns stored payload", () => {
+  it("returns stored payload from scopes mode", () => {
     setImpersonatedScopes([
       makeScope({
         targets: [{ canary: { name: "c1" } }]
@@ -132,6 +193,12 @@ describe("getImpersonatedPayload", () => {
     ]);
     const payload = getImpersonatedPayload();
     expect(payload?.canary).toEqual([{ names: ["c1"] }]);
+  });
+
+  it("returns stored payload from targets mode", () => {
+    setImpersonatedTargets([{ component: { name: "comp1" } }]);
+    const payload = getImpersonatedPayload();
+    expect(payload?.component).toEqual([{ names: ["comp1"] }]);
   });
 });
 
@@ -227,5 +294,46 @@ describe("buildPayload", () => {
       makeScope({ id: "uuid-2" })
     ]);
     expect(payload.scopes).toEqual(["uuid-1", "uuid-2"]);
+  });
+});
+
+describe("buildPayloadFromTargets", () => {
+  it("maps form targets with tags object", () => {
+    const payload = buildPayloadFromTargets([
+      { config: { name: "cfg", agent: "a1", tags: { env: "prod" } } }
+    ]);
+    expect(payload.config).toEqual([
+      { names: ["cfg"], agents: ["a1"], tags: { env: "prod" } }
+    ]);
+  });
+
+  it("handles wildcard targets", () => {
+    const payload = buildPayloadFromTargets([
+      { config: { name: "*", wildcard: true, tags: { env: "prod" } } }
+    ]);
+    expect(payload.config).toEqual([{ names: ["*"] }]);
+  });
+
+  it("falls back to tagSelector string when no tags object", () => {
+    const payload = buildPayloadFromTargets([
+      { config: { name: "x", tagSelector: "a=b" } }
+    ]);
+    expect(payload.config![0].tags).toEqual({ a: "b" });
+  });
+
+  it("expands global to all types except playbook", () => {
+    const payload = buildPayloadFromTargets([
+      { global: { name: "*", wildcard: true } }
+    ]);
+    expect(payload.config).toEqual([{ names: ["*"] }]);
+    expect(payload.component).toEqual([{ names: ["*"] }]);
+    expect(payload.canary).toEqual([{ names: ["*"] }]);
+    expect(payload.view).toEqual([{ names: ["*"] }]);
+    expect(payload.playbook).toBeUndefined();
+  });
+
+  it("does not include scopes field", () => {
+    const payload = buildPayloadFromTargets([{ config: { name: "x" } }]);
+    expect(payload.scopes).toBeUndefined();
   });
 });

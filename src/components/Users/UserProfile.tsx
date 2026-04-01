@@ -3,6 +3,7 @@ import { lazy, Suspense, useState } from "react";
 import { Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
+import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
@@ -57,7 +58,7 @@ export function UserProfileDropdown() {
                 onClick={() => setIsResourceSelectorSearchModalOpen(true)}
               />
               <UserButton.Action
-                label="Impersonate Scope"
+                label={`Impersonate Scope${hasImpersonatedScopes() ? " (active)" : ""}`}
                 labelIcon={<MdSecurity />}
                 onClick={() => setIsScopeImpersonationModalOpen(true)}
               />
