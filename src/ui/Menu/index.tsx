@@ -9,7 +9,7 @@ type ItemProps = Partial<$ElementProps<typeof HLMenu.Item>>;
 const Item = ({ children, ...props }: ItemProps) => (
   <HLMenu.Item
     as="div"
-    className="flex w-full items-center p-3 text-gray-700 hover:bg-gray-200"
+    className="flex w-full items-center px-3 py-2 text-gray-700 hover:bg-gray-200"
     {...props}
   >
     {children}

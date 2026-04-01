@@ -126,7 +126,7 @@ function ActionMenu({
         >
           <MenuItem
             as="div"
-            className="flex w-full cursor-pointer items-center p-3 text-gray-700 hover:bg-gray-200"
+            className="flex w-full cursor-pointer items-center px-3 py-2 text-gray-700 hover:bg-gray-200"
             onClick={() => {
               editUser();
             }}
@@ -152,7 +152,7 @@ function ActionMenu({
           </MenuItem>
           <MenuItem
             as="div"
-            className="flex w-full cursor-pointer items-center p-3 text-gray-700 hover:bg-gray-200"
+            className="flex w-full cursor-pointer items-center px-3 py-2 text-gray-700 hover:bg-gray-200"
             onClick={() => {
               deleteUser();
             }}
