@@ -1,3 +1,4 @@
+import { getImpersonatedPayload } from "@flanksource-ui/components/Scopes/Impersonation/scopeImpersonationStore";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import axios, { AxiosError } from "axios";
@@ -208,6 +209,36 @@ for (const client of [
       return Promise.reject(error);
     }
   );
+}
+
+// Attach X-Flanksource-Scope header when scope impersonation is active
+for (const client of [
+  apiBase,
+  Auth,
+  IncidentCommander,
+  ConfigDB,
+  Logs,
+  CanaryCheckerDB,
+  CanaryChecker,
+  Config,
+  Catalog,
+  Snapshot,
+  AgentAPI,
+  LogsSearch,
+  People,
+  PlaybookAPI,
+  ViewAPI,
+  ArtifactAPI,
+  Rback,
+  NotificationAPI
+]) {
+  client.interceptors.request.use((config) => {
+    const payload = getImpersonatedPayload();
+    if (payload) {
+      config.headers["X-Flanksource-Scope"] = JSON.stringify(payload);
+    }
+    return config;
+  });
 }
 
 export function redirectToLoginPageOnSessionExpiry(error: AxiosError) {

@@ -8,6 +8,7 @@ import {
 import { Fragment } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useUser } from "../../../context";
+import { hasImpersonatedScopes } from "../../../components/Scopes/Impersonation/scopeImpersonationStore";
 import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import { VersionInfo } from "../../VersionInfo/VersionInfo";
 import KratosLogoutButton from "./KratosLogoutButton";
@@ -16,12 +17,16 @@ type UserProfileDropdownProps = {
   openKubeConfigModal: () => void;
   openMcpTokenModal: () => void;
   openResourceSelectorSearchModal: () => void;
+  openScopeImpersonationModal: () => void;
+  showScopeImpersonation?: boolean;
 };
 
 export function KratosUserProfileDropdown({
   openKubeConfigModal,
   openMcpTokenModal,
-  openResourceSelectorSearchModal
+  openResourceSelectorSearchModal,
+  openScopeImpersonationModal,
+  showScopeImpersonation = false
 }: UserProfileDropdownProps) {
   const { user } = useUser();
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
@@ -95,6 +100,19 @@ export function KratosUserProfileDropdown({
               Resource selector search
             </button>
           </MenuItem>
+          {showScopeImpersonation && (
+            <MenuItem>
+              <button
+                onClick={openScopeImpersonationModal}
+                className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Impersonate Scope
+                {hasImpersonatedScopes() && (
+                  <span className="ml-1 text-green-600">(active)</span>
+                )}
+              </button>
+            </MenuItem>
+          )}
           <MenuItem>
             <VersionInfo />
           </MenuItem>

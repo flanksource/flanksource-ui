@@ -2,9 +2,13 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useState } from "react";
 import { Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload } from "react-icons/io";
+import { MdSecurity } from "react-icons/md";
+import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
+import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
@@ -17,6 +21,10 @@ const LazyResourceSelectorSearchModal = lazy(() =>
 
 export function UserProfileDropdown() {
   const authSystem = useDetermineAuthSystem();
+  const { featureFlags } = useFeatureFlagsContext();
+  const isRLSEnabled = featureFlags.some(
+    (f) => f.name === "rls.enable" && f.value === "true"
+  );
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
     useState(false);
   const [isMcpSetupModalOpen, setIsMcpSetupModalOpen] = useState(false);
@@ -24,6 +32,8 @@ export function UserProfileDropdown() {
     isResourceSelectorSearchModalOpen,
     setIsResourceSelectorSearchModalOpen
   ] = useState(false);
+  const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
+    useState(false);
 
   return (
     <>
@@ -52,6 +62,13 @@ export function UserProfileDropdown() {
                 labelIcon={<Search className="h-4 w-4" />}
                 onClick={() => setIsResourceSelectorSearchModalOpen(true)}
               />
+              {isRLSEnabled && (
+                <UserButton.Action
+                  label={`Impersonate Scope${hasImpersonatedScopes() ? " (active)" : ""}`}
+                  labelIcon={<MdSecurity />}
+                  onClick={() => setIsScopeImpersonationModalOpen(true)}
+                />
+              )}
             </UserButton.MenuItems>
           </UserButton>
         </div>
@@ -62,6 +79,10 @@ export function UserProfileDropdown() {
           openResourceSelectorSearchModal={() =>
             setIsResourceSelectorSearchModalOpen(true)
           }
+          openScopeImpersonationModal={() =>
+            setIsScopeImpersonationModalOpen(true)
+          }
+          showScopeImpersonation={isRLSEnabled}
         />
       )}
       <AddKubeConfigModal
@@ -80,6 +101,10 @@ export function UserProfileDropdown() {
           />
         </Suspense>
       )}
+      <ScopeImpersonationModal
+        isOpen={isScopeImpersonationModalOpen}
+        onClose={() => setIsScopeImpersonationModalOpen(false)}
+      />
     </>
   );
 }
