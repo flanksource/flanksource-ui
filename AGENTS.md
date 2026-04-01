@@ -1,2 +1,2 @@
 - Do not hand-write Shadcn components. Use the shadcn CLI to add new components.
-- Use npm run build to build
+- Do not run `npm run build` when dev server is running. use `npm run typecheck` instead.

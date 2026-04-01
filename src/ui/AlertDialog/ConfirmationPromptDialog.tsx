@@ -1,9 +1,15 @@
-import { Dialog } from "@headlessui/react";
-import React, { ComponentProps } from "react";
-import { FaCircleNotch } from "react-icons/fa";
-import { Modal } from "../Modal";
-import clsx from "clsx";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@flanksource-ui/components/ui/dialog";
+import clsx from "clsx";
+import React from "react";
+import { FaCircleNotch } from "react-icons/fa";
 
 export type ConfirmationPromptDialogProps = {
   isOpen: boolean;
@@ -16,7 +22,8 @@ export type ConfirmationPromptDialogProps = {
   isLoading?: boolean;
   confirmationStyle?: "delete" | "approve";
   error?: unknown;
-} & ComponentProps<typeof Dialog>;
+  className?: string;
+};
 
 export function ConfirmationPromptDialog({
   title,
@@ -29,100 +36,96 @@ export function ConfirmationPromptDialog({
   closeLabel = "Cancel",
   isLoading = false,
   error,
-  className,
-  ...rest
+  className
 }: ConfirmationPromptDialogProps) {
   return (
-    <Modal
-      hideCloseButton={true}
+    <Dialog
       open={isOpen}
-      title={
-        <div className="mt-4 sm:flex sm:items-start">
-          <div
-            className={clsx(
-              "mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full sm:mx-0 sm:h-10 sm:w-10",
-              confirmationStyle === "delete" && "bg-red-100",
-              confirmationStyle === "approve" && "bg-green-100"
-            )}
-          >
-            {confirmationStyle === "delete" && (
-              <svg
-                className="h-6 w-6 text-red-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-                ></path>
-              </svg>
-            )}
-            {confirmationStyle === "approve" && (
-              <svg
-                className="h-6 w-6 text-green-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m4.5 12.75 6 6 9-13.5"
-                ></path>
-              </svg>
-            )}
-          </div>
-          <div className="mb-3 mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-            <div>
-              <h3
-                className="text-base font-semibold text-gray-900"
-                id="modal-title"
-              >
+      onOpenChange={(open) => {
+        if (!open) {
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className={clsx("sm:max-w-md", className)}>
+        <DialogHeader>
+          <div className="flex items-start gap-3 text-left">
+            <div
+              className={clsx(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
+                confirmationStyle === "delete" && "bg-red-100",
+                confirmationStyle === "approve" && "bg-green-100"
+              )}
+            >
+              {confirmationStyle === "delete" && (
+                <svg
+                  className="h-6 w-6 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                  ></path>
+                </svg>
+              )}
+              {confirmationStyle === "approve" && (
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  ></path>
+                </svg>
+              )}
+            </div>
+            <div className="flex-1">
+              <DialogTitle className="text-base font-semibold text-gray-900">
                 {title}
-              </h3>
-              <div className="mt-2">
-                <p className="text-sm text-gray-500">{description}</p>
-              </div>
-              <div className="mt-3">
-                {error ? <ErrorViewer error={error} /> : null}
-              </div>
+              </DialogTitle>
+              <DialogDescription className="mt-2 text-sm text-gray-500">
+                {description}
+              </DialogDescription>
+              {error ? (
+                <div className="mt-3">
+                  <ErrorViewer error={error} />
+                </div>
+              ) : null}
             </div>
           </div>
-        </div>
-      }
-      titleClass="text-gray-900"
-      titleHeaderClass=" px-4"
-      size="very-small"
-      onClose={onClose}
-      {...rest}
-    >
-      <div className="flex flex-row bg-gray-100 p-3">
-        <div className="flex flex-1 flex-row items-center justify-end space-x-4">
-          <div className="flex flex-1 flex-row justify-end gap-2">
-            <button className="btn btn-white" onClick={onClose}>
-              {closeLabel}
-            </button>
-            <button
-              className="btn-primary"
-              onClick={onConfirm}
-              data-testid={`confirm-button-${yesLabel}`}
-            >
-              {isLoading && (
-                <FaCircleNotch className="mr-1 inline animate-spin" />
-              )}
-              {yesLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Modal>
+        </DialogHeader>
+
+        <DialogFooter className="gap-2 sm:justify-end">
+          <button className="btn btn-white" onClick={onClose}>
+            {closeLabel}
+          </button>
+          <button
+            className={clsx(
+              confirmationStyle === "delete" ? "btn-danger" : "btn-primary"
+            )}
+            onClick={onConfirm}
+            data-testid={`confirm-button-${yesLabel}`}
+          >
+            {isLoading && (
+              <FaCircleNotch className="mr-1 inline animate-spin" />
+            )}
+            {yesLabel}
+          </button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
