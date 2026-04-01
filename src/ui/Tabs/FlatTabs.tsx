@@ -36,7 +36,7 @@ export default function FlatTabs<T extends string>({
           ))}
         </select>
       </div>
-      <div className="hidden flex-1 flex-col sm:flex">
+      <div className="hidden min-h-0 flex-1 flex-col sm:flex">
         <div className="border-b border-gray-200">
           <nav aria-label="Tabs" className="-mb-px flex space-x-4 px-4">
             {tabs.map((tab) => (
@@ -56,7 +56,7 @@ export default function FlatTabs<T extends string>({
             ))}
           </nav>
         </div>
-        <div className={contentClassName}>
+        <div className={clsx("flex min-h-0 flex-1 flex-col", contentClassName)}>
           {tabs.find((tab) => tab.current)?.content}
         </div>
       </div>

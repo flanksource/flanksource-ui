@@ -31,13 +31,14 @@ export default function PlaybookPermissionsModal({
       onClose={onClose}
       open={isOpen}
       size="full"
-      containerClassName="h-full overflow-auto"
-      bodyClass="flex w-full flex-1 flex-col overflow-y-auto"
+      containerClassName="h-full overflow-hidden"
+      bodyClass="flex w-full min-h-0 flex-1 flex-col"
       helpLink="playbooks"
     >
       <FlatTabs
         activeTab={activeTab}
         setActiveTab={(label) => setActiveTab(label)}
+        contentClassName="px-4 pb-4"
         tabs={[
           {
             label: "Inbound",
