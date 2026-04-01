@@ -4,6 +4,15 @@ import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchPara
 
 type ViewTableFilterFormProps = {
   children: React.ReactNode;
+  /**
+   * List of table column names that are filterable.
+   *
+   * Example: ["status", "severity"].
+   *
+   * Each entry is used as:
+   * - the Formik field key (`values[field]`), and
+   * - the URL query-param key under `tablePrefix`.
+   */
   filterFields: string[];
   defaultFieldValues?: Record<string, string>;
   tablePrefix: string;
