@@ -2,6 +2,7 @@ import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
+import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 
 export type FetchPermissionsInput = {
   componentId?: string;
@@ -13,6 +14,7 @@ export type FetchPermissionsInput = {
   playbookId?: string;
   connectionId?: string;
   subject?: string;
+  action?: string;
   subject_type?: "playbook" | "team" | "person" | "notification" | "component";
 };
 
@@ -26,54 +28,69 @@ function composeQueryParamForFetchPermissions({
   playbookId,
   connectionId,
   subject,
+  action,
   subject_type
 }: FetchPermissionsInput) {
+  const filters: string[] = [];
+
   if (componentId) {
-    return `component_id=eq.${componentId}`;
+    filters.push(`component_id=eq.${componentId}`);
   }
   if (personId) {
-    return `person_id=eq.${personId}`;
+    filters.push(`person_id=eq.${personId}`);
   }
   if (teamId) {
-    return `team_id=eq.${teamId}`;
+    filters.push(`team_id=eq.${teamId}`);
   }
   if (configId) {
-    return `config_id=eq.${configId}`;
+    filters.push(`config_id=eq.${configId}`);
   }
   if (checkId) {
-    return `check_id=eq.${checkId}`;
+    filters.push(`check_id=eq.${checkId}`);
   }
   if (canaryId) {
-    return `canary_id=eq.${canaryId}`;
+    filters.push(`canary_id=eq.${canaryId}`);
   }
   if (playbookId) {
-    return `playbook_id=eq.${playbookId}`;
+    filters.push(`playbook_id=eq.${playbookId}`);
   }
   if (connectionId) {
-    return `connection_id=eq.${connectionId}`;
+    filters.push(`connection_id=eq.${connectionId}`);
   }
   if (subject) {
-    return `subject=eq.${subject}`;
+    filters.push(`subject=eq.${subject}`);
+  }
+  if (action) {
+    const actionFilter = tristateOutputToQueryParamValue(action, true);
+    if (actionFilter && action.includes(":")) {
+      filters.push(`action.filter=${actionFilter}`);
+    } else {
+      filters.push(`action=eq.${action}`);
+    }
   }
   if (subject_type) {
-    return `subject_type=eq.${subject_type}`;
+    filters.push(`subject_type=eq.${subject_type}`);
   }
-  return "";
+
+  return filters.join("&");
 }
 
 export function fetchPermissions(
   input: FetchPermissionsInput,
-  pagination: {
+  options: {
     pageSize: number;
     pageIndex: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
   }
 ) {
   const queryParam = composeQueryParamForFetchPermissions(input);
   const selectFields = `*,created_by(${AVATAR_INFO})`;
 
-  const { pageSize, pageIndex } = pagination;
+  const { pageSize, pageIndex, sortBy, sortOrder } = options;
+  const sortParams = sortBy ? `&order=${sortBy}.${sortOrder ?? "asc"}` : "";
 
-  const url = `/permissions_summary?${queryParam}&select=${selectFields}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+  const url = `/permissions_summary?${queryParam}&select=${selectFields}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}${sortParams}`;
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<PermissionsSummary[]>(url, {
       headers: {
