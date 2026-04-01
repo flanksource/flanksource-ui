@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { NextRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import toast from "react-hot-toast";
+import { sanitizeReturnTo } from "./returnTo";
 
 // A small function to help us deal with errors coming from fetching a flow.
 export function handleGetFlowError<S>(
@@ -16,10 +17,14 @@ export function handleGetFlowError<S>(
         // 2FA is enabled and enforced, but user did not perform 2fa yet!
         window.location.href = err.response?.data.redirect_browser_to;
         return;
-      case "session_already_available":
-        // User is already signed in, let's redirect them home!
-        await router.push("/");
+      case "session_already_available": {
+        // User is already signed in; continue the requested flow when return_to is present.
+        const returnTo = new URLSearchParams(window.location.search).get(
+          "return_to"
+        );
+        await router.push(sanitizeReturnTo(returnTo));
         return;
+      }
       case "session_refresh_required":
         // We need to re-authenticate to perform this action
         window.location.href = `/login?return_to=${url}&refresh=true`;

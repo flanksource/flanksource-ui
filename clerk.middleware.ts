@@ -4,7 +4,18 @@ import { NextResponse } from "next/server";
 const isPubliclyAccessibleRoute = createRouteMatcher([
   // all pages except the ones listed below are protected
   "/login(.*)",
-  "/registration(.*)"
+  "/registration(.*)",
+  "/.well-known(.*)",
+  "/authorize(.*)",
+  "/oauth(.*)",
+  "/userinfo",
+  "/revoke",
+  "/device_authorization",
+  "/keys",
+  "/end_session",
+  "/endsession",
+  "/oidc(.*)",
+  "/mcp(.*)"
 ]);
 
 export default clerkMiddleware(
