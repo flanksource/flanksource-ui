@@ -13,11 +13,13 @@ import ConfigTypesTristateDropdown from "../../ConfigChangesFilters/ConfigTypesT
 type ConfigChangeFiltersProps = {
   className?: string;
   paramsToReset?: string[];
+  extra?: React.ReactNode;
 };
 
 export function ConfigRelatedChangesFilters({
   className,
-  paramsToReset = []
+  paramsToReset = [],
+  extra
 }: ConfigChangeFiltersProps) {
   const arbitraryFilters = useConfigChangesArbitraryFilters();
 
@@ -35,6 +37,7 @@ export function ConfigRelatedChangesFilters({
           <ConfigRelatedChangesToggles />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
           <ShowDeletedConfigs />
+          {extra}
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">

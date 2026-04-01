@@ -262,6 +262,7 @@ export type GetConfigsRelatedChangesParams = {
   severity?: string;
   from?: string;
   to?: string;
+  from_inserted_at?: string;
   configTypes?: string;
   configType?: string;
   pageSize?: number | string;
@@ -284,6 +285,7 @@ export async function getConfigsChanges({
   severity,
   from,
   to,
+  from_inserted_at,
   configTypes,
   configType,
   pageIndex,
@@ -333,6 +335,9 @@ export async function getConfigsChanges({
   }
   if (to) {
     requestData.set("to", to);
+  }
+  if (from_inserted_at) {
+    requestData.set("from_inserted_at", from_inserted_at);
   }
   if (severity) {
     requestData.set("severity", severity);

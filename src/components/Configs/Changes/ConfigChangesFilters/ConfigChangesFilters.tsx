@@ -67,11 +67,13 @@ export function FilterBadge({ filters, paramKey }: FilterBadgeProps) {
 
 type ConfigChangeFiltersProps = React.HTMLProps<HTMLDivElement> & {
   paramsToReset?: string[];
+  extra?: React.ReactNode;
 };
 
 export function ConfigChangeFilters({
   className,
   paramsToReset = [],
+  extra,
   ...props
 }: ConfigChangeFiltersProps) {
   const [params] = useSearchParams();
@@ -100,6 +102,7 @@ export function ConfigChangeFilters({
           <ConfigTagsDropdown />
           <ConfigChangesDateRangeFilter paramsToReset={paramsToReset} />
           <ShowDeletedConfigs />
+          {extra}
         </div>
       </FormikFilterForm>
       <div className="flex flex-wrap gap-2">
