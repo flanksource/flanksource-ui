@@ -47,9 +47,9 @@ export default function ApprovePlaybookRunModal({
       title={`Approve Playbook ${playbookTitle} Run`}
       description={<p>Are you sure you want to approve this playbook run?</p>}
       onConfirm={() => approve(playbookRunId)}
-      open={open}
       onClose={handleClose}
       isOpen={open}
+      isLoading={isLoading}
       yesLabel={isLoading ? "Approving..." : "Approve"}
       closeLabel="Cancel"
       error={error}

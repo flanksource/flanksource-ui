@@ -37,9 +37,9 @@ export default function CancelPlaybookRunModal({
       title={`Cancel run`}
       description={<p>Are you sure you want to cancel this run?</p>}
       onConfirm={() => cancel(playbookRunId)}
-      open={open}
       onClose={onClose}
       isOpen={open}
+      isLoading={isLoading}
       yesLabel={isLoading ? "Cancelling..." : "Cancel"}
       closeLabel="Close"
     />
