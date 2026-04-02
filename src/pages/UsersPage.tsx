@@ -11,6 +11,7 @@ import { FaCopy } from "react-icons/fa";
 import { ImUserPlus } from "react-icons/im";
 import { getRegisteredUsers } from "../api/services/users";
 import { Button, Modal } from "../components";
+import { ErrorViewer } from "../components/ErrorViewer";
 import { AuthorizationAccessCheck } from "../components/Permissions/AuthorizationAccessCheck";
 import { toastError, toastSuccess } from "../components/Toast/toast";
 import { UserList } from "../components/Users/UserList";
@@ -42,14 +43,17 @@ export function UsersPage() {
     staleTime: 0
   });
 
-  const { mutate: inviteUserFunction, isLoading: isInviting } = useInviteUser({
+  const {
+    mutate: inviteUserFunction,
+    isLoading: isInviting,
+    error: inviteError,
+    reset: resetInviteError
+  } = useInviteUser({
     onSuccess: (data) => {
       refetch();
+      resetInviteError();
       setIsOpen(false);
       setInviteLink(data.link);
-    },
-    onError: (error) => {
-      toastError(error.message);
     }
   });
 
@@ -109,7 +113,10 @@ export function UsersPage() {
               >
                 <button
                   className="btn-primary"
-                  onClick={(e) => setIsOpen(true)}
+                  onClick={() => {
+                    resetInviteError();
+                    setIsOpen(true);
+                  }}
                 >
                   <ImUserPlus className="mr-2 h-5 w-5" />
                   Invite User
@@ -135,15 +142,22 @@ export function UsersPage() {
           <Modal
             title="Invite User"
             onClose={() => {
+              resetInviteError();
               setIsOpen(false);
             }}
             open={isOpen}
             bodyClass=""
           >
+            {inviteError ? (
+              <ErrorViewer error={inviteError} className="m-4 mb-0" />
+            ) : null}
             <UserForm
               className="flex flex-col bg-white p-4"
               onSubmit={inviteUserFunction}
-              onClose={() => setIsOpen(false)}
+              onClose={() => {
+                resetInviteError();
+                setIsOpen(false);
+              }}
               isSubmitting={isInviting}
             />
           </Modal>
