@@ -9,6 +9,8 @@ import {
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
+import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useEffect, useState } from "react";
 import { Button } from "..";
 import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown";
@@ -104,7 +106,7 @@ export default function PermissionsView({
           ? "created_by"
           : sortState[0]?.id;
 
-  const { isLoading, data, refetch } = useQuery({
+  const { isLoading, data, refetch, isError, error } = useQuery({
     queryKey: [
       "permissions_summary",
       permissionRequest,
@@ -128,6 +130,12 @@ export default function PermissionsView({
   useEffect(() => {
     setIsLoading(isLoading);
   }, [isLoading, setIsLoading]);
+
+  useEffect(() => {
+    if (isError) {
+      toastError(`Failed to fetch permissions: ${getErrorMessage(error)}`);
+    }
+  }, [error, isError]);
 
   useEffect(() => {
     if (onRefetch) {
