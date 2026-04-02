@@ -12,10 +12,13 @@ export type FetchPermissionsInput = {
   checkId?: string;
   canaryId?: string;
   playbookId?: string;
+  playbookName?: string;
+  playbookNamespace?: string;
   connectionId?: string;
   subject?: string;
   action?: string;
   subject_type?: "playbook" | "team" | "person" | "notification" | "component";
+  direction?: "inbound" | "outbound";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -51,8 +54,9 @@ function composeQueryParamForFetchPermissions({
   if (canaryId) {
     filters.push(`canary_id=eq.${canaryId}`);
   }
-  if (playbookId) {
-    filters.push(`playbook_id=eq.${playbookId}`);
+  if (playbookId && !subject) {
+    filters.push(`subject=eq.${playbookId}`);
+    filters.push(`subject_type=eq.playbook`);
   }
   if (connectionId) {
     filters.push(`connection_id=eq.${connectionId}`);
@@ -90,7 +94,22 @@ export function fetchPermissions(
   const { pageSize, pageIndex, sortBy, sortOrder } = options;
   const sortParams = sortBy ? `&order=${sortBy}.${sortOrder ?? "asc"}` : "";
 
-  const url = `/permissions_summary?${queryParam}&select=${selectFields}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}${sortParams}`;
+  const isInboundPlaybookSelectorQuery =
+    input.direction === "inbound" && !!input.playbookName;
+
+  const url = isInboundPlaybookSelectorQuery
+    ? (() => {
+        const params = new URLSearchParams({
+          p_field: "playbooks",
+          p_name: input.playbookName!
+        });
+        if (input.playbookNamespace) {
+          params.set("p_namespace", input.playbookNamespace);
+        }
+        return `/rpc/permissions_for_obj_selector?${params.toString()}&select=${selectFields}&limit=${pageSize}&offset=${pageIndex * pageSize}${sortParams}`;
+      })()
+    : `/permissions_summary?${queryParam}&select=${selectFields}&deleted_at=is.null&limit=${pageSize}&offset=${pageIndex * pageSize}${sortParams}`;
+
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<PermissionsSummary[]>(url, {
       headers: {

@@ -249,7 +249,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "action",
     accessorFn: (row) => row.action,
     header: "Action",
-    size: 60,
+    size: 70,
     Cell: ({ row }) => {
       const action = row.original.action;
       const deny = row.original.deny;
@@ -301,7 +301,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "created_by",
     accessorFn: (row) => row.created_by,
     header: "Created By",
-    size: 40,
+    size: 50,
     Cell: ({ row }) => {
       const createdBy = row.original.created_by;
       const source = row.original.source;
