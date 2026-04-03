@@ -26,7 +26,8 @@ import {
   DurationPanel,
   BarGaugePanel,
   PropertiesPanel,
-  TimeseriesPanel
+  TimeseriesPanel,
+  HeatmapPanel
 } from "./panels";
 import GlobalFilters from "./GlobalFilters";
 import GlobalFiltersForm from "./GlobalFiltersForm";
@@ -458,6 +459,8 @@ const renderPanel = (panel: PanelResult, index: number) => {
       return <PropertiesPanel key={`${panel.name}-${index}`} summary={panel} />;
     case "timeseries":
       return <TimeseriesPanel key={`${panel.name}-${index}`} summary={panel} />;
+    case "heatmap":
+      return <HeatmapPanel key={`${panel.name}-${index}`} summary={panel} />;
     default:
       return null;
   }

@@ -571,6 +571,17 @@ export type TimeseriesConfig = {
   };
 };
 
+export type HeatmapVariant = "calendar" | "compact";
+
+export type HeatmapConfig = {
+  /**
+   * Visual style for heatmap rendering.
+   * calendar: month grid similar to backups calendar
+   * compact: github-style compact heatmap
+   */
+  mode?: HeatmapVariant;
+};
+
 export type PanelResult = {
   name: string;
   type:
@@ -582,12 +593,14 @@ export type PanelResult = {
     | "duration"
     | "bargauge"
     | "properties"
-    | "timeseries";
+    | "timeseries"
+    | "heatmap";
   description?: string;
   rows?: Record<string, any>[];
   gauge?: GaugeConfig;
   bargauge?: BarGaugeConfig;
   timeseries?: TimeseriesConfig;
+  heatmap?: HeatmapConfig;
   number?: NumberConfig;
   piechart?: PiechartConfig;
 };
