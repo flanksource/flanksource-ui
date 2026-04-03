@@ -4,29 +4,13 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
-import CanaryLink from "../Canary/CanaryLink";
-import ConfigLink from "../Configs/ConfigLink/ConfigLink";
-import ConnectionIcon from "../Connections/ConnectionIcon";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
-import { TopologyLink } from "../Topology/TopologyLink";
-import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { permissionsActionsList } from "./PermissionsView";
 import { BsBan } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
-import { PermissionErrorDisplay } from "./PermissionErrorDisplay";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
-
-interface ScopeObject {
-  namespace?: string;
-  name?: string;
-}
-
-const formatScopeText = (scope: ScopeObject): string => {
-  const namespace = scope.namespace || "";
-  const name = scope.name || "";
-  return namespace && name ? `${namespace}/${name}` : name;
-};
+import PermissionResourceCell from "./PermissionResourceCell";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
@@ -113,136 +97,7 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     enableHiding: true,
     enableSorting: false,
     size: 150,
-    Cell: ({ row }) => {
-      const config = row.original.config_object;
-      const playbook = row.original.playbook_object;
-      const component = row.original.component_object;
-      const connection = row.original.connection_object;
-      const canary = row.original.canary_object;
-      const object = row.original.object;
-      const objectSelector = row.original.object_selector;
-      const error = row.original.error;
-
-      if (objectSelector) {
-        // Format scopes as "Scope: namespace/name, namespace2/name2"
-        if (objectSelector.scopes && Array.isArray(objectSelector.scopes)) {
-          const scopes = objectSelector.scopes;
-          const maxDisplay = 2;
-          const displayScopes = scopes.slice(0, maxDisplay);
-          const remaining = scopes.length - maxDisplay;
-
-          const scopeText = displayScopes
-            .map(formatScopeText)
-            .filter(Boolean)
-            .join(", ");
-
-          const fullScopeText = scopes
-            .map(formatScopeText)
-            .filter(Boolean)
-            .join(", ");
-
-          return (
-            <div className="flex flex-row items-center gap-3">
-              <div className="flex flex-row items-center gap-2">
-                <span className="text-sm text-gray-600">Scope:</span>
-                <span
-                  className="truncate font-mono text-sm"
-                  title={fullScopeText}
-                >
-                  {scopeText}
-                  {remaining > 0 && ` and ${remaining} more...`}
-                </span>
-              </div>
-              <PermissionErrorDisplay error={error} />
-            </div>
-          );
-        }
-
-        // Fallback to JSON for non-scope object selectors
-        return (
-          <div className="flex flex-row items-center gap-3">
-            <div className="flex flex-row items-center gap-2">
-              <span
-                className="truncate font-mono text-sm"
-                title={JSON.stringify(objectSelector)} // Provides full text on hover
-              >
-                {JSON.stringify(objectSelector)}
-              </span>
-            </div>
-            <PermissionErrorDisplay error={error} />
-          </div>
-        );
-      }
-
-      if (object) {
-        return (
-          <div className="flex flex-row items-center gap-3">
-            <div className="flex flex-row items-center gap-2">
-              <span>
-                {permissionObjectList.find((o) => o.value === object)?.label}
-              </span>
-            </div>
-            <PermissionErrorDisplay error={error} />
-          </div>
-        );
-      }
-
-      return (
-        <div className="flex flex-row items-center gap-3">
-          <div className="flex flex-row items-center gap-2">
-            <div className="flex flex-col">
-              {config && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-600">Catalog:</span>
-                  <ConfigLink config={config} />
-                </div>
-              )}
-
-              {playbook && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-600">Playbook:</span>
-                  <PlaybookSpecIcon
-                    playbook={{
-                      ...playbook,
-                      title: playbook.name,
-                      spec: { icon: playbook.icon || "", actions: [] }
-                    }}
-                    showLabel
-                  />
-                </div>
-              )}
-
-              {component && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-600">Component:</span>
-                  <TopologyLink
-                    topology={component}
-                    className="h-5 w-5 text-gray-600"
-                    linkClassName="text-gray-600"
-                    size="md"
-                  />
-                </div>
-              )}
-
-              {canary && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-600">Canary:</span>
-                  <CanaryLink canary={canary} />
-                </div>
-              )}
-
-              {connection && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-600">Connection:</span>
-                  <ConnectionIcon connection={connection} showLabel />
-                </div>
-              )}
-            </div>
-          </div>
-          <PermissionErrorDisplay error={error} />
-        </div>
-      );
-    }
+    Cell: ({ row }) => <PermissionResourceCell permission={row.original} />
   },
 
   {
