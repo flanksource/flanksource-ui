@@ -54,9 +54,8 @@ function composeQueryParamForFetchPermissions({
   if (canaryId) {
     filters.push(`canary_id=eq.${canaryId}`);
   }
-  if (playbookId && !subject) {
-    filters.push(`subject=eq.${playbookId}`);
-    filters.push(`subject_type=eq.playbook`);
+  if (playbookId) {
+    filters.push(`playbook_id=eq.${playbookId}`);
   }
   if (connectionId) {
     filters.push(`connection_id=eq.${connectionId}`);
