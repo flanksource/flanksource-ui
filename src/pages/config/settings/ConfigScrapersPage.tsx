@@ -19,6 +19,7 @@ import {
 import { toastSuccess } from "@flanksource-ui/components/Toast/toast";
 import {
   BreadcrumbNav,
+  BreadcrumbChild,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
@@ -254,30 +255,32 @@ export default function ConfigScrapersPage() {
       <Head prefix={`Catalog Settings`} />
       <SearchLayout
         title={
-          <BreadcrumbNav
-            list={[
-              <BreadcrumbRoot link="/catalog" key={"/catalog"}>
-                Catalog
-              </BreadcrumbRoot>,
-              <BreadcrumbRoot
-                link="/catalog/scrapers"
-                key={"/catalog/scrapers"}
-              >
-                Scrapers
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                resource={catalogScraperResourceInfo.table}
-                action="write"
-                key="add-button"
-              >
-                <AddSchemaResourceModal
-                  key={"add-resource"}
-                  onClose={() => refetch()}
-                  resourceInfo={catalogScraperResourceInfo!}
-                />
-              </AuthorizationAccessCheck>
-            ]}
-          />
+          <div className="flex items-center gap-2">
+            <BreadcrumbNav
+              list={[
+                <BreadcrumbRoot link="/catalog" key={"/catalog"}>
+                  Catalog
+                </BreadcrumbRoot>,
+                <BreadcrumbChild
+                  link="/catalog/scrapers"
+                  key={"/catalog/scrapers"}
+                >
+                  Scrapers
+                </BreadcrumbChild>
+              ]}
+            />
+            <AuthorizationAccessCheck
+              resource={catalogScraperResourceInfo.table}
+              action="write"
+              key="add-button"
+            >
+              <AddSchemaResourceModal
+                key={"add-resource"}
+                onClose={() => refetch()}
+                resourceInfo={catalogScraperResourceInfo!}
+              />
+            </AuthorizationAccessCheck>
+          </div>
         }
         onRefresh={() => refetch()}
         loading={isLoading || isRefetching}
