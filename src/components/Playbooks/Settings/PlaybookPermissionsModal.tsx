@@ -111,7 +111,7 @@ export default function PlaybookPermissionsModal({
             current: activeTab === "what-it-can-do",
             content: (
               <PermissionsView
-                hideResourceColumn
+                hideSubjectColumn
                 permissionRequest={outboundPermissionRequest}
                 showAddPermission
                 newPermissionData={{

@@ -78,6 +78,7 @@ type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
   setIsLoading?: (isLoading: boolean) => void;
   hideResourceColumn?: boolean;
+  hideSubjectColumn?: boolean;
   newPermissionData?: Partial<PermissionTable>;
   showAddPermission?: boolean;
   onRefetch?: (refetch: () => void) => void;
@@ -87,6 +88,7 @@ export default function PermissionsView({
   permissionRequest,
   setIsLoading = () => {},
   hideResourceColumn = false,
+  hideSubjectColumn = false,
   newPermissionData,
   showAddPermission = false,
   onRefetch
@@ -168,6 +170,7 @@ export default function PermissionsView({
           totalEntries={totalEntries}
           handleRowClick={(row) => setSelectedPermission(row)}
           hideResourceColumn={hideResourceColumn}
+          hideSubjectColumn={hideSubjectColumn}
         />
       </div>
       {selectedPermission && (
