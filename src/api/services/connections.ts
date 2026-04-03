@@ -15,3 +15,20 @@ export async function getConnectionByID(id: string) {
   >(`/connections?id=eq.${id}&select=id,name,type`);
   return res?.data?.[0] ?? null;
 }
+
+export async function getConnectionByNamespaceName(
+  name: string,
+  namespace?: string
+) {
+  const filters = [`name=eq.${name}`];
+
+  if (namespace) {
+    filters.push(`namespace=eq.${namespace}`);
+  }
+
+  const res = await IncidentCommander.get<
+    Pick<Connection, "id" | "name" | "type">[]
+  >(`/connections?${filters.join("&")}&select=id,name,type`);
+
+  return res?.data?.[0] ?? null;
+}

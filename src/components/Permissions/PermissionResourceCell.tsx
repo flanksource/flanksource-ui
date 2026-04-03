@@ -2,6 +2,7 @@ import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import CanaryLink from "../Canary/CanaryLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
+import ConnectionLink from "../Connections/ConnectionLink";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
 import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
@@ -142,12 +143,10 @@ export default function PermissionResourceCell({
           <div className="flex flex-row items-center gap-3">
             <div className="flex items-center gap-1">
               <span className="text-sm text-gray-600">Connection:</span>
-              <ConnectionIcon
-                connection={{
-                  id: selectedResource.selector.id,
-                  name: selectorLabel
-                }}
-                showLabel
+              <ConnectionLink
+                connectionId={selectedResource.selector.id}
+                connectionName={selectedResource.selector.name}
+                connectionNamespace={selectedResource.selector.namespace}
               />
             </div>
             <PermissionErrorDisplay error={error} />
