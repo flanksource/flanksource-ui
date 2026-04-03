@@ -39,6 +39,10 @@ export default function KratosAuthContextProvider({ children }: Props) {
     return <ErrorPage error={error} />;
   }
 
+  if (!payload) {
+    return <FullPageSkeletonLoader />;
+  }
+
   return (
     <AuthContext.Provider
       value={{
