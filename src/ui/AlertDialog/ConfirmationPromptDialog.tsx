@@ -109,14 +109,21 @@ export function ConfirmationPromptDialog({
         </DialogHeader>
 
         <DialogFooter className="gap-2 sm:justify-end">
-          <button className="btn btn-white" onClick={onClose}>
+          <button type="button" className="btn btn-white" onClick={onClose}>
             {closeLabel}
           </button>
           <button
+            type="button"
             className={clsx(
               confirmationStyle === "delete" ? "btn-danger" : "btn-primary"
             )}
-            onClick={onConfirm}
+            onClick={() => {
+              if (!isLoading) {
+                onConfirm();
+              }
+            }}
+            disabled={isLoading}
+            aria-busy={isLoading}
             data-testid={`confirm-button-${yesLabel}`}
           >
             {isLoading && (

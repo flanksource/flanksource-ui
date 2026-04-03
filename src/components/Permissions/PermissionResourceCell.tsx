@@ -1,11 +1,13 @@
-import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
+import {
+  PermissionGlobalObject,
+  PermissionsSummary
+} from "@flanksource-ui/api/types/permissions";
 import CanaryLink from "../Canary/CanaryLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
 import ConnectionLink from "../Connections/ConnectionLink";
 import PlaybookSpecIcon from "../Playbooks/Settings/PlaybookSpecIcon";
 import { TopologyLink } from "../Topology/TopologyLink";
-import { permissionObjectList } from "./ManagePermissions/Forms/FormikPermissionSelectResourceFields";
 import { PermissionErrorDisplay } from "./PermissionErrorDisplay";
 
 interface ScopeObject {
@@ -87,6 +89,16 @@ type PermissionResourceCellProps = {
   permission: PermissionsSummary;
 };
 
+const OBJECT_LABELS: Record<PermissionGlobalObject, string> = {
+  catalog: "Catalog",
+  component: "Component",
+  canaries: "Canaries",
+  connection: "Connection",
+  playbook: "Playbook",
+  topology: "Topology",
+  mcp: "MCP"
+};
+
 export default function PermissionResourceCell({
   permission
 }: PermissionResourceCellProps) {
@@ -98,6 +110,9 @@ export default function PermissionResourceCell({
   const object = permission.object;
   const objectSelector = permission.object_selector;
   const error = permission.error;
+  const hasConcreteObject = Boolean(
+    config || playbook || component || canary || connection
+  );
 
   if (objectSelector) {
     // Format scopes as "Scope: namespace/name, namespace2/name2"
@@ -187,13 +202,69 @@ export default function PermissionResourceCell({
     );
   }
 
+  if (hasConcreteObject) {
+    return (
+      <div className="flex flex-row items-center gap-3">
+        <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-col">
+            {config && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Catalog:</span>
+                <ConfigLink config={config} />
+              </div>
+            )}
+
+            {playbook && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Playbook:</span>
+                <PlaybookSpecIcon
+                  playbook={{
+                    ...playbook,
+                    title: playbook.name,
+                    spec: { icon: playbook.icon || "", actions: [] }
+                  }}
+                  showLabel
+                />
+              </div>
+            )}
+
+            {component && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Component:</span>
+                <TopologyLink
+                  topology={component}
+                  className="h-5 w-5 text-gray-600"
+                  linkClassName="text-gray-600"
+                  size="md"
+                />
+              </div>
+            )}
+
+            {canary && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Canary:</span>
+                <CanaryLink canary={canary} />
+              </div>
+            )}
+
+            {connection && (
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-gray-600">Connection:</span>
+                <ConnectionIcon connection={connection} showLabel />
+              </div>
+            )}
+          </div>
+        </div>
+        <PermissionErrorDisplay error={error} />
+      </div>
+    );
+  }
+
   if (object) {
     return (
       <div className="flex flex-row items-center gap-3">
         <div className="flex flex-row items-center gap-2">
-          <span>
-            {permissionObjectList.find((o) => o.value === object)?.label}
-          </span>
+          <span>{OBJECT_LABELS[object] ?? object}</span>
         </div>
         <PermissionErrorDisplay error={error} />
       </div>
@@ -202,56 +273,6 @@ export default function PermissionResourceCell({
 
   return (
     <div className="flex flex-row items-center gap-3">
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col">
-          {config && (
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-gray-600">Catalog:</span>
-              <ConfigLink config={config} />
-            </div>
-          )}
-
-          {playbook && (
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-gray-600">Playbook:</span>
-              <PlaybookSpecIcon
-                playbook={{
-                  ...playbook,
-                  title: playbook.name,
-                  spec: { icon: playbook.icon || "", actions: [] }
-                }}
-                showLabel
-              />
-            </div>
-          )}
-
-          {component && (
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-gray-600">Component:</span>
-              <TopologyLink
-                topology={component}
-                className="h-5 w-5 text-gray-600"
-                linkClassName="text-gray-600"
-                size="md"
-              />
-            </div>
-          )}
-
-          {canary && (
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-gray-600">Canary:</span>
-              <CanaryLink canary={canary} />
-            </div>
-          )}
-
-          {connection && (
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-gray-600">Connection:</span>
-              <ConnectionIcon connection={connection} showLabel />
-            </div>
-          )}
-        </div>
-      </div>
       <PermissionErrorDisplay error={error} />
     </div>
   );
