@@ -1,7 +1,8 @@
 import { AVATAR_INFO } from "@flanksource-ui/constants";
 import {
   FeatureFlag,
-  PropertyDBObject
+  PropertyDBObject,
+  PropertyDefinition
 } from "../../services/permissions/permissionsService";
 import { IncidentCommander, apiBase } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
@@ -42,4 +43,8 @@ export const deleteProperty = (property: Partial<PropertyDBObject>) => {
   return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
     IncidentCommander.delete(`/properties?name=eq.${property.name}`)
   );
+};
+
+export const fetchPropertyDefinitions = () => {
+  return apiBase.get<PropertyDefinition>("/debug/properties");
 };

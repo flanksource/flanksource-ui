@@ -10,8 +10,9 @@ import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ResourcePropertiesTab from "../FeatureFlags/ResourcePropertiesTab";
 import LogBackendsForm from "../Logs/LogBackends/LogBackendsForm";
 import { SchemaResourceJobsTab } from "../SchemaResourcePage/SchemaResourceEditJobsTab";
 import { SchemaApi } from "../SchemaResourcePage/resourceTypes";
@@ -29,6 +30,12 @@ const integrationTypeToTableMap: Record<IntegrationType, SchemaApi["table"]> = {
   logging_backends: "logging_backends",
   topologies: "topologies",
   scrapers: "config_scrapers"
+} as const;
+
+const integrationTypeToPropertyPrefix: Record<IntegrationType, string> = {
+  logging_backends: "jobs.",
+  topologies: "jobs.Topology.",
+  scrapers: "jobs.Scraper."
 } as const;
 
 export default function EditIntegrationPage() {
@@ -70,9 +77,18 @@ export default function EditIntegrationPage() {
     }
   );
 
-  const [activeTab, setActiveTab] = useState<"Edit Form" | "Job History">(
-    "Edit Form"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "Edit Form" | "Job History" | "Properties"
+  >("Edit Form");
+
+  const propertiesPrefix = useMemo(() => {
+    if (!type || !resource) return "";
+    const prefix = integrationTypeToPropertyPrefix[type];
+    const name = resource.namespace
+      ? `${resource.namespace}/${resource.name}`
+      : resource.name;
+    return `${prefix}${name}`;
+  }, [type, resource]);
 
   return (
     <>
@@ -150,6 +166,15 @@ export default function EditIntegrationPage() {
                   resourceId={id!}
                   tableName={table as any}
                 />
+              </Tab>
+              <Tab
+                className="flex flex-1 flex-col overflow-y-auto"
+                label={"Properties"}
+                value={"Properties"}
+              >
+                {propertiesPrefix && (
+                  <ResourcePropertiesTab prefix={propertiesPrefix} />
+                )}
               </Tab>
             </Tabs>
           </div>
