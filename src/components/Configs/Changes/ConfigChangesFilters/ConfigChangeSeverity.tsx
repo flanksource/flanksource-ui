@@ -57,7 +57,7 @@ export const configChangeSeverity = {
     icon: <HiInformationCircle className="text-gray-500" />,
     name: "Info",
     description: "Info",
-    value: "Info",
+    value: "info",
     colorClass: "text-gray-500 fill-gray-500"
   }
 } as const;

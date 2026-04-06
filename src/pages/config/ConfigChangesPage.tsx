@@ -36,13 +36,13 @@ export function ConfigChangesPage() {
       keepPreviousData: true
     });
 
-  const changes = (data?.changes ?? []).map((changes) => ({
-    ...changes,
+  const changes = (data?.changes ?? []).map((c) => ({
+    ...c,
     config: {
-      id: changes.config_id!,
-      type: changes.type!,
-      name: changes.name!,
-      deleted_at: changes.deleted_at
+      id: c.config_id ?? "",
+      type: c.type ?? c.config?.type ?? "",
+      name: c.name ?? c.config?.name ?? "",
+      deleted_at: c.deleted_at
     }
   }));
 

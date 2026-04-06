@@ -7,7 +7,7 @@ import { ConfigDetailChangeModal } from "@flanksource-ui/components/Configs/Chan
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 const ConfigChangesGraph = lazy(
@@ -30,12 +30,12 @@ export function ConfigDetailsChangesPage() {
     enabled: !!id
   });
 
-  const changes = (data?.changes ?? []).map((changes) => ({
-    ...changes,
+  const changes = (data?.changes ?? []).map((c) => ({
+    ...c,
     config: {
-      id: changes.config_id!,
-      type: changes.type!,
-      name: changes.name!
+      id: c.config_id ?? "",
+      type: c.type ?? c.config?.type ?? "",
+      name: c.name ?? c.config?.name ?? ""
     }
   }));
 
@@ -43,9 +43,14 @@ export function ConfigDetailsChangesPage() {
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   const [selectedChange, setSelectedChange] = useState<ConfigChange>();
+
+  useEffect(() => {
+    if (view !== "Graph") setSelectedChange(undefined);
+  }, [view]);
+
   const { data: changeDetails, isLoading: changeLoading } =
     useGetConfigChangesById(selectedChange?.id ?? "", {
-      enabled: !!selectedChange
+      enabled: view === "Graph" && !!selectedChange
     });
 
   if (error) {
