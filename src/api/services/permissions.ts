@@ -214,6 +214,16 @@ export async function fetchPermissionSubjectsPaginated({
   );
 }
 
+export async function fetchPermissionSubjectsByIds(ids: string[]) {
+  if (ids.length === 0) {
+    return [];
+  }
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    `/permission_subjects?select=id,name,type&id=in.(${ids.join(",")})&limit=${ids.length}`
+  );
+  return response.data ?? [];
+}
+
 export async function fetchPermissionSubjects() {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
     "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc&limit=5000"
