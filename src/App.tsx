@@ -210,6 +210,18 @@ const NotificationsSilencedPage = dynamic(
     )
 );
 
+const McpOverviewPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpOverviewPage")
+);
+
+const McpPlaybooksPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpPlaybooksPage")
+);
+
+const McpViewsPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpViewsPage")
+);
+
 const UsersPage = dynamic(() =>
   import("@flanksource-ui/pages/UsersPage").then((m) => m.UsersPage)
 );
@@ -380,112 +392,139 @@ const settingsNav: SettingsNavigationItems = {
   name: "Settings",
   icon: AdjustmentsIcon,
   checkPath: false,
-  submenu: [
-    {
-      name: "Connections",
-      href: "/settings/connections",
-      icon: BsLink,
-      featureName: features["settings.connections"],
-      resourceName: tables.connections
-    },
-    {
-      name: "Permissions",
-      href: "/settings/permissions",
-      icon: RiShieldUserFill,
-      featureName: features["settings.permissions"],
-      resourceName: tables.permissions
-    },
-    {
-      name: "Scopes",
-      href: "/settings/scopes",
-      icon: FaCrosshairs,
-      featureName: features["settings.permissions"],
-      resourceName: tables.scopes
-    },
-    ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
-      ? []
-      : [
-          {
-            name: "Users",
-            href: "/settings/users",
-            icon: HiUser,
-            featureName: features["settings.users"],
-            resourceName: tables.identities
-          }
-        ]),
-    ...schemaResourceTypes
-      // remove catalog_scraper from settings
-      .filter((resource) => resource.table !== "config_scrapers")
-      .map((x) => ({
-        ...x,
-        href: `/settings/${x.table}`
-      })),
-    {
-      name: "Jobs History",
-      href: "/settings/jobs",
-      icon: FaTasks,
-      featureName: features["settings.job_history"],
-      resourceName: tables.database
-    },
-    {
-      name: "Feature Flags",
-      href: "/settings/feature-flags",
-      icon: BsToggles,
-      featureName: features["settings.feature_flags"],
-      resourceName: tables.database
-    },
-    {
-      name: "Log Backends",
-      href: "/settings/log-backends",
-      icon: LogsIcon,
-      featureName: features["logs"],
-      resourceName: tables.database
-    },
-    {
-      name: "Event Queue",
-      href: "/settings/event-queue-status",
-      icon: FaTasks,
-      featureName: features["settings.event_queue_status"],
-      resourceName: tables.database
-    },
-    {
-      name: "Agents",
-      href: "/settings/agents",
-      icon: MdOutlineSupportAgent,
-      featureName: features.agents,
-      resourceName: tables.database
-    },
-    {
-      name: "Tokens",
-      href: "/settings/tokens",
-      icon: VscKey,
-      featureName: features.agents,
-      resourceName: tables.database
-    },
-    {
-      name: "Notifications",
-      href: "/notifications/rules",
-      icon: FaBell,
-      featureName: features["settings.notifications"],
-      resourceName: tables.notifications
-    },
-    {
-      name: "Integrations",
-      href: "/settings/integrations",
-      icon: MdOutlineIntegrationInstructions,
-      featureName: features["settings.integrations"],
-      resourceName: tables.database
-    },
-    {
-      name: "Views",
-      href: "/settings/views",
-      icon: ({ className }: { className: string }) => (
-        <Icon name="workflow" className={className} />
-      ),
-      featureName: features.views,
-      resourceName: tables.views
+  submenu: (() => {
+    const sortedSubmenu = [
+      {
+        name: "Connections",
+        href: "/settings/connections",
+        icon: BsLink,
+        featureName: features["settings.connections"],
+        resourceName: tables.connections
+      },
+      {
+        name: "Permissions",
+        href: "/settings/permissions",
+        icon: RiShieldUserFill,
+        featureName: features["settings.permissions"],
+        resourceName: tables.permissions
+      },
+      {
+        name: "Scopes",
+        href: "/settings/scopes",
+        icon: FaCrosshairs,
+        featureName: features["settings.permissions"],
+        resourceName: tables.scopes
+      },
+      ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
+        ? []
+        : [
+            {
+              name: "Users",
+              href: "/settings/users",
+              icon: HiUser,
+              featureName: features["settings.users"],
+              resourceName: tables.identities
+            }
+          ]),
+      ...schemaResourceTypes
+        // remove catalog_scraper from settings
+        .filter((resource) => resource.table !== "config_scrapers")
+        .map((x) => ({
+          ...x,
+          href: `/settings/${x.table}`
+        })),
+      {
+        name: "Jobs History",
+        href: "/settings/jobs",
+        icon: FaTasks,
+        featureName: features["settings.job_history"],
+        resourceName: tables.database
+      },
+      {
+        name: "MCP",
+        href: "/settings/mcp",
+        icon: ({ className }: { className: string }) => (
+          <Icon name="mcp" className={`${className} [&_path]:!fill-white`} />
+        ),
+        featureName: features["settings.mcp"],
+        resourceName: tables.database
+      },
+      {
+        name: "Feature Flags",
+        href: "/settings/feature-flags",
+        icon: BsToggles,
+        featureName: features["settings.feature_flags"],
+        resourceName: tables.database
+      },
+      {
+        name: "Log Backends",
+        href: "/settings/log-backends",
+        icon: LogsIcon,
+        featureName: features["logs"],
+        resourceName: tables.database
+      },
+      {
+        name: "Event Queue",
+        href: "/settings/event-queue-status",
+        icon: FaTasks,
+        featureName: features["settings.event_queue_status"],
+        resourceName: tables.database
+      },
+      {
+        name: "Agents",
+        href: "/settings/agents",
+        icon: MdOutlineSupportAgent,
+        featureName: features.agents,
+        resourceName: tables.database
+      },
+      {
+        name: "Tokens",
+        href: "/settings/tokens",
+        icon: VscKey,
+        featureName: features.agents,
+        resourceName: tables.database
+      },
+      {
+        name: "Notifications",
+        href: "/notifications/rules",
+        icon: FaBell,
+        featureName: features["settings.notifications"],
+        resourceName: tables.notifications
+      },
+      {
+        name: "Integrations",
+        href: "/settings/integrations",
+        icon: MdOutlineIntegrationInstructions,
+        featureName: features["settings.integrations"],
+        resourceName: tables.database
+      },
+      {
+        name: "Views",
+        href: "/settings/views",
+        icon: ({ className }: { className: string }) => (
+          <Icon name="workflow" className={className} />
+        ),
+        featureName: features.views,
+        resourceName: tables.views
+      }
+    ].sort((v1, v2) => stringSortHelper(v1.name, v2.name));
+
+    const jobsHistoryIndex = sortedSubmenu.findIndex(
+      (item) => item.name === "Jobs History"
+    );
+    const mcpIndex = sortedSubmenu.findIndex((item) => item.name === "MCP");
+
+    if (
+      jobsHistoryIndex !== -1 &&
+      mcpIndex !== -1 &&
+      mcpIndex !== jobsHistoryIndex + 1
+    ) {
+      const [mcpItem] = sortedSubmenu.splice(mcpIndex, 1);
+      sortedSubmenu.splice(jobsHistoryIndex + 1, 0, mcpItem);
     }
-  ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
+
+    return sortedSubmenu;
+  })()
 };
 
 const CANARY_API = "/api/canary/api/summary";
@@ -835,6 +874,37 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ViewsPage />,
               tables.views,
+              "read",
+              true
+            )}
+          />
+        </Route>
+
+        <Route path="mcp">
+          <Route index element={<Navigate to="/settings/mcp/overview" />} />
+          <Route
+            path="overview"
+            element={withAuthorizationAccessCheck(
+              <McpOverviewPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="playbooks"
+            element={withAuthorizationAccessCheck(
+              <McpPlaybooksPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="views"
+            element={withAuthorizationAccessCheck(
+              <McpViewsPage />,
+              tables.database,
               "read",
               true
             )}

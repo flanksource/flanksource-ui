@@ -47,7 +47,8 @@ export type PermissionTable = {
     | "team"
     | "person"
     | "notification"
-    | "component";
+    | "component"
+    | "role";
   created_by: string;
   updated_by: string;
   created_at: string;

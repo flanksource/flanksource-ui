@@ -7,6 +7,8 @@ type Props<T extends string | number | boolean> = {
   options: T[];
   className?: string;
   itemsClassName?: string;
+  activeItemClassName?: string;
+  getActiveItemClassName?: (option: T) => string | undefined;
 } & Omit<React.DetailsHTMLAttributes<HTMLDivElement>, "onChange">;
 
 export function Switch<T extends string | number | boolean>({
@@ -15,9 +17,14 @@ export function Switch<T extends string | number | boolean>({
   value,
   className,
   itemsClassName = "flex-1",
+  activeItemClassName,
+  getActiveItemClassName,
   ...props
 }: Props<T>) {
-  const [activeOption, setActiveOption] = useState(() => value ?? options[0]);
+  const fallbackOption = options[0];
+  const [activeOption, setActiveOption] = useState(
+    () => value ?? fallbackOption
+  );
   const activeClasses =
     "p-1.5 lg:pl-2.5 lg:pr-3.5 rounded-md flex items-center text-sm font-medium bg-white shadow-sm ring-1 ring-black ring-opacity-5";
   const inActiveClasses =
@@ -28,8 +35,8 @@ export function Switch<T extends string | number | boolean>({
   }
 
   useEffect(() => {
-    setActiveOption(value ?? options[0]);
-  }, [options, value]);
+    setActiveOption(value ?? fallbackOption);
+  }, [fallbackOption, value]);
 
   return (
     <div
@@ -49,9 +56,11 @@ export function Switch<T extends string | number | boolean>({
             key={option.toString()}
           >
             <span
-              className={
-                activeOption === option ? activeClasses : inActiveClasses
-              }
+              className={clsx(
+                activeOption === option ? activeClasses : inActiveClasses,
+                activeOption === option && activeItemClassName,
+                activeOption === option && getActiveItemClassName?.(option)
+              )}
             >
               {option}
             </span>

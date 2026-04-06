@@ -1,4 +1,4 @@
-import { IncidentCommander } from "../axios";
+import { apiBase, IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
@@ -17,8 +17,14 @@ export type FetchPermissionsInput = {
   connectionId?: string;
   subject?: string;
   action?: string;
-  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
   direction?: "inbound" | "outbound";
+  subject_type?:
+    | "playbook"
+    | "team"
+    | "person"
+    | "notification"
+    | "component"
+    | "role";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -148,4 +154,99 @@ export function recheckPermission(id: string) {
   return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
     error: null
   });
+}
+
+export type BulkApplySelection = {
+  mode: "selective" | "all" | "allExcept";
+  ids: string[];
+};
+
+export type BulkApplyScope = {
+  table: "playbooks" | "views";
+  filters?: Record<string, unknown>;
+};
+
+export type BulkApplyPermissionRequest = {
+  action: "allow" | "deny";
+  selection: BulkApplySelection;
+  scope: BulkApplyScope;
+};
+
+export async function bulkApplyPermission(payload: BulkApplyPermissionRequest) {
+  const response = await apiBase.post("/permission/bulk-apply", payload);
+  return response.data;
+}
+
+export type BulkApplyMcpPermissionRequest = {
+  object: "mcp";
+  action: "mcp:use";
+  changes: Array<{
+    user_id: string;
+    effect: "allow" | "deny" | "remove";
+  }>;
+};
+
+export async function bulkApplyMcpPermission(
+  payload: BulkApplyMcpPermissionRequest
+) {
+  const response = await apiBase.post("/permission/bulk-apply", payload);
+  return response.data;
+}
+
+export async function fetchMcpPlaybookPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:run&playbook_id=not.is.null&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchMcpViewPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export type PermissionSubject = {
+  id: string;
+  name: string;
+  type: "team" | "permission_subject_group" | "person" | "role";
+};
+
+export async function fetchPermissionSubjectsPaginated({
+  search = "",
+  pageIndex = 0,
+  pageSize = 20
+}: {
+  search?: string;
+  pageIndex?: number;
+  pageSize?: number;
+}) {
+  const query = search.trim();
+
+  let url =
+    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc";
+  url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  if (query) {
+    url += `&name=ilike.*${encodeURIComponent(query)}*`;
+  }
+
+  return resolvePostGrestRequestWithPagination<PermissionSubject[]>(
+    IncidentCommander.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+}
+
+export async function fetchPermissionSubjects() {
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc&limit=5000"
+  );
+
+  return response.data ?? [];
 }
