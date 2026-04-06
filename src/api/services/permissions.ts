@@ -1,4 +1,4 @@
-import { apiBase, IncidentCommander } from "../axios";
+import { IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
@@ -154,43 +154,6 @@ export function recheckPermission(id: string) {
   return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
     error: null
   });
-}
-
-export type BulkApplySelection = {
-  mode: "selective" | "all" | "allExcept";
-  ids: string[];
-};
-
-export type BulkApplyScope = {
-  table: "playbooks" | "views";
-  filters?: Record<string, unknown>;
-};
-
-export type BulkApplyPermissionRequest = {
-  action: "allow" | "deny";
-  selection: BulkApplySelection;
-  scope: BulkApplyScope;
-};
-
-export async function bulkApplyPermission(payload: BulkApplyPermissionRequest) {
-  const response = await apiBase.post("/permission/bulk-apply", payload);
-  return response.data;
-}
-
-export type BulkApplyMcpPermissionRequest = {
-  object: "mcp";
-  action: "mcp:use";
-  changes: Array<{
-    user_id: string;
-    effect: "allow" | "deny" | "remove";
-  }>;
-};
-
-export async function bulkApplyMcpPermission(
-  payload: BulkApplyMcpPermissionRequest
-) {
-  const response = await apiBase.post("/permission/bulk-apply", payload);
-  return response.data;
 }
 
 export async function fetchMcpPlaybookPermissions() {
