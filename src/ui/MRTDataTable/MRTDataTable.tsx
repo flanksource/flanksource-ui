@@ -1,7 +1,9 @@
 import { memo, useCallback, useMemo } from "react";
+import type { MouseEvent } from "react";
 import {
   GroupingState,
   OnChangeFn,
+  RowSelectionState,
   SortingState,
   VisibilityState
 } from "@tanstack/react-table";
@@ -16,6 +18,14 @@ import {
 } from "mantine-react-table";
 import useReactTablePaginationState from "../DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "../DataTable/Hooks/useReactTableSortState";
+
+const defaultMantineSelectCheckboxProps = {
+  styles: {
+    icon: {
+      display: "none"
+    }
+  }
+};
 
 type MRTDataTableProps<T extends Record<string, any> = {}> = {
   data: T[];
@@ -44,11 +54,26 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   enableGrouping?: boolean;
   onGroupingChange?: OnChangeFn<GroupingState>;
   disableHiding?: boolean;
+
+  // //////////////////
+  // Row Selection stuff (https://www.mantine-react-table.com/docs/guides/row-selection#enable-row-selection)
+  // //////////////////
+  enableRowSelection?: boolean;
+  enableSelectAll?: boolean;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
+  /** to derive a unique ID for any given row */
+  getRowId?: MRT_TableOptions<T>["getRowId"];
+  mantineSelectCheckboxProps?: MRT_TableOptions<T>["mantineSelectCheckboxProps"];
+  mantineSelectAllCheckboxProps?: MRT_TableOptions<T>["mantineSelectAllCheckboxProps"];
+  // --- End Row Selection ---
+
   mantineTableBodyRowProps?: {
     style?: Record<string, any>;
   };
   displayColumnDefOptions?: {
     "mrt-row-expand"?: Partial<MRT_ColumnDef<T>>;
+    "mrt-row-select"?: Partial<MRT_ColumnDef<T>>;
   };
   /** Prefix to namespace URL search params for sorting/pagination */
   urlParamPrefix?: string;
@@ -78,6 +103,13 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
   enableExpanding = false,
   onGroupingChange = () => {},
   disableHiding = false,
+  enableRowSelection = false,
+  enableSelectAll = false,
+  rowSelection,
+  onRowSelectionChange,
+  getRowId,
+  mantineSelectCheckboxProps,
+  mantineSelectAllCheckboxProps,
   mantineTableBodyRowProps,
   displayColumnDefOptions,
   urlParamPrefix,
@@ -128,6 +160,11 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       "mrt-row-expand": {
         size: 100,
         ...displayColumnDefOptions?.["mrt-row-expand"]
+      },
+      "mrt-row-select": {
+        size: 40,
+        maxSize: 40,
+        ...displayColumnDefOptions?.["mrt-row-select"]
       }
     }),
     [displayColumnDefOptions]
@@ -135,7 +172,13 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
 
   const tableBodyRowProps = useCallback(
     ({ row }: { row: MRT_Row<T> }) => ({
-      onClick: () => onRowClick(row.original),
+      onClick: (event: MouseEvent<HTMLElement>) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("a,button,input,[role='checkbox']")) {
+          return;
+        }
+        onRowClick(row.original);
+      },
       sx: { cursor: "pointer", maxHeight: "100%", overflowY: "auto" },
       ...mantineTableBodyRowProps
     }),
@@ -151,7 +194,6 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
         enableFilters: false,
         enableHiding: !disableHiding,
         enableExpanding,
-        enableSelectAll: false,
         enableFullScreenToggle: false,
         layoutMode: "grid",
         enableTopToolbar: false,
@@ -210,7 +252,8 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
             pageSize
           },
           sorting: sortState,
-          grouping: groupBy
+          grouping: groupBy,
+          rowSelection: rowSelection ?? {}
         },
         initialState: {
           ...initialState,
@@ -221,13 +264,31 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
         },
         mantineExpandButtonProps: { size: "xs" as const },
         mantineExpandAllButtonProps: { size: "xs" as const },
-        renderDetailPanel
+        renderDetailPanel,
+
+        //////////////////////////////
+        // Row Selection stuff
+        //////////////////////////////
+        selectDisplayMode: "checkbox",
+        getRowId,
+        enableSelectAll,
+        enableRowSelection,
+        enableMultiRowSelection: enableRowSelection,
+        mantineSelectCheckboxProps:
+          mantineSelectCheckboxProps ?? defaultMantineSelectCheckboxProps,
+        mantineSelectAllCheckboxProps:
+          mantineSelectAllCheckboxProps ?? defaultMantineSelectCheckboxProps,
+        onRowSelectionChange: enableRowSelection
+          ? onRowSelectionChange
+          : undefined
       }) as MRT_TableOptions<T>,
     [
       data,
       columns,
       disableHiding,
       enableExpanding,
+      enableRowSelection,
+      enableSelectAll,
       enableColumnActions,
       enableServerSideSorting,
       enableServerSidePagination,
@@ -236,6 +297,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       setPageIndex,
       setSortState,
       onGroupingChange,
+      onRowSelectionChange,
       enableGrouping,
       mergedDisplayColumnDefOptions,
       tableBodyRowProps,
@@ -244,10 +306,14 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       pageSize,
       sortState,
       groupBy,
+      rowSelection,
       isRefetching,
       columnVisibility,
       initialState,
       rowsPerPageOptions,
+      getRowId,
+      mantineSelectCheckboxProps,
+      mantineSelectAllCheckboxProps,
       renderDetailPanel
     ]
   );

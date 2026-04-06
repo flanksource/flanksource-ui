@@ -4,6 +4,8 @@ import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { MRT_ColumnDef } from "mantine-react-table";
+import { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
+import type { ChangeEvent } from "react";
 import CanaryLink from "../Canary/CanaryLink";
 import ConfigLink from "../Configs/ConfigLink/ConfigLink";
 import ConnectionIcon from "../Connections/ConnectionIcon";
@@ -33,7 +35,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "subject",
     accessorFn: (row) => row.subject,
     header: "Subject",
-    size: 80,
     Cell: ({ row }) => {
       const { team, group, person, subject, notification, playbook } =
         row.original;
@@ -112,7 +113,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     header: "Resource",
     enableHiding: true,
     enableSorting: false,
-    size: 150,
     Cell: ({ row }) => {
       const config = row.original.config_object;
       const playbook = row.original.playbook_object;
@@ -249,7 +249,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "action",
     accessorFn: (row) => row.action,
     header: "Action",
-    size: 60,
     Cell: ({ row }) => {
       const action = row.original.action;
       const deny = row.original.deny;
@@ -280,19 +279,16 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "description",
     header: "Description",
     enableSorting: false,
-    size: 200,
     accessorFn: (row) => row.description
   },
   {
     id: "updated_at",
-    size: 40,
     header: "Updated",
     accessorFn: (row) => row.updated_at,
     Cell: MRTDateCell
   },
   {
     id: "created_at",
-    size: 40,
     header: "Created",
     accessorFn: (row) => row.created_at,
     Cell: MRTDateCell
@@ -301,7 +297,6 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     id: "created_by",
     accessorFn: (row) => row.created_by,
     header: "Created By",
-    size: 40,
     Cell: ({ row }) => {
       const createdBy = row.original.created_by;
       const source = row.original.source;
@@ -325,6 +320,10 @@ type PermissionsTableProps = {
   isLoading: boolean;
   pageCount: number;
   totalEntries: number;
+  enableRowSelection?: boolean;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
+  onSelectAllChange?: (checked: boolean) => void;
   handleRowClick?: (row: PermissionsSummary) => void;
   hideResourceColumn?: boolean;
 };
@@ -334,19 +333,84 @@ export default function PermissionsTable({
   isLoading,
   pageCount,
   totalEntries,
+  enableRowSelection = false,
+  rowSelection,
+  onRowSelectionChange,
+  onSelectAllChange,
   hideResourceColumn = false,
   handleRowClick = () => {}
 }: PermissionsTableProps) {
   return (
     <MRTDataTable
+      key={
+        enableRowSelection
+          ? "permissions-table-bulk"
+          : "permissions-table-default"
+      }
       columns={permissionsTableColumns}
       data={permissions}
+      defaultPageSize={5}
       isLoading={isLoading}
       manualPageCount={pageCount}
       totalRowCount={totalEntries}
       enableServerSidePagination
       enableServerSideSorting
+      enableRowSelection={enableRowSelection}
+      enableSelectAll={enableRowSelection}
+      getRowId={(row) => row.id}
+      rowSelection={rowSelection}
+      onRowSelectionChange={onRowSelectionChange}
+      mantineSelectCheckboxProps={{
+        size: "xs",
+        radius: "lg",
+        styles: {
+          icon: {
+            display: "none"
+          },
+          input: {
+            opacity: 0.9,
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            backgroundColor: "#f9fafb",
+            transition:
+              "opacity 120ms ease-in-out, border-color 120ms ease-in-out",
+            "&:hover, &:focus": {
+              opacity: 1,
+              borderColor: "#9ca3af"
+            }
+          }
+        }
+      }}
+      mantineSelectAllCheckboxProps={{
+        size: "xs",
+        radius: "lg",
+        onChange: (event: ChangeEvent<HTMLInputElement>) => {
+          onSelectAllChange?.(event.currentTarget.checked);
+        },
+        styles: {
+          icon: {
+            display: "none"
+          },
+          input: {
+            opacity: 0.9,
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            backgroundColor: "#f9fafb",
+            transition:
+              "opacity 120ms ease-in-out, border-color 120ms ease-in-out",
+            "&:hover, &:focus": {
+              opacity: 1,
+              borderColor: "#9ca3af"
+            }
+          }
+        }
+      }}
       onRowClick={handleRowClick}
+      displayColumnDefOptions={{
+        "mrt-row-select": {
+          maxSize: 36
+        }
+      }}
       hiddenColumns={hideResourceColumn ? ["Resource"] : []}
     />
   );

@@ -90,7 +90,7 @@ export function PermissionsPage() {
         loading={isLoading}
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
-          <div className="flex flex-row items-center py-4">
+          <div className="flex flex-row flex-wrap items-center justify-between gap-2 py-4">
             <ReactSelectDropdown
               name="permissions-action-filter"
               items={actionOptions}
@@ -110,7 +110,7 @@ export function PermissionsPage() {
               prefix={<span className="text-xs text-gray-500">Action:</span>}
             />
           </div>
-          <div className="flex h-full flex-col overflow-y-auto pb-6">
+          <div className="flex h-full flex-col overflow-y-auto p-2">
             <PermissionsView
               permissionRequest={{
                 ...(rawActionFilter !== "all"

@@ -9,8 +9,12 @@ import {
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "..";
+import { toastSuccess } from "../Toast/toast";
+import useMrtBulkSelection, {
+  BulkSelectionPayload
+} from "@flanksource-ui/ui/MRTDataTable/Hooks/useMrtBulkSelection";
 import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown";
 import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
 import PermissionsTable from "./PermissionsTable";
@@ -72,13 +76,31 @@ export function getActionsForResourceType(
   return commonActions;
 }
 
+type SelectionScope = {
+  permissionRequest: FetchPermissionsInput;
+  sortBy?: string;
+  sortOrder: "asc" | "desc";
+};
+
+export type PermissionsBulkActionControls = {
+  hasSelectedRows: boolean;
+  selectionSummary: string;
+  onAllowSelected: () => void;
+  onDenySelected: () => void;
+  onClearSelection: () => void;
+};
+
 type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
   setIsLoading?: (isLoading: boolean) => void;
   hideResourceColumn?: boolean;
   newPermissionData?: Partial<PermissionTable>;
   showAddPermission?: boolean;
+  showInlineBulkActionControls?: boolean;
   onRefetch?: (refetch: () => void) => void;
+  onBulkActionControlsChange?: (
+    controls: PermissionsBulkActionControls
+  ) => void;
 };
 
 export default function PermissionsView({
@@ -87,7 +109,9 @@ export default function PermissionsView({
   hideResourceColumn = false,
   newPermissionData,
   showAddPermission = false,
-  onRefetch
+  showInlineBulkActionControls = true,
+  onRefetch,
+  onBulkActionControlsChange
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionsSummary>();
@@ -137,29 +161,151 @@ export default function PermissionsView({
 
   const totalEntries = data?.totalEntries || 0;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : 1;
-  const permissions = data?.data || [];
+  const permissions = useMemo(() => data?.data ?? [], [data?.data]);
+
+  const selectionScope = useMemo<SelectionScope>(
+    () => ({
+      permissionRequest,
+      sortBy: mappedSortBy,
+      sortOrder: sortState[0]?.desc ? "desc" : "asc"
+    }),
+    [mappedSortBy, permissionRequest, sortState]
+  );
+
+  const selectionResetKey = useMemo(
+    () => JSON.stringify(permissionRequest),
+    [permissionRequest]
+  );
+
+  const {
+    rowSelection,
+    selectedCount,
+    hasSelectedRows,
+    selectionSummary,
+    onRowSelectionChange: handleRowSelectionChange,
+    onSelectAllChange: handleSelectAllChange,
+    clearSelection: handleClearSelection,
+    buildPayload
+  } = useMrtBulkSelection<PermissionsSummary, SelectionScope>({
+    rows: permissions,
+    totalRowCount: totalEntries,
+    getRowId: (row) => row.id,
+    selectionScope,
+    resetKey: selectionResetKey
+  });
+
+  const handleBulkAction = useCallback(
+    (action: "allow" | "deny") => {
+      const payload: BulkSelectionPayload<SelectionScope> = buildPayload();
+
+      toastSuccess(
+        `${action === "allow" ? "Allow Selected" : "Deny Selected"} prepared for ${selectedCount} permission${selectedCount === 1 ? "" : "s"}`
+      );
+
+      // Frontend-only wiring for now. API call will use this payload in follow-up work.
+      void payload;
+    },
+    [buildPayload, selectedCount]
+  );
+
+  const handleAllowSelected = useCallback(() => {
+    handleBulkAction("allow");
+  }, [handleBulkAction]);
+
+  const handleDenySelected = useCallback(() => {
+    handleBulkAction("deny");
+  }, [handleBulkAction]);
+
+  useEffect(() => {
+    if (!onBulkActionControlsChange) {
+      return;
+    }
+
+    onBulkActionControlsChange({
+      hasSelectedRows,
+      selectionSummary,
+      onAllowSelected: handleAllowSelected,
+      onDenySelected: handleDenySelected,
+      onClearSelection: handleClearSelection
+    });
+  }, [
+    hasSelectedRows,
+    handleAllowSelected,
+    handleClearSelection,
+    handleDenySelected,
+    onBulkActionControlsChange,
+    selectionSummary
+  ]);
 
   return (
     <>
-      {showAddPermission && (
-        <div className="flex flex-row items-center justify-between p-2">
-          <Button
-            onClick={() => {
-              setIsPermissionModalOpen(true);
-            }}
-          >
-            Add Permission
-          </Button>
+      <div className="flex h-full min-h-0 flex-col">
+        {showAddPermission && (
+          <div className="mb-2 flex flex-row flex-wrap items-center gap-2">
+            <Button
+              onClick={() => {
+                setIsPermissionModalOpen(true);
+              }}
+            >
+              Add Permission
+            </Button>
+          </div>
+        )}
+
+        <div className="relative flex min-h-0 flex-1 flex-col">
+          {showInlineBulkActionControls && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-50 flex justify-center px-4">
+              <div
+                className={`pointer-events-auto flex flex-row flex-wrap items-center gap-1.5 rounded-xl border border-gray-300 bg-gray-100 px-2.5 py-1.5 shadow-lg transition-all duration-500 ease-out ${
+                  hasSelectedRows
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-2 opacity-0"
+                }`}
+              >
+                <span className="pr-1 text-xs font-medium text-gray-700">
+                  {selectionSummary}
+                </span>
+                <Button
+                  size="none"
+                  disabled={!hasSelectedRows}
+                  className="rounded border border-gray-400 bg-white px-2 py-1 text-xs leading-none text-gray-800 hover:bg-gray-50"
+                  onClick={handleAllowSelected}
+                >
+                  Allow Selected
+                </Button>
+                <Button
+                  size="none"
+                  disabled={!hasSelectedRows}
+                  className="rounded border border-gray-400 bg-gray-200 px-2 py-1 text-xs leading-none text-gray-800 hover:bg-gray-300"
+                  onClick={handleDenySelected}
+                >
+                  Deny Selected
+                </Button>
+                <Button
+                  size="none"
+                  className="rounded border border-gray-400 bg-white px-2 py-1 text-xs leading-none text-gray-800 hover:bg-gray-50"
+                  onClick={handleClearSelection}
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <PermissionsTable
+            permissions={permissions}
+            isLoading={isLoading}
+            pageCount={pageCount}
+            totalEntries={totalEntries}
+            enableRowSelection
+            rowSelection={rowSelection}
+            onRowSelectionChange={handleRowSelectionChange}
+            onSelectAllChange={handleSelectAllChange}
+            handleRowClick={(row) => setSelectedPermission(row)}
+            hideResourceColumn={hideResourceColumn}
+          />
         </div>
-      )}
-      <PermissionsTable
-        permissions={permissions}
-        isLoading={isLoading}
-        pageCount={pageCount}
-        totalEntries={totalEntries}
-        handleRowClick={(row) => setSelectedPermission(row)}
-        hideResourceColumn={hideResourceColumn}
-      />
+      </div>
       {selectedPermission && (
         <PermissionForm
           isOpen={!!selectedPermission}
