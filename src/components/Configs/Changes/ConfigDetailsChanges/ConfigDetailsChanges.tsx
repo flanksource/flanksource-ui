@@ -11,10 +11,14 @@ import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { ConfigIcon } from "@flanksource-ui/ui/Icons/ConfigIcon";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { artifactDownloadURL } from "@flanksource-ui/api/services/artifacts";
+import { formatBytes } from "@flanksource-ui/utils/common";
 import { Loading } from "@flanksource-ui/ui/Loading";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import ModalTitleListItems from "@flanksource-ui/ui/Modal/ModalTitleListItems";
 import { Stat } from "@flanksource-ui/ui/stats/Stat";
+import { TbFileDescription } from "react-icons/tb";
+import { IoMdDownload } from "react-icons/io";
 import { useMemo, useState } from "react";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import ConfigChangeDetailSection from "./ConfigChangeDetailsSection";
@@ -109,6 +113,26 @@ export function ConfigDetailsChanges({
               }
             />
           </div>
+          {changeDetails?.artifacts && changeDetails.artifacts.length > 0 && (
+            <div className="flex flex-wrap gap-3 py-2">
+              {changeDetails.artifacts.map((artifact) => (
+                <a
+                  key={artifact.id}
+                  href={artifactDownloadURL(artifact.id, artifact.filename)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 rounded border border-gray-200 px-2.5 py-1.5 text-sm text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <TbFileDescription className="h-4 w-4 shrink-0" />
+                  <span>{artifact.filename}</span>
+                  <span className="text-gray-400">
+                    ({formatBytes(artifact.size)})
+                  </span>
+                  <IoMdDownload className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                </a>
+              ))}
+            </div>
+          )}
           {changeDetails?.details && (
             <ConfigChangeDetailSection label="Details">
               <JSONViewer

@@ -7,7 +7,7 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaBell, FaCrosshairs, FaTasks } from "react-icons/fa";
+import { FaArchive, FaBell, FaCrosshairs, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -46,6 +46,7 @@ import { IncidentPageContextProvider } from "./context/IncidentPageContext";
 import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
 
+import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import { features } from "./services/permissions/features";
@@ -381,6 +382,13 @@ const settingsNav: SettingsNavigationItems = {
   icon: AdjustmentsIcon,
   checkPath: false,
   submenu: [
+    {
+      name: "Artifacts",
+      href: "/settings/artifacts",
+      icon: FaArchive,
+      featureName: features["settings.artifacts"],
+      resourceName: tables.artifacts
+    },
     {
       name: "Connections",
       href: "/settings/connections",
@@ -718,6 +726,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
       </Route>
 
       <Route path="settings" element={sidebar}>
+        <Route
+          path="artifacts"
+          element={withAuthorizationAccessCheck(
+            <ArtifactsPage />,
+            tables.artifacts,
+            "read",
+            true
+          )}
+        />
         <Route
           path="connections"
           element={withAuthorizationAccessCheck(

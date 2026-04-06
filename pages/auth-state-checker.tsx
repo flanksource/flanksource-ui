@@ -22,6 +22,8 @@ export function ClerkAuthStateChecker() {
   return <FullPageSkeletonLoader />;
 }
 
+export const getServerSideProps = async () => ({ props: {} });
+
 export default function AuthStateCheckerPage() {
   const authSystem = useDetermineAuthSystem();
 
