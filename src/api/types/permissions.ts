@@ -23,7 +23,11 @@ type PermissionObjectSelector = {
   views?: ViewSelector[];
 };
 
-interface Selectors {}
+interface Selectors {
+  id?: string;
+  name?: string;
+  namespace?: string;
+}
 
 interface ScopeSelector {
   namespace?: string;

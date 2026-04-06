@@ -158,7 +158,7 @@ export function recheckPermission(id: string) {
 
 export async function fetchMcpPlaybookPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    "/permissions_summary?select=*&action=eq.mcp:run&playbook_id=not.is.null&deleted_at=is.null&limit=5000"
+    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
   );
 
   return response.data ?? [];

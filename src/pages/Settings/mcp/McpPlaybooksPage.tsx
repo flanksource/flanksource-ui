@@ -8,6 +8,7 @@ import {
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
+import { PlaybookNames } from "@flanksource-ui/api/types/playbooks";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
 import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
@@ -26,6 +27,28 @@ type PermissionBuckets = {
 
 const EVERYONE_SUBJECT_ID = "everyone";
 const EVERYONE_SUBJECT_TYPE = "group";
+
+function permissionMatchesPlaybook(
+  permission: PermissionsSummary,
+  playbook: PlaybookNames
+) {
+  const playbookRefs = permission.object_selector?.playbooks ?? [];
+
+  return playbookRefs.some((playbookRef) => {
+    if (!playbookRef?.name) {
+      return false;
+    }
+
+    if (playbookRef.namespace) {
+      return (
+        playbookRef.namespace === playbook.namespace &&
+        playbookRef.name === playbook.name
+      );
+    }
+
+    return playbookRef.name === playbook.name;
+  });
+}
 
 export default function McpPlaybooksPage() {
   const { user } = useUser();
@@ -73,25 +96,27 @@ export default function McpPlaybooksPage() {
   const { mutate: setGlobalOverride, isLoading: isUpdatingGlobalOverride } =
     useMutation({
       mutationFn: async ({
-        playbookId,
+        playbook,
         override
       }: {
-        playbookId: string;
+        playbook: PlaybookNames;
         override: "allow" | "none" | "deny";
       }) => {
-        const existingOverrides = playbookPermissions.filter(
+        const latestPermissions = await fetchMcpPlaybookPermissions();
+
+        const matchingOverrides = latestPermissions.filter(
           (permission) =>
-            permission.playbook_id === playbookId &&
             permission.action === "mcp:run" &&
             permission.subject_type === EVERYONE_SUBJECT_TYPE &&
             permission.subject === EVERYONE_SUBJECT_ID &&
             permission.id &&
-            permission.source === "mcp_settings"
+            permission.source === "mcp_settings" &&
+            permissionMatchesPlaybook(permission, playbook)
         );
 
         if (override === "none") {
           await Promise.all(
-            existingOverrides.map((permission) =>
+            matchingOverrides.map((permission) =>
               deletePermission(permission.id)
             )
           );
@@ -99,12 +124,20 @@ export default function McpPlaybooksPage() {
         }
 
         const targetDeny = override === "deny";
-        const existingOverride = existingOverrides[0];
+        const [canonicalOverride, ...duplicateOverrides] = matchingOverrides;
 
-        if (existingOverride) {
-          if (existingOverride.deny !== targetDeny) {
+        if (duplicateOverrides.length > 0) {
+          await Promise.all(
+            duplicateOverrides.map((permission) =>
+              deletePermission(permission.id)
+            )
+          );
+        }
+
+        if (canonicalOverride) {
+          if (canonicalOverride.deny !== targetDeny) {
             await updatePermission({
-              id: existingOverride.id,
+              id: canonicalOverride.id,
               deny: targetDeny
             } as any);
           }
@@ -112,7 +145,9 @@ export default function McpPlaybooksPage() {
         }
 
         await addPermission({
-          playbook_id: playbookId,
+          object_selector: {
+            playbooks: [{ name: playbook.name, namespace: playbook.namespace }]
+          },
           action: "mcp:run",
           subject: EVERYONE_SUBJECT_ID,
           subject_type: EVERYONE_SUBJECT_TYPE,
@@ -132,10 +167,10 @@ export default function McpPlaybooksPage() {
   const { mutateAsync: allowSelectiveAccess, isLoading: isAllowingSelective } =
     useMutation({
       mutationFn: async ({
-        playbookId,
+        playbook,
         subjects
       }: {
-        playbookId: string;
+        playbook: PlaybookNames;
         subjects: PermissionSubject[];
       }) => {
         const normalizeSubject = (subject: PermissionSubject) => {
@@ -161,7 +196,6 @@ export default function McpPlaybooksPage() {
 
         const existingPermissions = playbookPermissions.filter(
           (permission) =>
-            permission.playbook_id === playbookId &&
             permission.action === "mcp:run" &&
             permission.deny !== true &&
             permission.subject &&
@@ -169,7 +203,9 @@ export default function McpPlaybooksPage() {
             (permission.subject_type === "person" ||
               permission.subject_type === "team" ||
               permission.subject_type === "group") &&
-            (permission.source === "mcp_settings" || permission.source === "UI")
+            (permission.source === "mcp_settings" ||
+              permission.source === "UI") &&
+            permissionMatchesPlaybook(permission, playbook)
         );
 
         const existingKeys = new Set(
@@ -177,6 +213,10 @@ export default function McpPlaybooksPage() {
             (permission) => `${permission.subject_type}:${permission.subject}`
           )
         );
+
+        const playbookSelector = [
+          { name: playbook.name, namespace: playbook.namespace }
+        ];
 
         const payloads = subjects
           .map((subject) => {
@@ -199,7 +239,7 @@ export default function McpPlaybooksPage() {
             }
 
             return {
-              playbook_id: playbookId,
+              object_selector: { playbooks: playbookSelector },
               action: "mcp:run",
               subject: subject.id,
               subject_type: subjectType,
@@ -247,8 +287,22 @@ export default function McpPlaybooksPage() {
   const permissionsByPlaybook = useMemo(() => {
     const map = new Map<string, PermissionBuckets>();
 
+    const playbooksByNamespacedRef = new Map<string, PlaybookNames>();
+    const playbooksByName = new Map<string, PlaybookNames[]>();
+
+    for (const playbook of playbooks) {
+      playbooksByNamespacedRef.set(
+        `${playbook.namespace || ""}/${playbook.name}`,
+        playbook
+      );
+
+      const existingPlaybooks = playbooksByName.get(playbook.name) ?? [];
+      existingPlaybooks.push(playbook);
+      playbooksByName.set(playbook.name, existingPlaybooks);
+    }
+
     for (const permission of playbookPermissions) {
-      if (!permission.playbook_id || permission.deny === true) {
+      if (permission.deny === true) {
         continue;
       }
 
@@ -259,32 +313,52 @@ export default function McpPlaybooksPage() {
         continue;
       }
 
-      const current = map.get(permission.playbook_id) ?? {
-        users: [],
-        groups: []
-      };
-
-      if (permission.subject_type === "person") {
-        current.users.push(permission);
-      } else if (
-        permission.subject_type === "team" ||
-        permission.subject_type === "group"
-      ) {
-        current.groups.push(permission);
+      const playbookRefs = permission.object_selector?.playbooks ?? [];
+      if (playbookRefs.length === 0) {
+        continue;
       }
 
-      map.set(permission.playbook_id, current);
+      for (const playbookRef of playbookRefs) {
+        if (!playbookRef.name) {
+          continue;
+        }
+
+        const matchedPlaybook = playbookRef.namespace
+          ? playbooksByNamespacedRef.get(
+              `${playbookRef.namespace}/${playbookRef.name}`
+            )
+          : playbooksByName.get(playbookRef.name)?.[0];
+
+        if (!matchedPlaybook) {
+          continue;
+        }
+
+        const current = map.get(matchedPlaybook.id) ?? {
+          users: [],
+          groups: []
+        };
+
+        if (permission.subject_type === "person") {
+          current.users.push(permission);
+        } else if (
+          permission.subject_type === "team" ||
+          permission.subject_type === "group"
+        ) {
+          current.groups.push(permission);
+        }
+
+        map.set(matchedPlaybook.id, current);
+      }
     }
 
     return map;
-  }, [playbookPermissions]);
+  }, [playbookPermissions, playbooks]);
 
   const globalOverrideByPlaybook = useMemo(() => {
     const map = new Map<string, "allow" | "none" | "deny">();
 
     for (const permission of playbookPermissions) {
       if (
-        !permission.playbook_id ||
         permission.action !== "mcp:run" ||
         permission.subject_type !== EVERYONE_SUBJECT_TYPE ||
         permission.subject !== EVERYONE_SUBJECT_ID
@@ -292,14 +366,29 @@ export default function McpPlaybooksPage() {
         continue;
       }
 
-      map.set(
-        permission.playbook_id,
-        permission.deny === true ? "deny" : "allow"
-      );
+      const playbookRefs = permission.object_selector?.playbooks ?? [];
+
+      for (const playbookRef of playbookRefs) {
+        if (!playbookRef.name) {
+          continue;
+        }
+
+        const playbook = playbooks.find(
+          (p) =>
+            p.name === playbookRef.name &&
+            (playbookRef.namespace
+              ? p.namespace === playbookRef.namespace
+              : true)
+        );
+
+        if (playbook) {
+          map.set(playbook.id, permission.deny === true ? "deny" : "allow");
+        }
+      }
     }
 
     return map;
-  }, [playbookPermissions]);
+  }, [playbookPermissions, playbooks]);
 
   const selectedPlaybook = useMemo(() => {
     return playbooks.find((playbook) => playbook.id === selectedPlaybookId);
@@ -358,7 +447,7 @@ export default function McpPlaybooksPage() {
                 onGlobalOverrideChange={(override) => {
                   setMutatingPlaybookId(playbook.id);
                   setGlobalOverride(
-                    { playbookId: playbook.id, override },
+                    { playbook, override },
                     {
                       onSettled: () => {
                         setMutatingPlaybookId((current) =>
@@ -389,12 +478,12 @@ export default function McpPlaybooksPage() {
             ? playbookPermissions
                 .filter(
                   (permission) =>
-                    permission.playbook_id === selectedPlaybook.id &&
                     permission.deny !== true &&
                     permission.subject &&
                     (permission.subject_type === "person" ||
                       permission.subject_type === "team" ||
-                      permission.subject_type === "group")
+                      permission.subject_type === "group") &&
+                    permissionMatchesPlaybook(permission, selectedPlaybook)
                 )
                 .map((permission) => permission.subject!)
             : []
@@ -406,7 +495,7 @@ export default function McpPlaybooksPage() {
           }
 
           await allowSelectiveAccess({
-            playbookId: selectedPlaybook.id,
+            playbook: selectedPlaybook,
             subjects
           });
         }}

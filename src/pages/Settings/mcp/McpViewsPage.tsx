@@ -93,7 +93,9 @@ export default function McpViewsPage() {
         view: View;
         override: "allow" | "none" | "deny";
       }) => {
-        const existingOverrides = viewPermissions.filter(
+        const latestPermissions = await fetchMcpViewPermissions();
+
+        const matchingOverrides = latestPermissions.filter(
           (permission) =>
             permission.action === "mcp:run" &&
             permission.subject_type === EVERYONE_SUBJECT_TYPE &&
@@ -105,7 +107,7 @@ export default function McpViewsPage() {
 
         if (override === "none") {
           await Promise.all(
-            existingOverrides.map((permission) =>
+            matchingOverrides.map((permission) =>
               deletePermission(permission.id)
             )
           );
@@ -113,12 +115,20 @@ export default function McpViewsPage() {
         }
 
         const targetDeny = override === "deny";
-        const existingOverride = existingOverrides[0];
+        const [canonicalOverride, ...duplicateOverrides] = matchingOverrides;
 
-        if (existingOverride) {
-          if (existingOverride.deny !== targetDeny) {
+        if (duplicateOverrides.length > 0) {
+          await Promise.all(
+            duplicateOverrides.map((permission) =>
+              deletePermission(permission.id)
+            )
+          );
+        }
+
+        if (canonicalOverride) {
+          if (canonicalOverride.deny !== targetDeny) {
             await updatePermission({
-              id: existingOverride.id,
+              id: canonicalOverride.id,
               deny: targetDeny
             } as any);
           }
