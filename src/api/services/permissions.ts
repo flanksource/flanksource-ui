@@ -174,7 +174,7 @@ export async function fetchMcpViewPermissions() {
 
 export async function fetchMcpUserPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    "/permissions_summary?select=*&action=eq.mcp:use&person_id=not.is.null&deleted_at=is.null&limit=5000"
+    "/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&deleted_at=is.null&limit=5000"
   );
 
   return response.data ?? [];
@@ -227,6 +227,14 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
 export async function fetchPermissionSubjects() {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
     "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchAllPermissionSubjects() {
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    "/permission_subjects?select=id,name,type&order=type.asc,name.asc&limit=5000"
   );
 
   return response.data ?? [];
