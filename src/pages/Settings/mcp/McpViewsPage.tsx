@@ -8,9 +8,9 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { getAllViews, View } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import PermissionAccessCard from "@flanksource-ui/components/MCP/PermissionAccessCard";
+import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
-import SubjectSelectorModal from "@flanksource-ui/components/MCP/SubjectSelectorModal";
+import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
 import {
   toastError,
   toastSuccess

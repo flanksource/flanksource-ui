@@ -8,8 +8,8 @@ import {
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import PermissionAccessCard from "@flanksource-ui/components/MCP/PermissionAccessCard";
-import SubjectSelectorModal from "@flanksource-ui/components/MCP/SubjectSelectorModal";
+import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
+import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import {
   toastError,

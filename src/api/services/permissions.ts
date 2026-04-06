@@ -172,6 +172,14 @@ export async function fetchMcpViewPermissions() {
   return response.data ?? [];
 }
 
+export async function fetchMcpUserPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:use&person_id=not.is.null&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
 export type PermissionSubject = {
   id: string;
   name: string;
