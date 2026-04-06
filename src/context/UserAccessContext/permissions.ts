@@ -23,7 +23,8 @@ export const tables = {
   scopes: "scopes",
   views: "views",
   teams: "teams",
-  applications: "applications"
+  applications: "applications",
+  artifacts: "artifacts"
 };
 
 const viewerReadObjects = [

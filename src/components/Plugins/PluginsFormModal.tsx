@@ -15,6 +15,7 @@ type PluginsFormModalProps = Omit<
   formValue?: ScrapePlugin;
   isSubmitting?: boolean;
   isDeleting?: boolean;
+  errorMessage?: string;
 };
 
 export default function PluginsFormModal({
@@ -25,7 +26,8 @@ export default function PluginsFormModal({
   onDelete,
   formValue,
   isSubmitting = false,
-  isDeleting = false
+  isDeleting = false,
+  errorMessage
 }: PluginsFormModalProps) {
   const [, setHelpModal] = useAtom(modalHelpLinkAtom);
   useEffect(() => {
@@ -56,6 +58,7 @@ export default function PluginsFormModal({
         className={className}
         isSubmitting={isSubmitting}
         isDeleting={isDeleting}
+        errorMessage={errorMessage}
         handleBack={() => setIsOpen(false)}
       />
     </Modal>

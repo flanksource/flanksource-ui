@@ -68,7 +68,7 @@ export function ViewsPage() {
       toastSuccess("View added successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   });
 
@@ -86,7 +86,7 @@ export function ViewsPage() {
       toastSuccess("View updated successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   });
 
@@ -101,7 +101,7 @@ export function ViewsPage() {
       toastSuccess("View deleted successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   });
 

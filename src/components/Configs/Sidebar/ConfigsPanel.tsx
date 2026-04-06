@@ -62,7 +62,7 @@ export function ConfigsPanelList({
       }
       toastError(response.error?.message);
     } catch (ex) {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   };
 

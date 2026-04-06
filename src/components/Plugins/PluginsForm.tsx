@@ -16,6 +16,7 @@ type PluginsFormProps = {
   handleBack?: () => void;
   isSubmitting?: boolean;
   isDeleting?: boolean;
+  errorMessage?: string;
   className?: string;
 };
 
@@ -26,9 +27,11 @@ export default function PluginsForm({
   handleBack = () => {},
   isSubmitting = false,
   isDeleting = false,
+  errorMessage,
   className
 }: PluginsFormProps) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [isErrorExpanded, setIsErrorExpanded] = useState(false);
   const isReadOnly = formValue?.source === "KubernetesCRD";
 
   return (
@@ -77,6 +80,22 @@ export default function PluginsForm({
               />
             </div>
           </div>
+          {errorMessage && (
+            <div className="mx-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+              <div className={isErrorExpanded ? "" : "line-clamp-2"}>
+                {errorMessage}
+              </div>
+              {errorMessage.length > 120 && (
+                <button
+                  type="button"
+                  className="mt-1 text-xs font-medium text-red-600 hover:text-red-800"
+                  onClick={() => setIsErrorExpanded(!isErrorExpanded)}
+                >
+                  {isErrorExpanded ? "Show less" : "Show more"}
+                </button>
+              )}
+            </div>
+          )}
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-4">
             {!formValue?.id && (
               <Button

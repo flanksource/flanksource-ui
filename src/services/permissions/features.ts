@@ -24,7 +24,8 @@ export const features = {
   "settings.notifications": "settings.notifications",
   "settings.playbooks": "settings.playbooks",
   "settings.integrations": "settings.integrations",
-  "settings.permissions": "settings.permissions"
+  "settings.permissions": "settings.permissions",
+  "settings.artifacts": "settings.artifacts"
 } as const;
 
 export const featureToParentMap = {
