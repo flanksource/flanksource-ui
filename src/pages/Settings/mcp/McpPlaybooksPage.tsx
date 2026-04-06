@@ -25,7 +25,7 @@ type PermissionBuckets = {
 };
 
 const EVERYONE_SUBJECT_ID = "everyone";
-const EVERYONE_SUBJECT_TYPE = "role";
+const EVERYONE_SUBJECT_TYPE = "group";
 
 export default function McpPlaybooksPage() {
   const { user } = useUser();

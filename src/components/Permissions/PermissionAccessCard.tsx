@@ -8,6 +8,7 @@ import {
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { HiUser, HiUserGroup } from "react-icons/hi";
 
 type PermissionAccessCardProps = {
   entity: {
@@ -25,6 +26,14 @@ type PermissionAccessCardProps = {
   isMutating?: boolean;
 };
 
+function DenyBadge() {
+  return (
+    <span className="ml-0.5 rounded bg-red-100 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600">
+      Denied
+    </span>
+  );
+}
+
 function PermissionGroupItem({
   permission,
   subjectLookup
@@ -32,11 +41,18 @@ function PermissionGroupItem({
   permission: PermissionsSummary;
   subjectLookup?: Record<string, { name: string; type: string }>;
 }) {
+  const isDeny = permission.deny === true;
+
   if (permission.team) {
     return (
-      <div className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-        <Icon name={permission.team.icon} className="h-3.5 w-3.5" />
-        <span>Team: {permission.team.name}</span>
+      <div className="flex items-center gap-2">
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+          <HiUserGroup className="h-3 w-3" />
+        </span>
+        <div className="flex items-center gap-1.5 text-xs text-gray-800">
+          <span className="font-medium">{permission.team.name}</span>
+          {isDeny && <DenyBadge />}
+        </div>
       </div>
     );
   }
@@ -47,21 +63,36 @@ function PermissionGroupItem({
   const groupName = lookup?.name || permission.group?.name || "Unknown group";
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700">
-      <span>{groupName}</span>
+    <div className="flex items-center gap-2">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+        <HiUser className="h-3 w-3" />
+      </span>
+      <div className="flex items-center gap-1.5 text-xs text-gray-800">
+        <span className="font-medium">{groupName}</span>
+        {isDeny && <DenyBadge />}
+      </div>
     </div>
   );
 }
 
 function PermissionUserItem({
-  permission
+  permission,
+  subjectLookup
 }: {
   permission: PermissionsSummary;
+  subjectLookup?: Record<string, { name: string; type: string }>;
 }) {
+  const isDeny = permission.deny === true;
+
   if (!permission.person) {
+    const resolvedName =
+      (permission.subject && subjectLookup?.[permission.subject]?.name) ||
+      permission.subject ||
+      "Unknown user";
     return (
-      <div className="text-xs text-gray-600">
-        {permission.subject || "Unknown user"}
+      <div className="flex items-center gap-1.5 text-xs text-gray-600">
+        <span>{resolvedName}</span>
+        {isDeny && <DenyBadge />}
       </div>
     );
   }
@@ -74,6 +105,7 @@ function PermissionUserItem({
         {permission.person.email && (
           <span className="text-gray-500">{permission.person.email}</span>
         )}
+        {isDeny && <DenyBadge />}
       </div>
     </div>
   );
@@ -118,6 +150,7 @@ export default function PermissionAccessCard({
             <div className="shrink-0">
               <div
                 className={isMutating ? "pointer-events-none opacity-60" : ""}
+                aria-disabled={isMutating || undefined}
               >
                 <Switch
                   options={["Deny all", "Custom", "Allow all"]}
@@ -155,55 +188,69 @@ export default function PermissionAccessCard({
       </CardHeader>
 
       <CardContent className="mt-4 border-t border-gray-200 p-4 pt-3">
-        <div className="space-y-3">
-          <div>
-            <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-              Groups
-            </div>
-            {groups.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {groups.map((groupPermission) => (
-                  <PermissionGroupItem
-                    key={groupPermission.id}
-                    permission={groupPermission}
-                    subjectLookup={subjectLookup}
-                  />
-                ))}
+        {globalOverride !== "none" ? (
+          <div className="rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-500">
+            {globalOverride === "allow"
+              ? "All users are allowed. Switch to Custom to manage individual permissions."
+              : "All users are denied. Switch to Custom to manage individual permissions."}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                Groups
               </div>
-            ) : (
-              <div className="text-xs text-gray-500">No groups have access</div>
-            )}
-          </div>
-
-          <div>
-            <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
-              Users
+              {groups.length > 0 ? (
+                <div className="space-y-2">
+                  {groups.map((groupPermission, idx) => (
+                    <PermissionGroupItem
+                      key={groupPermission.id || `group-${idx}`}
+                      permission={groupPermission}
+                      subjectLookup={subjectLookup}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-500">
+                  No groups have access
+                </div>
+              )}
             </div>
-            {users.length > 0 ? (
-              <div className="space-y-2">
-                {users.map((userPermission) => (
-                  <PermissionUserItem
-                    key={userPermission.id}
-                    permission={userPermission}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-xs text-gray-500">No users have access</div>
-            )}
-          </div>
 
-          <div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8"
-              onClick={onAllowSelective}
-            >
-              + Add user or group
-            </Button>
+            <div>
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                Users
+              </div>
+              {users.length > 0 ? (
+                <div className="space-y-2">
+                  {users.map((userPermission, idx) => (
+                    <PermissionUserItem
+                      key={userPermission.id || `user-${idx}`}
+                      permission={userPermission}
+                      subjectLookup={subjectLookup}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-500">
+                  No users have access
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8"
+                onClick={onAllowSelective}
+                disabled={isMutating}
+              >
+                + Add user or group
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

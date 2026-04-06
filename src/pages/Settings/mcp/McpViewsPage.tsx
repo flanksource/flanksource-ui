@@ -25,7 +25,7 @@ type PermissionBuckets = {
 };
 
 const EVERYONE_SUBJECT_ID = "everyone";
-const EVERYONE_SUBJECT_TYPE = "role";
+const EVERYONE_SUBJECT_TYPE = "group";
 
 function permissionMatchesView(permission: PermissionsSummary, view: View) {
   const viewRefs = permission.object_selector?.views ?? [];
