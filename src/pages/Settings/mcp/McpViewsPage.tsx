@@ -9,6 +9,11 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { getAllViews, View } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
+import {
+  buildPermissionAccessCardMaps,
+  buildSubjectLookup,
+  permissionMatchesResource
+} from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
@@ -20,47 +25,14 @@ import { useUser } from "@flanksource-ui/context";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
-type PermissionBuckets = {
-  users: PermissionsSummary[];
-  groups: PermissionsSummary[];
-};
-
 const EVERYONE_SUBJECT_ID = "everyone";
 const EVERYONE_SUBJECT_TYPE = "group";
 
+const getViewRefs = (permission: PermissionsSummary) =>
+  permission.object_selector?.views ?? [];
+
 function permissionMatchesView(permission: PermissionsSummary, view: View) {
-  const viewRefs = permission.object_selector?.views ?? [];
-
-  return viewRefs.some((viewRef) => {
-    if (!viewRef.name) {
-      return false;
-    }
-
-    if (viewRef.namespace) {
-      return viewRef.namespace === view.namespace && viewRef.name === view.name;
-    }
-
-    return viewRef.name === view.name;
-  });
-}
-
-function resolveViewsForRef(
-  viewRef: { name?: string; namespace?: string },
-  viewsByNamespacedRef: Map<string, View>,
-  viewsByName: Map<string, View[]>
-) {
-  if (!viewRef?.name) {
-    return [];
-  }
-
-  if (viewRef.namespace) {
-    const matchedView = viewsByNamespacedRef.get(
-      `${viewRef.namespace}/${viewRef.name}`
-    );
-    return matchedView ? [matchedView] : [];
-  }
-
-  return viewsByName.get(viewRef.name) ?? [];
+  return permissionMatchesResource(permission, view, getViewRefs);
 }
 
 export default function McpViewsPage() {
@@ -95,14 +67,10 @@ export default function McpViewsPage() {
     queryFn: fetchPermissionSubjects
   });
 
-  const subjectLookup = useMemo(() => {
-    return Object.fromEntries(
-      permissionSubjects.map((subject) => [
-        subject.id,
-        { name: subject.name, type: subject.type }
-      ])
-    );
-  }, [permissionSubjects]);
+  const subjectLookup = useMemo(
+    () => buildSubjectLookup(permissionSubjects),
+    [permissionSubjects]
+  );
 
   const { mutate: setGlobalOverride, isLoading: isUpdatingGlobalOverride } =
     useMutation({
@@ -292,120 +260,18 @@ export default function McpViewsPage() {
       }
     });
 
-  const permissionsByView = useMemo(() => {
-    const map = new Map<string, PermissionBuckets>();
-
-    const viewsByNamespacedRef = new Map<string, View>();
-    const viewsByName = new Map<string, View[]>();
-
-    for (const view of views) {
-      viewsByNamespacedRef.set(`${view.namespace || ""}/${view.name}`, view);
-
-      const existingViews = viewsByName.get(view.name) ?? [];
-      existingViews.push(view);
-      viewsByName.set(view.name, existingViews);
-    }
-
-    for (const permission of viewPermissions) {
-      if (permission.deny === true) {
-        continue;
-      }
-
-      if (
-        permission.subject_type === EVERYONE_SUBJECT_TYPE &&
-        permission.subject === EVERYONE_SUBJECT_ID
-      ) {
-        continue;
-      }
-
-      const viewRefs = permission.object_selector?.views ?? [];
-      if (viewRefs.length === 0) {
-        continue;
-      }
-
-      const assignedViewIds = new Set<string>();
-
-      for (const viewRef of viewRefs) {
-        const matchedViews = resolveViewsForRef(
-          viewRef,
-          viewsByNamespacedRef,
-          viewsByName
-        );
-
-        for (const matchedView of matchedViews) {
-          if (assignedViewIds.has(matchedView.id)) {
-            continue;
-          }
-
-          assignedViewIds.add(matchedView.id);
-
-          const current = map.get(matchedView.id) ?? { users: [], groups: [] };
-
-          if (permission.subject_type === "person") {
-            current.users.push(permission);
-          } else if (
-            permission.subject_type === "team" ||
-            permission.subject_type === "group"
-          ) {
-            current.groups.push(permission);
-          }
-
-          map.set(matchedView.id, current);
-        }
-      }
-    }
-
-    return map;
-  }, [viewPermissions, views]);
-
-  const globalOverrideByView = useMemo(() => {
-    const map = new Map<string, "allow" | "none" | "deny">();
-
-    const viewsByNamespacedRef = new Map<string, View>();
-    const viewsByName = new Map<string, View[]>();
-
-    for (const view of views) {
-      viewsByNamespacedRef.set(`${view.namespace || ""}/${view.name}`, view);
-
-      const existingViews = viewsByName.get(view.name) ?? [];
-      existingViews.push(view);
-      viewsByName.set(view.name, existingViews);
-    }
-
-    for (const permission of viewPermissions) {
-      if (
-        permission.action !== "mcp:run" ||
-        permission.subject_type !== EVERYONE_SUBJECT_TYPE ||
-        permission.subject !== EVERYONE_SUBJECT_ID ||
-        permission.source !== MCP_SETTINGS_PERMISSION_SOURCE
-      ) {
-        continue;
-      }
-
-      const viewRefs = permission.object_selector?.views ?? [];
-      const assignedViewIds = new Set<string>();
-
-      for (const viewRef of viewRefs) {
-        const matchedViews = resolveViewsForRef(
-          viewRef,
-          viewsByNamespacedRef,
-          viewsByName
-        );
-
-        for (const view of matchedViews) {
-          if (assignedViewIds.has(view.id)) {
-            continue;
-          }
-
-          assignedViewIds.add(view.id);
-          map.set(view.id, permission.deny === true ? "deny" : "allow");
-        }
-      }
-    }
-
-    return map;
-  }, [viewPermissions, views]);
-
+  const { permissionsByResource, globalOverrideByResource } = useMemo(
+    () =>
+      buildPermissionAccessCardMaps({
+        resources: views,
+        permissions: viewPermissions,
+        getRefs: getViewRefs,
+        source: MCP_SETTINGS_PERMISSION_SOURCE,
+        everyoneSubjectId: EVERYONE_SUBJECT_ID,
+        everyoneSubjectType: EVERYONE_SUBJECT_TYPE
+      }),
+    [viewPermissions, views]
+  );
   const selectedView = useMemo(() => {
     return views.find((view) => view.id === selectedViewId);
   }, [selectedViewId, views]);
@@ -439,7 +305,7 @@ export default function McpViewsPage() {
 
         <div className="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto [grid-template-columns:repeat(auto-fit,minmax(460px,1fr))]">
           {views.map((view) => {
-            const permissions = permissionsByView.get(view.id) ?? {
+            const permissions = permissionsByResource.get(view.id) ?? {
               users: [],
               groups: []
             };
@@ -456,7 +322,7 @@ export default function McpViewsPage() {
                 users={permissions.users}
                 groups={permissions.groups}
                 subjectLookup={subjectLookup}
-                globalOverride={globalOverrideByView.get(view.id) ?? "none"}
+                globalOverride={globalOverrideByResource.get(view.id) ?? "none"}
                 isMutating={mutatingViewId === view.id}
                 onGlobalOverrideChange={(override) => {
                   setMutatingViewId(view.id);

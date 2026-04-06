@@ -10,6 +10,11 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { PlaybookNames } from "@flanksource-ui/api/types/playbooks";
+import {
+  buildPermissionAccessCardMaps,
+  buildSubjectLookup,
+  permissionMatchesResource
+} from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
 import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
@@ -21,34 +26,17 @@ import { useUser } from "@flanksource-ui/context";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
-type PermissionBuckets = {
-  users: PermissionsSummary[];
-  groups: PermissionsSummary[];
-};
-
 const EVERYONE_SUBJECT_ID = "everyone";
 const EVERYONE_SUBJECT_TYPE = "group";
+
+const getPlaybookRefs = (permission: PermissionsSummary) =>
+  permission.object_selector?.playbooks ?? [];
 
 function permissionMatchesPlaybook(
   permission: PermissionsSummary,
   playbook: PlaybookNames
 ) {
-  const playbookRefs = permission.object_selector?.playbooks ?? [];
-
-  return playbookRefs.some((playbookRef) => {
-    if (!playbookRef?.name) {
-      return false;
-    }
-
-    if (playbookRef.namespace) {
-      return (
-        playbookRef.namespace === playbook.namespace &&
-        playbookRef.name === playbook.name
-      );
-    }
-
-    return playbookRef.name === playbook.name;
-  });
+  return permissionMatchesResource(permission, playbook, getPlaybookRefs);
 }
 
 export default function McpPlaybooksPage() {
@@ -85,14 +73,10 @@ export default function McpPlaybooksPage() {
     queryFn: fetchPermissionSubjects
   });
 
-  const subjectLookup = useMemo(() => {
-    return Object.fromEntries(
-      permissionSubjects.map((subject) => [
-        subject.id,
-        { name: subject.name, type: subject.type }
-      ])
-    );
-  }, [permissionSubjects]);
+  const subjectLookup = useMemo(
+    () => buildSubjectLookup(permissionSubjects),
+    [permissionSubjects]
+  );
 
   const { mutate: setGlobalOverride, isLoading: isUpdatingGlobalOverride } =
     useMutation({
@@ -284,113 +268,18 @@ export default function McpPlaybooksPage() {
       }
     });
 
-  const permissionsByPlaybook = useMemo(() => {
-    const map = new Map<string, PermissionBuckets>();
-
-    const playbooksByNamespacedRef = new Map<string, PlaybookNames>();
-    const playbooksByName = new Map<string, PlaybookNames[]>();
-
-    for (const playbook of playbooks) {
-      playbooksByNamespacedRef.set(
-        `${playbook.namespace || ""}/${playbook.name}`,
-        playbook
-      );
-
-      const existingPlaybooks = playbooksByName.get(playbook.name) ?? [];
-      existingPlaybooks.push(playbook);
-      playbooksByName.set(playbook.name, existingPlaybooks);
-    }
-
-    for (const permission of playbookPermissions) {
-      if (permission.deny === true) {
-        continue;
-      }
-
-      if (
-        permission.subject_type === EVERYONE_SUBJECT_TYPE &&
-        permission.subject === EVERYONE_SUBJECT_ID
-      ) {
-        continue;
-      }
-
-      const playbookRefs = permission.object_selector?.playbooks ?? [];
-      if (playbookRefs.length === 0) {
-        continue;
-      }
-
-      for (const playbookRef of playbookRefs) {
-        if (!playbookRef.name) {
-          continue;
-        }
-
-        const matchedPlaybook = playbookRef.namespace
-          ? playbooksByNamespacedRef.get(
-              `${playbookRef.namespace}/${playbookRef.name}`
-            )
-          : playbooksByName.get(playbookRef.name)?.[0];
-
-        if (!matchedPlaybook) {
-          continue;
-        }
-
-        const current = map.get(matchedPlaybook.id) ?? {
-          users: [],
-          groups: []
-        };
-
-        if (permission.subject_type === "person") {
-          current.users.push(permission);
-        } else if (
-          permission.subject_type === "team" ||
-          permission.subject_type === "group"
-        ) {
-          current.groups.push(permission);
-        }
-
-        map.set(matchedPlaybook.id, current);
-      }
-    }
-
-    return map;
-  }, [playbookPermissions, playbooks]);
-
-  const globalOverrideByPlaybook = useMemo(() => {
-    const map = new Map<string, "allow" | "none" | "deny">();
-
-    for (const permission of playbookPermissions) {
-      if (
-        permission.action !== "mcp:run" ||
-        permission.subject_type !== EVERYONE_SUBJECT_TYPE ||
-        permission.subject !== EVERYONE_SUBJECT_ID ||
-        permission.source !== MCP_SETTINGS_PERMISSION_SOURCE
-      ) {
-        continue;
-      }
-
-      const playbookRefs = permission.object_selector?.playbooks ?? [];
-
-      for (const playbookRef of playbookRefs) {
-        if (!playbookRef.name) {
-          continue;
-        }
-
-        const playbook = playbooks.find(
-          (p) =>
-            p.name === playbookRef.name &&
-            (playbookRef.namespace
-              ? p.namespace === playbookRef.namespace
-              : true)
-        );
-
-        if (playbook) {
-          map.set(playbook.id, permission.deny === true ? "deny" : "allow");
-        }
-      }
-    }
-
-    return map;
-  }, [playbookPermissions, playbooks]);
-
+  const { permissionsByResource, globalOverrideByResource } = useMemo(
+    () =>
+      buildPermissionAccessCardMaps({
+        resources: playbooks,
+        permissions: playbookPermissions,
+        getRefs: getPlaybookRefs,
+        source: MCP_SETTINGS_PERMISSION_SOURCE,
+        everyoneSubjectId: EVERYONE_SUBJECT_ID,
+        everyoneSubjectType: EVERYONE_SUBJECT_TYPE
+      }),
+    [playbookPermissions, playbooks]
+  );
   const selectedPlaybook = useMemo(() => {
     return playbooks.find((playbook) => playbook.id === selectedPlaybookId);
   }, [playbooks, selectedPlaybookId]);
@@ -424,7 +313,7 @@ export default function McpPlaybooksPage() {
 
         <div className="grid min-h-0 flex-1 grid-cols-1 content-start gap-3 overflow-y-auto">
           {playbooks.map((playbook) => {
-            const permissions = permissionsByPlaybook.get(playbook.id) ?? {
+            const permissions = permissionsByResource.get(playbook.id) ?? {
               users: [],
               groups: []
             };
@@ -442,7 +331,7 @@ export default function McpPlaybooksPage() {
                 groups={permissions.groups}
                 subjectLookup={subjectLookup}
                 globalOverride={
-                  globalOverrideByPlaybook.get(playbook.id) ?? "none"
+                  globalOverrideByResource.get(playbook.id) ?? "none"
                 }
                 isMutating={mutatingPlaybookId === playbook.id}
                 onGlobalOverrideChange={(override) => {
