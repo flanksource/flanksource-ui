@@ -44,6 +44,25 @@ function permissionMatchesView(permission: PermissionsSummary, view: View) {
   });
 }
 
+function resolveViewsForRef(
+  viewRef: { name?: string; namespace?: string },
+  viewsByNamespacedRef: Map<string, View>,
+  viewsByName: Map<string, View[]>
+) {
+  if (!viewRef?.name) {
+    return [];
+  }
+
+  if (viewRef.namespace) {
+    const matchedView = viewsByNamespacedRef.get(
+      `${viewRef.namespace}/${viewRef.name}`
+    );
+    return matchedView ? [matchedView] : [];
+  }
+
+  return viewsByName.get(viewRef.name) ?? [];
+}
+
 export default function McpViewsPage() {
   const { user } = useUser();
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
@@ -304,27 +323,35 @@ export default function McpViewsPage() {
         continue;
       }
 
+      const assignedViewIds = new Set<string>();
+
       for (const viewRef of viewRefs) {
-        const matchedView = viewRef.namespace
-          ? viewsByNamespacedRef.get(`${viewRef.namespace}/${viewRef.name}`)
-          : viewsByName.get(viewRef.name)?.[0];
+        const matchedViews = resolveViewsForRef(
+          viewRef,
+          viewsByNamespacedRef,
+          viewsByName
+        );
 
-        if (!matchedView) {
-          continue;
+        for (const matchedView of matchedViews) {
+          if (assignedViewIds.has(matchedView.id)) {
+            continue;
+          }
+
+          assignedViewIds.add(matchedView.id);
+
+          const current = map.get(matchedView.id) ?? { users: [], groups: [] };
+
+          if (permission.subject_type === "person") {
+            current.users.push(permission);
+          } else if (
+            permission.subject_type === "team" ||
+            permission.subject_type === "group"
+          ) {
+            current.groups.push(permission);
+          }
+
+          map.set(matchedView.id, current);
         }
-
-        const current = map.get(matchedView.id) ?? { users: [], groups: [] };
-
-        if (permission.subject_type === "person") {
-          current.users.push(permission);
-        } else if (
-          permission.subject_type === "team" ||
-          permission.subject_type === "group"
-        ) {
-          current.groups.push(permission);
-        }
-
-        map.set(matchedView.id, current);
       }
     }
 
@@ -333,6 +360,17 @@ export default function McpViewsPage() {
 
   const globalOverrideByView = useMemo(() => {
     const map = new Map<string, "allow" | "none" | "deny">();
+
+    const viewsByNamespacedRef = new Map<string, View>();
+    const viewsByName = new Map<string, View[]>();
+
+    for (const view of views) {
+      viewsByNamespacedRef.set(`${view.namespace || ""}/${view.name}`, view);
+
+      const existingViews = viewsByName.get(view.name) ?? [];
+      existingViews.push(view);
+      viewsByName.set(view.name, existingViews);
+    }
 
     for (const permission of viewPermissions) {
       if (
@@ -345,14 +383,21 @@ export default function McpViewsPage() {
       }
 
       const viewRefs = permission.object_selector?.views ?? [];
+      const assignedViewIds = new Set<string>();
+
       for (const viewRef of viewRefs) {
-        const view = views.find(
-          (v) =>
-            v.name === viewRef.name &&
-            (viewRef.namespace ? v.namespace === viewRef.namespace : true)
+        const matchedViews = resolveViewsForRef(
+          viewRef,
+          viewsByNamespacedRef,
+          viewsByName
         );
 
-        if (view) {
+        for (const view of matchedViews) {
+          if (assignedViewIds.has(view.id)) {
+            continue;
+          }
+
+          assignedViewIds.add(view.id);
           map.set(view.id, permission.deny === true ? "deny" : "allow");
         }
       }
