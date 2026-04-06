@@ -17,8 +17,14 @@ export type FetchPermissionsInput = {
   connectionId?: string;
   subject?: string;
   action?: string;
-  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
   direction?: "inbound" | "outbound";
+  subject_type?:
+    | "playbook"
+    | "team"
+    | "person"
+    | "notification"
+    | "component"
+    | "role";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -148,4 +154,88 @@ export function recheckPermission(id: string) {
   return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
     error: null
   });
+}
+
+export async function fetchMcpPlaybookPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchMcpViewPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchMcpUserPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    "/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&deleted_at=is.null&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export type PermissionSubject = {
+  id: string;
+  name: string;
+  type: "team" | "permission_subject_group" | "person" | "role";
+};
+
+export async function fetchPermissionSubjectsPaginated({
+  search = "",
+  pageIndex = 0,
+  pageSize = 20
+}: {
+  search?: string;
+  pageIndex?: number;
+  pageSize?: number;
+}) {
+  const query = search.trim();
+
+  let url =
+    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc";
+  url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  if (query) {
+    url += `&name=ilike.*${encodeURIComponent(query)}*`;
+  }
+
+  return resolvePostGrestRequestWithPagination<PermissionSubject[]>(
+    IncidentCommander.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+}
+
+export async function fetchPermissionSubjectsByIds(ids: string[]) {
+  if (ids.length === 0) {
+    return [];
+  }
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    `/permission_subjects?select=id,name,type&id=in.(${ids.join(",")})&limit=${ids.length}`
+  );
+  return response.data ?? [];
+}
+
+export async function fetchPermissionSubjects() {
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc&limit=5000"
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchAllPermissionSubjects() {
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    "/permission_subjects?select=id,name,type&order=type.asc,name.asc&limit=5000"
+  );
+
+  return response.data ?? [];
 }

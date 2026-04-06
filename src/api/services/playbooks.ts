@@ -27,9 +27,39 @@ export async function getAllPlaybooksSpecs() {
 
 export async function getAllPlaybookNames() {
   const res = await IncidentCommander.get<PlaybookNames[] | null>(
-    `/playbook_names?select=id,name,title,icon,category&order=title.asc`
+    `/playbook_names?select=id,name,namespace,title,icon,category,description&order=title.asc`
   );
   return res.data ?? [];
+}
+
+export async function getPlaybookNamesPaginated({
+  pageIndex,
+  pageSize,
+  sortBy,
+  sortOrder
+}: {
+  pageIndex: number;
+  pageSize: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}) {
+  let url =
+    "/playbook_names?select=id,name,namespace,title,icon,category,description";
+  url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  if (sortBy) {
+    url += `&order=${encodeURIComponent(`${sortBy}.${sortOrder ?? "asc"}`)}`;
+  } else {
+    url += `&order=${encodeURIComponent("title.asc")}`;
+  }
+
+  return resolvePostGrestRequestWithPagination<PlaybookNames[]>(
+    IncidentCommander.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
 }
 
 export async function getPlaybookSpec(id: string) {

@@ -210,6 +210,18 @@ const NotificationsSilencedPage = dynamic(
     )
 );
 
+const McpOverviewPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpOverviewPage")
+);
+
+const McpPlaybooksPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpPlaybooksPage")
+);
+
+const McpViewsPage = dynamic(
+  () => import("@flanksource-ui/pages/Settings/mcp/McpViewsPage")
+);
+
 const UsersPage = dynamic(() =>
   import("@flanksource-ui/pages/UsersPage").then((m) => m.UsersPage)
 );
@@ -425,6 +437,15 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/jobs",
       icon: FaTasks,
       featureName: features["settings.job_history"],
+      resourceName: tables.database
+    },
+    {
+      name: "MCP",
+      href: "/settings/mcp",
+      icon: ({ className }: { className: string }) => (
+        <Icon name="mcp" className={`${className} [&_path]:!fill-white`} />
+      ),
+      featureName: features["settings.mcp"],
       resourceName: tables.database
     },
     {
@@ -835,6 +856,37 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <ViewsPage />,
               tables.views,
+              "read",
+              true
+            )}
+          />
+        </Route>
+
+        <Route path="mcp">
+          <Route index element={<Navigate to="/settings/mcp/overview" />} />
+          <Route
+            path="overview"
+            element={withAuthorizationAccessCheck(
+              <McpOverviewPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="playbooks"
+            element={withAuthorizationAccessCheck(
+              <McpPlaybooksPage />,
+              tables.database,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="views"
+            element={withAuthorizationAccessCheck(
+              <McpViewsPage />,
+              tables.database,
               "read",
               true
             )}
