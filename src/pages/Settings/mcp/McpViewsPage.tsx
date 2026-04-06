@@ -4,6 +4,7 @@ import {
   fetchMcpViewPermissions,
   updatePermission,
   fetchPermissionSubjects,
+  MCP_SETTINGS_PERMISSION_SOURCE,
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import { getAllViews, View } from "@flanksource-ui/api/services/views";
@@ -101,7 +102,7 @@ export default function McpViewsPage() {
             permission.subject_type === EVERYONE_SUBJECT_TYPE &&
             permission.subject === EVERYONE_SUBJECT_ID &&
             permission.id &&
-            permission.source === "mcp_settings" &&
+            permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
             permissionMatchesView(permission, view)
         );
 
@@ -143,7 +144,7 @@ export default function McpViewsPage() {
           subject: EVERYONE_SUBJECT_ID,
           subject_type: EVERYONE_SUBJECT_TYPE,
           deny: targetDeny,
-          source: "mcp_settings",
+          source: MCP_SETTINGS_PERMISSION_SOURCE,
           created_by: user?.id!
         } as any);
       },
@@ -194,8 +195,7 @@ export default function McpViewsPage() {
             (permission.subject_type === "person" ||
               permission.subject_type === "team" ||
               permission.subject_type === "group") &&
-            (permission.source === "mcp_settings" ||
-              permission.source === "UI") &&
+            permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
             permissionMatchesView(permission, view)
         );
 
@@ -233,7 +233,7 @@ export default function McpViewsPage() {
               subject: subject.id,
               subject_type: subjectType,
               deny: false,
-              source: "mcp_settings" as const,
+              source: MCP_SETTINGS_PERMISSION_SOURCE,
               created_by: user?.id
             };
           })
@@ -338,7 +338,8 @@ export default function McpViewsPage() {
       if (
         permission.action !== "mcp:run" ||
         permission.subject_type !== EVERYONE_SUBJECT_TYPE ||
-        permission.subject !== EVERYONE_SUBJECT_ID
+        permission.subject !== EVERYONE_SUBJECT_ID ||
+        permission.source !== MCP_SETTINGS_PERMISSION_SOURCE
       ) {
         continue;
       }

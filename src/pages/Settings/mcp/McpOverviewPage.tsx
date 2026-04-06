@@ -3,6 +3,7 @@ import {
   deletePermission,
   fetchAllPermissionSubjects,
   fetchMcpUserPermissions,
+  MCP_SETTINGS_PERMISSION_SOURCE,
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
@@ -23,12 +24,12 @@ function isMcpUserAccessPermission(permission: PermissionsSummary) {
     permission.object === MCP_OBJECT &&
     !!permission.subject &&
     !!permission.id &&
-    (permission.source === "mcp_settings" || permission.source === "UI")
+    permission.source === MCP_SETTINGS_PERMISSION_SOURCE
   );
 }
 
 function mapPermissionSubjectType(type: PermissionSubject["type"]) {
-  if (type === "permission_subject_group") {
+  if (type === "permission_subject_group" || type === "role") {
     return "group" as const;
   }
 
@@ -91,7 +92,9 @@ export default function McpOverviewPage() {
       }) => {
         const existingPermissions = (
           permissionsByUser.get(subjectId) ?? []
-        ).filter((permission) => permission.source === "mcp_settings");
+        ).filter(
+          (permission) => permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+        );
 
         if (access === "default") {
           await Promise.all(
@@ -115,7 +118,7 @@ export default function McpOverviewPage() {
             subject: subjectId,
             subject_type: mapPermissionSubjectType(subjectType),
             deny: targetDeny,
-            source: "mcp_settings",
+            source: MCP_SETTINGS_PERMISSION_SOURCE,
             created_by: user?.id!
           } as any);
 
@@ -173,10 +176,10 @@ export default function McpOverviewPage() {
           {subjects.map((subject) => {
             const permissions = permissionsByUser.get(subject.id) ?? [];
 
-            const activePermission =
-              permissions.find(
-                (permission) => permission.source === "mcp_settings"
-              ) ?? permissions[0];
+            const activePermission = permissions.find(
+              (permission) =>
+                permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+            );
 
             const access = !activePermission
               ? "default"
