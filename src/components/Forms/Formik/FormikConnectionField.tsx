@@ -38,7 +38,7 @@ export default function FormikConnectionField({
       });
     },
     onError: (err: Error) => {
-      toastError((err as Error).message);
+      toastError(err);
     }
   });
 
