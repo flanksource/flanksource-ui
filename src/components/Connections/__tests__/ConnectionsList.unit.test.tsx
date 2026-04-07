@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Connection } from "../ConnectionFormModal";
 import { ConnectionList } from "../ConnectionsList";
+import { ConnectionValueType } from "../connectionTypes";
 
 // Mock the CRDSource component
 jest.mock("../../Settings/CRDSource", () => {
@@ -71,16 +72,14 @@ describe("ConnectionsList", () => {
   const mockConnectionWithCRD: Connection = {
     id: "conn-123",
     name: "Test CRD Connection",
-    type: "postgres",
-    source: "KubernetesCRD",
-    created_by: { id: "user-1", name: "User One" }
+    type: ConnectionValueType.Postgres,
+    source: "KubernetesCRD"
   };
 
   const mockConnectionWithUser: Connection = {
     id: "conn-456",
     name: "Test User Connection",
-    type: "mysql",
-    created_by: { id: "user-2", name: "User Two" }
+    type: ConnectionValueType.MySQL
   };
 
   it("should display CRD component when source is KubernetesCRD", () => {
