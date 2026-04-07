@@ -16,7 +16,7 @@ import {
 } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
-import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
+import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import {
   toastError,
   toastSuccess
@@ -47,7 +47,7 @@ export default function McpViewsPage() {
     isRefetching: isViewsRefetching
   } = useQuery({
     queryKey: ["mcp", "views", "all"],
-    queryFn: async () => getAllViews(undefined, 0, 1000)
+    queryFn: async () => getAllViews([{ id: "name", desc: false }], 0, 1000)
   });
 
   const views = useMemo(() => viewsResponse?.data ?? [], [viewsResponse?.data]);
@@ -308,84 +308,83 @@ export default function McpViewsPage() {
           </p>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
-          {views.map((view) => {
-            const permissions = permissionsByResource.get(view.id) ?? {
-              users: [],
-              groups: []
-            };
+        <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+          <div className="min-h-0 flex-1 lg:w-[56rem] lg:flex-none [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
+            {views.map((view) => {
+              const permissions = permissionsByResource.get(view.id) ?? {
+                users: [],
+                groups: []
+              };
 
-            return (
-              <PermissionAccessCard
-                key={view.id}
-                entity={{
-                  id: view.id,
-                  name: view.spec?.title || view.name,
-                  namespace: view.namespace,
-                  icon: view.spec?.icon || "workflow"
-                }}
-                users={permissions.users}
-                groups={permissions.groups}
-                subjectLookup={subjectLookup}
-                globalOverride={globalOverrideByResource.get(view.id) ?? "none"}
-                isMutating={mutatingViewId === view.id}
-                onGlobalOverrideChange={(override) => {
-                  setMutatingViewId(view.id);
-                  setGlobalOverride(
-                    { view, override },
-                    {
-                      onSettled: () => {
-                        setMutatingViewId((current) =>
-                          current === view.id ? null : current
-                        );
+              return (
+                <PermissionAccessCard
+                  key={view.id}
+                  entity={{
+                    id: view.id,
+                    name: view.spec?.title || view.name,
+                    namespace: view.namespace,
+                    icon: view.spec?.icon || "workflow"
+                  }}
+                  users={permissions.users}
+                  groups={permissions.groups}
+                  subjectLookup={subjectLookup}
+                  globalOverride={
+                    globalOverrideByResource.get(view.id) ?? "none"
+                  }
+                  isMutating={mutatingViewId === view.id}
+                  onGlobalOverrideChange={(override) => {
+                    setMutatingViewId(view.id);
+                    setGlobalOverride(
+                      { view, override },
+                      {
+                        onSettled: () => {
+                          setMutatingViewId((current) =>
+                            current === view.id ? null : current
+                          );
+                        }
                       }
-                    }
-                  );
+                    );
+                  }}
+                  onViewSubjects={() => setSelectedViewId(view.id)}
+                />
+              );
+            })}
+          </div>
+
+          <div className="min-h-0 w-full shrink-0 lg:sticky lg:top-6 lg:w-[420px] lg:self-start">
+            {selectedView ? (
+              <SubjectSelectorPanel
+                key={selectedView.id}
+                description="Select users or groups to allow this view for MCP usage."
+                preselectedSubjectIds={viewPermissions
+                  .filter(
+                    (permission) =>
+                      permission.deny !== true &&
+                      permission.subject &&
+                      permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+                      (permission.subject_type === "person" ||
+                        permission.subject_type === "team" ||
+                        permission.subject_type === "group") &&
+                      permissionMatchesView(permission, selectedView)
+                  )
+                  .map((permission) => permission.subject!)}
+                isSubmitting={isAllowingSelective}
+                onClose={() => setSelectedViewId(null)}
+                onAllow={async (subjects) => {
+                  await allowSelectiveAccess({
+                    view: selectedView,
+                    subjects
+                  });
                 }}
-                onViewSubjects={() => setSelectedViewId(view.id)}
               />
-            );
-          })}
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
+                Select a view row to manage custom subject access.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <SubjectSelectorModal
-        open={!!selectedView}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedViewId(null);
-          }
-        }}
-        title={`Allow access: ${selectedView?.spec?.title || selectedView?.name || ""}`}
-        description="Select users or groups to allow this view for MCP usage."
-        preselectedSubjectIds={
-          selectedView
-            ? viewPermissions
-                .filter(
-                  (permission) =>
-                    permission.deny !== true &&
-                    permission.subject &&
-                    permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-                    (permission.subject_type === "person" ||
-                      permission.subject_type === "team" ||
-                      permission.subject_type === "group") &&
-                    permissionMatchesView(permission, selectedView)
-                )
-                .map((permission) => permission.subject!)
-            : []
-        }
-        isSubmitting={isAllowingSelective}
-        onAllow={async (subjects) => {
-          if (!selectedView) {
-            return;
-          }
-
-          await allowSelectiveAccess({
-            view: selectedView,
-            subjects
-          });
-        }}
-      />
     </McpTabsLinks>
   );
 }

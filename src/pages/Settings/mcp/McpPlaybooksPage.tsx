@@ -16,7 +16,7 @@ import {
   permissionMatchesResource
 } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
-import SubjectSelectorModal from "@flanksource-ui/components/Permissions/SubjectSelectorModal";
+import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import {
   toastError,
@@ -316,86 +316,83 @@ export default function McpPlaybooksPage() {
           </p>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
-          {playbooks.map((playbook) => {
-            const permissions = permissionsByResource.get(playbook.id) ?? {
-              users: [],
-              groups: []
-            };
+        <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+          <div className="min-h-0 flex-1 lg:w-[56rem] lg:flex-none [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
+            {playbooks.map((playbook) => {
+              const permissions = permissionsByResource.get(playbook.id) ?? {
+                users: [],
+                groups: []
+              };
 
-            return (
-              <PermissionAccessCard
-                key={playbook.id}
-                entity={{
-                  id: playbook.id,
-                  name: playbook.title || playbook.name,
-                  namespace: playbook.namespace,
-                  icon: playbook.icon
-                }}
-                users={permissions.users}
-                groups={permissions.groups}
-                subjectLookup={subjectLookup}
-                globalOverride={
-                  globalOverrideByResource.get(playbook.id) ?? "none"
-                }
-                isMutating={mutatingPlaybookId === playbook.id}
-                onGlobalOverrideChange={(override) => {
-                  setMutatingPlaybookId(playbook.id);
-                  setGlobalOverride(
-                    { playbook, override },
-                    {
-                      onSettled: () => {
-                        setMutatingPlaybookId((current) =>
-                          current === playbook.id ? null : current
-                        );
+              return (
+                <PermissionAccessCard
+                  key={playbook.id}
+                  entity={{
+                    id: playbook.id,
+                    name: playbook.title || playbook.name,
+                    namespace: playbook.namespace,
+                    icon: playbook.icon
+                  }}
+                  users={permissions.users}
+                  groups={permissions.groups}
+                  subjectLookup={subjectLookup}
+                  globalOverride={
+                    globalOverrideByResource.get(playbook.id) ?? "none"
+                  }
+                  isMutating={mutatingPlaybookId === playbook.id}
+                  onGlobalOverrideChange={(override) => {
+                    setMutatingPlaybookId(playbook.id);
+                    setGlobalOverride(
+                      { playbook, override },
+                      {
+                        onSettled: () => {
+                          setMutatingPlaybookId((current) =>
+                            current === playbook.id ? null : current
+                          );
+                        }
                       }
-                    }
-                  );
+                    );
+                  }}
+                  onViewSubjects={() => setSelectedPlaybookId(playbook.id)}
+                />
+              );
+            })}
+          </div>
+
+          <div className="min-h-0 w-full shrink-0 lg:sticky lg:top-6 lg:w-[420px] lg:self-start">
+            {selectedPlaybook ? (
+              <SubjectSelectorPanel
+                key={selectedPlaybook.id}
+                description="Select users or groups to allow this playbook for MCP usage."
+                preselectedSubjectIds={playbookPermissions
+                  .filter(
+                    (permission) =>
+                      permission.deny !== true &&
+                      permission.subject &&
+                      permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+                      (permission.subject_type === "person" ||
+                        permission.subject_type === "team" ||
+                        permission.subject_type === "group") &&
+                      permissionMatchesPlaybook(permission, selectedPlaybook)
+                  )
+                  .map((permission) => permission.subject!)}
+                isSubmitting={isAllowingSelective}
+                onClose={() => setSelectedPlaybookId(null)}
+                onAllow={async (subjects) => {
+                  await allowSelectiveAccess({
+                    playbook: selectedPlaybook,
+                    subjects
+                  });
                 }}
-                onViewSubjects={() => setSelectedPlaybookId(playbook.id)}
               />
-            );
-          })}
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
+                Select a playbook row to manage custom subject access.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <SubjectSelectorModal
-        open={!!selectedPlaybook}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedPlaybookId(null);
-          }
-        }}
-        title={`Allow mcp:run to ${selectedPlaybook?.title || selectedPlaybook?.name || ""}`}
-        description="Select users or groups to allow this playbook for MCP usage."
-        preselectedSubjectIds={
-          selectedPlaybook
-            ? playbookPermissions
-                .filter(
-                  (permission) =>
-                    permission.deny !== true &&
-                    permission.subject &&
-                    permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-                    (permission.subject_type === "person" ||
-                      permission.subject_type === "team" ||
-                      permission.subject_type === "group") &&
-                    permissionMatchesPlaybook(permission, selectedPlaybook)
-                )
-                .map((permission) => permission.subject!)
-            : []
-        }
-        isSubmitting={isAllowingSelective}
-        onAllow={async (subjects) => {
-          if (!selectedPlaybook) {
-            return;
-          }
-
-          await allowSelectiveAccess({
-            playbook: selectedPlaybook,
-            subjects
-          });
-        }}
-      />
     </McpTabsLinks>
   );
 }
