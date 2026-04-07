@@ -43,7 +43,8 @@ function SubjectIcon({ subject }: { subject: PermissionSubject }) {
 
   return (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-      {subject.type === "team" ? (
+      {subject.type === "team" ||
+      subject.type === "permission_subject_group" ? (
         <HiUserGroup className="h-3 w-3" />
       ) : (
         <HiUser className="h-3 w-3" />
