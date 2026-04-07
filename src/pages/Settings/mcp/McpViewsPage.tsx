@@ -35,6 +35,18 @@ function permissionMatchesView(permission: PermissionsSummary, view: View) {
   return permissionMatchesResource(permission, view, getViewRefs);
 }
 
+function mapSubjectType(type: PermissionSubject["type"]) {
+  if (type === "permission_subject_group") {
+    return "group" as const;
+  }
+
+  if (type === "role") {
+    return "role" as const;
+  }
+
+  return type;
+}
+
 export default function McpViewsPage() {
   const { user } = useUser();
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
@@ -153,19 +165,7 @@ export default function McpViewsPage() {
         subjects: PermissionSubject[];
       }) => {
         const normalizeSubject = (subject: PermissionSubject) => {
-          const subjectType =
-            subject.type === "person"
-              ? "person"
-              : subject.type === "team"
-                ? "team"
-                : subject.type === "permission_subject_group"
-                  ? "group"
-                  : null;
-
-          if (!subjectType) {
-            return null;
-          }
-
+          const subjectType = mapSubjectType(subject.type);
           return `${subjectType}:${subject.id}`;
         };
 
@@ -181,7 +181,8 @@ export default function McpViewsPage() {
             permission.id &&
             (permission.subject_type === "person" ||
               permission.subject_type === "team" ||
-              permission.subject_type === "group") &&
+              permission.subject_type === "group" ||
+              permission.subject_type === "role") &&
             permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
             permissionMatchesView(permission, view)
         );
@@ -196,18 +197,7 @@ export default function McpViewsPage() {
 
         const payloads = subjects
           .map((subject) => {
-            const subjectType =
-              subject.type === "person"
-                ? "person"
-                : subject.type === "team"
-                  ? "team"
-                  : subject.type === "permission_subject_group"
-                    ? "group"
-                    : null;
-
-            if (!subjectType) {
-              return null;
-            }
+            const subjectType = mapSubjectType(subject.type);
 
             const key = `${subjectType}:${subject.id}`;
             if (existingKeys.has(key)) {
@@ -355,7 +345,7 @@ export default function McpViewsPage() {
             {selectedView ? (
               <SubjectSelectorPanel
                 key={selectedView.id}
-                description="Select users or groups to allow this view for MCP usage."
+                description="Select users, teams, groups, or roles to allow this view for MCP usage."
                 preselectedSubjectIds={viewPermissions
                   .filter(
                     (permission) =>
@@ -364,7 +354,8 @@ export default function McpViewsPage() {
                       permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
                       (permission.subject_type === "person" ||
                         permission.subject_type === "team" ||
-                        permission.subject_type === "group") &&
+                        permission.subject_type === "group" ||
+                        permission.subject_type === "role") &&
                       permissionMatchesView(permission, selectedView)
                   )
                   .map((permission) => permission.subject!)}

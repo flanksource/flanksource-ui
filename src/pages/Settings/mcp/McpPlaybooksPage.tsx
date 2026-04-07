@@ -39,6 +39,18 @@ function permissionMatchesPlaybook(
   return permissionMatchesResource(permission, playbook, getPlaybookRefs);
 }
 
+function mapSubjectType(type: PermissionSubject["type"]) {
+  if (type === "permission_subject_group") {
+    return "group" as const;
+  }
+
+  if (type === "role") {
+    return "role" as const;
+  }
+
+  return type;
+}
+
 export default function McpPlaybooksPage() {
   const { user } = useUser();
   const [selectedPlaybookId, setSelectedPlaybookId] = useState<string | null>(
@@ -159,19 +171,7 @@ export default function McpPlaybooksPage() {
         subjects: PermissionSubject[];
       }) => {
         const normalizeSubject = (subject: PermissionSubject) => {
-          const subjectType =
-            subject.type === "person"
-              ? "person"
-              : subject.type === "team"
-                ? "team"
-                : subject.type === "permission_subject_group"
-                  ? "group"
-                  : null;
-
-          if (!subjectType) {
-            return null;
-          }
-
+          const subjectType = mapSubjectType(subject.type);
           return `${subjectType}:${subject.id}`;
         };
 
@@ -187,7 +187,8 @@ export default function McpPlaybooksPage() {
             permission.id &&
             (permission.subject_type === "person" ||
               permission.subject_type === "team" ||
-              permission.subject_type === "group") &&
+              permission.subject_type === "group" ||
+              permission.subject_type === "role") &&
             permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
             permissionMatchesPlaybook(permission, playbook)
         );
@@ -204,18 +205,7 @@ export default function McpPlaybooksPage() {
 
         const payloads = subjects
           .map((subject) => {
-            const subjectType =
-              subject.type === "person"
-                ? "person"
-                : subject.type === "team"
-                  ? "team"
-                  : subject.type === "permission_subject_group"
-                    ? "group"
-                    : null;
-
-            if (!subjectType) {
-              return null;
-            }
+            const subjectType = mapSubjectType(subject.type);
 
             const key = `${subjectType}:${subject.id}`;
             if (existingKeys.has(key)) {
@@ -363,7 +353,7 @@ export default function McpPlaybooksPage() {
             {selectedPlaybook ? (
               <SubjectSelectorPanel
                 key={selectedPlaybook.id}
-                description="Select users or groups to allow this playbook for MCP usage."
+                description="Select users, teams, groups, or roles to allow this playbook for MCP usage."
                 preselectedSubjectIds={playbookPermissions
                   .filter(
                     (permission) =>
@@ -372,7 +362,8 @@ export default function McpPlaybooksPage() {
                       permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
                       (permission.subject_type === "person" ||
                         permission.subject_type === "team" ||
-                        permission.subject_type === "group") &&
+                        permission.subject_type === "group" ||
+                        permission.subject_type === "role") &&
                       permissionMatchesPlaybook(permission, selectedPlaybook)
                   )
                   .map((permission) => permission.subject!)}

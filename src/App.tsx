@@ -860,7 +860,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <McpOverviewPage />,
               tables.database,
-              "read",
+              "write",
               true
             )}
           />
@@ -869,7 +869,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <McpPlaybooksPage />,
               tables.database,
-              "read",
+              "write",
               true
             )}
           />
@@ -878,7 +878,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <McpViewsPage />,
               tables.database,
-              "read",
+              "write",
               true
             )}
           />

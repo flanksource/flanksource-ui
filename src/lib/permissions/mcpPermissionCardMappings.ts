@@ -167,7 +167,8 @@ export function buildPermissionAccessCardMaps<
         current.users.push(permission);
       } else if (
         permission.subject_type === "team" ||
-        permission.subject_type === "group"
+        permission.subject_type === "group" ||
+        permission.subject_type === "role"
       ) {
         current.groups.push(permission);
       }

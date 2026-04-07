@@ -228,7 +228,7 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
 
 export async function fetchPermissionSubjects() {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc&limit=5000"
+    "/permission_subjects?select=id,name,type&order=name.asc&limit=5000"
   );
 
   return response.data ?? [];

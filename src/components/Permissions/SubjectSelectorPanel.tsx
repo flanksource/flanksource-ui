@@ -239,7 +239,7 @@ export default function SubjectSelectorPanel({
       </div>
 
       <Input
-        placeholder="Search users or groups"
+        placeholder="Search users, teams, groups, or roles"
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
