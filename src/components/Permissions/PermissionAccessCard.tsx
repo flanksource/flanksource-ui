@@ -1,4 +1,3 @@
-import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 
@@ -9,9 +8,6 @@ type PermissionAccessCardProps = {
     namespace?: string;
     icon?: string;
   };
-  users: PermissionsSummary[];
-  groups: PermissionsSummary[];
-  subjectLookup?: Record<string, { name: string; type: string }>;
   globalOverride?: "allow" | "none" | "deny";
   onGlobalOverrideChange: (value: "allow" | "none" | "deny") => void;
   onViewSubjects?: () => void;

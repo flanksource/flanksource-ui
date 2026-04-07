@@ -104,17 +104,22 @@ export default function SubjectSelectorPanel({
       queryFn: () =>
         fetchPermissionSubjectsByIds(normalizedPreselectedSubjectIds),
       enabled: shouldFetchSubjectsByIds,
-      staleTime: 60_000,
-      onSuccess: (data) => {
-        setSelectedSubjects((prev) => {
-          const next = { ...prev };
-          for (const subject of data) {
-            next[subject.id] = subject;
-          }
-          return next;
-        });
-      }
+      staleTime: 60_000
     });
+
+  useEffect(() => {
+    if (subjectsByIds.length === 0) {
+      return;
+    }
+
+    setSelectedSubjects((prev) => {
+      const next = { ...prev };
+      for (const subject of subjectsByIds) {
+        next[subject.id] = subject;
+      }
+      return next;
+    });
+  }, [subjectsByIds]);
 
   const debouncedSearch = useDebouncedValue(search, 300) ?? "";
 

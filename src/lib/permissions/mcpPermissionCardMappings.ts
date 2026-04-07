@@ -4,6 +4,24 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 
+export const EVERYONE_SUBJECT_ID = "everyone";
+export const EVERYONE_SUBJECT_TYPE = "group";
+
+/**
+ * Map a PermissionSubject type to the subject_type used in permission records.
+ */
+export function mapSubjectType(type: PermissionSubject["type"]) {
+  if (type === "permission_subject_group") {
+    return "group" as const;
+  }
+
+  if (type === "role") {
+    return "role" as const;
+  }
+
+  return type;
+}
+
 export type NamespacedResource = {
   id: string;
   name: string;

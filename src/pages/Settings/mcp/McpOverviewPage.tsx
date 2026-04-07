@@ -129,11 +129,15 @@ export default function McpOverviewPage() {
         subjectType: PermissionSubject["type"];
         access: "deny" | "default" | "allow";
       }) => {
-        const existingPermissions = (
-          permissionsByUser.get(subjectId) ?? []
-        ).filter(
-          (permission) => permission.source === MCP_SETTINGS_PERMISSION_SOURCE
-        );
+        // Re-fetch to avoid acting on stale data from the render closure
+        const latestPermissions = await fetchMcpUserPermissions();
+        const existingPermissions = latestPermissions
+          .filter(isMcpUserAccessPermission)
+          .filter(
+            (permission) =>
+              permission.subject === subjectId &&
+              permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+          );
 
         if (access === "default") {
           await Promise.all(

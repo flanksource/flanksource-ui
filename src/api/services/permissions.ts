@@ -159,15 +159,7 @@ export function recheckPermission(id: string) {
 // Source marker used by the MCP Settings UI for permissions it creates/manages.
 export const MCP_SETTINGS_PERMISSION_SOURCE = "mcp_settings" as const;
 
-export async function fetchMcpPlaybookPermissions() {
-  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
-  );
-
-  return response.data ?? [];
-}
-
-export async function fetchMcpViewPermissions() {
+export async function fetchMcpRunPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
     `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );

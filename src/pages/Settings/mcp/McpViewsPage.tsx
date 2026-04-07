@@ -1,62 +1,22 @@
-import {
-  addPermission,
-  deletePermission,
-  fetchMcpViewPermissions,
-  updatePermission,
-  fetchPermissionSubjects,
-  MCP_SETTINGS_PERMISSION_SOURCE,
-  PermissionSubject
-} from "@flanksource-ui/api/services/permissions";
-import { getAllViews, View } from "@flanksource-ui/api/services/views";
+import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
+import { getAllViews } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import {
-  buildPermissionAccessCardMaps,
-  buildSubjectLookup,
-  permissionMatchesResource
-} from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
+import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
 import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
-import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
-import {
-  toastError,
-  toastSuccess
-} from "@flanksource-ui/components/Toast/toast";
-import { useUser } from "@flanksource-ui/context";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-
-const EVERYONE_SUBJECT_ID = "everyone";
-const EVERYONE_SUBJECT_TYPE = "group";
+import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 const getViewRefs = (permission: PermissionsSummary) =>
   permission.object_selector?.views ?? [];
 
-function permissionMatchesView(permission: PermissionsSummary, view: View) {
-  return permissionMatchesResource(permission, view, getViewRefs);
-}
-
-function mapSubjectType(type: PermissionSubject["type"]) {
-  if (type === "permission_subject_group") {
-    return "group" as const;
-  }
-
-  if (type === "role") {
-    return "role" as const;
-  }
-
-  return type;
-}
-
 export default function McpViewsPage() {
-  const { user } = useUser();
-  const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
-  const [mutatingViewId, setMutatingViewId] = useState<string | null>(null);
-
   const {
-    isLoading: isViewsLoading,
+    isLoading,
     data: viewsResponse,
-    refetch: refetchViews,
-    isRefetching: isViewsRefetching
+    refetch,
+    isRefetching
   } = useQuery({
     queryKey: ["mcp", "views", "all"],
     queryFn: async () => getAllViews([{ id: "name", desc: false }], 0, 1000)
@@ -65,217 +25,28 @@ export default function McpViewsPage() {
   const views = useMemo(() => viewsResponse?.data ?? [], [viewsResponse?.data]);
 
   const {
-    data: viewPermissions = [],
-    isLoading: isPermissionsLoading,
-    refetch: refetchPermissions,
-    isRefetching: isPermissionsRefetching
-  } = useQuery({
-    queryKey: ["mcp", "views", "permissions"],
-    queryFn: fetchMcpViewPermissions
+    permissionsByResource,
+    globalOverrideByResource,
+    selectedResource: selectedView,
+    setSelectedResourceId,
+    mutatingResourceId,
+    setGlobalOverride,
+    allowSelectiveAccess,
+    isAllowingSelective,
+    loading,
+    isInitialLoading,
+    preselectedSubjectIds,
+    refetch: refetchAll
+  } = useMcpResourcePermissions({
+    resources: views,
+    isResourcesLoading: isLoading,
+    isResourcesRefetching: isRefetching,
+    refetchResources: refetch,
+    permissionsQueryKey: ["mcp", "views", "permissions"],
+    fetchPermissions: fetchMcpRunPermissions,
+    getRefs: getViewRefs,
+    objectSelectorKey: "views"
   });
-
-  const { data: permissionSubjects = [] } = useQuery({
-    queryKey: ["mcp", "permission-subjects", "all"],
-    queryFn: fetchPermissionSubjects
-  });
-
-  const subjectLookup = useMemo(
-    () => buildSubjectLookup(permissionSubjects),
-    [permissionSubjects]
-  );
-
-  const { mutate: setGlobalOverride, isLoading: isUpdatingGlobalOverride } =
-    useMutation({
-      mutationFn: async ({
-        view,
-        override
-      }: {
-        view: View;
-        override: "allow" | "none" | "deny";
-      }) => {
-        const latestPermissions = await fetchMcpViewPermissions();
-
-        const matchingOverrides = latestPermissions.filter(
-          (permission) =>
-            permission.action === "mcp:run" &&
-            permission.subject_type === EVERYONE_SUBJECT_TYPE &&
-            permission.subject === EVERYONE_SUBJECT_ID &&
-            permission.id &&
-            permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-            permissionMatchesView(permission, view)
-        );
-
-        if (override === "none") {
-          await Promise.all(
-            matchingOverrides.map((permission) =>
-              deletePermission(permission.id)
-            )
-          );
-          return;
-        }
-
-        const targetDeny = override === "deny";
-        const [canonicalOverride, ...duplicateOverrides] = matchingOverrides;
-
-        if (duplicateOverrides.length > 0) {
-          await Promise.all(
-            duplicateOverrides.map((permission) =>
-              deletePermission(permission.id)
-            )
-          );
-        }
-
-        if (canonicalOverride) {
-          if (canonicalOverride.deny !== targetDeny) {
-            await updatePermission({
-              id: canonicalOverride.id,
-              deny: targetDeny
-            } as any);
-          }
-          return;
-        }
-
-        await addPermission({
-          object_selector: {
-            views: [{ name: view.name, namespace: view.namespace }]
-          },
-          action: "mcp:run",
-          subject: EVERYONE_SUBJECT_ID,
-          subject_type: EVERYONE_SUBJECT_TYPE,
-          deny: targetDeny,
-          source: MCP_SETTINGS_PERMISSION_SOURCE,
-          created_by: user?.id!
-        } as any);
-      },
-      onSuccess: () => {
-        refetchPermissions();
-      },
-      onError: (error) => {
-        toastError(error as any);
-      }
-    });
-
-  const { mutateAsync: allowSelectiveAccess, isLoading: isAllowingSelective } =
-    useMutation({
-      mutationFn: async ({
-        view,
-        subjects
-      }: {
-        view: View;
-        subjects: PermissionSubject[];
-      }) => {
-        const normalizeSubject = (subject: PermissionSubject) => {
-          const subjectType = mapSubjectType(subject.type);
-          return `${subjectType}:${subject.id}`;
-        };
-
-        const desiredKeys = new Set(
-          subjects.map(normalizeSubject).filter(Boolean) as string[]
-        );
-
-        const existingPermissions = viewPermissions.filter(
-          (permission) =>
-            permission.action === "mcp:run" &&
-            permission.deny !== true &&
-            permission.subject &&
-            permission.id &&
-            (permission.subject_type === "person" ||
-              permission.subject_type === "team" ||
-              permission.subject_type === "group" ||
-              permission.subject_type === "role") &&
-            permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-            permissionMatchesView(permission, view)
-        );
-
-        const existingKeys = new Set(
-          existingPermissions.map(
-            (permission) => `${permission.subject_type}:${permission.subject}`
-          )
-        );
-
-        const viewSelector = [{ name: view.name, namespace: view.namespace }];
-
-        const payloads = subjects
-          .map((subject) => {
-            const subjectType = mapSubjectType(subject.type);
-
-            const key = `${subjectType}:${subject.id}`;
-            if (existingKeys.has(key)) {
-              return null;
-            }
-
-            return {
-              object_selector: { views: viewSelector },
-              action: "mcp:run",
-              subject: subject.id,
-              subject_type: subjectType,
-              deny: false,
-              source: MCP_SETTINGS_PERMISSION_SOURCE,
-              created_by: user?.id
-            };
-          })
-          .filter(Boolean);
-
-        const deleteIds = existingPermissions
-          .filter(
-            (permission) =>
-              !desiredKeys.has(
-                `${permission.subject_type}:${permission.subject}`
-              )
-          )
-          .map((permission) => permission.id);
-
-        await Promise.all([
-          ...payloads.map((payload) => addPermission(payload as any)),
-          ...deleteIds.map((id) => deletePermission(id))
-        ]);
-
-        return {
-          added: payloads.length,
-          removed: deleteIds.length
-        };
-      },
-      onSuccess: ({ added, removed }) => {
-        if (added === 0 && removed === 0) {
-          toastSuccess("No permission changes");
-        } else {
-          toastSuccess(`Updated permissions: +${added} / -${removed}`);
-        }
-
-        setSelectedViewId(null);
-        refetchPermissions();
-      },
-      onError: (error) => {
-        toastError(error as any);
-      }
-    });
-
-  const { permissionsByResource, globalOverrideByResource } = useMemo(
-    () =>
-      buildPermissionAccessCardMaps({
-        resources: views,
-        permissions: viewPermissions,
-        getRefs: getViewRefs,
-        source: MCP_SETTINGS_PERMISSION_SOURCE,
-        everyoneSubjectId: EVERYONE_SUBJECT_ID,
-        everyoneSubjectType: EVERYONE_SUBJECT_TYPE
-      }),
-    [viewPermissions, views]
-  );
-  const selectedView = useMemo(() => {
-    return views.find((view) => view.id === selectedViewId);
-  }, [selectedViewId, views]);
-
-  const loading =
-    isViewsLoading ||
-    isPermissionsLoading ||
-    isViewsRefetching ||
-    isPermissionsRefetching ||
-    isUpdatingGlobalOverride ||
-    isAllowingSelective;
-
-  const isInitialLoading =
-    (isViewsLoading || isPermissionsLoading) && views.length === 0;
 
   return (
     <McpTabsLinks
@@ -283,10 +54,7 @@ export default function McpViewsPage() {
       loading={loading}
       isInitialLoading={isInitialLoading}
       loadingText="Loading MCP views..."
-      onRefresh={() => {
-        refetchViews();
-        refetchPermissions();
-      }}
+      onRefresh={refetchAll}
     >
       <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 pb-6">
         <div>
@@ -315,27 +83,14 @@ export default function McpViewsPage() {
                     namespace: view.namespace,
                     icon: view.spec?.icon || "workflow"
                   }}
-                  users={permissions.users}
-                  groups={permissions.groups}
-                  subjectLookup={subjectLookup}
                   globalOverride={
                     globalOverrideByResource.get(view.id) ?? "none"
                   }
-                  isMutating={mutatingViewId === view.id}
-                  onGlobalOverrideChange={(override) => {
-                    setMutatingViewId(view.id);
-                    setGlobalOverride(
-                      { view, override },
-                      {
-                        onSettled: () => {
-                          setMutatingViewId((current) =>
-                            current === view.id ? null : current
-                          );
-                        }
-                      }
-                    );
-                  }}
-                  onViewSubjects={() => setSelectedViewId(view.id)}
+                  isMutating={mutatingResourceId === view.id}
+                  onGlobalOverrideChange={(override) =>
+                    setGlobalOverride(view, override)
+                  }
+                  onViewSubjects={() => setSelectedResourceId(view.id)}
                 />
               );
             })}
@@ -346,27 +101,12 @@ export default function McpViewsPage() {
               <SubjectSelectorPanel
                 key={selectedView.id}
                 description="Select users, teams, groups, or roles to allow this view for MCP usage."
-                preselectedSubjectIds={viewPermissions
-                  .filter(
-                    (permission) =>
-                      permission.deny !== true &&
-                      permission.subject &&
-                      permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-                      (permission.subject_type === "person" ||
-                        permission.subject_type === "team" ||
-                        permission.subject_type === "group" ||
-                        permission.subject_type === "role") &&
-                      permissionMatchesView(permission, selectedView)
-                  )
-                  .map((permission) => permission.subject!)}
+                preselectedSubjectIds={preselectedSubjectIds}
                 isSubmitting={isAllowingSelective}
-                onClose={() => setSelectedViewId(null)}
-                onAllow={async (subjects) => {
-                  await allowSelectiveAccess({
-                    view: selectedView,
-                    subjects
-                  });
-                }}
+                onClose={() => setSelectedResourceId(null)}
+                onAllow={(subjects) =>
+                  allowSelectiveAccess(selectedView, subjects)
+                }
               />
             ) : (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
