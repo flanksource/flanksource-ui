@@ -316,7 +316,7 @@ export default function McpPlaybooksPage() {
           </p>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
           {playbooks.map((playbook) => {
             const permissions = permissionsByResource.get(playbook.id) ?? {
               users: [],

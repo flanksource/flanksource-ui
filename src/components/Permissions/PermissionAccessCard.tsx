@@ -27,7 +27,7 @@ export default function PermissionAccessCard({
 }: PermissionAccessCardProps) {
   return (
     <div
-      className={`w-full max-w-4xl border-b border-gray-200 py-3 ${globalOverride === "none" && onViewSubjects ? "cursor-pointer" : ""}`}
+      className={`w-full max-w-4xl ${globalOverride === "none" && onViewSubjects ? "cursor-pointer" : ""}`}
       onClick={() => {
         if (globalOverride === "none") {
           onViewSubjects?.();
@@ -63,6 +63,7 @@ export default function PermissionAccessCard({
               aria-disabled={isMutating || undefined}
             >
               <Switch
+                size="sm"
                 options={["Deny all", "Custom", "Allow all"]}
                 value={
                   globalOverride === "deny"
