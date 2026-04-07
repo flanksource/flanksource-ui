@@ -44,6 +44,7 @@ export default function McpPlaybooksPage() {
   const [selectedPlaybookId, setSelectedPlaybookId] = useState<string | null>(
     null
   );
+  const [viewerPlaybookId, setViewerPlaybookId] = useState<string | null>(null);
   const [mutatingPlaybookId, setMutatingPlaybookId] = useState<string | null>(
     null
   );
@@ -283,6 +284,9 @@ export default function McpPlaybooksPage() {
   const selectedPlaybook = useMemo(() => {
     return playbooks.find((playbook) => playbook.id === selectedPlaybookId);
   }, [playbooks, selectedPlaybookId]);
+  const viewerPlaybook = useMemo(() => {
+    return playbooks.find((playbook) => playbook.id === viewerPlaybookId);
+  }, [playbooks, viewerPlaybookId]);
 
   const loading =
     isPlaybooksLoading ||
@@ -353,6 +357,7 @@ export default function McpPlaybooksPage() {
                   );
                 }}
                 onAllowSelective={() => setSelectedPlaybookId(playbook.id)}
+                onViewSubjects={() => setViewerPlaybookId(playbook.id)}
               />
             );
           })}
@@ -375,6 +380,7 @@ export default function McpPlaybooksPage() {
                   (permission) =>
                     permission.deny !== true &&
                     permission.subject &&
+                    permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
                     (permission.subject_type === "person" ||
                       permission.subject_type === "team" ||
                       permission.subject_type === "group") &&
@@ -394,6 +400,34 @@ export default function McpPlaybooksPage() {
             subjects
           });
         }}
+      />
+
+      <SubjectSelectorModal
+        open={!!viewerPlaybook}
+        onOpenChange={(open) => {
+          if (!open) {
+            setViewerPlaybookId(null);
+          }
+        }}
+        mode="readonly"
+        title={`Allowed subjects: ${viewerPlaybook?.title || viewerPlaybook?.name || ""}`}
+        description="Browse users and groups that currently have MCP access for this playbook."
+        preselectedSubjectIds={
+          viewerPlaybook
+            ? (Array.from(
+                new Set([
+                  ...(permissionsByResource.get(viewerPlaybook.id)?.users ?? [])
+                    .map((permission) => permission.subject)
+                    .filter(Boolean),
+                  ...(
+                    permissionsByResource.get(viewerPlaybook.id)?.groups ?? []
+                  )
+                    .map((permission) => permission.subject)
+                    .filter(Boolean)
+                ])
+              ) as string[])
+            : []
+        }
       />
     </McpTabsLinks>
   );

@@ -23,6 +23,7 @@ type PermissionAccessCardProps = {
   globalOverride?: "allow" | "none" | "deny";
   onGlobalOverrideChange: (value: "allow" | "none" | "deny") => void;
   onAllowSelective: () => void;
+  onViewSubjects?: () => void;
   isMutating?: boolean;
 };
 
@@ -119,8 +120,15 @@ export default function PermissionAccessCard({
   globalOverride = "none",
   onGlobalOverrideChange,
   onAllowSelective,
+  onViewSubjects,
   isMutating = false
 }: PermissionAccessCardProps) {
+  const maxVisiblePerSection = 2;
+  const visibleGroups = groups.slice(0, maxVisiblePerSection);
+  const visibleUsers = users.slice(0, maxVisiblePerSection);
+  const hiddenGroupsCount = Math.max(groups.length - maxVisiblePerSection, 0);
+  const hiddenUsersCount = Math.max(users.length - maxVisiblePerSection, 0);
+
   return (
     <Card className="rounded-xl border-gray-200 shadow-sm">
       <CardHeader className="p-4 pb-0">
@@ -187,7 +195,14 @@ export default function PermissionAccessCard({
         </div>
       </CardHeader>
 
-      <CardContent className="mt-4 border-t border-gray-200 p-4 pt-3">
+      <CardContent
+        className={`mt-4 border-t border-gray-200 p-4 pt-3 ${globalOverride === "none" && onViewSubjects ? "cursor-pointer" : ""}`}
+        onClick={() => {
+          if (globalOverride === "none") {
+            onViewSubjects?.();
+          }
+        }}
+      >
         {globalOverride !== "none" ? (
           <div className="rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-500">
             {globalOverride === "allow"
@@ -202,13 +217,18 @@ export default function PermissionAccessCard({
               </div>
               {groups.length > 0 ? (
                 <div className="space-y-2">
-                  {groups.map((groupPermission, idx) => (
+                  {visibleGroups.map((groupPermission, idx) => (
                     <PermissionGroupItem
                       key={groupPermission.id || `group-${idx}`}
                       permission={groupPermission}
                       subjectLookup={subjectLookup}
                     />
                   ))}
+                  {hiddenGroupsCount > 0 ? (
+                    <div className="text-xs text-gray-500">
+                      and {hiddenGroupsCount} more
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="text-xs text-gray-500">
@@ -223,13 +243,18 @@ export default function PermissionAccessCard({
               </div>
               {users.length > 0 ? (
                 <div className="space-y-2">
-                  {users.map((userPermission, idx) => (
+                  {visibleUsers.map((userPermission, idx) => (
                     <PermissionUserItem
                       key={userPermission.id || `user-${idx}`}
                       permission={userPermission}
                       subjectLookup={subjectLookup}
                     />
                   ))}
+                  {hiddenUsersCount > 0 ? (
+                    <div className="text-xs text-gray-500">
+                      and {hiddenUsersCount} more
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <div className="text-xs text-gray-500">
@@ -243,7 +268,10 @@ export default function PermissionAccessCard({
                 variant="outline"
                 size="sm"
                 className="h-8"
-                onClick={onAllowSelective}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAllowSelective();
+                }}
                 disabled={isMutating}
               >
                 + Add user or group

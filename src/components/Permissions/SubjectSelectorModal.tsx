@@ -35,9 +35,10 @@ type SubjectSelectorModalProps = {
   onOpenChange: (open: boolean) => void;
   title: string;
   description?: string;
-  onAllow: (selection: PermissionSubject[]) => Promise<void> | void;
+  onAllow?: (selection: PermissionSubject[]) => Promise<void> | void;
   preselectedSubjectIds?: string[];
   isSubmitting?: boolean;
+  mode?: "edit" | "readonly";
 };
 
 function SubjectIcon({ subject }: { subject: PermissionSubject }) {
@@ -64,7 +65,8 @@ export default function SubjectSelectorModal({
   description,
   onAllow,
   preselectedSubjectIds = [],
-  isSubmitting = false
+  isSubmitting = false,
+  mode = "edit"
 }: SubjectSelectorModalProps) {
   const [search, setSearch] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
@@ -116,21 +118,24 @@ export default function SubjectSelectorModal({
   // Fetch full subject objects for every preselected ID so that
   // `selectedSubjects` is complete even when those subjects live on a
   // different page of results.
-  useQuery({
-    queryKey: ["permission-subjects-by-ids", preselectedSubjectIds],
-    queryFn: () => fetchPermissionSubjectsByIds(preselectedSubjectIds),
-    enabled: open && preselectedSubjectIds.length > 0,
-    staleTime: 60_000,
-    onSuccess: (data) => {
-      setSelectedSubjects((prev) => {
-        const next = { ...prev };
-        for (const subject of data) {
-          next[subject.id] = subject;
-        }
-        return next;
-      });
-    }
-  });
+  const shouldFetchSubjectsByIds = open && preselectedSubjectIds.length > 0;
+
+  const { data: subjectsByIds = [], isLoading: isSubjectsByIdsLoading } =
+    useQuery({
+      queryKey: ["permission-subjects-by-ids", preselectedSubjectIds],
+      queryFn: () => fetchPermissionSubjectsByIds(preselectedSubjectIds),
+      enabled: shouldFetchSubjectsByIds,
+      staleTime: 60_000,
+      onSuccess: (data) => {
+        setSelectedSubjects((prev) => {
+          const next = { ...prev };
+          for (const subject of data) {
+            next[subject.id] = subject;
+          }
+          return next;
+        });
+      }
+    });
 
   const debouncedSearch = useDebouncedValue(search, 300) ?? "";
 
@@ -152,15 +157,34 @@ export default function SubjectSelectorModal({
         pageIndex,
         pageSize: PAGE_SIZE
       }),
-    enabled: open
+    enabled: open && mode === "edit"
   });
 
   const subjects = useMemo(
     () => (data?.data ?? []) as PermissionSubject[],
     [data?.data]
   );
-  const totalEntries = data?.totalEntries ?? 0;
-  const pageCount = Math.ceil(totalEntries / PAGE_SIZE);
+  const readonlySubjects = useMemo(() => {
+    const normalizedSearch = debouncedSearch.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return subjectsByIds;
+    }
+
+    return subjectsByIds.filter((subject) =>
+      subject.name.toLowerCase().includes(normalizedSearch)
+    );
+  }, [debouncedSearch, subjectsByIds]);
+
+  const displayedSubjects = mode === "readonly" ? readonlySubjects : subjects;
+  const totalEntries =
+    mode === "readonly" ? readonlySubjects.length : (data?.totalEntries ?? 0);
+  const pageCount =
+    mode === "readonly"
+      ? totalEntries > 0
+        ? 1
+        : 0
+      : Math.ceil(totalEntries / PAGE_SIZE);
 
   // Enrich selectedSubjects as new pages are loaded.
   useEffect(() => {
@@ -226,21 +250,27 @@ export default function SubjectSelectorModal({
         />
 
         <div className="min-h-0 flex-1 space-y-1 overflow-y-auto rounded-md border p-2">
-          {isLoading ? (
+          {mode === "readonly" &&
+          shouldFetchSubjectsByIds &&
+          isSubjectsByIdsLoading ? (
             <div className="p-2 text-sm text-gray-500">Loading...</div>
-          ) : subjects.length > 0 ? (
-            subjects.map((subject) => (
+          ) : mode === "edit" && isLoading ? (
+            <div className="p-2 text-sm text-gray-500">Loading...</div>
+          ) : displayedSubjects.length > 0 ? (
+            displayedSubjects.map((subject) => (
               <label
                 key={subject.id}
-                className="flex cursor-pointer items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
+                className={`flex items-center justify-between rounded px-2 py-1.5 ${mode === "edit" ? "cursor-pointer hover:bg-gray-50" : ""}`}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
-                  <Checkbox
-                    checked={!!selectedIds[subject.id]}
-                    onCheckedChange={(checked) =>
-                      toggleSubject(subject, checked === true)
-                    }
-                  />
+                  {mode === "edit" ? (
+                    <Checkbox
+                      checked={!!selectedIds[subject.id]}
+                      onCheckedChange={(checked) =>
+                        toggleSubject(subject, checked === true)
+                      }
+                    />
+                  ) : null}
                   <SubjectIcon subject={subject} />
                   <div className="min-w-0 truncate text-sm font-medium text-gray-900">
                     {subject.name}
@@ -259,53 +289,68 @@ export default function SubjectSelectorModal({
           )}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500">
-          <div>
-            Selected: {selectedCount} subject{selectedCount === 1 ? "" : "s"}
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={pageIndex === 0}
-              onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-            >
-              Previous
-            </Button>
-            <span>
-              Page {pageCount === 0 ? 0 : pageIndex + 1} of {pageCount || 0}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={pageCount === 0 || pageIndex + 1 >= pageCount}
-              onClick={() =>
-                setPageIndex((p) => (p + 1 < pageCount ? p + 1 : p))
-              }
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        {mode === "edit" ? (
+          <>
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <div>
+                Selected: {selectedCount} subject
+                {selectedCount === 1 ? "" : "s"}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={pageIndex === 0}
+                  onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                >
+                  Previous
+                </Button>
+                <span>
+                  Page {pageCount === 0 ? 0 : pageIndex + 1} of {pageCount || 0}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={pageCount === 0 || pageIndex + 1 >= pageCount}
+                  onClick={() =>
+                    setPageIndex((p) => (p + 1 < pageCount ? p + 1 : p))
+                  }
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
 
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            disabled={!hasChanged || isSubmitting}
-            onClick={() => onAllow(Object.values(selectedSubjects))}
-          >
-            Apply
-          </Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                disabled={!hasChanged || isSubmitting}
+                onClick={() => onAllow?.(Object.values(selectedSubjects))}
+              >
+                Apply
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

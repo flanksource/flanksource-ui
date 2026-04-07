@@ -161,7 +161,7 @@ export const MCP_SETTINGS_PERMISSION_SOURCE = "mcp_settings" as const;
 
 export async function fetchMcpPlaybookPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
+    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];
@@ -169,7 +169,7 @@ export async function fetchMcpPlaybookPermissions() {
 
 export async function fetchMcpViewPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    "/permissions_summary?select=*&action=eq.mcp:run&deleted_at=is.null&limit=5000"
+    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];
@@ -177,7 +177,7 @@ export async function fetchMcpViewPermissions() {
 
 export async function fetchMcpUserPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    "/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&deleted_at=is.null&limit=5000"
+    `/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];
