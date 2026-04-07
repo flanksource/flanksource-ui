@@ -168,7 +168,7 @@ export function useMcpResourcePermissions<
         created_by: user?.id
       } as any);
     },
-    onSuccess: () => {
+    onSettled: () => {
       refetchPermissions();
     },
     onError: (error) => {

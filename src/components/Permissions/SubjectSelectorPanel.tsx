@@ -169,6 +169,11 @@ export default function SubjectSelectorPanel({
     [selectedIds, selectedSubjects]
   );
 
+  const unresolvedSelectedIds = useMemo(
+    () => Object.keys(selectedIds).filter((id) => !selectedSubjects[id]),
+    [selectedIds, selectedSubjects]
+  );
+
   const displayedSubjects = useMemo(() => {
     const merged = new Map<string, PermissionSubject>();
 
@@ -219,24 +224,34 @@ export default function SubjectSelectorPanel({
     Object.keys(selectedIds).some((id) => !initialSelectedIds[id]);
   const allSelectedHydrated = selectedHydratedSubjects.length === selectedCount;
 
-  const toggleSubject = (subject: PermissionSubject, checked: boolean) => {
+  const removeSelectedId = (id: string) => {
     setSelectedIds((prev) => {
-      if (checked) {
-        return { ...prev, [subject.id]: true };
+      if (!prev[id]) {
+        return prev;
       }
       const next = { ...prev };
-      delete next[subject.id];
+      delete next[id];
       return next;
     });
 
     setSelectedSubjects((prev) => {
-      if (checked) {
-        return { ...prev, [subject.id]: subject };
+      if (!prev[id]) {
+        return prev;
       }
       const next = { ...prev };
-      delete next[subject.id];
+      delete next[id];
       return next;
     });
+  };
+
+  const toggleSubject = (subject: PermissionSubject, checked: boolean) => {
+    if (checked) {
+      setSelectedIds((prev) => ({ ...prev, [subject.id]: true }));
+      setSelectedSubjects((prev) => ({ ...prev, [subject.id]: subject }));
+      return;
+    }
+
+    removeSelectedId(subject.id);
   };
 
   return (
@@ -258,33 +273,61 @@ export default function SubjectSelectorPanel({
       <div className="mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md border p-2">
         {(shouldFetchSubjectsByIds && isSubjectsByIdsLoading) || isLoading ? (
           <div className="p-2 text-sm text-gray-500">Loading...</div>
-        ) : displayedSubjects.length > 0 ? (
-          groupedDisplayedSubjects.map((group) => (
-            <div key={group.type} className="space-y-1">
-              <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
-                {TYPE_LABELS[group.type] ?? group.type}
-              </div>
-              {group.subjects.map((subject) => (
-                <div
-                  key={subject.id}
-                  className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
-                >
-                  <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
-                    <SubjectIcon subject={subject} />
-                    <div className="min-w-0 truncate text-sm font-medium text-gray-900">
-                      {subject.name}
-                    </div>
-                  </div>
-                  <Switch
-                    checked={!!selectedIds[subject.id]}
-                    onCheckedChange={(checked) =>
-                      toggleSubject(subject, checked)
-                    }
-                  />
+        ) : displayedSubjects.length > 0 || unresolvedSelectedIds.length > 0 ? (
+          <>
+            {unresolvedSelectedIds.length > 0 ? (
+              <div className="space-y-1">
+                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-amber-600 first:pt-0">
+                  Missing
                 </div>
-              ))}
-            </div>
-          ))
+                {unresolvedSelectedIds.map((id) => (
+                  <div
+                    key={id}
+                    className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
+                  >
+                    <div className="min-w-0 truncate text-sm font-medium text-gray-900">
+                      Missing subject ({id})
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeSelectedId(id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {groupedDisplayedSubjects.map((group) => (
+              <div key={group.type} className="space-y-1">
+                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
+                  {TYPE_LABELS[group.type] ?? group.type}
+                </div>
+                {group.subjects.map((subject) => (
+                  <div
+                    key={subject.id}
+                    className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
+                      <SubjectIcon subject={subject} />
+                      <div className="min-w-0 truncate text-sm font-medium text-gray-900">
+                        {subject.name}
+                      </div>
+                    </div>
+                    <Switch
+                      checked={!!selectedIds[subject.id]}
+                      onCheckedChange={(checked) =>
+                        toggleSubject(subject, checked)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </>
         ) : (
           <div className="p-2 text-sm text-gray-500">No subjects found</div>
         )}
