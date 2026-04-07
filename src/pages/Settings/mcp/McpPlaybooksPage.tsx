@@ -316,7 +316,7 @@ export default function McpPlaybooksPage() {
           </p>
         </div>
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 content-start gap-3 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           {playbooks.map((playbook) => {
             const permissions = permissionsByResource.get(playbook.id) ?? {
               users: [],
@@ -352,7 +352,6 @@ export default function McpPlaybooksPage() {
                     }
                   );
                 }}
-                onAllowSelective={() => setSelectedPlaybookId(playbook.id)}
                 onViewSubjects={() => setSelectedPlaybookId(playbook.id)}
               />
             );

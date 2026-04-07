@@ -308,7 +308,7 @@ export default function McpViewsPage() {
           </p>
         </div>
 
-        <div className="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto [grid-template-columns:repeat(auto-fit,minmax(460px,1fr))]">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           {views.map((view) => {
             const permissions = permissionsByResource.get(view.id) ?? {
               users: [],
@@ -342,7 +342,6 @@ export default function McpViewsPage() {
                     }
                   );
                 }}
-                onAllowSelective={() => setSelectedViewId(view.id)}
                 onViewSubjects={() => setSelectedViewId(view.id)}
               />
             );
