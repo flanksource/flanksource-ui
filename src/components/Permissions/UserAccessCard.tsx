@@ -25,7 +25,7 @@ export default function UserAccessCard({
   isMutating = false
 }: UserAccessCardProps) {
   return (
-    <div className="w-full max-w-4xl">
+    <div className="w-full max-w-3xl">
       <div className="flex items-start gap-3">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-xs font-semibold text-gray-700">
           {user.type === "team" || user.type === "permission_subject_group" ? (

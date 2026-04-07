@@ -27,7 +27,7 @@ export default function PermissionAccessCard({
 }: PermissionAccessCardProps) {
   return (
     <div
-      className={`w-full max-w-4xl ${globalOverride === "none" && onViewSubjects ? "cursor-pointer" : ""}`}
+      className={`w-full max-w-3xl ${globalOverride === "none" && onViewSubjects ? "cursor-pointer" : ""}`}
       onClick={() => {
         if (globalOverride === "none") {
           onViewSubjects?.();
