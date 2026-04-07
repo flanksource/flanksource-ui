@@ -260,6 +260,7 @@ function ObjectPermissionSwitch({
       </label>
       <div className="flex flex-row items-center space-x-2">
         <Switch
+          size="sm"
           options={getOptionsForObject()}
           defaultValue="None"
           value={selectedPermission as string}
@@ -405,7 +406,7 @@ export default function TokenScopeFieldsGroup({
       </div>
 
       {selectedScope === "Custom" && (
-        <div className="max-h-64 space-y-4 overflow-y-auto rounded-md border bg-gray-50 p-4">
+        <div className="space-y-4 rounded-md border bg-gray-50 p-4">
           {OBJECTS.map((object) => (
             <ObjectPermissionSwitch
               key={object}

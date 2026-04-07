@@ -234,7 +234,7 @@ export default function SubjectSelectorPanel({
   };
 
   return (
-    <div className="flex max-h-[calc(100vh-8rem)] min-h-0 flex-col overflow-hidden rounded-md border border-gray-200 bg-white p-3">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-gray-200 bg-white p-3">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
           {description ? (

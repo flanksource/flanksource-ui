@@ -2,7 +2,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsArrowsFullscreen, BsFullscreenExit } from "react-icons/bs";
 import { useWindowSize } from "react-use-size";
 import DialogButton from "../Buttons/DialogButton";
@@ -44,6 +44,7 @@ export interface IModalProps {
   children?: React.ReactNode;
   containerClassName?: string;
   dialogClassName?: string;
+  allowBodyScroll?: boolean;
 }
 
 export function useDialogSize(size?: string): {
@@ -142,6 +143,7 @@ export function Modal({
   containerClassName = "overflow-auto max-h-full",
   dialogClassName = "fixed z-50 inset-0 overflow-y-auto min-h-2xl:my-20 py-4",
   helpLink: helpLinkProps,
+  allowBodyScroll = false,
   ...rest
 }: IModalProps) {
   const [_helpLink, setHelpLink] = useAtom(modalHelpLinkAtom);
@@ -150,13 +152,44 @@ export function Modal({
   const isSmall = _size === "very-small" || _size === "small";
 
   const helpLink = _helpLink || helpLinkProps;
+  const resolvedDialogClassName = allowBodyScroll
+    ? "fixed z-50 inset-0 overflow-y-auto py-4"
+    : dialogClassName;
+  const resolvedDialogPanelClassName = clsx(
+    "flex justify-center",
+    allowBodyScroll ? "items-start" : "items-center",
+    allowBodyScroll ? "mx-auto" : sizeClass.classNames,
+    sizeClass.width
+  );
+
+  useEffect(() => {
+    if (!open || !allowBodyScroll) {
+      return;
+    }
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyPaddingRight = body.style.paddingRight;
+
+    html.style.overflow = "auto";
+    body.style.overflow = "auto";
+    body.style.paddingRight = "0px";
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.style.paddingRight = prevBodyPaddingRight;
+    };
+  }, [allowBodyScroll, open]);
 
   return (
     <Dialog
       as="div"
       open={open}
       auto-reopen="true"
-      className={dialogClassName}
+      className={resolvedDialogClassName}
       onClose={() => {
         // reset the help link when the modal is closed, this is to ensure
         // that the help link is not displayed when the modal is reopened and
@@ -173,21 +206,18 @@ export function Modal({
         transition
         className="fixed inset-0 bg-black/30 duration-300 ease-out data-[closed]:opacity-0"
       />
-      <DialogPanel
-        transition
-        className={clsx(
-          "flex items-center justify-center",
-          sizeClass.classNames,
-          sizeClass.width
-        )}
-      >
+      <DialogPanel transition className={resolvedDialogPanelClassName}>
         <div
           className={clsx(
-            !isSmall && "mb-10 mt-10 justify-between overflow-auto",
+            !isSmall &&
+              clsx(
+                "mb-10 mt-10 justify-between",
+                !allowBodyScroll && "overflow-auto"
+              ),
             !isSmall && childClassName,
             "flex transform flex-col rounded-lg bg-white text-left shadow-xl transition-all",
             isSmall && "mx-4 my-0 w-full max-w-prose",
-            sizeClass.height
+            !allowBodyScroll && sizeClass.height
           )}
         >
           <div
@@ -230,7 +260,7 @@ export function Modal({
             className={clsx(
               !isSmall && "mb-auto flex flex-1 flex-col",
               bodyClass,
-              `max-h-[${sizeClass.windowHeight - 50}px]`
+              !allowBodyScroll && `max-h-[${sizeClass.windowHeight - 50}px]`
             )}
           >
             {children}

@@ -67,13 +67,8 @@ export default function McpViewsPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-          <div className="min-h-0 flex-1 lg:w-[56rem] lg:flex-none [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
             {views.map((view) => {
-              const permissions = permissionsByResource.get(view.id) ?? {
-                users: [],
-                groups: []
-              };
-
               return (
                 <PermissionAccessCard
                   key={view.id}
@@ -96,7 +91,7 @@ export default function McpViewsPage() {
             })}
           </div>
 
-          <div className="min-h-0 w-full shrink-0 lg:sticky lg:top-6 lg:w-[420px] lg:self-start">
+          <div className="min-h-0 w-full shrink-0 lg:w-[420px]">
             {selectedView ? (
               <SubjectSelectorPanel
                 key={selectedView.id}

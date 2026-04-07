@@ -8,12 +8,14 @@ import {
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import UserAccessCard from "@flanksource-ui/components/Permissions/UserAccessCard";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import UserAccessCard from "@flanksource-ui/components/Permissions/UserAccessCard";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
+import SetupMcpModal from "@flanksource-ui/components/Users/SetupMcpModal";
 import { useUser } from "@flanksource-ui/context";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { AiFillPlusCircle } from "react-icons/ai";
 
 const MCP_OBJECT = "mcp";
 const MCP_ACTION = "mcp:use";
@@ -55,6 +57,7 @@ export default function McpOverviewPage() {
   const [mutatingSubjectId, setMutatingSubjectId] = useState<string | null>(
     null
   );
+  const [isSetupMcpModalOpen, setIsSetupMcpModalOpen] = useState(false);
 
   const {
     data: subjects = [],
@@ -204,6 +207,16 @@ export default function McpOverviewPage() {
       loading={loading}
       isInitialLoading={isInitialLoading}
       loadingText="Loading MCP subjects..."
+      headerAction={
+        <button
+          key="setup-mcp"
+          type="button"
+          title="Setup MCP"
+          onClick={() => setIsSetupMcpModalOpen(true)}
+        >
+          <AiFillPlusCircle size={32} className="text-blue-600" />
+        </button>
+      }
       onRefresh={() => {
         refetchUsers();
         refetchPermissions();
@@ -279,6 +292,10 @@ export default function McpOverviewPage() {
           ))}
         </div>
       </div>
+      <SetupMcpModal
+        isOpen={isSetupMcpModalOpen}
+        onClose={() => setIsSetupMcpModalOpen(false)}
+      />
     </McpTabsLinks>
   );
 }

@@ -149,12 +149,12 @@ export function CreateTokenFormContent({
       {({ handleSubmit, isValid }) => (
         <Form
           id={formId}
-          className="flex flex-1 flex-col overflow-y-auto"
+          className="flex flex-1 flex-col"
           onSubmit={handleSubmit}
         >
-          <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
-            <div className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}>
-              <div className="flex flex-col space-y-4 overflow-y-auto p-4">
+          <div className={clsx("my-2 flex h-full flex-col")}>
+            <div className={clsx("mb-2 flex flex-col px-2")}>
+              <div className="flex flex-col space-y-4 p-4">
                 <FormikTextInput
                   name="name"
                   label="Name"

@@ -21,6 +21,7 @@ type McpTabsLinksProps = {
   loading?: boolean;
   isInitialLoading?: boolean;
   loadingText?: string;
+  headerAction?: React.ReactNode;
 };
 
 export default function McpTabsLinks({
@@ -30,7 +31,8 @@ export default function McpTabsLinks({
   onRefresh = () => {},
   loading = false,
   isInitialLoading = false,
-  loadingText = "Loading..."
+  loadingText = "Loading...",
+  headerAction
 }: McpTabsLinksProps) {
   const [searchParams] = useSearchParams();
 
@@ -70,7 +72,8 @@ export default function McpTabsLinks({
               <BreadcrumbRoot key="mcp" link="/settings/mcp/overview">
                 MCP
               </BreadcrumbRoot>,
-              <BreadcrumbChild key={activeTab}>{activeTab}</BreadcrumbChild>
+              <BreadcrumbChild key={activeTab}>{activeTab}</BreadcrumbChild>,
+              ...(headerAction ? [headerAction] : [])
             ]}
           />
         }
