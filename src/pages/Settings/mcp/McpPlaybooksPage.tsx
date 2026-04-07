@@ -44,7 +44,6 @@ export default function McpPlaybooksPage() {
   const [selectedPlaybookId, setSelectedPlaybookId] = useState<string | null>(
     null
   );
-  const [viewerPlaybookId, setViewerPlaybookId] = useState<string | null>(null);
   const [mutatingPlaybookId, setMutatingPlaybookId] = useState<string | null>(
     null
   );
@@ -284,9 +283,6 @@ export default function McpPlaybooksPage() {
   const selectedPlaybook = useMemo(() => {
     return playbooks.find((playbook) => playbook.id === selectedPlaybookId);
   }, [playbooks, selectedPlaybookId]);
-  const viewerPlaybook = useMemo(() => {
-    return playbooks.find((playbook) => playbook.id === viewerPlaybookId);
-  }, [playbooks, viewerPlaybookId]);
 
   const loading =
     isPlaybooksLoading ||
@@ -357,7 +353,7 @@ export default function McpPlaybooksPage() {
                   );
                 }}
                 onAllowSelective={() => setSelectedPlaybookId(playbook.id)}
-                onViewSubjects={() => setViewerPlaybookId(playbook.id)}
+                onViewSubjects={() => setSelectedPlaybookId(playbook.id)}
               />
             );
           })}
@@ -371,7 +367,7 @@ export default function McpPlaybooksPage() {
             setSelectedPlaybookId(null);
           }
         }}
-        title={`Allow access: ${selectedPlaybook?.title || selectedPlaybook?.name || ""}`}
+        title={`Allow mcp:run to ${selectedPlaybook?.title || selectedPlaybook?.name || ""}`}
         description="Select users or groups to allow this playbook for MCP usage."
         preselectedSubjectIds={
           selectedPlaybook
@@ -400,39 +396,6 @@ export default function McpPlaybooksPage() {
             subjects
           });
         }}
-      />
-
-      <SubjectSelectorModal
-        open={!!viewerPlaybook}
-        onOpenChange={(open) => {
-          if (!open) {
-            setViewerPlaybookId(null);
-          }
-        }}
-        mode="readonly"
-        accessReview={
-          viewerPlaybook
-            ? { resource: { playbook: viewerPlaybook.id }, action: "mcp:run" }
-            : undefined
-        }
-        title={`Allowed subjects: ${viewerPlaybook?.title || viewerPlaybook?.name || ""}`}
-        description="Browse users and groups that currently have MCP access for this playbook."
-        preselectedSubjectIds={
-          viewerPlaybook
-            ? (Array.from(
-                new Set([
-                  ...(permissionsByResource.get(viewerPlaybook.id)?.users ?? [])
-                    .map((permission) => permission.subject)
-                    .filter(Boolean),
-                  ...(
-                    permissionsByResource.get(viewerPlaybook.id)?.groups ?? []
-                  )
-                    .map((permission) => permission.subject)
-                    .filter(Boolean)
-                ])
-              ) as string[])
-            : []
-        }
       />
     </McpTabsLinks>
   );

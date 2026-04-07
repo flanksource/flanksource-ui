@@ -38,7 +38,6 @@ function permissionMatchesView(permission: PermissionsSummary, view: View) {
 export default function McpViewsPage() {
   const { user } = useUser();
   const [selectedViewId, setSelectedViewId] = useState<string | null>(null);
-  const [viewerViewId, setViewerViewId] = useState<string | null>(null);
   const [mutatingViewId, setMutatingViewId] = useState<string | null>(null);
 
   const {
@@ -276,9 +275,6 @@ export default function McpViewsPage() {
   const selectedView = useMemo(() => {
     return views.find((view) => view.id === selectedViewId);
   }, [selectedViewId, views]);
-  const viewerView = useMemo(() => {
-    return views.find((view) => view.id === viewerViewId);
-  }, [viewerViewId, views]);
 
   const loading =
     isViewsLoading ||
@@ -347,7 +343,7 @@ export default function McpViewsPage() {
                   );
                 }}
                 onAllowSelective={() => setSelectedViewId(view.id)}
-                onViewSubjects={() => setViewerViewId(view.id)}
+                onViewSubjects={() => setSelectedViewId(view.id)}
               />
             );
           })}
@@ -390,32 +386,6 @@ export default function McpViewsPage() {
             subjects
           });
         }}
-      />
-
-      <SubjectSelectorModal
-        open={!!viewerView}
-        onOpenChange={(open) => {
-          if (!open) {
-            setViewerViewId(null);
-          }
-        }}
-        mode="readonly"
-        title={`Allowed subjects: ${viewerView?.spec?.title || viewerView?.name || ""}`}
-        description="Browse users and groups that currently have MCP access for this view."
-        preselectedSubjectIds={
-          viewerView
-            ? (Array.from(
-                new Set([
-                  ...(permissionsByResource.get(viewerView.id)?.users ?? [])
-                    .map((permission) => permission.subject)
-                    .filter(Boolean),
-                  ...(permissionsByResource.get(viewerView.id)?.groups ?? [])
-                    .map((permission) => permission.subject)
-                    .filter(Boolean)
-                ])
-              ) as string[])
-            : []
-        }
       />
     </McpTabsLinks>
   );

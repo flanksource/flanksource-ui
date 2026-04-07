@@ -200,8 +200,7 @@ export async function fetchPermissionSubjectsPaginated({
 }) {
   const query = search.trim();
 
-  let url =
-    "/permission_subjects?select=id,name,type&type=neq.role&order=name.asc";
+  let url = "/permission_subjects?select=id,name,type&order=name.asc";
   url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   if (query) {
