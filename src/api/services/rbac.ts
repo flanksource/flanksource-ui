@@ -54,3 +54,52 @@ export async function getPermissions(id: string): Promise<Permission[]> {
   );
   return response.data.payload ?? [];
 }
+
+export type SubjectAccessReviewResource = {
+  playbook?: string;
+  [key: string]: string | undefined;
+};
+
+export type SubjectAccessReviewRequest = {
+  resource: SubjectAccessReviewResource;
+  action: "mcp:run";
+  subjects: string[];
+};
+
+export type SubjectAccessReviewMatchedPolicy = {
+  subject: string;
+  object: string;
+  action: string;
+  effect: "allow" | "deny";
+  condition?: string;
+  id?: string;
+};
+
+export type SubjectAccessReviewResult = {
+  subject: string;
+  allowed: boolean;
+  reason?: string;
+  trace?: {
+    allow_count: number;
+    deny_count: number;
+    matched_policies: SubjectAccessReviewMatchedPolicy[];
+  };
+  error?: string;
+};
+
+export type SubjectAccessReviewResponse = {
+  resource: SubjectAccessReviewResource;
+  action: "mcp:run";
+  results: SubjectAccessReviewResult[];
+};
+
+export async function reviewSubjectAccess(
+  payload: SubjectAccessReviewRequest
+): Promise<SubjectAccessReviewResponse> {
+  const response = await Rback.post<SubjectAccessReviewResponse>(
+    "/subject-access-reviews",
+    payload
+  );
+
+  return response.data;
+}

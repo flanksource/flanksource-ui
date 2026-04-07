@@ -410,6 +410,11 @@ export default function McpPlaybooksPage() {
           }
         }}
         mode="readonly"
+        accessReview={
+          viewerPlaybook
+            ? { resource: { playbook: viewerPlaybook.id }, action: "mcp:run" }
+            : undefined
+        }
         title={`Allowed subjects: ${viewerPlaybook?.title || viewerPlaybook?.name || ""}`}
         description="Browse users and groups that currently have MCP access for this playbook."
         preselectedSubjectIds={

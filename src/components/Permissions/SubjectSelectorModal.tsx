@@ -3,6 +3,11 @@ import {
   fetchPermissionSubjectsPaginated,
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
+import {
+  reviewSubjectAccess,
+  SubjectAccessReviewResource,
+  SubjectAccessReviewResult
+} from "@flanksource-ui/api/services/rbac";
 import { Badge } from "@flanksource-ui/components/ui/badge";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Checkbox } from "@flanksource-ui/components/ui/checkbox";
@@ -39,6 +44,10 @@ type SubjectSelectorModalProps = {
   preselectedSubjectIds?: string[];
   isSubmitting?: boolean;
   mode?: "edit" | "readonly";
+  accessReview?: {
+    resource: SubjectAccessReviewResource;
+    action: "mcp:run";
+  };
 };
 
 function SubjectIcon({ subject }: { subject: PermissionSubject }) {
@@ -66,7 +75,8 @@ export default function SubjectSelectorModal({
   onAllow,
   preselectedSubjectIds = [],
   isSubmitting = false,
-  mode = "edit"
+  mode = "edit",
+  accessReview
 }: SubjectSelectorModalProps) {
   const [search, setSearch] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
@@ -177,6 +187,55 @@ export default function SubjectSelectorModal({
   }, [debouncedSearch, subjectsByIds]);
 
   const displayedSubjects = mode === "readonly" ? readonlySubjects : subjects;
+
+  const reviewedSubjectIds = useMemo(() => {
+    if (mode !== "readonly") {
+      return [] as string[];
+    }
+
+    return Array.from(new Set(preselectedSubjectIds));
+  }, [mode, preselectedSubjectIds]);
+
+  const shouldRunAccessReview =
+    open &&
+    mode === "readonly" &&
+    !!accessReview &&
+    reviewedSubjectIds.length > 0;
+
+  const accessReviewResourceKey = useMemo(
+    () => JSON.stringify(accessReview?.resource ?? {}),
+    [accessReview?.resource]
+  );
+
+  const { data: accessReviewResponse, isLoading: isAccessReviewLoading } =
+    useQuery({
+      queryKey: [
+        "mcp",
+        "subject-access-reviews",
+        accessReviewResourceKey,
+        accessReview?.action,
+        reviewedSubjectIds
+      ],
+      queryFn: async () =>
+        reviewSubjectAccess({
+          resource: accessReview!.resource,
+          action: accessReview!.action,
+          subjects: reviewedSubjectIds
+        }),
+      enabled: shouldRunAccessReview,
+      staleTime: 5_000,
+      cacheTime: 5_000
+    });
+
+  const accessReviewBySubject = useMemo(() => {
+    const map = new Map<string, SubjectAccessReviewResult>();
+
+    for (const result of accessReviewResponse?.results ?? []) {
+      map.set(result.subject, result);
+    }
+
+    return map;
+  }, [accessReviewResponse?.results]);
   const totalEntries =
     mode === "readonly" ? readonlySubjects.length : (data?.totalEntries ?? 0);
   const pageCount =
@@ -251,8 +310,8 @@ export default function SubjectSelectorModal({
 
         <div className="min-h-0 flex-1 space-y-1 overflow-y-auto rounded-md border p-2">
           {mode === "readonly" &&
-          shouldFetchSubjectsByIds &&
-          isSubjectsByIdsLoading ? (
+          ((shouldFetchSubjectsByIds && isSubjectsByIdsLoading) ||
+            (shouldRunAccessReview && isAccessReviewLoading)) ? (
             <div className="p-2 text-sm text-gray-500">Loading...</div>
           ) : mode === "edit" && isLoading ? (
             <div className="p-2 text-sm text-gray-500">Loading...</div>
@@ -277,10 +336,40 @@ export default function SubjectSelectorModal({
                   </div>
                 </div>
 
-                <div className="ml-2 flex shrink-0 items-center">
+                <div className="ml-2 flex shrink-0 items-center gap-2">
                   <Badge variant="outline" className="text-[10px] font-normal">
                     {TYPE_LABELS[subject.type] ?? subject.type}
                   </Badge>
+                  {mode === "readonly" && accessReview
+                    ? (() => {
+                        const review = accessReviewBySubject.get(subject.id);
+
+                        if (!review) {
+                          return (
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] font-normal text-gray-500"
+                            >
+                              Unknown
+                            </Badge>
+                          );
+                        }
+
+                        return (
+                          <Badge
+                            variant="outline"
+                            title={review.reason || review.error || undefined}
+                            className={`text-[10px] font-semibold ${
+                              review.allowed
+                                ? "border-green-200 text-green-700"
+                                : "border-red-200 text-red-700"
+                            }`}
+                          >
+                            {review.allowed ? "Allowed" : "Denied"}
+                          </Badge>
+                        );
+                      })()
+                    : null}
                 </div>
               </label>
             ))
