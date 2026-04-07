@@ -158,6 +158,10 @@ export default function McpOverviewPage() {
           .map((permission) => permission.id!);
 
         if (!primaryPermission) {
+          if (!user?.id) {
+            throw new Error("User must be logged in to create permissions");
+          }
+
           await addPermission({
             object: MCP_OBJECT,
             action: MCP_ACTION,
@@ -165,7 +169,7 @@ export default function McpOverviewPage() {
             subject_type: mapPermissionSubjectType(subjectType),
             deny: targetDeny,
             source: MCP_SETTINGS_PERMISSION_SOURCE,
-            created_by: user?.id!
+            created_by: user.id
           } as any);
 
           return;

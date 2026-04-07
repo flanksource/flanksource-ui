@@ -159,9 +159,11 @@ export function buildPermissionAccessCardMaps<
 
     if (isGlobalOverride) {
       for (const resource of matchedResources) {
+        const next = permission.deny === true ? "deny" : "allow";
+        const current = globalOverrideByResource.get(resource.id);
         globalOverrideByResource.set(
           resource.id,
-          permission.deny === true ? "deny" : "allow"
+          current === "deny" || next === "deny" ? "deny" : "allow"
         );
       }
       continue;

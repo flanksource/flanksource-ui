@@ -44,7 +44,8 @@ function SubjectIcon({ subject }: { subject: PermissionSubject }) {
   return (
     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
       {subject.type === "team" ||
-      subject.type === "permission_subject_group" ? (
+      subject.type === "permission_subject_group" ||
+      subject.type === "role" ? (
         <HiUserGroup className="h-3 w-3" />
       ) : (
         <HiUser className="h-3 w-3" />
@@ -107,20 +108,6 @@ export default function SubjectSelectorPanel({
       staleTime: 60_000
     });
 
-  useEffect(() => {
-    if (subjectsByIds.length === 0) {
-      return;
-    }
-
-    setSelectedSubjects((prev) => {
-      const next = { ...prev };
-      for (const subject of subjectsByIds) {
-        next[subject.id] = subject;
-      }
-      return next;
-    });
-  }, [subjectsByIds]);
-
   const debouncedSearch = useDebouncedValue(search, 300) ?? "";
 
   useEffect(() => {
@@ -143,10 +130,60 @@ export default function SubjectSelectorPanel({
       })
   });
 
-  const displayedSubjects = useMemo(
+  const pagedSubjects = useMemo(
     () => (data?.data ?? []) as PermissionSubject[],
     [data?.data]
   );
+
+  useEffect(() => {
+    setSelectedSubjects((prev) => {
+      const next: Record<string, PermissionSubject> = {};
+
+      for (const id of Object.keys(selectedIds)) {
+        if (prev[id]) {
+          next[id] = prev[id];
+        }
+      }
+
+      for (const subject of subjectsByIds) {
+        if (selectedIds[subject.id]) {
+          next[subject.id] = subject;
+        }
+      }
+
+      for (const subject of pagedSubjects) {
+        if (selectedIds[subject.id]) {
+          next[subject.id] = subject;
+        }
+      }
+
+      return next;
+    });
+  }, [pagedSubjects, selectedIds, subjectsByIds]);
+
+  const selectedHydratedSubjects = useMemo(
+    () =>
+      Object.keys(selectedIds)
+        .map((id) => selectedSubjects[id])
+        .filter((subject): subject is PermissionSubject => !!subject),
+    [selectedIds, selectedSubjects]
+  );
+
+  const displayedSubjects = useMemo(() => {
+    const merged = new Map<string, PermissionSubject>();
+
+    for (const subject of selectedHydratedSubjects) {
+      merged.set(subject.id, subject);
+    }
+
+    for (const subject of pagedSubjects) {
+      if (!merged.has(subject.id)) {
+        merged.set(subject.id, subject);
+      }
+    }
+
+    return Array.from(merged.values());
+  }, [pagedSubjects, selectedHydratedSubjects]);
 
   const groupedDisplayedSubjects = useMemo(() => {
     const seen = new Set<string>();
@@ -176,42 +213,11 @@ export default function SubjectSelectorPanel({
   const totalEntries = data?.totalEntries ?? 0;
   const pageCount = Math.ceil(totalEntries / PAGE_SIZE);
 
-  useEffect(() => {
-    if (subjectsByIds.length === 0) {
-      return;
-    }
-
-    setSelectedSubjects((prev) => {
-      const next = { ...prev };
-      for (const subject of subjectsByIds) {
-        if (selectedIds[subject.id]) {
-          next[subject.id] = subject;
-        }
-      }
-      return next;
-    });
-  }, [selectedIds, subjectsByIds]);
-
-  useEffect(() => {
-    if (displayedSubjects.length === 0) {
-      return;
-    }
-
-    setSelectedSubjects((prev) => {
-      const next = { ...prev };
-      for (const subject of displayedSubjects) {
-        if (selectedIds[subject.id]) {
-          next[subject.id] = subject;
-        }
-      }
-      return next;
-    });
-  }, [displayedSubjects, selectedIds]);
-
   const selectedCount = Object.keys(selectedIds).length;
   const hasChanged =
     selectedCount !== Object.keys(initialSelectedIds).length ||
     Object.keys(selectedIds).some((id) => !initialSelectedIds[id]);
+  const allSelectedHydrated = selectedHydratedSubjects.length === selectedCount;
 
   const toggleSubject = (subject: PermissionSubject, checked: boolean) => {
     setSelectedIds((prev) => {
@@ -321,8 +327,8 @@ export default function SubjectSelectorPanel({
         ) : null}
         <Button
           type="button"
-          disabled={!hasChanged || isSubmitting}
-          onClick={() => onAllow?.(Object.values(selectedSubjects))}
+          disabled={!hasChanged || isSubmitting || !allSelectedHydrated}
+          onClick={() => onAllow?.(selectedHydratedSubjects)}
         >
           Apply
         </Button>

@@ -216,7 +216,7 @@ export function useMcpResourcePermissions<
         { name: resource.name, namespace: resource.namespace }
       ];
 
-      const payloads = subjects
+      const payloadsToAdd = subjects
         .map((subject) => {
           const subjectType = mapSubjectType(subject.type);
           if (existingKeys.has(`${subjectType}:${subject.id}`)) {
@@ -232,18 +232,41 @@ export function useMcpResourcePermissions<
             created_by: user?.id
           };
         })
-        .filter(Boolean);
+        .filter((payload): payload is NonNullable<typeof payload> => !!payload)
+        .sort((a, b) =>
+          `${a.subject_type}:${a.subject}`.localeCompare(
+            `${b.subject_type}:${b.subject}`
+          )
+        );
 
       const deleteIds = existingPermissions
         .filter((p) => !desiredKeys.has(`${p.subject_type}:${p.subject}`))
-        .map((p) => p.id);
+        .map((p) => p.id!)
+        .sort((a, b) => a.localeCompare(b));
 
-      await Promise.all([
-        ...payloads.map((payload) => addPermission(payload as any)),
-        ...deleteIds.map((id) => deletePermission(id))
-      ]);
+      const addedPermissionIds: string[] = [];
 
-      return { added: payloads.length, removed: deleteIds.length };
+      try {
+        for (const payload of payloadsToAdd) {
+          const created = await addPermission(payload as any);
+          if (created?.data?.id) {
+            addedPermissionIds.push(created.data.id);
+          }
+        }
+
+        for (const id of deleteIds) {
+          await deletePermission(id);
+        }
+      } catch (error) {
+        if (addedPermissionIds.length > 0) {
+          await Promise.allSettled(
+            addedPermissionIds.map((id) => deletePermission(id))
+          );
+        }
+        throw error;
+      }
+
+      return { added: payloadsToAdd.length, removed: deleteIds.length };
     },
     onSuccess: ({ added, removed }) => {
       if (added === 0 && removed === 0) {
@@ -252,10 +275,12 @@ export function useMcpResourcePermissions<
         toastSuccess(`Updated permissions: +${added} / -${removed}`);
       }
       setSelectedResourceId(null);
-      refetchPermissions();
     },
     onError: (error) => {
       toastError(error as any);
+    },
+    onSettled: () => {
+      refetchPermissions();
     }
   });
 
