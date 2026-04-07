@@ -292,10 +292,15 @@ export default function McpPlaybooksPage() {
     isUpdatingGlobalOverride ||
     isAllowingSelective;
 
+  const isInitialLoading =
+    (isPlaybooksLoading || isPermissionsLoading) && playbooks.length === 0;
+
   return (
     <McpTabsLinks
       activeTab="Playbooks"
       loading={loading}
+      isInitialLoading={isInitialLoading}
+      loadingText="Loading MCP playbooks..."
       onRefresh={() => {
         refetchPlaybooks();
         refetchPermissions();

@@ -152,10 +152,15 @@ export default function McpOverviewPage() {
     isPermissionsRefetching ||
     isUpdatingUserAccess;
 
+  const isInitialLoading =
+    (isUsersLoading || isPermissionsLoading) && subjects.length === 0;
+
   return (
     <McpTabsLinks
       activeTab="Overview"
       loading={loading}
+      isInitialLoading={isInitialLoading}
+      loadingText="Loading MCP subjects..."
       onRefresh={() => {
         refetchUsers();
         refetchPermissions();

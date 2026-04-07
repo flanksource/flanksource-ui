@@ -47,6 +47,9 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
+import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
+import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
+import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
@@ -208,18 +211,6 @@ const NotificationsSilencedPage = dynamic(
     import(
       "@flanksource-ui/pages/Settings/notifications/NotificationsSilencedPage"
     )
-);
-
-const McpOverviewPage = dynamic(
-  () => import("@flanksource-ui/pages/Settings/mcp/McpOverviewPage")
-);
-
-const McpPlaybooksPage = dynamic(
-  () => import("@flanksource-ui/pages/Settings/mcp/McpPlaybooksPage")
-);
-
-const McpViewsPage = dynamic(
-  () => import("@flanksource-ui/pages/Settings/mcp/McpViewsPage")
 );
 
 const UsersPage = dynamic(() =>

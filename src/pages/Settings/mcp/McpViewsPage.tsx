@@ -284,10 +284,15 @@ export default function McpViewsPage() {
     isUpdatingGlobalOverride ||
     isAllowingSelective;
 
+  const isInitialLoading =
+    (isViewsLoading || isPermissionsLoading) && views.length === 0;
+
   return (
     <McpTabsLinks
       activeTab="Views"
       loading={loading}
+      isInitialLoading={isInitialLoading}
+      loadingText="Loading MCP views..."
       onRefresh={() => {
         refetchViews();
         refetchPermissions();

@@ -5,6 +5,7 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { Loading } from "@flanksource-ui/ui/Loading";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import clsx from "clsx";
 import { useMemo } from "react";
@@ -18,6 +19,8 @@ type McpTabsLinksProps = {
   className?: string;
   onRefresh?: () => void;
   loading?: boolean;
+  isInitialLoading?: boolean;
+  loadingText?: string;
 };
 
 export default function McpTabsLinks({
@@ -25,7 +28,9 @@ export default function McpTabsLinks({
   children,
   className,
   onRefresh = () => {},
-  loading = false
+  loading = false,
+  isInitialLoading = false,
+  loadingText = "Loading..."
 }: McpTabsLinksProps) {
   const [searchParams] = useSearchParams();
 
@@ -83,7 +88,13 @@ export default function McpTabsLinks({
                 className
               )}
             >
-              <ErrorBoundary>{children}</ErrorBoundary>
+              <ErrorBoundary>
+                {isInitialLoading ? (
+                  <Loading className="h-full w-full py-8" text={loadingText} />
+                ) : (
+                  children
+                )}
+              </ErrorBoundary>
             </TabbedLinks>
           </div>
           <ConfigSidebar />
