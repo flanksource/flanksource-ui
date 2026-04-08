@@ -9,7 +9,7 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
-import UserAccessCard from "@flanksource-ui/components/Permissions/UserAccessCard";
+import UserList from "@flanksource-ui/components/MCP/UserList";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import SetupMcpModal from "@flanksource-ui/components/Users/SetupMcpModal";
 import { useUser } from "@flanksource-ui/context";
@@ -19,13 +19,6 @@ import { AiFillPlusCircle } from "react-icons/ai";
 
 const MCP_OBJECT = "mcp";
 const MCP_ACTION = "mcp:use";
-
-const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
-  person: "person",
-  team: "team",
-  role: "role",
-  permission_subject_group: "group"
-};
 
 const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   role: 0,
@@ -218,7 +211,7 @@ export default function McpOverviewPage() {
           title="Setup MCP"
           onClick={() => setIsSetupMcpModalOpen(true)}
         >
-          <AiFillPlusCircle size={32} className="text-blue-600" />
+          <AiFillPlusCircle size={24} className="text-blue-600" />
         </button>
       }
       onRefresh={() => {
@@ -226,76 +219,24 @@ export default function McpOverviewPage() {
         refetchPermissions();
       }}
     >
-      <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            Subject permissions
-          </h3>
-          <p className="text-sm text-gray-600">
-            Control which users, teams, groups, or roles can use MCP through
-            this gateway.
-          </p>
-        </div>
-
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md border p-2">
-          {groupedSubjects.map((group) => (
-            <div key={group.type} className="space-y-1">
-              <div className="pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
-                {TYPE_LABELS[group.type] ?? group.type}
-              </div>
-
-              <div className="[&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
-                {group.subjects.map((subject) => {
-                  const permissions = permissionsByUser.get(subject.id) ?? [];
-
-                  const activePermission = permissions.find(
-                    (permission) =>
-                      permission.source === MCP_SETTINGS_PERMISSION_SOURCE
-                  );
-
-                  const access = !activePermission
-                    ? "default"
-                    : activePermission.deny === true
-                      ? "deny"
-                      : "allow";
-
-                  return (
-                    <UserAccessCard
-                      key={subject.id}
-                      user={{
-                        id: subject.id,
-                        name: subject.name,
-                        type: subject.type
-                      }}
-                      action={MCP_ACTION}
-                      object={MCP_OBJECT}
-                      access={access}
-                      isMutating={mutatingSubjectId === subject.id}
-                      onChangeAccess={(access) => {
-                        setMutatingSubjectId(subject.id);
-                        setUserAccess(
-                          {
-                            subjectId: subject.id,
-                            subjectType: subject.type,
-                            access
-                          },
-                          {
-                            onSettled: () => {
-                              setMutatingSubjectId((current) =>
-                                current === subject.id ? null : current
-                              );
-                            }
-                          }
-                        );
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <UserList
+        groupedSubjects={groupedSubjects}
+        permissionsByUser={permissionsByUser}
+        mutatingSubjectId={mutatingSubjectId}
+        onChangeAccess={(subject, access) => {
+          setMutatingSubjectId(subject.id);
+          setUserAccess(
+            { subjectId: subject.id, subjectType: subject.type, access },
+            {
+              onSettled: () => {
+                setMutatingSubjectId((current) =>
+                  current === subject.id ? null : current
+                );
+              }
+            }
+          );
+        }}
+      />
       <SetupMcpModal
         isOpen={isSetupMcpModalOpen}
         onClose={() => setIsSetupMcpModalOpen(false)}

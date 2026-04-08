@@ -2,7 +2,7 @@ import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
-import PermissionAccessCard from "@flanksource-ui/components/Permissions/PermissionAccessCard";
+import ResourceAccessCard from "@flanksource-ui/components/Permissions/ResourceAccessCard";
 import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { useQuery } from "@tanstack/react-query";
@@ -64,10 +64,10 @@ export default function McpPlaybooksPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
             {playbooks.map((playbook) => {
               return (
-                <PermissionAccessCard
+                <ResourceAccessCard
                   key={playbook.id}
                   entity={{
                     id: playbook.id,

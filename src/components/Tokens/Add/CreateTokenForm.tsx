@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
+import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import {
   createToken,
@@ -12,7 +13,7 @@ import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
-import { toastError, toastSuccess } from "../../Toast/toast";
+import { toastSuccess } from "../../Toast/toast";
 import {
   OBJECTS,
   getActionsForObject,
@@ -20,6 +21,7 @@ import {
 } from "../tokenUtils";
 import TokenScopeFieldsGroup from "./TokenScopeFieldsGroup";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
 export type TokenFormValues = CreateTokenRequest & {
   objectActions: Record<string, boolean>;
@@ -59,13 +61,16 @@ export function CreateTokenFormContent({
   showFooter = true,
   formId
 }: CreateTokenFormContentProps) {
+  const [submitError, setSubmitError] = useState<unknown>(null);
+
   const { mutate: createTokenMutation, isLoading } = useMutation({
     mutationFn: createToken,
-    onSuccess: (data) => {
+    onSuccess: () => {
+      setSubmitError(null);
       toastSuccess("Token created successfully");
     },
-    onError: (error: any) => {
-      toastError(error.message || "Failed to create token");
+    onError: (error: unknown) => {
+      setSubmitError(error);
     }
   });
 
@@ -120,6 +125,8 @@ export function CreateTokenFormContent({
       autoRenew: values.autoRenew,
       scope: selectedScopes
     };
+
+    setSubmitError(null);
 
     createTokenMutation(tokenRequest, {
       onSuccess: (data) => {
@@ -178,6 +185,9 @@ export function CreateTokenFormContent({
               </div>
             </div>
           </div>
+          {submitError != null && (
+            <ErrorViewer error={submitError} className="mx-6 mb-4" />
+          )}
           {showFooter && (
             <div
               className={clsx(
