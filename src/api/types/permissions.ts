@@ -14,6 +14,12 @@ export type PermissionGlobalObject =
   | "topology"
   | "mcp";
 
+/**
+ * Selector map for `object_selector` in a permission rule.
+ *
+ * Each key narrows the permission scope for that resource type.
+ * If omitted, the permission applies to all objects of the selected global object.
+ */
 type PermissionObjectSelector = {
   playbooks?: Selectors[];
   connections?: Selectors[];

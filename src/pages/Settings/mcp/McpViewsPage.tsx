@@ -6,7 +6,7 @@ import ResourceAccessCard from "@flanksource-ui/components/Permissions/ResourceA
 import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const getViewRefs = (permission: PermissionsSummary) =>
   permission.object_selector?.views ?? [];
@@ -47,6 +47,26 @@ export default function McpViewsPage() {
     getRefs: getViewRefs,
     objectSelectorKey: "views"
   });
+
+  const [isSubjectPanelSwitching, setIsSubjectPanelSwitching] = useState(false);
+
+  useEffect(() => {
+    if (!selectedView) {
+      setIsSubjectPanelSwitching(false);
+      return;
+    }
+
+    // SubjectSelectorPanel remounts when the selected view changes (key={selectedView.id}).
+    // Keep this overlay on briefly so the switch feels intentional instead of a flicker.
+    setIsSubjectPanelSwitching(true);
+    const timer = setTimeout(() => {
+      setIsSubjectPanelSwitching(false);
+    }, 220);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [selectedView?.id]);
 
   return (
     <McpTabsLinks
@@ -92,18 +112,25 @@ export default function McpViewsPage() {
             })}
           </div>
 
+          {/* Keep a stable right-column width/height for both states so layout doesn't jump. */}
           <div className="min-h-0 w-full shrink-0 lg:w-[420px]">
             {selectedView ? (
-              <SubjectSelectorPanel
-                key={selectedView.id}
-                description="Select users, teams, groups, or roles to allow this view for MCP usage."
-                preselectedSubjectIds={preselectedSubjectIds}
-                isSubmitting={isAllowingSelective}
-                onClose={() => setSelectedResourceId(null)}
-                onAllow={(subjects) =>
-                  allowSelectiveAccess(selectedView, subjects)
-                }
-              />
+              <div className="relative h-full">
+                <SubjectSelectorPanel
+                  key={selectedView.id}
+                  description="Select users, teams, groups, or roles to allow this view for MCP usage."
+                  preselectedSubjectIds={preselectedSubjectIds}
+                  isSubmitting={isAllowingSelective}
+                  onClose={() => setSelectedResourceId(null)}
+                  onAllow={(subjects) =>
+                    allowSelectiveAccess(selectedView, subjects)
+                  }
+                />
+
+                {isSubjectPanelSwitching ? (
+                  <div className="pointer-events-none absolute inset-0 z-10 rounded-md bg-white/20 backdrop-blur-[1.5px]" />
+                ) : null}
+              </div>
             ) : (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
                 Select a view row to manage custom subject access.

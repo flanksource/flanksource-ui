@@ -48,7 +48,7 @@ export default function SubjectAccessCard({
       <div className="flex items-center gap-3">
         <SubjectAvatar
           subject={{ name: user.name ?? user.id, type: user.type ?? "person" }}
-          size="md"
+          size="xs"
         />
 
         <div className="flex min-w-0 flex-1 items-center justify-between gap-2">

@@ -225,18 +225,18 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
   return response.data ?? [];
 }
 
-export async function fetchPermissionSubjects() {
+async function fetchPermissionSubjectsWithOrder(order: string) {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    "/permission_subjects?select=id,name,type,owner&order=name.asc&limit=5000"
+    `/permission_subjects?select=id,name,type,owner&order=${order}&limit=5000`
   );
 
   return response.data ?? [];
 }
 
-export async function fetchAllPermissionSubjects() {
-  const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    "/permission_subjects?select=id,name,type,owner&order=type.asc,name.asc&limit=5000"
-  );
+export async function fetchPermissionSubjects() {
+  return fetchPermissionSubjectsWithOrder("name.asc");
+}
 
-  return response.data ?? [];
+export async function fetchAllPermissionSubjects() {
+  return fetchPermissionSubjectsWithOrder("type.asc,name.asc");
 }
