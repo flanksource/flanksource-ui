@@ -6,6 +6,7 @@ import ResourceAccessCard from "@flanksource-ui/components/Permissions/ResourceA
 import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 const getPlaybookRefs = (permission: PermissionsSummary) =>
   permission.object_selector?.playbooks ?? [];
@@ -22,7 +23,6 @@ export default function McpPlaybooksPage() {
   });
 
   const {
-    permissionsByResource,
     globalOverrideByResource,
     selectedResource: selectedPlaybook,
     setSelectedResourceId,
@@ -45,6 +45,37 @@ export default function McpPlaybooksPage() {
     objectSelectorKey: "playbooks"
   });
 
+  const groupedPlaybooks = useMemo(() => {
+    const grouped = new Map<string, typeof playbooks>();
+
+    for (const playbook of playbooks) {
+      const category = playbook.category?.trim() || "Other";
+      const categoryPlaybooks = grouped.get(category) ?? [];
+      categoryPlaybooks.push(playbook);
+      grouped.set(category, categoryPlaybooks);
+    }
+
+    return Array.from(grouped.entries())
+      .sort(([a], [b]) => {
+        if (a === "Other") {
+          return 1;
+        }
+        if (b === "Other") {
+          return -1;
+        }
+
+        return a.localeCompare(b, undefined, { sensitivity: "base" });
+      })
+      .map(([category, categoryPlaybooks]) => ({
+        category,
+        playbooks: categoryPlaybooks.sort((a, b) =>
+          (a.title || a.name).localeCompare(b.title || b.name, undefined, {
+            sensitivity: "base"
+          })
+        )
+      }));
+  }, [playbooks]);
+
   return (
     <McpTabsLinks
       activeTab="Playbooks"
@@ -64,29 +95,46 @@ export default function McpPlaybooksPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*]:pb-2 [&>*]:pt-2">
-            {playbooks.map((playbook) => {
-              return (
-                <ResourceAccessCard
-                  key={playbook.id}
-                  entity={{
-                    id: playbook.id,
-                    name: playbook.title || playbook.name,
-                    namespace: playbook.namespace,
-                    icon: playbook.icon
-                  }}
-                  globalOverride={
-                    globalOverrideByResource.get(playbook.id) ?? "none"
-                  }
-                  isMutating={mutatingResourceId === playbook.id}
-                  isSelected={selectedPlaybook?.id === playbook.id}
-                  onGlobalOverrideChange={(override) =>
-                    setGlobalOverride(playbook, override)
-                  }
-                  onViewSubjects={() => setSelectedResourceId(playbook.id)}
-                />
-              );
-            })}
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl">
+            <div className="space-y-4">
+              {groupedPlaybooks.map((group) => {
+                return (
+                  <div key={group.category} className="space-y-2">
+                    <h4 className="text-sm font-semibold text-gray-700">
+                      {group.category}
+                    </h4>
+
+                    <div className="[&>*+*]:border-t [&>*+*]:border-gray-200 [&>*]:pb-2 [&>*]:pt-2">
+                      {group.playbooks.map((playbook) => {
+                        return (
+                          <ResourceAccessCard
+                            key={playbook.id}
+                            entity={{
+                              id: playbook.id,
+                              name: playbook.title || playbook.name,
+                              namespace: playbook.namespace,
+                              icon: playbook.icon
+                            }}
+                            globalOverride={
+                              globalOverrideByResource.get(playbook.id) ??
+                              "none"
+                            }
+                            isMutating={mutatingResourceId === playbook.id}
+                            isSelected={selectedPlaybook?.id === playbook.id}
+                            onGlobalOverrideChange={(override) =>
+                              setGlobalOverride(playbook, override)
+                            }
+                            onViewSubjects={() =>
+                              setSelectedResourceId(playbook.id)
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           <div className="min-h-0 w-full shrink-0 lg:w-[420px]">

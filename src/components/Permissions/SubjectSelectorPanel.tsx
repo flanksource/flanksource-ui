@@ -251,7 +251,7 @@ export default function SubjectSelectorPanel({
         onChange={(event) => setSearch(event.target.value)}
       />
 
-      <div className="mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md border p-2">
+      <div className="mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md">
         {(shouldFetchSubjectsByIds && isSubjectsByIdsLoading) || isLoading ? (
           <div className="p-2 text-sm text-gray-500">Loading...</div>
         ) : displayedSubjects.length > 0 || unresolvedSelectedIds.length > 0 ? (

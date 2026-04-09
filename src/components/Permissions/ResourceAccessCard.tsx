@@ -64,7 +64,7 @@ export default function ResourceAccessCard({
 
   return (
     <div
-      className={`w-full max-w-3xl ${canOpenSubjects ? "cursor-pointer" : ""} ${isSelected ? "rounded-md bg-blue-50 ring-1 ring-inset ring-blue-200" : ""}`}
+      className={`w-full max-w-3xl ${canOpenSubjects ? "cursor-pointer" : ""} ${isSelected ? "rounded-md bg-gray-50 ring-1 ring-inset ring-gray-300" : ""}`}
       onClick={handleCardClick}
     >
       <div className="flex items-start gap-3">
@@ -107,7 +107,7 @@ export default function ResourceAccessCard({
                 onChange={(value) =>
                   onGlobalOverrideChange(toGlobalOverride(value))
                 }
-                className="h-auto"
+                className="mr-2 h-auto"
                 itemsClassName=""
                 getActiveItemClassName={(option) => {
                   if (option === "Allow all") {
