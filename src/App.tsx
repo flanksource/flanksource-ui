@@ -50,6 +50,7 @@ import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
 import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
 import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
+import McpCheckAccessPage from "./pages/Settings/mcp/McpCheckAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
@@ -877,6 +878,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="views"
             element={withAuthorizationAccessCheck(
               <McpViewsPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+          <Route
+            path="check-access"
+            element={withAuthorizationAccessCheck(
+              <McpCheckAccessPage />,
               tables.database,
               "write",
               true

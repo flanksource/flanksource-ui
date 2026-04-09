@@ -14,7 +14,7 @@ import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 
 type McpTabsLinksProps = {
-  activeTab: "Overview" | "Playbooks" | "Views";
+  activeTab: "Overview" | "Playbooks" | "Views" | "Check Access";
   children: React.ReactNode;
   className?: string;
   onRefresh?: () => void;
@@ -57,6 +57,12 @@ export default function McpTabsLinks({
         label: "Views",
         path: "/settings/mcp/views",
         key: "Views",
+        search
+      },
+      {
+        label: "Check Access",
+        path: "/settings/mcp/check-access",
+        key: "Check Access",
         search
       }
     ];

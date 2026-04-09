@@ -60,12 +60,14 @@ export type SubjectAccessReviewResource = {
   view?: string;
   config?: string;
   check?: string;
+  global?: string;
   [key: string]: string | undefined;
 };
 
 export type SubjectAccessReviewAction =
   | "read"
   | "mcp:run"
+  | "mcp:use"
   | "playbook:run"
   | "playbook:cancel"
   | "playbook:approve";
