@@ -1,7 +1,4 @@
-import {
-  fetchPermissionSubjects,
-  PermissionSubject
-} from "@flanksource-ui/api/services/permissions";
+import { fetchPermissionSubjects } from "@flanksource-ui/api/services/permissions";
 import {
   reviewSubjectAccess,
   SubjectAccessReviewAction
@@ -24,12 +21,11 @@ import {
   SelectTrigger,
   SelectValue
 } from "@flanksource-ui/components/ui/select";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
+import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
 import { useEffect, useMemo, useState } from "react";
-import { HiUser, HiUserGroup } from "react-icons/hi";
 
 export type PermissionAccessCheckConfig = {
   resource: {
@@ -55,24 +51,6 @@ type PermissionAccessCheckFormValues = {
   action: SubjectAccessReviewAction | "";
   targetResourceId: string;
 };
-
-function SubjectIcon({ subject }: { subject: PermissionSubject }) {
-  if (subject.type === "person") {
-    return <Avatar size="xs" user={{ name: subject.name }} />;
-  }
-
-  return (
-    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-      {subject.type === "team" ||
-      subject.type === "permission_subject_group" ||
-      subject.type === "role" ? (
-        <HiUserGroup className="h-3 w-3" />
-      ) : (
-        <HiUser className="h-3 w-3" />
-      )}
-    </span>
-  );
-}
 
 export default function PermissionAccessCheckModal({
   open,
@@ -216,7 +194,7 @@ export default function PermissionAccessCheckModal({
                     <SelectTrigger>
                       {selectedSubject ? (
                         <div className="flex min-w-0 items-center gap-2">
-                          <SubjectIcon subject={selectedSubject} />
+                          <SubjectAvatar subject={selectedSubject} size="xs" />
                           <span className="truncate">
                             {selectedSubject.name}
                           </span>
@@ -235,7 +213,7 @@ export default function PermissionAccessCheckModal({
                       {subjects.map((subject) => (
                         <SelectItem key={subject.id} value={subject.id}>
                           <div className="flex items-center gap-2">
-                            <SubjectIcon subject={subject} />
+                            <SubjectAvatar subject={subject} size="xs" />
                             <span>{subject.name}</span>
                           </div>
                         </SelectItem>

@@ -1,5 +1,7 @@
+import SubjectAvatar, {
+  PermissionSubjectType
+} from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
-import { HiUser, HiUserGroup } from "react-icons/hi";
 
 type AccessLevel = "deny" | "default" | "allow";
 type SwitchOption = "Deny" | "Default" | "Allow";
@@ -18,15 +20,13 @@ const OPTION_TO_ACCESS: Record<SwitchOption, AccessLevel> = {
 
 const SWITCH_OPTIONS: SwitchOption[] = ["Deny", "Default", "Allow"];
 
-const GROUP_TYPES = new Set(["team", "permission_subject_group", "role"]);
-
 type SubjectAccessCardProps = {
   user: {
     id: string;
     name?: string;
     email?: string;
     avatar?: string;
-    type?: "team" | "permission_subject_group" | "person" | "role";
+    type?: PermissionSubjectType;
   };
   action: string;
   object: string;
@@ -43,18 +43,13 @@ export default function SubjectAccessCard({
   onChangeAccess,
   isMutating = false
 }: SubjectAccessCardProps) {
-  const isGroup = user.type ? GROUP_TYPES.has(user.type) : false;
-
   return (
     <div className="w-full max-w-3xl">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-xs font-semibold text-gray-700">
-          {isGroup ? (
-            <HiUserGroup className="h-4 w-4" />
-          ) : (
-            <HiUser className="h-4 w-4" />
-          )}
-        </div>
+        <SubjectAvatar
+          subject={{ name: user.name ?? user.id, type: user.type ?? "person" }}
+          size="md"
+        />
 
         <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
           <div className="min-w-0">

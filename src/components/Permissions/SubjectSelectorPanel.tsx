@@ -7,10 +7,9 @@ import { Button } from "@flanksource-ui/components/ui/button";
 import { Switch } from "@flanksource-ui/components/ui/switch";
 import { Input } from "@flanksource-ui/components/ui/input";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
+import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { HiUser, HiUserGroup } from "react-icons/hi";
 
 const PAGE_SIZE = 20;
 
@@ -35,24 +34,6 @@ type SubjectSelectorPanelProps = {
   isSubmitting?: boolean;
   onClose?: () => void;
 };
-
-function SubjectIcon({ subject }: { subject: PermissionSubject }) {
-  if (subject.type === "person") {
-    return <Avatar size="xs" user={{ name: subject.name }} />;
-  }
-
-  return (
-    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-      {subject.type === "team" ||
-      subject.type === "permission_subject_group" ||
-      subject.type === "role" ? (
-        <HiUserGroup className="h-3 w-3" />
-      ) : (
-        <HiUser className="h-3 w-3" />
-      )}
-    </span>
-  );
-}
 
 export default function SubjectSelectorPanel({
   description,
@@ -312,7 +293,7 @@ export default function SubjectSelectorPanel({
                     className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
-                      <SubjectIcon subject={subject} />
+                      <SubjectAvatar subject={subject} size="xs" />
                       <div className="min-w-0 truncate text-sm font-medium text-gray-900">
                         {subject.name}
                       </div>
