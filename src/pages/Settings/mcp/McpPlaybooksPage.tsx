@@ -6,7 +6,7 @@ import ResourceAccessCard from "@flanksource-ui/components/Permissions/ResourceA
 import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const getPlaybookRefs = (permission: PermissionsSummary) =>
   permission.object_selector?.playbooks ?? [];
@@ -44,6 +44,24 @@ export default function McpPlaybooksPage() {
     getRefs: getPlaybookRefs,
     objectSelectorKey: "playbooks"
   });
+
+  const [isSubjectPanelSwitching, setIsSubjectPanelSwitching] = useState(false);
+
+  useEffect(() => {
+    if (!selectedPlaybook) {
+      setIsSubjectPanelSwitching(false);
+      return;
+    }
+
+    setIsSubjectPanelSwitching(true);
+    const timer = setTimeout(() => {
+      setIsSubjectPanelSwitching(false);
+    }, 220);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [selectedPlaybook?.id]);
 
   const groupedPlaybooks = useMemo(() => {
     const grouped = new Map<string, typeof playbooks>();
@@ -139,16 +157,25 @@ export default function McpPlaybooksPage() {
 
           <div className="min-h-0 w-full shrink-0 lg:w-[420px]">
             {selectedPlaybook ? (
-              <SubjectSelectorPanel
-                key={selectedPlaybook.id}
-                description="Select users, teams, groups, or roles to allow this playbook for MCP usage."
-                preselectedSubjectIds={preselectedSubjectIds}
-                isSubmitting={isAllowingSelective}
-                onClose={() => setSelectedResourceId(null)}
-                onAllow={(subjects) =>
-                  allowSelectiveAccess(selectedPlaybook, subjects)
-                }
-              />
+              <div className="relative h-full">
+                <SubjectSelectorPanel
+                  key={selectedPlaybook.id}
+                  title={`Subject access for ${
+                    selectedPlaybook.title || selectedPlaybook.name
+                  }`}
+                  description="Select users, teams, groups, or roles to allow this playbook for MCP usage."
+                  preselectedSubjectIds={preselectedSubjectIds}
+                  isSubmitting={isAllowingSelective}
+                  onClose={() => setSelectedResourceId(null)}
+                  onAllow={(subjects) =>
+                    allowSelectiveAccess(selectedPlaybook, subjects)
+                  }
+                />
+
+                {isSubjectPanelSwitching ? (
+                  <div className="pointer-events-none absolute inset-0 z-10 rounded-md bg-white/20 backdrop-blur-[1.5px]" />
+                ) : null}
+              </div>
             ) : (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
                 Select a playbook row to manage custom subject access.

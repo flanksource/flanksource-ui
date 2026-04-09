@@ -28,6 +28,7 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
 };
 
 type SubjectSelectorPanelProps = {
+  title?: string;
   description?: string;
   onAllow?: (selection: PermissionSubject[]) => Promise<void> | void;
   preselectedSubjectIds?: string[];
@@ -36,6 +37,7 @@ type SubjectSelectorPanelProps = {
 };
 
 export default function SubjectSelectorPanel({
+  title,
   description,
   onAllow,
   preselectedSubjectIds = [],
@@ -80,14 +82,17 @@ export default function SubjectSelectorPanel({
 
   const shouldFetchSubjectsByIds = normalizedPreselectedSubjectIds.length > 0;
 
-  const { data: subjectsByIds = [], isLoading: isSubjectsByIdsLoading } =
-    useQuery({
-      queryKey: ["permission-subjects-by-ids", normalizedPreselectedSubjectIds],
-      queryFn: () =>
-        fetchPermissionSubjectsByIds(normalizedPreselectedSubjectIds),
-      enabled: shouldFetchSubjectsByIds,
-      staleTime: 60_000
-    });
+  const {
+    data: subjectsByIds = [],
+    isLoading: isSubjectsByIdsLoading,
+    isFetching: isSubjectsByIdsFetching
+  } = useQuery({
+    queryKey: ["permission-subjects-by-ids", normalizedPreselectedSubjectIds],
+    queryFn: () =>
+      fetchPermissionSubjectsByIds(normalizedPreselectedSubjectIds),
+    enabled: shouldFetchSubjectsByIds,
+    staleTime: 60_000
+  });
 
   const debouncedSearch = useDebouncedValue(search, 300) ?? "";
 
@@ -95,7 +100,7 @@ export default function SubjectSelectorPanel({
     setPageIndex(0);
   }, [debouncedSearch]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: [
       "mcp",
       "subject-selector",
@@ -205,6 +210,17 @@ export default function SubjectSelectorPanel({
     Object.keys(selectedIds).some((id) => !initialSelectedIds[id]);
   const allSelectedHydrated = selectedHydratedSubjects.length === selectedCount;
 
+  const isPanelFetching =
+    isLoading ||
+    isFetching ||
+    (shouldFetchSubjectsByIds &&
+      (isSubjectsByIdsLoading || isSubjectsByIdsFetching));
+
+  const showFullLoadingState =
+    isPanelFetching &&
+    displayedSubjects.length === 0 &&
+    unresolvedSelectedIds.length === 0;
+
   const removeSelectedId = (id: string) => {
     setSelectedIds((prev) => {
       if (!prev[id]) {
@@ -239,6 +255,9 @@ export default function SubjectSelectorPanel({
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-gray-200 bg-white p-3">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
+          {title ? (
+            <div className="text-sm font-semibold text-gray-900">{title}</div>
+          ) : null}
           {description ? (
             <div className="mt-0.5 text-xs text-gray-500">{description}</div>
           ) : null}
@@ -251,9 +270,12 @@ export default function SubjectSelectorPanel({
         onChange={(event) => setSearch(event.target.value)}
       />
 
-      <div className="mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md">
-        {(shouldFetchSubjectsByIds && isSubjectsByIdsLoading) || isLoading ? (
-          <div className="p-2 text-sm text-gray-500">Loading...</div>
+      <div className="relative mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md">
+        {showFullLoadingState ? (
+          <div className="flex items-center gap-2 p-2 text-sm text-gray-500">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+            Loading subjects...
+          </div>
         ) : displayedSubjects.length > 0 || unresolvedSelectedIds.length > 0 ? (
           <>
             {unresolvedSelectedIds.length > 0 ? (
@@ -312,6 +334,13 @@ export default function SubjectSelectorPanel({
         ) : (
           <div className="p-2 text-sm text-gray-500">No subjects found</div>
         )}
+
+        {isPanelFetching && !showFullLoadingState ? (
+          <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-200 bg-white/90 px-2 py-1 text-xs text-gray-500 shadow-sm backdrop-blur-sm">
+            <div className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+            Updating...
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
