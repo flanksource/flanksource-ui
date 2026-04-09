@@ -2,7 +2,7 @@ import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import clsx from "clsx";
 import { IconType } from "react-icons";
-import { HiBadgeCheck, HiUserGroup, HiUsers } from "react-icons/hi";
+import { HiBadgeCheck, HiKey, HiUserGroup, HiUsers } from "react-icons/hi";
 
 export type PermissionSubjectType = PermissionSubject["type"];
 
@@ -31,6 +31,10 @@ const SUBJECT_TYPE_ICON_CONFIG: Record<
   },
   role: {
     Icon: HiBadgeCheck,
+    colors: "bg-indigo-50 text-indigo-700"
+  },
+  access_token_person: {
+    Icon: HiKey,
     colors: "bg-indigo-50 text-indigo-700"
   }
 };

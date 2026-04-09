@@ -15,6 +15,7 @@ const PAGE_SIZE = 20;
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
+  access_token_person: "access token",
   team: "team",
   role: "role",
   permission_subject_group: "group"
@@ -24,7 +25,8 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3
+  person: 3,
+  access_token_person: 4
 };
 
 type SubjectSelectorPanelProps = {
@@ -121,6 +123,38 @@ export default function SubjectSelectorPanel({
     [data?.data]
   );
 
+  const missingOwnerIds = useMemo(() => {
+    const personIds = new Set(
+      [...subjectsByIds, ...pagedSubjects]
+        .filter((subject) => subject.type === "person")
+        .map((subject) => subject.id)
+    );
+
+    return [
+      ...new Set(
+        [...subjectsByIds, ...pagedSubjects]
+          .filter(
+            (subject) =>
+              subject.type === "access_token_person" &&
+              !!subject.owner &&
+              !personIds.has(subject.owner)
+          )
+          .map((subject) => subject.owner!)
+      )
+    ];
+  }, [pagedSubjects, subjectsByIds]);
+
+  const {
+    data: missingOwnerSubjects = [],
+    isLoading: isMissingOwnerSubjectsLoading,
+    isFetching: isMissingOwnerSubjectsFetching
+  } = useQuery({
+    queryKey: ["permission-subjects-owner-ids", missingOwnerIds],
+    queryFn: () => fetchPermissionSubjectsByIds(missingOwnerIds),
+    enabled: missingOwnerIds.length > 0,
+    staleTime: 60_000
+  });
+
   useEffect(() => {
     setSelectedSubjects((prev) => {
       const next: Record<string, PermissionSubject> = {};
@@ -173,8 +207,14 @@ export default function SubjectSelectorPanel({
       }
     }
 
+    for (const subject of missingOwnerSubjects) {
+      if (!merged.has(subject.id)) {
+        merged.set(subject.id, subject);
+      }
+    }
+
     return Array.from(merged.values());
-  }, [pagedSubjects, selectedHydratedSubjects]);
+  }, [missingOwnerSubjects, pagedSubjects, selectedHydratedSubjects]);
 
   const groupedDisplayedSubjects = useMemo(() => {
     const seen = new Set<string>();
@@ -201,6 +241,47 @@ export default function SubjectSelectorPanel({
       }));
   }, [displayedSubjects]);
 
+  const { accessTokensByOwnerId, unownedAccessTokens } = useMemo(() => {
+    const peopleIds = new Set(
+      displayedSubjects
+        .filter((subject) => subject.type === "person")
+        .map((subject) => subject.id)
+    );
+
+    const byOwner = new Map<string, PermissionSubject[]>();
+    const unowned: PermissionSubject[] = [];
+
+    for (const subject of displayedSubjects) {
+      if (subject.type !== "access_token_person") {
+        continue;
+      }
+
+      if (!subject.owner || !peopleIds.has(subject.owner)) {
+        unowned.push(subject);
+        continue;
+      }
+
+      const list = byOwner.get(subject.owner) ?? [];
+      list.push(subject);
+      byOwner.set(subject.owner, list);
+    }
+
+    for (const [, tokens] of byOwner.entries()) {
+      tokens.sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+      );
+    }
+
+    unowned.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
+
+    return {
+      accessTokensByOwnerId: byOwner,
+      unownedAccessTokens: unowned
+    };
+  }, [displayedSubjects]);
+
   const totalEntries = data?.totalEntries ?? 0;
   const pageCount = Math.ceil(totalEntries / PAGE_SIZE);
 
@@ -213,6 +294,8 @@ export default function SubjectSelectorPanel({
   const isPanelFetching =
     isLoading ||
     isFetching ||
+    isMissingOwnerSubjectsLoading ||
+    isMissingOwnerSubjectsFetching ||
     (shouldFetchSubjectsByIds &&
       (isSubjectsByIdsLoading || isSubjectsByIdsFetching));
 
@@ -250,6 +333,24 @@ export default function SubjectSelectorPanel({
 
     removeSelectedId(subject.id);
   };
+
+  const renderSubjectRow = (subject: PermissionSubject, className = "") => (
+    <div
+      key={subject.id}
+      className={`flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50 ${className}`}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
+        <SubjectAvatar subject={subject} size="xs" />
+        <div className="min-w-0 truncate text-sm font-medium text-gray-900">
+          {subject.name}
+        </div>
+      </div>
+      <Switch
+        checked={!!selectedIds[subject.id]}
+        onCheckedChange={(checked) => toggleSubject(subject, checked)}
+      />
+    </div>
+  );
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-gray-200 bg-white p-3">
@@ -304,43 +405,45 @@ export default function SubjectSelectorPanel({
               </div>
             ) : null}
 
-            {groupedDisplayedSubjects.map((group) => (
-              <div key={group.type} className="space-y-1">
-                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
-                  {TYPE_LABELS[group.type] ?? group.type}
-                </div>
-                {group.subjects.map((subject) => (
-                  <div
-                    key={subject.id}
-                    className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
-                  >
-                    <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
-                      <SubjectAvatar subject={subject} size="xs" />
-                      <div className="min-w-0 truncate text-sm font-medium text-gray-900">
-                        {subject.name}
-                      </div>
-                    </div>
-                    <Switch
-                      checked={!!selectedIds[subject.id]}
-                      onCheckedChange={(checked) =>
-                        toggleSubject(subject, checked)
-                      }
-                    />
+            {groupedDisplayedSubjects
+              .filter((group) => group.type !== "access_token_person")
+              .map((group) => (
+                <div key={group.type} className="space-y-1">
+                  <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
+                    {TYPE_LABELS[group.type] ?? group.type}
                   </div>
-                ))}
+                  {group.type === "person"
+                    ? group.subjects.map((person) => {
+                        const ownedTokens =
+                          accessTokensByOwnerId.get(person.id) ?? [];
+
+                        return (
+                          <div key={person.id} className="space-y-1">
+                            {renderSubjectRow(person)}
+                            {ownedTokens.map((token) =>
+                              renderSubjectRow(token, "ml-8")
+                            )}
+                          </div>
+                        );
+                      })
+                    : group.subjects.map((subject) =>
+                        renderSubjectRow(subject)
+                      )}
+                </div>
+              ))}
+
+            {unownedAccessTokens.length > 0 ? (
+              <div className="space-y-1">
+                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
+                  {TYPE_LABELS.access_token_person}
+                </div>
+                {unownedAccessTokens.map((token) => renderSubjectRow(token))}
               </div>
-            ))}
+            ) : null}
           </>
         ) : (
           <div className="p-2 text-sm text-gray-500">No subjects found</div>
         )}
-
-        {isPanelFetching && !showFullLoadingState ? (
-          <div className="pointer-events-none absolute right-2 top-2 z-10 flex items-center gap-2 rounded-md border border-gray-200 bg-white/90 px-2 py-1 text-xs text-gray-500 shadow-sm backdrop-blur-sm">
-            <div className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
-            Updating...
-          </div>
-        ) : null}
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs text-gray-500">

@@ -52,7 +52,8 @@ export type PermissionTable = {
     | "person"
     | "notification"
     | "component"
-    | "role";
+    | "role"
+    | "access_token_person";
   created_by: string;
   updated_by: string;
   created_at: string;

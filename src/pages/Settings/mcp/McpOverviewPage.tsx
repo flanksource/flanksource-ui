@@ -24,7 +24,8 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3
+  person: 3,
+  access_token_person: 4
 };
 
 function isMcpUserAccessPermission(permission: PermissionsSummary) {
@@ -40,6 +41,10 @@ function isMcpUserAccessPermission(permission: PermissionsSummary) {
 function mapPermissionSubjectType(type: PermissionSubject["type"]) {
   if (type === "permission_subject_group" || type === "role") {
     return "group" as const;
+  }
+
+  if (type === "access_token_person") {
+    return "person" as const;
   }
 
   return type;
@@ -94,6 +99,10 @@ export default function McpOverviewPage() {
     const grouped = new Map<PermissionSubject["type"], PermissionSubject[]>();
 
     for (const subject of subjects) {
+      if (subject.type === "access_token_person") {
+        continue;
+      }
+
       if (seen.has(subject.id)) {
         continue;
       }

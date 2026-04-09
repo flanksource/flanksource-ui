@@ -10,6 +10,7 @@ const MCP_ACTION = "mcp:use";
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
+  access_token_person: "access token",
   team: "team",
   role: "role",
   permission_subject_group: "group"

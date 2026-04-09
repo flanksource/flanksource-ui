@@ -24,7 +24,8 @@ export type FetchPermissionsInput = {
     | "person"
     | "notification"
     | "component"
-    | "role";
+    | "role"
+    | "access_token_person";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -178,7 +179,13 @@ export async function fetchMcpUserPermissions() {
 export type PermissionSubject = {
   id: string;
   name: string;
-  type: "team" | "permission_subject_group" | "person" | "role";
+  type:
+    | "team"
+    | "permission_subject_group"
+    | "person"
+    | "role"
+    | "access_token_person";
+  owner?: string | null;
 };
 
 export async function fetchPermissionSubjectsPaginated({
@@ -192,7 +199,7 @@ export async function fetchPermissionSubjectsPaginated({
 }) {
   const query = search.trim();
 
-  let url = "/permission_subjects?select=id,name,type&order=name.asc";
+  let url = "/permission_subjects?select=id,name,type,owner&order=name.asc";
   url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   if (query) {
@@ -213,14 +220,14 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
     return [];
   }
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    `/permission_subjects?select=id,name,type&id=in.(${ids.join(",")})&limit=${ids.length}`
+    `/permission_subjects?select=id,name,type,owner&id=in.(${ids.join(",")})&limit=${ids.length}`
   );
   return response.data ?? [];
 }
 
 export async function fetchPermissionSubjects() {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    "/permission_subjects?select=id,name,type&order=name.asc&limit=5000"
+    "/permission_subjects?select=id,name,type,owner&order=name.asc&limit=5000"
   );
 
   return response.data ?? [];
@@ -228,7 +235,7 @@ export async function fetchPermissionSubjects() {
 
 export async function fetchAllPermissionSubjects() {
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    "/permission_subjects?select=id,name,type&order=type.asc,name.asc&limit=5000"
+    "/permission_subjects?select=id,name,type,owner&order=type.asc,name.asc&limit=5000"
   );
 
   return response.data ?? [];

@@ -19,6 +19,10 @@ export function mapSubjectType(type: PermissionSubject["type"]) {
     return "role" as const;
   }
 
+  if (type === "access_token_person") {
+    return "person" as const;
+  }
+
   return type;
 }
 
