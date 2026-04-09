@@ -16,6 +16,7 @@ type PermissionAccessCardProps = {
   onGlobalOverrideChange: (value: GlobalOverride) => void;
   onViewSubjects?: () => void;
   isMutating?: boolean;
+  isSelected?: boolean;
 };
 
 const SWITCH_OPTIONS = ["Deny all", "Custom", "Allow all"];
@@ -48,7 +49,8 @@ export default function ResourceAccessCard({
   globalOverride = "none",
   onGlobalOverrideChange,
   onViewSubjects,
-  isMutating = false
+  isMutating = false,
+  isSelected = false
 }: PermissionAccessCardProps) {
   const canOpenSubjects = globalOverride === "none" && Boolean(onViewSubjects);
 
@@ -62,11 +64,11 @@ export default function ResourceAccessCard({
 
   return (
     <div
-      className={`w-full max-w-3xl ${canOpenSubjects ? "cursor-pointer" : ""}`}
+      className={`w-full max-w-3xl ${canOpenSubjects ? "cursor-pointer" : ""} ${isSelected ? "rounded-md bg-blue-50 ring-1 ring-inset ring-blue-200" : ""}`}
       onClick={handleCardClick}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-xs font-semibold text-gray-700">
+        <div className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold text-gray-700">
           <Icon name={entity.icon ?? "playbook"} className="h-4 w-4" />
         </div>
 

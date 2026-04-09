@@ -64,7 +64,7 @@ export default function McpPlaybooksPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*+*]:pt-2 [&>*]:pb-2">
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl [&>*+*]:border-t [&>*+*]:border-gray-200 [&>*]:pb-2 [&>*]:pt-2">
             {playbooks.map((playbook) => {
               return (
                 <ResourceAccessCard
@@ -79,6 +79,7 @@ export default function McpPlaybooksPage() {
                     globalOverrideByResource.get(playbook.id) ?? "none"
                   }
                   isMutating={mutatingResourceId === playbook.id}
+                  isSelected={selectedPlaybook?.id === playbook.id}
                   onGlobalOverrideChange={(override) =>
                     setGlobalOverride(playbook, override)
                   }
