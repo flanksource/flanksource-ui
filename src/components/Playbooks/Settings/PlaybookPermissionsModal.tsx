@@ -1,3 +1,4 @@
+import { SubjectAccessReviewAction } from "@flanksource-ui/api/services/rbac";
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import PermissionsView from "@flanksource-ui/components/Permissions/PermissionsView";
 import { Modal } from "@flanksource-ui/ui/Modal";
@@ -11,6 +12,13 @@ type PlaybookPermissionsModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+const playbookAccessReviewActions: SubjectAccessReviewAction[] = [
+  "read",
+  "playbook:run",
+  "playbook:cancel",
+  "playbook:approve"
+];
 
 export default function PlaybookPermissionsModal({
   playbook,
@@ -99,6 +107,17 @@ export default function PlaybookPermissionsModal({
                 hideResourceColumn
                 permissionRequest={inboundPermissionRequest}
                 showAddPermission
+                accessCheckConfig={{
+                  resource: {
+                    type: "playbook",
+                    id: playbook.id,
+                    name: `${playbook.namespace}/${playbook.name}`
+                  },
+                  actions: playbookAccessReviewActions,
+                  title: "Playbook Access Check",
+                  description:
+                    "Select a subject and action to check access for this playbook."
+                }}
                 newPermissionData={{
                   playbook_id: playbook.id
                 }}

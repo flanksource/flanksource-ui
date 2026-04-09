@@ -57,12 +57,22 @@ export async function getPermissions(id: string): Promise<Permission[]> {
 
 export type SubjectAccessReviewResource = {
   playbook?: string;
+  view?: string;
+  config?: string;
+  check?: string;
   [key: string]: string | undefined;
 };
 
+export type SubjectAccessReviewAction =
+  | "read"
+  | "mcp:run"
+  | "playbook:run"
+  | "playbook:cancel"
+  | "playbook:approve";
+
 export type SubjectAccessReviewRequest = {
   resource: SubjectAccessReviewResource;
-  action: "mcp:run";
+  action: SubjectAccessReviewAction;
   subjects: string[];
 };
 
@@ -89,7 +99,7 @@ export type SubjectAccessReviewResult = {
 
 export type SubjectAccessReviewResponse = {
   resource: SubjectAccessReviewResource;
-  action: "mcp:run";
+  action: SubjectAccessReviewAction;
   results: SubjectAccessReviewResult[];
 };
 

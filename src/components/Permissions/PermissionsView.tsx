@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import { Button } from "..";
 import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown";
 import PermissionForm from "./ManagePermissions/Forms/PermissionForm";
+import PermissionAccessCheckModal, {
+  PermissionAccessCheckConfig
+} from "./PermissionAccessCheckModal";
 import PermissionsTable from "./PermissionsTable";
 
 // Source: github.com/flanksource/duty/rbac/policy/policy.go
@@ -82,6 +85,7 @@ type PermissionsViewProps = {
   newPermissionData?: Partial<PermissionTable>;
   showAddPermission?: boolean;
   onRefetch?: (refetch: () => void) => void;
+  accessCheckConfig?: PermissionAccessCheckConfig;
 };
 
 export default function PermissionsView({
@@ -91,13 +95,15 @@ export default function PermissionsView({
   hideSubjectColumn = false,
   newPermissionData,
   showAddPermission = false,
-  onRefetch
+  onRefetch,
+  accessCheckConfig
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionsSummary>();
   const { pageSize, pageIndex } = useReactTablePaginationState();
   const [sortState] = useReactTableSortState();
   const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+  const [isAccessCheckModalOpen, setIsAccessCheckModalOpen] = useState(false);
 
   const mappedSortBy =
     sortState[0]?.id === "created"
@@ -153,13 +159,25 @@ export default function PermissionsView({
     <div className="flex h-full min-h-0 flex-1 flex-col">
       {showAddPermission && (
         <div className="flex shrink-0 flex-row items-center justify-between py-2">
-          <Button
-            onClick={() => {
-              setIsPermissionModalOpen(true);
-            }}
-          >
-            Add Permission
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                setIsPermissionModalOpen(true);
+              }}
+            >
+              Add Permission
+            </Button>
+            {accessCheckConfig ? (
+              <Button
+                className="btn-secondary"
+                onClick={() => {
+                  setIsAccessCheckModalOpen(true);
+                }}
+              >
+                Check Access
+              </Button>
+            ) : null}
+          </div>
         </div>
       )}
       <div className="flex min-h-0 flex-1 flex-col">
@@ -193,6 +211,13 @@ export default function PermissionsView({
           }}
         />
       )}
+      {accessCheckConfig ? (
+        <PermissionAccessCheckModal
+          open={isAccessCheckModalOpen}
+          onOpenChange={setIsAccessCheckModalOpen}
+          config={accessCheckConfig}
+        />
+      ) : null}
     </div>
   );
 }
