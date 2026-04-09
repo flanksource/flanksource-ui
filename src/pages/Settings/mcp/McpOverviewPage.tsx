@@ -180,7 +180,7 @@ export default function McpOverviewPage() {
           ...duplicatePermissionIds.map((id) => deletePermission(id))
         ]);
       },
-      onSuccess: () => {
+      onSettled: () => {
         refetchPermissions();
       },
       onError: (error) => {
@@ -208,6 +208,7 @@ export default function McpOverviewPage() {
         <button
           key="setup-mcp"
           type="button"
+          aria-label="Setup MCP"
           title="Setup MCP"
           onClick={() => setIsSetupMcpModalOpen(true)}
         >

@@ -268,6 +268,7 @@ export default function PermissionAccessCheckModal({
                         hintLink
                         configResourceSelector={[{}]}
                         className="flex flex-col space-y-2"
+                        renderMenuInPortal={false}
                       />
                     ) : (
                       <FormikResourceSelectorDropdown
@@ -276,6 +277,7 @@ export default function PermissionAccessCheckModal({
                         hintLink
                         checkResourceSelector={[{}]}
                         className="flex flex-col space-y-2"
+                        renderMenuInPortal={false}
                       />
                     )}
                     <p className="text-xs text-gray-500">
