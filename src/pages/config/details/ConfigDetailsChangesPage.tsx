@@ -34,7 +34,7 @@ export function ConfigDetailsChangesPage() {
 
   const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
     keepPreviousData: true,
-    enabled: !!id
+    enabled: !!id && !liveTail
   });
 
   // Initialize cursor from base data when live tail is turned on

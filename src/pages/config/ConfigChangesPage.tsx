@@ -50,7 +50,8 @@ export function ConfigChangesPage() {
 
   const { data, isLoading, error, isRefetching, refetch } =
     useGetAllConfigsChangesQuery({
-      keepPreviousData: true
+      keepPreviousData: true,
+      enabled: !liveTail
     });
 
   // Initialize cursor from base data when live tail is turned on
