@@ -31,7 +31,15 @@ export default function McpCheckAccessPage() {
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Check Access</h3>
           <p className="text-sm text-gray-600">
-            Validate whether a subject can invoke MCP resources.
+            Permissions granted from the MCP settings page are only one part of
+            the overall access model. Additional permissions, created elsewhere
+            in the UI or from Kubernetes resources, may override or supersede
+            them.
+          </p>
+          <br />
+          <p className="text-sm text-gray-600">
+            This check evaluates the final effective access across all
+            permissions.
           </p>
         </div>
 

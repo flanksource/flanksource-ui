@@ -239,6 +239,15 @@ export default function ResourceSelectorPanel({
         ? "Deny"
         : "Default";
 
+  const isListLocked = bulkAccess === "allow" || bulkAccess === "deny";
+
+  const resetTargetResources =
+    activeTab === "playbook"
+      ? resources.filter((resource) => resource.kind === "playbook")
+      : activeTab === "view"
+        ? resources.filter((resource) => resource.kind === "view")
+        : resources;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
@@ -287,155 +296,195 @@ export default function ResourceSelectorPanel({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {TABS.map((tab) => {
-          const isActive = activeTab === tab.key;
-          const count = counts[tab.key];
+      <div className="relative min-h-0 flex-1">
+        <div
+          className={`flex h-full min-h-0 flex-col gap-3 ${
+            isListLocked
+              ? "pointer-events-none select-none opacity-60 blur-[1px]"
+              : ""
+          }`}
+          aria-hidden={isListLocked || undefined}
+        >
+          <div className="flex items-center gap-2">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.key;
+              const count = counts[tab.key];
 
-          return (
-            <Button
-              key={tab.key}
-              type="button"
-              variant={isActive ? "default" : "outline"}
-              size="sm"
-              className={
-                isActive
-                  ? "border-gray-900 bg-gray-900 text-white hover:bg-gray-800"
-                  : "text-gray-700"
-              }
-              onClick={() => setActiveTab(tab.key)}
-            >
-              {tab.label}{" "}
-              <span className="ml-1 text-xs opacity-80">{count}</span>
-            </Button>
-          );
-        })}
-      </div>
+              return (
+                <Button
+                  key={tab.key}
+                  type="button"
+                  variant={isActive ? "default" : "outline"}
+                  size="sm"
+                  className={
+                    isActive
+                      ? "border-gray-900 bg-gray-900 text-white hover:bg-gray-800"
+                      : "text-gray-700"
+                  }
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  {tab.label}{" "}
+                  <span className="ml-1 text-xs opacity-80">{count}</span>
+                </Button>
+              );
+            })}
+          </div>
 
-      <Input
-        placeholder="Search playbooks and views..."
-        value={resourceSearch}
-        onChange={(event) => setResourceSearch(event.target.value)}
-      />
+          <Input
+            placeholder="Search ..."
+            value={resourceSearch}
+            onChange={(event) => setResourceSearch(event.target.value)}
+          />
 
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
-        {(activeTab === "all" ||
-          activeTab === "allowed" ||
-          activeTab === "playbook") && (
-          <div className="space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Playbooks
-            </div>
-            <div className="overflow-hidden rounded-md border border-gray-200">
-              {resourcesByType.playbooks.length === 0 ? (
-                <div className="p-3 text-sm text-gray-500">
-                  No playbooks found
+          <div className="mb-3 min-h-0 flex-1 space-y-4 overflow-y-auto">
+            {(activeTab === "all" ||
+              activeTab === "allowed" ||
+              activeTab === "playbook") && (
+              <div className="space-y-2">
+                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Playbooks
                 </div>
-              ) : (
-                resourcesByType.playbooks.map((resource) => {
-                  const state = getAccessState(
-                    permissions,
-                    selectedSubject,
-                    resource
-                  );
-
-                  return (
-                    <div
-                      key={resource.id}
-                      className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
-                    >
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Icon
-                          name={resource.icon || "playbook"}
-                          className="h-4 w-4 text-gray-500"
-                        />
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-medium text-gray-900">
-                            {resource.name}
-                          </div>
-                          {resource.subtitle ? (
-                            <div className="truncate text-xs text-gray-500">
-                              {resource.subtitle}
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-
-                      <TriStateAccessSwitch
-                        value={state.access}
-                        disabled={
-                          Boolean(mutatingResourceIds[resource.id]) ||
-                          isSubmitting
-                        }
-                        onChange={(access) =>
-                          onSetResourceAccess(resource, access)
-                        }
-                      />
+                <div className="overflow-hidden rounded-md border border-gray-200">
+                  {resourcesByType.playbooks.length === 0 ? (
+                    <div className="p-3 text-sm text-gray-500">
+                      No playbooks found
                     </div>
-                  );
-                })
-              )}
+                  ) : (
+                    resourcesByType.playbooks.map((resource) => {
+                      const state = getAccessState(
+                        permissions,
+                        selectedSubject,
+                        resource
+                      );
+
+                      return (
+                        <div
+                          key={resource.id}
+                          className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Icon
+                              name={resource.icon || "playbook"}
+                              className="h-4 w-4 text-gray-500"
+                            />
+                            <div className="min-w-0">
+                              <div className="truncate text-sm font-medium text-gray-900">
+                                {resource.name}
+                              </div>
+                              {resource.subtitle ? (
+                                <div className="truncate text-xs text-gray-500">
+                                  {resource.subtitle}
+                                </div>
+                              ) : null}
+                            </div>
+                          </div>
+
+                          <TriStateAccessSwitch
+                            value={state.access}
+                            disabled={
+                              isListLocked ||
+                              Boolean(mutatingResourceIds[resource.id]) ||
+                              isSubmitting
+                            }
+                            onChange={(access) =>
+                              onSetResourceAccess(resource, access)
+                            }
+                          />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {(activeTab === "all" ||
+              activeTab === "allowed" ||
+              activeTab === "view") && (
+              <div className="space-y-2">
+                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Views
+                </div>
+                <div className="overflow-hidden rounded-md border border-gray-200">
+                  {resourcesByType.views.length === 0 ? (
+                    <div className="p-3 text-sm text-gray-500">
+                      No views found
+                    </div>
+                  ) : (
+                    resourcesByType.views.map((resource) => {
+                      const state = getAccessState(
+                        permissions,
+                        selectedSubject,
+                        resource
+                      );
+
+                      return (
+                        <div
+                          key={resource.id}
+                          className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Icon
+                              name={resource.icon || "workflow"}
+                              className="h-4 w-4 text-gray-500"
+                            />
+                            <div className="min-w-0">
+                              <div className="truncate text-sm font-medium text-gray-900">
+                                {resource.name}
+                              </div>
+                              {resource.subtitle ? (
+                                <div className="truncate text-xs text-gray-500">
+                                  {resource.subtitle}
+                                </div>
+                              ) : null}
+                            </div>
+                          </div>
+
+                          <TriStateAccessSwitch
+                            value={state.access}
+                            disabled={
+                              isListLocked ||
+                              Boolean(mutatingResourceIds[resource.id]) ||
+                              isSubmitting
+                            }
+                            onChange={(access) =>
+                              onSetResourceAccess(resource, access)
+                            }
+                          />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {isListLocked ? (
+          <div className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center rounded-md">
+            <div className="max-w-sm rounded-md border border-gray-200 bg-white/95 p-4 text-center shadow-sm">
+              <p className="text-sm font-medium text-gray-900">
+                Individual resource rules are locked while
+                {bulkAccess === "allow" ? " Allow all" : " Deny all"} is active.
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Set bulk access to Default to edit individual resources.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="mt-3"
+                onClick={() =>
+                  onSetManyResourceAccess(resetTargetResources, "default")
+                }
+              >
+                Set to Default
+              </Button>
             </div>
           </div>
-        )}
-
-        {(activeTab === "all" ||
-          activeTab === "allowed" ||
-          activeTab === "view") && (
-          <div className="space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Views
-            </div>
-            <div className="overflow-hidden rounded-md border border-gray-200">
-              {resourcesByType.views.length === 0 ? (
-                <div className="p-3 text-sm text-gray-500">No views found</div>
-              ) : (
-                resourcesByType.views.map((resource) => {
-                  const state = getAccessState(
-                    permissions,
-                    selectedSubject,
-                    resource
-                  );
-
-                  return (
-                    <div
-                      key={resource.id}
-                      className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
-                    >
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Icon
-                          name={resource.icon || "workflow"}
-                          className="h-4 w-4 text-gray-500"
-                        />
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-medium text-gray-900">
-                            {resource.name}
-                          </div>
-                          {resource.subtitle ? (
-                            <div className="truncate text-xs text-gray-500">
-                              {resource.subtitle}
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-
-                      <TriStateAccessSwitch
-                        value={state.access}
-                        disabled={
-                          Boolean(mutatingResourceIds[resource.id]) ||
-                          isSubmitting
-                        }
-                        onChange={(access) =>
-                          onSetResourceAccess(resource, access)
-                        }
-                      />
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

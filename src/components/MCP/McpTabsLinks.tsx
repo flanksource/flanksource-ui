@@ -53,6 +53,12 @@ export default function McpTabsLinks({
         search
       },
       {
+        label: "Subjects",
+        path: "/settings/mcp/subject-access",
+        key: "Subject access",
+        search
+      },
+      {
         label: "Playbooks",
         path: "/settings/mcp/playbooks",
         key: "Playbooks",
@@ -62,12 +68,6 @@ export default function McpTabsLinks({
         label: "Views",
         path: "/settings/mcp/views",
         key: "Views",
-        search
-      },
-      {
-        label: "Subject access",
-        path: "/settings/mcp/subject-access",
-        key: "Subject access",
         search
       },
       {

@@ -13,10 +13,11 @@ type Entity = {
 type PermissionAccessCardProps = {
   entity: Entity;
   globalOverride?: GlobalOverride;
-  onGlobalOverrideChange: (value: GlobalOverride) => void;
+  onGlobalOverrideChange?: (value: GlobalOverride) => void;
   onViewSubjects?: () => void;
   isMutating?: boolean;
   isSelected?: boolean;
+  showGlobalSwitch?: boolean;
 };
 
 const SWITCH_OPTIONS = ["Deny all", "Custom", "Allow all"];
@@ -50,9 +51,14 @@ export default function ResourceAccessCard({
   onGlobalOverrideChange,
   onViewSubjects,
   isMutating = false,
-  isSelected = false
+  isSelected = false,
+  showGlobalSwitch = true
 }: PermissionAccessCardProps) {
-  const canOpenSubjects = globalOverride === "none" && Boolean(onViewSubjects);
+  const { icon, name, namespace } = entity;
+  const canOpenSubjects =
+    (showGlobalSwitch ? globalOverride === "none" : true) &&
+    Boolean(onViewSubjects);
+  const isGlobalSwitchDisabled = isMutating || !onGlobalOverrideChange;
 
   const handleCardClick = () => {
     if (!canOpenSubjects) {
@@ -62,6 +68,14 @@ export default function ResourceAccessCard({
     onViewSubjects?.();
   };
 
+  const handleGlobalOverrideSwitchChange = (value: string) => {
+    if (!onGlobalOverrideChange) {
+      return;
+    }
+
+    onGlobalOverrideChange(toGlobalOverride(value));
+  };
+
   return (
     <div
       className={`w-full max-w-3xl ${canOpenSubjects ? "cursor-pointer" : ""} ${isSelected ? "rounded-md bg-gray-50 ring-1 ring-inset ring-gray-300" : ""}`}
@@ -69,60 +83,62 @@ export default function ResourceAccessCard({
     >
       <div className="flex items-start gap-3">
         <div className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold text-gray-700">
-          <Icon name={entity.icon ?? "playbook"} className="h-4 w-4" />
+          <Icon name={icon ?? "playbook"} className="h-4 w-4" />
         </div>
 
         <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
           <div className="min-w-0">
             <div
               className="truncate text-sm font-semibold text-gray-900"
-              title={entity.name}
+              title={name}
             >
-              {entity.name}
+              {name}
             </div>
-            {entity.namespace && (
+            {namespace && (
               <div
                 className="mt-0.5 truncate text-xs text-gray-500"
-                title={entity.namespace}
+                title={namespace}
               >
-                {entity.namespace}
+                {namespace}
               </div>
             )}
           </div>
 
-          <div
-            className="shrink-0"
-            onClick={(event) => event.stopPropagation()}
-          >
+          {showGlobalSwitch ? (
             <div
-              className={
-                isMutating ? "pointer-events-none opacity-60" : undefined
-              }
-              aria-disabled={isMutating || undefined}
+              className="shrink-0"
+              onClick={(event) => event.stopPropagation()}
             >
-              <Switch
-                size="sm"
-                options={SWITCH_OPTIONS}
-                value={toSwitchOption(globalOverride)}
-                onChange={(value) =>
-                  onGlobalOverrideChange(toGlobalOverride(value))
+              <div
+                className={
+                  isGlobalSwitchDisabled
+                    ? "pointer-events-none opacity-60"
+                    : undefined
                 }
-                className="mr-2 h-auto"
-                itemsClassName=""
-                getActiveItemClassName={(option) => {
-                  if (option === "Allow all") {
-                    return "bg-blue-50 text-blue-700 ring-blue-200";
-                  }
+                aria-disabled={isGlobalSwitchDisabled || undefined}
+              >
+                <Switch
+                  size="sm"
+                  options={SWITCH_OPTIONS}
+                  value={toSwitchOption(globalOverride)}
+                  onChange={handleGlobalOverrideSwitchChange}
+                  className="mr-2 h-auto"
+                  itemsClassName=""
+                  getActiveItemClassName={(option) => {
+                    if (option === "Allow all") {
+                      return "bg-blue-50 text-blue-700 ring-blue-200";
+                    }
 
-                  if (option === "Deny all") {
-                    return "bg-red-50 text-red-700 ring-red-200";
-                  }
+                    if (option === "Deny all") {
+                      return "bg-red-50 text-red-700 ring-red-200";
+                    }
 
-                  return undefined;
-                }}
-              />
+                    return undefined;
+                  }}
+                />
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </div>

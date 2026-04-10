@@ -1,10 +1,14 @@
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
-import ResourceAccessCard from "@flanksource-ui/components/Permissions/ResourceAccessCard";
-import SubjectSelectorPanel from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import SubjectSelectorPanel, {
+  SubjectAccess
+} from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
+import { Input } from "@flanksource-ui/components/ui/input";
+import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
+import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
@@ -31,6 +35,8 @@ export default function McpPlaybooksPage() {
     setSelectiveSubjectAccess,
     isSettingSelectiveSubjectAccess,
     mutatingSubjectId,
+    allowSelectiveAccess,
+    isAllowingSelective,
     loading,
     isInitialLoading,
     preselectedSubjectAccess,
@@ -47,6 +53,9 @@ export default function McpPlaybooksPage() {
   });
 
   const [isSubjectPanelSwitching, setIsSubjectPanelSwitching] = useState(false);
+  const [playbookSearch, setPlaybookSearch] = useState("");
+
+  const debouncedSearch = useDebouncedValue(playbookSearch, 200) ?? "";
 
   useEffect(() => {
     if (!selectedPlaybook) {
@@ -66,8 +75,17 @@ export default function McpPlaybooksPage() {
 
   const groupedPlaybooks = useMemo(() => {
     const grouped = new Map<string, typeof playbooks>();
+    const loweredSearch = debouncedSearch.trim().toLowerCase();
 
     for (const playbook of playbooks) {
+      const displayName = playbook.title || playbook.name;
+      const haystack =
+        `${displayName} ${playbook.namespace || ""} ${playbook.category || ""}`.toLowerCase();
+
+      if (loweredSearch && !haystack.includes(loweredSearch)) {
+        continue;
+      }
+
       const category = playbook.category?.trim() || "Other";
       const categoryPlaybooks = grouped.get(category) ?? [];
       categoryPlaybooks.push(playbook);
@@ -93,7 +111,23 @@ export default function McpPlaybooksPage() {
           })
         )
       }));
-  }, [playbooks]);
+  }, [debouncedSearch, playbooks]);
+
+  const visiblePlaybooks = useMemo(
+    () => groupedPlaybooks.flatMap((group) => group.playbooks),
+    [groupedPlaybooks]
+  );
+
+  useEffect(() => {
+    if (
+      selectedPlaybook?.id &&
+      visiblePlaybooks.some((playbook) => playbook.id === selectedPlaybook.id)
+    ) {
+      return;
+    }
+
+    setSelectedResourceId(visiblePlaybooks[0]?.id ?? null);
+  }, [selectedPlaybook?.id, setSelectedResourceId, visiblePlaybooks]);
 
   return (
     <McpTabsLinks
@@ -113,64 +147,97 @@ export default function McpPlaybooksPage() {
           </p>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto pr-3 lg:max-w-3xl">
-            <div className="space-y-4">
-              {groupedPlaybooks.map((group) => {
-                return (
-                  <div key={group.category} className="space-y-2">
-                    <h4 className="text-sm font-semibold text-gray-700">
-                      {group.category}
-                    </h4>
+        <div className="flex min-h-0 flex-1 gap-4">
+          <div className="flex w-[320px] shrink-0 flex-col">
+            <Input
+              placeholder="Search playbooks..."
+              value={playbookSearch}
+              onChange={(event) => setPlaybookSearch(event.target.value)}
+            />
 
-                    <div className="[&>*+*]:border-t [&>*+*]:border-gray-200 [&>*]:pb-2 [&>*]:pt-2">
-                      {group.playbooks.map((playbook) => {
-                        return (
-                          <ResourceAccessCard
-                            key={playbook.id}
-                            entity={{
-                              id: playbook.id,
-                              name: playbook.title || playbook.name,
-                              namespace: playbook.namespace,
-                              icon: playbook.icon
-                            }}
-                            globalOverride={
-                              globalOverrideByResource.get(playbook.id) ??
-                              "none"
-                            }
-                            isMutating={mutatingResourceId === playbook.id}
-                            isSelected={selectedPlaybook?.id === playbook.id}
-                            onGlobalOverrideChange={(override) =>
-                              setGlobalOverride(playbook, override)
-                            }
-                            onViewSubjects={() =>
-                              setSelectedResourceId(playbook.id)
-                            }
-                          />
-                        );
-                      })}
+            <div className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto">
+              {groupedPlaybooks.length === 0 ? (
+                <div className="px-2 py-1.5 text-sm text-gray-500">
+                  No playbooks found
+                </div>
+              ) : (
+                groupedPlaybooks.map((group) => (
+                  <div key={group.category} className="space-y-1">
+                    <div className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      {group.category}
                     </div>
+
+                    {group.playbooks.map((playbook) => {
+                      const isActive = selectedPlaybook?.id === playbook.id;
+
+                      return (
+                        <button
+                          key={playbook.id}
+                          type="button"
+                          onClick={() => setSelectedResourceId(playbook.id)}
+                          className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors ${
+                            isActive
+                              ? "bg-blue-50 text-blue-800"
+                              : "text-gray-800 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-indigo-700">
+                            <Icon
+                              name={playbook.icon || "playbook"}
+                              className="h-3 w-3"
+                            />
+                          </span>
+                          <span className="truncate">
+                            {playbook.title || playbook.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
 
-          <div className="min-h-0 w-full shrink-0 lg:w-[420px]">
+          <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
             {selectedPlaybook ? (
               <div className="relative h-full">
                 <SubjectSelectorPanel
                   key={selectedPlaybook.id}
-                  title={`Subject access for ${
-                    selectedPlaybook.title || selectedPlaybook.name
-                  }`}
-                  description="Select users, teams, groups, or roles to manage playbook access for MCP usage."
+                  headerEntity={{
+                    name: selectedPlaybook.title || selectedPlaybook.name,
+                    icon: selectedPlaybook.icon || "playbook"
+                  }}
                   preselectedSubjectAccess={preselectedSubjectAccess}
-                  isSubmitting={isSettingSelectiveSubjectAccess}
+                  bulkAccess={
+                    (globalOverrideByResource.get(selectedPlaybook.id) ===
+                    "allow"
+                      ? "allow"
+                      : globalOverrideByResource.get(selectedPlaybook.id) ===
+                          "deny"
+                        ? "deny"
+                        : "default") as SubjectAccess
+                  }
+                  isSubmitting={
+                    isSettingSelectiveSubjectAccess || isAllowingSelective
+                  }
+                  isBulkSubmitting={mutatingResourceId === selectedPlaybook.id}
                   mutatingSubjectId={mutatingSubjectId}
-                  onClose={() => setSelectedResourceId(null)}
+                  onSetBulkAccess={(access) =>
+                    setGlobalOverride(
+                      selectedPlaybook,
+                      access === "allow"
+                        ? "allow"
+                        : access === "deny"
+                          ? "deny"
+                          : "none"
+                    )
+                  }
                   onSetSubjectAccess={(subject, access) =>
                     setSelectiveSubjectAccess(selectedPlaybook, subject, access)
+                  }
+                  onSetManySubjectAccess={(selections) =>
+                    allowSelectiveAccess(selectedPlaybook, selections)
                   }
                 />
 

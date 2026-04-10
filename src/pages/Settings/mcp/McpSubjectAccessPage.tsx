@@ -456,7 +456,7 @@ export default function McpSubjectAccessPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 gap-4">
-          <div className="flex w-[280px] shrink-0 flex-col">
+          <div className="flex w-[320px] shrink-0 flex-col">
             <Input
               placeholder="Search subjects..."
               value={subjectSearch}
