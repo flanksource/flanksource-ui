@@ -28,11 +28,12 @@ export default function McpPlaybooksPage() {
     setSelectedResourceId,
     mutatingResourceId,
     setGlobalOverride,
-    allowSelectiveAccess,
-    isAllowingSelective,
+    setSelectiveSubjectAccess,
+    isSettingSelectiveSubjectAccess,
+    mutatingSubjectId,
     loading,
     isInitialLoading,
-    preselectedSubjectIds,
+    preselectedSubjectAccess,
     refetch: refetchAll
   } = useMcpResourcePermissions({
     resources: playbooks,
@@ -163,12 +164,13 @@ export default function McpPlaybooksPage() {
                   title={`Subject access for ${
                     selectedPlaybook.title || selectedPlaybook.name
                   }`}
-                  description="Select users, teams, groups, or roles to allow this playbook for MCP usage."
-                  preselectedSubjectIds={preselectedSubjectIds}
-                  isSubmitting={isAllowingSelective}
+                  description="Select users, teams, groups, or roles to manage playbook access for MCP usage."
+                  preselectedSubjectAccess={preselectedSubjectAccess}
+                  isSubmitting={isSettingSelectiveSubjectAccess}
+                  mutatingSubjectId={mutatingSubjectId}
                   onClose={() => setSelectedResourceId(null)}
-                  onAllow={(subjects) =>
-                    allowSelectiveAccess(selectedPlaybook, subjects)
+                  onSetSubjectAccess={(subject, access) =>
+                    setSelectiveSubjectAccess(selectedPlaybook, subject, access)
                   }
                 />
 

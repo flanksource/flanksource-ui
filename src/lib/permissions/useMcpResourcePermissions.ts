@@ -36,6 +36,11 @@ export type McpResourcePermissionsConfig<TResource extends NamespacedResource> =
     objectSelectorKey: string;
   };
 
+export type SubjectAccessSelection = {
+  subject: PermissionSubject;
+  access: "allow" | "deny";
+};
+
 export function useMcpResourcePermissions<
   TResource extends NamespacedResource
 >({
@@ -53,6 +58,9 @@ export function useMcpResourcePermissions<
     null
   );
   const [mutatingResourceId, setMutatingResourceId] = useState<string | null>(
+    null
+  );
+  const [mutatingSubjectId, setMutatingSubjectId] = useState<string | null>(
     null
   );
 
@@ -88,21 +96,35 @@ export function useMcpResourcePermissions<
     [resources, selectedResourceId]
   );
 
-  const preselectedSubjectIds = useMemo(() => {
-    if (!selectedResource) return [];
-    return permissions
-      .filter(
-        (p) =>
-          p.deny !== true &&
-          p.subject &&
-          p.source === MCP_SETTINGS_PERMISSION_SOURCE &&
-          (p.subject_type === "person" ||
-            p.subject_type === "team" ||
-            p.subject_type === "group" ||
-            p.subject_type === "role") &&
-          permissionMatchesResource(p, selectedResource, getRefs)
-      )
-      .map((p) => p.subject!);
+  const preselectedSubjectAccess = useMemo(() => {
+    const accessBySubjectId: Record<string, "allow" | "deny"> = {};
+
+    if (!selectedResource) {
+      return accessBySubjectId;
+    }
+
+    for (const permission of permissions) {
+      if (
+        !permission.subject ||
+        permission.source !== MCP_SETTINGS_PERMISSION_SOURCE ||
+        (permission.subject_type !== "person" &&
+          permission.subject_type !== "team" &&
+          permission.subject_type !== "group" &&
+          permission.subject_type !== "role") ||
+        !permissionMatchesResource(permission, selectedResource, getRefs)
+      ) {
+        continue;
+      }
+
+      const subjectId = permission.subject;
+      const nextAccess = permission.deny === true ? "deny" : "allow";
+      const currentAccess = accessBySubjectId[subjectId];
+
+      accessBySubjectId[subjectId] =
+        currentAccess === "deny" || nextAccess === "deny" ? "deny" : "allow";
+    }
+
+    return accessBySubjectId;
   }, [permissions, selectedResource, getRefs]);
 
   // ── Mutations ───────────────────────────────────────────────────────
@@ -185,19 +207,34 @@ export function useMcpResourcePermissions<
       subjects
     }: {
       resource: TResource;
-      subjects: PermissionSubject[];
+      subjects: PermissionSubject[] | SubjectAccessSelection[];
     }) => {
       // Re-fetch to avoid acting on stale data from the render closure
       const latestPermissions = await fetchPermissions();
 
-      const desiredKeys = new Set(
-        subjects.map((s) => `${mapSubjectType(s.type)}:${s.id}`)
+      const normalizedSelections: SubjectAccessSelection[] = (
+        subjects as Array<PermissionSubject | SubjectAccessSelection>
+      ).map((entry) => {
+        if ("subject" in entry) {
+          return entry;
+        }
+
+        return {
+          subject: entry,
+          access: "allow"
+        };
+      });
+
+      const desiredAccessByKey = new Map<string, "allow" | "deny">(
+        normalizedSelections.map((selection) => [
+          `${mapSubjectType(selection.subject.type)}:${selection.subject.id}`,
+          selection.access
+        ])
       );
 
       const existingPermissions = latestPermissions.filter(
         (p) =>
           p.action === "mcp:run" &&
-          p.deny !== true &&
           p.subject &&
           p.id &&
           (p.subject_type === "person" ||
@@ -208,26 +245,32 @@ export function useMcpResourcePermissions<
           permissionMatchesResource(p, resource, getRefs)
       );
 
-      const existingKeys = new Set(
-        existingPermissions.map((p) => `${p.subject_type}:${p.subject}`)
-      );
+      const existingByKey = new Map<string, typeof existingPermissions>();
+
+      for (const permission of existingPermissions) {
+        const key = `${permission.subject_type}:${permission.subject}`;
+        const list = existingByKey.get(key) ?? [];
+        list.push(permission);
+        existingByKey.set(key, list);
+      }
 
       const resourceSelector = [
         { name: resource.name, namespace: resource.namespace }
       ];
 
-      const payloadsToAdd = subjects
-        .map((subject) => {
-          const subjectType = mapSubjectType(subject.type);
-          if (existingKeys.has(`${subjectType}:${subject.id}`)) {
+      const payloadsToAdd = normalizedSelections
+        .map((selection) => {
+          const subjectType = mapSubjectType(selection.subject.type);
+          const key = `${subjectType}:${selection.subject.id}`;
+          if (existingByKey.has(key)) {
             return null;
           }
           return {
             object_selector: { [objectSelectorKey]: resourceSelector },
             action: "mcp:run",
-            subject: subject.id,
+            subject: selection.subject.id,
             subject_type: subjectType,
-            deny: false,
+            deny: selection.access === "deny",
             source: MCP_SETTINGS_PERMISSION_SOURCE,
             created_by: user?.id
           };
@@ -239,10 +282,44 @@ export function useMcpResourcePermissions<
           )
         );
 
-      const deleteIds = existingPermissions
-        .filter((p) => !desiredKeys.has(`${p.subject_type}:${p.subject}`))
-        .map((p) => p.id!)
-        .sort((a, b) => a.localeCompare(b));
+      const updatePayloads = Array.from(existingByKey.entries())
+        .map(([key, permissionsForSubject]) => {
+          const desiredAccess = desiredAccessByKey.get(key);
+
+          if (!desiredAccess) {
+            return null;
+          }
+
+          const [primary, ...duplicates] = permissionsForSubject;
+          if (!primary?.id) {
+            return null;
+          }
+
+          const shouldDeny = desiredAccess === "deny";
+          const requiresUpdate =
+            primary.deny === true ? !shouldDeny : shouldDeny;
+
+          return {
+            id: primary.id,
+            deny: shouldDeny,
+            requiresUpdate,
+            duplicateIds: duplicates
+              .map((permission) => permission.id)
+              .filter((id): id is string => !!id)
+          };
+        })
+        .filter((entry): entry is NonNullable<typeof entry> => !!entry)
+        .sort((a, b) => a.id.localeCompare(b.id));
+
+      const deleteIds = [
+        ...existingPermissions
+          .filter((permission) => {
+            const key = `${permission.subject_type}:${permission.subject}`;
+            return !desiredAccessByKey.has(key);
+          })
+          .map((permission) => permission.id!),
+        ...updatePayloads.flatMap((entry) => entry.duplicateIds)
+      ].sort((a, b) => a.localeCompare(b));
 
       const addedPermissionIds: string[] = [];
 
@@ -252,6 +329,17 @@ export function useMcpResourcePermissions<
           if (created?.data?.id) {
             addedPermissionIds.push(created.data.id);
           }
+        }
+
+        for (const payload of updatePayloads) {
+          if (!payload.requiresUpdate) {
+            continue;
+          }
+
+          await updatePermission({
+            id: payload.id,
+            deny: payload.deny
+          } as any);
         }
 
         for (const id of deleteIds) {
@@ -266,13 +354,19 @@ export function useMcpResourcePermissions<
         throw error;
       }
 
-      return { added: payloadsToAdd.length, removed: deleteIds.length };
+      return {
+        added: payloadsToAdd.length,
+        updated: updatePayloads.filter((entry) => entry.requiresUpdate).length,
+        removed: deleteIds.length
+      };
     },
-    onSuccess: ({ added, removed }) => {
-      if (added === 0 && removed === 0) {
+    onSuccess: ({ added, updated, removed }) => {
+      if (added === 0 && updated === 0 && removed === 0) {
         toastSuccess("No permission changes");
       } else {
-        toastSuccess(`Updated permissions: +${added} / -${removed}`);
+        toastSuccess(
+          `Updated permissions: +${added} / ~${updated} / -${removed}`
+        );
       }
       setSelectedResourceId(null);
     },
@@ -303,9 +397,98 @@ export function useMcpResourcePermissions<
 
   const allowSelectiveAccess = async (
     resource: TResource,
-    subjects: PermissionSubject[]
+    subjects: PermissionSubject[] | SubjectAccessSelection[]
   ) => {
     await allowSelectiveAccessMutation({ resource, subjects });
+  };
+
+  const {
+    mutateAsync: setSelectiveSubjectAccessMutation,
+    isLoading: isSettingSelectiveSubjectAccess
+  } = useMutation({
+    mutationFn: async ({
+      resource,
+      subject,
+      access
+    }: {
+      resource: TResource;
+      subject: PermissionSubject;
+      access: "allow" | "deny" | "default";
+    }) => {
+      const latestPermissions = await fetchPermissions();
+      const subjectType = mapSubjectType(subject.type);
+
+      const existingPermissions = latestPermissions.filter(
+        (p) =>
+          p.action === "mcp:run" &&
+          p.subject === subject.id &&
+          p.subject_type === subjectType &&
+          p.id &&
+          p.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+          permissionMatchesResource(p, resource, getRefs)
+      );
+
+      if (access === "default") {
+        await Promise.all(
+          existingPermissions.map((permission) =>
+            deletePermission(permission.id!)
+          )
+        );
+        return;
+      }
+
+      const shouldDeny = access === "deny";
+      const [primary, ...duplicates] = existingPermissions;
+
+      if (!primary) {
+        await addPermission({
+          object_selector: {
+            [objectSelectorKey]: [
+              { name: resource.name, namespace: resource.namespace }
+            ]
+          },
+          action: "mcp:run",
+          subject: subject.id,
+          subject_type: subjectType,
+          deny: shouldDeny,
+          source: MCP_SETTINGS_PERMISSION_SOURCE,
+          created_by: user?.id
+        } as any);
+      } else if (primary.deny !== shouldDeny) {
+        await updatePermission({
+          id: primary.id,
+          deny: shouldDeny
+        } as any);
+      }
+
+      if (duplicates.length > 0) {
+        await Promise.all(
+          duplicates
+            .map((permission) => permission.id)
+            .filter((id): id is string => !!id)
+            .map((id) => deletePermission(id))
+        );
+      }
+    },
+    onError: (error) => {
+      toastError(error as any);
+    },
+    onSettled: () => {
+      refetchPermissions();
+    }
+  });
+
+  const setSelectiveSubjectAccess = async (
+    resource: TResource,
+    subject: PermissionSubject,
+    access: "allow" | "deny" | "default"
+  ) => {
+    setMutatingSubjectId(subject.id);
+    try {
+      await setSelectiveSubjectAccessMutation({ resource, subject, access });
+    } finally {
+      setMutatingSubjectId((cur) => (cur === subject.id ? null : cur));
+    }
   };
 
   // ── Loading state ───────────────────────────────────────────────────
@@ -316,7 +499,8 @@ export function useMcpResourcePermissions<
     isResourcesRefetching ||
     isPermissionsRefetching ||
     isUpdatingGlobalOverride ||
-    isAllowingSelective;
+    isAllowingSelective ||
+    isSettingSelectiveSubjectAccess;
 
   const isInitialLoading =
     (isResourcesLoading || isPermissionsLoading) && resources.length === 0;
@@ -330,9 +514,12 @@ export function useMcpResourcePermissions<
     setGlobalOverride,
     allowSelectiveAccess,
     isAllowingSelective,
+    setSelectiveSubjectAccess,
+    mutatingSubjectId,
+    isSettingSelectiveSubjectAccess,
     loading,
     isInitialLoading,
-    preselectedSubjectIds,
+    preselectedSubjectAccess,
     refetch: () => {
       refetchResources();
       refetchPermissions();

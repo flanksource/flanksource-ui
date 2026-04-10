@@ -31,11 +31,12 @@ export default function McpViewsPage() {
     setSelectedResourceId,
     mutatingResourceId,
     setGlobalOverride,
-    allowSelectiveAccess,
-    isAllowingSelective,
+    setSelectiveSubjectAccess,
+    isSettingSelectiveSubjectAccess,
+    mutatingSubjectId,
     loading,
     isInitialLoading,
-    preselectedSubjectIds,
+    preselectedSubjectAccess,
     refetch: refetchAll
   } = useMcpResourcePermissions({
     resources: views,
@@ -118,12 +119,13 @@ export default function McpViewsPage() {
               <div className="relative h-full">
                 <SubjectSelectorPanel
                   key={selectedView.id}
-                  description="Select users, teams, groups, or roles to allow this view for MCP usage."
-                  preselectedSubjectIds={preselectedSubjectIds}
-                  isSubmitting={isAllowingSelective}
+                  description="Select users, teams, groups, or roles to manage view access for MCP usage."
+                  preselectedSubjectAccess={preselectedSubjectAccess}
+                  isSubmitting={isSettingSelectiveSubjectAccess}
+                  mutatingSubjectId={mutatingSubjectId}
                   onClose={() => setSelectedResourceId(null)}
-                  onAllow={(subjects) =>
-                    allowSelectiveAccess(selectedView, subjects)
+                  onSetSubjectAccess={(subject, access) =>
+                    setSelectiveSubjectAccess(selectedView, subject, access)
                   }
                 />
 

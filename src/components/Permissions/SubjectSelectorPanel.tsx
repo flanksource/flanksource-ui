@@ -1,17 +1,14 @@
 import {
-  fetchPermissionSubjectsByIds,
-  fetchPermissionSubjectsPaginated,
+  fetchAllPermissionSubjects,
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
+import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
+import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { Button } from "@flanksource-ui/components/ui/button";
-import { Switch } from "@flanksource-ui/components/ui/switch";
 import { Input } from "@flanksource-ui/components/ui/input";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
-import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-
-const PAGE_SIZE = 20;
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
@@ -29,203 +26,104 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   access_token_person: 4
 };
 
+type SubjectAccess = "deny" | "default" | "allow";
+
 type SubjectSelectorPanelProps = {
   title?: string;
   description?: string;
-  onAllow?: (selection: PermissionSubject[]) => Promise<void> | void;
-  preselectedSubjectIds?: string[];
+  preselectedSubjectAccess?: Record<string, "allow" | "deny">;
   isSubmitting?: boolean;
+  mutatingSubjectId?: string | null;
   onClose?: () => void;
+  onSetSubjectAccess: (
+    subject: PermissionSubject,
+    access: SubjectAccess
+  ) => Promise<void> | void;
 };
 
 export default function SubjectSelectorPanel({
   title,
   description,
-  onAllow,
-  preselectedSubjectIds = [],
+  preselectedSubjectAccess = {},
   isSubmitting = false,
-  onClose
+  mutatingSubjectId,
+  onClose,
+  onSetSubjectAccess
 }: SubjectSelectorPanelProps) {
   const [search, setSearch] = useState("");
-  const [pageIndex, setPageIndex] = useState(0);
-  const [selectedIds, setSelectedIds] = useState<Record<string, true>>({});
-  const [selectedSubjects, setSelectedSubjects] = useState<
-    Record<string, PermissionSubject>
-  >({});
-  const [initialSelectedIds, setInitialSelectedIds] = useState<
-    Record<string, true>
+  const [selectedAccessById, setSelectedAccessById] = useState<
+    Record<string, SubjectAccess>
   >({});
 
-  const normalizedPreselectedSubjectIds = useMemo(
-    () => [...new Set(preselectedSubjectIds)].sort(),
-    [preselectedSubjectIds]
-  );
-  const preselectedSubjectIdsSignature = useMemo(
-    () => normalizedPreselectedSubjectIds.join("|"),
-    [normalizedPreselectedSubjectIds]
-  );
-
-  useEffect(() => {
-    const ids = preselectedSubjectIdsSignature
-      ? preselectedSubjectIdsSignature.split("|")
-      : [];
-
-    const idMap: Record<string, true> = {};
-    for (const id of ids) {
-      idMap[id] = true;
-    }
-
-    setSearch("");
-    setPageIndex(0);
-    setSelectedIds(idMap);
-    setSelectedSubjects({});
-    setInitialSelectedIds(idMap);
-  }, [preselectedSubjectIdsSignature]);
-
-  const shouldFetchSubjectsByIds = normalizedPreselectedSubjectIds.length > 0;
+  const debouncedSearch =
+    useDebouncedValue(search, 250)?.trim().toLowerCase() ?? "";
 
   const {
-    data: subjectsByIds = [],
-    isLoading: isSubjectsByIdsLoading,
-    isFetching: isSubjectsByIdsFetching
+    data: subjects = [],
+    isLoading,
+    isFetching
   } = useQuery({
-    queryKey: ["permission-subjects-by-ids", normalizedPreselectedSubjectIds],
-    queryFn: () =>
-      fetchPermissionSubjectsByIds(normalizedPreselectedSubjectIds),
-    enabled: shouldFetchSubjectsByIds,
+    queryKey: ["mcp", "subject-selector", "all-subjects"],
+    queryFn: fetchAllPermissionSubjects,
     staleTime: 60_000
   });
 
-  const debouncedSearch = useDebouncedValue(search, 300) ?? "";
-
-  useEffect(() => {
-    setPageIndex(0);
-  }, [debouncedSearch]);
-
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: [
-      "mcp",
-      "subject-selector",
-      debouncedSearch,
-      pageIndex,
-      PAGE_SIZE
-    ],
-    queryFn: async () =>
-      fetchPermissionSubjectsPaginated({
-        search: debouncedSearch,
-        pageIndex,
-        pageSize: PAGE_SIZE
-      })
-  });
-
-  const pagedSubjects = useMemo(
-    () => (data?.data ?? []) as PermissionSubject[],
-    [data?.data]
-  );
-
-  const missingOwnerIds = useMemo(() => {
-    const personIds = new Set(
-      [...subjectsByIds, ...pagedSubjects]
-        .filter((subject) => subject.type === "person")
-        .map((subject) => subject.id)
-    );
-
-    return [
-      ...new Set(
-        [...subjectsByIds, ...pagedSubjects]
-          .filter(
-            (subject) =>
-              subject.type === "access_token_person" &&
-              !!subject.owner &&
-              !personIds.has(subject.owner)
-          )
-          .map((subject) => subject.owner!)
-      )
-    ];
-  }, [pagedSubjects, subjectsByIds]);
-
-  const {
-    data: missingOwnerSubjects = [],
-    isLoading: isMissingOwnerSubjectsLoading,
-    isFetching: isMissingOwnerSubjectsFetching
-  } = useQuery({
-    queryKey: ["permission-subjects-owner-ids", missingOwnerIds],
-    queryFn: () => fetchPermissionSubjectsByIds(missingOwnerIds),
-    enabled: missingOwnerIds.length > 0,
-    staleTime: 60_000
-  });
-
-  useEffect(() => {
-    setSelectedSubjects((prev) => {
-      const next: Record<string, PermissionSubject> = {};
-
-      for (const id of Object.keys(selectedIds)) {
-        if (prev[id]) {
-          next[id] = prev[id];
-        }
-      }
-
-      for (const subject of subjectsByIds) {
-        if (selectedIds[subject.id]) {
-          next[subject.id] = subject;
-        }
-      }
-
-      for (const subject of pagedSubjects) {
-        if (selectedIds[subject.id]) {
-          next[subject.id] = subject;
-        }
-      }
-
-      return next;
-    });
-  }, [pagedSubjects, selectedIds, subjectsByIds]);
-
-  const selectedHydratedSubjects = useMemo(
+  const normalizedPreselectedAccess = useMemo(
     () =>
-      Object.keys(selectedIds)
-        .map((id) => selectedSubjects[id])
-        .filter((subject): subject is PermissionSubject => !!subject),
-    [selectedIds, selectedSubjects]
+      Object.fromEntries(
+        Object.entries(preselectedSubjectAccess)
+          .filter(([, access]) => access === "allow" || access === "deny")
+          .sort(([a], [b]) => a.localeCompare(b))
+      ) as Record<string, "allow" | "deny">,
+    [preselectedSubjectAccess]
   );
 
-  const unresolvedSelectedIds = useMemo(
-    () => Object.keys(selectedIds).filter((id) => !selectedSubjects[id]),
-    [selectedIds, selectedSubjects]
+  const preselectedAccessSignature = useMemo(
+    () => JSON.stringify(normalizedPreselectedAccess),
+    [normalizedPreselectedAccess]
   );
 
-  const displayedSubjects = useMemo(() => {
-    const merged = new Map<string, PermissionSubject>();
+  useEffect(() => {
+    const parsed = preselectedAccessSignature
+      ? (JSON.parse(preselectedAccessSignature) as Record<
+          string,
+          "allow" | "deny"
+        >)
+      : {};
 
-    for (const subject of selectedHydratedSubjects) {
-      merged.set(subject.id, subject);
+    const next: Record<string, SubjectAccess> = {};
+    for (const [id, access] of Object.entries(parsed)) {
+      next[id] = access;
     }
 
-    for (const subject of pagedSubjects) {
-      if (!merged.has(subject.id)) {
-        merged.set(subject.id, subject);
-      }
-    }
+    setSelectedAccessById(next);
+  }, [preselectedAccessSignature]);
 
-    for (const subject of missingOwnerSubjects) {
-      if (!merged.has(subject.id)) {
-        merged.set(subject.id, subject);
-      }
-    }
+  const filteredSubjects = useMemo(() => {
+    const query = debouncedSearch;
 
-    return Array.from(merged.values());
-  }, [missingOwnerSubjects, pagedSubjects, selectedHydratedSubjects]);
+    return subjects
+      .filter((subject) => {
+        if (!query) {
+          return true;
+        }
+        return subject.name.toLowerCase().includes(query);
+      })
+      .sort((a, b) => {
+        const typeOrder =
+          SUBJECT_TYPE_ORDER[a.type] - SUBJECT_TYPE_ORDER[b.type];
+        if (typeOrder !== 0) {
+          return typeOrder;
+        }
+
+        return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+      });
+  }, [debouncedSearch, subjects]);
 
   const groupedDisplayedSubjects = useMemo(() => {
-    const seen = new Set<string>();
     const grouped = new Map<PermissionSubject["type"], PermissionSubject[]>();
 
-    for (const subject of displayedSubjects) {
-      if (seen.has(subject.id)) {
-        continue;
-      }
-      seen.add(subject.id);
-
+    for (const subject of filteredSubjects) {
       const list = grouped.get(subject.type) ?? [];
       list.push(subject);
       grouped.set(subject.type, list);
@@ -235,122 +133,32 @@ export default function SubjectSelectorPanel({
       .sort((a, b) => SUBJECT_TYPE_ORDER[a[0]] - SUBJECT_TYPE_ORDER[b[0]])
       .map(([type, groupedSubjects]) => ({
         type,
-        subjects: groupedSubjects.sort((a, b) =>
-          a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-        )
+        subjects: groupedSubjects
       }));
-  }, [displayedSubjects]);
+  }, [filteredSubjects]);
 
-  const { accessTokensByOwnerId, unownedAccessTokens } = useMemo(() => {
-    const peopleIds = new Set(
-      displayedSubjects
-        .filter((subject) => subject.type === "person")
-        .map((subject) => subject.id)
-    );
+  const selectedCount = Object.keys(selectedAccessById).filter(
+    (id) => selectedAccessById[id] !== "default"
+  ).length;
 
-    const byOwner = new Map<string, PermissionSubject[]>();
-    const unowned: PermissionSubject[] = [];
-
-    for (const subject of displayedSubjects) {
-      if (subject.type !== "access_token_person") {
-        continue;
-      }
-
-      if (!subject.owner || !peopleIds.has(subject.owner)) {
-        unowned.push(subject);
-        continue;
-      }
-
-      const list = byOwner.get(subject.owner) ?? [];
-      list.push(subject);
-      byOwner.set(subject.owner, list);
-    }
-
-    for (const [, tokens] of byOwner.entries()) {
-      tokens.sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-      );
-    }
-
-    unowned.sort((a, b) =>
-      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-    );
-
-    return {
-      accessTokensByOwnerId: byOwner,
-      unownedAccessTokens: unowned
-    };
-  }, [displayedSubjects]);
-
-  const totalEntries = data?.totalEntries ?? 0;
-  const pageCount = Math.ceil(totalEntries / PAGE_SIZE);
-
-  const selectedCount = Object.keys(selectedIds).length;
-  const hasChanged =
-    selectedCount !== Object.keys(initialSelectedIds).length ||
-    Object.keys(selectedIds).some((id) => !initialSelectedIds[id]);
-  const allSelectedHydrated = selectedHydratedSubjects.length === selectedCount;
-
-  const isPanelFetching =
-    isLoading ||
-    isFetching ||
-    isMissingOwnerSubjectsLoading ||
-    isMissingOwnerSubjectsFetching ||
-    (shouldFetchSubjectsByIds &&
-      (isSubjectsByIdsLoading || isSubjectsByIdsFetching));
-
-  const showFullLoadingState =
-    isPanelFetching &&
-    displayedSubjects.length === 0 &&
-    unresolvedSelectedIds.length === 0;
-
-  const removeSelectedId = (id: string) => {
-    setSelectedIds((prev) => {
-      if (!prev[id]) {
-        return prev;
-      }
+  const setSubjectAccess = (
+    subject: PermissionSubject,
+    access: SubjectAccess
+  ) => {
+    setSelectedAccessById((prev) => {
       const next = { ...prev };
-      delete next[id];
+
+      if (access === "default") {
+        delete next[subject.id];
+      } else {
+        next[subject.id] = access;
+      }
+
       return next;
     });
 
-    setSelectedSubjects((prev) => {
-      if (!prev[id]) {
-        return prev;
-      }
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
+    void onSetSubjectAccess(subject, access);
   };
-
-  const toggleSubject = (subject: PermissionSubject, checked: boolean) => {
-    if (checked) {
-      setSelectedIds((prev) => ({ ...prev, [subject.id]: true }));
-      setSelectedSubjects((prev) => ({ ...prev, [subject.id]: subject }));
-      return;
-    }
-
-    removeSelectedId(subject.id);
-  };
-
-  const renderSubjectRow = (subject: PermissionSubject, className = "") => (
-    <div
-      key={subject.id}
-      className={`flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50 ${className}`}
-    >
-      <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
-        <SubjectAvatar subject={subject} size="xs" />
-        <div className="min-w-0 truncate text-sm font-medium text-gray-900">
-          {subject.name}
-        </div>
-      </div>
-      <Switch
-        checked={!!selectedIds[subject.id]}
-        onCheckedChange={(checked) => toggleSubject(subject, checked)}
-      />
-    </div>
-  );
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-md border border-gray-200 bg-white p-3">
@@ -363,6 +171,11 @@ export default function SubjectSelectorPanel({
             <div className="mt-0.5 text-xs text-gray-500">{description}</div>
           ) : null}
         </div>
+        {onClose ? (
+          <Button type="button" variant="outline" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        ) : null}
       </div>
 
       <Input
@@ -371,123 +184,47 @@ export default function SubjectSelectorPanel({
         onChange={(event) => setSearch(event.target.value)}
       />
 
+      <div className="mt-2 text-xs text-gray-500">
+        Selected: {selectedCount} subject{selectedCount === 1 ? "" : "s"}
+      </div>
+
       <div className="relative mt-3 min-h-0 flex-1 space-y-4 overflow-y-auto rounded-md">
-        {showFullLoadingState ? (
+        {isLoading || isFetching ? (
           <div className="flex items-center gap-2 p-2 text-sm text-gray-500">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
             Loading subjects...
           </div>
-        ) : displayedSubjects.length > 0 || unresolvedSelectedIds.length > 0 ? (
-          <>
-            {unresolvedSelectedIds.length > 0 ? (
-              <div className="space-y-1">
-                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-amber-600 first:pt-0">
-                  Missing
-                </div>
-                {unresolvedSelectedIds.map((id) => (
-                  <div
-                    key={id}
-                    className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
-                  >
-                    <div className="min-w-0 truncate text-sm font-medium text-gray-900">
-                      Missing subject ({id})
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeSelectedId(id)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
+        ) : filteredSubjects.length > 0 ? (
+          groupedDisplayedSubjects.map((group) => (
+            <div key={group.type} className="space-y-1">
+              <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
+                {TYPE_LABELS[group.type] ?? group.type}
               </div>
-            ) : null}
 
-            {groupedDisplayedSubjects
-              .filter((group) => group.type !== "access_token_person")
-              .map((group) => (
-                <div key={group.type} className="space-y-1">
-                  <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
-                    {TYPE_LABELS[group.type] ?? group.type}
+              {group.subjects.map((subject) => (
+                <div
+                  key={subject.id}
+                  className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-gray-50"
+                >
+                  <div className="flex min-w-0 flex-1 items-center gap-2 pr-2">
+                    <SubjectAvatar subject={subject} size="xs" />
+                    <div className="min-w-0 truncate text-sm font-medium text-gray-900">
+                      {subject.name}
+                    </div>
                   </div>
-                  {group.type === "person"
-                    ? group.subjects.map((person) => {
-                        const ownedTokens =
-                          accessTokensByOwnerId.get(person.id) ?? [];
 
-                        return (
-                          <div key={person.id} className="space-y-1">
-                            {renderSubjectRow(person)}
-                            {ownedTokens.map((token) =>
-                              renderSubjectRow(token, "ml-8")
-                            )}
-                          </div>
-                        );
-                      })
-                    : group.subjects.map((subject) =>
-                        renderSubjectRow(subject)
-                      )}
+                  <TriStateAccessSwitch
+                    value={selectedAccessById[subject.id] ?? "default"}
+                    disabled={isSubmitting || mutatingSubjectId === subject.id}
+                    onChange={(next) => setSubjectAccess(subject, next)}
+                  />
                 </div>
               ))}
-
-            {unownedAccessTokens.length > 0 ? (
-              <div className="space-y-1">
-                <div className="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">
-                  {TYPE_LABELS.access_token_person}
-                </div>
-                {unownedAccessTokens.map((token) => renderSubjectRow(token))}
-              </div>
-            ) : null}
-          </>
+            </div>
+          ))
         ) : (
           <div className="p-2 text-sm text-gray-500">No subjects found</div>
         )}
-      </div>
-
-      <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-        <div>
-          Selected: {selectedCount} subject{selectedCount === 1 ? "" : "s"}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={pageIndex === 0}
-            onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-          >
-            Previous
-          </Button>
-          <span>
-            Page {pageCount === 0 ? 0 : pageIndex + 1} of {pageCount || 0}
-          </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={pageCount === 0 || pageIndex + 1 >= pageCount}
-            onClick={() => setPageIndex((p) => (p + 1 < pageCount ? p + 1 : p))}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-3 flex justify-end gap-2">
-        {onClose ? (
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-        ) : null}
-        <Button
-          type="button"
-          disabled={!hasChanged || isSubmitting || !allSelectedHydrated}
-          onClick={() => onAllow?.(selectedHydratedSubjects)}
-        >
-          Apply
-        </Button>
       </div>
     </div>
   );
