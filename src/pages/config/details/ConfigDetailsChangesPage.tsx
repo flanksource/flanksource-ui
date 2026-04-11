@@ -9,13 +9,14 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 function getNewestCreatedAt(changes: ConfigChange[]): string | undefined {
-  return changes.reduce(
-    (latest, c) =>
-      c.created_at && (!latest || c.created_at > latest)
-        ? c.created_at
-        : latest,
-    undefined as string | undefined
-  );
+  let latest: string | undefined;
+  for (const c of changes) {
+    const ts = typeof c.created_at === "string" ? c.created_at : undefined;
+    if (ts && (!latest || ts > latest)) {
+      latest = ts;
+    }
+  }
+  return latest;
 }
 
 export function ConfigDetailsChangesPage() {
