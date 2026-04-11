@@ -8,11 +8,11 @@ import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
-function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
+function getNewestCreatedAt(changes: ConfigChange[]): string | undefined {
   return changes.reduce(
     (latest, c) =>
-      c.inserted_at && (!latest || c.inserted_at > latest)
-        ? c.inserted_at
+      c.created_at && (!latest || c.created_at > latest)
+        ? c.created_at
         : latest,
     undefined as string | undefined
   );
@@ -34,13 +34,13 @@ export function ConfigDetailsChangesPage() {
 
   const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
     keepPreviousData: true,
-    enabled: !!id && !liveTail
+    enabled: !!id
   });
 
   // Initialize cursor from base data when live tail is turned on
   useEffect(() => {
     if (liveTail && data?.changes?.length && !tailCursor) {
-      setTailCursor(getNewestInsertedAt(data.changes));
+      setTailCursor(getNewestCreatedAt(data.changes));
     }
   }, [liveTail, data, tailCursor]);
 
@@ -53,7 +53,7 @@ export function ConfigDetailsChangesPage() {
   }, [liveTail]);
 
   const { data: pollData } = useGetConfigChangesByIDQuery({
-    from_inserted_at: tailCursor,
+    cursor: tailCursor,
     keepPreviousData: false,
     enabled: liveTail && !!id && !!tailCursor,
     refetchInterval: liveTail ? 5000 : false
@@ -64,16 +64,15 @@ export function ConfigDetailsChangesPage() {
     if (!pollData?.changes?.length) return;
 
     const incoming = pollData.changes;
-    const newest = getNewestInsertedAt(incoming);
+    const newest = getNewestCreatedAt(incoming);
     if (newest) {
       setTailCursor((prev) => (!prev || newest > prev ? newest : prev));
     }
 
     setTailedChanges((prev) => {
-      const existingIds = new Set(prev.map((c) => c.id));
-      const deduped = incoming.filter((c) => !existingIds.has(c.id));
-      if (deduped.length === 0) return prev;
-      return [...deduped, ...prev];
+      const incomingIds = new Set(incoming.map((c) => c.id));
+      const filtered = prev.filter((c) => !incomingIds.has(c.id));
+      return [...incoming, ...filtered];
     });
   }, [pollData]);
 
@@ -95,11 +94,15 @@ export function ConfigDetailsChangesPage() {
     }
   }));
 
+  const tailedIds = new Set(tailedWithConfig.map((c) => c.id));
+  const baseWithoutTailed = baseChanges.filter((c) => !tailedIds.has(c.id));
   const baseIds = new Set(baseChanges.map((c) => c.id));
-  const uniqueTailed = tailedWithConfig.filter((c) => !baseIds.has(c.id));
-  const changes = [...uniqueTailed, ...baseChanges];
+  const newTailedCount = tailedWithConfig.filter(
+    (c) => !baseIds.has(c.id)
+  ).length;
+  const changes = [...tailedWithConfig, ...baseWithoutTailed];
 
-  const totalChanges = (data?.total ?? 0) + uniqueTailed.length;
+  const totalChanges = (data?.total ?? 0) + newTailedCount;
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   if (error) {
