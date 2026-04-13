@@ -1,26 +1,14 @@
 import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
+import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
+import ResourceList, {
+  ResourceSortDirection,
+  ResourceSortOption
+} from "@flanksource-ui/components/Permissions/ResourceList";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
-import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@flanksource-ui/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from "@flanksource-ui/components/ui/tooltip";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
-import { Switch as SegmentedSwitch } from "@flanksource-ui/ui/FormControls/Switch";
-import { Icon } from "@flanksource-ui/ui/Icons/Icon";
-import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
-import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
 export type ResourceAccess = "deny" | "default" | "allow";
@@ -55,25 +43,6 @@ type ResourceSelectorPanelProps = {
     access: ResourceAccess
   ) => Promise<void> | void;
 };
-const BULK_OPTIONS = ["Deny All", "Custom", "Allow all"] as const;
-type BulkOption = (typeof BULK_OPTIONS)[number];
-
-const RESOURCE_SORT_OPTIONS = ["deny", "allow", "alphabetical"] as const;
-type ResourceSortOption = (typeof RESOURCE_SORT_OPTIONS)[number];
-type ResourceSortDirection = "asc" | "desc";
-
-const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
-  deny: "Deny",
-  allow: "Allow",
-  alphabetical: "Alphabetical"
-};
-
-const ROW_LAYOUT_TRANSITION = {
-  type: "spring",
-  stiffness: 620,
-  damping: 42,
-  mass: 0.7
-} as const;
 
 function getRefsForPermission(
   permission: PermissionsSummary,
@@ -249,7 +218,7 @@ export default function ResourceSelectorPanel({
     viewSortDirection
   ]);
 
-  const bulkAccess = useMemo<ResourceAccess>(() => {
+  const bulkAccessByKind = useMemo(() => {
     const subjectType = mapSubjectType(selectedSubject.type);
 
     const getWildcardAccessByKind = (
@@ -279,24 +248,11 @@ export default function ResourceSelectorPanel({
         : "allow";
     };
 
-    const playbookAccess = getWildcardAccessByKind("playbook");
-    const viewAccess = getWildcardAccessByKind("view");
-
-    if (playbookAccess === viewAccess) {
-      return playbookAccess;
-    }
-
-    return "default";
+    return {
+      playbook: getWildcardAccessByKind("playbook"),
+      view: getWildcardAccessByKind("view")
+    };
   }, [permissions, selectedSubject]);
-
-  const bulkOptionValue: BulkOption =
-    bulkAccess === "allow"
-      ? "Allow all"
-      : bulkAccess === "deny"
-        ? "Deny All"
-        : "Custom";
-
-  const isListLocked = bulkAccess === "allow" || bulkAccess === "deny";
 
   const getEffectiveBadge = (resource: McpSubjectResource) => {
     if (!hasEffectiveAccessResults) {
@@ -306,28 +262,7 @@ export default function ResourceSelectorPanel({
     const isAllowed =
       effectiveAccessByResourceKey[getResourceKey(resource)] === true;
 
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span
-            className={
-              isAllowed
-                ? "inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"
-                : "inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-50 text-red-600"
-            }
-          >
-            {isAllowed ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <X className="h-3.5 w-3.5" />
-            )}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent side="top">
-          Effective access: {isAllowed ? "Allowed" : "Denied"}
-        </TooltipContent>
-      </Tooltip>
-    );
+    return <EffectiveAccessBadge isAllowed={isAllowed} />;
   };
 
   return (
@@ -357,45 +292,6 @@ export default function ResourceSelectorPanel({
             </Button>
           ) : null}
         </div>
-
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-sm text-gray-600">Global Permission</div>
-
-          <div
-            className={
-              isSubmitting || filteredResources.length === 0
-                ? "pointer-events-none opacity-60"
-                : undefined
-            }
-            aria-disabled={
-              isSubmitting || filteredResources.length === 0 || undefined
-            }
-          >
-            <SegmentedSwitch
-              size="sm"
-              className="w-48"
-              itemsClassName="flex-1 justify-center"
-              options={[...BULK_OPTIONS]}
-              value={bulkOptionValue}
-              onChange={(value) => {
-                const access: ResourceAccess =
-                  value === "Allow all"
-                    ? "allow"
-                    : value === "Deny All"
-                      ? "deny"
-                      : "default";
-                onSetManyResourceAccess(filteredResources, access);
-              }}
-              getActiveItemClassName={(option) =>
-                option === "Allow all"
-                  ? "!bg-green-600 !text-white !ring-green-600"
-                  : option === "Deny All"
-                    ? "!bg-red-600 !text-white !ring-red-600"
-                    : undefined
-              }
-            />
-          </div>
-        </div>
       </div>
 
       <div className="relative min-h-0 flex-1 pt-3">
@@ -410,219 +306,57 @@ export default function ResourceSelectorPanel({
           </div>
 
           <div className="mb-3 min-h-0 flex-1 space-y-4 overflow-y-auto">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Playbooks
-                </div>
-                <div className="flex items-center gap-1">
-                  <Select
-                    value={playbookSort}
-                    onValueChange={(value) =>
-                      setPlaybookSort(value as ResourceSortOption)
-                    }
-                  >
-                    <SelectTrigger className="h-8 w-[140px] text-xs">
-                      <SelectValue placeholder="Sort" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RESOURCE_SORT_OPTIONS.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {RESOURCE_SORT_OPTION_LABELS[option]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            <ResourceList
+              title="Playbooks"
+              emptyMessage="No playbooks found"
+              defaultIcon="playbook"
+              resources={resourcesByType.playbooks}
+              sort={playbookSort}
+              sortDirection={playbookSortDirection}
+              onSortChange={setPlaybookSort}
+              onSortDirectionToggle={() =>
+                setPlaybookSortDirection((prev) =>
+                  prev === "asc" ? "desc" : "asc"
+                )
+              }
+              bulkAccess={bulkAccessByKind.playbook}
+              onBulkAccessChange={(access) =>
+                onSetManyResourceAccess(resourcesByType.playbooks, access)
+              }
+              accessByResourceKey={accessByResourceKey}
+              getResourceKey={getResourceKey}
+              getEffectiveBadge={getEffectiveBadge}
+              isListLocked={bulkAccessByKind.playbook !== "default"}
+              isSubmitting={isSubmitting}
+              mutatingResourceIds={mutatingResourceIds}
+              onSetResourceAccess={onSetResourceAccess}
+            />
 
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8"
-                    disabled={resourcesByType.playbooks.length === 0}
-                    aria-label={
-                      playbookSortDirection === "asc"
-                        ? "Sort ascending"
-                        : "Sort descending"
-                    }
-                    onClick={() =>
-                      setPlaybookSortDirection((prev) =>
-                        prev === "asc" ? "desc" : "asc"
-                      )
-                    }
-                  >
-                    {playbookSortDirection === "asc" ? (
-                      <ArrowUp className="h-3.5 w-3.5" />
-                    ) : (
-                      <ArrowDown className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-              <div className="overflow-hidden rounded-md border border-gray-200">
-                {resourcesByType.playbooks.length === 0 ? (
-                  <div className="p-3 text-sm text-gray-500">
-                    No playbooks found
-                  </div>
-                ) : (
-                  resourcesByType.playbooks.map((resource) => {
-                    const access =
-                      accessByResourceKey[getResourceKey(resource)] ??
-                      "default";
-
-                    return (
-                      <motion.div
-                        layout="position"
-                        initial={false}
-                        transition={ROW_LAYOUT_TRANSITION}
-                        key={resource.id}
-                        className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <Icon
-                            name={resource.icon || "playbook"}
-                            className="h-4 w-4 text-gray-500"
-                          />
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-medium text-gray-900">
-                              {resource.displayName || resource.name}
-                            </div>
-                            {resource.subtitle ? (
-                              <div className="truncate text-xs text-gray-500">
-                                {resource.subtitle}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {getEffectiveBadge(resource)}
-                          {!isListLocked ? (
-                            <TriStateAccessSwitch
-                              value={access}
-                              disabled={
-                                Boolean(mutatingResourceIds[resource.id]) ||
-                                isSubmitting
-                              }
-                              onChange={(access) =>
-                                onSetResourceAccess(resource, access)
-                              }
-                            />
-                          ) : null}
-                        </div>
-                      </motion.div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Views
-                </div>
-                <div className="flex items-center gap-1">
-                  <Select
-                    value={viewSort}
-                    onValueChange={(value) =>
-                      setViewSort(value as ResourceSortOption)
-                    }
-                  >
-                    <SelectTrigger className="h-8 w-[140px] text-xs">
-                      <SelectValue placeholder="Sort" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RESOURCE_SORT_OPTIONS.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {RESOURCE_SORT_OPTION_LABELS[option]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    className="h-8 w-8"
-                    disabled={resourcesByType.views.length === 0}
-                    aria-label={
-                      viewSortDirection === "asc"
-                        ? "Sort ascending"
-                        : "Sort descending"
-                    }
-                    onClick={() =>
-                      setViewSortDirection((prev) =>
-                        prev === "asc" ? "desc" : "asc"
-                      )
-                    }
-                  >
-                    {viewSortDirection === "asc" ? (
-                      <ArrowUp className="h-3.5 w-3.5" />
-                    ) : (
-                      <ArrowDown className="h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-              <div className="overflow-hidden rounded-md border border-gray-200">
-                {resourcesByType.views.length === 0 ? (
-                  <div className="p-3 text-sm text-gray-500">
-                    No views found
-                  </div>
-                ) : (
-                  resourcesByType.views.map((resource) => {
-                    const access =
-                      accessByResourceKey[getResourceKey(resource)] ??
-                      "default";
-
-                    return (
-                      <motion.div
-                        layout="position"
-                        initial={false}
-                        transition={ROW_LAYOUT_TRANSITION}
-                        key={resource.id}
-                        className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <Icon
-                            name={resource.icon || "workflow"}
-                            className="h-4 w-4 text-gray-500"
-                          />
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-medium text-gray-900">
-                              {resource.displayName || resource.name}
-                            </div>
-                            {resource.subtitle ? (
-                              <div className="truncate text-xs text-gray-500">
-                                {resource.subtitle}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {getEffectiveBadge(resource)}
-                          {!isListLocked ? (
-                            <TriStateAccessSwitch
-                              value={access}
-                              disabled={
-                                Boolean(mutatingResourceIds[resource.id]) ||
-                                isSubmitting
-                              }
-                              onChange={(access) =>
-                                onSetResourceAccess(resource, access)
-                              }
-                            />
-                          ) : null}
-                        </div>
-                      </motion.div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
+            <ResourceList
+              title="Views"
+              emptyMessage="No views found"
+              defaultIcon="workflow"
+              resources={resourcesByType.views}
+              sort={viewSort}
+              sortDirection={viewSortDirection}
+              onSortChange={setViewSort}
+              onSortDirectionToggle={() =>
+                setViewSortDirection((prev) =>
+                  prev === "asc" ? "desc" : "asc"
+                )
+              }
+              bulkAccess={bulkAccessByKind.view}
+              onBulkAccessChange={(access) =>
+                onSetManyResourceAccess(resourcesByType.views, access)
+              }
+              accessByResourceKey={accessByResourceKey}
+              getResourceKey={getResourceKey}
+              getEffectiveBadge={getEffectiveBadge}
+              isListLocked={bulkAccessByKind.view !== "default"}
+              isSubmitting={isSubmitting}
+              mutatingResourceIds={mutatingResourceIds}
+              onSetResourceAccess={onSetResourceAccess}
+            />
           </div>
         </div>
       </div>
