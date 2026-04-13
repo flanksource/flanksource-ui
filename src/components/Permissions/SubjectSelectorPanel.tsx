@@ -40,14 +40,7 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
 
 export type SubjectAccess = "deny" | "default" | "allow";
 
-type ActiveTab = "all" | "allowed";
-
-const TABS: Array<{ key: ActiveTab; label: string }> = [
-  { key: "all", label: "All" },
-  { key: "allowed", label: "Allowed" }
-];
-
-const BULK_OPTIONS = ["Deny", "Default", "Allow"] as const;
+const BULK_OPTIONS = ["Deny All", "Custom", "Allow all"] as const;
 type BulkOption = (typeof BULK_OPTIONS)[number];
 
 type SubjectSelectorPanelProps = {
@@ -91,7 +84,6 @@ export default function SubjectSelectorPanel({
   onSetSubjectAccess,
   onSetManySubjectAccess
 }: SubjectSelectorPanelProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("all");
   const [search, setSearch] = useState("");
   const [selectedAccessById, setSelectedAccessById] = useState<
     Record<string, SubjectAccess>
@@ -214,15 +206,7 @@ export default function SubjectSelectorPanel({
       });
   }, [debouncedSearch, subjects]);
 
-  const displayedSubjects = useMemo(() => {
-    if (activeTab === "allowed") {
-      return sortedSubjects.filter(
-        (subject) => selectedAccessById[subject.id] === "allow"
-      );
-    }
-
-    return sortedSubjects;
-  }, [activeTab, selectedAccessById, sortedSubjects]);
+  const displayedSubjects = sortedSubjects;
 
   const groupedDisplayedSubjects = useMemo(() => {
     const grouped = new Map<PermissionSubject["type"], PermissionSubject[]>();
@@ -240,15 +224,6 @@ export default function SubjectSelectorPanel({
         subjects: groupSubjects
       }));
   }, [displayedSubjects]);
-
-  const counts = useMemo(() => {
-    const all = subjects.length;
-    const allowed = subjects.filter(
-      (subject) => selectedAccessById[subject.id] === "allow"
-    ).length;
-
-    return { all, allowed };
-  }, [selectedAccessById, subjects]);
 
   const bulkAccessFromSelection = useMemo<SubjectAccess>(() => {
     if (displayedSubjects.length === 0) {
@@ -278,10 +253,10 @@ export default function SubjectSelectorPanel({
 
   const bulkOptionValue: BulkOption =
     resolvedBulkAccess === "allow"
-      ? "Allow"
+      ? "Allow all"
       : resolvedBulkAccess === "deny"
-        ? "Deny"
-        : "Default";
+        ? "Deny All"
+        : "Custom";
 
   const setBulkSubjectAccess = async (access: SubjectAccess) => {
     if (onSetBulkAccess) {
@@ -454,17 +429,17 @@ export default function SubjectSelectorPanel({
               value={bulkOptionValue}
               onChange={(value) => {
                 const access: SubjectAccess =
-                  value === "Allow"
+                  value === "Allow all"
                     ? "allow"
-                    : value === "Deny"
+                    : value === "Deny All"
                       ? "deny"
                       : "default";
                 void setBulkSubjectAccess(access);
               }}
               getActiveItemClassName={(option) =>
-                option === "Allow"
+                option === "Allow all"
                   ? "!bg-green-600 !text-white !ring-green-600"
-                  : option === "Deny"
+                  : option === "Deny All"
                     ? "!bg-red-600 !text-white !ring-red-600"
                     : undefined
               }
@@ -474,39 +449,7 @@ export default function SubjectSelectorPanel({
       </div>
 
       <div className="relative min-h-0 flex-1">
-        <div
-          className={`flex h-full min-h-0 flex-col gap-3 ${
-            isListLocked
-              ? "pointer-events-none select-none opacity-60 blur-[1px]"
-              : ""
-          }`}
-          aria-hidden={isListLocked || undefined}
-        >
-          <div className="flex items-center gap-2">
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.key;
-              const count = counts[tab.key];
-
-              return (
-                <Button
-                  key={tab.key}
-                  type="button"
-                  variant={isActive ? "default" : "outline"}
-                  size="sm"
-                  className={
-                    isActive
-                      ? "border-gray-900 bg-gray-900 text-white hover:bg-gray-800"
-                      : "text-gray-700"
-                  }
-                  onClick={() => setActiveTab(tab.key)}
-                >
-                  {tab.label}{" "}
-                  <span className="ml-1 text-xs opacity-80">{count}</span>
-                </Button>
-              );
-            })}
-          </div>
-
+        <div className="flex h-full min-h-0 flex-col gap-3">
           <Input
             placeholder="Search ..."
             value={search}
@@ -541,15 +484,19 @@ export default function SubjectSelectorPanel({
 
                         <div className="flex items-center gap-2">
                           {renderEffectiveAccessIcon(subject)}
-                          <TriStateAccessSwitch
-                            value={selectedAccessById[subject.id] ?? "default"}
-                            disabled={
-                              isListLocked ||
-                              isSubmitting ||
-                              mutatingSubjectId === subject.id
-                            }
-                            onChange={(next) => setSubjectAccess(subject, next)}
-                          />
+                          {!isListLocked ? (
+                            <TriStateAccessSwitch
+                              value={
+                                selectedAccessById[subject.id] ?? "default"
+                              }
+                              disabled={
+                                isSubmitting || mutatingSubjectId === subject.id
+                              }
+                              onChange={(next) =>
+                                setSubjectAccess(subject, next)
+                              }
+                            />
+                          ) : null}
                         </div>
                       </div>
                     ))}
@@ -561,18 +508,6 @@ export default function SubjectSelectorPanel({
             )}
           </div>
         </div>
-
-        {isListLocked ? (
-          <div className="pointer-events-auto absolute inset-0 z-10 flex items-center justify-center rounded-md">
-            <div className="max-w-sm rounded-md border border-gray-200 bg-white/95 p-4 text-center shadow-sm">
-              <p className="text-sm font-medium text-gray-900">
-                Individual subject rules are locked while
-                {resolvedBulkAccess === "allow" ? " Allow all" : " Deny all"} is
-                active.
-              </p>
-            </div>
-          </div>
-        ) : null}
       </div>
     </div>
   );
