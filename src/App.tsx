@@ -47,6 +47,7 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
+import { PermissionsSubjectsPage } from "./pages/Settings/PermissionsSubjectsPage";
 import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
 import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
 import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
@@ -745,6 +746,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="permissions"
           element={withAuthorizationAccessCheck(
             <PermissionsPage />,
+            tables.permissions,
+            "read"
+          )}
+        />
+        <Route
+          path="permissions/subjects"
+          element={withAuthorizationAccessCheck(
+            <PermissionsSubjectsPage />,
             tables.permissions,
             "read"
           )}

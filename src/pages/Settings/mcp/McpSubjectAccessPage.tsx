@@ -15,16 +15,15 @@ import {
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import PermissionSubjectPanel from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
 import ResourceSelectorPanel, {
   McpSubjectResource,
   ResourceAccess
 } from "@flanksource-ui/components/Permissions/ResourceSelectorPanel";
-import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import {
   toastError,
   toastSuccess
 } from "@flanksource-ui/components/Toast/toast";
-import { Input } from "@flanksource-ui/components/ui/input";
 import { useUser } from "@flanksource-ui/context";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
@@ -37,14 +36,6 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   team: 2,
   person: 3,
   access_token_person: 4
-};
-
-const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
-  person: "person",
-  access_token_person: "access token",
-  team: "team",
-  role: "role",
-  permission_subject_group: "group"
 };
 
 function getPermissionRefs(
@@ -529,43 +520,13 @@ export default function McpSubjectAccessPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 gap-4">
-          <div className="flex w-[320px] shrink-0 flex-col">
-            <Input
-              placeholder="Search subjects..."
-              value={subjectSearch}
-              onChange={(event) => setSubjectSearch(event.target.value)}
-            />
-
-            <div className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto">
-              {groupedSubjects.map((group) => (
-                <div key={group.type} className="space-y-1">
-                  <div className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    {TYPE_LABELS[group.type] ?? group.type}
-                  </div>
-
-                  {group.list.map((subject) => {
-                    const isActive = subject.id === selectedSubjectId;
-
-                    return (
-                      <button
-                        key={subject.id}
-                        type="button"
-                        onClick={() => setSelectedSubjectId(subject.id)}
-                        className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors ${
-                          isActive
-                            ? "bg-blue-50 text-blue-800"
-                            : "text-gray-800 hover:bg-gray-50"
-                        }`}
-                      >
-                        <SubjectAvatar subject={subject} size="xs" />
-                        <span className="truncate">{subject.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
+          <PermissionSubjectPanel
+            subjectSearch={subjectSearch}
+            onSubjectSearchChange={setSubjectSearch}
+            groupedSubjects={groupedSubjects}
+            selectedSubjectId={selectedSubjectId}
+            onSelectSubject={setSelectedSubjectId}
+          />
 
           <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
             {selectedSubject ? (

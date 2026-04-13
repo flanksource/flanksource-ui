@@ -1,19 +1,14 @@
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import AddPermissionButton from "@flanksource-ui/components/Permissions/ManagePermissions/Forms/AddPermissionButton";
+import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
 import PermissionsView, {
   permissionsActionsList
 } from "@flanksource-ui/components/Permissions/PermissionsView";
-import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import {
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "@flanksource-ui/ui/BreadcrumbNav";
-import { Head } from "@flanksource-ui/ui/Head";
-import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { useMemo, useRef, useState } from "react";
-import { parseTristateKeyState } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
-import { useSearchParams } from "react-router-dom";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { parseTristateKeyState } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
+import { useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export function PermissionsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,68 +58,53 @@ export function PermissionsPage() {
   );
 
   return (
-    <>
-      <Head prefix="Permissions" />
-      <SearchLayout
-        title={
-          <BreadcrumbNav
-            list={[
-              <BreadcrumbRoot
-                link="/settings/permissions"
-                key="permissions-root-item"
-              >
-                Permissions
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                key={"add-button"}
-                resource={tables.permissions}
-                action="write"
-              >
-                <AddPermissionButton />
-              </AuthorizationAccessCheck>
-            ]}
+    <PermissionsTabsLinks
+      activeTab="Permissions"
+      loading={isLoading}
+      onRefresh={() => refetchFunctionRef.current?.()}
+      headerAction={
+        <AuthorizationAccessCheck
+          key={"add-button"}
+          resource={tables.permissions}
+          action="write"
+        >
+          <AddPermissionButton />
+        </AuthorizationAccessCheck>
+      }
+    >
+      <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
+        <div className="flex flex-row items-center py-4">
+          <ReactSelectDropdown
+            name="permissions-action-filter"
+            items={actionOptions}
+            value={actionFilter}
+            onChange={(value) => {
+              const nextParams = new URLSearchParams(searchParams);
+              if (!value || value === "all") {
+                nextParams.delete("action");
+              } else {
+                nextParams.set("action", value);
+              }
+              setSearchParams(nextParams);
+            }}
+            className="min-w-[180px]"
+            dropDownClassNames="w-[260px] left-0"
+            hideControlBorder
+            prefix={<span className="text-xs text-gray-500">Action:</span>}
           />
-        }
-        onRefresh={() => refetchFunctionRef.current?.()}
-        contentClass="p-0 h-full"
-        loading={isLoading}
-      >
-        <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
-          <div className="flex flex-row items-center py-4">
-            <ReactSelectDropdown
-              name="permissions-action-filter"
-              items={actionOptions}
-              value={actionFilter}
-              onChange={(value) => {
-                const nextParams = new URLSearchParams(searchParams);
-                if (!value || value === "all") {
-                  nextParams.delete("action");
-                } else {
-                  nextParams.set("action", value);
-                }
-                setSearchParams(nextParams);
-              }}
-              className="min-w-[180px]"
-              dropDownClassNames="w-[260px] left-0"
-              hideControlBorder
-              prefix={<span className="text-xs text-gray-500">Action:</span>}
-            />
-          </div>
-          <div className="flex h-full flex-col overflow-y-auto pb-6">
-            <PermissionsView
-              permissionRequest={{
-                ...(rawActionFilter !== "all"
-                  ? { action: rawActionFilter }
-                  : {})
-              }}
-              setIsLoading={setIsLoading}
-              onRefetch={(refetch) => {
-                refetchFunctionRef.current = refetch;
-              }}
-            />
-          </div>
         </div>
-      </SearchLayout>
-    </>
+        <div className="flex h-full flex-col overflow-y-auto pb-6">
+          <PermissionsView
+            permissionRequest={{
+              ...(rawActionFilter !== "all" ? { action: rawActionFilter } : {})
+            }}
+            setIsLoading={setIsLoading}
+            onRefetch={(refetch) => {
+              refetchFunctionRef.current = refetch;
+            }}
+          />
+        </div>
+      </div>
+    </PermissionsTabsLinks>
   );
 }
