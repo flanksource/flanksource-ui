@@ -38,7 +38,7 @@ export default function UserList({
   onChangeAccess
 }: Props) {
   return (
-    <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 pb-6">
+    <div className="flex w-full flex-col gap-4 p-6 pb-6">
       {groupedSubjects.map((group) => (
         <div key={group.type} className="space-y-1">
           <div className="pt-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first:pt-0">

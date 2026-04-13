@@ -7,9 +7,11 @@ import {
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
+import { useTokensListQuery } from "@flanksource-ui/api/query-hooks/useTokensQuery";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import UserList from "@flanksource-ui/components/MCP/UserList";
+import TokensTable from "@flanksource-ui/components/Tokens/List/TokensTable";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import SetupMcpModal from "@flanksource-ui/components/Users/SetupMcpModal";
 import { useUser } from "@flanksource-ui/context";
@@ -197,6 +199,17 @@ export default function McpOverviewPage() {
       }
     });
 
+  const {
+    data: tokens = [],
+    isLoading: isTokensLoading,
+    refetch: refetchTokens,
+    isRefetching: isTokensRefetching
+  } = useTokensListQuery({
+    keepPreviousData: true,
+    staleTime: 0,
+    cacheTime: 0
+  });
+
   const loading =
     isUsersLoading ||
     isPermissionsLoading ||
@@ -227,6 +240,7 @@ export default function McpOverviewPage() {
       onRefresh={() => {
         refetchUsers();
         refetchPermissions();
+        refetchTokens();
       }}
     >
       <UserList
@@ -247,6 +261,22 @@ export default function McpOverviewPage() {
           );
         }}
       />
+
+      <div className="px-6">
+        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+          MCP access tokens
+        </div>
+        <TokensTable
+          tokens={tokens}
+          isLoading={isTokensLoading}
+          isRefetching={isTokensRefetching}
+          refresh={refetchTokens}
+          showHideAgentsToggle={false}
+          defaultHideAgents={true}
+          tokenIdSearchParamKey="mcpTokenId"
+        />
+      </div>
+
       <SetupMcpModal
         isOpen={isSetupMcpModalOpen}
         onClose={() => setIsSetupMcpModalOpen(false)}
