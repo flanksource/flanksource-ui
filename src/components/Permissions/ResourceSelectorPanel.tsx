@@ -4,9 +4,15 @@ import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar"
 import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@flanksource-ui/components/ui/tooltip";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
+import { Check, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type ResourceAccess = "deny" | "default" | "allow";
@@ -14,18 +20,24 @@ export type ResourceAccess = "deny" | "default" | "allow";
 export type McpSubjectResource = {
   id: string;
   kind: "playbook" | "view";
+  /** Canonical selector name used by object_selector (e.g. playbook.name / view.name). */
   name: string;
+  /** Optional UI label (e.g. title). Falls back to canonical `name`. */
+  displayName?: string;
   namespace?: string;
   icon?: string;
   subtitle?: string;
 };
-
 type ResourceSelectorPanelProps = {
   selectedSubject: PermissionSubject;
   resources: McpSubjectResource[];
   permissions: PermissionsSummary[];
+  effectiveAccessByResourceKey?: Record<string, boolean>;
+  hasEffectiveAccessResults?: boolean;
+  isCheckingEffectiveAccess?: boolean;
   isSubmitting?: boolean;
   mutatingResourceIds?: Record<string, true>;
+  onCheckEffectiveAccess?: () => void;
   onSetResourceAccess: (
     resource: McpSubjectResource,
     access: ResourceAccess
@@ -35,7 +47,6 @@ type ResourceSelectorPanelProps = {
     access: ResourceAccess
   ) => Promise<void> | void;
 };
-
 const TABS = [
   { key: "all", label: "All" },
   { key: "allowed", label: "Allowed" },
@@ -109,8 +120,12 @@ export default function ResourceSelectorPanel({
   selectedSubject,
   resources,
   permissions,
+  effectiveAccessByResourceKey = {},
+  hasEffectiveAccessResults = false,
+  isCheckingEffectiveAccess = false,
   isSubmitting = false,
   mutatingResourceIds = {},
+  onCheckEffectiveAccess,
   onSetResourceAccess,
   onSetManyResourceAccess
 }: ResourceSelectorPanelProps) {
@@ -143,7 +158,7 @@ export default function ResourceSelectorPanel({
       }
 
       const haystack =
-        `${resource.name} ${resource.subtitle || ""} ${resource.namespace || ""}`.toLowerCase();
+        `${resource.displayName || resource.name} ${resource.name} ${resource.subtitle || ""} ${resource.namespace || ""}`.toLowerCase();
       return haystack.includes(normalizedSearch);
     });
   }, [activeTab, normalizedSearch, permissions, resources, selectedSubject]);
@@ -248,6 +263,38 @@ export default function ResourceSelectorPanel({
         ? resources.filter((resource) => resource.kind === "view")
         : resources;
 
+  const getEffectiveBadge = (resource: McpSubjectResource) => {
+    if (!hasEffectiveAccessResults) {
+      return null;
+    }
+
+    const isAllowed =
+      effectiveAccessByResourceKey[`${resource.kind}:${resource.id}`] === true;
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={
+              isAllowed
+                ? "inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"
+                : "inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-50 text-red-600"
+            }
+          >
+            {isAllowed ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <X className="h-3.5 w-3.5" />
+            )}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          Effective access: {isAllowed ? "Allowed" : "Denied"}
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
@@ -261,6 +308,20 @@ export default function ResourceSelectorPanel({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          {onCheckEffectiveAccess ? (
+            <Button
+              type="button"
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              onClick={onCheckEffectiveAccess}
+              disabled={isCheckingEffectiveAccess || resources.length === 0}
+            >
+              {isCheckingEffectiveAccess
+                ? "Checking effective access..."
+                : "Check effective access"}
+            </Button>
+          ) : null}
+
           <div
             className={
               isSubmitting || filteredResources.length === 0
@@ -369,7 +430,7 @@ export default function ResourceSelectorPanel({
                             />
                             <div className="min-w-0">
                               <div className="truncate text-sm font-medium text-gray-900">
-                                {resource.name}
+                                {resource.displayName || resource.name}
                               </div>
                               {resource.subtitle ? (
                                 <div className="truncate text-xs text-gray-500">
@@ -379,17 +440,20 @@ export default function ResourceSelectorPanel({
                             </div>
                           </div>
 
-                          <TriStateAccessSwitch
-                            value={state.access}
-                            disabled={
-                              isListLocked ||
-                              Boolean(mutatingResourceIds[resource.id]) ||
-                              isSubmitting
-                            }
-                            onChange={(access) =>
-                              onSetResourceAccess(resource, access)
-                            }
-                          />
+                          <div className="flex items-center gap-2">
+                            {getEffectiveBadge(resource)}
+                            <TriStateAccessSwitch
+                              value={state.access}
+                              disabled={
+                                isListLocked ||
+                                Boolean(mutatingResourceIds[resource.id]) ||
+                                isSubmitting
+                              }
+                              onChange={(access) =>
+                                onSetResourceAccess(resource, access)
+                              }
+                            />
+                          </div>
                         </div>
                       );
                     })
@@ -430,7 +494,7 @@ export default function ResourceSelectorPanel({
                             />
                             <div className="min-w-0">
                               <div className="truncate text-sm font-medium text-gray-900">
-                                {resource.name}
+                                {resource.displayName || resource.name}
                               </div>
                               {resource.subtitle ? (
                                 <div className="truncate text-xs text-gray-500">
@@ -440,17 +504,20 @@ export default function ResourceSelectorPanel({
                             </div>
                           </div>
 
-                          <TriStateAccessSwitch
-                            value={state.access}
-                            disabled={
-                              isListLocked ||
-                              Boolean(mutatingResourceIds[resource.id]) ||
-                              isSubmitting
-                            }
-                            onChange={(access) =>
-                              onSetResourceAccess(resource, access)
-                            }
-                          />
+                          <div className="flex items-center gap-2">
+                            {getEffectiveBadge(resource)}
+                            <TriStateAccessSwitch
+                              value={state.access}
+                              disabled={
+                                isListLocked ||
+                                Boolean(mutatingResourceIds[resource.id]) ||
+                                isSubmitting
+                              }
+                              onChange={(access) =>
+                                onSetResourceAccess(resource, access)
+                              }
+                            />
+                          </div>
                         </div>
                       );
                     })

@@ -208,6 +208,11 @@ export default function McpPlaybooksPage() {
                     name: selectedPlaybook.title || selectedPlaybook.name,
                     icon: selectedPlaybook.icon || "playbook"
                   }}
+                  effectiveAccessResource={{
+                    id: selectedPlaybook.id,
+                    type: "playbook",
+                    action: "mcp:run"
+                  }}
                   preselectedSubjectAccess={preselectedSubjectAccess}
                   bulkAccess={
                     (globalOverrideByResource.get(selectedPlaybook.id) ===

@@ -42,10 +42,10 @@ export default function TriStateAccessSwitch({
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`relative inline-flex h-5 w-12 overflow-hidden rounded-full p-0.5 transition-colors ${TRACK_CLASSNAME[value]} ${disabled ? "opacity-60" : ""}`}
+        className={`relative inline-flex h-4 w-11 overflow-hidden rounded-full p-0.5 transition-colors ${TRACK_CLASSNAME[value]} ${disabled ? "opacity-60" : ""}`}
       >
         <span
-          className="pointer-events-none absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform"
+          className="pointer-events-none absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition-transform"
           style={{ transform: `translateX(${position}px)` }}
         />
 
@@ -69,7 +69,7 @@ export default function TriStateAccessSwitch({
       </div>
 
       <span
-        className={`min-w-[42px] text-xs font-medium ${ACCESS_LABEL_CLASSNAME[value]}`}
+        className={`min-w-[40px] text-xs font-medium ${ACCESS_LABEL_CLASSNAME[value]}`}
       >
         {ACCESS_LABEL[value]}
       </span>

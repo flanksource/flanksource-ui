@@ -2,14 +2,24 @@ import {
   fetchAllPermissionSubjects,
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
+import {
+  fetchEffectiveResourceSubjectAccess,
+  SubjectAccessReviewAction
+} from "@flanksource-ui/api/services/rbac";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@flanksource-ui/components/ui/tooltip";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
+import { Check, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
@@ -47,6 +57,11 @@ type SubjectSelectorPanelProps = {
     name: string;
     icon?: string;
   };
+  effectiveAccessResource?: {
+    id: string;
+    type: "playbook" | "view";
+    action?: SubjectAccessReviewAction;
+  };
   preselectedSubjectAccess?: Record<string, "allow" | "deny">;
   isSubmitting?: boolean;
   isBulkSubmitting?: boolean;
@@ -65,6 +80,7 @@ type SubjectSelectorPanelProps = {
 export default function SubjectSelectorPanel({
   title,
   description,
+  effectiveAccessResource,
   preselectedSubjectAccess = {},
   isSubmitting = false,
   isBulkSubmitting = false,
@@ -80,6 +96,10 @@ export default function SubjectSelectorPanel({
   const [selectedAccessById, setSelectedAccessById] = useState<
     Record<string, SubjectAccess>
   >({});
+  const [
+    hasTriggeredEffectiveAccessCheck,
+    setHasTriggeredEffectiveAccessCheck
+  ] = useState(false);
 
   const debouncedSearch =
     useDebouncedValue(search, 250)?.trim().toLowerCase() ?? "";
@@ -92,6 +112,40 @@ export default function SubjectSelectorPanel({
     queryKey: ["mcp", "subject-selector", "all-subjects"],
     queryFn: fetchAllPermissionSubjects,
     staleTime: 60_000
+  });
+
+  const {
+    data: effectiveSubjectAccessResponse,
+    isFetching: isCheckingEffectiveAccess,
+    refetch: refetchEffectiveSubjectAccess
+  } = useQuery({
+    queryKey: [
+      "mcp",
+      "subject-selector",
+      "effective-access",
+      effectiveAccessResource?.type ?? "none",
+      effectiveAccessResource?.id ?? "none",
+      subjects.length
+    ],
+    enabled: false,
+    queryFn: async () => {
+      if (!effectiveAccessResource) {
+        return {
+          resource: { id: "", type: "playbook" as const },
+          action: "mcp:run" as const,
+          results: [] as Array<{ subjectId: string; allowed: boolean }>
+        };
+      }
+
+      return fetchEffectiveResourceSubjectAccess({
+        resource: {
+          id: effectiveAccessResource.id,
+          type: effectiveAccessResource.type
+        },
+        action: effectiveAccessResource.action ?? "mcp:run",
+        subjects: subjects.map((subject) => subject.id)
+      });
+    }
   });
 
   const normalizedPreselectedAccess = useMemo(
@@ -124,6 +178,20 @@ export default function SubjectSelectorPanel({
 
     setSelectedAccessById(next);
   }, [preselectedAccessSignature]);
+
+  useEffect(() => {
+    setHasTriggeredEffectiveAccessCheck(false);
+  }, [effectiveAccessResource?.type, effectiveAccessResource?.id]);
+
+  const effectiveAccessBySubjectId = useMemo(() => {
+    const map: Record<string, boolean> = {};
+
+    for (const result of effectiveSubjectAccessResponse?.results ?? []) {
+      map[result.subjectId] = result.allowed;
+    }
+
+    return map;
+  }, [effectiveSubjectAccessResponse?.results]);
 
   const sortedSubjects = useMemo(() => {
     const query = debouncedSearch;
@@ -296,6 +364,37 @@ export default function SubjectSelectorPanel({
     Boolean(onSetBulkAccess) &&
     (resolvedBulkAccess === "allow" || resolvedBulkAccess === "deny");
 
+  const renderEffectiveAccessIcon = (subject: PermissionSubject) => {
+    if (!hasTriggeredEffectiveAccessCheck) {
+      return null;
+    }
+
+    const allowed = effectiveAccessBySubjectId[subject.id] === true;
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={
+              allowed
+                ? "inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"
+                : "inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-50 text-red-600"
+            }
+          >
+            {allowed ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <X className="h-3.5 w-3.5" />
+            )}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          Effective access: {allowed ? "Allowed" : "Denied"}
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
@@ -318,40 +417,59 @@ export default function SubjectSelectorPanel({
           </div>
         </div>
 
-        <div
-          className={
-            isSubmitting || isBulkSubmitting || displayedSubjects.length === 0
-              ? "pointer-events-none opacity-60"
-              : undefined
-          }
-          aria-disabled={
-            isSubmitting ||
-            isBulkSubmitting ||
-            displayedSubjects.length === 0 ||
-            undefined
-          }
-        >
-          <Switch
-            size="sm"
-            options={[...BULK_OPTIONS]}
-            value={bulkOptionValue}
-            onChange={(value) => {
-              const access: SubjectAccess =
-                value === "Allow"
-                  ? "allow"
-                  : value === "Deny"
-                    ? "deny"
-                    : "default";
-              void setBulkSubjectAccess(access);
-            }}
-            getActiveItemClassName={(option) =>
-              option === "Allow"
-                ? "!bg-green-600 !text-white !ring-green-600"
-                : option === "Deny"
-                  ? "!bg-red-600 !text-white !ring-red-600"
-                  : undefined
+        <div className="flex items-center gap-2">
+          {effectiveAccessResource ? (
+            <Button
+              type="button"
+              size="sm"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              disabled={isCheckingEffectiveAccess || subjects.length === 0}
+              onClick={() => {
+                setHasTriggeredEffectiveAccessCheck(true);
+                refetchEffectiveSubjectAccess();
+              }}
+            >
+              {isCheckingEffectiveAccess
+                ? "Checking effective access..."
+                : "Check effective access"}
+            </Button>
+          ) : null}
+
+          <div
+            className={
+              isSubmitting || isBulkSubmitting || displayedSubjects.length === 0
+                ? "pointer-events-none opacity-60"
+                : undefined
             }
-          />
+            aria-disabled={
+              isSubmitting ||
+              isBulkSubmitting ||
+              displayedSubjects.length === 0 ||
+              undefined
+            }
+          >
+            <Switch
+              size="sm"
+              options={[...BULK_OPTIONS]}
+              value={bulkOptionValue}
+              onChange={(value) => {
+                const access: SubjectAccess =
+                  value === "Allow"
+                    ? "allow"
+                    : value === "Deny"
+                      ? "deny"
+                      : "default";
+                void setBulkSubjectAccess(access);
+              }}
+              getActiveItemClassName={(option) =>
+                option === "Allow"
+                  ? "!bg-green-600 !text-white !ring-green-600"
+                  : option === "Deny"
+                    ? "!bg-red-600 !text-white !ring-red-600"
+                    : undefined
+              }
+            />
+          </div>
         </div>
       </div>
 
@@ -421,15 +539,18 @@ export default function SubjectSelectorPanel({
                           </div>
                         </div>
 
-                        <TriStateAccessSwitch
-                          value={selectedAccessById[subject.id] ?? "default"}
-                          disabled={
-                            isListLocked ||
-                            isSubmitting ||
-                            mutatingSubjectId === subject.id
-                          }
-                          onChange={(next) => setSubjectAccess(subject, next)}
-                        />
+                        <div className="flex items-center gap-2">
+                          {renderEffectiveAccessIcon(subject)}
+                          <TriStateAccessSwitch
+                            value={selectedAccessById[subject.id] ?? "default"}
+                            disabled={
+                              isListLocked ||
+                              isSubmitting ||
+                              mutatingSubjectId === subject.id
+                            }
+                            onChange={(next) => setSubjectAccess(subject, next)}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>

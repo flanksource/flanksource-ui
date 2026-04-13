@@ -8,6 +8,10 @@ import {
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
+import {
+  fetchEffectiveSubjectResourceAccess,
+  EffectiveSubjectResourceAccessResult
+} from "@flanksource-ui/api/services/rbac";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
@@ -83,6 +87,10 @@ export default function McpSubjectAccessPage() {
   >({});
   const [isResourcePanelSwitching, setIsResourcePanelSwitching] =
     useState(false);
+  const [
+    hasTriggeredEffectiveAccessCheck,
+    setHasTriggeredEffectiveAccessCheck
+  ] = useState(false);
 
   const debouncedSearch = useDebouncedValue(subjectSearch, 200) ?? "";
 
@@ -205,7 +213,8 @@ export default function McpSubjectAccessPage() {
       .map((playbook) => ({
         id: playbook.id,
         kind: "playbook" as const,
-        name: playbook.title || playbook.name,
+        name: playbook.name,
+        displayName: playbook.title || playbook.name,
         namespace: playbook.namespace,
         icon: playbook.icon || "playbook",
         subtitle: playbook.namespace
@@ -213,24 +222,88 @@ export default function McpSubjectAccessPage() {
           : "playbook"
       }))
       .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+        (a.displayName || a.name).localeCompare(
+          b.displayName || b.name,
+          undefined,
+          {
+            sensitivity: "base"
+          }
+        )
       );
 
     const viewResources = views
       .map((view) => ({
         id: view.id,
         kind: "view" as const,
-        name: view.spec?.title || view.name,
+        name: view.name,
+        displayName: view.spec?.title || view.name,
         namespace: view.namespace,
         icon: view.spec?.icon || "workflow",
         subtitle: view.namespace ? `${view.namespace} · view` : "view"
       }))
       .sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+        (a.displayName || a.name).localeCompare(
+          b.displayName || b.name,
+          undefined,
+          {
+            sensitivity: "base"
+          }
+        )
       );
 
     return [...playbookResources, ...viewResources];
   }, [playbooks, views]);
+
+  const {
+    data: effectiveAccessResponse,
+    isFetching: isCheckingEffectiveAccess,
+    refetch: refetchEffectiveAccess
+  } = useQuery({
+    queryKey: [
+      "mcp",
+      "subject-access",
+      "effective-access",
+      selectedSubject?.id ?? "none",
+      resources.length
+    ],
+    enabled: false,
+    queryFn: async () => {
+      if (!selectedSubject) {
+        return {
+          subject: "",
+          action: "mcp:run" as const,
+          results: [] as EffectiveSubjectResourceAccessResult[]
+        };
+      }
+
+      return fetchEffectiveSubjectResourceAccess({
+        subject: selectedSubject.id,
+        action: "mcp:run",
+        resources: resources.map((resource) => ({
+          id: resource.id,
+          type: resource.kind
+        }))
+      });
+    }
+  });
+
+  const effectiveAccessByResourceKey = useMemo(() => {
+    const map: Record<string, boolean> = {};
+
+    for (const result of effectiveAccessResponse?.results ?? []) {
+      map[`${result.resourceType}:${result.resourceId}`] = result.allowed;
+    }
+
+    return map;
+  }, [effectiveAccessResponse?.results]);
+
+  const hasEffectiveAccessResults =
+    hasTriggeredEffectiveAccessCheck &&
+    (effectiveAccessResponse?.results?.length ?? 0) > 0;
+
+  useEffect(() => {
+    setHasTriggeredEffectiveAccessCheck(false);
+  }, [selectedSubject?.id]);
 
   const loading =
     isSubjectsLoading ||
@@ -502,8 +575,15 @@ export default function McpSubjectAccessPage() {
                   selectedSubject={selectedSubject}
                   resources={resources}
                   permissions={permissions}
+                  effectiveAccessByResourceKey={effectiveAccessByResourceKey}
+                  hasEffectiveAccessResults={hasEffectiveAccessResults}
+                  isCheckingEffectiveAccess={isCheckingEffectiveAccess}
                   isSubmitting={isSubmitting}
                   mutatingResourceIds={mutatingResourceIds}
+                  onCheckEffectiveAccess={() => {
+                    setHasTriggeredEffectiveAccessCheck(true);
+                    refetchEffectiveAccess();
+                  }}
                   onSetResourceAccess={(resource, access) =>
                     applyAccess([resource], access)
                   }

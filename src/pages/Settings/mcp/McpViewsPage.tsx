@@ -209,6 +209,11 @@ export default function McpViewsPage() {
                     name: selectedView.spec?.title || selectedView.name,
                     icon: selectedView.spec?.icon || "workflow"
                   }}
+                  effectiveAccessResource={{
+                    id: selectedView.id,
+                    type: "view",
+                    action: "mcp:run"
+                  }}
                   preselectedSubjectAccess={preselectedSubjectAccess}
                   bulkAccess={
                     (globalOverrideByResource.get(selectedView.id) === "allow"
