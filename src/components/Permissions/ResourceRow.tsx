@@ -1,7 +1,8 @@
+import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
 import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { motion } from "motion/react";
-import { ReactNode } from "react";
+import { memo } from "react";
 import type {
   McpSubjectResource,
   ResourceAccess
@@ -18,7 +19,8 @@ type ResourceRowProps = {
   resource: McpSubjectResource;
   access: ResourceAccess;
   defaultIcon: string;
-  effectiveBadge: ReactNode;
+  showEffectiveBadge: boolean;
+  isAllowed: boolean;
   isListLocked: boolean;
   isSubmitting: boolean;
   isMutating: boolean;
@@ -28,11 +30,12 @@ type ResourceRowProps = {
   ) => Promise<void> | void;
 };
 
-export default function ResourceRow({
+function ResourceRow({
   resource,
   access,
   defaultIcon,
-  effectiveBadge,
+  showEffectiveBadge,
+  isAllowed,
   isListLocked,
   isSubmitting,
   isMutating,
@@ -43,7 +46,6 @@ export default function ResourceRow({
       layout="position"
       initial={false}
       transition={ROW_LAYOUT_TRANSITION}
-      key={resource.id}
       className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
     >
       <div className="flex min-w-0 items-center gap-2">
@@ -64,7 +66,9 @@ export default function ResourceRow({
       </div>
 
       <div className="flex items-center gap-2">
-        {effectiveBadge}
+        {showEffectiveBadge ? (
+          <EffectiveAccessBadge isAllowed={isAllowed} />
+        ) : null}
         {!isListLocked ? (
           <TriStateAccessSwitch
             value={access}
@@ -76,3 +80,5 @@ export default function ResourceRow({
     </motion.div>
   );
 }
+
+export default memo(ResourceRow);

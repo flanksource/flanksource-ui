@@ -1,15 +1,11 @@
 import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
-import ResourceList, {
-  ResourceSortDirection,
-  ResourceSortOption
-} from "@flanksource-ui/components/Permissions/ResourceList";
+import ResourceList from "@flanksource-ui/components/Permissions/ResourceList";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export type ResourceAccess = "deny" | "default" | "allow";
 
@@ -101,18 +97,6 @@ function getAccessState(
   return { access: "default" };
 }
 
-function getSortRank(access: ResourceAccess, sortOption: ResourceSortOption) {
-  switch (sortOption) {
-    case "deny":
-      return access === "deny" ? 0 : access === "allow" ? 1 : 2;
-    case "allow":
-      return access === "allow" ? 0 : access === "deny" ? 1 : 2;
-    case "alphabetical":
-    default:
-      return 0;
-  }
-}
-
 function getResourceKey(resource: McpSubjectResource) {
   return `${resource.kind}:${resource.id}`;
 }
@@ -131,13 +115,6 @@ export default function ResourceSelectorPanel({
   onSetManyResourceAccess
 }: ResourceSelectorPanelProps) {
   const [resourceSearch, setResourceSearch] = useState("");
-  const [playbookSort, setPlaybookSort] =
-    useState<ResourceSortOption>("alphabetical");
-  const [playbookSortDirection, setPlaybookSortDirection] =
-    useState<ResourceSortDirection>("asc");
-  const [viewSort, setViewSort] = useState<ResourceSortOption>("alphabetical");
-  const [viewSortDirection, setViewSortDirection] =
-    useState<ResourceSortDirection>("asc");
 
   const normalizedSearch = resourceSearch.trim().toLowerCase();
 
@@ -179,44 +156,8 @@ export default function ResourceSelectorPanel({
       }
     }
 
-    const sortResources = (
-      list: McpSubjectResource[],
-      sortOption: ResourceSortOption,
-      sortDirection: ResourceSortDirection
-    ) => {
-      return [...list].sort((a, b) => {
-        const aAccess = accessByResourceKey[getResourceKey(a)] ?? "default";
-        const bAccess = accessByResourceKey[getResourceKey(b)] ?? "default";
-
-        const rankDiff =
-          getSortRank(aAccess, sortOption) - getSortRank(bAccess, sortOption);
-
-        if (rankDiff !== 0) {
-          return sortDirection === "asc" ? rankDiff : -rankDiff;
-        }
-
-        const nameDiff = (a.displayName || a.name).localeCompare(
-          b.displayName || b.name,
-          undefined,
-          { sensitivity: "base" }
-        );
-
-        return sortDirection === "asc" ? nameDiff : -nameDiff;
-      });
-    };
-
-    return {
-      playbooks: sortResources(playbooks, playbookSort, playbookSortDirection),
-      views: sortResources(views, viewSort, viewSortDirection)
-    };
-  }, [
-    accessByResourceKey,
-    filteredResources,
-    playbookSort,
-    playbookSortDirection,
-    viewSort,
-    viewSortDirection
-  ]);
+    return { playbooks, views };
+  }, [filteredResources]);
 
   const bulkAccessByKind = useMemo(() => {
     const subjectType = mapSubjectType(selectedSubject.type);
@@ -254,16 +195,19 @@ export default function ResourceSelectorPanel({
     };
   }, [permissions, selectedSubject]);
 
-  const getEffectiveBadge = (resource: McpSubjectResource) => {
-    if (!hasEffectiveAccessResults) {
-      return null;
-    }
+  const onSetPlaybookBulkAccess = useCallback(
+    (access: ResourceAccess) => {
+      onSetManyResourceAccess(resourcesByType.playbooks, access);
+    },
+    [onSetManyResourceAccess, resourcesByType.playbooks]
+  );
 
-    const isAllowed =
-      effectiveAccessByResourceKey[getResourceKey(resource)] === true;
-
-    return <EffectiveAccessBadge isAllowed={isAllowed} />;
-  };
+  const onSetViewBulkAccess = useCallback(
+    (access: ResourceAccess) => {
+      onSetManyResourceAccess(resourcesByType.views, access);
+    },
+    [onSetManyResourceAccess, resourcesByType.views]
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -311,21 +255,12 @@ export default function ResourceSelectorPanel({
               emptyMessage="No playbooks found"
               defaultIcon="playbook"
               resources={resourcesByType.playbooks}
-              sort={playbookSort}
-              sortDirection={playbookSortDirection}
-              onSortChange={setPlaybookSort}
-              onSortDirectionToggle={() =>
-                setPlaybookSortDirection((prev) =>
-                  prev === "asc" ? "desc" : "asc"
-                )
-              }
               bulkAccess={bulkAccessByKind.playbook}
-              onBulkAccessChange={(access) =>
-                onSetManyResourceAccess(resourcesByType.playbooks, access)
-              }
+              onBulkAccessChange={onSetPlaybookBulkAccess}
               accessByResourceKey={accessByResourceKey}
+              effectiveAccessByResourceKey={effectiveAccessByResourceKey}
+              hasEffectiveAccessResults={hasEffectiveAccessResults}
               getResourceKey={getResourceKey}
-              getEffectiveBadge={getEffectiveBadge}
               isListLocked={bulkAccessByKind.playbook !== "default"}
               isSubmitting={isSubmitting}
               mutatingResourceIds={mutatingResourceIds}
@@ -337,21 +272,12 @@ export default function ResourceSelectorPanel({
               emptyMessage="No views found"
               defaultIcon="workflow"
               resources={resourcesByType.views}
-              sort={viewSort}
-              sortDirection={viewSortDirection}
-              onSortChange={setViewSort}
-              onSortDirectionToggle={() =>
-                setViewSortDirection((prev) =>
-                  prev === "asc" ? "desc" : "asc"
-                )
-              }
               bulkAccess={bulkAccessByKind.view}
-              onBulkAccessChange={(access) =>
-                onSetManyResourceAccess(resourcesByType.views, access)
-              }
+              onBulkAccessChange={onSetViewBulkAccess}
               accessByResourceKey={accessByResourceKey}
+              effectiveAccessByResourceKey={effectiveAccessByResourceKey}
+              hasEffectiveAccessResults={hasEffectiveAccessResults}
               getResourceKey={getResourceKey}
-              getEffectiveBadge={getEffectiveBadge}
               isListLocked={bulkAccessByKind.view !== "default"}
               isSubmitting={isSubmitting}
               mutatingResourceIds={mutatingResourceIds}

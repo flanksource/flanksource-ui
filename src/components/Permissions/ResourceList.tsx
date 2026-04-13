@@ -8,7 +8,7 @@ import {
 } from "@flanksource-ui/components/ui/select";
 import { Switch as SegmentedSwitch } from "@flanksource-ui/ui/FormControls/Switch";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { ReactNode } from "react";
+import { memo, useMemo, useState } from "react";
 import type {
   McpSubjectResource,
   ResourceAccess
@@ -19,8 +19,8 @@ const BULK_OPTIONS = ["Deny All", "Custom", "Allow All"] as const;
 type BulkOption = (typeof BULK_OPTIONS)[number];
 
 const RESOURCE_SORT_OPTIONS = ["deny", "allow", "alphabetical"] as const;
-export type ResourceSortOption = (typeof RESOURCE_SORT_OPTIONS)[number];
-export type ResourceSortDirection = "asc" | "desc";
+type ResourceSortOption = (typeof RESOURCE_SORT_OPTIONS)[number];
+type ResourceSortDirection = "asc" | "desc";
 
 const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
   deny: "Deny",
@@ -28,20 +28,29 @@ const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
   alphabetical: "Alphabetical"
 };
 
+function getSortRank(access: ResourceAccess, sortOption: ResourceSortOption) {
+  switch (sortOption) {
+    case "deny":
+      return access === "deny" ? 0 : access === "allow" ? 1 : 2;
+    case "allow":
+      return access === "allow" ? 0 : access === "deny" ? 1 : 2;
+    case "alphabetical":
+    default:
+      return 0;
+  }
+}
+
 type ResourceListProps = {
   title: string;
   emptyMessage: string;
   defaultIcon: string;
   resources: McpSubjectResource[];
-  sort: ResourceSortOption;
-  sortDirection: ResourceSortDirection;
-  onSortChange: (sort: ResourceSortOption) => void;
-  onSortDirectionToggle: () => void;
   bulkAccess: ResourceAccess;
   onBulkAccessChange: (access: ResourceAccess) => void;
   accessByResourceKey: Record<string, ResourceAccess>;
+  effectiveAccessByResourceKey: Record<string, boolean>;
+  hasEffectiveAccessResults: boolean;
   getResourceKey: (resource: McpSubjectResource) => string;
-  getEffectiveBadge: (resource: McpSubjectResource) => ReactNode;
   isListLocked: boolean;
   isSubmitting: boolean;
   mutatingResourceIds: Record<string, true>;
@@ -51,25 +60,47 @@ type ResourceListProps = {
   ) => Promise<void> | void;
 };
 
-export default function ResourceList({
+function ResourceList({
   title,
   emptyMessage,
   defaultIcon,
   resources,
-  sort,
-  sortDirection,
-  onSortChange,
-  onSortDirectionToggle,
   bulkAccess,
   onBulkAccessChange,
   accessByResourceKey,
+  effectiveAccessByResourceKey,
+  hasEffectiveAccessResults,
   getResourceKey,
-  getEffectiveBadge,
   isListLocked,
   isSubmitting,
   mutatingResourceIds,
   onSetResourceAccess
 }: ResourceListProps) {
+  const [sort, setSort] = useState<ResourceSortOption>("alphabetical");
+  const [sortDirection, setSortDirection] =
+    useState<ResourceSortDirection>("asc");
+
+  const sortedResources = useMemo(() => {
+    return [...resources].sort((a, b) => {
+      const aAccess = accessByResourceKey[getResourceKey(a)] ?? "default";
+      const bAccess = accessByResourceKey[getResourceKey(b)] ?? "default";
+
+      const rankDiff = getSortRank(aAccess, sort) - getSortRank(bAccess, sort);
+
+      if (rankDiff !== 0) {
+        return sortDirection === "asc" ? rankDiff : -rankDiff;
+      }
+
+      const nameDiff = (a.displayName || a.name).localeCompare(
+        b.displayName || b.name,
+        undefined,
+        { sensitivity: "base" }
+      );
+
+      return sortDirection === "asc" ? nameDiff : -nameDiff;
+    });
+  }, [accessByResourceKey, getResourceKey, resources, sort, sortDirection]);
+
   const bulkOptionValue: BulkOption =
     bulkAccess === "allow"
       ? "Allow All"
@@ -119,7 +150,7 @@ export default function ResourceList({
 
           <Select
             value={sort}
-            onValueChange={(value) => onSortChange(value as ResourceSortOption)}
+            onValueChange={(value) => setSort(value as ResourceSortOption)}
           >
             <SelectTrigger className="h-8 w-[140px] text-xs">
               <SelectValue placeholder="Sort" />
@@ -142,7 +173,9 @@ export default function ResourceList({
             aria-label={
               sortDirection === "asc" ? "Sort ascending" : "Sort descending"
             }
-            onClick={onSortDirectionToggle}
+            onClick={() =>
+              setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
+            }
           >
             {sortDirection === "asc" ? (
               <ArrowUp className="h-3.5 w-3.5" />
@@ -154,26 +187,31 @@ export default function ResourceList({
       </div>
 
       <div className="overflow-hidden rounded-md border border-gray-200">
-        {resources.length === 0 ? (
+        {sortedResources.length === 0 ? (
           <div className="p-3 text-sm text-gray-500">{emptyMessage}</div>
         ) : (
-          resources.map((resource) => (
-            <ResourceRow
-              key={resource.id}
-              resource={resource}
-              access={
-                accessByResourceKey[getResourceKey(resource)] ?? "default"
-              }
-              defaultIcon={defaultIcon}
-              effectiveBadge={getEffectiveBadge(resource)}
-              isListLocked={isListLocked}
-              isSubmitting={isSubmitting}
-              isMutating={Boolean(mutatingResourceIds[resource.id])}
-              onSetResourceAccess={onSetResourceAccess}
-            />
-          ))
+          sortedResources.map((resource) => {
+            const key = getResourceKey(resource);
+
+            return (
+              <ResourceRow
+                key={resource.id}
+                resource={resource}
+                access={accessByResourceKey[key] ?? "default"}
+                defaultIcon={defaultIcon}
+                showEffectiveBadge={hasEffectiveAccessResults}
+                isAllowed={effectiveAccessByResourceKey[key] === true}
+                isListLocked={isListLocked}
+                isSubmitting={isSubmitting}
+                isMutating={Boolean(mutatingResourceIds[resource.id])}
+                onSetResourceAccess={onSetResourceAccess}
+              />
+            );
+          })
         )}
       </div>
     </div>
   );
 }
+
+export default memo(ResourceList);
