@@ -5,6 +5,13 @@ import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStat
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@flanksource-ui/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
@@ -49,6 +56,21 @@ type ResourceSelectorPanelProps = {
 };
 const BULK_OPTIONS = ["Deny All", "Custom", "Allow all"] as const;
 type BulkOption = (typeof BULK_OPTIONS)[number];
+
+const RESOURCE_SORT_OPTIONS = [
+  "deny-first",
+  "allow-first",
+  "custom-first",
+  "alphabetical"
+] as const;
+type ResourceSortOption = (typeof RESOURCE_SORT_OPTIONS)[number];
+
+const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
+  "deny-first": "Deny first",
+  "allow-first": "Allow first",
+  "custom-first": "Custom first",
+  alphabetical: "Alphabetically"
+};
 
 function getRefsForPermission(
   permission: PermissionsSummary,
@@ -107,6 +129,25 @@ function getAccessState(
   return { access: "default" };
 }
 
+function getSortRank(access: ResourceAccess, sortOption: ResourceSortOption) {
+  switch (sortOption) {
+    case "deny-first":
+      return access === "deny" ? 0 : access === "allow" ? 1 : 2;
+    case "allow-first":
+      return access === "allow" ? 0 : access === "deny" ? 1 : 2;
+    case "custom-first":
+      // "Custom" means explicitly configured (allow/deny), so keep defaults last.
+      return access === "default" ? 1 : 0;
+    case "alphabetical":
+    default:
+      return 0;
+  }
+}
+
+function getResourceKey(resource: McpSubjectResource) {
+  return `${resource.kind}:${resource.id}`;
+}
+
 export default function ResourceSelectorPanel({
   selectedSubject,
   resources,
@@ -121,6 +162,9 @@ export default function ResourceSelectorPanel({
   onSetManyResourceAccess
 }: ResourceSelectorPanelProps) {
   const [resourceSearch, setResourceSearch] = useState("");
+  const [playbookSort, setPlaybookSort] =
+    useState<ResourceSortOption>("alphabetical");
+  const [viewSort, setViewSort] = useState<ResourceSortOption>("alphabetical");
 
   const normalizedSearch = resourceSearch.trim().toLowerCase();
 
@@ -136,6 +180,20 @@ export default function ResourceSelectorPanel({
     });
   }, [normalizedSearch, resources]);
 
+  const accessByResourceKey = useMemo(() => {
+    const byKey: Record<string, ResourceAccess> = {};
+
+    for (const resource of filteredResources) {
+      byKey[getResourceKey(resource)] = getAccessState(
+        permissions,
+        selectedSubject,
+        resource
+      ).access;
+    }
+
+    return byKey;
+  }, [filteredResources, permissions, selectedSubject]);
+
   const resourcesByType = useMemo(() => {
     const playbooks: McpSubjectResource[] = [];
     const views: McpSubjectResource[] = [];
@@ -148,8 +206,34 @@ export default function ResourceSelectorPanel({
       }
     }
 
-    return { playbooks, views };
-  }, [filteredResources]);
+    const sortResources = (
+      list: McpSubjectResource[],
+      sortOption: ResourceSortOption
+    ) => {
+      return [...list].sort((a, b) => {
+        const aAccess = accessByResourceKey[getResourceKey(a)] ?? "default";
+        const bAccess = accessByResourceKey[getResourceKey(b)] ?? "default";
+
+        const rankDiff =
+          getSortRank(aAccess, sortOption) - getSortRank(bAccess, sortOption);
+
+        if (rankDiff !== 0) {
+          return rankDiff;
+        }
+
+        return (a.displayName || a.name).localeCompare(
+          b.displayName || b.name,
+          undefined,
+          { sensitivity: "base" }
+        );
+      });
+    };
+
+    return {
+      playbooks: sortResources(playbooks, playbookSort),
+      views: sortResources(views, viewSort)
+    };
+  }, [accessByResourceKey, filteredResources, playbookSort, viewSort]);
 
   const bulkAccess = useMemo<ResourceAccess>(() => {
     const subjectType = mapSubjectType(selectedSubject.type);
@@ -206,7 +290,7 @@ export default function ResourceSelectorPanel({
     }
 
     const isAllowed =
-      effectiveAccessByResourceKey[`${resource.kind}:${resource.id}`] === true;
+      effectiveAccessByResourceKey[getResourceKey(resource)] === true;
 
     return (
       <Tooltip>
@@ -313,8 +397,27 @@ export default function ResourceSelectorPanel({
 
           <div className="mb-3 min-h-0 flex-1 space-y-4 overflow-y-auto">
             <div className="space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Playbooks
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Playbooks
+                </div>
+                <Select
+                  value={playbookSort}
+                  onValueChange={(value) =>
+                    setPlaybookSort(value as ResourceSortOption)
+                  }
+                >
+                  <SelectTrigger className="h-8 w-[150px] text-xs">
+                    <SelectValue placeholder="Sort" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RESOURCE_SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {RESOURCE_SORT_OPTION_LABELS[option]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="overflow-hidden rounded-md border border-gray-200">
                 {resourcesByType.playbooks.length === 0 ? (
@@ -323,11 +426,9 @@ export default function ResourceSelectorPanel({
                   </div>
                 ) : (
                   resourcesByType.playbooks.map((resource) => {
-                    const state = getAccessState(
-                      permissions,
-                      selectedSubject,
-                      resource
-                    );
+                    const access =
+                      accessByResourceKey[getResourceKey(resource)] ??
+                      "default";
 
                     return (
                       <div
@@ -355,7 +456,7 @@ export default function ResourceSelectorPanel({
                           {getEffectiveBadge(resource)}
                           {!isListLocked ? (
                             <TriStateAccessSwitch
-                              value={state.access}
+                              value={access}
                               disabled={
                                 Boolean(mutatingResourceIds[resource.id]) ||
                                 isSubmitting
@@ -374,8 +475,27 @@ export default function ResourceSelectorPanel({
             </div>
 
             <div className="space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Views
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Views
+                </div>
+                <Select
+                  value={viewSort}
+                  onValueChange={(value) =>
+                    setViewSort(value as ResourceSortOption)
+                  }
+                >
+                  <SelectTrigger className="h-8 w-[150px] text-xs">
+                    <SelectValue placeholder="Sort" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RESOURCE_SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {RESOURCE_SORT_OPTION_LABELS[option]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="overflow-hidden rounded-md border border-gray-200">
                 {resourcesByType.views.length === 0 ? (
@@ -384,11 +504,9 @@ export default function ResourceSelectorPanel({
                   </div>
                 ) : (
                   resourcesByType.views.map((resource) => {
-                    const state = getAccessState(
-                      permissions,
-                      selectedSubject,
-                      resource
-                    );
+                    const access =
+                      accessByResourceKey[getResourceKey(resource)] ??
+                      "default";
 
                     return (
                       <div
@@ -416,7 +534,7 @@ export default function ResourceSelectorPanel({
                           {getEffectiveBadge(resource)}
                           {!isListLocked ? (
                             <TriStateAccessSwitch
-                              value={state.access}
+                              value={access}
                               disabled={
                                 Boolean(mutatingResourceIds[resource.id]) ||
                                 isSubmitting
