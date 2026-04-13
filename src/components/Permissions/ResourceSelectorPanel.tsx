@@ -19,7 +19,7 @@ import {
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 import { Switch as SegmentedSwitch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
-import { Check, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
@@ -58,19 +58,14 @@ type ResourceSelectorPanelProps = {
 const BULK_OPTIONS = ["Deny All", "Custom", "Allow all"] as const;
 type BulkOption = (typeof BULK_OPTIONS)[number];
 
-const RESOURCE_SORT_OPTIONS = [
-  "deny-first",
-  "allow-first",
-  "custom-first",
-  "alphabetical"
-] as const;
+const RESOURCE_SORT_OPTIONS = ["deny", "allow", "alphabetical"] as const;
 type ResourceSortOption = (typeof RESOURCE_SORT_OPTIONS)[number];
+type ResourceSortDirection = "asc" | "desc";
 
 const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
-  "deny-first": "Deny first",
-  "allow-first": "Allow first",
-  "custom-first": "Custom first",
-  alphabetical: "Alphabetically"
+  deny: "Deny",
+  allow: "Allow",
+  alphabetical: "Alphabetical"
 };
 
 const ROW_LAYOUT_TRANSITION = {
@@ -139,13 +134,10 @@ function getAccessState(
 
 function getSortRank(access: ResourceAccess, sortOption: ResourceSortOption) {
   switch (sortOption) {
-    case "deny-first":
+    case "deny":
       return access === "deny" ? 0 : access === "allow" ? 1 : 2;
-    case "allow-first":
+    case "allow":
       return access === "allow" ? 0 : access === "deny" ? 1 : 2;
-    case "custom-first":
-      // "Custom" means explicitly configured (allow/deny), so keep defaults last.
-      return access === "default" ? 1 : 0;
     case "alphabetical":
     default:
       return 0;
@@ -172,7 +164,11 @@ export default function ResourceSelectorPanel({
   const [resourceSearch, setResourceSearch] = useState("");
   const [playbookSort, setPlaybookSort] =
     useState<ResourceSortOption>("alphabetical");
+  const [playbookSortDirection, setPlaybookSortDirection] =
+    useState<ResourceSortDirection>("asc");
   const [viewSort, setViewSort] = useState<ResourceSortOption>("alphabetical");
+  const [viewSortDirection, setViewSortDirection] =
+    useState<ResourceSortDirection>("asc");
 
   const normalizedSearch = resourceSearch.trim().toLowerCase();
 
@@ -216,7 +212,8 @@ export default function ResourceSelectorPanel({
 
     const sortResources = (
       list: McpSubjectResource[],
-      sortOption: ResourceSortOption
+      sortOption: ResourceSortOption,
+      sortDirection: ResourceSortDirection
     ) => {
       return [...list].sort((a, b) => {
         const aAccess = accessByResourceKey[getResourceKey(a)] ?? "default";
@@ -226,22 +223,31 @@ export default function ResourceSelectorPanel({
           getSortRank(aAccess, sortOption) - getSortRank(bAccess, sortOption);
 
         if (rankDiff !== 0) {
-          return rankDiff;
+          return sortDirection === "asc" ? rankDiff : -rankDiff;
         }
 
-        return (a.displayName || a.name).localeCompare(
+        const nameDiff = (a.displayName || a.name).localeCompare(
           b.displayName || b.name,
           undefined,
           { sensitivity: "base" }
         );
+
+        return sortDirection === "asc" ? nameDiff : -nameDiff;
       });
     };
 
     return {
-      playbooks: sortResources(playbooks, playbookSort),
-      views: sortResources(views, viewSort)
+      playbooks: sortResources(playbooks, playbookSort, playbookSortDirection),
+      views: sortResources(views, viewSort, viewSortDirection)
     };
-  }, [accessByResourceKey, filteredResources, playbookSort, viewSort]);
+  }, [
+    accessByResourceKey,
+    filteredResources,
+    playbookSort,
+    playbookSortDirection,
+    viewSort,
+    viewSortDirection
+  ]);
 
   const bulkAccess = useMemo<ResourceAccess>(() => {
     const subjectType = mapSubjectType(selectedSubject.type);
@@ -409,23 +415,49 @@ export default function ResourceSelectorPanel({
                 <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                   Playbooks
                 </div>
-                <Select
-                  value={playbookSort}
-                  onValueChange={(value) =>
-                    setPlaybookSort(value as ResourceSortOption)
-                  }
-                >
-                  <SelectTrigger className="h-8 w-[150px] text-xs">
-                    <SelectValue placeholder="Sort" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {RESOURCE_SORT_OPTIONS.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {RESOURCE_SORT_OPTION_LABELS[option]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-1">
+                  <Select
+                    value={playbookSort}
+                    onValueChange={(value) =>
+                      setPlaybookSort(value as ResourceSortOption)
+                    }
+                  >
+                    <SelectTrigger className="h-8 w-[140px] text-xs">
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RESOURCE_SORT_OPTIONS.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {RESOURCE_SORT_OPTION_LABELS[option]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="h-8 w-8"
+                    disabled={resourcesByType.playbooks.length === 0}
+                    aria-label={
+                      playbookSortDirection === "asc"
+                        ? "Sort ascending"
+                        : "Sort descending"
+                    }
+                    onClick={() =>
+                      setPlaybookSortDirection((prev) =>
+                        prev === "asc" ? "desc" : "asc"
+                      )
+                    }
+                  >
+                    {playbookSortDirection === "asc" ? (
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    ) : (
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </div>
               </div>
               <div className="overflow-hidden rounded-md border border-gray-200">
                 {resourcesByType.playbooks.length === 0 ? (
@@ -490,23 +522,49 @@ export default function ResourceSelectorPanel({
                 <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                   Views
                 </div>
-                <Select
-                  value={viewSort}
-                  onValueChange={(value) =>
-                    setViewSort(value as ResourceSortOption)
-                  }
-                >
-                  <SelectTrigger className="h-8 w-[150px] text-xs">
-                    <SelectValue placeholder="Sort" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {RESOURCE_SORT_OPTIONS.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {RESOURCE_SORT_OPTION_LABELS[option]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-1">
+                  <Select
+                    value={viewSort}
+                    onValueChange={(value) =>
+                      setViewSort(value as ResourceSortOption)
+                    }
+                  >
+                    <SelectTrigger className="h-8 w-[140px] text-xs">
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RESOURCE_SORT_OPTIONS.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {RESOURCE_SORT_OPTION_LABELS[option]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="h-8 w-8"
+                    disabled={resourcesByType.views.length === 0}
+                    aria-label={
+                      viewSortDirection === "asc"
+                        ? "Sort ascending"
+                        : "Sort descending"
+                    }
+                    onClick={() =>
+                      setViewSortDirection((prev) =>
+                        prev === "asc" ? "desc" : "asc"
+                      )
+                    }
+                  >
+                    {viewSortDirection === "asc" ? (
+                      <ArrowUp className="h-3.5 w-3.5" />
+                    ) : (
+                      <ArrowDown className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </div>
               </div>
               <div className="overflow-hidden rounded-md border border-gray-200">
                 {resourcesByType.views.length === 0 ? (
