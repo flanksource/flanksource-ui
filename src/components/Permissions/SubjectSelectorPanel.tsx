@@ -371,33 +371,35 @@ export default function SubjectSelectorPanel({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          {headerEntity ? (
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-700">
-              <Icon
-                name={headerEntity.icon || "playbook"}
-                className="h-4 w-4"
-              />
-            </span>
-          ) : null}
-          <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-gray-900">
-              {headerEntity?.name || title}
-            </div>
-            {!headerEntity && description ? (
-              <div className="mt-0.5 text-xs text-gray-500">{description}</div>
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="space-y-3 pb-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            {headerEntity ? (
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-700">
+                <Icon
+                  name={headerEntity.icon || "playbook"}
+                  className="h-4 w-4"
+                />
+              </span>
             ) : null}
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-gray-900">
+                {headerEntity?.name || title}
+              </div>
+              {!headerEntity && description ? (
+                <div className="mt-0.5 text-xs text-gray-500">
+                  {description}
+                </div>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
           {effectiveAccessResource ? (
             <Button
               type="button"
               size="sm"
-              className="bg-blue-600 text-white hover:bg-blue-700"
+              className="w-48 justify-center bg-blue-600 text-white hover:bg-blue-700"
               disabled={isCheckingEffectiveAccess || subjects.length === 0}
               onClick={() => {
                 setHasTriggeredEffectiveAccessCheck(true);
@@ -409,6 +411,10 @@ export default function SubjectSelectorPanel({
                 : "Check effective access"}
             </Button>
           ) : null}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm text-gray-600">Global permission</div>
 
           <div
             className={
@@ -425,6 +431,8 @@ export default function SubjectSelectorPanel({
           >
             <Switch
               size="sm"
+              className="w-48"
+              itemsClassName="flex-1 justify-center"
               options={[...BULK_OPTIONS]}
               value={bulkOptionValue}
               onChange={(value) => {
@@ -448,7 +456,7 @@ export default function SubjectSelectorPanel({
         </div>
       </div>
 
-      <div className="relative min-h-0 flex-1">
+      <div className="relative min-h-0 flex-1 pt-3">
         <div className="flex h-full min-h-0 flex-col gap-3">
           <Input
             placeholder="Search ..."

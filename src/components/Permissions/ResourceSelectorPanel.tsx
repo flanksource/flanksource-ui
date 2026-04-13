@@ -233,23 +233,23 @@ export default function ResourceSelectorPanel({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <SubjectAvatar subject={selectedSubject} size="md" />
-          <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-gray-900">
-              {selectedSubject.name}
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="space-y-3 pb-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <SubjectAvatar subject={selectedSubject} size="md" />
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-gray-900">
+                {selectedSubject.name}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-2">
           {onCheckEffectiveAccess ? (
             <Button
               type="button"
               size="sm"
-              className="bg-blue-600 text-white hover:bg-blue-700"
+              className="w-48 justify-center bg-blue-600 text-white hover:bg-blue-700"
               onClick={onCheckEffectiveAccess}
               disabled={isCheckingEffectiveAccess || resources.length === 0}
             >
@@ -258,6 +258,10 @@ export default function ResourceSelectorPanel({
                 : "Check effective access"}
             </Button>
           ) : null}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm text-gray-600">Global Permission</div>
 
           <div
             className={
@@ -271,6 +275,8 @@ export default function ResourceSelectorPanel({
           >
             <SegmentedSwitch
               size="sm"
+              className="w-48"
+              itemsClassName="flex-1 justify-center"
               options={[...BULK_OPTIONS]}
               value={bulkOptionValue}
               onChange={(value) => {
@@ -294,7 +300,7 @@ export default function ResourceSelectorPanel({
         </div>
       </div>
 
-      <div className="relative min-h-0 flex-1">
+      <div className="relative min-h-0 flex-1 pt-3">
         <div className="flex h-full min-h-0 flex-col gap-3">
           <div className="flex items-center gap-3">
             <Input
