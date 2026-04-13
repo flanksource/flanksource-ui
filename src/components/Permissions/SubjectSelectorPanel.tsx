@@ -11,6 +11,13 @@ import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStat
 import { Button } from "@flanksource-ui/components/ui/button";
 import { Input } from "@flanksource-ui/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@flanksource-ui/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
@@ -19,7 +26,8 @@ import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
-import { Check, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
@@ -42,6 +50,29 @@ export type SubjectAccess = "deny" | "default" | "allow";
 
 const BULK_OPTIONS = ["Deny All", "Custom", "Allow all"] as const;
 type BulkOption = (typeof BULK_OPTIONS)[number];
+
+const SUBJECT_SORT_OPTIONS = [
+  "deny",
+  "allow",
+  "custom",
+  "alphabetical"
+] as const;
+type SubjectSortOption = (typeof SUBJECT_SORT_OPTIONS)[number];
+type SubjectSortDirection = "asc" | "desc";
+
+const SUBJECT_SORT_OPTION_LABELS: Record<SubjectSortOption, string> = {
+  deny: "Deny",
+  allow: "Allow",
+  custom: "Custom",
+  alphabetical: "Alphabetical"
+};
+
+const ROW_LAYOUT_TRANSITION = {
+  type: "spring",
+  stiffness: 620,
+  damping: 42,
+  mass: 0.7
+} as const;
 
 type SubjectSelectorPanelProps = {
   title?: string;
@@ -70,6 +101,23 @@ type SubjectSelectorPanelProps = {
   ) => Promise<void> | void;
 };
 
+function getSubjectSortRank(
+  access: SubjectAccess,
+  sortOption: SubjectSortOption
+) {
+  switch (sortOption) {
+    case "deny":
+      return access === "deny" ? 0 : access === "allow" ? 1 : 2;
+    case "allow":
+      return access === "allow" ? 0 : access === "deny" ? 1 : 2;
+    case "custom":
+      return access === "default" ? 1 : 0;
+    case "alphabetical":
+    default:
+      return 0;
+  }
+}
+
 export default function SubjectSelectorPanel({
   title,
   description,
@@ -85,6 +133,10 @@ export default function SubjectSelectorPanel({
   onSetManySubjectAccess
 }: SubjectSelectorPanelProps) {
   const [search, setSearch] = useState("");
+  const [subjectSort, setSubjectSort] =
+    useState<SubjectSortOption>("alphabetical");
+  const [subjectSortDirection, setSubjectSortDirection] =
+    useState<SubjectSortDirection>("asc");
   const [selectedAccessById, setSelectedAccessById] = useState<
     Record<string, SubjectAccess>
   >({});
@@ -202,9 +254,29 @@ export default function SubjectSelectorPanel({
           return typeOrder;
         }
 
-        return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        const aAccess = selectedAccessById[a.id] ?? "default";
+        const bAccess = selectedAccessById[b.id] ?? "default";
+        const rankDiff =
+          getSubjectSortRank(aAccess, subjectSort) -
+          getSubjectSortRank(bAccess, subjectSort);
+
+        if (rankDiff !== 0) {
+          return subjectSortDirection === "asc" ? rankDiff : -rankDiff;
+        }
+
+        const nameDiff = a.name.localeCompare(b.name, undefined, {
+          sensitivity: "base"
+        });
+
+        return subjectSortDirection === "asc" ? nameDiff : -nameDiff;
       });
-  }, [debouncedSearch, subjects]);
+  }, [
+    debouncedSearch,
+    selectedAccessById,
+    subjectSort,
+    subjectSortDirection,
+    subjects
+  ]);
 
   const displayedSubjects = sortedSubjects;
 
@@ -458,11 +530,56 @@ export default function SubjectSelectorPanel({
 
       <div className="relative min-h-0 flex-1 pt-3">
         <div className="flex h-full min-h-0 flex-col gap-3">
-          <Input
-            placeholder="Search ..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+          <div className="flex items-center gap-2">
+            <Input
+              className="flex-1"
+              placeholder="Search ..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+
+            <Select
+              value={subjectSort}
+              onValueChange={(value) =>
+                setSubjectSort(value as SubjectSortOption)
+              }
+            >
+              <SelectTrigger className="h-8 w-[140px] text-xs">
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                {SUBJECT_SORT_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {SUBJECT_SORT_OPTION_LABELS[option]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button
+              type="button"
+              size="icon"
+              variant="outline"
+              className="h-8 w-8"
+              disabled={displayedSubjects.length === 0}
+              aria-label={
+                subjectSortDirection === "asc"
+                  ? "Sort ascending"
+                  : "Sort descending"
+              }
+              onClick={() =>
+                setSubjectSortDirection((prev) =>
+                  prev === "asc" ? "desc" : "asc"
+                )
+              }
+            >
+              {subjectSortDirection === "asc" ? (
+                <ArrowUp className="h-3.5 w-3.5" />
+              ) : (
+                <ArrowDown className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          </div>
 
           <div className="mb-3 min-h-0 flex-1 space-y-4 overflow-y-auto">
             {isLoading || isFetching ? (
@@ -479,7 +596,10 @@ export default function SubjectSelectorPanel({
 
                   <div className="overflow-hidden rounded-md border border-gray-200">
                     {group.subjects.map((subject) => (
-                      <div
+                      <motion.div
+                        layout="position"
+                        initial={false}
+                        transition={ROW_LAYOUT_TRANSITION}
                         key={subject.id}
                         className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
                       >
@@ -506,7 +626,7 @@ export default function SubjectSelectorPanel({
                             />
                           ) : null}
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
