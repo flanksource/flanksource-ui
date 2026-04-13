@@ -20,6 +20,7 @@ import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCar
 import { Switch as SegmentedSwitch } from "@flanksource-ui/ui/FormControls/Switch";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Check, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
 export type ResourceAccess = "deny" | "default" | "allow";
@@ -71,6 +72,13 @@ const RESOURCE_SORT_OPTION_LABELS: Record<ResourceSortOption, string> = {
   "custom-first": "Custom first",
   alphabetical: "Alphabetically"
 };
+
+const ROW_LAYOUT_TRANSITION = {
+  type: "spring",
+  stiffness: 620,
+  damping: 42,
+  mass: 0.7
+} as const;
 
 function getRefsForPermission(
   permission: PermissionsSummary,
@@ -431,7 +439,10 @@ export default function ResourceSelectorPanel({
                       "default";
 
                     return (
-                      <div
+                      <motion.div
+                        layout="position"
+                        initial={false}
+                        transition={ROW_LAYOUT_TRANSITION}
                         key={resource.id}
                         className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
                       >
@@ -467,7 +478,7 @@ export default function ResourceSelectorPanel({
                             />
                           ) : null}
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })
                 )}
@@ -509,7 +520,10 @@ export default function ResourceSelectorPanel({
                       "default";
 
                     return (
-                      <div
+                      <motion.div
+                        layout="position"
+                        initial={false}
+                        transition={ROW_LAYOUT_TRANSITION}
                         key={resource.id}
                         className="flex items-center justify-between gap-3 border-b border-gray-200 p-3 last:border-b-0"
                       >
@@ -545,7 +559,7 @@ export default function ResourceSelectorPanel({
                             />
                           ) : null}
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })
                 )}
