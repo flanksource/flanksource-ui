@@ -50,8 +50,9 @@ export function ConfigDetailsChangesPage() {
     if (!liveTail) {
       setTailedChanges([]);
       setTailCursor(undefined);
+      refetch();
     }
-  }, [liveTail]);
+  }, [liveTail, refetch]);
 
   const { data: pollData } = useGetConfigChangesByIDQuery({
     from_inserted_at: tailCursor,

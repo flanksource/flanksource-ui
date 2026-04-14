@@ -66,8 +66,9 @@ export function ConfigChangesPage() {
     if (!liveTail) {
       setTailedChanges([]);
       setTailCursor(undefined);
+      refetch();
     }
-  }, [liveTail]);
+  }, [liveTail, refetch]);
 
   const { data: pollData } = useGetAllConfigsChangesQuery({
     from_inserted_at: tailCursor,
