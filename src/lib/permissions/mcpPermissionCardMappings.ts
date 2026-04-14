@@ -1,6 +1,6 @@
 import {
-  PermissionSubject,
-  MCP_SETTINGS_PERMISSION_SOURCE
+  INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
+  PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 
@@ -114,7 +114,7 @@ export function buildPermissionAccessCardMaps<
   permissions,
   getRefs,
   action = "mcp:run",
-  source = MCP_SETTINGS_PERMISSION_SOURCE,
+  source = INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
   everyoneSubjectId = "everyone",
   everyoneSubjectType = "group"
 }: {

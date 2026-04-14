@@ -58,6 +58,7 @@ export async function getPermissions(id: string): Promise<Permission[]> {
 export type SubjectAccessReviewResource = {
   playbook?: string;
   view?: string;
+  connection?: string;
   config?: string;
   check?: string;
   global?: string;
@@ -66,6 +67,8 @@ export type SubjectAccessReviewResource = {
 
 export type SubjectAccessReviewAction =
   | "read"
+  | "update"
+  | "delete"
   | "mcp:run"
   | "mcp:use"
   | "playbook:run"
@@ -118,7 +121,7 @@ export async function reviewSubjectAccess(
 
 export type EffectiveSubjectResourceAccessResource = {
   id: string;
-  type: "playbook" | "view";
+  type: "playbook" | "view" | "connection";
 };
 
 export type EffectiveSubjectResourceAccessRequest = {
@@ -129,7 +132,7 @@ export type EffectiveSubjectResourceAccessRequest = {
 
 export type EffectiveSubjectResourceAccessResult = {
   resourceId: string;
-  resourceType: "playbook" | "view";
+  resourceType: "playbook" | "view" | "connection";
   allowed: boolean;
 };
 
@@ -142,7 +145,7 @@ export type EffectiveSubjectResourceAccessResponse = {
 type SubjectAccessSearchRequest = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types?: Array<"playbook" | "view">;
+  resource_types?: Array<"playbook" | "view" | "connection">;
   search?: string;
   namespace?: string;
 };
@@ -150,12 +153,12 @@ type SubjectAccessSearchRequest = {
 type SubjectAccessSearchResponse = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types: Array<"playbook" | "view">;
+  resource_types: Array<"playbook" | "view" | "connection">;
   total: number;
   limit: number;
   offset: number;
   results: Array<{
-    resource_type: "playbook" | "view";
+    resource_type: "playbook" | "view" | "connection";
     id: string;
     name: string;
     namespace?: string;
@@ -220,7 +223,9 @@ export async function fetchEffectiveResourceSubjectAccess(
   const resource: SubjectAccessReviewResource =
     payload.resource.type === "playbook"
       ? { playbook: payload.resource.id }
-      : { view: payload.resource.id };
+      : payload.resource.type === "view"
+        ? { view: payload.resource.id }
+        : { connection: payload.resource.id };
 
   const response = await reviewSubjectAccess({
     resource,

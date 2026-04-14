@@ -3,7 +3,8 @@ import {
   deletePermission,
   fetchAllPermissionSubjects,
   fetchMcpUserPermissions,
-  MCP_SETTINGS_PERMISSION_SOURCE,
+  INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
+  isSettingsManagedPermissionSource,
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
@@ -36,7 +37,7 @@ function isMcpUserAccessPermission(permission: PermissionsSummary) {
     permission.object === MCP_OBJECT &&
     !!permission.subject &&
     !!permission.id &&
-    permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+    isSettingsManagedPermissionSource(permission.source)
   );
 }
 
@@ -143,7 +144,7 @@ export default function McpOverviewPage() {
           .filter(
             (permission) =>
               permission.subject === subjectId &&
-              permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+              isSettingsManagedPermissionSource(permission.source)
           );
 
         if (access === "default") {
@@ -172,7 +173,7 @@ export default function McpOverviewPage() {
             subject: subjectId,
             subject_type: mapPermissionSubjectType(subjectType),
             deny: targetDeny,
-            source: MCP_SETTINGS_PERMISSION_SOURCE,
+            source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
             created_by: user.id
           } as any);
 

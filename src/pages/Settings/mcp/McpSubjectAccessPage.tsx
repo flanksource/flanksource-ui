@@ -4,7 +4,8 @@ import {
   deletePermission,
   fetchAllPermissionSubjects,
   fetchMcpRunPermissions,
-  MCP_SETTINGS_PERMISSION_SOURCE,
+  INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
+  isSettingsManagedPermissionSource,
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
@@ -197,7 +198,7 @@ export default function McpSubjectAccessPage() {
     return () => {
       clearTimeout(timer);
     };
-  }, [selectedSubject?.id]);
+  }, [selectedSubject]);
 
   const resources = useMemo<McpSubjectResource[]>(() => {
     const playbookResources = playbooks
@@ -327,7 +328,7 @@ export default function McpSubjectAccessPage() {
     const matchingPermissions = currentPermissions.filter(
       (permission) =>
         permission.action === "mcp:run" &&
-        permission.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+        isSettingsManagedPermissionSource(permission.source) &&
         permission.subject === subject.id &&
         permission.subject_type === subjectType &&
         permission.id &&
@@ -357,7 +358,7 @@ export default function McpSubjectAccessPage() {
         subject: subject.id,
         subject_type: subjectType,
         deny,
-        source: MCP_SETTINGS_PERMISSION_SOURCE,
+        source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
         created_by: user?.id
       } as any);
       return;
@@ -404,7 +405,7 @@ export default function McpSubjectAccessPage() {
           const existingForKind = latestPermissions.filter((permission) => {
             if (
               permission.action !== "mcp:run" ||
-              permission.source !== MCP_SETTINGS_PERMISSION_SOURCE ||
+              !isSettingsManagedPermissionSource(permission.source) ||
               permission.subject !== selectedSubject.id ||
               permission.subject_type !== subjectType ||
               !permission.id
@@ -442,7 +443,7 @@ export default function McpSubjectAccessPage() {
               subject: selectedSubject.id,
               subject_type: subjectType,
               deny,
-              source: MCP_SETTINGS_PERMISSION_SOURCE,
+              source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
               created_by: user?.id
             } as any);
           } else if (primaryWildcard.deny !== deny) {
@@ -520,13 +521,15 @@ export default function McpSubjectAccessPage() {
         </div>
 
         <div className="flex min-h-0 flex-1 gap-4">
-          <PermissionSubjectPanel
-            subjectSearch={subjectSearch}
-            onSubjectSearchChange={setSubjectSearch}
-            groupedSubjects={groupedSubjects}
-            selectedSubjectId={selectedSubjectId}
-            onSelectSubject={setSelectedSubjectId}
-          />
+          <div className="w-[320px] shrink-0">
+            <PermissionSubjectPanel
+              subjectSearch={subjectSearch}
+              onSubjectSearchChange={setSubjectSearch}
+              groupedSubjects={groupedSubjects}
+              selectedSubjectId={selectedSubjectId}
+              onSelectSubject={setSelectedSubjectId}
+            />
+          </div>
 
           <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
             {selectedSubject ? (
