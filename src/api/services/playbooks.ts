@@ -27,7 +27,7 @@ export async function getAllPlaybooksSpecs() {
 
 export async function getAllPlaybookNames() {
   const res = await IncidentCommander.get<PlaybookNames[] | null>(
-    `/playbook_names?select=id,name,title,icon,category&order=title.asc`
+    `/playbook_names?select=id,name,namespace,title,icon,category,description&order=title.asc`
   );
   return res.data ?? [];
 }

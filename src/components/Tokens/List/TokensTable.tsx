@@ -11,23 +11,29 @@ type TokensTableProps = {
   isLoading?: boolean;
   isRefetching?: boolean;
   refresh?: () => void;
+  showHideAgentsToggle?: boolean;
+  defaultHideAgents?: boolean;
+  tokenIdSearchParamKey?: string;
 };
 
 export default function TokensTable({
   tokens,
   isLoading,
   isRefetching,
-  refresh
+  refresh,
+  showHideAgentsToggle = true,
+  defaultHideAgents = true,
+  tokenIdSearchParamKey = "id"
 }: TokensTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const columns = useMemo(() => tokensTableColumns, []);
 
-  const tokenId = searchParams.get("id") ?? undefined;
+  const tokenId = searchParams.get(tokenIdSearchParamKey) ?? undefined;
   const selectedToken = useMemo(() => {
     return tokens.find((token) => token.id === tokenId);
   }, [tokens, tokenId]);
 
-  const [hideAgents, setHideAgents] = useState(true);
+  const [hideAgents, setHideAgents] = useState(defaultHideAgents);
   const filteredTokens = useMemo(() => {
     if (hideAgents) {
       return tokens.filter((token) => !token.name.startsWith("agent-"));
@@ -38,14 +44,16 @@ export default function TokensTable({
 
   return (
     <div className="flex h-full w-full flex-col gap-4">
-      <Toggle
-        value={hideAgents}
-        label="Hide Agents"
-        className="inline-flex items-center"
-        onChange={(val) => {
-          setHideAgents(val);
-        }}
-      />
+      {showHideAgentsToggle && (
+        <Toggle
+          value={hideAgents}
+          label="Hide Agents"
+          className="inline-flex items-center"
+          onChange={(val) => {
+            setHideAgents(val);
+          }}
+        />
+      )}
 
       <MRTDataTable
         data={filteredTokens}
@@ -54,7 +62,7 @@ export default function TokensTable({
         isRefetching={isRefetching}
         enableServerSideSorting={false}
         onRowClick={(token) => {
-          searchParams.set("id", token.id);
+          searchParams.set(tokenIdSearchParamKey, token.id);
           setSearchParams(searchParams);
         }}
       />
@@ -67,7 +75,7 @@ export default function TokensTable({
             if (refresh) {
               refresh();
             }
-            searchParams.delete("id");
+            searchParams.delete(tokenIdSearchParamKey);
             setSearchParams(searchParams);
           }}
         />

@@ -47,6 +47,12 @@ import { UserAccessStateContextProvider } from "./context/UserAccessContext/User
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
+import { PermissionsSubjectsPage } from "./pages/Settings/PermissionsSubjectsPage";
+import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
+import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
+import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
+import McpSubjectAccessPage from "./pages/Settings/mcp/McpSubjectAccessPage";
+import McpCheckAccessPage from "./pages/Settings/mcp/McpCheckAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
@@ -428,6 +434,15 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.database
     },
     {
+      name: "MCP",
+      href: "/settings/mcp",
+      icon: ({ className }: { className: string }) => (
+        <Icon name="mcp" className={`${className} [&_path]:!fill-white`} />
+      ),
+      featureName: features["settings.mcp"],
+      resourceName: tables.database
+    },
+    {
       name: "Feature Flags",
       href: "/settings/feature-flags",
       icon: BsToggles,
@@ -736,6 +751,14 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
+          path="permissions/subjects"
+          element={withAuthorizationAccessCheck(
+            <PermissionsSubjectsPage />,
+            tables.permissions,
+            "read"
+          )}
+        />
+        <Route
           path="scopes"
           element={withAuthorizationAccessCheck(
             <ScopesPage />,
@@ -836,6 +859,55 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               <ViewsPage />,
               tables.views,
               "read",
+              true
+            )}
+          />
+        </Route>
+
+        <Route path="mcp">
+          <Route index element={<Navigate to="/settings/mcp/overview" />} />
+          <Route
+            path="overview"
+            element={withAuthorizationAccessCheck(
+              <McpOverviewPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+          <Route
+            path="playbooks"
+            element={withAuthorizationAccessCheck(
+              <McpPlaybooksPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+          <Route
+            path="views"
+            element={withAuthorizationAccessCheck(
+              <McpViewsPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+          <Route
+            path="subject-access"
+            element={withAuthorizationAccessCheck(
+              <McpSubjectAccessPage />,
+              tables.database,
+              "write",
+              true
+            )}
+          />
+          <Route
+            path="check-access"
+            element={withAuthorizationAccessCheck(
+              <McpCheckAccessPage />,
+              tables.database,
+              "write",
               true
             )}
           />

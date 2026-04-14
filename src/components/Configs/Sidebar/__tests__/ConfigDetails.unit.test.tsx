@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { ConfigDetails } from "./../ConfigDetails";
 import { Provider as JotaiProvider } from "jotai";
@@ -46,8 +46,7 @@ const renderWithProviders = (component: React.ReactElement) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: false,
-        gcTime: 0
+        retry: false
       }
     }
   });

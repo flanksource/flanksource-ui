@@ -14,6 +14,12 @@ export type PermissionGlobalObject =
   | "topology"
   | "mcp";
 
+/**
+ * Selector map for `object_selector` in a permission rule.
+ *
+ * Each key narrows the permission scope for that resource type.
+ * If omitted, the permission applies to all objects of the selected global object.
+ */
 type PermissionObjectSelector = {
   playbooks?: Selectors[];
   connections?: Selectors[];
@@ -23,7 +29,11 @@ type PermissionObjectSelector = {
   views?: ViewSelector[];
 };
 
-interface Selectors {}
+interface Selectors {
+  id?: string;
+  name?: string;
+  namespace?: string;
+}
 
 interface ScopeSelector {
   namespace?: string;
@@ -47,7 +57,9 @@ export type PermissionTable = {
     | "team"
     | "person"
     | "notification"
-    | "component";
+    | "component"
+    | "role"
+    | "access_token_person";
   created_by: string;
   updated_by: string;
   created_at: string;

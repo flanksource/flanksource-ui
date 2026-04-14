@@ -28,6 +28,7 @@ type FormikConfigsDropdownProps = {
   className?: string;
   valueField?: "id" | "name";
   disabled?: boolean;
+  renderMenuInPortal?: boolean;
 };
 
 export default function FormikResourceSelectorDropdown({
@@ -43,7 +44,8 @@ export default function FormikResourceSelectorDropdown({
   playbookResourceSelector,
   className = "flex flex-col space-y-2 py-2",
   valueField = "id",
-  disabled = false
+  disabled = false,
+  renderMenuInPortal = true
 }: FormikConfigsDropdownProps) {
   const [inputText, setInputText] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -332,11 +334,15 @@ export default function FormikResourceSelectorDropdown({
         }}
         onInputChange={handleInputChange}
         inputValue={inputText ?? value}
-        menuPortalTarget={document.body}
+        menuPortalTarget={
+          renderMenuInPortal && typeof window !== "undefined"
+            ? document.body
+            : undefined
+        }
         styles={{
           menuPortal: (base) => ({ ...base, zIndex: 9999 })
         }}
-        menuPosition={"fixed"}
+        menuPosition={renderMenuInPortal ? "fixed" : "absolute"}
         menuShouldBlockScroll={true}
         onBlur={(event) => {
           field.onBlur(event);

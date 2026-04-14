@@ -17,8 +17,15 @@ export type FetchPermissionsInput = {
   connectionId?: string;
   subject?: string;
   action?: string;
-  subject_type?: "playbook" | "team" | "person" | "notification" | "component";
   direction?: "inbound" | "outbound";
+  subject_type?:
+    | "playbook"
+    | "team"
+    | "person"
+    | "notification"
+    | "component"
+    | "role"
+    | "access_token_person";
 };
 
 function composeQueryParamForFetchPermissions({
@@ -148,4 +155,88 @@ export function recheckPermission(id: string) {
   return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
     error: null
   });
+}
+
+// Source marker used by the MCP Settings UI for permissions it creates/manages.
+export const MCP_SETTINGS_PERMISSION_SOURCE = "mcp_settings" as const;
+
+export async function fetchMcpRunPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchMcpUserPermissions() {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    `/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
+  );
+
+  return response.data ?? [];
+}
+
+export type PermissionSubject = {
+  id: string;
+  name: string;
+  type:
+    | "team"
+    | "permission_subject_group"
+    | "person"
+    | "role"
+    | "access_token_person";
+  owner?: string | null;
+};
+
+export async function fetchPermissionSubjectsPaginated({
+  search = "",
+  pageIndex = 0,
+  pageSize = 20
+}: {
+  search?: string;
+  pageIndex?: number;
+  pageSize?: number;
+}) {
+  const query = search.trim();
+
+  let url = "/permission_subjects?select=id,name,type,owner&order=name.asc";
+  url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  if (query) {
+    url += `&name=ilike.*${encodeURIComponent(query)}*`;
+  }
+
+  return resolvePostGrestRequestWithPagination<PermissionSubject[]>(
+    IncidentCommander.get(url, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+}
+
+export async function fetchPermissionSubjectsByIds(ids: string[]) {
+  if (ids.length === 0) {
+    return [];
+  }
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    `/permission_subjects?select=id,name,type,owner&id=in.(${ids.join(",")})&limit=${ids.length}`
+  );
+  return response.data ?? [];
+}
+
+async function fetchPermissionSubjectsWithOrder(order: string) {
+  const response = await IncidentCommander.get<PermissionSubject[] | null>(
+    `/permission_subjects?select=id,name,type,owner&order=${order}&limit=5000`
+  );
+
+  return response.data ?? [];
+}
+
+export async function fetchPermissionSubjects() {
+  return fetchPermissionSubjectsWithOrder("name.asc");
+}
+
+export async function fetchAllPermissionSubjects() {
+  return fetchPermissionSubjectsWithOrder("type.asc,name.asc");
 }

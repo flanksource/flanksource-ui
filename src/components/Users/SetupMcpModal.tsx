@@ -77,9 +77,10 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
       title="Setup MCP"
       onClose={handleClose}
       open={isOpen}
-      bodyClass="flex h-[70vh] min-h-[620px] max-h-[70vh] w-full flex-1 flex-col overflow-hidden"
+      allowBodyScroll
+      bodyClass="flex w-full flex-col"
     >
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-hidden p-4">
+      <div className="flex w-full flex-col gap-4 p-4">
         <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
           <h3 className="text-base font-semibold text-gray-900">
             Choose how MCP should authenticate
@@ -90,16 +91,16 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
           </p>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex flex-col">
           <Tabs
             activeTab={mode}
             onSelectTab={(tab) => setMode(tab as SetupMode)}
-            contentClassName="flex min-h-0 flex-1 flex-col overflow-y-auto border border-t-0 border-gray-300 bg-white"
+            contentClassName="flex flex-col border border-t-0 border-gray-300 bg-white"
           >
             <Tab
               value="as-user"
               label="As me (full user permissions)"
-              className="h-full overflow-y-auto p-4"
+              className="h-full p-4"
             >
               <Tabs
                 activeTab={activeClient}
@@ -108,7 +109,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
                 {Object.entries(asUserConfigs).map(
                   ([key, { label, config }]) => (
                     <Tab key={key} label={label} value={key} className="p-4">
-                      <div className="max-h-64 overflow-y-auto">
+                      <div className="max-h-80 overflow-y-auto">
                         <JSONViewer
                           code={config}
                           format="json"
@@ -122,7 +123,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
               </Tabs>
 
               {mcpUsageInstructionsByClient[activeClient] && (
-                <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+                <div className="mt-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
                   {mcpUsageInstructionsByClient[activeClient]}
                 </div>
               )}
@@ -131,7 +132,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
             <Tab
               value="access-token"
               label="Access token (restricted permissions)"
-              className="h-full overflow-y-auto p-4"
+              className="h-full p-4"
             >
               {mcpTokenResponse ? (
                 <TokenDisplayContent

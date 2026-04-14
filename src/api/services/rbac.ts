@@ -54,3 +54,190 @@ export async function getPermissions(id: string): Promise<Permission[]> {
   );
   return response.data.payload ?? [];
 }
+
+export type SubjectAccessReviewResource = {
+  playbook?: string;
+  view?: string;
+  config?: string;
+  check?: string;
+  global?: string;
+  [key: string]: string | undefined;
+};
+
+export type SubjectAccessReviewAction =
+  | "read"
+  | "mcp:run"
+  | "mcp:use"
+  | "playbook:run"
+  | "playbook:cancel"
+  | "playbook:approve";
+
+export type SubjectAccessReviewRequest = {
+  resource: SubjectAccessReviewResource;
+  action: SubjectAccessReviewAction;
+  subjects: string[];
+};
+
+export type SubjectAccessReviewMatchedPolicy = {
+  subject: string;
+  object: string;
+  action: string;
+  effect: "allow" | "deny";
+  condition?: string;
+  id?: string;
+};
+
+export type SubjectAccessReviewResult = {
+  subject: string;
+  allowed: boolean;
+  reason?: string;
+  trace?: {
+    allow_count: number;
+    deny_count: number;
+    matched_policies: SubjectAccessReviewMatchedPolicy[];
+  };
+  error?: string;
+};
+
+export type SubjectAccessReviewResponse = {
+  resource: SubjectAccessReviewResource;
+  action: SubjectAccessReviewAction;
+  results: SubjectAccessReviewResult[];
+};
+
+export async function reviewSubjectAccess(
+  payload: SubjectAccessReviewRequest
+): Promise<SubjectAccessReviewResponse> {
+  const response = await Rback.post<SubjectAccessReviewResponse>(
+    "/subject-access-reviews",
+    payload
+  );
+
+  return response.data;
+}
+
+export type EffectiveSubjectResourceAccessResource = {
+  id: string;
+  type: "playbook" | "view";
+};
+
+export type EffectiveSubjectResourceAccessRequest = {
+  subject: string;
+  action: SubjectAccessReviewAction;
+  resources: EffectiveSubjectResourceAccessResource[];
+};
+
+export type EffectiveSubjectResourceAccessResult = {
+  resourceId: string;
+  resourceType: "playbook" | "view";
+  allowed: boolean;
+};
+
+export type EffectiveSubjectResourceAccessResponse = {
+  subject: string;
+  action: SubjectAccessReviewAction;
+  results: EffectiveSubjectResourceAccessResult[];
+};
+
+type SubjectAccessSearchRequest = {
+  subject: string;
+  action: SubjectAccessReviewAction;
+  resource_types?: Array<"playbook" | "view">;
+  search?: string;
+  namespace?: string;
+};
+
+type SubjectAccessSearchResponse = {
+  subject: string;
+  action: SubjectAccessReviewAction;
+  resource_types: Array<"playbook" | "view">;
+  total: number;
+  limit: number;
+  offset: number;
+  results: Array<{
+    resource_type: "playbook" | "view";
+    id: string;
+    name: string;
+    namespace?: string;
+  }>;
+};
+
+export async function fetchEffectiveSubjectResourceAccess(
+  payload: EffectiveSubjectResourceAccessRequest
+): Promise<EffectiveSubjectResourceAccessResponse> {
+  const resourceTypes = Array.from(
+    new Set(payload.resources.map((resource) => resource.type))
+  );
+
+  const allowedResourceKeys = new Set<string>();
+
+  const response = await Rback.post<SubjectAccessSearchResponse>(
+    "/subject-access-search",
+    {
+      subject: payload.subject,
+      action: payload.action,
+      resource_types: resourceTypes
+    } satisfies SubjectAccessSearchRequest
+  );
+
+  const data = response.data;
+
+  for (const result of data.results ?? []) {
+    allowedResourceKeys.add(`${result.resource_type}:${result.id}`);
+  }
+
+  return {
+    subject: payload.subject,
+    action: payload.action,
+    results: payload.resources.map((resource) => ({
+      resourceId: resource.id,
+      resourceType: resource.type,
+      allowed: allowedResourceKeys.has(`${resource.type}:${resource.id}`)
+    }))
+  };
+}
+
+export type EffectiveResourceSubjectAccessRequest = {
+  resource: EffectiveSubjectResourceAccessResource;
+  action: SubjectAccessReviewAction;
+  subjects: string[];
+};
+
+export type EffectiveResourceSubjectAccessResult = {
+  subjectId: string;
+  allowed: boolean;
+};
+
+export type EffectiveResourceSubjectAccessResponse = {
+  resource: EffectiveSubjectResourceAccessResource;
+  action: SubjectAccessReviewAction;
+  results: EffectiveResourceSubjectAccessResult[];
+};
+
+export async function fetchEffectiveResourceSubjectAccess(
+  payload: EffectiveResourceSubjectAccessRequest
+): Promise<EffectiveResourceSubjectAccessResponse> {
+  const resource: SubjectAccessReviewResource =
+    payload.resource.type === "playbook"
+      ? { playbook: payload.resource.id }
+      : { view: payload.resource.id };
+
+  const response = await reviewSubjectAccess({
+    resource,
+    action: payload.action,
+    subjects: ["*"]
+  });
+
+  const allowedBySubject = new Map(
+    (response.results ?? []).map((result) => [result.subject, result.allowed])
+  );
+
+  return {
+    resource: payload.resource,
+    action: payload.action,
+    results: payload.subjects.map((subjectId) => ({
+      subjectId,
+      allowed: allowedBySubject.get(subjectId) === true
+    }))
+  };
+}
