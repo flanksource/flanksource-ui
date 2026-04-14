@@ -8,10 +8,10 @@ import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
-function getNewestCreatedAt(changes: ConfigChange[]): string | undefined {
+function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
   let latest: string | undefined;
   for (const c of changes) {
-    const ts = typeof c.created_at === "string" ? c.created_at : undefined;
+    const ts = typeof c.inserted_at === "string" ? c.inserted_at : undefined;
     if (ts && (!latest || ts > latest)) {
       latest = ts;
     }
@@ -41,7 +41,7 @@ export function ConfigDetailsChangesPage() {
   // Initialize cursor from base data when live tail is turned on
   useEffect(() => {
     if (liveTail && data?.changes?.length && !tailCursor) {
-      setTailCursor(getNewestCreatedAt(data.changes));
+      setTailCursor(getNewestInsertedAt(data.changes));
     }
   }, [liveTail, data, tailCursor]);
 
@@ -54,7 +54,7 @@ export function ConfigDetailsChangesPage() {
   }, [liveTail]);
 
   const { data: pollData } = useGetConfigChangesByIDQuery({
-    cursor: tailCursor,
+    from_inserted_at: tailCursor,
     keepPreviousData: false,
     enabled: liveTail && !!id && !!tailCursor,
     refetchInterval: liveTail ? 5000 : false
@@ -65,7 +65,7 @@ export function ConfigDetailsChangesPage() {
     if (!pollData?.changes?.length) return;
 
     const incoming = pollData.changes;
-    const newest = getNewestCreatedAt(incoming);
+    const newest = getNewestInsertedAt(incoming);
     if (newest) {
       setTailCursor((prev) => (!prev || newest > prev ? newest : prev));
     }
