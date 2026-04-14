@@ -39,9 +39,11 @@ function useConfigChangesTagsFilter(paramPrefix?: string) {
 export function useGetAllConfigsChangesQuery(
   {
     paramPrefix,
+    from_inserted_at,
     ...queryOptions
   }: UseQueryOptions<CatalogChangesSearchResponse> & {
     paramPrefix?: string;
+    from_inserted_at?: string;
   } = {
     enabled: true,
     keepPreviousData: true
@@ -73,8 +75,9 @@ export function useGetAllConfigsChangesQuery(
     include_deleted_configs: showChangesFromDeletedConfigs,
     changeType,
     severity,
-    from,
-    to,
+    from: from_inserted_at ? undefined : from,
+    to: from_inserted_at ? undefined : to,
+    from_inserted_at,
     configTypes,
     configType,
     sortBy: sortBy[0]?.id,
@@ -93,7 +96,12 @@ export function useGetAllConfigsChangesQuery(
 }
 
 export function useGetConfigChangesByIDQuery(
-  queryOptions: UseQueryOptions<CatalogChangesSearchResponse> = {
+  {
+    from_inserted_at,
+    ...queryOptions
+  }: UseQueryOptions<CatalogChangesSearchResponse> & {
+    from_inserted_at?: string;
+  } = {
     enabled: true,
     keepPreviousData: true
   }
@@ -141,8 +149,9 @@ export function useGetConfigChangesByIDQuery(
     include_deleted_configs: showChangesFromDeletedConfigs,
     changeType: change_type,
     severity,
-    from,
-    to,
+    from: from_inserted_at ? undefined : from,
+    to: from_inserted_at ? undefined : to,
+    from_inserted_at,
     configTypes,
     sortBy: sortBy[0]?.id,
     sortOrder: sortBy[0]?.desc ? "desc" : "asc",

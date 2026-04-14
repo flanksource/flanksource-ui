@@ -23,6 +23,7 @@ export interface ConfigChange extends CreatedAt {
   tags?: Record<string, any>;
   first_observed?: string;
   count?: number;
+  inserted_at?: string;
 }
 
 export interface Change {
