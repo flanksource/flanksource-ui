@@ -18,7 +18,7 @@ export default function NotificationsPage() {
 
   const includeDeletedResources = useShowDeletedConfigs();
 
-  const { data, isLoading, refetch, isRefetching } = useQuery({
+  const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
       "notifications_send_history_summary",
       pageIndex,
@@ -42,9 +42,11 @@ export default function NotificationsPage() {
       return res;
     },
     keepPreviousData: true,
-    staleTime: 1000 * 60,
-    cacheTime: 1000 * 60 * 5
+    staleTime: 1000 * 60
   });
+
+  const isInitialLoading = isLoading;
+  const isRefetching = !isLoading && isFetching;
 
   const totalEntries = data?.total;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
@@ -53,13 +55,13 @@ export default function NotificationsPage() {
     <NotificationTabsLinks
       activeTab={"Notifications"}
       refresh={refetch}
-      isLoading={isLoading || isRefetching}
+      isLoading={isInitialLoading}
     >
       <div className="flex h-full w-full flex-1 flex-col p-3">
         <NotificationFilterBar />
         <NotificationSendHistorySummaryList
           data={data?.results ?? []}
-          isLoading={isLoading}
+          isLoading={isInitialLoading}
           isRefetching={isRefetching}
           pageCount={pageCount}
           sendHistoryRowCount={totalEntries ?? 0}
