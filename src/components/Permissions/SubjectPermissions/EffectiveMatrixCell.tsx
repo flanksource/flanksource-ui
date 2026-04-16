@@ -1,7 +1,8 @@
 import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
+import { EffectiveState } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 
 type EffectiveMatrixCellProps = {
-  state: "allowed" | "denied" | "unknown";
+  state: EffectiveState;
   notChecked?: boolean;
 };
 

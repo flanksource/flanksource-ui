@@ -1,6 +1,5 @@
 import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
-
-type AccessValue = "allow" | "deny" | "default";
+import { AccessValue } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 
 type DirectMatrixCellProps = {
   value: AccessValue;
