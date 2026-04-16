@@ -141,25 +141,74 @@ function buildLLMModel(connection: LLMConnection): LanguageModelV3 {
   }
 }
 
+function tryParseJSON(value?: string) {
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function getErrorDetail(error: unknown): unknown {
+  if (error instanceof HttpError) {
+    return tryParseJSON(error.body);
+  }
+
+  if (!(error instanceof Error) || !error.cause) {
+    return undefined;
+  }
+
+  if (error.cause instanceof Error) {
+    const cause = error.cause as Error & {
+      code?: string;
+      errno?: string | number;
+      address?: string;
+      port?: number;
+    };
+
+    return {
+      message: cause.message,
+      code: cause.code,
+      errno: cause.errno,
+      address: cause.address,
+      port: cause.port
+    };
+  }
+
+  return error.cause;
+}
+
 export async function POST(req: Request) {
+  let mcpClient: Awaited<ReturnType<typeof createMCPClient>> | undefined;
+
   const wideEvent: Record<string, any> = {
     event: "llm-conversation",
     timestamp: new Date().toISOString(),
     status: "started"
   };
 
-  const {
-    messages,
-    alwaysAllowedTools = []
-  }: { messages?: UIMessage[]; alwaysAllowedTools?: string[] } =
-    await req.json();
-  if (!Array.isArray(messages)) {
-    return new Response("Invalid request body", { status: 400 });
-  }
-
-  wideEvent.messages = messages.length;
-
   try {
+    const {
+      messages,
+      alwaysAllowedTools = []
+    }: { messages?: UIMessage[]; alwaysAllowedTools?: string[] } =
+      await req.json();
+
+    if (!Array.isArray(messages)) {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: {
+          "content-type": "application/json"
+        }
+      });
+    }
+
+    wideEvent.messages = messages.length;
+
     const backendUrl = await getBackendUrl();
     wideEvent.backendURL = backendUrl;
 
@@ -167,24 +216,26 @@ export async function POST(req: Request) {
     wideEvent.cookies = cookies.length;
 
     const llmConnection = await fetchLLMConnection(backendUrl, cookies);
-    const model = buildLLMModel(llmConnection);
     wideEvent.llm = {
       model: llmConnection.properties?.model,
       provider: llmConnection.type
     };
 
-    const mcpClient = await createMCPClient({
+    const model = buildLLMModel(llmConnection);
+
+    mcpClient = await createMCPClient({
       transport: {
         type: "http",
         url: buildURL(backendUrl, "/mcp").toString(),
         headers: {
-          // Use the user's cookie to authenticate for now.
-          // We need to add the more fine-grained MCP tokens
           Cookie: cookies
         }
       }
     });
+    wideEvent.mcpCreated = true;
+
     const tools = await buildChatTools(mcpClient, alwaysAllowedTools);
+    wideEvent.totalTools = Object.entries(tools).length;
 
     const loadedSkillTool = await loadSkillTool();
     wideEvent.skills = {
@@ -201,7 +252,6 @@ export async function POST(req: Request) {
       (tools as Record<string, unknown>).skill = loadedSkillTool.skillTool;
     }
 
-    // Build tools first so convertToModelMessages can resolve tool schemas
     const modelMessages = await convertToModelMessages(messages, { tools });
 
     const result = streamText({
@@ -213,9 +263,16 @@ export async function POST(req: Request) {
       experimental_transform: truncateToolResultTransform,
       onError: async (error) => {
         wideEvent.status = "error";
-        wideEvent.error =
-          error instanceof Error ? error.message : String(error);
+        wideEvent.error = {
+          error:
+            error instanceof Error ? error.message : "Internal Server Error",
+          detail: getErrorDetail(error),
+          provider: wideEvent.llm?.provider,
+          model: wideEvent.llm?.model
+        };
+
         await mcpClient?.close();
+        console.error(JSON.stringify(wideEvent));
       },
       onFinish: async (result) => {
         wideEvent.status = "completed";
@@ -223,25 +280,43 @@ export async function POST(req: Request) {
           totalTokens: result.usage?.totalTokens
         };
         wideEvent.finishReason = result.finishReason;
+
         await mcpClient?.close();
+        console.log(JSON.stringify(wideEvent));
       }
     });
 
-    return result.toUIMessageStreamResponse({ sendReasoning: true });
+    return result.toUIMessageStreamResponse({
+      sendReasoning: true,
+      onError: (error) =>
+        JSON.stringify({
+          error:
+            error instanceof Error ? error.message : "Internal Server Error",
+          detail: getErrorDetail(error),
+          provider: wideEvent.llm?.provider,
+          model: wideEvent.llm?.model
+        })
+    });
   } catch (error) {
     wideEvent.status = "error";
-    wideEvent.error = error instanceof Error ? error.message : String(error);
-    if (error instanceof HttpError) {
-      return new Response(error.body ?? error.message, {
-        status: error.status
-      });
-    }
-    return new Response("Internal Server Error", { status: 500 });
-  } finally {
-    if (wideEvent.status === "error") {
-      console.error(JSON.stringify(wideEvent));
-    } else {
-      console.log(JSON.stringify(wideEvent));
-    }
+    wideEvent.error = {
+      error: error instanceof Error ? error.message : "Internal Server Error",
+      detail: getErrorDetail(error),
+      provider: wideEvent.llm?.provider,
+      model: wideEvent.llm?.model
+    };
+
+    try {
+      await mcpClient?.close();
+    } catch {}
+
+    console.error(JSON.stringify(wideEvent));
+
+    return new Response(JSON.stringify(wideEvent.error), {
+      status: error instanceof HttpError ? error.status : 500,
+      headers: {
+        "content-type": "application/json"
+      }
+    });
   }
 }
