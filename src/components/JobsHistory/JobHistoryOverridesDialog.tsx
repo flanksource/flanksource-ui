@@ -85,6 +85,7 @@ const overrideFields: OverrideField[] = [
 ];
 
 const supportedLogLevels = ["info", "debug", "trace", "warn", "error"] as const;
+const EMPTY_PROPERTIES: DisableProperty[] = [];
 
 const upsertProperty = async (
   name: string,
@@ -122,7 +123,7 @@ export default function JobHistoryOverridesDialog({
 }: JobHistoryOverridesDialogProps) {
   const user = useUser();
 
-  const { data: properties = [] } = useQuery({
+  const { data: properties } = useQuery({
     queryKey: ["job_history_overrides", "properties", jobName],
     queryFn: async () => {
       const response = await fetchProperties();
@@ -132,6 +133,8 @@ export default function JobHistoryOverridesDialog({
     staleTime: 0
   });
 
+  const safeProperties = properties ?? EMPTY_PROPERTIES;
+
   const initialValues = useMemo(() => {
     const values: Record<string, string> = {};
     if (!jobName) {
@@ -140,7 +143,7 @@ export default function JobHistoryOverridesDialog({
 
     const prefix = `jobs.${jobName}.`;
     const byName = new Map(
-      properties.map((property) => [property.name, property.value])
+      safeProperties.map((property) => [property.name, property.value])
     );
 
     for (const field of overrideFields) {
@@ -156,11 +159,14 @@ export default function JobHistoryOverridesDialog({
     }
 
     return values;
-  }, [jobName, properties]);
+  }, [jobName, safeProperties]);
 
   const [values, setValues] = useState<Record<string, string>>(initialValues);
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
     setValues(initialValues);
   }, [initialValues, open]);
 
