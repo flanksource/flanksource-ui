@@ -50,11 +50,18 @@ export const getJobsHistory = async ({
 
   const durationParam = duration ? `&duration_millis=gte.${duration}` : "";
 
-  const rangeParam = startsAt
-    ? endsAt
-      ? `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`
-      : `&created_at=gt.${startsAt}`
-    : "";
+  const rangeParam = (() => {
+    if (startsAt && endsAt) {
+      return `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`;
+    }
+    if (startsAt) {
+      return `&created_at=gt.${startsAt}`;
+    }
+    if (endsAt) {
+      return `&created_at=lt.${endsAt}`;
+    }
+    return "";
+  })();
 
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<JobHistory[] | null>(

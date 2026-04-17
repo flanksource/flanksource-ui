@@ -105,6 +105,7 @@ export default function JobHistorySummary({
             <Button
               variant="outline"
               size="sm"
+              className="h-6 px-2"
               onClick={() => {
                 setSelectedJobName(row.original.name);
                 setIsOverridesDialogOpen(true);

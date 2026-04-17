@@ -30,7 +30,7 @@ import {
 import { formatJobName } from "@flanksource-ui/utils/common";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type DisableProperty = {
   name: string;
@@ -116,6 +116,13 @@ const upsertProperty = async (
   }
 };
 
+const ignoreNotFound = (error: unknown) => {
+  if (isAxiosError(error) && error.response?.status === 404) {
+    return;
+  }
+  throw error;
+};
+
 export default function JobHistoryOverridesDialog({
   open,
   jobName,
@@ -162,12 +169,13 @@ export default function JobHistoryOverridesDialog({
   }, [jobName, safeProperties]);
 
   const [values, setValues] = useState<Record<string, string>>(initialValues);
+  const wasOpenRef = useRef(open);
 
   useEffect(() => {
-    if (!open) {
-      return;
+    if (open && !wasOpenRef.current) {
+      setValues(initialValues);
     }
-    setValues(initialValues);
+    wasOpenRef.current = open;
   }, [initialValues, open]);
 
   const saveMutation = useMutation({
@@ -188,13 +196,13 @@ export default function JobHistoryOverridesDialog({
 
           if (value === "") {
             operations.push(
-              deleteProperty({ name: disabledName }).catch(() => {}),
-              deleteProperty({ name: legacyDisabledName }).catch(() => {})
+              deleteProperty({ name: disabledName }).catch(ignoreNotFound),
+              deleteProperty({ name: legacyDisabledName }).catch(ignoreNotFound)
             );
           } else {
             operations.push(upsertProperty(disabledName, value, user.user?.id));
             operations.push(
-              deleteProperty({ name: legacyDisabledName }).catch(() => {})
+              deleteProperty({ name: legacyDisabledName }).catch(ignoreNotFound)
             );
           }
 
@@ -204,7 +212,7 @@ export default function JobHistoryOverridesDialog({
         const propertyName = `${prefix}${field.key}`;
         if (value === "") {
           operations.push(
-            deleteProperty({ name: propertyName }).catch(() => {})
+            deleteProperty({ name: propertyName }).catch(ignoreNotFound)
           );
         } else {
           operations.push(upsertProperty(propertyName, value, user.user?.id));
