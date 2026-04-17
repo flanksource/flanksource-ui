@@ -100,7 +100,7 @@ export function FeatureFlagsPage() {
         contentClass="p-0 h-full"
         loading={isLoading}
       >
-        <div className="mx-auto flex h-full max-w-screen-xl flex-1 flex-col px-6 pb-0">
+        <div className="flex h-full w-full flex-1 flex-col px-6 pb-0">
           <FeatureFlagsList
             className="mt-6 overflow-y-hidden"
             data={featureFlags ?? []}
