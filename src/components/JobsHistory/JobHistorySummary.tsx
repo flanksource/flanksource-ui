@@ -102,14 +102,23 @@ export default function JobHistorySummary({
           }
         }
 
-        await deleteProperty({ name: legacyPropertyName });
+        await deleteProperty({ name: legacyPropertyName }).catch(() => {
+          // legacy property may not exist; ignore cleanup failure
+        });
         return;
       }
 
-      await Promise.all([
+      const results = await Promise.allSettled([
         deleteProperty({ name: propertyName }),
         deleteProperty({ name: legacyPropertyName })
       ]);
+
+      const hasDeleteSuccess = results.some(
+        (result) => result.status === "fulfilled"
+      );
+      if (!hasDeleteSuccess) {
+        throw new Error("Failed to enable job");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

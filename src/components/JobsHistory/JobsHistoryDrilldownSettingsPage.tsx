@@ -11,7 +11,7 @@ export default function JobsHistoryDrilldownSettingsPage() {
   const { jobName } = useParams<{ jobName: string }>();
   const [searchParams] = useSearchParams();
 
-  const decodedJobName = jobName ? decodeURIComponent(jobName) : "";
+  const decodedJobName = jobName ?? "";
 
   const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
 
