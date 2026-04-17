@@ -29,6 +29,7 @@ import {
 } from "@flanksource-ui/api/services/properties";
 import { formatJobName } from "@flanksource-ui/utils/common";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
 
 type DisableProperty = {
@@ -96,16 +97,21 @@ const upsertProperty = async (
     created_by: userID
   };
 
-  const createResponse = await saveProperty(payload);
-  if (!createResponse.data) {
-    const updateResponse = await updateProperty(payload);
-    if (!updateResponse.data) {
-      throw new Error(
-        createResponse.error?.message ??
-          updateResponse.error?.message ??
-          `Failed to update ${name}`
-      );
+  try {
+    await saveProperty(payload);
+    return;
+  } catch (error) {
+    const code = isAxiosError(error)
+      ? (error.response?.data as { code?: string } | undefined)?.code
+      : undefined;
+
+    // If the property already exists, update it instead.
+    if (code === "23505") {
+      await updateProperty(payload);
+      return;
     }
+
+    throw error;
   }
 };
 
