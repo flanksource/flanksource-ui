@@ -369,19 +369,26 @@ export const getViewsByConfigId = async (configId: string) => {
 
 export const getViewIdByNamespaceAndName = async (
   namespace: string,
-  name: string
+  name: string,
+  signal?: AbortSignal
 ) => {
   const res = await resolvePostGrestRequestWithPagination<ViewSummary[]>(
     ConfigDB.get(
-      `/views_summary?namespace=eq.${encodeURIComponent(namespace)}&name=eq.${encodeURIComponent(name)}&select=id`
+      `/views_summary?namespace=eq.${encodeURIComponent(namespace)}&name=eq.${encodeURIComponent(name)}&select=id`,
+      { signal }
     )
   );
   return res.data?.[0]?.id;
 };
 
-export const getViewIdByName = async (name: string) => {
+export const getViewIdByName = async (name: string, signal?: AbortSignal) => {
   const res = await resolvePostGrestRequestWithPagination<ViewSummary[]>(
-    ConfigDB.get(`/views_summary?name=eq.${encodeURIComponent(name)}&select=id`)
+    ConfigDB.get(
+      `/views_summary?name=eq.${encodeURIComponent(name)}&select=id`,
+      {
+        signal
+      }
+    )
   );
   return res.data?.[0]?.id;
 };

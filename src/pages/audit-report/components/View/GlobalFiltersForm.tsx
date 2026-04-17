@@ -1,5 +1,5 @@
 import { Form, Formik, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 import { ViewVariable } from "../../types";
 
@@ -18,11 +18,13 @@ function GlobalFiltersListener({
   globalVarPrefix,
   currentVariables = EMPTY_VARIABLES
 }: GlobalFiltersFormProps): React.ReactElement {
-  const { values, setFieldValue } =
-    useFormikContext<Record<string, string | undefined>>();
-  const [globalParams, setGlobalParams] =
-    usePrefixedSearchParams(globalVarPrefix);
+  const { values } = useFormikContext<Record<string, string | undefined>>();
+  const [, setGlobalParams] = usePrefixedSearchParams(globalVarPrefix);
 
+  // Sync form → URL whenever values change.
+  // The reverse direction (URL → form) is handled by initialValues in the
+  // parent so that we avoid an Effect chain (write URL → read URL → set field
+  // → write URL → …).
   useEffect(() => {
     setGlobalParams(() => {
       const newParams = new URLSearchParams();
@@ -39,28 +41,6 @@ function GlobalFiltersListener({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values, setGlobalParams]);
 
-  // Initialize form values when variables load or URL params change
-  useEffect(() => {
-    variables.forEach((variable) => {
-      const urlValue = globalParams.get(variable.key);
-      const currentValue = currentVariables[variable.key];
-      const optionItems = variable.optionItems ?? [];
-      const defaultValue =
-        variable.default ??
-        (optionItems.length > 0
-          ? optionItems[0].value
-          : variable.options.length > 0
-            ? variable.options[0]
-            : "");
-
-      const valueToUse = urlValue || currentValue || defaultValue;
-      if (valueToUse) {
-        setFieldValue(variable.key, valueToUse);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalParams.toString(), variables, currentVariables, setFieldValue]);
-
   return children as React.ReactElement;
 }
 
@@ -75,9 +55,38 @@ export default function GlobalFiltersForm({
   globalVarPrefix,
   currentVariables
 }: GlobalFiltersFormProps) {
+  const [globalParams] = usePrefixedSearchParams(globalVarPrefix);
+
+  // Compute initialValues from URL params + variable defaults so that the
+  // Formik form starts with the correct values without needing a
+  // "read URL → setFieldValue" Effect.
+  // `globalParams` is included in deps so that external URL changes (browser
+  // back/forward) trigger a reinitialisation.  Formik's deep-equality check
+  // in `enableReinitialize` prevents spurious resets when the URL simply
+  // reflects the current form values.
+  const initialValues = useMemo<Record<string, string>>(() => {
+    const values: Record<string, string> = {};
+    variables.forEach((variable) => {
+      const urlValue = globalParams.get(variable.key);
+      const currentValue = currentVariables?.[variable.key];
+      const optionItems = variable.optionItems ?? [];
+      const defaultValue =
+        variable.default ??
+        (optionItems.length > 0
+          ? optionItems[0].value
+          : variable.options.length > 0
+            ? variable.options[0]
+            : "");
+
+      const valueToUse = urlValue || currentValue || defaultValue;
+      if (valueToUse) values[variable.key] = valueToUse;
+    });
+    return values;
+  }, [globalParams, variables, currentVariables]);
+
   return (
     <Formik
-      initialValues={{}}
+      initialValues={initialValues}
       onSubmit={() => {
         // Form submission is handled by the listener
       }}
@@ -87,7 +96,6 @@ export default function GlobalFiltersForm({
         <GlobalFiltersListener
           variables={variables}
           globalVarPrefix={globalVarPrefix}
-          currentVariables={currentVariables}
         >
           {children}
         </GlobalFiltersListener>

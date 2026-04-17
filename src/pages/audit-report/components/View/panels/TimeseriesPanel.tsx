@@ -71,10 +71,6 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
   const rows = useMemo(() => summary.rows || [], [summary.rows]);
   const chartWrapperRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
-  const [cachedTicks, setCachedTicks] = useState<number[] | undefined>();
-  const [cachedDomain, setCachedDomain] = useState<
-    [number, number] | undefined
-  >();
 
   useEffect(() => {
     const el = chartWrapperRef.current;
@@ -160,20 +156,20 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
     return { min, max, span: max - min };
   }, [chartData]);
 
-  useEffect(() => {
-    if (!timeRange) return;
-    // Cache domain once per data load
-    setCachedDomain([timeRange.min, timeRange.max]);
+  // Derived directly from timeRange — no state or Effects needed.
+  const cachedDomain = useMemo<[number, number] | undefined>(() => {
+    if (!timeRange) return undefined;
+    return [timeRange.min, timeRange.max];
   }, [timeRange]);
 
-  useEffect(() => {
-    if (!timeRange || !containerWidth) return;
+  const cachedTicks = useMemo<number[] | undefined>(() => {
+    if (!timeRange || !containerWidth) return undefined;
     const targetTickCount = clamp(Math.floor(containerWidth / 70), 4, 16);
     const spaced = buildEvenlySpacedRange(
       { min: timeRange.min, max: timeRange.max },
       targetTickCount
     );
-    setCachedTicks(spaced.ticks);
+    return spaced.ticks;
   }, [timeRange, containerWidth]);
 
   const hasNoRows = rows.length === 0;
