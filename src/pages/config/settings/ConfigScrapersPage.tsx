@@ -15,7 +15,7 @@ import {
   DataTableTagsColumn,
   MRTJobHistoryStatusColumn
 } from "@flanksource-ui/components/Settings/ResourceTable";
-import { ScrapeUIDialog } from "./components/snapshot/ScrapeUIDialog";
+import { ScrapeRunViewerDialog } from "./components/scrape-run-viewer/ScrapeRunViewerDialog";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import {
   BreadcrumbNav,
@@ -258,7 +258,7 @@ export default function ConfigScrapersPage() {
       </SearchLayout>
 
       {(artifactId || jobHistoryId) && (
-        <ScrapeUIDialog
+        <ScrapeRunViewerDialog
           open={isRunDialogOpen}
           onOpenChange={(isOpen) => {
             if (!isOpen) {

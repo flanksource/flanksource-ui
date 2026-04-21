@@ -7,11 +7,11 @@ import {
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
-import { App as ScrapeUIApp } from "./viewer/App";
+import { ScrapeRunViewer } from "./viewer/ScrapeRunViewer";
 import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loading-icons";
 
-interface ScrapeUIDialogProps {
+interface ScrapeRunViewerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   artifactId?: string;
@@ -34,13 +34,13 @@ function getRunArtifactID(jobHistory: any) {
   );
 }
 
-export function ScrapeUIDialog({
+export function ScrapeRunViewerDialog({
   open,
   onOpenChange,
   artifactId,
   jobHistoryId,
   title = "Scrape Run"
-}: ScrapeUIDialogProps) {
+}: ScrapeRunViewerDialogProps) {
   const { data: jobHistory } = useQuery({
     queryKey: ["job-history", jobHistoryId],
     queryFn: () => getJobHistoryByID(jobHistoryId!),
@@ -65,7 +65,7 @@ export function ScrapeUIDialog({
   const status = jobHistory?.status;
   const isFailed = status === "FAILED";
   const runError = jobHistory?.details?.errors ?? jobHistory?.details;
-  const canRenderScrapeUI =
+  const canRenderScrapeRunViewer =
     !!resolvedArtifactId && (!jobHistoryId || isTerminal(status)) && !isFailed;
 
   return (
@@ -82,8 +82,8 @@ export function ScrapeUIDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="h-[calc(90vh-68px)] overflow-hidden">
-          {canRenderScrapeUI ? (
-            <ScrapeUIApp
+          {canRenderScrapeRunViewer ? (
+            <ScrapeRunViewer
               artifactId={resolvedArtifactId}
               syncRouteWithURL
               routeMode="search"

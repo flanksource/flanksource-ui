@@ -158,7 +158,7 @@ async function parseArtifactSnapshotResponse(
   return toSnapshot(JSON.parse(jsonText));
 }
 
-interface AppProps {
+interface ScrapeRunViewerProps {
   artifactId: string;
   syncRouteWithURL?: boolean;
   basePath?: string;
@@ -166,13 +166,13 @@ interface AppProps {
   containerClassName?: string;
 }
 
-export function App({
+export function ScrapeRunViewer({
   artifactId,
   syncRouteWithURL = true,
   basePath = "/scrapeui",
   routeMode = "path",
   containerClassName = "flex h-screen flex-col bg-gray-100"
-}: AppProps) {
+}: ScrapeRunViewerProps) {
   const [route, navigate] = useRoute({
     syncWithURL: syncRouteWithURL,
     basePath,
