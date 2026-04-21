@@ -148,38 +148,31 @@ export const JobsHistoryTableColumn: MRT_ColumnDef<JobHistory>[] = [
     }
   },
   {
-    header: "Statistics",
-    id: "statistics",
-    enableHiding: true,
-    columns: [
-      {
-        header: "Success",
-        id: "success_count",
-        accessorKey: "success_count",
-        size: 60,
-        maxSize: 100,
-        Cell: ({ row, column }) => {
-          const value = row.getValue<JobHistory["success_count"]>(column.id);
-          if (value === 0) {
-            return null;
-          }
-          return <span>{value}</span>;
-        }
-      },
-      {
-        header: "Error",
-        id: "error_count",
-        accessorKey: "error_count",
-        size: 50,
-        maxSize: 100,
-        Cell: ({ row, column }) => {
-          const value = row.getValue<JobHistory["error_count"]>(column.id);
-          if (value === 0) {
-            return null;
-          }
-          return <span className={`text-red-500`}>{value}</span>;
-        }
+    header: "Success",
+    id: "success_count",
+    accessorKey: "success_count",
+    size: 60,
+    maxSize: 100,
+    Cell: ({ row, column }) => {
+      const value = row.getValue<JobHistory["success_count"]>(column.id);
+      if (value === 0) {
+        return null;
       }
-    ]
+      return <span>{value}</span>;
+    }
+  },
+  {
+    header: "Error",
+    id: "error_count",
+    accessorKey: "error_count",
+    size: 50,
+    maxSize: 100,
+    Cell: ({ row, column }) => {
+      const value = row.getValue<JobHistory["error_count"]>(column.id);
+      if (value === 0) {
+        return null;
+      }
+      return <span className={`text-red-500`}>{value}</span>;
+    }
   }
 ];

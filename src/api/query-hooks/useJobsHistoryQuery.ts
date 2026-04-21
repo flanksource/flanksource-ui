@@ -6,7 +6,11 @@ import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTime
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getJobsHistory, GetJobsHistoryParams } from "../services/jobsHistory";
+import {
+  getJobsHistory,
+  getJobsHistoryWithArtifacts,
+  GetJobsHistoryParams
+} from "../services/jobsHistory";
 
 type Response =
   | { error: Error; data: null; totalEntries: undefined }
@@ -74,6 +78,49 @@ export function useJobsHistoryForSettingQuery(
   return useQuery<Response, Error>(
     ["jobs_history", params],
     () => getJobsHistory(params),
+    options
+  );
+}
+
+export function useScraperJobsHistoryForSettingQuery(
+  options?: UseQueryOptions<Response, Error>,
+  resourceId?: string
+) {
+  const { timeRangeAbsoluteValue } = useTimeRangeParams(
+    jobHistoryDefaultDateFilter
+  );
+
+  const [searchParams] = useSearchParams();
+  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
+  const name = searchParams.get("name") ?? "";
+  const sortBy = searchParams.get("sortBy") ?? "";
+  const sortOrder = searchParams.get("sortOrder") ?? "desc";
+  const status = searchParams.get("status") ?? "";
+  const duration = searchParams.get("runDuration") ?? undefined;
+  const durationMillis = duration
+    ? durationOptions[duration].valueInMillis
+    : undefined;
+  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
+  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
+
+  const params = {
+    pageIndex,
+    pageSize,
+    resourceType: "config_scraper",
+    name,
+    status,
+    sortBy,
+    sortOrder,
+    startsAt,
+    endsAt,
+    duration: durationMillis,
+    resourceId
+  } satisfies GetJobsHistoryParams;
+
+  return useQuery<Response, Error>(
+    ["jobs_history", "scraper", params],
+    () => getJobsHistoryWithArtifacts(params),
     options
   );
 }
