@@ -45,10 +45,9 @@ export default function ConfigScrapersPage() {
 
   const [sortState] = useReactTableSortState();
   const [searchParams, setSearchParams] = useSearchParams();
-  const artifactId = searchParams.get("artifactId") ?? undefined;
   const jobHistoryId = searchParams.get("jobHistoryId") ?? undefined;
   const isRunDialogOpen =
-    searchParams.get("scrapeui") === "1" && !!(artifactId || jobHistoryId);
+    searchParams.get("scrapeui") === "1" && !!jobHistoryId;
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["catalog", "catalog_scrapper", sortState],
@@ -173,23 +172,15 @@ export default function ConfigScrapersPage() {
               onRunComplete={() => {
                 refetch();
               }}
-              onRunSuccess={({ artifactId, jobHistoryId }) => {
+              onRunSuccess={({ jobHistoryId }) => {
+                if (!jobHistoryId) {
+                  return;
+                }
+
                 setSearchParams((prev) => {
                   const next = new URLSearchParams(prev);
                   next.set("scrapeui", "1");
-
-                  if (artifactId) {
-                    next.set("artifactId", artifactId);
-                  } else {
-                    next.delete("artifactId");
-                  }
-
-                  if (jobHistoryId) {
-                    next.set("jobHistoryId", jobHistoryId);
-                  } else {
-                    next.delete("jobHistoryId");
-                  }
-
+                  next.set("jobHistoryId", jobHistoryId);
                   next.set("scrapeTab", "spec");
                   return next;
                 });
@@ -257,7 +248,7 @@ export default function ConfigScrapersPage() {
         </ConfigPageTabs>
       </SearchLayout>
 
-      {(artifactId || jobHistoryId) && (
+      {jobHistoryId && (
         <ScrapeRunViewerDialog
           open={isRunDialogOpen}
           onOpenChange={(isOpen) => {
@@ -266,7 +257,6 @@ export default function ConfigScrapersPage() {
                 (prev) => {
                   const next = new URLSearchParams(prev);
                   next.delete("scrapeui");
-                  next.delete("artifactId");
                   next.delete("jobHistoryId");
                   next.delete("scrapeTab");
                   next.delete("scrapeId");
@@ -277,7 +267,6 @@ export default function ConfigScrapersPage() {
               );
             }
           }}
-          artifactId={artifactId}
           jobHistoryId={jobHistoryId}
           title="Scrape Run Output"
         />

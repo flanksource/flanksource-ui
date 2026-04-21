@@ -4,6 +4,6 @@ import { ScrapeRunViewer } from "./ScrapeRunViewer";
 const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
-    <ScrapeRunViewer artifactId="019da90b-3e48-5b01-e073-1f155e1ac297" />
+    <ScrapeRunViewer jobHistoryId="019daf9c-5d3e-f8ee-ae13-be5218b0e729" />
   );
 }

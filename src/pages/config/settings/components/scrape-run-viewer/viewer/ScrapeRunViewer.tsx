@@ -125,41 +125,126 @@ function toSnapshot(payload: any): Snapshot {
   };
 }
 
-async function parseArtifactSnapshotResponse(
-  response: Response
-): Promise<Snapshot> {
-  if (!response.ok) {
-    let message = `artifact download failed (${response.status})`;
+const terminalStatuses = new Set(["SUCCESS", "FAILED", "WARNING", "STOPPED"]);
 
-    try {
-      const raw = await response.text();
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          message = parsed?.error || parsed?.message || raw;
-        } catch {
-          message = raw;
-        }
+function isTerminal(status?: string) {
+  return !!status && terminalStatuses.has(status);
+}
+
+type JobHistoryRecord = {
+  status?: string;
+  time_start?: string;
+  created_at?: string;
+  details?: any;
+};
+
+type ArtifactRecord = {
+  id: string;
+  filename?: string;
+  path?: string;
+  created_at?: string;
+};
+
+async function parseArtifactError(response: Response, fallback: string) {
+  let message = fallback;
+
+  try {
+    const raw = await response.text();
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        message = parsed?.error || parsed?.message || raw;
+      } catch {
+        message = raw;
       }
-    } catch {
-      // ignore body parsing errors and use fallback message
     }
+  } catch {
+    // ignore body parsing errors and use fallback message
+  }
 
+  return message;
+}
+
+async function readArtifactText(response: Response): Promise<string> {
+  if (!response.ok) {
+    const message = await parseArtifactError(
+      response,
+      `artifact download failed (${response.status})`
+    );
     throw new Error(message);
   }
 
   const bytes = new Uint8Array(await response.arrayBuffer());
   const isGzip = bytes.length > 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
 
-  const jsonText = isGzip
+  return isGzip
     ? (pako.ungzip(bytes, { to: "string" }) as string)
     : new TextDecoder().decode(bytes);
+}
 
+async function parseArtifactSnapshotResponse(
+  response: Response
+): Promise<Snapshot> {
+  const jsonText = await readArtifactText(response);
   return toSnapshot(JSON.parse(jsonText));
 }
 
+async function parseArtifactJSONResponse<T>(response: Response): Promise<T> {
+  const jsonText = await readArtifactText(response);
+  return JSON.parse(jsonText) as T;
+}
+
+function artifactName(artifact: ArtifactRecord): string {
+  const file = artifact.filename || artifact.path?.split("/").pop() || "";
+  return file.toLowerCase();
+}
+
+function pickArtifact(
+  artifacts: ArtifactRecord[],
+  matcher: (name: string) => boolean
+): ArtifactRecord | undefined {
+  return artifacts.find((artifact) => matcher(artifactName(artifact)));
+}
+
+async function fetchJobHistory(
+  jobHistoryId: string
+): Promise<JobHistoryRecord | null> {
+  const response = await fetch(
+    `/api/db/job_histories?select=*&id=eq.${encodeURIComponent(jobHistoryId)}&limit=1`
+  );
+
+  if (!response.ok) {
+    const message = await parseArtifactError(
+      response,
+      `failed to fetch job history (${response.status})`
+    );
+    throw new Error(message);
+  }
+
+  const rows = (await response.json()) as JobHistoryRecord[];
+  return rows?.[0] ?? null;
+}
+
+async function fetchArtifactsForJobHistory(
+  jobHistoryId: string
+): Promise<ArtifactRecord[]> {
+  const response = await fetch(
+    `/api/db/artifacts?select=id,filename,path,created_at&job_history_id=eq.${encodeURIComponent(jobHistoryId)}&deleted_at=is.null&order=created_at.desc`
+  );
+
+  if (!response.ok) {
+    const message = await parseArtifactError(
+      response,
+      `failed to fetch run artifacts (${response.status})`
+    );
+    throw new Error(message);
+  }
+
+  return (await response.json()) as ArtifactRecord[];
+}
+
 interface ScrapeRunViewerProps {
-  artifactId: string;
+  jobHistoryId: string;
   syncRouteWithURL?: boolean;
   basePath?: string;
   routeMode?: "path" | "hash" | "search";
@@ -167,7 +252,7 @@ interface ScrapeRunViewerProps {
 }
 
 export function ScrapeRunViewer({
-  artifactId,
+  jobHistoryId,
   syncRouteWithURL = true,
   basePath = "/scrapeui",
   routeMode = "path",
@@ -196,6 +281,10 @@ export function ScrapeRunViewer({
   const logsRef = useRef<HTMLDivElement>(null);
   const initialTabRef = useRef(tab);
   const navigateRef = useRef(navigate);
+  const summaryArtifactIdRef = useRef<string | undefined>(undefined);
+  const logsArtifactIdRef = useRef<string | undefined>(undefined);
+  const harArtifactIdRef = useRef<string | undefined>(undefined);
+  const snapshotsArtifactIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     navigateRef.current = navigate;
@@ -222,30 +311,189 @@ export function ScrapeRunViewer({
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const mergeSnapshot = (partial: Partial<Snapshot>) => {
+      setSnapshot((prev) => {
+        if (!prev) return prev;
+        return { ...prev, ...partial };
+      });
+    };
+
+    const loadArtifacts = async (artifacts: ArtifactRecord[]) => {
+      const summaryArtifact = pickArtifact(
+        artifacts,
+        (name) =>
+          name.includes("summary") &&
+          (name.endsWith(".json") || name.endsWith(".json.gz"))
+      );
+
+      if (
+        summaryArtifact &&
+        summaryArtifact.id !== summaryArtifactIdRef.current
+      ) {
+        const snap = await fetch(
+          `/api/artifacts/download/${encodeURIComponent(summaryArtifact.id)}`
+        ).then(parseArtifactSnapshotResponse);
+
+        if (cancelled) return;
+        summaryArtifactIdRef.current = summaryArtifact.id;
+        applySnap(snap);
+      }
+
+      const logsArtifact = pickArtifact(
+        artifacts,
+        (name) => name === "logs.txt" || name === "logs.txt.gz"
+      );
+      if (logsArtifact && logsArtifact.id !== logsArtifactIdRef.current) {
+        const logs = await fetch(
+          `/api/artifacts/download/${encodeURIComponent(logsArtifact.id)}`
+        ).then(readArtifactText);
+
+        if (cancelled) return;
+        logsArtifactIdRef.current = logsArtifact.id;
+        mergeSnapshot({ logs });
+      }
+
+      const harArtifact = pickArtifact(
+        artifacts,
+        (name) => name === "har.json" || name === "har.json.gz"
+      );
+      if (harArtifact && harArtifact.id !== harArtifactIdRef.current) {
+        const rawHar = await fetch(
+          `/api/artifacts/download/${encodeURIComponent(harArtifact.id)}`
+        ).then(parseArtifactJSONResponse<any>);
+
+        if (cancelled) return;
+
+        const entries = Array.isArray(rawHar)
+          ? rawHar
+          : rawHar?.log?.entries || rawHar?.entries || [];
+
+        harArtifactIdRef.current = harArtifact.id;
+        mergeSnapshot({ har: entries });
+      }
+
+      const snapshotsArtifact = pickArtifact(
+        artifacts,
+        (name) => name === "snapshots.json" || name === "snapshots.json.gz"
+      );
+      if (
+        snapshotsArtifact &&
+        snapshotsArtifact.id !== snapshotsArtifactIdRef.current
+      ) {
+        const snapshots = await fetch(
+          `/api/artifacts/download/${encodeURIComponent(snapshotsArtifact.id)}`
+        ).then(parseArtifactJSONResponse<Record<string, any>>);
+
+        if (cancelled) return;
+        snapshotsArtifactIdRef.current = snapshotsArtifact.id;
+        mergeSnapshot({ snapshots });
+      }
+    };
+
+    const poll = async () => {
+      try {
+        const jobHistory = await fetchJobHistory(jobHistoryId);
+
+        if (cancelled) return;
+
+        if (!jobHistory) {
+          setStatus("Waiting for job history...");
+          return;
+        }
+
+        if (!startRef.current) {
+          const startedAt =
+            (jobHistory.time_start &&
+              new Date(jobHistory.time_start).getTime()) ||
+            (jobHistory.created_at &&
+              new Date(jobHistory.created_at).getTime()) ||
+            Date.now();
+          startRef.current = startedAt;
+        }
+
+        const currentStatus = jobHistory.status;
+        const terminal = isTerminal(currentStatus);
+
+        if (!terminal) {
+          setStatus(
+            currentStatus ? `Scraping... (${currentStatus})` : "Scraping..."
+          );
+          return;
+        }
+
+        if (currentStatus === "FAILED") {
+          setStatus("Scrape failed");
+        } else {
+          setStatus("Scrape complete");
+        }
+
+        const artifacts = await fetchArtifactsForJobHistory(jobHistoryId);
+
+        if (cancelled) return;
+
+        if (artifacts.length > 0) {
+          await loadArtifacts(artifacts);
+        } else {
+          setStatus("Run completed. Waiting for artifacts...");
+        }
+
+        const hasSummary = !!summaryArtifactIdRef.current;
+        const shouldComplete =
+          terminal && (currentStatus === "FAILED" || hasSummary);
+
+        if (shouldComplete) {
+          doneRef.current = true;
+          setDone(true);
+          if (startRef.current) {
+            setElapsed(Date.now() - startRef.current);
+          }
+        }
+      } catch (error: unknown) {
+        if (cancelled) return;
+        const message =
+          error instanceof Error ? error.message : "Failed to load scrape run";
+        setStatus(message);
+      } finally {
+        if (!cancelled && !doneRef.current) {
+          timer = setTimeout(poll, 2000);
+        }
+      }
+    };
+
     doneRef.current = false;
     setDone(false);
     setStatus("Loading...");
+    setSnapshot(null);
+    setSelected(null);
+    setElapsed(0);
+    startRef.current = 0;
+    summaryArtifactIdRef.current = undefined;
+    logsArtifactIdRef.current = undefined;
+    harArtifactIdRef.current = undefined;
+    snapshotsArtifactIdRef.current = undefined;
 
-    fetch(`/api/artifacts/download/${encodeURIComponent(artifactId)}`)
-      .then(parseArtifactSnapshotResponse)
-      .then((snap) => applySnap(snap))
-      .catch((error: unknown) => {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "Failed to load scrape artifact";
-        setStatus(message);
-      });
+    poll();
 
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [applySnap, jobHistoryId]);
+
+  useEffect(() => {
     const timer = setInterval(() => {
-      if (startRef.current && !doneRef.current)
+      if (startRef.current && !doneRef.current) {
         setElapsed(Date.now() - startRef.current);
+      }
     }, 1000);
 
     return () => {
       clearInterval(timer);
     };
-  }, [applySnap, artifactId]);
+  }, []);
 
   const tabRef = useRef(tab);
   tabRef.current = tab;

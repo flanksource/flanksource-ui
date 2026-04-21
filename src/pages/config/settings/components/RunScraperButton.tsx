@@ -27,7 +27,6 @@ const RUN_LOG_LEVELS = ["trace", "debug", "info", "warn", "error"] as const;
 type RunLogLevel = (typeof RUN_LOG_LEVELS)[number];
 
 type RunScraperSuccessPayload = {
-  artifactId?: string;
   jobHistoryId?: string;
 };
 
@@ -65,17 +64,13 @@ export function RunScraperButton({
         captureSnapshots
       });
       const payload = response?.data?.payload ?? response?.data;
-      const runArtifactId = payload?.run_artifact_id;
       const jobHistoryId = payload?.job_history_id;
 
       toastSuccess("Scraper started successfully");
       setIsDialogOpen(false);
 
-      if (openScrapeUI && (runArtifactId || jobHistoryId)) {
-        onRunSuccess({
-          artifactId: runArtifactId,
-          jobHistoryId
-        });
+      if (openScrapeUI && jobHistoryId) {
+        onRunSuccess({ jobHistoryId });
       }
     } catch (err) {
       setError(err);
@@ -116,28 +111,26 @@ export function RunScraperButton({
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-700">Log level</p>
-              <Select
-                value={logLevel}
-                onValueChange={(value) => setLogLevel(value as RunLogLevel)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select log level" />
-                </SelectTrigger>
-                <SelectContent>
-                  {RUN_LOG_LEVELS.map((level) => (
-                    <SelectItem key={level} value={level}>
-                      {level.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">Log level</p>
+                <Select
+                  value={logLevel}
+                  onValueChange={(value) => setLogLevel(value as RunLogLevel)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select log level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RUN_LOG_LEVELS.map((level) => (
+                      <SelectItem key={level} value={level}>
+                        {level.toUpperCase()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-gray-700">Run options</p>
-
-              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+              <div className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm font-medium text-gray-700">
                     Capture logs
@@ -152,7 +145,7 @@ export function RunScraperButton({
                 />
               </div>
 
-              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+              <div className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm font-medium text-gray-700">
                     Capture snapshots
@@ -167,7 +160,7 @@ export function RunScraperButton({
                 />
               </div>
 
-              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+              <div className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm font-medium text-gray-700">
                     Capture HAR
@@ -178,21 +171,21 @@ export function RunScraperButton({
                 </div>
                 <Switch checked={captureHAR} onCheckedChange={setCaptureHAR} />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
-              <div>
-                <p className="text-sm font-medium text-gray-700">
-                  Open Scrape UI
-                </p>
-                <p className="text-xs text-gray-500">
-                  Automatically open run output dialog after starting.
-                </p>
+              <div className="flex items-center justify-between py-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    Open Scrape UI
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Automatically open run output dialog after starting.
+                  </p>
+                </div>
+                <Switch
+                  checked={openScrapeUI}
+                  onCheckedChange={setOpenScrapeUI}
+                />
               </div>
-              <Switch
-                checked={openScrapeUI}
-                onCheckedChange={setOpenScrapeUI}
-              />
             </div>
           </div>
 

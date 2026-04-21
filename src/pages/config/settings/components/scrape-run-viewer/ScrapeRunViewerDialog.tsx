@@ -1,4 +1,3 @@
-import { getJobHistoryByID } from "@flanksource-ui/api/services/jobsHistory";
 import {
   Dialog,
   DialogContent,
@@ -6,113 +5,37 @@ import {
   DialogHeader,
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
-import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { ScrapeRunViewer } from "./viewer/ScrapeRunViewer";
-import { useQuery } from "@tanstack/react-query";
-import { Oval } from "react-loading-icons";
 
 interface ScrapeRunViewerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  artifactId?: string;
-  jobHistoryId?: string;
+  jobHistoryId: string;
   title?: string;
-}
-
-const terminalStatuses = new Set(["SUCCESS", "FAILED", "WARNING", "STOPPED"]);
-
-function isTerminal(status?: string) {
-  return !!status && terminalStatuses.has(status);
-}
-
-function getRunArtifactID(jobHistory: any) {
-  return (
-    jobHistory?.details?.run_artifact_id ??
-    jobHistory?.details?.runArtifactId ??
-    jobHistory?.details?.artifact_id ??
-    jobHistory?.details?.artifactId
-  );
 }
 
 export function ScrapeRunViewerDialog({
   open,
   onOpenChange,
-  artifactId,
   jobHistoryId,
   title = "Scrape Run"
 }: ScrapeRunViewerDialogProps) {
-  const { data: jobHistory } = useQuery({
-    queryKey: ["job-history", jobHistoryId],
-    queryFn: () => getJobHistoryByID(jobHistoryId!),
-    enabled: open && !!jobHistoryId,
-    refetchInterval: (data) => {
-      const status = data?.status;
-      const runArtifactId = getRunArtifactID(data);
-
-      if (runArtifactId && isTerminal(status)) {
-        return false;
-      }
-
-      if (isTerminal(status)) {
-        return false;
-      }
-
-      return 2000;
-    }
-  });
-
-  const resolvedArtifactId = artifactId ?? getRunArtifactID(jobHistory);
-  const status = jobHistory?.status;
-  const isFailed = status === "FAILED";
-  const runError = jobHistory?.details?.errors ?? jobHistory?.details;
-  const canRenderScrapeRunViewer =
-    !!resolvedArtifactId && (!jobHistoryId || isTerminal(status)) && !isFailed;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-[90vh] w-[95vw] max-w-[95vw] gap-0 overflow-hidden p-0">
         <DialogHeader className="border-b px-4 py-3">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="font-mono text-xs">
-            {resolvedArtifactId
-              ? `Artifact: ${resolvedArtifactId}`
-              : jobHistoryId
-                ? `Job History: ${jobHistoryId}`
-                : "Waiting for run artifact..."}
+            Job History: {jobHistoryId}
           </DialogDescription>
         </DialogHeader>
         <div className="h-[calc(90vh-68px)] overflow-hidden">
-          {canRenderScrapeRunViewer ? (
-            <ScrapeRunViewer
-              artifactId={resolvedArtifactId}
-              syncRouteWithURL
-              routeMode="search"
-              containerClassName="flex h-full flex-col bg-gray-100"
-            />
-          ) : isFailed ? (
-            <div className="h-full overflow-auto bg-gray-50 p-6">
-              <div className="mx-auto flex max-w-3xl flex-col gap-4">
-                <p className="text-sm font-medium text-gray-700">
-                  Scraper run failed.
-                </p>
-                <ErrorViewer error={runError ?? "Scraper run failed"} />
-              </div>
-            </div>
-          ) : (
-            <div className="flex h-full items-center justify-center bg-gray-50 p-6">
-              <div className="flex max-w-xl flex-col items-center gap-3 text-center">
-                <Oval stroke="currentColor" className="h-5 w-5 text-gray-500" />
-                <p className="text-sm text-gray-700">
-                  Waiting for scraper run to complete and produce artifact...
-                </p>
-                {status && (
-                  <p className="font-mono text-xs text-gray-500">
-                    Status: {status}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
+          <ScrapeRunViewer
+            jobHistoryId={jobHistoryId}
+            syncRouteWithURL
+            routeMode="search"
+            containerClassName="flex h-full flex-col bg-gray-100"
+          />
         </div>
       </DialogContent>
     </Dialog>
