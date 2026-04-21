@@ -255,6 +255,7 @@ export function DetailPanel({
               {item.name || item.id}
             </h2>
             <button
+              type="button"
               className="text-gray-300 transition-colors hover:text-blue-500"
               title="Copy link to this config"
               onClick={() => {

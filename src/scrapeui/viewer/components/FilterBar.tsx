@@ -39,6 +39,7 @@ export function FilterBar({
         const colors = HEALTH_COLORS[h] || HEALTH_COLORS["unknown"];
         return (
           <button
+            type="button"
             key={h}
             className={`rounded-full border px-2 py-0.5 text-xs transition-all ${
               active
@@ -60,6 +61,7 @@ export function FilterBar({
         const active = filters.type.has(t);
         return (
           <button
+            type="button"
             key={t}
             className={`rounded-full border px-2 py-0.5 text-xs transition-all ${
               active
@@ -76,6 +78,7 @@ export function FilterBar({
       })}
       {(filters.health.size > 0 || filters.type.size > 0) && (
         <button
+          type="button"
           className="ml-1 text-xs text-gray-400 hover:text-gray-600"
           onClick={() => onChange({ health: new Set(), type: new Set() })}
         >

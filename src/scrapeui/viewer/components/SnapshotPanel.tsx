@@ -304,6 +304,7 @@ export function SnapshotPanel({ pairs }: Props) {
               (v === "before" && !pair?.before);
             return (
               <button
+                type="button"
                 key={v}
                 disabled={disabled}
                 className={`px-3 py-1 capitalize ${view === v ? "bg-blue-500 text-white" : disabled ? "cursor-not-allowed bg-white text-gray-300" : "bg-white text-gray-600 hover:bg-gray-50"}`}

@@ -214,5 +214,9 @@ export async function getIntegrationWithJobStatus(id: string) {
 }
 
 export async function runConfigScraper(scraperId: string) {
-  return Config.post(`/run/${scraperId}`);
+  return Config.post(`/run/${scraperId}`, undefined, {
+    params: {
+      async: true
+    }
+  });
 }

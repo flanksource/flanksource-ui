@@ -34,8 +34,9 @@ import { Play } from "lucide-react";
 import { Oval } from "react-loading-icons";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import { ScrapeUIDialog } from "@flanksource-ui/scrapeui/ScrapeUIDialog";
 
 export const catalogScraperResourceInfo = schemaResourceTypes.find(
   (resource) => resource.table === "config_scrapers"
@@ -48,11 +49,13 @@ type ConfigScraperRow = SchemaResourceWithJobStatus & {
 function RunScraperButton({
   scraperId,
   onRunStart,
-  onRunComplete
+  onRunComplete,
+  onRunSuccess
 }: {
   scraperId: string;
   onRunStart: () => void;
   onRunComplete: () => void;
+  onRunSuccess: (artifactId: string) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -62,8 +65,15 @@ function RunScraperButton({
     setError(null);
     onRunStart();
     try {
-      await runConfigScraper(scraperId);
-      toastSuccess("Scraper ran successfully");
+      const response = await runConfigScraper(scraperId);
+      const payload = response?.data?.payload ?? response?.data;
+      const runArtifactId = payload?.run_artifact_id;
+
+      toastSuccess("Scraper started successfully");
+
+      if (runArtifactId) {
+        onRunSuccess(runArtifactId);
+      }
     } catch (err) {
       setError(err);
     } finally {
@@ -109,6 +119,9 @@ export default function ConfigScrapersPage() {
   const navigate = useNavigate();
 
   const [sortState] = useReactTableSortState();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const artifactId = searchParams.get("artifactId");
+  const isRunDialogOpen = searchParams.get("scrapeui") === "1" && !!artifactId;
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["catalog", "catalog_scrapper", sortState],
@@ -233,12 +246,21 @@ export default function ConfigScrapersPage() {
               onRunComplete={() => {
                 refetch();
               }}
+              onRunSuccess={(artifactId) => {
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.set("scrapeui", "1");
+                  next.set("artifactId", artifactId);
+                  next.set("scrapeTab", "spec");
+                  return next;
+                });
+              }}
             />
           );
         }
       }
     ],
-    [refetch]
+    [refetch, setSearchParams]
   );
 
   const dataWithTable = useMemo<ConfigScraperRow[]>(() => {
@@ -295,6 +317,30 @@ export default function ConfigScrapersPage() {
           </div>
         </ConfigPageTabs>
       </SearchLayout>
+
+      {artifactId && (
+        <ScrapeUIDialog
+          open={isRunDialogOpen}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setSearchParams(
+                (prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.delete("scrapeui");
+                  next.delete("artifactId");
+                  next.delete("scrapeTab");
+                  next.delete("scrapeId");
+                  next.delete("scrapeQ");
+                  return next;
+                },
+                { replace: true }
+              );
+            }
+          }}
+          artifactId={artifactId}
+          title="Scrape Run Output"
+        />
+      )}
     </>
   );
 }

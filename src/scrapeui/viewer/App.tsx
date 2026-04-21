@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import type { Snapshot, ScrapeResult, Tab } from "./types";
+import pako from "pako";
+import type { Counts, Snapshot, ScrapeResult, Tab } from "./types";
 import {
   groupByType,
   filterItems,
@@ -69,8 +70,98 @@ const TAB_DEFS: { key: Tab; label: string; icon: string; countKey?: string }[] =
     { key: "spec", label: "Spec", icon: "codicon:file-code" }
   ];
 
-export function App() {
-  const [route, navigate] = useRoute();
+function buildCounts(results: any, relationships: any[]): Counts {
+  const configs = results?.configs || [];
+  return {
+    configs: configs.length,
+    changes: (results?.changes || []).length,
+    analysis: (results?.analysis || []).length,
+    relationships: (relationships || []).length,
+    external_users: (results?.external_users || []).length,
+    external_groups: (results?.external_groups || []).length,
+    external_roles: (results?.external_roles || []).length,
+    config_access: (results?.config_access || []).length,
+    access_logs: (results?.config_access_logs || []).length,
+    errors: configs.filter((r: any) => !!r?.error).length
+  };
+}
+
+function toSnapshot(payload: any): Snapshot {
+  if (payload?.scrapers && payload?.results && payload?.counts) {
+    return payload as Snapshot;
+  }
+
+  const results = payload?.results || {};
+  const relationships = payload?.relationships || results?.relationships || [];
+  const startedAtMs = payload?.started_at
+    ? new Date(payload.started_at).getTime()
+    : Date.now();
+
+  const snapshots = payload?.snapshot_pair
+    ? {
+        [payload?.scraper_name || payload?.scraper_id || "run"]:
+          payload.snapshot_pair
+      }
+    : undefined;
+
+  return {
+    scrapers: payload?.scrapers || [],
+    results,
+    relationships,
+    config_meta: payload?.config_meta,
+    issues: payload?.issues || [],
+    counts: buildCounts(results, relationships),
+    save_summary: payload?.save_summary,
+    snapshots,
+    scrape_spec: payload?.scrape_spec,
+    properties: payload?.properties,
+    log_level: payload?.log_level,
+    har: payload?.har || [],
+    logs: payload?.logs || "",
+    done: payload?.done ?? true,
+    started_at: Number.isFinite(startedAtMs) ? startedAtMs : Date.now(),
+    build_info: payload?.build_info,
+    last_scrape_summary: payload?.last_scrape_summary
+  };
+}
+
+async function parseArtifactSnapshotResponse(
+  response: Response
+): Promise<Snapshot> {
+  if (!response.ok) {
+    throw new Error(`artifact download failed: ${response.status}`);
+  }
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  const isGzip = bytes.length > 2 && bytes[0] === 0x1f && bytes[1] === 0x8b;
+
+  const jsonText = isGzip
+    ? (pako.ungzip(bytes, { to: "string" }) as string)
+    : new TextDecoder().decode(bytes);
+
+  return toSnapshot(JSON.parse(jsonText));
+}
+
+interface AppProps {
+  artifactId: string;
+  syncRouteWithURL?: boolean;
+  basePath?: string;
+  routeMode?: "path" | "hash" | "search";
+  containerClassName?: string;
+}
+
+export function App({
+  artifactId,
+  syncRouteWithURL = true,
+  basePath = "/scrapeui",
+  routeMode = "path",
+  containerClassName = "flex h-screen flex-col bg-gray-100"
+}: AppProps) {
+  const [route, navigate] = useRoute({
+    syncWithURL: syncRouteWithURL,
+    basePath,
+    mode: routeMode
+  });
   const { tab, id: routeId, q: routeQ } = route;
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [done, setDone] = useState(false);
@@ -113,26 +204,14 @@ export function App() {
   );
 
   useEffect(() => {
-    fetch("/api/scrape")
-      .then((r) => r.json())
-      .then((snap: Snapshot) => applySnap(snap))
-      .catch(() => {});
+    doneRef.current = false;
+    setDone(false);
+    setStatus("Loading...");
 
-    const es = new EventSource("/api/scrape/stream");
-    es.addEventListener("message", (e: MessageEvent) => {
-      const snap: Snapshot = JSON.parse(e.data);
-      applySnap(snap);
-      if (snap.done) es.close();
-    });
-    es.addEventListener("done", () => {
-      doneRef.current = true;
-      setDone(true);
-      setStatus("Scrape complete");
-      es.close();
-    });
-    es.onerror = () => {
-      if (!doneRef.current) setStatus("Connection lost — retrying...");
-    };
+    fetch(`/api/artifacts/download/${encodeURIComponent(artifactId)}`)
+      .then(parseArtifactSnapshotResponse)
+      .then((snap) => applySnap(snap))
+      .catch(() => setStatus("Failed to load scrape artifact"));
 
     const timer = setInterval(() => {
       if (startRef.current && !doneRef.current)
@@ -140,10 +219,9 @@ export function App() {
     }, 1000);
 
     return () => {
-      es.close();
       clearInterval(timer);
     };
-  }, [applySnap]);
+  }, [applySnap, artifactId]);
 
   const tabRef = useRef(tab);
   tabRef.current = tab;
@@ -307,7 +385,7 @@ export function App() {
   );
 
   return (
-    <div className="flex h-screen flex-col bg-gray-100">
+    <div className={containerClassName}>
       {/* Header */}
       <div className="border-b bg-white px-6 py-3">
         <div className="flex items-center justify-between">
@@ -407,6 +485,7 @@ export function App() {
 
           return (
             <button
+              type="button"
               key={t.key}
               className={`flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm transition-colors ${
                 isActive
@@ -445,6 +524,7 @@ export function App() {
             />
             {search && (
               <button
+                type="button"
                 className="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 onClick={() => setSearch("")}
               >
@@ -453,6 +533,7 @@ export function App() {
             )}
           </div>
           <button
+            type="button"
             className="rounded p-1 text-gray-400 transition-colors hover:text-blue-600"
             title="Copy link to current view"
             onClick={() => {
@@ -474,12 +555,14 @@ export function App() {
               {configs.length > 0 && (
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-200"
                     onClick={() => setExpandAll(true)}
                   >
                     Expand
                   </button>
                   <button
+                    type="button"
                     className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-200"
                     onClick={() => setExpandAll(false)}
                   >

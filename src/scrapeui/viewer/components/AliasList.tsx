@@ -13,6 +13,7 @@ export function AliasList({ aliases }: Props) {
         >
           <span className="flex-1 break-all">{alias}</span>
           <button
+            type="button"
             className="shrink-0 text-gray-300 opacity-0 transition-opacity hover:text-gray-600 group-hover:opacity-100"
             title="Copy"
             onClick={(e) => {
