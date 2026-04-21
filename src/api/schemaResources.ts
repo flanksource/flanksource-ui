@@ -213,10 +213,21 @@ export async function getIntegrationWithJobStatus(id: string) {
   return res.data?.[0];
 }
 
-export async function runConfigScraper(scraperId: string) {
+export type RunConfigScraperOptions = {
+  async?: boolean;
+  logLevel?: "trace" | "debug" | "info" | "warn" | "error";
+};
+
+export async function runConfigScraper(
+  scraperId: string,
+  options: RunConfigScraperOptions = {}
+) {
+  const { async: asyncRun = true, logLevel } = options;
+
   return Config.post(`/run/${scraperId}`, undefined, {
     params: {
-      async: true
+      async: asyncRun,
+      ...(logLevel ? { logLevel } : {})
     }
   });
 }

@@ -79,3 +79,11 @@ export const getJobsHistoryNames = async () => {
   );
   return res.data ?? [];
 };
+
+export const getJobHistoryByID = async (jobHistoryID: string) => {
+  const res = await IncidentCommander.get<JobHistory[] | null>(
+    `/job_histories?select=*&id=eq.${jobHistoryID}&limit=1`
+  );
+
+  return res.data?.[0] ?? null;
+};

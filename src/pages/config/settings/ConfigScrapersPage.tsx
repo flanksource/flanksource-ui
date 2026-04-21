@@ -37,6 +37,22 @@ import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { ScrapeUIDialog } from "@flanksource-ui/scrapeui/ScrapeUIDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@flanksource-ui/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@flanksource-ui/components/ui/select";
+import { Switch } from "@flanksource-ui/components/ui/switch";
 
 export const catalogScraperResourceInfo = schemaResourceTypes.find(
   (resource) => resource.table === "config_scrapers"
@@ -44,6 +60,14 @@ export const catalogScraperResourceInfo = schemaResourceTypes.find(
 
 type ConfigScraperRow = SchemaResourceWithJobStatus & {
   table: SchemaResourceType["table"];
+};
+
+const RUN_LOG_LEVELS = ["trace", "debug", "info", "warn", "error"] as const;
+type RunLogLevel = (typeof RUN_LOG_LEVELS)[number];
+
+type RunScraperSuccessPayload = {
+  artifactId?: string;
+  jobHistoryId?: string;
 };
 
 function RunScraperButton({
@@ -55,24 +79,32 @@ function RunScraperButton({
   scraperId: string;
   onRunStart: () => void;
   onRunComplete: () => void;
-  onRunSuccess: (artifactId: string) => void;
+  onRunSuccess: (payload: RunScraperSuccessPayload) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [logLevel, setLogLevel] = useState<RunLogLevel>("info");
+  const [openScrapeUI, setOpenScrapeUI] = useState(true);
 
   const handleRun = async () => {
     setIsRunning(true);
     setError(null);
     onRunStart();
     try {
-      const response = await runConfigScraper(scraperId);
+      const response = await runConfigScraper(scraperId, { logLevel });
       const payload = response?.data?.payload ?? response?.data;
       const runArtifactId = payload?.run_artifact_id;
+      const jobHistoryId = payload?.job_history_id;
 
       toastSuccess("Scraper started successfully");
+      setIsDialogOpen(false);
 
-      if (runArtifactId) {
-        onRunSuccess(runArtifactId);
+      if (openScrapeUI && (runArtifactId || jobHistoryId)) {
+        onRunSuccess({
+          artifactId: runArtifactId,
+          jobHistoryId
+        });
       }
     } catch (err) {
       setError(err);
@@ -89,17 +121,83 @@ function RunScraperButton({
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          handleRun();
+          setIsDialogOpen(true);
         }}
         disabled={isRunning}
       >
-        {isRunning ? (
-          <Oval stroke="currentColor" className="mr-2 h-3.5 w-3.5" />
-        ) : (
-          <Play className="mr-2 h-3.5 w-3.5" />
-        )}
+        <Play className="mr-2 h-3.5 w-3.5" />
         Run
       </Button>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent
+          className="sm:max-w-md"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle>Run scraper</DialogTitle>
+            <DialogDescription>
+              Configure this run before starting the scraper.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Log level</p>
+              <Select
+                value={logLevel}
+                onValueChange={(value) => setLogLevel(value as RunLogLevel)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select log level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RUN_LOG_LEVELS.map((level) => (
+                    <SelectItem key={level} value={level}>
+                      {level.toUpperCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+              <div>
+                <p className="text-sm font-medium text-gray-700">
+                  Open Scrape UI
+                </p>
+                <p className="text-xs text-gray-500">
+                  Automatically open run output dialog after starting.
+                </p>
+              </div>
+              <Switch
+                checked={openScrapeUI}
+                onCheckedChange={setOpenScrapeUI}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              onClick={() => setIsDialogOpen(false)}
+              disabled={isRunning}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleRun} disabled={isRunning}>
+              {isRunning ? (
+                <Oval stroke="currentColor" className="mr-2 h-3.5 w-3.5" />
+              ) : (
+                <Play className="mr-2 h-3.5 w-3.5" />
+              )}
+              Run
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Modal
         title="Scraper Run Failed"
@@ -120,8 +218,10 @@ export default function ConfigScrapersPage() {
 
   const [sortState] = useReactTableSortState();
   const [searchParams, setSearchParams] = useSearchParams();
-  const artifactId = searchParams.get("artifactId");
-  const isRunDialogOpen = searchParams.get("scrapeui") === "1" && !!artifactId;
+  const artifactId = searchParams.get("artifactId") ?? undefined;
+  const jobHistoryId = searchParams.get("jobHistoryId") ?? undefined;
+  const isRunDialogOpen =
+    searchParams.get("scrapeui") === "1" && !!(artifactId || jobHistoryId);
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["catalog", "catalog_scrapper", sortState],
@@ -246,11 +346,23 @@ export default function ConfigScrapersPage() {
               onRunComplete={() => {
                 refetch();
               }}
-              onRunSuccess={(artifactId) => {
+              onRunSuccess={({ artifactId, jobHistoryId }) => {
                 setSearchParams((prev) => {
                   const next = new URLSearchParams(prev);
                   next.set("scrapeui", "1");
-                  next.set("artifactId", artifactId);
+
+                  if (artifactId) {
+                    next.set("artifactId", artifactId);
+                  } else {
+                    next.delete("artifactId");
+                  }
+
+                  if (jobHistoryId) {
+                    next.set("jobHistoryId", jobHistoryId);
+                  } else {
+                    next.delete("jobHistoryId");
+                  }
+
                   next.set("scrapeTab", "spec");
                   return next;
                 });
@@ -318,7 +430,7 @@ export default function ConfigScrapersPage() {
         </ConfigPageTabs>
       </SearchLayout>
 
-      {artifactId && (
+      {(artifactId || jobHistoryId) && (
         <ScrapeUIDialog
           open={isRunDialogOpen}
           onOpenChange={(isOpen) => {
@@ -328,6 +440,7 @@ export default function ConfigScrapersPage() {
                   const next = new URLSearchParams(prev);
                   next.delete("scrapeui");
                   next.delete("artifactId");
+                  next.delete("jobHistoryId");
                   next.delete("scrapeTab");
                   next.delete("scrapeId");
                   next.delete("scrapeQ");
@@ -338,6 +451,7 @@ export default function ConfigScrapersPage() {
             }
           }}
           artifactId={artifactId}
+          jobHistoryId={jobHistoryId}
           title="Scrape Run Output"
         />
       )}
