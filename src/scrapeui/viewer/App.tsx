@@ -129,7 +129,23 @@ async function parseArtifactSnapshotResponse(
   response: Response
 ): Promise<Snapshot> {
   if (!response.ok) {
-    throw new Error(`artifact download failed: ${response.status}`);
+    let message = `artifact download failed (${response.status})`;
+
+    try {
+      const raw = await response.text();
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          message = parsed?.error || parsed?.message || raw;
+        } catch {
+          message = raw;
+        }
+      }
+    } catch {
+      // ignore body parsing errors and use fallback message
+    }
+
+    throw new Error(message);
   }
 
   const bytes = new Uint8Array(await response.arrayBuffer());
@@ -211,7 +227,13 @@ export function App({
     fetch(`/api/artifacts/download/${encodeURIComponent(artifactId)}`)
       .then(parseArtifactSnapshotResponse)
       .then((snap) => applySnap(snap))
-      .catch(() => setStatus("Failed to load scrape artifact"));
+      .catch((error: unknown) => {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to load scrape artifact";
+        setStatus(message);
+      });
 
     const timer = setInterval(() => {
       if (startRef.current && !doneRef.current)
