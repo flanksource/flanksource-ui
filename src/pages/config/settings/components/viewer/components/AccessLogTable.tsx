@@ -73,10 +73,18 @@ function AccessLogRow({
         onClick={() => setOpen(!open)}
       >
         <td className="whitespace-nowrap px-3 py-2 text-xs">
-          {resolveConfigId(lookups, entry.external_config_id)}
+          {resolveConfigId(
+            lookups,
+            entry.external_config_id ?? entry.config_id
+          )}
         </td>
         <td className="whitespace-nowrap px-3 py-2">
-          {entry.external_user_aliases?.map((a, j) => (
+          {(entry.external_user_aliases?.length
+            ? entry.external_user_aliases
+            : entry.external_user_id
+              ? [entry.external_user_id]
+              : []
+          ).map((a, j) => (
             <span
               key={j}
               className="mr-1 inline-block rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600"
@@ -115,10 +123,24 @@ function AccessLogRow({
 export function AccessLogTable({ entries, lookups, search }: Props) {
   const filtered = useMemo(() => {
     if (!search) return entries;
-    return entries.filter((e) =>
-      matchesSearch(search, ...(e.external_user_aliases || []))
-    );
-  }, [entries, search]);
+    return entries.filter((e) => {
+      const users = e.external_user_aliases?.length
+        ? e.external_user_aliases
+        : e.external_user_id
+          ? [e.external_user_id]
+          : [];
+
+      return matchesSearch(
+        search,
+        resolveConfigId(lookups, e.external_config_id ?? e.config_id),
+        e.config_id,
+        e.external_user_id,
+        e.created_at,
+        ...users,
+        ...users.map((u) => resolve(lookups.users, u))
+      );
+    });
+  }, [entries, lookups, search]);
   const { sorted, sort, toggle } = useSort(filtered);
 
   if (!entries || entries.length === 0) {
@@ -147,8 +169,17 @@ export function AccessLogTable({ entries, lookups, search }: Props) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((e, i) => (
-            <AccessLogRow key={i} entry={e} lookups={lookups} />
+          {sorted.map((e) => (
+            <AccessLogRow
+              key={[
+                e.config_id ?? JSON.stringify(e.external_config_id ?? ""),
+                e.external_user_id ?? e.external_user_aliases?.join(",") ?? "",
+                e.created_at ?? "",
+                e.count ?? ""
+              ].join("|")}
+              entry={e}
+              lookups={lookups}
+            />
           ))}
         </tbody>
       </table>

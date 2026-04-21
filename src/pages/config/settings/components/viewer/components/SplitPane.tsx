@@ -2,6 +2,7 @@ import {
   useState,
   useRef,
   useCallback,
+  useEffect,
   type ReactNode,
   type MouseEvent as ReactMouseEvent
 } from "react";
@@ -24,10 +25,25 @@ export function SplitPane({
   const [split, setSplit] = useState(defaultSplit);
   const dragging = useRef(false);
   const container = useRef<HTMLDivElement>(null);
+  const moveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
+  const upHandlerRef = useRef<(() => void) | null>(null);
+
+  const cleanupDrag = useCallback(() => {
+    const onMove = moveHandlerRef.current;
+    const onUp = upHandlerRef.current;
+    if (onMove) document.removeEventListener("mousemove", onMove);
+    if (onUp) document.removeEventListener("mouseup", onUp);
+    moveHandlerRef.current = null;
+    upHandlerRef.current = null;
+    dragging.current = false;
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+  }, []);
 
   const onMouseDown = useCallback(
     (e: ReactMouseEvent<HTMLDivElement>) => {
       e.preventDefault();
+      cleanupDrag();
       dragging.current = true;
 
       const onMove = (e: MouseEvent) => {
@@ -38,20 +54,20 @@ export function SplitPane({
       };
 
       const onUp = () => {
-        dragging.current = false;
-        document.removeEventListener("mousemove", onMove);
-        document.removeEventListener("mouseup", onUp);
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
+        cleanupDrag();
       };
 
+      moveHandlerRef.current = onMove;
+      upHandlerRef.current = onUp;
       document.addEventListener("mousemove", onMove);
       document.addEventListener("mouseup", onUp);
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
     },
-    [minLeft, minRight]
+    [cleanupDrag, minLeft, minRight]
   );
+
+  useEffect(() => cleanupDrag, [cleanupDrag]);
 
   return (
     <div ref={container} className="flex flex-1 overflow-hidden">

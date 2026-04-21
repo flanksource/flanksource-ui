@@ -82,24 +82,22 @@ export function useRoute(options?: {
 
   const navigate = useCallback(
     (next: Partial<Route>) => {
-      setRoute((prev) => {
-        const merged: Route = {
-          tab: next.tab ?? prev.tab,
-          id: "id" in next ? next.id : prev.id,
-          q: "q" in next ? next.q : prev.q
-        };
+      const merged: Route = {
+        tab: next.tab ?? route.tab,
+        id: "id" in next ? next.id : route.id,
+        q: "q" in next ? next.q : route.q
+      };
 
-        if (syncWithURL) {
-          const search = buildSearch(merged, location.search);
-          if (location.search !== search) {
-            navigateURL(`${location.pathname}${search}`, { replace: true });
-          }
+      setRoute(merged);
+
+      if (syncWithURL) {
+        const search = buildSearch(merged, location.search);
+        if (location.search !== search) {
+          navigateURL(`${location.pathname}${search}`, { replace: true });
         }
-
-        return merged;
-      });
+      }
     },
-    [syncWithURL, location.pathname, location.search, navigateURL]
+    [route, syncWithURL, location.pathname, location.search, navigateURL]
   );
 
   return [route, navigate];

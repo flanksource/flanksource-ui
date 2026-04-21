@@ -1,4 +1,10 @@
-import type { ScrapeResult, TypeGroup, FullScrapeResults } from "./types";
+import type {
+  ScrapeResult,
+  TypeGroup,
+  FullScrapeResults,
+  ExternalConfigAccess,
+  ExternalConfigAccessLog
+} from "./types";
 
 export function groupByType(items: ScrapeResult[]): TypeGroup[] {
   const groups = new Map<string, ScrapeResult[]>();
@@ -157,6 +163,34 @@ export function resolveConfigId(lookups: Lookups, extId: any): string {
   if (typeof extId === "string") return lookups.configs.get(extId) || extId;
   const eid = extId.external_id || extId.config_id || "";
   return lookups.configs.get(eid) || eid;
+}
+
+// Shared matcher used by both DetailPanel and tree count aggregation.
+// Some scrapers populate nested external_config_id (string/object), while others
+// use top-level config_id. We also accept aliases for resilient matching.
+export function matchesConfig(
+  a: Pick<
+    ExternalConfigAccess | ExternalConfigAccessLog,
+    "external_config_id" | "config_id"
+  >,
+  item: Pick<ScrapeResult, "id" | "aliases">
+): boolean {
+  const itemKeys = new Set<string>([item.id, ...(item.aliases || [])]);
+
+  const ext = a.external_config_id;
+  if (ext) {
+    if (typeof ext === "string") {
+      if (itemKeys.has(ext)) return true;
+    } else if (typeof ext === "object") {
+      const externalId = (ext as any).external_id;
+      const configId = (ext as any).config_id;
+      if (externalId && itemKeys.has(externalId)) return true;
+      if (configId && itemKeys.has(configId)) return true;
+    }
+  }
+
+  if (a.config_id && itemKeys.has(a.config_id)) return true;
+  return false;
 }
 
 export function statusColor(status: number): string {

@@ -183,8 +183,17 @@ export function HARPanel({ entries, search }: Props) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((e, i) => (
-            <HARRow key={i} entry={e} />
+          {sorted.map((e) => (
+            <HARRow
+              key={[
+                e.startedDateTime,
+                e.request.method,
+                e.request.url,
+                e.response.status,
+                e.time
+              ].join("|")}
+              entry={e}
+            />
           ))}
         </tbody>
       </table>

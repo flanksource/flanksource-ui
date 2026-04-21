@@ -73,7 +73,10 @@ function AccessRow({
           {entry.id}
         </td>
         <td className="whitespace-nowrap px-3 py-2 text-xs">
-          {resolveConfigId(lookups, entry.external_config_id)}
+          {resolveConfigId(
+            lookups,
+            entry.external_config_id ?? entry.config_id
+          )}
         </td>
         <td className="whitespace-nowrap px-3 py-2">
           {(entry.external_user_aliases?.length
@@ -138,16 +141,41 @@ function AccessRow({
 export function AccessTable({ entries, lookups, search }: Props) {
   const filtered = useMemo(() => {
     if (!search) return entries;
-    return entries.filter((e) =>
-      matchesSearch(
+    return entries.filter((e) => {
+      const users = e.external_user_aliases?.length
+        ? e.external_user_aliases
+        : e.external_user_id
+          ? [e.external_user_id]
+          : [];
+      const roles = e.external_role_aliases?.length
+        ? e.external_role_aliases
+        : e.external_role_id
+          ? [e.external_role_id]
+          : [];
+      const groups = e.external_group_aliases?.length
+        ? e.external_group_aliases
+        : e.external_group_id
+          ? [e.external_group_id]
+          : [];
+
+      return matchesSearch(
         search,
         e.id,
-        ...(e.external_user_aliases || []),
-        ...(e.external_role_aliases || []),
-        ...(e.external_group_aliases || [])
-      )
-    );
-  }, [entries, search]);
+        resolveConfigId(lookups, e.external_config_id ?? e.config_id),
+        e.config_id,
+        e.external_user_id,
+        e.external_role_id,
+        e.external_group_id,
+        e.created_at,
+        ...users,
+        ...roles,
+        ...groups,
+        ...users.map((u) => resolve(lookups.users, u)),
+        ...roles.map((r) => resolve(lookups.roles, r)),
+        ...groups.map((g) => resolve(lookups.groups, g))
+      );
+    });
+  }, [entries, lookups, search]);
   const { sorted, sort, toggle } = useSort(filtered);
 
   if (!entries || entries.length === 0) {
@@ -176,8 +204,21 @@ export function AccessTable({ entries, lookups, search }: Props) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((e, i) => (
-            <AccessRow key={i} entry={e} lookups={lookups} />
+          {sorted.map((e) => (
+            <AccessRow
+              key={
+                e.id ||
+                [
+                  e.config_id ?? JSON.stringify(e.external_config_id ?? ""),
+                  e.external_user_id ??
+                    e.external_user_aliases?.join(",") ??
+                    "",
+                  e.created_at ?? ""
+                ].join("|")
+              }
+              entry={e}
+              lookups={lookups}
+            />
           ))}
         </tbody>
       </table>

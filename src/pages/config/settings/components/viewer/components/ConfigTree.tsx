@@ -55,7 +55,7 @@ function TypeGroupNode({
               item={item}
               selected={selected}
               onSelect={onSelect}
-              counts={configCounts?.get(item.id)}
+              counts={configCounts?.get(`${item.config_type}-${item.id}`)}
             />
           ))}
         </div>

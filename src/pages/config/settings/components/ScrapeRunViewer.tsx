@@ -6,7 +6,8 @@ import {
   filterItems,
   collectTypes,
   buildLookups,
-  globalSearch
+  globalSearch,
+  matchesConfig
 } from "./viewer/utils";
 import { useRoute } from "./viewer/hooks/useRoute";
 import { SplitPane } from "./viewer/components/SplitPane";
@@ -584,52 +585,53 @@ export function ScrapeRunViewer({
     const logs = snapshot?.results?.config_access_logs || [];
     const relationships = snapshot?.relationships || [];
 
+    const configKey = (cfg: ScrapeResult) => `${cfg.config_type}-${cfg.id}`;
+
     for (const ch of changes) {
       if (!ch.source) continue;
       for (const cfg of configs) {
         if (ch.source.includes(cfg.id)) {
-          const c = m.get(cfg.id) || zero();
+          const key = configKey(cfg);
+          const c = m.get(key) || zero();
           c.changes++;
-          m.set(cfg.id, c);
+          m.set(key, c);
         }
       }
     }
+
     for (const a of access) {
-      const extId =
-        (a.external_config_id as any)?.external_id || a.external_config_id;
-      if (!extId) continue;
       for (const cfg of configs) {
-        if (cfg.id === extId) {
-          const c = m.get(cfg.id) || zero();
+        if (matchesConfig(a, cfg)) {
+          const key = configKey(cfg);
+          const c = m.get(key) || zero();
           c.access++;
-          m.set(cfg.id, c);
+          m.set(key, c);
         }
       }
     }
+
     for (const l of logs) {
-      const extId =
-        (l.external_config_id as any)?.external_id || l.external_config_id;
-      if (!extId) continue;
       for (const cfg of configs) {
-        if (cfg.id === extId) {
-          const c = m.get(cfg.id) || zero();
+        if (matchesConfig(l, cfg)) {
+          const key = configKey(cfg);
+          const c = m.get(key) || zero();
           c.accessLogs++;
-          m.set(cfg.id, c);
+          m.set(key, c);
         }
       }
     }
+
     for (const rel of relationships) {
-      if (rel.config_id) {
-        const c = m.get(rel.config_id) || zero();
-        c.relationships++;
-        m.set(rel.config_id, c);
-      }
-      if (rel.related_id && rel.related_id !== rel.config_id) {
-        const c = m.get(rel.related_id) || zero();
-        c.relationships++;
-        m.set(rel.related_id, c);
+      for (const cfg of configs) {
+        if (cfg.id === rel.config_id || cfg.id === rel.related_id) {
+          const key = configKey(cfg);
+          const c = m.get(key) || zero();
+          c.relationships++;
+          m.set(key, c);
+        }
       }
     }
+
     return m;
   }, [snapshot?.results, snapshot?.relationships, configs]);
 

@@ -41,8 +41,10 @@ export function JsonView({ data, name, depth = 0 }: Props) {
       className="font-mono text-sm"
       style={{ paddingLeft: depth > 0 ? "12px" : "0" }}
     >
-      <span
-        className="cursor-pointer select-none rounded px-0.5 hover:bg-gray-100"
+      <button
+        type="button"
+        className="cursor-pointer select-none rounded bg-transparent px-0.5 text-left font-mono hover:bg-gray-100"
+        aria-expanded={open}
         onClick={() => setOpen(!open)}
       >
         <span className="mr-1 text-xs text-gray-400">{open ? "▼" : "▶"}</span>
@@ -55,7 +57,7 @@ export function JsonView({ data, name, depth = 0 }: Props) {
           </span>
         )}
         {open && <span className="text-gray-400">{bracket[0]}</span>}
-      </span>
+      </button>
       {open && (
         <>
           {entries.map(([key, val]) => (

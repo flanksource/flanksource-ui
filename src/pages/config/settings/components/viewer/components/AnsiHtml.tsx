@@ -44,10 +44,23 @@ function parseAnsi(raw: string): Span[] {
       });
     }
 
-    const codes = match[1].split(";").filter(Boolean);
+    const codes =
+      match[1] === "" ? ["0"] : match[1].split(";").map((code) => code || "0");
     for (const code of codes) {
-      if (code === "0" || code === "") {
+      if (code === "0") {
         style = {};
+      } else if (code === "22") {
+        const { fontWeight, opacity, ...rest } = style;
+        style = rest;
+      } else if (code === "23") {
+        const { fontStyle, ...rest } = style;
+        style = rest;
+      } else if (code === "24") {
+        const { textDecoration, ...rest } = style;
+        style = rest;
+      } else if (code === "39") {
+        const { color, ...rest } = style;
+        style = rest;
       } else if (ANSI_STYLES[code]) {
         style = { ...style, ...ANSI_STYLES[code] };
       }

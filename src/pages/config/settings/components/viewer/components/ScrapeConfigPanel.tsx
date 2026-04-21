@@ -8,17 +8,24 @@ interface Props {
   logLevel?: LogLevelInfo;
 }
 
+function formatDecimal(value: number): string {
+  return value
+    .toFixed(2)
+    .replace(/\.0+$/, "")
+    .replace(/(\.\d*[1-9])0+$/, "$1");
+}
+
 function formatValue(val: any, type?: string): string {
   if (val === null || val === undefined) return "";
   if (type === "duration" && typeof val === "number") {
     // Go's time.Duration serializes as nanoseconds
     const ms = val / 1e6;
-    if (ms < 1000) return `${ms}ms`;
+    if (ms < 1000) return `${formatDecimal(ms)}ms`;
     const secs = ms / 1000;
-    if (secs < 60) return `${secs}s`;
+    if (secs < 60) return `${formatDecimal(secs)}s`;
     const mins = secs / 60;
-    if (mins < 60) return `${mins}m`;
-    return `${mins / 60}h`;
+    if (mins < 60) return `${formatDecimal(mins)}m`;
+    return `${formatDecimal(mins / 60)}h`;
   }
   if (type === "bool") return val ? "on" : "off";
   return String(val);

@@ -10,7 +10,13 @@ import type {
   ExternalGroup,
   ExternalRole
 } from "../types";
-import { healthIcon, healthColor, type Lookups, resolve } from "../utils";
+import {
+  healthIcon,
+  healthColor,
+  type Lookups,
+  resolve,
+  matchesConfig
+} from "../utils";
 import { JsonView } from "./JsonView";
 import { AliasList } from "./AliasList";
 
@@ -52,34 +58,6 @@ function LabelBadges({
       ))}
     </div>
   );
-}
-
-// matchesConfig decides whether a config_access (or access_log) row belongs
-// to a given config item. Some scrapers populate the nested
-// external_config_id struct (most ADO scrapers), others populate the
-// sibling top-level config_id field directly (e.g. AAD enterprise apps).
-// Some scrapers normalize IDs into a path form while others use a UUID
-// form. We check every plausible identifier shape so the match is
-// resilient to any of these patterns.
-function matchesConfig(
-  a: { external_config_id?: any; config_id?: string },
-  item: { id: string; aliases?: string[] }
-): boolean {
-  const itemKeys = new Set<string>();
-  itemKeys.add(item.id);
-  for (const alias of item.aliases || []) itemKeys.add(alias);
-
-  const ext = a.external_config_id;
-  if (ext) {
-    if (typeof ext === "string") {
-      if (itemKeys.has(ext)) return true;
-    } else if (typeof ext === "object") {
-      if (ext.external_id && itemKeys.has(ext.external_id)) return true;
-      if (ext.config_id && itemKeys.has(ext.config_id)) return true;
-    }
-  }
-  if (a.config_id && itemKeys.has(a.config_id)) return true;
-  return false;
 }
 
 function Expandable({
@@ -242,6 +220,9 @@ export function DetailPanel({
     );
   }
 
+  const isOrphanedItem =
+    item.config_type === "Orphaned Changes" || item.id.startsWith("orphaned-");
+
   return (
     <div className="space-y-4 p-4">
       <div className="flex items-center gap-2">
@@ -258,22 +239,38 @@ export function DetailPanel({
               type="button"
               className="text-gray-300 transition-colors hover:text-blue-500"
               title="Copy link to this config"
-              onClick={() => {
+              onClick={async () => {
                 const url = new URL(window.location.href);
-                url.hash = `tab=configs&id=${encodeURIComponent(item.id)}`;
-                navigator.clipboard.writeText(url.toString());
+                url.searchParams.set("scrapeTab", "configs");
+                url.searchParams.set("scrapeId", item.id);
+                await navigator.clipboard?.writeText?.(url.toString());
               }}
             >
               <iconify-icon icon="codicon:link" className="text-sm" />
             </button>
-            <a
-              className="text-gray-300 transition-colors hover:text-blue-500"
-              title="Download JSON for this config"
-              href={`/api/config/${encodeURIComponent(item.id)}`}
-              download
-            >
-              <iconify-icon icon="codicon:cloud-download" className="text-sm" />
-            </a>
+            {!isOrphanedItem ? (
+              <a
+                className="text-gray-300 transition-colors hover:text-blue-500"
+                title="Download JSON for this config"
+                href={`/api/config/${encodeURIComponent(item.id)}`}
+                download
+              >
+                <iconify-icon
+                  icon="codicon:cloud-download"
+                  className="text-sm"
+                />
+              </a>
+            ) : (
+              <span
+                className="text-gray-300"
+                title="Download unavailable for orphaned snapshot-only configs"
+              >
+                <iconify-icon
+                  icon="codicon:cloud-download"
+                  className="text-sm"
+                />
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span>{item.config_type}</span>
