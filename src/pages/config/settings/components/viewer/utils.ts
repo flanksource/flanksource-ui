@@ -161,8 +161,9 @@ export function resolve(lookup: Map<string, string>, key: string): string {
 export function resolveConfigId(lookups: Lookups, extId: any): string {
   if (!extId) return "";
   if (typeof extId === "string") return lookups.configs.get(extId) || extId;
-  const eid = extId.external_id || extId.config_id || "";
-  return lookups.configs.get(eid) || eid;
+  const eid = extId.external_id || "";
+  const cid = extId.config_id || "";
+  return lookups.configs.get(eid) || lookups.configs.get(cid) || eid || cid;
 }
 
 // Shared matcher used by both DetailPanel and tree count aggregation.

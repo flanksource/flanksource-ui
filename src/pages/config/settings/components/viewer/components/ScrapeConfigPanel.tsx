@@ -63,7 +63,8 @@ export function ScrapeConfigPanel({ spec, properties, logLevel }: Props) {
     );
   }, [sortedProps, propFilter]);
 
-  const hasContent = spec || sortedProps.length > 0 || logLevel;
+  const hasLogLevel = !!(logLevel?.scraper || logLevel?.global);
+  const hasContent = !!spec || sortedProps.length > 0 || hasLogLevel;
   if (!hasContent) {
     return (
       <div className="p-8 text-center text-sm text-gray-400">
@@ -75,7 +76,7 @@ export function ScrapeConfigPanel({ spec, properties, logLevel }: Props) {
   return (
     <div className="h-full space-y-4 overflow-auto p-4">
       {/* Log Levels */}
-      {logLevel && (logLevel.scraper || logLevel.global) && (
+      {hasLogLevel && (
         <div>
           <h3 className="mb-2 text-sm font-semibold text-gray-700">
             Log Level

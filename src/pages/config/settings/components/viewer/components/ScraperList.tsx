@@ -14,6 +14,8 @@ function statusIcon(status: ScraperProgress["status"]): string {
       return "codicon:pass-filled";
     case "error":
       return "codicon:error";
+    default:
+      return "codicon:question";
   }
 }
 
@@ -27,6 +29,8 @@ function statusColor(status: ScraperProgress["status"]): string {
       return "text-green-500";
     case "error":
       return "text-red-500";
+    default:
+      return "text-gray-400";
   }
 }
 
@@ -41,10 +45,9 @@ export function ScraperList({ scrapers }: Props) {
           className="flex items-center gap-1 text-sm"
           title={s.error || ""}
         >
-          <iconify-icon
-            icon={statusIcon(s.status)}
-            className={statusColor(s.status)}
-          />
+          <span className={statusColor(s.status)}>
+            <iconify-icon icon={statusIcon(s.status)} />
+          </span>
           <span
             className={s.status === "error" ? "text-red-600" : "text-gray-700"}
           >

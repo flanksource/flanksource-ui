@@ -251,6 +251,7 @@ function SnapshotViewHeader({
   onViewChange,
   hasAfter,
   hasBefore,
+  hasDiff,
   runStartedAt
 }: {
   scraperNames: string[];
@@ -260,6 +261,7 @@ function SnapshotViewHeader({
   onViewChange: (view: View) => void;
   hasAfter: boolean;
   hasBefore: boolean;
+  hasDiff: boolean;
   runStartedAt?: string;
 }) {
   return (
@@ -284,7 +286,8 @@ function SnapshotViewHeader({
         {VIEW_ORDER.map((candidate) => {
           const disabled =
             (candidate === "after" && !hasAfter) ||
-            (candidate === "before" && !hasBefore);
+            (candidate === "before" && !hasBefore) ||
+            (candidate === "diff" && !hasDiff);
 
           return (
             <button
@@ -350,11 +353,12 @@ export function SnapshotPanel({ pairs }: Props) {
     if (!userView) return;
     if (
       (userView === "after" && !pair?.after) ||
-      (userView === "before" && !pair?.before)
+      (userView === "before" && !pair?.before) ||
+      (userView === "diff" && !pair?.diff)
     ) {
       setUserView(null);
     }
-  }, [pair?.after, pair?.before, userView]);
+  }, [pair?.after, pair?.before, pair?.diff, userView]);
 
   const data =
     pair &&
@@ -384,15 +388,16 @@ export function SnapshotPanel({ pairs }: Props) {
         onViewChange={setUserView}
         hasAfter={!!pair?.after}
         hasBefore={!!pair?.before}
+        hasDiff={!!pair?.diff}
         runStartedAt={(pair?.after || pair?.before)?.run_started_at}
       />
 
-      {isDiffView && isEmpty ? (
+      {!data ? (
+        <div className="text-sm text-gray-400">No data</div>
+      ) : isDiffView && isEmpty ? (
         <div className="p-2 text-sm italic text-gray-500">
           No changes between before and after snapshots.
         </div>
-      ) : !data ? (
-        <div className="text-sm text-gray-400">No data</div>
       ) : (
         sections.map((section) => (
           <CountsTable

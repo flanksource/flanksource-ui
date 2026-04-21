@@ -95,7 +95,8 @@ function matchesEntityLog(
   aliases: string[],
   log: ExternalConfigAccessLog
 ): boolean {
-  return log.external_user_aliases?.some((t) => aliases.includes(t)) || false;
+  if (log.external_user_aliases?.some((t) => aliases.includes(t))) return true;
+  return !!log.external_user_id && aliases.includes(log.external_user_id);
 }
 
 function columnsFor(
