@@ -15,7 +15,7 @@ import {
   DataTableTagsColumn,
   MRTJobHistoryStatusColumn
 } from "@flanksource-ui/components/Settings/ResourceTable";
-import { ScrapeUIDialog } from "./components/scrapeui/ScrapeUIDialog";
+import { ScrapeUIDialog } from "./components/snapshot/ScrapeUIDialog";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import {
   BreadcrumbNav,
