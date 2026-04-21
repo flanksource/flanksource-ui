@@ -15,27 +15,37 @@ export const jobHistoryDefaultDateFilter: URLSearchParamsInit = {
 
 type JobHistoryFiltersProps = {
   paramsToReset?: string[];
+  showJobNameDropdown?: boolean;
+  defaultStatusFilter?: string | null;
 };
 
 export default function JobHistoryFilters({
-  paramsToReset = ["pageIndex", "pageSize"]
+  paramsToReset = ["pageIndex", "pageSize"],
+  showJobNameDropdown = true,
+  defaultStatusFilter = ""
 }: JobHistoryFiltersProps) {
   const { setTimeRangeParams, getTimeRangeFromUrl } = useTimeRangeParams(
     jobHistoryDefaultDateFilter
   );
 
   const timeRangeValue = getTimeRangeFromUrl();
+  const defaultFieldValues = defaultStatusFilter
+    ? { status: defaultStatusFilter }
+    : undefined;
 
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
-      filterFields={["name", "resource_type", "status", "duration"]}
-      defaultFieldValues={{
-        status: "SUCCESS:-1"
-      }}
+      filterFields={[
+        ...(showJobNameDropdown ? ["name"] : []),
+        "resource_type",
+        "status",
+        "duration"
+      ]}
+      defaultFieldValues={defaultFieldValues}
     >
       <div className="flex flex-wrap gap-2 py-4">
-        <JobHistoryNamesDropdown />
+        {showJobNameDropdown && <JobHistoryNamesDropdown />}
 
         <JobHistoryResourceTypeDropdown />
 

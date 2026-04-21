@@ -286,6 +286,10 @@ const JobsHistorySettingsPage = dynamic(
   () => import("./components/JobsHistory/JobsHistorySettingsPage")
 );
 
+const JobsHistoryDrilldownSettingsPage = dynamic(
+  () => import("./components/JobsHistory/JobsHistoryDrilldownSettingsPage")
+);
+
 const AgentsPage = dynamic(
   () => import("@flanksource-ui/components/Agents/AgentPage")
 );
@@ -778,6 +782,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="jobs"
           element={withAuthorizationAccessCheck(
             <JobsHistorySettingsPage />,
+            tables.database,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path="jobs/:jobName"
+          element={withAuthorizationAccessCheck(
+            <JobsHistoryDrilldownSettingsPage />,
             tables.database,
             "read",
             true

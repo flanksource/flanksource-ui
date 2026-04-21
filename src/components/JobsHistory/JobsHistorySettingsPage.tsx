@@ -1,10 +1,9 @@
 import { useSearchParams } from "react-router-dom";
-import { useJobsHistoryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
+import { useJobsHistorySummaryForSettingQuery } from "../../api/query-hooks/useJobsHistoryQuery";
 import { BreadcrumbNav, BreadcrumbRoot } from "../../ui/BreadcrumbNav";
 import { Head } from "../../ui/Head";
 import { SearchLayout } from "../../ui/Layout/SearchLayout";
-import JobHistoryFilters from "./Filters/JobsHistoryFilters";
-import JobsHistoryTable from "./JobsHistoryTable";
+import JobHistorySummary from "./JobHistorySummary";
 
 export default function JobsHistorySettingsPage() {
   const [searchParams] = useSearchParams();
@@ -12,11 +11,11 @@ export default function JobsHistorySettingsPage() {
   const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
 
   const { data, isLoading, refetch, isRefetching } =
-    useJobsHistoryForSettingQuery({
+    useJobsHistorySummaryForSettingQuery({
       keepPreviousData: true
     });
 
-  const jobs = data?.data;
+  const summary = data?.data;
   const totalEntries = data?.totalEntries;
   const pageCount = totalEntries ? Math.ceil(totalEntries / pageSize) : -1;
 
@@ -38,14 +37,12 @@ export default function JobsHistorySettingsPage() {
         loading={isLoading || isRefetching}
       >
         <div className="flex h-full w-full flex-1 flex-col p-6 pb-0">
-          <JobHistoryFilters />
-
-          <JobsHistoryTable
-            jobs={jobs ?? []}
+          <JobHistorySummary
+            data={summary ?? []}
             isLoading={isLoading}
             isRefetching={isRefetching}
             pageCount={pageCount}
-            totalJobHistoryItems={totalEntries}
+            totalEntries={totalEntries}
           />
         </div>
       </SearchLayout>

@@ -8,14 +8,25 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   getJobsHistory,
+  getJobsHistorySummary,
   getJobsHistoryWithArtifacts,
-  GetJobsHistoryParams
+  GetJobsHistoryParams,
+  GetJobsHistorySummaryParams,
+  JobHistorySummary
 } from "../services/jobsHistory";
 
 type Response =
   | { error: Error; data: null; totalEntries: undefined }
   | {
       data: JobHistory[] | null;
+      totalEntries?: number | undefined;
+      error: null;
+    };
+
+type SummaryResponse =
+  | { error: Error; data: null; totalEntries: undefined }
+  | {
+      data: JobHistorySummary[] | null;
       totalEntries?: number | undefined;
       error: null;
     };
@@ -35,7 +46,8 @@ export function useJobsHistoryQuery(
 export function useJobsHistoryForSettingQuery(
   options?: UseQueryOptions<Response, Error>,
   resourceId?: string,
-  tableName?: keyof typeof resourceTypeMap
+  tableName?: keyof typeof resourceTypeMap,
+  nameOverride?: string
 ) {
   const { timeRangeAbsoluteValue } = useTimeRangeParams(
     jobHistoryDefaultDateFilter
@@ -44,7 +56,11 @@ export function useJobsHistoryForSettingQuery(
   const [searchParams] = useSearchParams();
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "150");
-  const name = searchParams.get("name") ?? "";
+  const name = nameOverride
+    ? nameOverride.includes(":")
+      ? nameOverride
+      : `${nameOverride}:1`
+    : (searchParams.get("name") ?? "");
   const sortBy = searchParams.get("sortBy") ?? "";
   const sortOrder = searchParams.get("sortOrder") ?? "desc";
   const status = searchParams.get("status") ?? "";
@@ -121,6 +137,32 @@ export function useScraperJobsHistoryForSettingQuery(
   return useQuery<Response, Error>(
     ["jobs_history", "scraper", params],
     () => getJobsHistoryWithArtifacts(params),
+    options
+  );
+}
+
+export function useJobsHistorySummaryForSettingQuery(
+  options?: UseQueryOptions<SummaryResponse, Error>
+) {
+  const [searchParams] = useSearchParams();
+
+  const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "50");
+  const name = searchParams.get("name") ?? "";
+  const sortBy = searchParams.get("sortBy") ?? "";
+  const sortOrder = searchParams.get("sortOrder") ?? "desc";
+
+  const params = {
+    pageIndex,
+    pageSize,
+    name,
+    sortBy,
+    sortOrder
+  } satisfies GetJobsHistorySummaryParams;
+
+  return useQuery<SummaryResponse, Error>(
+    ["job_history_summary", params],
+    () => getJobsHistorySummary(params),
     options
   );
 }
