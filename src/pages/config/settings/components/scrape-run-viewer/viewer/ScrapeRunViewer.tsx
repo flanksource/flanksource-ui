@@ -195,29 +195,31 @@ export function ScrapeRunViewer({
   const startRef = useRef(0);
   const logsRef = useRef<HTMLDivElement>(null);
   const initialTabRef = useRef(tab);
+  const navigateRef = useRef(navigate);
 
-  const applySnap = useCallback(
-    (snap: Snapshot) => {
-      startRef.current = snap.started_at;
-      setSnapshot(snap);
-      if (snap.done) {
-        doneRef.current = true;
-        setDone(true);
-        setStatus("Scrape complete");
-        setElapsed(Date.now() - snap.started_at);
-      } else {
-        setStatus("Scraping...");
-      }
-      if (
-        (snap.results?.configs?.length ?? 0) > 0 &&
-        tabRef.current === "spec" &&
-        initialTabRef.current === "spec"
-      ) {
-        navigate({ tab: "configs" });
-      }
-    },
-    [navigate]
-  );
+  useEffect(() => {
+    navigateRef.current = navigate;
+  }, [navigate]);
+
+  const applySnap = useCallback((snap: Snapshot) => {
+    startRef.current = snap.started_at;
+    setSnapshot(snap);
+    if (snap.done) {
+      doneRef.current = true;
+      setDone(true);
+      setStatus("Scrape complete");
+      setElapsed(Date.now() - snap.started_at);
+    } else {
+      setStatus("Scraping...");
+    }
+    if (
+      (snap.results?.configs?.length ?? 0) > 0 &&
+      tabRef.current === "spec" &&
+      initialTabRef.current === "spec"
+    ) {
+      navigateRef.current({ tab: "configs" });
+    }
+  }, []);
 
   useEffect(() => {
     doneRef.current = false;
