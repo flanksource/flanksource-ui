@@ -31,13 +31,17 @@ type RunScraperSuccessPayload = {
 };
 
 type Props = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   scraperId: string;
   onRunStart: () => void;
   onRunComplete: () => void;
   onRunSuccess: (payload: RunScraperSuccessPayload) => void;
 };
 
-export function RunScraperButton({
+export function ScrapeRunDialog({
+  open,
+  onOpenChange,
   scraperId,
   onRunStart,
   onRunComplete,
@@ -45,7 +49,6 @@ export function RunScraperButton({
 }: Props) {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [logLevel, setLogLevel] = useState<RunLogLevel>("info");
   const [captureHAR, setCaptureHAR] = useState(false);
   const [captureLogs, setCaptureLogs] = useState(true);
@@ -67,7 +70,7 @@ export function RunScraperButton({
       const jobHistoryId = payload?.job_history_id;
 
       toastSuccess("Scraper started successfully");
-      setIsDialogOpen(false);
+      onOpenChange(false);
 
       if (openScrapeUI && jobHistoryId) {
         onRunSuccess({ jobHistoryId });
@@ -82,20 +85,7 @@ export function RunScraperButton({
 
   return (
     <>
-      <Button
-        size="xs"
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          setIsDialogOpen(true);
-        }}
-        disabled={isRunning}
-      >
-        <Play className="mr-2 h-3.5 w-3.5" />
-        Run
-      </Button>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           className="sm:max-w-md"
           onClick={(e) => {
@@ -192,7 +182,7 @@ export function RunScraperButton({
           <DialogFooter>
             <Button
               type="button"
-              onClick={() => setIsDialogOpen(false)}
+              onClick={() => onOpenChange(false)}
               disabled={isRunning}
             >
               Cancel

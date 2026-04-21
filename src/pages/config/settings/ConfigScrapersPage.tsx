@@ -15,7 +15,7 @@ import {
   DataTableTagsColumn,
   MRTJobHistoryStatusColumn
 } from "@flanksource-ui/components/Settings/ResourceTable";
-import { ScrapeRunViewerDialog } from "./components/scrape-run-viewer/ScrapeRunViewerDialog";
+import { ScrapeRunViewerDialog } from "./components/ScrapeRunViewerDialog";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import {
   BreadcrumbNav,
@@ -28,9 +28,11 @@ import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells"
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useQuery } from "@tanstack/react-query";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { RunScraperButton } from "./components/RunScraperButton";
+import { ScrapeRunDialog } from "./components/ScrapeRunDialog";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Play } from "lucide-react";
 
 export const catalogScraperResourceInfo = schemaResourceTypes.find(
   (resource) => resource.table === "config_scrapers"
@@ -40,14 +42,70 @@ type ConfigScraperRow = SchemaResourceWithJobStatus & {
   table: SchemaResourceType["table"];
 };
 
+type ScraperRunActionCellProps = {
+  scraperId: string;
+  refetch: () => void;
+  setSearchParams: ReturnType<typeof useSearchParams>[1];
+};
+
+function ScraperRunActionCell({
+  scraperId,
+  refetch,
+  setSearchParams
+}: ScraperRunActionCellProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  return (
+    <>
+      <Button
+        size="xs"
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          setIsDialogOpen(true);
+        }}
+      >
+        <Play className="mr-2 h-3.5 w-3.5" />
+        Run
+      </Button>
+
+      <ScrapeRunDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        scraperId={scraperId}
+        onRunStart={() => {
+          // Refetch after a delay, when the scraper job has started
+          setTimeout(() => {
+            refetch();
+          }, 1000);
+        }}
+        onRunComplete={() => {
+          refetch();
+        }}
+        onRunSuccess={({ jobHistoryId }) => {
+          if (!jobHistoryId) {
+            return;
+          }
+
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("jobHistoryId", jobHistoryId);
+            next.set("scrapeTab", "spec");
+            return next;
+          });
+        }}
+      />
+    </>
+  );
+}
+
 export default function ConfigScrapersPage() {
   const navigate = useNavigate();
 
   const [sortState] = useReactTableSortState();
   const [searchParams, setSearchParams] = useSearchParams();
   const jobHistoryId = searchParams.get("jobHistoryId") ?? undefined;
-  const isRunDialogOpen =
-    searchParams.get("scrapeui") === "1" && !!jobHistoryId;
+  const isRunDialogOpen = !!jobHistoryId;
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["catalog", "catalog_scrapper", sortState],
@@ -161,30 +219,10 @@ export default function ConfigScrapersPage() {
         Cell: ({ row }: { row: MRT_Row<ConfigScraperRow> }) => {
           const { id } = row.original;
           return (
-            <RunScraperButton
+            <ScraperRunActionCell
               scraperId={id}
-              onRunStart={() => {
-                // Refetch after a delay, when the scraper job has started
-                setTimeout(() => {
-                  refetch();
-                }, 1000);
-              }}
-              onRunComplete={() => {
-                refetch();
-              }}
-              onRunSuccess={({ jobHistoryId }) => {
-                if (!jobHistoryId) {
-                  return;
-                }
-
-                setSearchParams((prev) => {
-                  const next = new URLSearchParams(prev);
-                  next.set("scrapeui", "1");
-                  next.set("jobHistoryId", jobHistoryId);
-                  next.set("scrapeTab", "spec");
-                  return next;
-                });
-              }}
+              refetch={refetch}
+              setSearchParams={setSearchParams}
             />
           );
         }
@@ -256,7 +294,6 @@ export default function ConfigScrapersPage() {
               setSearchParams(
                 (prev) => {
                   const next = new URLSearchParams(prev);
-                  next.delete("scrapeui");
                   next.delete("jobHistoryId");
                   next.delete("scrapeTab");
                   next.delete("scrapeId");

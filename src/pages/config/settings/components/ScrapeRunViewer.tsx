@@ -1,28 +1,28 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import pako from "pako";
-import type { Counts, Snapshot, ScrapeResult, Tab } from "./types";
+import type { Counts, Snapshot, ScrapeResult, Tab } from "./viewer/types";
 import {
   groupByType,
   filterItems,
   collectTypes,
   buildLookups,
   globalSearch
-} from "./utils";
-import { useRoute } from "./hooks/useRoute";
-import { SplitPane } from "./components/SplitPane";
-import { ScraperList } from "./components/ScraperList";
-import { Summary } from "./components/Summary";
-import { FilterBar, type Filters } from "./components/FilterBar";
-import { ConfigTree } from "./components/ConfigTree";
-import { DetailPanel } from "./components/DetailPanel";
-import { AnsiHtml } from "./components/AnsiHtml";
-import { HARPanel } from "./components/HARPanel";
-import { EntityTable } from "./components/EntityTable";
-import { AccessTable } from "./components/AccessTable";
-import { AccessLogTable } from "./components/AccessLogTable";
-import { ScrapeConfigPanel } from "./components/ScrapeConfigPanel";
-import { SnapshotPanel } from "./components/SnapshotPanel";
-import { JsonView } from "./components/JsonView";
+} from "./viewer/utils";
+import { useRoute } from "./viewer/hooks/useRoute";
+import { SplitPane } from "./viewer/components/SplitPane";
+import { ScraperList } from "./viewer/components/ScraperList";
+import { Summary } from "./viewer/components/Summary";
+import { FilterBar, type Filters } from "./viewer/components/FilterBar";
+import { ConfigTree } from "./viewer/components/ConfigTree";
+import { DetailPanel } from "./viewer/components/DetailPanel";
+import { AnsiHtml } from "./viewer/components/AnsiHtml";
+import { HARPanel } from "./viewer/components/HARPanel";
+import { EntityTable } from "./viewer/components/EntityTable";
+import { AccessTable } from "./viewer/components/AccessTable";
+import { AccessLogTable } from "./viewer/components/AccessLogTable";
+import { ScrapeConfigPanel } from "./viewer/components/ScrapeConfigPanel";
+import { SnapshotPanel } from "./viewer/components/SnapshotPanel";
+import { JsonView } from "./viewer/components/JsonView";
 
 const TAB_DEFS: { key: Tab; label: string; icon: string; countKey?: string }[] =
   [
@@ -246,22 +246,16 @@ async function fetchArtifactsForJobHistory(
 interface ScrapeRunViewerProps {
   jobHistoryId: string;
   syncRouteWithURL?: boolean;
-  basePath?: string;
-  routeMode?: "path" | "hash" | "search";
   containerClassName?: string;
 }
 
 export function ScrapeRunViewer({
   jobHistoryId,
   syncRouteWithURL = true,
-  basePath = "/scrapeui",
-  routeMode = "path",
   containerClassName = "flex h-screen flex-col bg-gray-100"
 }: ScrapeRunViewerProps) {
   const [route, navigate] = useRoute({
-    syncWithURL: syncRouteWithURL,
-    basePath,
-    mode: routeMode
+    syncWithURL: syncRouteWithURL
   });
   const { tab, id: routeId, q: routeQ } = route;
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);

@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
-import { ScrapeRunViewer } from "./viewer/ScrapeRunViewer";
+import { ScrapeRunViewer } from "./ScrapeRunViewer";
 
 interface ScrapeRunViewerDialogProps {
   open: boolean;
@@ -33,7 +33,6 @@ export function ScrapeRunViewerDialog({
           <ScrapeRunViewer
             jobHistoryId={jobHistoryId}
             syncRouteWithURL
-            routeMode="search"
             containerClassName="flex h-full flex-col bg-gray-100"
           />
         </div>
