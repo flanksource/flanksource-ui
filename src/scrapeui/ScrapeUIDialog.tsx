@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
+import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import { App as ScrapeUIApp } from "@flanksource-ui/scrapeui/viewer/App";
 import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loading-icons";
@@ -62,8 +63,10 @@ export function ScrapeUIDialog({
 
   const resolvedArtifactId = artifactId ?? getRunArtifactID(jobHistory);
   const status = jobHistory?.status;
+  const isFailed = status === "FAILED";
+  const runError = jobHistory?.details?.errors ?? jobHistory?.details;
   const canRenderScrapeUI =
-    !!resolvedArtifactId && (!jobHistoryId || isTerminal(status));
+    !!resolvedArtifactId && (!jobHistoryId || isTerminal(status)) && !isFailed;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -86,6 +89,15 @@ export function ScrapeUIDialog({
               routeMode="search"
               containerClassName="flex h-full flex-col bg-gray-100"
             />
+          ) : isFailed ? (
+            <div className="h-full overflow-auto bg-gray-50 p-6">
+              <div className="mx-auto flex max-w-3xl flex-col gap-4">
+                <p className="text-sm font-medium text-gray-700">
+                  Scraper run failed.
+                </p>
+                <ErrorViewer error={runError ?? "Scraper run failed"} />
+              </div>
+            </div>
           ) : (
             <div className="flex h-full items-center justify-center bg-gray-50 p-6">
               <div className="flex max-w-xl flex-col items-center gap-3 text-center">
