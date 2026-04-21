@@ -85,6 +85,9 @@ function RunScraperButton({
   const [error, setError] = useState<unknown>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [logLevel, setLogLevel] = useState<RunLogLevel>("info");
+  const [captureHAR, setCaptureHAR] = useState(false);
+  const [captureLogs, setCaptureLogs] = useState(true);
+  const [captureSnapshots, setCaptureSnapshots] = useState(false);
   const [openScrapeUI, setOpenScrapeUI] = useState(true);
 
   const handleRun = async () => {
@@ -92,7 +95,12 @@ function RunScraperButton({
     setError(null);
     onRunStart();
     try {
-      const response = await runConfigScraper(scraperId, { logLevel });
+      const response = await runConfigScraper(scraperId, {
+        logLevel,
+        captureHAR,
+        captureLogs,
+        captureSnapshots
+      });
       const payload = response?.data?.payload ?? response?.data;
       const runArtifactId = payload?.run_artifact_id;
       const jobHistoryId = payload?.job_history_id;
@@ -161,6 +169,52 @@ function RunScraperButton({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Run options</p>
+
+              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    Capture logs
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Include scraper runtime logs in job details.
+                  </p>
+                </div>
+                <Switch
+                  checked={captureLogs}
+                  onCheckedChange={setCaptureLogs}
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    Capture snapshots
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Capture and store snapshots while scraping.
+                  </p>
+                </div>
+                <Switch
+                  checked={captureSnapshots}
+                  onCheckedChange={setCaptureSnapshots}
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    Capture HAR
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Capture HTTP archive (HAR) for the run.
+                  </p>
+                </div>
+                <Switch checked={captureHAR} onCheckedChange={setCaptureHAR} />
+              </div>
             </div>
 
             <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
