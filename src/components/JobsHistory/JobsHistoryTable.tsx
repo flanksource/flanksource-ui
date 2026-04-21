@@ -1,4 +1,5 @@
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useCallback, useState } from "react";
 import { JobsHistoryDetails } from "./JobsHistoryDetails";
 import { JobsHistoryTableColumn as jobsHistoryTableColumn } from "./JobsHistoryTableColumn";
@@ -46,6 +47,12 @@ export type JobHistory = {
   time_end: string;
   created_at: string;
   resource_name: string;
+  artifacts?: {
+    id: string;
+    filename?: string;
+    path?: string;
+    deleted_at?: string | null;
+  }[];
   agent?: {
     id: string;
     name: string;
@@ -59,6 +66,10 @@ type JobsHistoryTableProps = {
   pageCount: number;
   hiddenColumns?: string[];
   totalJobHistoryItems?: number;
+  columns?: MRT_ColumnDef<JobHistory>[];
+  mantineTableBodyCellProps?: {
+    sx?: Record<string, any>;
+  };
 };
 
 export default function JobsHistoryTable({
@@ -67,7 +78,9 @@ export default function JobsHistoryTable({
   isRefetching,
   pageCount,
   hiddenColumns = [],
-  totalJobHistoryItems
+  totalJobHistoryItems,
+  columns,
+  mantineTableBodyCellProps
 }: JobsHistoryTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
@@ -88,7 +101,7 @@ export default function JobsHistoryTable({
     <>
       <MRTDataTable
         data={jobs}
-        columns={jobsHistoryTableColumn}
+        columns={columns ?? jobsHistoryTableColumn}
         isLoading={isLoading}
         isRefetching={isRefetching}
         onRowClick={onRowClick}
@@ -97,6 +110,7 @@ export default function JobsHistoryTable({
         manualPageCount={pageCount}
         hiddenColumns={hiddenColumns}
         totalRowCount={totalJobHistoryItems}
+        mantineTableBodyCellProps={mantineTableBodyCellProps}
       />
       {selectedJob && (
         <JobsHistoryDetails

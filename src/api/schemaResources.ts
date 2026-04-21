@@ -213,6 +213,31 @@ export async function getIntegrationWithJobStatus(id: string) {
   return res.data?.[0];
 }
 
-export async function runConfigScraper(scraperId: string) {
-  return Config.post(`/run/${scraperId}`);
+export type RunConfigScraperOptions = {
+  async?: boolean;
+  logLevel?: "trace" | "debug" | "info" | "warn" | "error";
+  captureHAR?: boolean;
+  captureLogs?: boolean;
+  captureSnapshots?: boolean;
+};
+
+export async function runConfigScraper(
+  scraperId: string,
+  options: RunConfigScraperOptions = {}
+) {
+  const {
+    async: asyncRun = true,
+    logLevel,
+    captureHAR,
+    captureLogs,
+    captureSnapshots
+  } = options;
+
+  return Config.post(`/run/${scraperId}`, {
+    async: asyncRun,
+    ...(logLevel ? { logLevel } : {}),
+    ...(typeof captureHAR === "boolean" ? { captureHAR } : {}),
+    ...(typeof captureLogs === "boolean" ? { captureLogs } : {}),
+    ...(typeof captureSnapshots === "boolean" ? { captureSnapshots } : {})
+  });
 }

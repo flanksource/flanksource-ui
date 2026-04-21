@@ -1,8 +1,8 @@
 import {
   getAll,
-  runConfigScraper,
   SchemaResourceWithJobStatus
 } from "@flanksource-ui/api/schemaResources";
+import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import AddSchemaResourceModal from "@flanksource-ui/components/SchemaResourcePage/AddSchemaResourceModal";
@@ -11,31 +11,27 @@ import {
   SchemaResourceType,
   schemaResourceTypes
 } from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
-import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
 import {
   DataTableTagsColumn,
   MRTJobHistoryStatusColumn
 } from "@flanksource-ui/components/Settings/ResourceTable";
-import { toastSuccess } from "@flanksource-ui/components/Toast/toast";
+import { ScrapeRunViewerDialog } from "./components/ScrapeRunViewerDialog";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
 import {
   BreadcrumbNav,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
-import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { Modal } from "@flanksource-ui/ui/Modal";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useQuery } from "@tanstack/react-query";
-import { Play } from "lucide-react";
-import { Oval } from "react-loading-icons";
 import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ScrapeRunDialog } from "./components/ScrapeRunDialog";
+import { Button } from "@flanksource-ui/components/ui/button";
 
 export const catalogScraperResourceInfo = schemaResourceTypes.find(
   (resource) => resource.table === "config_scrapers"
@@ -45,62 +41,60 @@ type ConfigScraperRow = SchemaResourceWithJobStatus & {
   table: SchemaResourceType["table"];
 };
 
-function RunScraperButton({
-  scraperId,
-  onRunStart,
-  onRunComplete
-}: {
+type ScraperRunActionCellProps = {
   scraperId: string;
-  onRunStart: () => void;
-  onRunComplete: () => void;
-}) {
-  const [isRunning, setIsRunning] = useState(false);
-  const [error, setError] = useState<unknown>(null);
+  refetch: () => void;
+  setSearchParams: ReturnType<typeof useSearchParams>[1];
+};
 
-  const handleRun = async () => {
-    setIsRunning(true);
-    setError(null);
-    onRunStart();
-    try {
-      await runConfigScraper(scraperId);
-      toastSuccess("Scraper ran successfully");
-    } catch (err) {
-      setError(err);
-    } finally {
-      setIsRunning(false);
-      onRunComplete();
-    }
-  };
+function ScraperRunActionCell({
+  scraperId,
+  refetch,
+  setSearchParams
+}: ScraperRunActionCellProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <>
       <Button
-        size="xs"
+        variant="outline"
+        size="sm"
+        className="h-6 px-2 text-xs"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          handleRun();
+          setIsDialogOpen(true);
         }}
-        disabled={isRunning}
       >
-        {isRunning ? (
-          <Oval stroke="currentColor" className="mr-2 h-3.5 w-3.5" />
-        ) : (
-          <Play className="mr-2 h-3.5 w-3.5" />
-        )}
         Run
       </Button>
 
-      <Modal
-        title="Scraper Run Failed"
-        open={error !== null}
-        onClose={() => setError(null)}
-        size="medium"
-      >
-        <div className="p-4">
-          <ErrorViewer error={error} />
-        </div>
-      </Modal>
+      <ScrapeRunDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        scraperId={scraperId}
+        onRunStart={() => {
+          // Refetch after a delay, when the scraper job has started
+          setTimeout(() => {
+            refetch();
+          }, 1000);
+        }}
+        onRunComplete={() => {
+          refetch();
+        }}
+        onRunSuccess={({ jobHistoryId }) => {
+          if (!jobHistoryId) {
+            return;
+          }
+
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("jobHistoryId", jobHistoryId);
+            next.set("scrapeTab", "spec");
+            return next;
+          });
+        }}
+      />
     </>
   );
 }
@@ -109,6 +103,9 @@ export default function ConfigScrapersPage() {
   const navigate = useNavigate();
 
   const [sortState] = useReactTableSortState();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const jobHistoryId = searchParams.get("jobHistoryId") ?? undefined;
+  const isRunDialogOpen = !!jobHistoryId;
 
   const { data, refetch, isLoading, isRefetching } = useQuery({
     queryKey: ["catalog", "catalog_scrapper", sortState],
@@ -222,23 +219,16 @@ export default function ConfigScrapersPage() {
         Cell: ({ row }: { row: MRT_Row<ConfigScraperRow> }) => {
           const { id } = row.original;
           return (
-            <RunScraperButton
+            <ScraperRunActionCell
               scraperId={id}
-              onRunStart={() => {
-                // Refetch after a delay, when the scraper job has started
-                setTimeout(() => {
-                  refetch();
-                }, 1000);
-              }}
-              onRunComplete={() => {
-                refetch();
-              }}
+              refetch={refetch}
+              setSearchParams={setSearchParams}
             />
           );
         }
       }
     ],
-    [refetch]
+    [refetch, setSearchParams]
   );
 
   const dataWithTable = useMemo<ConfigScraperRow[]>(() => {
@@ -295,6 +285,29 @@ export default function ConfigScrapersPage() {
           </div>
         </ConfigPageTabs>
       </SearchLayout>
+
+      {jobHistoryId && (
+        <ScrapeRunViewerDialog
+          open={isRunDialogOpen}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setSearchParams(
+                (prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.delete("jobHistoryId");
+                  next.delete("scrapeTab");
+                  next.delete("scrapeId");
+                  next.delete("scrapeQ");
+                  return next;
+                },
+                { replace: true }
+              );
+            }
+          }}
+          jobHistoryId={jobHistoryId}
+          title="Scrape Run Output"
+        />
+      )}
     </>
   );
 }

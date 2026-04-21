@@ -1,7 +1,7 @@
 import { useSettingsUpdateResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
 import { getResource } from "@flanksource-ui/api/schemaResources";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
-import { SchemaResourceJobsTab } from "@flanksource-ui/components/SchemaResourcePage/SchemaResourceEditJobsTab";
+import { ScraperJobHistory } from "./components/ScraperJobHistory";
 import ConfigScrapperSpecEditor from "@flanksource-ui/components/SpecEditor/ConfigScrapperSpecEditor";
 import {
   BreadcrumbChild,
@@ -108,10 +108,7 @@ export default function ConfigScrapersEditPage() {
                   label={"Job History"}
                   value={"Job History"}
                 >
-                  <SchemaResourceJobsTab
-                    resourceId={id!}
-                    tableName={"config_scrapers"}
-                  />
+                  <ScraperJobHistory resourceId={id!} />
                 </Tab>
               </Tabs>
             </div>
