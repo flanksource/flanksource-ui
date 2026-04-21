@@ -67,6 +67,9 @@ type JobsHistoryTableProps = {
   hiddenColumns?: string[];
   totalJobHistoryItems?: number;
   columns?: MRT_ColumnDef<JobHistory>[];
+  mantineTableBodyCellProps?: {
+    sx?: Record<string, any>;
+  };
 };
 
 export default function JobsHistoryTable({
@@ -76,7 +79,8 @@ export default function JobsHistoryTable({
   pageCount,
   hiddenColumns = [],
   totalJobHistoryItems,
-  columns
+  columns,
+  mantineTableBodyCellProps
 }: JobsHistoryTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobHistory>();
@@ -106,6 +110,7 @@ export default function JobsHistoryTable({
         manualPageCount={pageCount}
         hiddenColumns={hiddenColumns}
         totalRowCount={totalJobHistoryItems}
+        mantineTableBodyCellProps={mantineTableBodyCellProps}
       />
       {selectedJob && (
         <JobsHistoryDetails

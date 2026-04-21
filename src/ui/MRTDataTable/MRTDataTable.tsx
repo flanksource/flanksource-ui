@@ -47,6 +47,9 @@ type MRTDataTableProps<T extends Record<string, any> = {}> = {
   mantineTableBodyRowProps?: {
     style?: Record<string, any>;
   };
+  mantineTableBodyCellProps?: {
+    sx?: Record<string, any>;
+  };
   displayColumnDefOptions?: {
     "mrt-row-expand"?: Partial<MRT_ColumnDef<T>>;
   };
@@ -79,6 +82,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
   onGroupingChange = () => {},
   disableHiding = false,
   mantineTableBodyRowProps,
+  mantineTableBodyCellProps,
   displayColumnDefOptions,
   urlParamPrefix,
   defaultPageSize,
@@ -194,7 +198,11 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
           sx: { flex: "1 1 auto" }
         },
         mantineTableBodyCellProps: {
-          sx: { zIndex: "auto" }
+          ...mantineTableBodyCellProps,
+          sx: {
+            zIndex: "auto",
+            ...(mantineTableBodyCellProps?.sx ?? {})
+          }
         },
         // Use cell-level memoization so that individual cells only re-render
         // when their cell reference changes, not on every table state update.
@@ -240,6 +248,7 @@ function MRTDataTableInner<T extends Record<string, any> = {}>({
       mergedDisplayColumnDefOptions,
       tableBodyRowProps,
       disablePagination,
+      mantineTableBodyCellProps,
       pageIndex,
       pageSize,
       sortState,

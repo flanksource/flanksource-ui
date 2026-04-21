@@ -31,8 +31,7 @@ import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ScrapeRunDialog } from "./components/ScrapeRunDialog";
-import { Button } from "@flanksource-ui/ui/Buttons/Button";
-import { Play } from "lucide-react";
+import { Button } from "@flanksource-ui/components/ui/button";
 
 export const catalogScraperResourceInfo = schemaResourceTypes.find(
   (resource) => resource.table === "config_scrapers"
@@ -58,14 +57,15 @@ function ScraperRunActionCell({
   return (
     <>
       <Button
-        size="xs"
+        variant="outline"
+        size="sm"
+        className="h-6 px-2 text-xs"
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
           setIsDialogOpen(true);
         }}
       >
-        <Play className="mr-2 h-3.5 w-3.5" />
         Run
       </Button>
 

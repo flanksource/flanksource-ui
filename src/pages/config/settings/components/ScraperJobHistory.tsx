@@ -5,7 +5,7 @@ import {
   default as JobsHistoryTable
 } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { JobsHistoryTableColumn } from "@flanksource-ui/components/JobsHistory/JobsHistoryTableColumn";
-import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { Button } from "@flanksource-ui/components/ui/button";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -55,7 +55,9 @@ export function ScraperJobHistory({ resourceId }: ScraperJobHistoryProps) {
 
           return (
             <Button
-              size="xs"
+              variant="secondary"
+              size="sm"
+              className="h-6 px-2 text-xs"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -63,7 +65,7 @@ export function ScraperJobHistory({ resourceId }: ScraperJobHistoryProps) {
                 setIsScrapeDialogOpen(true);
               }}
             >
-              Open ({artifacts.length})
+              Open
             </Button>
           );
         }
@@ -85,6 +87,12 @@ export function ScraperJobHistory({ resourceId }: ScraperJobHistoryProps) {
           totalJobHistoryItems={totalEntries}
           hiddenColumns={["resource_id", "resource_type", "resource_name"]}
           columns={columns}
+          mantineTableBodyCellProps={{
+            sx: {
+              paddingTop: "4px",
+              paddingBottom: "4px"
+            }
+          }}
         />
       )}
 
