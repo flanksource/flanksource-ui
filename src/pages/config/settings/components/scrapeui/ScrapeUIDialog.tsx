@@ -7,7 +7,7 @@ import {
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
-import { App as ScrapeUIApp } from "@flanksource-ui/scrapeui/viewer/App";
+import { App as ScrapeUIApp } from "./viewer/App";
 import { useQuery } from "@tanstack/react-query";
 import { Oval } from "react-loading-icons";
 
