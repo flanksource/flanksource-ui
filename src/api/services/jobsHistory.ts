@@ -50,14 +50,70 @@ export const getJobsHistory = async ({
 
   const durationParam = duration ? `&duration_millis=gte.${duration}` : "";
 
-  const rangeParam =
-    startsAt && endsAt
-      ? `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`
-      : "";
+  const rangeParam = (() => {
+    if (startsAt && endsAt) {
+      return `&and=(created_at.gt.${startsAt},created_at.lt.${endsAt})`;
+    }
+    if (startsAt) {
+      return `&created_at=gt.${startsAt}`;
+    }
+    if (endsAt) {
+      return `&created_at=lt.${endsAt}`;
+    }
+    return "";
+  })();
 
   return resolvePostGrestRequestWithPagination(
     IncidentCommander.get<JobHistory[] | null>(
       `/job_histories?&select=*${pagingParams}${resourceTypeParam}${resourceIdParam}${nameParam}${statusParam}${sortByParam}${sortOrderParam}${rangeParam}${durationParam}`,
+      {
+        headers: {
+          Prefer: "count=exact"
+        }
+      }
+    )
+  );
+};
+
+export type JobHistorySummary = {
+  name: string;
+  total: number;
+  running: number;
+  success: number;
+  warning: number;
+  failed: number;
+  stale: number;
+  skipped: number;
+  last_run_at: string;
+  average_duration: number | string | null;
+};
+
+export type GetJobsHistorySummaryParams = {
+  pageIndex: number;
+  pageSize: number;
+  name?: string;
+  sortBy?: string;
+  sortOrder?: string;
+};
+
+export const getJobsHistorySummary = async ({
+  pageIndex,
+  pageSize,
+  name,
+  sortBy,
+  sortOrder
+}: GetJobsHistorySummaryParams) => {
+  const pagingParams = `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
+
+  const nameParam = name ? tristateOutputToQueryFilterParam(name, "name") : "";
+
+  const sortByParam = sortBy ? `&order=${sortBy}` : "&order=last_run_at";
+
+  const sortOrderParam = sortOrder ? `.${sortOrder}` : ".desc";
+
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.get<JobHistorySummary[] | null>(
+      `/job_history_summary?select=*${pagingParams}${nameParam}${sortByParam}${sortOrderParam}`,
       {
         headers: {
           Prefer: "count=exact"
