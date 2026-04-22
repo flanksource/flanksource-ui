@@ -157,12 +157,27 @@ export function recheckPermission(id: string) {
   });
 }
 
-// Source marker used by the MCP Settings UI for permissions it creates/manages.
-export const MCP_SETTINGS_PERMISSION_SOURCE = "mcp_settings" as const;
+// Source marker used by settings UIs for permissions they create/manage.
+export const INTERACTIVE_SETTINGS_PERMISSION_SOURCE =
+  "interactive_settings" as const;
+
+export function isSettingsManagedPermissionSource(source?: string | null) {
+  return source === INTERACTIVE_SETTINGS_PERMISSION_SOURCE;
+}
+
+export async function fetchSettingsManagedSubjectPermissions(
+  subjectId: string
+) {
+  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
+    `/permissions_summary?select=*&subject=eq.${subjectId}&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
+  );
+
+  return response.data ?? [];
+}
 
 export async function fetchMcpRunPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
+    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];
@@ -170,7 +185,7 @@ export async function fetchMcpRunPermissions() {
 
 export async function fetchMcpUserPermissions() {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    `/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&source=eq.${MCP_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
+    `/permissions_summary?select=*&action=eq.mcp:use&object=eq.mcp&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];

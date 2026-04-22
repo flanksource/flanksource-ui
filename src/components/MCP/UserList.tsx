@@ -1,5 +1,5 @@
 import {
-  MCP_SETTINGS_PERMISSION_SOURCE,
+  isSettingsManagedPermissionSource,
   PermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
@@ -49,9 +49,8 @@ export default function UserList({
             {group.subjects.map((subject) => {
               const permissions = permissionsByUser.get(subject.id) ?? [];
 
-              const activePermission = permissions.find(
-                (permission) =>
-                  permission.source === MCP_SETTINGS_PERMISSION_SOURCE
+              const activePermission = permissions.find((permission) =>
+                isSettingsManagedPermissionSource(permission.source)
               );
 
               const access = !activePermission

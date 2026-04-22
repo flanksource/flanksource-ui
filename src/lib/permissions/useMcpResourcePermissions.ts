@@ -1,7 +1,8 @@
 import {
   addPermission,
   deletePermission,
-  MCP_SETTINGS_PERMISSION_SOURCE,
+  INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
+  isSettingsManagedPermissionSource,
   PermissionSubject,
   updatePermission
 } from "@flanksource-ui/api/services/permissions";
@@ -84,7 +85,7 @@ export function useMcpResourcePermissions<
         resources,
         permissions,
         getRefs,
-        source: MCP_SETTINGS_PERMISSION_SOURCE,
+        source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
         everyoneSubjectId: EVERYONE_SUBJECT_ID,
         everyoneSubjectType: EVERYONE_SUBJECT_TYPE
       }),
@@ -106,7 +107,7 @@ export function useMcpResourcePermissions<
     for (const permission of permissions) {
       if (
         !permission.subject ||
-        permission.source !== MCP_SETTINGS_PERMISSION_SOURCE ||
+        !isSettingsManagedPermissionSource(permission.source) ||
         (permission.subject_type !== "person" &&
           permission.subject_type !== "team" &&
           permission.subject_type !== "group" &&
@@ -148,7 +149,7 @@ export function useMcpResourcePermissions<
           p.subject_type === EVERYONE_SUBJECT_TYPE &&
           p.subject === EVERYONE_SUBJECT_ID &&
           p.id &&
-          p.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+          isSettingsManagedPermissionSource(p.source) &&
           permissionMatchesResource(p, resource, getRefs)
       );
 
@@ -186,7 +187,7 @@ export function useMcpResourcePermissions<
         subject: EVERYONE_SUBJECT_ID,
         subject_type: EVERYONE_SUBJECT_TYPE,
         deny: targetDeny,
-        source: MCP_SETTINGS_PERMISSION_SOURCE,
+        source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
         created_by: user?.id
       } as any);
     },
@@ -241,7 +242,7 @@ export function useMcpResourcePermissions<
             p.subject_type === "team" ||
             p.subject_type === "group" ||
             p.subject_type === "role") &&
-          p.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+          isSettingsManagedPermissionSource(p.source) &&
           permissionMatchesResource(p, resource, getRefs)
       );
 
@@ -271,7 +272,7 @@ export function useMcpResourcePermissions<
             subject: selection.subject.id,
             subject_type: subjectType,
             deny: selection.access === "deny",
-            source: MCP_SETTINGS_PERMISSION_SOURCE,
+            source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
             created_by: user?.id
           };
         })
@@ -424,7 +425,7 @@ export function useMcpResourcePermissions<
           p.subject === subject.id &&
           p.subject_type === subjectType &&
           p.id &&
-          p.source === MCP_SETTINGS_PERMISSION_SOURCE &&
+          isSettingsManagedPermissionSource(p.source) &&
           permissionMatchesResource(p, resource, getRefs)
       );
 
@@ -451,7 +452,7 @@ export function useMcpResourcePermissions<
           subject: subject.id,
           subject_type: subjectType,
           deny: shouldDeny,
-          source: MCP_SETTINGS_PERMISSION_SOURCE,
+          source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
           created_by: user?.id
         } as any);
       } else if (primary.deny !== shouldDeny) {

@@ -1,4 +1,7 @@
-import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
+import {
+  isSettingsManagedPermissionSource,
+  PermissionSubject
+} from "@flanksource-ui/api/services/permissions";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import ResourceList from "@flanksource-ui/components/Permissions/ResourceList";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
@@ -80,7 +83,7 @@ function getAccessState(
   const direct = permissions.filter(
     (permission) =>
       permission.action === "mcp:run" &&
-      permission.source === "mcp_settings" &&
+      isSettingsManagedPermissionSource(permission.source) &&
       permission.subject === subject.id &&
       permission.subject_type === subjectType &&
       permissionMatchesResource(permission, resource)
@@ -168,7 +171,7 @@ export default function ResourceSelectorPanel({
       const wildcardPermissions = permissions.filter((permission) => {
         if (
           permission.action !== "mcp:run" ||
-          permission.source !== "mcp_settings" ||
+          !isSettingsManagedPermissionSource(permission.source) ||
           permission.subject !== selectedSubject.id ||
           permission.subject_type !== subjectType
         ) {

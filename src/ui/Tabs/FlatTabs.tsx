@@ -19,7 +19,7 @@ export default function FlatTabs<T extends string>({
   contentClassName = "px-4 pb-4"
 }: FlatTabsProps<T>) {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">
           Select a tab

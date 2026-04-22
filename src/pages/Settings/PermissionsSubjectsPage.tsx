@@ -2,10 +2,11 @@ import { fetchAllPermissionSubjects } from "@flanksource-ui/api/services/permiss
 import PermissionSubjectPanel, {
   PermissionSubjectGroup
 } from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
+import SubjectPermissionsWorkbench from "@flanksource-ui/components/Permissions/SubjectPermissionsWorkbench";
 import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useIsFetching, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const SUBJECT_TYPE_ORDER = {
   role: 0,
@@ -22,6 +23,8 @@ export function PermissionsSubjectsPage() {
   );
 
   const debouncedSearch = useDebouncedValue(subjectSearch, 200) ?? "";
+
+  const queryClient = useQueryClient();
 
   const {
     data: subjects = [],
@@ -88,22 +91,28 @@ export function PermissionsSubjectsPage() {
     [selectedSubjectId, sortedSubjects]
   );
 
+  const isWorkbenchFetching =
+    useIsFetching({ queryKey: ["permissions-subjects"] }) > 0;
+
+  const onRefresh = useCallback(async () => {
+    await Promise.all([
+      refetch(),
+      queryClient.invalidateQueries({ queryKey: ["permissions-subjects"] })
+    ]);
+  }, [queryClient, refetch]);
+
   return (
     <PermissionsTabsLinks
       activeTab="Subjects"
-      loading={isLoading || isRefetching}
-      onRefresh={() => refetch()}
+      loading={isLoading || isRefetching || isWorkbenchFetching}
+      onRefresh={onRefresh}
     >
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-6 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
-          <p className="text-sm text-gray-600">
-            Browse permission subjects. Subject details and actions will be
-            added here.
-          </p>
-        </div>
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-4 lg:flex-row lg:gap-4">
+        <div className="flex min-h-0 w-full shrink-0 flex-col gap-3 lg:w-[220px]">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
+          </div>
 
-        <div className="flex min-h-0 flex-1 gap-4">
           <PermissionSubjectPanel
             subjectSearch={subjectSearch}
             onSubjectSearchChange={setSubjectSearch}
@@ -111,14 +120,16 @@ export function PermissionsSubjectsPage() {
             selectedSubjectId={selectedSubjectId}
             onSelectSubject={setSelectedSubjectId}
           />
+        </div>
 
-          <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
+        <div className="min-h-0 min-w-0 flex-1">
+          {selectedSubject ? (
+            <SubjectPermissionsWorkbench selectedSubject={selectedSubject} />
+          ) : (
             <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
-              {selectedSubject
-                ? `Selected subject: ${selectedSubject.name}`
-                : "Select a subject."}
+              Select a subject.
             </div>
-          </div>
+          )}
         </div>
       </div>
     </PermissionsTabsLinks>

@@ -31,7 +31,7 @@ export default function PermissionSubjectPanel({
   onSelectSubject
 }: PermissionSubjectPanelProps) {
   return (
-    <div className="flex w-[320px] shrink-0 flex-col">
+    <div className="flex w-full min-w-0 flex-col">
       <Input
         placeholder="Search subjects..."
         value={subjectSearch}
