@@ -30,7 +30,7 @@ import {
 import { formatJobName } from "@flanksource-ui/utils/common";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type DisableProperty = {
   name: string;
@@ -169,13 +169,11 @@ export default function JobHistoryOverridesDialog({
   }, [jobName, safeProperties]);
 
   const [values, setValues] = useState<Record<string, string>>(initialValues);
-  const wasOpenRef = useRef(open);
 
   useEffect(() => {
-    if (open && !wasOpenRef.current) {
+    if (open) {
       setValues(initialValues);
     }
-    wasOpenRef.current = open;
   }, [initialValues, open]);
 
   const saveMutation = useMutation({
