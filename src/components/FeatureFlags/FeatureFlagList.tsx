@@ -22,11 +22,8 @@ const AvatarCell = ({ getValue }: CellContext<FeatureFlag, any>) => {
 const columns: ColumnDef<FeatureFlag>[] = [
   {
     header: "Name",
-    accessorKey: "name"
-  },
-  {
-    header: "Description",
-    accessorKey: "description"
+    accessorKey: "name",
+    minSize: 300
   },
   {
     header: "Value",
@@ -34,23 +31,27 @@ const columns: ColumnDef<FeatureFlag>[] = [
   },
   {
     header: "Source",
-    accessorKey: "source"
+    accessorKey: "source",
+    maxSize: 80
   },
   {
     header: "Created By",
     accessorKey: "created_by",
-    cell: AvatarCell
+    cell: AvatarCell,
+    maxSize: 80
   },
   {
     header: "Created At",
     accessorKey: "created_at",
     cell: DateCell,
-    sortingFn: "datetime"
+    sortingFn: "datetime",
+    maxSize: 120
   },
   {
     header: "Updated At",
     accessorKey: "updated_at",
     cell: DateCell,
+    maxSize: 120,
     sortingFn: "datetime"
   }
 ];

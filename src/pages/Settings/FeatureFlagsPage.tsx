@@ -33,7 +33,7 @@ export function FeatureFlagsPage() {
     data: featureFlags,
     isLoading,
     refetch
-  } = useGetFeatureFlagsFromAPI();
+  } = useGetFeatureFlagsFromAPI({ refetchOnMount: "always" });
 
   const { mutate: saveFeatureFlag } = useAddFeatureFlag(() => {
     refetch();
