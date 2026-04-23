@@ -888,6 +888,12 @@ export const connectionTypes: ConnectionType[] = [
     fields: [
       ...commonConnectionFormFields,
       {
+        label: "URL",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
+      {
         label: "Region",
         key: "region",
         type: ConnectionsFieldTypes.input,
@@ -922,18 +928,20 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         region: data?.properties?.region,
         profile: data?.properties?.profile,
-        insecure_tls: data?.properties?.insecureTLS === "true"
+        insecure_tls:
+          data?.insecure_tls === true || data?.insecure_tls === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
+        url: data.url,
         username: data.username,
         password: data.password,
+        insecure_tls: data.insecure_tls,
         properties: {
           region: data.region,
-          profile: data.profile,
-          insecureTLS: data.insecure_tls
+          profile: data.profile
         }
       };
     }
@@ -986,7 +994,8 @@ export const connectionTypes: ConnectionType[] = [
         region: data?.properties?.region,
         profile: data?.properties?.profile,
         keyID: data?.properties?.keyID ?? data?.keyID,
-        insecure_tls: data?.properties?.insecureTLS === "true"
+        insecure_tls:
+          data?.insecure_tls === true || data?.insecure_tls === "true"
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
@@ -994,11 +1003,11 @@ export const connectionTypes: ConnectionType[] = [
         name: data.name,
         username: data.username,
         password: data.password,
+        insecure_tls: data.insecure_tls,
         properties: {
           region: data.region,
           profile: data.profile,
-          keyID: data.keyID,
-          insecureTLS: data.insecure_tls
+          keyID: data.keyID
         }
       };
     }
@@ -1009,6 +1018,12 @@ export const connectionTypes: ConnectionType[] = [
     value: ConnectionValueType.AWS_S3,
     fields: [
       ...commonConnectionFormFields,
+      {
+        label: "URL",
+        key: "url",
+        type: ConnectionsFieldTypes.input,
+        required: false
+      },
       {
         label: "Region",
         key: "region",
@@ -1050,13 +1065,15 @@ export const connectionTypes: ConnectionType[] = [
         ...data,
         region: data?.properties?.region,
         profile: data?.properties?.profile,
-        insecure_tls: data?.insecure_tls === true,
+        insecure_tls:
+          data?.insecure_tls === true || data?.insecure_tls === "true",
         bucket: data?.properties?.bucket
       } as Connection;
     },
     preSubmitConverter: (data: Record<string, string>) => {
       return {
         name: data.name,
+        url: data.url,
         username: data.username,
         password: data.password,
         insecure_tls: !!data.insecure_tls,
