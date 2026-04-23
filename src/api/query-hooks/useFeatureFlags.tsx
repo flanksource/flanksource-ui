@@ -43,14 +43,17 @@ export function useGetPropertyFromDB(featureFlag?: FeatureFlag) {
   });
 }
 
-export function useGetFeatureFlagsFromAPI() {
+export function useGetFeatureFlagsFromAPI(options?: {
+  refetchOnMount?: boolean | "always";
+}) {
   return useQuery({
     queryKey: ["feature-flags", "all", "api"],
     queryFn: async () => {
       const res = await fetchFeatureFlagsAPI();
       return res.data ?? [];
     },
-    staleTime: 30 * 1000
+    staleTime: 30 * 1000,
+    ...options
   });
 }
 
