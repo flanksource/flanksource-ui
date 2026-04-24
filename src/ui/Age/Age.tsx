@@ -2,7 +2,12 @@ import clsx from "clsx";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import TimezonePlugin from "dayjs/plugin/timezone";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@flanksource-ui/components/ui/tooltip";
 import { isEmpty } from "../../utils/date";
 import {
   datetimePreferenceAtom,
@@ -48,22 +53,22 @@ export default function Age({
       datetimePreference,
       suffix
     );
-    return (
-      <>
-        <span
-          data-tooltip-id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
-          className={className}
-        >
-          {formattedDate}
-        </span>
 
-        {datetimePreference !== "timestamp" && (
-          <Tooltip
-            id={`age-tooltip-${_from.local().fromNow(!suffix)}`}
-            content={formatDateForTooltip(_from, displayTimezonePreference)}
-          />
-        )}
-      </>
+    if (datetimePreference === "timestamp") {
+      return <span className={className}>{formattedDate}</span>;
+    }
+
+    return (
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className={className}>{formattedDate}</span>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-none">
+            {getFullTimestampTooltip(_from)}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 
@@ -73,34 +78,41 @@ export default function Age({
 
   if (duration.asMilliseconds() < 1000) {
     return (
-      <>
-        <span
-          data-tooltip-id={`age-tooltip-${duration.asMilliseconds()}`}
-          className={className}
-        >
-          {duration.asMilliseconds()}ms
-        </span>
-        <Tooltip
-          id={`age-tooltip-${duration.asMilliseconds()}`}
-          content={`${formatDateForTooltip(_from, displayTimezonePreference)}`}
-        />
-      </>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className={className}>{duration.asMilliseconds()}ms</span>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-none">
+            {getFullTimestampTooltip(_from)}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   }
 
   return (
-    <>
-      <span
-        data-tooltip-id={`age-tooltip-${_from.local().to(_to)}`}
-        className={clsx(className, "whitespace-nowrap")}
-      >
-        {_from.local().to(_to, !suffix)}
-      </span>
-      <Tooltip
-        id={`age-tooltip-${_from.local().to(_to)}`}
-        content={`${formatDateForTooltip(_from, displayTimezonePreference)} - ${formatDateForTooltip(_to, displayTimezonePreference)}`}
-      />
-    </>
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className={clsx(className, "whitespace-nowrap")}>
+            {_from.local().to(_to, !suffix)}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-none">
+          <div className="space-y-2">
+            <div>
+              <div className="font-medium">From</div>
+              {getFullTimestampTooltip(_from)}
+            </div>
+            <div>
+              <div className="font-medium">To</div>
+              {getFullTimestampTooltip(_to)}
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -109,6 +121,21 @@ export function formatDateForTooltip(
   displayTimezone: string = "Browser"
 ) {
   return formatDayjs(datetime, displayTimezone, "timestamp", false);
+}
+
+function getFullTimestampTooltip(datetime: dayjs.Dayjs) {
+  const browserTimezoneOffset = datetime.local().format("Z");
+  const browserTimestamp = datetime.local().format("YYYY-MM-DD HH:mm:ss");
+  const utcTimestamp = datetime.tz("UTC").format("YYYY-MM-DD HH:mm:ss");
+
+  return (
+    <div className="space-y-1">
+      <div>
+        {browserTimestamp} {browserTimezoneOffset}
+      </div>
+      <div>{utcTimestamp} UTC</div>
+    </div>
+  );
 }
 
 export function formatDayjs(
