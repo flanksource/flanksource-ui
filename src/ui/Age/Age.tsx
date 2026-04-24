@@ -64,8 +64,8 @@ export default function Age({
           <TooltipTrigger asChild>
             <span className={className}>{formattedDate}</span>
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-none">
-            {getFullTimestampTooltip(_from)}
+          <TooltipContent side="top" className="max-w-none p-0">
+            <FullTimestampTooltip datetime={_from} />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -83,8 +83,8 @@ export default function Age({
           <TooltipTrigger asChild>
             <span className={className}>{duration.asMilliseconds()}ms</span>
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-none">
-            {getFullTimestampTooltip(_from)}
+          <TooltipContent side="top" className="max-w-none p-0">
+            <FullTimestampTooltip datetime={_from} />
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -99,15 +99,19 @@ export default function Age({
             {_from.local().to(_to, !suffix)}
           </span>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-none">
-          <div className="space-y-2">
+        <TooltipContent side="top" className="max-w-none p-0">
+          <div className="w-[248px] space-y-1.5 rounded-md border border-white/20 bg-[#2b2b2b] p-2 text-white">
             <div>
-              <div className="font-medium">From</div>
-              {getFullTimestampTooltip(_from)}
+              <div className="mb-1 text-[10px] uppercase tracking-wide text-zinc-400">
+                From
+              </div>
+              <FullTimestampRows datetime={_from} />
             </div>
-            <div>
-              <div className="font-medium">To</div>
-              {getFullTimestampTooltip(_to)}
+            <div className="border-t border-white/15 pt-1.5">
+              <div className="mb-1 text-[10px] uppercase tracking-wide text-zinc-400">
+                To
+              </div>
+              <FullTimestampRows datetime={_to} />
             </div>
           </div>
         </TooltipContent>
@@ -123,17 +127,34 @@ export function formatDateForTooltip(
   return formatDayjs(datetime, displayTimezone, "timestamp", false);
 }
 
-function getFullTimestampTooltip(datetime: dayjs.Dayjs) {
+function FullTimestampTooltip({ datetime }: { datetime: dayjs.Dayjs }) {
+  return (
+    <div className="w-[248px] rounded-md border border-white/20 bg-[#2b2b2b] p-2 text-white">
+      <FullTimestampRows datetime={datetime} />
+    </div>
+  );
+}
+
+function FullTimestampRows({ datetime }: { datetime: dayjs.Dayjs }) {
   const browserTimezoneOffset = datetime.local().format("Z");
   const browserTimestamp = datetime.local().format("YYYY-MM-DD HH:mm:ss");
   const utcTimestamp = datetime.tz("UTC").format("YYYY-MM-DD HH:mm:ss");
 
   return (
-    <div className="space-y-1">
-      <div>
-        {browserTimestamp} {browserTimezoneOffset}
+    <div className="space-y-1 text-xs">
+      <div className="flex items-center gap-1.5 font-mono">
+        <span className="w-12 shrink-0 text-zinc-300">
+          {browserTimezoneOffset}
+        </span>
+        <span>{browserTimestamp}</span>
       </div>
-      <div>{utcTimestamp} UTC</div>
+      <div className="flex items-center gap-1.5 font-mono">
+        <span className="w-12 shrink-0 text-zinc-300">UTC</span>
+        <span>{utcTimestamp}</span>
+      </div>
+      <div className="border-t border-white/15 pt-1 text-[11px] text-zinc-300">
+        {datetime.fromNow()}
+      </div>
     </div>
   );
 }
