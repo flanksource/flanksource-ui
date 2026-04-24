@@ -142,6 +142,7 @@ function FullTimestampRows({ datetime }: { datetime: dayjs.Dayjs }) {
 
   return (
     <div className="space-y-1 text-xs">
+      <div className="pb-1 text-zinc-100">{formatRelativeLong(datetime)}</div>
       <div className="flex items-center gap-1.5 font-mono">
         <span className="w-12 shrink-0 text-zinc-300">
           {browserTimezoneOffset}
@@ -152,11 +153,33 @@ function FullTimestampRows({ datetime }: { datetime: dayjs.Dayjs }) {
         <span className="w-12 shrink-0 text-zinc-300">UTC</span>
         <span>{utcTimestamp}</span>
       </div>
-      <div className="border-t border-white/15 pt-1 text-[11px] text-zinc-300">
-        {datetime.fromNow()}
-      </div>
     </div>
   );
+}
+
+function formatRelativeLong(datetime: dayjs.Dayjs) {
+  const now = dayjs();
+  const diffSeconds = datetime.diff(now, "second");
+  const absSeconds = Math.abs(diffSeconds);
+
+  const units: Array<{ unit: Intl.RelativeTimeFormatUnit; seconds: number }> = [
+    { unit: "year", seconds: 365 * 24 * 60 * 60 },
+    { unit: "month", seconds: 30 * 24 * 60 * 60 },
+    { unit: "day", seconds: 24 * 60 * 60 },
+    { unit: "hour", seconds: 60 * 60 },
+    { unit: "minute", seconds: 60 },
+    { unit: "second", seconds: 1 }
+  ];
+
+  const selected =
+    units.find(({ seconds }) => absSeconds >= seconds) ??
+    units[units.length - 1];
+  const value = Math.round(diffSeconds / selected.seconds);
+
+  return new Intl.RelativeTimeFormat("en", {
+    numeric: "always",
+    style: "long"
+  }).format(value, selected.unit);
 }
 
 export function formatDayjs(
