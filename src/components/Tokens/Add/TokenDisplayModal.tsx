@@ -36,12 +36,12 @@ export function TokenDisplayContent({
   const maskedToken = tokenResponse.payload.token.replace(/./g, "•");
 
   return (
-    <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-      <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4">
-        <h3 className="mb-2 text-lg font-bold text-yellow-800">
+    <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+      <div className="rounded-md border border-yellow-200 bg-yellow-50 p-2">
+        <h3 className="mb-2 font-bold text-yellow-800">
           ⚠️ Important Security Notice
         </h3>
-        <p className="text-yellow-700">
+        <p className="text-sm text-yellow-700">
           This token will only be displayed once. Please copy and store it
           securely. You won't be able to see it again after closing this dialog.
         </p>
@@ -76,7 +76,7 @@ export function TokenDisplayContent({
       </div>
 
       {isMcp ? (
-        <div className="rounded-md border border-green-200 bg-green-50 p-4">
+        <div className="rounded-md border border-green-200 bg-green-50 p-4 text-sm">
           <h4 className="mb-2 font-medium text-green-800">MCP Client Setup:</h4>
           <McpSetupTabs
             token={tokenResponse.payload.token}
@@ -86,7 +86,7 @@ export function TokenDisplayContent({
           />
         </div>
       ) : (
-        <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+        <div className="">
           <h4 className="mb-2 font-medium text-blue-800">
             Usage Instructions:
           </h4>
@@ -163,11 +163,28 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
 
   const bearerAuth = `Bearer ${token}`;
   const baseUrl = useAgentsBaseURL() + "/mcp";
+  const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const isWindows = /Windows/i.test(userAgent);
 
-  const mcpConfigs = {
-    "claude-desktop": {
-      label: "Claude Desktop",
-      config: `{
+  const claudeDesktopConfig = isWindows
+    ? `{
+  "mcpServers": {
+    "mission-control": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx.cmd",
+        "-y",
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
+      ],
+      "env": {}
+    }
+  }
+}`
+    : `{
   "mcpServers": {
     "mission-control": {
       "command": "npx",
@@ -181,7 +198,12 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
       "env": {}
     }
   }
-}`
+}`;
+
+  const mcpConfigs = {
+    "claude-desktop": {
+      label: "Claude Desktop",
+      config: claudeDesktopConfig
     },
     "claude-code": {
       label: "Claude Code",
@@ -300,42 +322,31 @@ MCP_BEARER_TOKEN=${token}`
       case "claude-desktop":
         return (
           <>
-            <li>
-              Add this configuration to{" "}
+            <div>
+              Open Claude Desktop, go to <strong>Settings → Developer</strong>,
+              click the <strong>Edit Config</strong> button, and add this
+              configuration to{" "}
+              <code className="rounded bg-blue-100 px-1">
+                claude_desktop_config.json
+              </code>
+              .
+            </div>
+            <div>
+              If Claude opens a folder instead of the file, create or edit{" "}
               <code className="rounded bg-blue-100 px-1">
                 claude_desktop_config.json
               </code>{" "}
-              located at:
-            </li>
-            <ul className="list-inside list-disc space-y-1 pl-6">
-              <li>
-                macOS:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  ~/Library/Application Support/Claude/
-                </code>
-              </li>
-              <li>
-                Windows:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  %APPDATA%\Claude\
-                </code>
-              </li>
-              <li>
-                Linux:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  ~/.config/Claude/
-                </code>
-              </li>
-            </ul>
+              in that folder.
+            </div>
           </>
         );
       case "claude-code":
         return (
-          <li>
+          <div>
             Add this configuration to{" "}
             <code className="rounded bg-blue-100 px-1">.mcp.json</code> file in
             your project root.
-          </li>
+          </div>
         );
       default:
         return null;
@@ -349,8 +360,8 @@ MCP_BEARER_TOKEN=${token}`
       <div className="mt-4">
         <Tabs activeTab={activeTab} onSelectTab={handleTabChange}>
           {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
-            <Tab key={key} label={label} value={key} className="p-4">
-              <div className="max-h-64 overflow-y-auto">
+            <Tab key={key} label={label} value={key} className="p-2">
+              <div className="overflow-y-auto">
                 {key === "direct" || key === "slack-bot" ? (
                   <CodeBlock
                     code={config}
@@ -360,7 +371,7 @@ MCP_BEARER_TOKEN=${token}`
                   <JSONViewer
                     code={config}
                     format="json"
-                    showLineNo
+                    showLineNo={false}
                     hideCopyButton={false}
                   />
                 )}
@@ -370,14 +381,13 @@ MCP_BEARER_TOKEN=${token}`
         </Tabs>
       </div>
       {usageInstructions && (
-        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50 p-4">
-          <h4 className="mb-2 font-medium text-blue-800">
-            Usage Instructions:
-          </h4>
-          <ul className="space-y-1 text-sm text-blue-700">
-            {usageInstructions}
-            <li>• Store it securely and never share it publicly</li>
-          </ul>
+        <div className="mt-2 space-y-1 text-sm text-blue-700">
+          {usageInstructions}
+          <div>
+            Please ensure that you have{" "}
+            <code className="rounded bg-blue-100 px-1">node</code> and{" "}
+            <code className="rounded bg-blue-100 px-1">npx</code> installed.
+          </div>
         </div>
       )}
     </>

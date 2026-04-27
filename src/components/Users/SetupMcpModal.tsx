@@ -81,8 +81,8 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
       bodyClass="flex w-full flex-col"
     >
       <div className="flex w-full flex-col gap-4 p-4">
-        <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-base font-semibold text-gray-900">
+        <div className="">
+          <h3 className="text-md text-base font-semibold text-gray-900">
             Choose how MCP should authenticate
           </h3>
           <p className="mt-1 text-sm text-gray-700">
