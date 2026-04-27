@@ -165,15 +165,6 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
   const baseUrl = useAgentsBaseURL() + "/mcp";
   const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
   const isWindows = /Windows/i.test(userAgent);
-  const isMac = /Macintosh|Mac OS X/i.test(userAgent);
-  const isLinux = /Linux/i.test(userAgent) && !/Android/i.test(userAgent);
-  const claudeDesktopConfigPath = isWindows
-    ? "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
-    : isMac
-      ? "~/Library/Application Support/Claude/claude_desktop_config.json"
-      : isLinux
-        ? "~/.config/Claude/claude_desktop_config.json"
-        : null;
 
   const claudeDesktopConfig = isWindows
     ? `{
@@ -330,29 +321,32 @@ MCP_BEARER_TOKEN=${token}`
     switch (key) {
       case "claude-desktop":
         return (
-          <span>
-            Add this configuration to{" "}
-            <code className="rounded bg-blue-100 px-1">
-              claude_desktop_config.json
-            </code>{" "}
-            located at{" "}
-            {claudeDesktopConfigPath ? (
+          <>
+            <div>
+              Open Claude Desktop, go to <strong>Settings → Developer</strong>,
+              click the <strong>Edit Config</strong> button, and add this
+              configuration to{" "}
               <code className="rounded bg-blue-100 px-1">
-                {claudeDesktopConfigPath}
+                claude_desktop_config.json
               </code>
-            ) : (
-              "the Claude configuration directory for your OS"
-            )}
-            .
-          </span>
+              .
+            </div>
+            <div>
+              If Claude opens a folder instead of the file, create or edit{" "}
+              <code className="rounded bg-blue-100 px-1">
+                claude_desktop_config.json
+              </code>{" "}
+              in that folder.
+            </div>
+          </>
         );
       case "claude-code":
         return (
-          <span>
+          <div>
             Add this configuration to{" "}
             <code className="rounded bg-blue-100 px-1">.mcp.json</code> file in
             your project root.
-          </span>
+          </div>
         );
       default:
         return null;
@@ -377,7 +371,7 @@ MCP_BEARER_TOKEN=${token}`
                   <JSONViewer
                     code={config}
                     format="json"
-                    showLineNo
+                    showLineNo={false}
                     hideCopyButton={false}
                   />
                 )}
@@ -388,8 +382,12 @@ MCP_BEARER_TOKEN=${token}`
       </div>
       {usageInstructions && (
         <div className="mt-2 space-y-1 text-sm text-blue-700">
-          <div>{usageInstructions}</div>
-          <div>Please ensure that you have node and npx installed.</div>
+          {usageInstructions}
+          <div>
+            Please ensure that you have{" "}
+            <code className="rounded bg-blue-100 px-1">node</code> and{" "}
+            <code className="rounded bg-blue-100 px-1">npx</code> installed.
+          </div>
         </div>
       )}
     </>
