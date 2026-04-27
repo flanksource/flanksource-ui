@@ -163,11 +163,37 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
 
   const bearerAuth = `Bearer ${token}`;
   const baseUrl = useAgentsBaseURL() + "/mcp";
+  const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const isWindows = /Windows/i.test(userAgent);
+  const isMac = /Macintosh|Mac OS X/i.test(userAgent);
+  const isLinux = /Linux/i.test(userAgent) && !/Android/i.test(userAgent);
+  const claudeDesktopConfigPath = isWindows
+    ? "%LOCALAPPDATA%\\Packages\\Claude_pzs8sxrjxfjjc\\LocalCache\\Roaming\\Claude\\claude_desktop_config.json"
+    : isMac
+      ? "~/Library/Application Support/Claude/claude_desktop_config.json"
+      : isLinux
+        ? "~/.config/Claude/claude_desktop_config.json"
+        : null;
 
-  const mcpConfigs = {
-    "claude-desktop": {
-      label: "Claude Desktop",
-      config: `{
+  const claudeDesktopConfig = isWindows
+    ? `{
+  "mcpServers": {
+    "mission-control": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx.cmd",
+        "-y",
+        "mcp-remote",
+        "${baseUrl}",
+        "--header",
+        "Authorization:${bearerAuth}"
+      ],
+      "env": {}
+    }
+  }
+}`
+    : `{
   "mcpServers": {
     "mission-control": {
       "command": "npx",
@@ -181,7 +207,12 @@ function McpSetupTabs({ token, onTabChange }: McpSetupTabsProps) {
       "env": {}
     }
   }
-}`
+}`;
+
+  const mcpConfigs = {
+    "claude-desktop": {
+      label: "Claude Desktop",
+      config: claudeDesktopConfig
     },
     "claude-code": {
       label: "Claude Code",
@@ -299,43 +330,29 @@ MCP_BEARER_TOKEN=${token}`
     switch (key) {
       case "claude-desktop":
         return (
-          <>
-            <li>
-              Add this configuration to{" "}
+          <span>
+            Add this configuration to{" "}
+            <code className="rounded bg-blue-100 px-1">
+              claude_desktop_config.json
+            </code>{" "}
+            located at{" "}
+            {claudeDesktopConfigPath ? (
               <code className="rounded bg-blue-100 px-1">
-                claude_desktop_config.json
-              </code>{" "}
-              located at:
-            </li>
-            <ul className="list-inside list-disc space-y-1 pl-6">
-              <li>
-                macOS:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  ~/Library/Application Support/Claude/
-                </code>
-              </li>
-              <li>
-                Windows:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  %APPDATA%\Claude\
-                </code>
-              </li>
-              <li>
-                Linux:{" "}
-                <code className="rounded bg-blue-100 px-1">
-                  ~/.config/Claude/
-                </code>
-              </li>
-            </ul>
-          </>
+                {claudeDesktopConfigPath}
+              </code>
+            ) : (
+              "the Claude configuration directory for your OS"
+            )}
+            .
+          </span>
         );
       case "claude-code":
         return (
-          <li>
+          <span>
             Add this configuration to{" "}
             <code className="rounded bg-blue-100 px-1">.mcp.json</code> file in
             your project root.
-          </li>
+          </span>
         );
       default:
         return null;
@@ -374,10 +391,10 @@ MCP_BEARER_TOKEN=${token}`
           <h4 className="mb-2 font-medium text-blue-800">
             Usage Instructions:
           </h4>
-          <ul className="space-y-1 text-sm text-blue-700">
+          <span className="space-y-1 text-sm text-blue-700">
             {usageInstructions}
-            <li>• Store it securely and never share it publicly</li>
-          </ul>
+            <span> Store it securely and never share it publicly</span>
+          </span>
         </div>
       )}
     </>
