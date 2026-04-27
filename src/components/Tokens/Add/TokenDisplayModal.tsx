@@ -36,12 +36,12 @@ export function TokenDisplayContent({
   const maskedToken = tokenResponse.payload.token.replace(/./g, "•");
 
   return (
-    <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-      <div className="rounded-md border border-yellow-200 bg-yellow-50 p-4">
-        <h3 className="mb-2 text-lg font-bold text-yellow-800">
+    <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
+      <div className="rounded-md border border-yellow-200 bg-yellow-50 p-2">
+        <h3 className="mb-2 font-bold text-yellow-800">
           ⚠️ Important Security Notice
         </h3>
-        <p className="text-yellow-700">
+        <p className="text-sm text-yellow-700">
           This token will only be displayed once. Please copy and store it
           securely. You won't be able to see it again after closing this dialog.
         </p>
@@ -76,7 +76,7 @@ export function TokenDisplayContent({
       </div>
 
       {isMcp ? (
-        <div className="rounded-md border border-green-200 bg-green-50 p-4">
+        <div className="rounded-md border border-green-200 bg-green-50 p-4 text-sm">
           <h4 className="mb-2 font-medium text-green-800">MCP Client Setup:</h4>
           <McpSetupTabs
             token={tokenResponse.payload.token}
@@ -86,7 +86,7 @@ export function TokenDisplayContent({
           />
         </div>
       ) : (
-        <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
+        <div className="">
           <h4 className="mb-2 font-medium text-blue-800">
             Usage Instructions:
           </h4>
@@ -366,8 +366,8 @@ MCP_BEARER_TOKEN=${token}`
       <div className="mt-4">
         <Tabs activeTab={activeTab} onSelectTab={handleTabChange}>
           {Object.entries(mcpConfigs).map(([key, { label, config }]) => (
-            <Tab key={key} label={label} value={key} className="p-4">
-              <div className="max-h-64 overflow-y-auto">
+            <Tab key={key} label={label} value={key} className="p-2">
+              <div className="overflow-y-auto">
                 {key === "direct" || key === "slack-bot" ? (
                   <CodeBlock
                     code={config}
@@ -387,14 +387,9 @@ MCP_BEARER_TOKEN=${token}`
         </Tabs>
       </div>
       {usageInstructions && (
-        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50 p-4">
-          <h4 className="mb-2 font-medium text-blue-800">
-            Usage Instructions:
-          </h4>
-          <span className="space-y-1 text-sm text-blue-700">
-            {usageInstructions}
-            <span> Store it securely and never share it publicly</span>
-          </span>
+        <div className="mt-2 space-y-1 text-sm text-blue-700">
+          <div>{usageInstructions}</div>
+          <div>Please ensure that you have node and npx installed.</div>
         </div>
       )}
     </>
