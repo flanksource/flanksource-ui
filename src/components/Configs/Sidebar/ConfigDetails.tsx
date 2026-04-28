@@ -9,15 +9,19 @@ import TextSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/TextSkeletonLo
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
-import { useMemo, useEffect } from "react";
-import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
+import { useEffect, useMemo, useState } from "react";
+import { FaEdit, FaExclamationTriangle, FaPlus, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 import { InfoMessage } from "../../InfoMessage";
 import { Status } from "../../Status";
 import DisplayDetailsRow from "../../Utils/DisplayDetailsRow";
 import { DisplayGroupedProperties } from "../../Utils/DisplayGroupedProperties";
 import ConfigCostValue from "../ConfigCosts/ConfigCostValue";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
+import { IconButton } from "../../../ui/Buttons/IconButton";
+import AddConfigPropertyModal from "./AddConfigPropertyModal";
+import ManageConfigPropertiesModal from "./ManageConfigPropertiesModal";
 import { formatConfigLabels } from "./Utils/formatConfigLabels";
 import { MdOutlineSupportAgent } from "react-icons/md";
 
@@ -26,6 +30,9 @@ type Props = {
 };
 
 export function ConfigDetails({ configId }: Props) {
+  const [isAddPropertyOpen, setIsAddPropertyOpen] = useState(false);
+  const [isManagePropertiesOpen, setIsManagePropertiesOpen] = useState(false);
+
   const {
     data: configDetails,
     isLoading,
@@ -252,7 +259,44 @@ export function ConfigDetails({ configId }: Props) {
 
           <DisplayDetailsRow items={types} />
 
+          <div className="flex items-center justify-between py-1 text-sm text-gray-700">
+            <span className="border-b border-dashed border-gray-500">
+              Properties
+            </span>
+            <div className="flex items-center gap-2">
+              <IconButton
+                data-tooltip-id="edit-properties-tooltip"
+                data-tooltip-content="Edit properties"
+                icon={<FaEdit className="text-gray-600" size={14} />}
+                onClick={() => setIsManagePropertiesOpen(true)}
+              />
+              <IconButton
+                data-tooltip-id="add-property-tooltip"
+                data-tooltip-content="Add property"
+                icon={<FaPlus className="text-gray-600" size={14} />}
+                onClick={() => setIsAddPropertyOpen(true)}
+              />
+            </div>
+            <Tooltip id="edit-properties-tooltip" />
+            <Tooltip id="add-property-tooltip" />
+          </div>
           <DisplayGroupedProperties items={properties} />
+
+          <AddConfigPropertyModal
+            configId={configId}
+            isOpen={isAddPropertyOpen}
+            onClose={() => setIsAddPropertyOpen(false)}
+            existingProperties={configDetails.properties}
+            onAdded={() => refetchConfig()}
+          />
+
+          <ManageConfigPropertiesModal
+            configId={configId}
+            isOpen={isManagePropertiesOpen}
+            onClose={() => setIsManagePropertiesOpen(false)}
+            existingProperties={configDetails.properties}
+            onChanged={() => refetchConfig()}
+          />
 
           {!isCostsEmpty(configDetails) && (
             <DisplayDetailsRow

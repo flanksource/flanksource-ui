@@ -22,6 +22,8 @@ export type Property = {
     label: string;
     url: string;
   }[];
+  created_by?: string;
+  creator_type?: "scraper" | "person" | string;
 };
 
 export interface Component extends Timestamped, Namespaced {

@@ -14,6 +14,7 @@ import {
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
+import { Property } from "../types/topology";
 
 export * from "./configAccess";
 
@@ -163,6 +164,47 @@ export const getConfig = (id: string) =>
   resolvePostGrestRequestWithPagination<ConfigDetail[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
   );
+
+export type UpdateConfigItemPropertiesResponse = {
+  changed: boolean;
+  properties: Property[];
+};
+
+export const updateConfigItemProperties = async (
+  configId: string,
+  creatorType: "person" | "scraper",
+  createdBy: string,
+  properties: Property[]
+) => {
+  const res = await ConfigDB.post<UpdateConfigItemPropertiesResponse[]>(
+    "/rpc/update_config_item_properties",
+    {
+      p_config_id: configId,
+      p_creator_type: creatorType,
+      p_created_by: createdBy,
+      p_properties: properties
+    }
+  );
+  return res.data?.[0];
+};
+
+export const deleteConfigItemProperty = async (
+  configId: string,
+  creatorType: "person" | "scraper",
+  createdBy: string,
+  propertyName: string
+) => {
+  const res = await ConfigDB.post<UpdateConfigItemPropertiesResponse[]>(
+    "/rpc/delete_config_item_property",
+    {
+      p_config_id: configId,
+      p_creator_type: creatorType,
+      p_created_by: createdBy,
+      p_property_name: propertyName
+    }
+  );
+  return res.data?.[0];
+};
 
 export type ConfigsTagList = {
   key: string;
