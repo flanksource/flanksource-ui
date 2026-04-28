@@ -23,6 +23,16 @@ const statusOptions: Record<string, TriStateOptions> = {
     id: "4",
     label: "Failed",
     value: "FAILED"
+  },
+  stale: {
+    id: "5",
+    label: "Stale",
+    value: "STALE"
+  },
+  skipped: {
+    id: "6",
+    label: "Skipped",
+    value: "SKIPPED"
   }
 };
 
