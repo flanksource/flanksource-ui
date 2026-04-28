@@ -24,7 +24,7 @@ export default function JobsHistoryLogsTab({
 
   return (
     <>
-      <JobHistoryFilters defaultStatusFilter={null} />
+      <JobHistoryFilters defaultStatusFilter="SUCCESS:-1,STALE:-1,SKIPPED:-1" />
 
       <JobsHistoryTable
         jobs={jobs ?? []}
