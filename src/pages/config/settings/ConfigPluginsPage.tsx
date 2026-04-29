@@ -16,6 +16,7 @@ import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   BreadcrumbNav,
+  BreadcrumbChild,
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import MRTAvatarCell from "@flanksource-ui/ui/MRTDataTable/Cells/MRTAvataCell";
@@ -231,29 +232,31 @@ export default function ConfigPluginsPage() {
       <Head prefix="Catalog Plugins" />
       <SearchLayout
         title={
-          <BreadcrumbNav
-            list={[
-              <BreadcrumbRoot key="/catalog" link="/catalog">
-                Catalog
-              </BreadcrumbRoot>,
-              <BreadcrumbRoot key="/catalog/plugins" link="/catalog/plugins">
-                Plugins
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                resource={tables.database}
-                action="write"
-                key="add-plugin"
+          <div className="flex items-center gap-2">
+            <BreadcrumbNav
+              list={[
+                <BreadcrumbRoot key="/catalog" link="/catalog">
+                  Catalog
+                </BreadcrumbRoot>,
+                <BreadcrumbChild key="/catalog/plugins" link="/catalog/plugins">
+                  Plugins
+                </BreadcrumbChild>
+              ]}
+            />
+            <AuthorizationAccessCheck
+              resource={tables.database}
+              action="write"
+              key="add-plugin"
+            >
+              <button
+                type="button"
+                className=""
+                onClick={() => setIsOpen(true)}
               >
-                <button
-                  type="button"
-                  className=""
-                  onClick={() => setIsOpen(true)}
-                >
-                  <AiFillPlusCircle size={32} className="text-blue-600" />
-                </button>
-              </AuthorizationAccessCheck>
-            ]}
-          />
+                <AiFillPlusCircle size={32} className="text-blue-600" />
+              </button>
+            </AuthorizationAccessCheck>
+          </div>
         }
         onRefresh={() => refetch()}
         loading={isLoading}
