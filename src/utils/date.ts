@@ -288,3 +288,55 @@ export function formatDuration(ms: number): string {
   const remainingDays = Math.round(totalDays - months * avgDaysPerMonth);
   return remainingDays > 0 ? `${months}mo${remainingDays}d` : `${months}mo`;
 }
+
+/**
+ * Converts nanoseconds to a human-readable duration string (e.g., "1h", "5m", "30s").
+ */
+export function nanosecondsToHuman(ns: number | string): string {
+  const n = typeof ns === "string" ? parseInt(ns, 10) : ns;
+  if (isNaN(n) || n === 0) return "";
+  return formatDuration(n / 1_000_000);
+}
+
+/**
+ * Parses a human-readable duration string (e.g., "1h", "5m", "30s", "1d") to nanoseconds.
+ * Returns the original string if it cannot be parsed.
+ */
+export function humanToNanoseconds(value: string): number | null {
+  if (!value || !value.trim()) return null;
+  const trimmed = value.trim();
+  // match patterns like "1h30m", "5m", "30s", "1d", "2w", "1mo"
+  let total = 0;
+  const pattern = /(\d+(?:\.\d+)?)(mo|w|d|h|m|s|ms)/g;
+  let match: RegExpExecArray | null;
+  let matched = false;
+  while ((match = pattern.exec(trimmed)) !== null) {
+    matched = true;
+    const num = parseFloat(match[1]);
+    const unit = match[2];
+    switch (unit) {
+      case "ms":
+        total += num * 1_000_000;
+        break;
+      case "s":
+        total += num * 1_000_000_000;
+        break;
+      case "m":
+        total += num * 60 * 1_000_000_000;
+        break;
+      case "h":
+        total += num * 3_600 * 1_000_000_000;
+        break;
+      case "d":
+        total += num * 86_400 * 1_000_000_000;
+        break;
+      case "w":
+        total += num * 7 * 86_400 * 1_000_000_000;
+        break;
+      case "mo":
+        total += num * 30 * 86_400 * 1_000_000_000;
+        break;
+    }
+  }
+  return matched ? Math.round(total) : null;
+}

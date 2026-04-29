@@ -1,6 +1,7 @@
 import {
   useAddFeatureFlag,
   useDeleteFeatureFlag,
+  useGetDebugProperties,
   useGetFeatureFlagsFromAPI,
   useGetPropertyFromDB,
   useUpdateFeatureFlag
@@ -14,7 +15,8 @@ import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsCont
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   FeatureFlag,
-  PropertyDBObject
+  PropertyDBObject,
+  PropertyType
 } from "@flanksource-ui/services/permissions/permissionsService";
 import {
   BreadcrumbNav,
@@ -34,6 +36,8 @@ export function FeatureFlagsPage() {
     isLoading,
     refetch
   } = useGetFeatureFlagsFromAPI({ refetchOnMount: "always" });
+
+  const { data: debugProperties } = useGetDebugProperties();
 
   const { mutate: saveFeatureFlag } = useAddFeatureFlag(() => {
     refetch();
@@ -70,6 +74,15 @@ export function FeatureFlagsPage() {
     setEditedRow(undefined);
   }, [isOpen]);
 
+  // Derive type + default from editedRow or debugProperties
+  const editedName = editedRow?.name;
+  const editedPropertyType =
+    editedRow?.type ??
+    (editedName ? debugProperties?.[editedName]?.type : undefined);
+  const debugEntry = editedName ? debugProperties?.[editedName] : undefined;
+  const editedDefaultValue =
+    debugEntry !== undefined ? String(debugEntry.default) : undefined;
+
   return (
     <>
       <Head prefix="Feature Flags" />
@@ -102,8 +115,9 @@ export function FeatureFlagsPage() {
       >
         <div className="flex h-full w-full flex-1 flex-col px-6 pb-0">
           <FeatureFlagsList
-            className="mt-6 overflow-y-hidden"
+            className="mt-6"
             data={featureFlags ?? []}
+            debugProperties={debugProperties}
             isLoading={isLoading}
             onRowClick={(val) => {
               if (val.source === "local") {
@@ -122,6 +136,8 @@ export function FeatureFlagsPage() {
               onFeatureFlagDelete={deleteFeatureFlag}
               formValue={property}
               source={editedRow?.source}
+              propertyType={editedPropertyType as PropertyType | undefined}
+              defaultValue={editedDefaultValue}
             />
           )}
         </div>

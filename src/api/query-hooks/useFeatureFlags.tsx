@@ -10,6 +10,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   deleteProperty,
+  fetchDebugProperties,
   fetchFeatureFlagsAPI,
   fetchProperties,
   fetchProperty,
@@ -54,6 +55,14 @@ export function useGetFeatureFlagsFromAPI(options?: {
     },
     staleTime: 30 * 1000,
     ...options
+  });
+}
+
+export function useGetDebugProperties() {
+  return useQuery({
+    queryKey: ["debug-properties"],
+    queryFn: fetchDebugProperties,
+    staleTime: 5 * 60 * 1000
   });
 }
 

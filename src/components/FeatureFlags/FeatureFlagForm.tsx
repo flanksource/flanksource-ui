@@ -1,5 +1,9 @@
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
+import {
+  PropertyDBObject,
+  PropertyType
+} from "@flanksource-ui/services/permissions/permissionsService";
+import { nanosecondsToHuman } from "@flanksource-ui/utils/date";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import clsx from "clsx";
@@ -8,6 +12,7 @@ import { FaTrash } from "react-icons/fa";
 import FormikTextInput from "../Forms/Formik/FormikTextInput";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { toastError } from "../Toast/toast";
+import PropertyValueInput from "./PropertyValueInput";
 
 type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   isOpen: boolean;
@@ -16,7 +21,19 @@ type FeatureFlagFormProps = React.HTMLProps<HTMLDivElement> & {
   onFeatureFlagDelete: (data: Partial<PropertyDBObject>) => void;
   formValue?: Partial<PropertyDBObject>;
   source?: string;
+  propertyType?: PropertyType;
+  defaultValue?: string;
 };
+
+function getInitialValue(
+  formValue: Partial<PropertyDBObject> | undefined,
+  defaultValue: string | undefined
+): string {
+  if (formValue?.value !== undefined && formValue.value !== "") {
+    return formValue.value;
+  }
+  return defaultValue ?? "";
+}
 
 export default function FeatureFlagForm({
   className,
@@ -26,11 +43,31 @@ export default function FeatureFlagForm({
   onFeatureFlagDelete,
   formValue,
   source,
+  propertyType,
+  defaultValue,
   ...props
 }: FeatureFlagFormProps) {
+  const isEditing = Boolean(formValue?.created_at);
+  const title = isEditing ? "Edit Property" : "Add Property";
+
+  const initialValues = {
+    ...formValue,
+    name: formValue?.name ?? "",
+    value: getInitialValue(formValue, defaultValue)
+  };
+
+  const hint =
+    defaultValue !== undefined
+      ? `Default: ${
+          propertyType === "duration"
+            ? nanosecondsToHuman(defaultValue) || defaultValue
+            : defaultValue
+        }`
+      : undefined;
+
   return (
     <Modal
-      title="Add Feature Flag"
+      title={title}
       size="very-small"
       onClose={() => {
         setIsOpen(false);
@@ -39,15 +76,18 @@ export default function FeatureFlagForm({
       bodyClass=""
     >
       <Formik
-        initialValues={
-          formValue || {
-            name: "",
-            value: ""
-          }
-        }
+        initialValues={initialValues}
+        enableReinitialize
         onSubmit={(value) => {
-          if (!value.name || !value.value) {
-            toastError(`please provide all details`);
+          if (!value.name) {
+            toastError(`Please provide the property name`);
+            return;
+          }
+          if (
+            propertyType !== "bool" &&
+            (value.value === "" || value.value == null)
+          ) {
+            toastError(`Please provide a value`);
             return;
           }
           onFeatureFlagSubmit?.(value);
@@ -60,26 +100,25 @@ export default function FeatureFlagForm({
             {...props}
           >
             <div className={clsx("mb-2 flex flex-col px-2")}>
-              <div className="flex flex-row justify-center gap-4 overflow-y-auto px-2 py-6">
-                <div className="flex-1">
-                  <FormikTextInput
-                    name="name"
-                    label="Feature flag"
-                    className="flex flex-row items-center gap-2"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col">
-                  <FormikTextInput
-                    name="value"
-                    label="Value"
-                    className="flex flex-row items-center gap-2"
-                  />
-                </div>
+              <div className="flex flex-col gap-4 overflow-y-auto px-2 py-6">
+                <FormikTextInput
+                  name="name"
+                  label="Property"
+                  readOnly={isEditing}
+                  className="flex flex-col gap-1"
+                />
+                <PropertyValueInput
+                  name="value"
+                  label="Value"
+                  propertyType={propertyType}
+                  disabled={source === "local"}
+                />
+                {hint && <p className="text-xs text-gray-500">{hint}</p>}
               </div>
             </div>
           </div>
           <div className="flex items-center rounded-lg bg-gray-100 px-5 py-4">
-            {Boolean(formValue?.created_at) && (
+            {isEditing && (
               <AuthorizationAccessCheck
                 resource={tables.feature_flags}
                 action="write"
@@ -111,7 +150,7 @@ export default function FeatureFlagForm({
                 >
                   <Button
                     type="submit"
-                    text={Boolean(formValue?.created_at) ? "Update" : "Save"}
+                    text={isEditing ? "Update" : "Save"}
                     className="btn-primary"
                   />
                 </AuthorizationAccessCheck>
