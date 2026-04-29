@@ -1,10 +1,12 @@
+import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import { UserFormValue } from "@flanksource-ui/components/Users/UserForm";
 import {
   Auth,
   CanaryChecker,
   IncidentCommander,
   People,
-  Rback
+  Rback,
+  apiBase
 } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
@@ -154,17 +156,27 @@ export const inviteUser = ({
   }>("/invite_user", { firstName, lastName, email, role });
 };
 
-export const getVersionInfo = () =>
-  resolvePostGrestRequestWithPagination<VersionInfo>(
-    CanaryChecker.get("/about").then((data) => {
-      const versionInfo: any = data.data || {};
-      data.data = {
-        ...versionInfo,
-        backend: versionInfo.Version
-      };
-      return data;
-    })
-  );
+export const getVersionInfo = async () => {
+  let backend: string | undefined;
+
+  if (isCanaryUI) {
+    const { data } = await CanaryChecker.get<{ Version?: string }>("/about");
+    backend = data.Version;
+  } else {
+    const { data } = await apiBase.get<{
+      appVersion?: string;
+      chartVersion?: string;
+    }>("/about");
+    backend = data.chartVersion || data.appVersion;
+  }
+
+  return {
+    data: {
+      backend: backend || "NA"
+    } satisfies VersionInfo,
+    error: null
+  };
+};
 
 export const updateUserRole = (userId: string, roles: string[]) => {
   return resolvePostGrestRequestWithPagination<{
