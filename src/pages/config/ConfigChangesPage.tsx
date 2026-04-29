@@ -79,7 +79,7 @@ export function ConfigChangesPage() {
 
   // Accumulate new items from poll and advance cursor
   useEffect(() => {
-    if (!pollData?.changes?.length) return;
+    if (!liveTail || !pollData?.changes?.length) return;
 
     const incoming = pollData.changes;
     const newest = getNewestInsertedAt(incoming);
@@ -92,7 +92,7 @@ export function ConfigChangesPage() {
       const filtered = prev.filter((c) => !incomingIds.has(c.id));
       return [...incoming, ...filtered];
     });
-  }, [pollData]);
+  }, [liveTail, pollData]);
 
   const baseChanges = (data?.changes ?? []).map((change) => ({
     ...change,
