@@ -1,4 +1,7 @@
-import { PropertyDBObject } from "@flanksource-ui/services/permissions/permissionsService";
+import {
+  DebugProperty,
+  PropertyDBObject
+} from "@flanksource-ui/services/permissions/permissionsService";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import FeatureFlagForm from "./FeatureFlagForm";
@@ -6,11 +9,13 @@ import FeatureFlagForm from "./FeatureFlagForm";
 type FeatureFlagAddButtonProps = {
   onSubmit: (property: Partial<PropertyDBObject>) => void;
   onDelete: (property: Partial<PropertyDBObject>) => void;
+  debugProperties?: Record<string, DebugProperty>;
 };
 
 export default function FeatureFlagAddButton({
   onSubmit,
-  onDelete
+  onDelete,
+  debugProperties
 }: FeatureFlagAddButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,6 +34,7 @@ export default function FeatureFlagAddButton({
         setIsOpen={setIsOpen}
         onFeatureFlagSubmit={onSubmit}
         onFeatureFlagDelete={onDelete}
+        debugProperties={debugProperties}
       />
     </>
   );

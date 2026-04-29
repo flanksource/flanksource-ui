@@ -104,6 +104,7 @@ export function FeatureFlagsPage() {
                 <FeatureFlagAddButton
                   onSubmit={onSubmit}
                   onDelete={deleteFeatureFlag}
+                  debugProperties={debugProperties}
                 />
               </AuthorizationAccessCheck>
             ]}
