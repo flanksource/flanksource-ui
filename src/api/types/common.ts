@@ -4,10 +4,8 @@ export type PaginationInfo = {
 };
 
 export type VersionInfo = {
-  frontend: string;
+  frontend?: string;
   backend: string;
-  Version: string;
-  Timestamp: string;
 };
 
 export type CostsData = {
