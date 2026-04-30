@@ -1,5 +1,6 @@
 import { Agent, Avatar, CreatedAt, Timestamped } from "../traits";
 import { HealthCheckSummary } from "./health";
+import { PlaybookArtifact } from "./playbooks";
 import { Property } from "./topology";
 
 export interface ConfigChange extends CreatedAt {
@@ -24,6 +25,7 @@ export interface ConfigChange extends CreatedAt {
   first_observed?: string;
   count?: number;
   inserted_at?: string;
+  artifacts?: PlaybookArtifact[];
 }
 
 export interface Change {

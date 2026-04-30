@@ -41,8 +41,10 @@ export default function TabContentDownloadButton({
 
   const onDownloadLogs = useCallback(async () => {
     if (artifactID) {
-      const downloadURL = `/api/artifacts/download/${artifactID}`;
-      window.open(downloadURL, "_blank");
+      const { artifactDownloadURL } = await import(
+        "@flanksource-ui/api/services/artifacts"
+      );
+      window.open(artifactDownloadURL(artifactID, fileName), "_blank");
       return;
     }
 
