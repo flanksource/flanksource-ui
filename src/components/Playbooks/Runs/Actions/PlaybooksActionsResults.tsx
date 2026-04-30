@@ -12,7 +12,10 @@ import TabContentDownloadButton from "./PlaybookResultsDropdownButton";
 import { Tab, Tabs } from "../../../../ui/Tabs/Tabs";
 import blockKitToMarkdown from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
-import { downloadArtifact } from "../../../../api/services/artifacts";
+import {
+  artifactDownloadURL,
+  downloadArtifact
+} from "../../../../api/services/artifacts";
 import { TbAlertCircle, TbFileDescription } from "react-icons/tb";
 import { formatBytes } from "@flanksource-ui/utils/common";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
@@ -482,7 +485,7 @@ function ArtifactContent({
     }
   });
 
-  const downloadURL = `/api/artifacts/download/${artifact.id}`;
+  const downloadURL = artifactDownloadURL(artifact.id, artifact.filename);
 
   return (
     <div className="flex h-full w-full flex-col">
