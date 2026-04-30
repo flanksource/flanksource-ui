@@ -33,7 +33,7 @@ const KratosLogin = () => {
   const searchParams = useSearchParams();
 
   const flowId = searchParams.get("flow") || undefined;
-  const returnTo = searchParams.get("return_to") || "/";
+  const returnTo = searchParams.get("return_to") || undefined;
   const username = searchParams.get("username");
   const password = searchParams.get("password");
 
@@ -54,7 +54,7 @@ const KratosLogin = () => {
       const { data } = await ory.getLoginFlow({ id });
       setFlow(data);
     } catch (error) {
-      handleError(error as AxiosError);
+      return handleError(error as AxiosError);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -68,13 +68,13 @@ const KratosLogin = () => {
   );
 
   const createFlow = useCallback(
-    async (refresh: boolean, aal: string, returnTo: string = "/") => {
+    async (refresh: boolean, aal: string, returnTo?: string) => {
       try {
         const { data } = await ory.createBrowserLoginFlow({
           refresh: refresh,
           // Check for two-factor authentication
           aal: aal,
-          returnTo: returnTo
+          ...(returnTo ? { returnTo } : {})
         });
         setFlow(data);
         if (flowId !== data.id) {
@@ -97,13 +97,13 @@ const KratosLogin = () => {
 
     if (flowId) {
       getFlow(flowId).catch(() => {
-        createFlow(refresh, aal, String(returnTo ?? "/"));
+        createFlow(refresh, aal, returnTo);
       });
       return;
     }
 
     // Otherwise we initialize it
-    createFlow(refresh, aal, returnTo ?? "/");
+    createFlow(refresh, aal, returnTo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
@@ -115,7 +115,7 @@ const KratosLogin = () => {
           updateLoginFlowBody: values
         });
         setLoginSuccessful(true);
-        push(String(returnTo || "/"));
+        push(returnTo ?? "/");
       } catch (error) {
         if ((error as AxiosError).response?.status === 400) {
           // Yup, it is!
@@ -156,7 +156,6 @@ const KratosLogin = () => {
       });
     }
   }, [flow, submitFlow, credentials]);
-
 
   return (
     <div className="w-96">

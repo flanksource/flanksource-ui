@@ -244,18 +244,20 @@ for (const client of [
 
 export function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
   if (error?.response?.status === 401) {
+    const returnTo = encodeURIComponent(
+      `${window.location.pathname}${window.location.search}`
+    );
+
     if (isBasicAuthSystem) {
-      window.location.href = `/login?return_to=${window.location.pathname}${window.location.search}`;
+      window.location.href = `/login?return_to=${returnTo}`;
       return;
     }
 
     if (isClerkAuthSystem) {
-      const url = `/auth-state-checker?return_to=${window.location.pathname}${window.location.search}`;
-      window.location.href = url;
+      window.location.href = `/auth-state-checker?return_to=${returnTo}`;
       return;
     }
 
-    const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
-    window.location.href = url;
+    window.location.href = `/login?return_to=${returnTo}`;
   }
 }
