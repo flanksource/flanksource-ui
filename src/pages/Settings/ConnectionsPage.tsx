@@ -119,7 +119,7 @@ export function ConnectionsPage() {
         toastSuccess("Connection added successfully");
       },
       onError: (ex) => {
-        toastError((ex as Error).message);
+        toastError(ex);
       }
     });
 
@@ -138,7 +138,7 @@ export function ConnectionsPage() {
         toastSuccess("Connection updated successfully");
       },
       onError: (ex) => {
-        toastError((ex as Error).message);
+        toastError(ex);
       }
     });
 
@@ -156,7 +156,7 @@ export function ConnectionsPage() {
       toastSuccess("Connection deleted successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   });
 

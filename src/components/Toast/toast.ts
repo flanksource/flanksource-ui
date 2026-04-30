@@ -1,26 +1,11 @@
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import toast, { ToastOptions } from "react-hot-toast";
 
-type ErrorMessage =
-  | {
-      response?: {
-        data?: {
-          error: string;
-          message: string;
-        };
-      };
-    }
-  | string
-  | undefined;
-
-export function toastError(message: ErrorMessage) {
-  if (typeof message === "string" || !message) {
+export function toastError(message: unknown) {
+  if (typeof message === "string") {
     toast.error(message || "An error occurred");
   } else {
-    toast.error(
-      message.response?.data?.error ||
-        message.response?.data?.message ||
-        "An error occurred"
-    );
+    toast.error(getErrorMessage(message) || "An error occurred");
   }
 }
 
