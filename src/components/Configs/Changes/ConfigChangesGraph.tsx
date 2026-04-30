@@ -31,11 +31,13 @@ export default function ConfigChangesGraph({
   onItemClicked = () => {}
 }: ConfigChangesGraphProps) {
   const data: ChartShallowDataShape[] = useMemo(() => {
-    return changes.map((change) => ({
-      key: dayjs(change.first_observed).toDate(),
-      data: change.config?.name!,
-      metadata: change
-    }));
+    return changes
+      .filter((change) => change.first_observed && change.config?.name)
+      .map((change) => ({
+        key: dayjs(change.first_observed).toDate(),
+        data: change.config!.name!,
+        metadata: change
+      }));
   }, [changes]);
 
   return (
@@ -97,13 +99,14 @@ export default function ConfigChangesGraph({
                                 {change.change_type}
                               </span>
                               <span className="font-semibold">
-                                <Age from={change.first_observed} />
-                                {(change.count || 1) > 1 && (
-                                  <span className="inline-block pl-1 text-gray-500">
-                                    (x{change.count} over{" "}
-                                    <Age from={change.first_observed} />)
-                                  </span>
-                                )}
+                                <Age from={change.created_at} />
+                                {(change.count || 1) > 1 &&
+                                  change.first_observed && (
+                                    <span className="inline-block pl-1 text-gray-500">
+                                      (x{change.count} over{" "}
+                                      <Age from={change.first_observed} />)
+                                    </span>
+                                  )}
                               </span>
                             </div>
                             <p>{change.summary}</p>

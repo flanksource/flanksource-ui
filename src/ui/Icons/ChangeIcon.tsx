@@ -16,8 +16,16 @@ export function ChangeIcon({
   change
 }: ChangeIconProps) {
   const colorClass = useMemo(() => {
+    const normalized = change?.severity?.toLowerCase();
+    const aliases: Record<string, string> = {
+      failure: "critical",
+      blocker: "critical",
+      warning: "medium",
+      success: "low"
+    };
+    const mapped = aliases[normalized ?? ""] ?? normalized;
     const items = Object.values(configChangeSeverity).find(
-      (item) => item.value === change?.severity
+      (item) => item.value === mapped
     );
     return items?.colorClass ?? "";
   }, [change?.severity]);

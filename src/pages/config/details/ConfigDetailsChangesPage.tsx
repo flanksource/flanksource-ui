@@ -85,21 +85,21 @@ export function ConfigDetailsChangesPage() {
     });
   }, [pollData]);
 
-  const baseChanges = (data?.changes ?? []).map((change) => ({
-    ...change,
+  const baseChanges = (data?.changes ?? []).map((c) => ({
+    ...c,
     config: {
-      id: change.config_id!,
-      type: change.type!,
-      name: change.name!
+      id: c.config_id ?? "",
+      type: c.type ?? c.config?.type ?? "",
+      name: c.name ?? c.config?.name ?? ""
     }
   }));
 
-  const tailedWithConfig = tailedChanges.map((change) => ({
-    ...change,
+  const tailedWithConfig = tailedChanges.map((c) => ({
+    ...c,
     config: {
-      id: change.config_id!,
-      type: change.type!,
-      name: change.name!
+      id: c.config_id ?? "",
+      type: c.type ?? c.config?.type ?? "",
+      name: c.name ?? c.config?.name ?? ""
     }
   }));
 
@@ -115,9 +115,14 @@ export function ConfigDetailsChangesPage() {
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   const [selectedChange, setSelectedChange] = useState<ConfigChange>();
+
+  useEffect(() => {
+    if (view !== "Graph") setSelectedChange(undefined);
+  }, [view]);
+
   const { data: changeDetails, isLoading: changeLoading } =
     useGetConfigChangesById(selectedChange?.id ?? "", {
-      enabled: !!selectedChange
+      enabled: view === "Graph" && !!selectedChange
     });
 
   if (error) {

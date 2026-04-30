@@ -68,7 +68,7 @@ export function ConfigDetailsChanges({
             <Stat
               title="Date"
               sizeStyle="sm"
-              value={<Age from={changeDetails?.created_at!} suffix={true} />}
+              value={<Age from={changeDetails?.created_at} suffix={true} />}
             />
 
             <Stat
