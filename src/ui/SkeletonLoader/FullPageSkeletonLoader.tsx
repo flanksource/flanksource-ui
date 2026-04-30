@@ -19,9 +19,7 @@ export default function FullPageSkeletonLoader() {
         <div className="flex h-auto w-full flex-row items-end space-x-4 border-b border-gray-300 bg-gray-50 p-3">
           <div className="h-full w-36 animate-pulse rounded-md bg-gray-200"></div>
           <div className="flex-1 animate-pulse"></div>
-          {authSystem === "kratos" ? (
-            <div className="h-12 w-12 rounded-full bg-gray-300"></div>
-          ) : (
+          {authSystem === "clerk" ? (
             <div
               className="flex h-12 flex-row items-center gap-2"
               data-testid="open-user-button"
@@ -34,6 +32,8 @@ export default function FullPageSkeletonLoader() {
               />
               <UserButton />
             </div>
+          ) : (
+            <div className="h-12 w-12 rounded-full bg-gray-300"></div>
           )}
         </div>
         <div className="flex flex-1 animate-pulse flex-row p-4">
