@@ -75,7 +75,7 @@ export function useAddFeatureFlag(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      toastError((error as Error).message);
+      toastError(error);
     }
   });
 }
@@ -98,7 +98,7 @@ export function useUpdateFeatureFlag(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      toastError((error as Error).message);
+      toastError(error);
     }
   });
 }
@@ -116,7 +116,7 @@ export function useDeleteFeatureFlag(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      toastError((error as Error).message);
+      toastError(error);
     }
   });
 }

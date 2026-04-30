@@ -86,7 +86,7 @@ export function ApplicationsPage() {
         toastSuccess("Application added successfully");
       },
       onError: (ex) => {
-        toastError((ex as Error).message);
+        toastError(ex);
       }
     });
 
@@ -105,7 +105,7 @@ export function ApplicationsPage() {
         toastSuccess("Application updated successfully");
       },
       onError: (ex) => {
-        toastError((ex as Error).message);
+        toastError(ex);
       }
     });
 
@@ -123,7 +123,7 @@ export function ApplicationsPage() {
       toastSuccess("Application deleted successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      toastError(ex);
     }
   });
 

@@ -45,7 +45,9 @@ export const getAllScrapePlugins = (
   );
 };
 
-export const createScrapePlugin = async (plugin: Partial<ScrapePlugin>) => {
+export const createScrapePlugin = async (
+  plugin: Omit<Partial<ScrapePlugin>, "created_by"> & { created_by?: string }
+) => {
   return ConfigDB.post("/scrape_plugins", plugin);
 };
 

@@ -8,10 +8,8 @@ import {
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import PluginsFormModal from "@flanksource-ui/components/Plugins/PluginsFormModal";
-import {
-  toastError,
-  toastSuccess
-} from "@flanksource-ui/components/Toast/toast";
+import { toastSuccess } from "@flanksource-ui/components/Toast/toast";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
@@ -28,7 +26,7 @@ import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_ColumnDef } from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
 
@@ -141,6 +139,9 @@ export default function ConfigPluginsPage() {
   const user = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [editedRow, setEditedRow] = useState<ScrapePlugin>();
+  const [formError, setFormError] = useState<string>();
+
+  const clearFormError = useCallback(() => setFormError(undefined), []);
   const [sortState] = useReactTableSortState();
   const { pageIndex, pageSize } = useReactTablePaginationState();
 
@@ -161,7 +162,7 @@ export default function ConfigPluginsPage() {
       const payload = buildPluginPayload(values.name, values.spec);
       const response = await createScrapePlugin({
         ...payload,
-        created_by: user.user,
+        created_by: user.user?.id,
         source: payload.source || "UI"
       });
       return response?.data;
@@ -172,7 +173,7 @@ export default function ConfigPluginsPage() {
       toastSuccess("Plugin added successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      setFormError(getErrorMessage(ex));
     }
   });
 
@@ -194,7 +195,7 @@ export default function ConfigPluginsPage() {
       toastSuccess("Plugin updated successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      setFormError(getErrorMessage(ex));
     }
   });
 
@@ -209,7 +210,7 @@ export default function ConfigPluginsPage() {
       toastSuccess("Plugin deleted successfully");
     },
     onError: (ex) => {
-      toastError((ex as Error).message);
+      setFormError(getErrorMessage(ex));
     }
   });
 
@@ -283,6 +284,7 @@ export default function ConfigPluginsPage() {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           onSubmit={(values: { name: string; spec: Record<string, any> }) => {
+            clearFormError();
             if (editedRow?.id) {
               updatePlugin(values);
             } else {
@@ -293,6 +295,7 @@ export default function ConfigPluginsPage() {
           isSubmitting={isSubmitting}
           isDeleting={isDeleting}
           formValue={editedRow}
+          errorMessage={formError}
           key={editedRow?.id || "plugin-form"}
         />
       </SearchLayout>
