@@ -5,7 +5,7 @@ import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
@@ -17,6 +17,16 @@ function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
     }
   }
   return latest;
+}
+
+function getLiveTailQueryKey(params: URLSearchParams) {
+  return Array.from(params.entries())
+    .filter(([key]) => key !== "changeId")
+    .sort(([aKey, aValue], [bKey, bValue]) =>
+      aKey === bKey ? aValue.localeCompare(bValue) : aKey.localeCompare(bKey)
+    )
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
 }
 
 export function ConfigDetailsChangesPage() {
@@ -32,18 +42,21 @@ export function ConfigDetailsChangesPage() {
   const [liveTail, setLiveTail] = useState(false);
   const [tailCursor, setTailCursor] = useState<string | undefined>(undefined);
   const [tailedChanges, setTailedChanges] = useState<ConfigChange[]>([]);
+  const liveTailQueryKey = useMemo(() => getLiveTailQueryKey(params), [params]);
+  const liveTailQueryKeyRef = useRef(liveTailQueryKey);
 
-  const { data, isLoading, error, refetch } = useGetConfigChangesByIDQuery({
-    keepPreviousData: true,
-    enabled: !!id
-  });
+  const { data, isLoading, error, refetch, isPreviousData } =
+    useGetConfigChangesByIDQuery({
+      keepPreviousData: true,
+      enabled: !!id
+    });
 
   // Initialize cursor from base data when live tail is turned on
   useEffect(() => {
-    if (liveTail && data?.changes?.length && !tailCursor) {
+    if (liveTail && data?.changes?.length && !tailCursor && !isPreviousData) {
       setTailCursor(getNewestInsertedAt(data.changes));
     }
-  }, [liveTail, data, tailCursor]);
+  }, [liveTail, data, tailCursor, isPreviousData]);
 
   // Reset when live tail is turned off
   useEffect(() => {
@@ -53,6 +66,20 @@ export function ConfigDetailsChangesPage() {
       refetch();
     }
   }, [liveTail, refetch]);
+
+  // Reset live tail state whenever filters, sorting, pagination, or date range changes.
+  useEffect(() => {
+    if (!liveTail) {
+      liveTailQueryKeyRef.current = liveTailQueryKey;
+      return;
+    }
+    if (liveTailQueryKeyRef.current === liveTailQueryKey) {
+      return;
+    }
+    liveTailQueryKeyRef.current = liveTailQueryKey;
+    setTailedChanges([]);
+    setTailCursor(undefined);
+  }, [liveTail, liveTailQueryKey]);
 
   const { data: pollData } = useGetConfigChangesByIDQuery({
     from_inserted_at: tailCursor,
@@ -102,9 +129,13 @@ export function ConfigDetailsChangesPage() {
   const newTailedCount = tailedWithConfig.filter(
     (c) => !baseIds.has(c.id)
   ).length;
-  const changes = [...tailedWithConfig, ...baseWithoutTailed];
+  const changes = liveTail
+    ? [...tailedWithConfig, ...baseWithoutTailed]
+    : baseChanges;
 
-  const totalChanges = (data?.total ?? 0) + newTailedCount;
+  const totalChanges = liveTail
+    ? (data?.total ?? 0) + newTailedCount
+    : (data?.total ?? 0);
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   if (error) {
