@@ -11,7 +11,7 @@ export default function ClerkLogin() {
       path="/login"
       routing="path"
       signUpUrl="/registration"
-      forceRedirectUrl={returnTo ? `/?return_to=${returnTo}` : undefined}
+      forceRedirectUrl={returnTo || undefined}
     />
   );
 }

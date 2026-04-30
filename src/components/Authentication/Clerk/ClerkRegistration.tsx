@@ -14,9 +14,7 @@ export default function ClerkRegistration() {
             path="/registration"
             routing="path"
             signInUrl="/login"
-            signInForceRedirectUrl={
-              returnTo ? `/?return_to=${returnTo}` : undefined
-            }
+            signInForceRedirectUrl={returnTo || undefined}
           />
         </div>
       </div>
