@@ -2,14 +2,13 @@ import { useGetConfigChangesById } from "@flanksource-ui/api/query-hooks/useGetC
 import { useGetConfigChangesByIDQuery } from "@flanksource-ui/api/query-hooks/useConfigChangesHooks";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
-import ConfigChangesGraph from "@flanksource-ui/components/Configs/Changes/ConfigChangesGraph";
 import { useConfigChangesViewToggleState } from "@flanksource-ui/components/Configs/Changes/ConfigChangesViewToggle";
 import { ConfigDetailChangeModal } from "@flanksource-ui/components/Configs/Changes/ConfigDetailsChanges/ConfigDetailsChanges";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
@@ -22,6 +21,9 @@ function getNewestInsertedAt(changes: ConfigChange[]): string | undefined {
   }
   return latest;
 }
+const ConfigChangesGraph = lazy(
+  () => import("@flanksource-ui/components/Configs/Changes/ConfigChangesGraph")
+);
 
 export function ConfigDetailsChangesPage() {
   const { id } = useParams();
@@ -145,10 +147,18 @@ export function ConfigDetailsChangesPage() {
           <div className="flex w-full flex-1 flex-col overflow-y-auto">
             {view === "Graph" ? (
               <>
-                <ConfigChangesGraph
-                  changes={changes}
-                  onItemClicked={(change) => setSelectedChange(change)}
-                />
+                <Suspense
+                  fallback={
+                    <div className="flex h-full items-center justify-center">
+                      Loading graph...
+                    </div>
+                  }
+                >
+                  <ConfigChangesGraph
+                    changes={changes}
+                    onItemClicked={(change) => setSelectedChange(change)}
+                  />
+                </Suspense>
                 {selectedChange && (
                   <ConfigDetailChangeModal
                     isLoading={changeLoading}
