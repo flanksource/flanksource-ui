@@ -19,7 +19,7 @@ export default function KratosRegistration() {
   const [flow, setFlow] = useState<RegistrationFlow>();
 
   // Get ?flow=... from the URL
-  const { flow: flowId, return_to: returnTo } = router.query;
+  const { flow: flowId, invite, return_to: returnTo } = router.query;
 
   // In this effect we either initiate a new registration flow, or we fetch an existing registration flow.
   useEffect(() => {
@@ -41,21 +41,32 @@ export default function KratosRegistration() {
     }
 
     // Otherwise we initialize it
+    const registrationReturnTo = invite
+      ? `/registration?invite=${encodeURIComponent(String(invite))}`
+      : returnTo
+        ? String(returnTo)
+        : undefined;
+
     ory
       .createBrowserRegistrationFlow({
+        returnTo: registrationReturnTo,
         afterVerificationReturnTo: returnTo ? String(returnTo) : undefined
       })
       .then(({ data }) => {
         setFlow(data);
       })
       .catch(handleFlowError(router, "registration", setFlow));
-  }, [flowId, router, router.isReady, returnTo, flow]);
+  }, [flowId, router, router.isReady, returnTo, invite, flow]);
 
   const onSubmit = (values: UpdateRegistrationFlowBody) =>
     router
       // On submission, add the flow ID to the URL but do not navigate. This prevents the user loosing
       // his data when she/he reloads the page.
-      .push(`/registration?flow=${flow?.id}`, undefined, { shallow: true })
+      .push(
+        `/registration?flow=${flow?.id}${invite ? `&invite=${encodeURIComponent(String(invite))}` : ""}`,
+        undefined,
+        { shallow: true }
+      )
       .then(() =>
         ory
           .updateRegistrationFlow({
