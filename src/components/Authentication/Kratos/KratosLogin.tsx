@@ -34,6 +34,7 @@ const KratosLogin = () => {
   const searchParams = useSearchParams();
 
   const flowId = searchParams.get("flow") || undefined;
+  const invite = searchParams.get("invite") || undefined;
   const returnTo = sanitizeReturnTo(searchParams.get("return_to"));
   const username = searchParams.get("username");
   const password = searchParams.get("password");
@@ -71,11 +72,15 @@ const KratosLogin = () => {
   const createFlow = useCallback(
     async (refresh: boolean, aal: string, returnTo?: string) => {
       try {
+        const flowReturnTo = invite
+          ? `${returnTo}${returnTo.includes("?") ? "&" : "?"}invite=${encodeURIComponent(invite)}`
+          : returnTo;
+
         const { data } = await ory.createBrowserLoginFlow({
           refresh: refresh,
           // Check for two-factor authentication
           aal: aal,
-          ...(returnTo ? { returnTo } : {})
+          returnTo: flowReturnTo
         });
         setFlow(data);
         if (flowId !== data.id) {
@@ -88,7 +93,7 @@ const KratosLogin = () => {
         handleError(error as AxiosError);
       }
     },
-    [flowId, handleError, replace, router.pathname, searchParams]
+    [flowId, handleError, invite, replace, router.pathname, searchParams]
   );
 
   useEffect(() => {
