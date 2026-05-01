@@ -25,9 +25,9 @@ export function ClerkAuthStateChecker() {
 export default function AuthStateCheckerPage() {
   const authSystem = useDetermineAuthSystem();
 
-  if (authSystem === "kratos") {
-    return <FullPageSkeletonLoader />;
+  if (authSystem === "clerk") {
+    return <ClerkAuthStateChecker />;
   }
 
-  return <ClerkAuthStateChecker />;
+  return <FullPageSkeletonLoader />;
 }
