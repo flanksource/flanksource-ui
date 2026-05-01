@@ -1,4 +1,5 @@
 import type { Preview } from "@storybook/react";
+import { TooltipProvider } from "@flanksource-ui/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { initialize, mswLoader } from "msw-storybook-addon";
 import { RouterContext } from "next/dist/shared/lib/router-context.shared-runtime";
@@ -36,7 +37,9 @@ const preview: Preview = {
       return (
         <MemoryRouter initialEntries={["/incidents"]}>
           <QueryClientProvider client={queryClient}>
-            <Story />
+            <TooltipProvider>
+              <Story />
+            </TooltipProvider>
           </QueryClientProvider>
         </MemoryRouter>
       );
