@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicPaths = ["/login", "/api/", "/registration"];
+const publicPaths = ["/login", "/registration"];
+const publicApiPaths = ["/api/auth/login"];
 
 function isPublicPath(pathname: string): boolean {
-  return publicPaths.some((p) => pathname.startsWith(p));
+  return (
+    publicPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
+    publicApiPaths.includes(pathname)
+  );
 }
 
 export default function basicMiddleware(request: NextRequest) {
