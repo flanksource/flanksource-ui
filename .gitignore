@@ -58,4 +58,3 @@ tsconfig.tsbuildinfo
 default.nix
 .claude
 .playwright-mcp/
-*.png
