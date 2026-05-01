@@ -13,7 +13,12 @@ export default function BasicLogin() {
   const rawReturnTo = Array.isArray(router.query.return_to)
     ? router.query.return_to[0]
     : router.query.return_to;
-  const returnTo = typeof rawReturnTo === "string" ? rawReturnTo : "/";
+  const returnTo =
+    typeof rawReturnTo === "string" &&
+    rawReturnTo.startsWith("/") &&
+    !rawReturnTo.startsWith("//")
+      ? rawReturnTo
+      : "/";
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
