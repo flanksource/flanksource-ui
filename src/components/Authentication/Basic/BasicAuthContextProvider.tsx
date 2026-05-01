@@ -1,5 +1,6 @@
 import { WhoamiResponse, whoami } from "@flanksource-ui/api/services/users";
 import { AuthContext, createAuthorizer } from "@flanksource-ui/context";
+import ErrorPage from "@flanksource-ui/components/Errors/ErrorPage";
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import FullPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FullPageSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
@@ -39,6 +40,8 @@ export default function BasicAuthContextProvider({ children }: Props) {
       window.location.href = `/login?return_to=${window.location.pathname}${window.location.search}`;
       return <FullPageSkeletonLoader />;
     }
+
+    return <ErrorPage error={error} />;
   }
 
   if (!payload) {
