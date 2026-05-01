@@ -1,6 +1,5 @@
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 
@@ -11,8 +10,10 @@ export default function BasicLogin() {
   const [submitting, setSubmitting] = useState(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const returnTo = searchParams.get("return_to") || "/";
+  const rawReturnTo = Array.isArray(router.query.return_to)
+    ? router.query.return_to[0]
+    : router.query.return_to;
+  const returnTo = typeof rawReturnTo === "string" ? rawReturnTo : "/";
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
