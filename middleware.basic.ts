@@ -18,10 +18,11 @@ export default function basicMiddleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.nextUrl.searchParams.get("token");
-  if (token) {
-    return NextResponse.next();
-  }
+  // FIXME: Comment it out. Not sure what this for.
+  // const token = request.nextUrl.searchParams.get("token");
+  // if (token) {
+  //   return NextResponse.next();
+  // }
 
   const hasSession =
     request.cookies.has("ory_kratos_session") ||
