@@ -1,4 +1,3 @@
-import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import {
   Menu,
@@ -61,58 +60,56 @@ export default function PlaybooksDropdownMenu({
   );
 
   return (
-    <AuthorizationAccessCheck resource={"playbook_runs"} action={"write"}>
-      <div className={containerClassName}>
-        <Menu as="div" className="relative inline-block text-left">
-          <MenuButton className={buttonClassName}>
-            <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
-            <span>Playbooks</span>
-            <ChevronDownIcon
-              className={clsx(
-                "-mr-1 ml-2 h-5 w-5",
-                highlight ? "text-blue-500" : "text-gray-400"
-              )}
-              aria-hidden="true"
-            />
-          </MenuButton>
-
-          {/* @ts-ignore */}
-          <Transition
-            as={Fragment as any}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <MenuItems portal className="menu-items" anchor="bottom start">
-              {playbooks?.map((playbook) => (
-                <MenuItem
-                  as="button"
-                  className="menu-item w-full"
-                  onClick={() => setSelectedPlaybookSpec(playbook)}
-                  key={playbook.id}
-                >
-                  <PlaybookSpecIcon playbook={playbook} showLabel showTag />
-                </MenuItem>
-              ))}
-            </MenuItems>
-          </Transition>
-        </Menu>
-        {selectedPlaybookSpec && (
-          <SubmitPlaybookRunForm
-            componentId={component_id}
-            checkId={check_id}
-            configId={config_id}
-            isOpen={!!selectedPlaybookSpec}
-            onClose={() => {
-              setSelectedPlaybookSpec(undefined);
-            }}
-            playbook={selectedPlaybookSpec}
+    <div className={containerClassName}>
+      <Menu as="div" className="relative inline-block text-left">
+        <MenuButton className={buttonClassName}>
+          <Icon name="playbook" className="mr-2 mt-0.5 h-5 w-5" />
+          <span>Playbooks</span>
+          <ChevronDownIcon
+            className={clsx(
+              "-mr-1 ml-2 h-5 w-5",
+              highlight ? "text-blue-500" : "text-gray-400"
+            )}
+            aria-hidden="true"
           />
-        )}
-      </div>
-    </AuthorizationAccessCheck>
+        </MenuButton>
+
+        {/* @ts-ignore */}
+        <Transition
+          as={Fragment as any}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <MenuItems portal className="menu-items" anchor="bottom start">
+            {playbooks?.map((playbook) => (
+              <MenuItem
+                as="button"
+                className="menu-item w-full"
+                onClick={() => setSelectedPlaybookSpec(playbook)}
+                key={playbook.id}
+              >
+                <PlaybookSpecIcon playbook={playbook} showLabel showTag />
+              </MenuItem>
+            ))}
+          </MenuItems>
+        </Transition>
+      </Menu>
+      {selectedPlaybookSpec && (
+        <SubmitPlaybookRunForm
+          componentId={component_id}
+          checkId={check_id}
+          configId={config_id}
+          isOpen={!!selectedPlaybookSpec}
+          onClose={() => {
+            setSelectedPlaybookSpec(undefined);
+          }}
+          playbook={selectedPlaybookSpec}
+        />
+      )}
+    </div>
   );
 }
