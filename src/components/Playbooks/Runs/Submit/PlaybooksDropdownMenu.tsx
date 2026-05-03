@@ -1,3 +1,4 @@
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import {
   Menu,
@@ -47,7 +48,15 @@ export default function PlaybooksDropdownMenu({
     config_id
   });
 
-  if (error || playbooks?.length === 0 || isLoading) {
+  if (error) {
+    return (
+      <div className={clsx(containerClassName, "text-sm text-red-600")}>
+        Failed to load playbooks: {getErrorMessage(error)}
+      </div>
+    );
+  }
+
+  if (playbooks?.length === 0 || isLoading) {
     return null;
   }
 

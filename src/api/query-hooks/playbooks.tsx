@@ -72,10 +72,14 @@ export function useGetPlaybooksToRun(
       // this is a bit of a hack, but we need to get the specs because that's
       // where the icon is stored
       const specs = await getPlaybookSpecsByIDs(ids);
-      return res.map((playbook) => ({
-        ...playbook,
-        title: specs.find((spec) => spec.id === playbook.id)!.title,
-        spec: specs.find((spec) => spec.id === playbook.id)!.spec
+      const playbooksByID = new Map(
+        res.map((playbook) => [playbook.id, playbook])
+      );
+
+      return specs.map((playbookSpec) => ({
+        ...playbooksByID.get(playbookSpec.id),
+        title: playbookSpec.title,
+        spec: playbookSpec.spec
       })) as (RunnablePlaybook & {
         spec: any;
       })[];
