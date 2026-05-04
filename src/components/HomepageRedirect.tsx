@@ -5,18 +5,28 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import {
   getDashboard,
   DashboardResponse,
   getSectionResultByViewRef
 } from "../api/services/views";
-import { HealthPage } from "../pages/health";
+import { useUserAccessStateContext } from "../context/UserAccessContext/UserAccessContext";
+import { tables } from "../context/UserAccessContext/permissions";
 import FullPageSkeletonLoader from "../ui/SkeletonLoader/FullPageSkeletonLoader";
 
 const ViewContainer = React.lazy(
   () => import("../pages/views/components/ViewContainer")
 );
+
+const homepageFallbacks = [
+  { resource: tables.canaries, path: "/health" },
+  { resource: tables.incident, path: "/incidents" },
+  { resource: tables.catalog, path: "/catalog" },
+  { resource: tables.playbooks, path: "/playbooks" },
+  { resource: tables.applications, path: "/applications" }
+];
 
 /**
  * Pre-seed react-query cache with dashboard metadata so ViewContainer can
@@ -62,6 +72,39 @@ function seedDashboardCache(
 
 export function HomepageRedirect() {
   const queryClient = useQueryClient();
+  const { hasResourceAccess, roles } = useUserAccessStateContext();
+  const [fallbackPath, setFallbackPath] = useState<string | null>(null);
+  const [canReadViews, setCanReadViews] = useState(false);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsCheckingAccess(true);
+
+    Promise.all([
+      hasResourceAccess(tables.views, "read"),
+      ...homepageFallbacks.map((item) =>
+        hasResourceAccess(item.resource, "read").then((hasAccess) => ({
+          ...item,
+          hasAccess
+        }))
+      )
+    ]).then(([hasViewsAccess, ...fallbackResults]) => {
+      if (cancelled) {
+        return;
+      }
+
+      setCanReadViews(Boolean(hasViewsAccess));
+      setFallbackPath(
+        fallbackResults.find((item) => item.hasAccess)?.path ?? null
+      );
+      setIsCheckingAccess(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasResourceAccess, roles]);
 
   const {
     data: dashboard,
@@ -77,18 +120,21 @@ export function HomepageRedirect() {
     staleTime: 5 * 60 * 1000
   });
 
-  if (isLoading) {
+  if (isLoading || isCheckingAccess) {
     return <FullPageSkeletonLoader />;
   }
 
-  // Fall back to health checks page when there's no dashboard view (404) or on error
-  if (error || !dashboard?.id) {
-    return <HealthPage url="/api/canary/api/summary" />;
+  if (!error && dashboard?.id && canReadViews) {
+    return (
+      <Suspense fallback={<FullPageSkeletonLoader />}>
+        <ViewContainer id={dashboard.id} />
+      </Suspense>
+    );
   }
 
-  return (
-    <Suspense fallback={<FullPageSkeletonLoader />}>
-      <ViewContainer id={dashboard.id} />
-    </Suspense>
-  );
+  if (fallbackPath) {
+    return <Navigate to={fallbackPath} replace />;
+  }
+
+  return <FullPageSkeletonLoader />;
 }
