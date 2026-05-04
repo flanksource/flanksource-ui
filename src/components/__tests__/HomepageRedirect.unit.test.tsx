@@ -3,7 +3,12 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import {
+  UserAccessStateContext,
+  type UserAccessState
+} from "../../context/UserAccessContext/UserAccessContext";
+import { tables } from "../../context/UserAccessContext/permissions";
 import { HomepageRedirect } from "../HomepageRedirect";
 import { getDashboard } from "../../api/services/views";
 import type { DashboardResponse } from "../../api/services/views";
@@ -38,13 +43,34 @@ function createQueryClient() {
   });
 }
 
-function renderWithProviders() {
+function renderWithProviders(accessOverrides?: Partial<UserAccessState>) {
   const queryClient = createQueryClient();
+  const accessState: UserAccessState = {
+    isAdmin: false,
+    isViewer: false,
+    roles: [],
+    hasResourceAccess: jest.fn((resourceName: string) =>
+      Promise.resolve(
+        resourceName === tables.views || resourceName === tables.canaries
+      )
+    ),
+    hasAnyResourceAccess: jest.fn(() => Promise.resolve(false)),
+    ...accessOverrides
+  };
+
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={["/"]}>
-        <HomepageRedirect />
-      </MemoryRouter>
+      <UserAccessStateContext.Provider value={accessState}>
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route index element={<HomepageRedirect />} />
+            <Route
+              path="/health"
+              element={<div data-testid="health-page">Health</div>}
+            />
+          </Routes>
+        </MemoryRouter>
+      </UserAccessStateContext.Provider>
     </QueryClientProvider>
   );
 }
@@ -118,9 +144,30 @@ describe("HomepageRedirect", () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={["/"]}>
-          <HomepageRedirect />
-        </MemoryRouter>
+        <UserAccessStateContext.Provider
+          value={{
+            isAdmin: false,
+            isViewer: false,
+            roles: [],
+            hasResourceAccess: jest.fn((resourceName: string) =>
+              Promise.resolve(
+                resourceName === tables.views ||
+                  resourceName === tables.canaries
+              )
+            ),
+            hasAnyResourceAccess: jest.fn(() => Promise.resolve(false))
+          }}
+        >
+          <MemoryRouter initialEntries={["/"]}>
+            <Routes>
+              <Route index element={<HomepageRedirect />} />
+              <Route
+                path="/health"
+                element={<div data-testid="health-page">Health</div>}
+              />
+            </Routes>
+          </MemoryRouter>
+        </UserAccessStateContext.Provider>
       </QueryClientProvider>
     );
 
