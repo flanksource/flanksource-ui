@@ -4,6 +4,7 @@ import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import axios, { AxiosError } from "axios";
 
 const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
+const isBasicAuthSystem = process.env.NEXT_PUBLIC_AUTH_IS_BASIC === "true";
 
 const API_BASE = "/api";
 
@@ -243,13 +244,20 @@ for (const client of [
 
 export function redirectToLoginPageOnSessionExpiry(error: AxiosError) {
   if (error?.response?.status === 401) {
-    if (isClerkAuthSystem) {
-      const url = `/auth-state-checker?return_to=${window.location.pathname}${window.location.search}`;
-      window.location.href = url;
+    const returnTo = encodeURIComponent(
+      `${window.location.pathname}${window.location.search}`
+    );
+
+    if (isBasicAuthSystem) {
+      window.location.href = `/login?return_to=${returnTo}`;
       return;
     }
 
-    const url = `/login?return_to=${window.location.pathname}${window.location.search}`;
-    window.location.href = url;
+    if (isClerkAuthSystem) {
+      window.location.href = `/auth-state-checker?return_to=${returnTo}`;
+      return;
+    }
+
+    window.location.href = `/login?return_to=${returnTo}`;
   }
 }
