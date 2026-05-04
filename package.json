@@ -163,9 +163,9 @@
     ]
   },
   "scripts": {
-    "dev": "dotenv run cross-env next dev",
+    "dev": "cross-env next dev",
     "dev:canary": "cross-env NEXT_PUBLIC_APP_DEPLOYMENT=CANARY_CHECKER next dev",
-    "dev:basic": "cp middleware.basic.ts middleware.ts && dotenv run cross-env next dev",
+    "dev:basic": "cp middleware.basic.ts middleware.ts && cross-env next dev",
     "dev:clerk": "cp middleware.clerk.ts middleware.ts && cross-env next dev",
     "start": "cross-env next start",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 node -v && cross-env NODE_OPTIONS=--max-old-space-size=8192 NODE_ENV=production next build",
