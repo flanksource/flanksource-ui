@@ -28,6 +28,7 @@ import { Canary, Icon } from "./components";
 import AuthProviderWrapper from "./components/Authentication/AuthProviderWrapper";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HomepageRedirect } from "./components/HomepageRedirect";
+import { NoPermissionsOnboardingPage } from "./components/NoPermissionsOnboardingPage";
 import {
   DASHBOARD_VIEW_PROPERTY,
   FALLBACK_VIEW_NAME,
@@ -43,7 +44,10 @@ import { ConfigPageContextProvider } from "./context/ConfigPageContext";
 import { useFeatureFlagsContext } from "./context/FeatureFlagsContext";
 import { HealthPageContextProvider } from "./context/HealthPageContext";
 import { IncidentPageContextProvider } from "./context/IncidentPageContext";
-import { UserAccessStateContextProvider } from "./context/UserAccessContext/UserAccessContext";
+import {
+  UserAccessStateContextProvider,
+  useUserAccessStateContext
+} from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
 
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
@@ -515,6 +519,42 @@ const settingsNav: SettingsNavigationItems = {
   ].sort((v1, v2) => stringSortHelper(v1.name, v2.name))
 };
 
+const GLOBAL_PAGE_ACCESS_RESOURCES = [
+  ...new Set([
+    ...navigation.map((item) => item.resourceName),
+    ...settingsNav.submenu.map((item) => item.resourceName),
+    tables.views
+  ])
+];
+
+function useHasAnyPageAccess() {
+  const { hasAnyResourceAccess, roles } = useUserAccessStateContext();
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+  const [hasAnyPageAccess, setHasAnyPageAccess] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsCheckingAccess(true);
+
+    hasAnyResourceAccess(GLOBAL_PAGE_ACCESS_RESOURCES, "read").then(
+      (hasAccess) => {
+        if (cancelled) {
+          return;
+        }
+
+        setHasAnyPageAccess(hasAccess);
+        setIsCheckingAccess(false);
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasAnyResourceAccess, roles]);
+
+  return { hasAnyPageAccess, isCheckingAccess };
+}
+
 const CANARY_API = "/api/canary/api/summary";
 
 export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
@@ -534,12 +574,21 @@ export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
 
 export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
   const { featureFlagsLoaded } = useFeatureFlagsContext();
+  const { hasAnyPageAccess, isCheckingAccess } = useHasAnyPageAccess();
 
   if (
     !featureFlagsLoaded &&
     !window.location.pathname.startsWith("/view/topology")
   ) {
     return <FullPageSkeletonLoader />;
+  }
+
+  if (isCheckingAccess) {
+    return <FullPageSkeletonLoader />;
+  }
+
+  if (!hasAnyPageAccess) {
+    return <NoPermissionsOnboardingPage />;
   }
 
   return (
