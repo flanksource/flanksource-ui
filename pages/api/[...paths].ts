@@ -11,10 +11,20 @@ async function getTargetURL(req: NextApiRequest) {
   if (process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true") {
     const { clerkClient, getAuth } = await import("@clerk/nextjs/server");
     const user = getAuth(req);
-    const org = await clerkClient.organizations.getOrganization({
-      organizationId: user.sessionClaims?.org_id!
-    });
-    return org?.publicMetadata?.backend_url;
+    const orgId = user.sessionClaims?.org_id;
+
+    if (!orgId) {
+      return process.env.BACKEND_URL;
+    }
+
+    try {
+      const org = await clerkClient.organizations.getOrganization({
+        organizationId: orgId
+      });
+      return org?.publicMetadata?.backend_url || process.env.BACKEND_URL;
+    } catch {
+      return process.env.BACKEND_URL;
+    }
   }
   return process.env.BACKEND_URL;
 }

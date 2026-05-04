@@ -12,8 +12,12 @@ export function ClerkAuthStateChecker() {
   const { isLoaded, isSignedIn } = useSession();
 
   React.useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      push(`/login?return_to=${returnURL}`);
+    if (!isLoaded) {
+      return;
+    }
+
+    if (!isSignedIn) {
+      push(`/login?return_to=${encodeURIComponent(returnURL || "/")}`);
     } else {
       push("/error?error_code=BAD_SESSION");
     }

@@ -2,6 +2,7 @@ import {
   Flow,
   handleGetFlowError as HandleError
 } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { sanitizeReturnTo } from "@flanksource-ui/components/Authentication/Kratos/ory/returnTo";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import { ToasterWithCloseButton } from "@flanksource-ui/ui/ToasterWithCloseButton";
@@ -33,7 +34,7 @@ const KratosLogin = () => {
   const searchParams = useSearchParams();
 
   const flowId = searchParams.get("flow") || undefined;
-  const returnTo = searchParams.get("return_to") || undefined;
+  const returnTo = sanitizeReturnTo(searchParams.get("return_to"));
   const username = searchParams.get("username");
   const password = searchParams.get("password");
 
