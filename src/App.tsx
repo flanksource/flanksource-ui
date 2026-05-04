@@ -342,7 +342,7 @@ const navigation: NavigationItems = [
     href: "/catalog",
     icon: VscJson,
     featureName: features.config,
-    resourceName: tables.database
+    resourceName: tables.catalog
   },
   {
     name: "Logs",
@@ -358,7 +358,7 @@ const navigation: NavigationItems = [
       <Icon name="playbook" className={`${className} text-white`} />
     ),
     featureName: features.playbooks,
-    resourceName: tables.database
+    resourceName: tables.playbooks
   },
   {
     name: "Applications",
@@ -520,7 +520,14 @@ const CANARY_API = "/api/canary/api/summary";
 export function HealthRoutes({ sidebar }: { sidebar: ReactNode }) {
   return (
     <Routes>
-      <Route index element={<HealthPage url={CANARY_API} />} />
+      <Route
+        index
+        element={withAuthorizationAccessCheck(
+          <HealthPage url={CANARY_API} />,
+          tables.canaries,
+          "read"
+        )}
+      />
     </Routes>
   );
 }
@@ -608,7 +615,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <PlaybooksListPage />,
-            tables.database,
+            tables.playbooks,
             "read",
             true
           )}
@@ -619,7 +626,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <PlaybookRunsPage />,
-              tables.database,
+              tables.playbooks,
               "read"
             )}
           />
@@ -628,7 +635,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path=":id"
             element={withAuthorizationAccessCheck(
               <PlaybookRunsDetailsPage />,
-              tables.database,
+              tables.playbooks,
               "read",
               true
             )}
@@ -1003,7 +1010,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <ConfigListPage />,
-            tables.database,
+            tables.catalog,
             "read",
             true
           )}
@@ -1012,7 +1019,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="changes"
           element={withAuthorizationAccessCheck(
             <ConfigChangesPage />,
-            tables.database,
+            tables.catalog,
             "read",
             true
           )}
@@ -1021,7 +1028,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="access"
           element={withAuthorizationAccessCheck(
             <ConfigAccessPage />,
-            tables.database,
+            tables.catalog,
             "read",
             true
           )}
@@ -1030,7 +1037,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="insights"
           element={withAuthorizationAccessCheck(
             <ConfigInsightsPage />,
-            tables.database,
+            tables.catalog,
             "read",
             true
           )}
@@ -1040,7 +1047,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <ConfigScrapersPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1050,7 +1057,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path=":id"
             element={withAuthorizationAccessCheck(
               <ConfigScrapersEditPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1060,7 +1067,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="plugins"
           element={withAuthorizationAccessCheck(
             <ConfigPluginsPage />,
-            tables.database,
+            tables.catalog,
             "read",
             true
           )}
@@ -1072,7 +1079,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               <ErrorBoundary>
                 {withAuthorizationAccessCheck(
                   <ConfigDetailsIndexRedirect />,
-                  tables.database,
+                  tables.catalog,
                   "read",
                   true
                 )}
@@ -1085,7 +1092,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
               <ErrorBoundary>
                 {withAuthorizationAccessCheck(
                   <ConfigDetailsPage />,
-                  tables.database,
+                  tables.catalog,
                   "read",
                   true
                 )}
@@ -1096,7 +1103,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="changes"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsChangesPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1105,7 +1112,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="insights"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsInsightsPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1114,7 +1121,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="relationships"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsRelationshipsPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1123,7 +1130,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="playbooks"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsPlaybooksPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}
@@ -1132,7 +1139,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="checks"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsChecksPage />,
-              tables.database,
+              tables.catalog,
               "read"
             )}
           />
@@ -1140,7 +1147,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="access"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsAccessPage />,
-              tables.database,
+              tables.catalog,
               "read"
             )}
           />
@@ -1148,7 +1155,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="access-logs"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsAccessLogsPage />,
-              tables.database,
+              tables.catalog,
               "read"
             )}
           />
@@ -1156,7 +1163,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="view/:viewId"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsViewPage />,
-              tables.database,
+              tables.catalog,
               "read",
               true
             )}

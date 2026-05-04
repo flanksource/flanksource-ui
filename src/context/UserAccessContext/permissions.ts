@@ -7,6 +7,7 @@ export const tables = {
   evidences: "evidences",
   comments: "comments",
   canaries: "canaries",
+  catalog: "catalog",
   topologies: "topologies",
   config_scrapers: "config_scrapers",
   identities: "identities",
@@ -89,7 +90,7 @@ export const permDefs = {
     write: []
   },
   guest: {
-    read: viewerReadObjects,
+    read: [],
     write: []
   }
 };
