@@ -174,10 +174,12 @@ export function useGetConfigChangesByIDQuery(
 
 export function useGetAllConfigsChangesInfiniteQuery({
   pageSize = 200,
-  paramPrefix
+  paramPrefix,
+  enabled = true
 }: {
   pageSize?: number;
   paramPrefix?: string;
+  enabled?: boolean;
 } = {}) {
   const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(
@@ -221,6 +223,7 @@ export function useGetAllConfigsChangesInfiniteQuery({
       lastPage.changes && lastPage.changes.length < pageSize
         ? undefined
         : allPages.length,
-    keepPreviousData: true
+    keepPreviousData: true,
+    enabled
   });
 }

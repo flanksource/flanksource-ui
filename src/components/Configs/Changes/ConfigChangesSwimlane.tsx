@@ -1,9 +1,9 @@
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import {
   HoverCard,
-  HoverCardContent,
   HoverCardTrigger
 } from "@flanksource-ui/components/ui/hover-card";
+import { PortaledHoverCardContent as HoverCardContent } from "@flanksource-ui/components/ui/portaled-hover-card";
 import { Age } from "@flanksource-ui/ui/Age";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { relativeDateTime } from "@flanksource-ui/utils/date";

@@ -92,7 +92,8 @@ export function ConfigChangesPage() {
 
   // Graph view: infinite query
   const infiniteQuery = useGetAllConfigsChangesInfiniteQuery({
-    pageSize: parseInt(pageSize)
+    pageSize: parseInt(pageSize),
+    enabled: isGraphView
   });
 
   // Initialize cursor from base data when live tail is turned on
