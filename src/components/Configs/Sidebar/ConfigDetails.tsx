@@ -293,7 +293,6 @@ export function ConfigDetails({ configId }: Props) {
             configId={configId}
             isOpen={isManagePropertiesOpen}
             onClose={() => setIsManagePropertiesOpen(false)}
-            existingProperties={configDetails.properties}
             onChanged={() => refetchConfig()}
           />
 

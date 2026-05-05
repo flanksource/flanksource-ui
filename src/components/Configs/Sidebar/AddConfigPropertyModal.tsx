@@ -87,7 +87,6 @@ export default function AddConfigPropertyModal({
 
             const result = await createConfigItemProperty(
               configId,
-              "person",
               user.id,
               newProperty
             );
