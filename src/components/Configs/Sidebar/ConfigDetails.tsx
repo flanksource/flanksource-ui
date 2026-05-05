@@ -286,7 +286,6 @@ export function ConfigDetails({ configId }: Props) {
             configId={configId}
             isOpen={isAddPropertyOpen}
             onClose={() => setIsAddPropertyOpen(false)}
-            existingProperties={configDetails.properties}
             onAdded={() => refetchConfig()}
           />
 

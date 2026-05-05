@@ -165,27 +165,88 @@ export const getConfig = (id: string) =>
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
   );
 
-export type UpdateConfigItemPropertiesResponse = {
+export type ConfigItemPropertiesResponse = {
   changed: boolean;
   properties: Property[];
 };
 
-export const updateConfigItemProperties = async (
+type ConfigPropertyRow = {
+  config_id: string;
+  creator_type: "person" | "scraper";
+  created_by: string;
+  name: string;
+  label?: string;
+  tooltip?: string;
+  icon?: string;
+  type?: string;
+  color?: string;
+  order?: number;
+  headline?: boolean;
+  hidden?: boolean;
+  text?: string;
+  value?: number | string;
+  unit?: string;
+  max?: number;
+  min?: number;
+  status?: string;
+  last_transition?: string;
+  link?: string;
+  link_label?: string;
+};
+
+const getConfigProperties = async (configId: string) => {
+  const result = await getConfig(configId);
+  return result.data?.[0]?.properties ?? [];
+};
+
+const toConfigPropertyRow = (
   configId: string,
   creatorType: "person" | "scraper",
   createdBy: string,
-  properties: Property[]
-) => {
-  const res = await ConfigDB.post<UpdateConfigItemPropertiesResponse[]>(
-    "/rpc/update_config_item_properties",
-    {
-      p_config_id: configId,
-      p_creator_type: creatorType,
-      p_created_by: createdBy,
-      p_properties: properties
-    }
+  property: Property
+): ConfigPropertyRow => {
+  const firstLink = property.links?.[0];
+
+  return {
+    config_id: configId,
+    creator_type: creatorType,
+    created_by: createdBy,
+    name: property.name,
+    label: property.label,
+    tooltip: property.tooltip,
+    icon: property.icon,
+    type: property.type,
+    color: property.color,
+    order: property.order,
+    headline: property.headline,
+    hidden: property.hidden,
+    text: property.text,
+    value:
+      property.value instanceof Date
+        ? property.value.getTime()
+        : property.value,
+    unit: property.unit,
+    max: property.max,
+    min: property.min,
+    status: property.status,
+    link: property.link ?? property.url ?? firstLink?.url,
+    link_label: property.link_label ?? firstLink?.label
+  };
+};
+
+export const createConfigItemProperty = async (
+  configId: string,
+  creatorType: "person" | "scraper",
+  createdBy: string,
+  property: Property
+): Promise<ConfigItemPropertiesResponse> => {
+  await ConfigDB.post(
+    "config_properties",
+    toConfigPropertyRow(configId, creatorType, createdBy, property),
+    { headers: { Prefer: "return=minimal" } }
   );
-  return res.data?.[0];
+
+  return { changed: true, properties: await getConfigProperties(configId) };
 };
 
 export const deleteConfigItemProperty = async (
@@ -194,16 +255,13 @@ export const deleteConfigItemProperty = async (
   createdBy: string,
   propertyName: string
 ) => {
-  const res = await ConfigDB.post<UpdateConfigItemPropertiesResponse[]>(
-    "/rpc/delete_config_item_property",
-    {
-      p_config_id: configId,
-      p_creator_type: creatorType,
-      p_created_by: createdBy,
-      p_property_name: propertyName
-    }
+  await ConfigDB.patch(
+    `config_properties?config_id=eq.${configId}&creator_type=eq.${creatorType}&created_by=eq.${createdBy}&name=eq.${encodeURIComponent(propertyName)}&deleted_at=is.null`,
+    { deleted_at: new Date().toISOString() },
+    { headers: { Prefer: "return=minimal" } }
   );
-  return res.data?.[0];
+
+  return { changed: true, properties: await getConfigProperties(configId) };
 };
 
 export type ConfigsTagList = {

@@ -1,4 +1,4 @@
-import { updateConfigItemProperties } from "@flanksource-ui/api/services/configs";
+import { createConfigItemProperty } from "@flanksource-ui/api/services/configs";
 import { Property } from "@flanksource-ui/api/types/topology";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import {
@@ -15,7 +15,6 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onAdded?: (properties?: Property[]) => void;
-  existingProperties?: Property[] | null;
 };
 
 type AddPropertyForm = {
@@ -23,22 +22,17 @@ type AddPropertyForm = {
   valueType: "text" | "value";
   text: string;
   value: string;
+  link: string;
+  link_label: string;
 };
 
 export default function AddConfigPropertyModal({
   configId,
   isOpen,
   onClose,
-  onAdded,
-  existingProperties
+  onAdded
 }: Props) {
   const { user } = useUser();
-
-  const userProperties =
-    existingProperties?.filter(
-      (property) =>
-        property.creator_type === "person" && property.created_by === user?.id
-    ) ?? [];
 
   return (
     <Modal
@@ -48,7 +42,14 @@ export default function AddConfigPropertyModal({
       onClose={onClose}
     >
       <Formik<AddPropertyForm>
-        initialValues={{ name: "", valueType: "text", text: "", value: "" }}
+        initialValues={{
+          name: "",
+          valueType: "text",
+          text: "",
+          value: "",
+          link: "",
+          link_label: ""
+        }}
         onSubmit={async (values, formik) => {
           if (!user?.id) {
             toastError("Could not determine current user");
@@ -74,23 +75,21 @@ export default function AddConfigPropertyModal({
           }
 
           try {
-            const newProperty: Property =
-              values.valueType === "value"
-                ? { name: values.name, value: Number(values.value) }
-                : { name: values.name, text: values.text };
+            const newProperty: Property = {
+              name: values.name,
+              ...(values.valueType === "value"
+                ? { value: Number(values.value) }
+                : { text: values.text }),
+              ...(values.link
+                ? { link: values.link, link_label: values.link_label }
+                : {})
+            };
 
-            const incoming = [
-              ...userProperties.filter(
-                (property) => property.name !== values.name
-              ),
-              newProperty
-            ];
-
-            const result = await updateConfigItemProperties(
+            const result = await createConfigItemProperty(
               configId,
               "person",
               user.id,
-              incoming
+              newProperty
             );
             toastSuccess("Property added");
             onAdded?.(result?.properties);
@@ -127,6 +126,8 @@ export default function AddConfigPropertyModal({
               ) : (
                 <FormikTextInput name="text" label="Text" required />
               )}
+              <FormikTextInput name="link" label="Link" />
+              <FormikTextInput name="link_label" label="Link label" />
             </div>
             <div className="flex items-center justify-end rounded-lg bg-gray-100 px-5 py-4">
               <button
