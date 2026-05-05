@@ -165,6 +165,7 @@ function SeverityTooltip({
 
 type ConfigChangesSwimlaneProps = {
   changes: ConfigChange[];
+  isLoading?: boolean;
   onItemClicked?: (change: ConfigChange) => void;
   fetchNextPage?: () => void;
   hasNextPage?: boolean;
@@ -490,6 +491,7 @@ function GroupParentRow({
 
 export default function ConfigChangesSwimlane({
   changes,
+  isLoading,
   onItemClicked = () => {},
   fetchNextPage,
   hasNextPage,
@@ -591,6 +593,15 @@ export default function ConfigChangesSwimlane({
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center gap-2 text-sm text-gray-400">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+        Loading changes...
+      </div>
+    );
+  }
 
   if (changes.length === 0) {
     return (

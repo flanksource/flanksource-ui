@@ -277,6 +277,7 @@ export function ConfigChangesPage() {
                 <>
                   <ConfigChangesSwimlane
                     changes={changes}
+                    isLoading={isLoading}
                     onItemClicked={(change) => setSelectedChange(change)}
                     fetchNextPage={infiniteQuery.fetchNextPage}
                     hasNextPage={infiniteQuery.hasNextPage}

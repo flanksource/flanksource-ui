@@ -113,6 +113,12 @@ describe("ConfigChangesSwimlane integration", () => {
     expect(countChildRows()).toBe(childCountBefore);
   });
 
+  it("shows loading indicator while initial data is loading", () => {
+    renderSwimlane({ isLoading: true });
+    expect(screen.getByText("Loading changes...")).toBeInTheDocument();
+    expect(screen.queryByText("No changes to display")).not.toBeInTheDocument();
+  });
+
   it("shows loading indicator when isFetchingNextPage is true", () => {
     renderSwimlane({
       changes: allChanges,
