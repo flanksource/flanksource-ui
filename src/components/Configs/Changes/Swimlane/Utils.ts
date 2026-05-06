@@ -322,7 +322,6 @@ export function computeLabelPlacements(
   const result = new Map<string, PlacedIcon>();
   const range = max - min || 1;
   const bucketSpan = range / numBuckets;
-  const bucketWidthPct = 100 / numBuckets;
 
   const seenTypes = new Set<string>();
   const deferredTypes = new Set<string>();
