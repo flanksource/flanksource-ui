@@ -70,13 +70,6 @@ export type BucketedRow = {
   totalCount: number;
 };
 
-export type ConfigPathMetadata = {
-  id: string;
-  name: string;
-  type?: string;
-  path?: string;
-};
-
 export type SwimlaneNode = SwimlaneGroup;
 
 export type SwimlaneGroup = {
@@ -246,57 +239,35 @@ function rowPath(row: BucketedRow): string {
   return row.path ?? row.config?.path ?? row.name;
 }
 
-function rowId(row: BucketedRow): string | undefined {
-  return row.config?.id ?? row.buckets.flat()[0]?.config_id;
-}
-
-function idForPath(path: string): string {
-  return path.split(PATH_DELIMITER).at(-1) ?? path;
-}
-
-function metadataForPath(
-  path: string,
-  rows: BucketedRow[],
-  metadataById: Map<string, ConfigPathMetadata>
-) {
-  const id = idForPath(path);
-  const matchingRow = rows.find((row) => rowId(row) === id);
-  return {
-    name: matchingRow?.name ?? metadataById.get(id)?.name ?? id,
-    type: matchingRow?.config?.type ?? metadataById.get(id)?.type
-  };
-}
-
 type PathTreeNode = {
   path: string;
-  row?: BucketedRow;
-  children: Map<string, PathTreeNode>;
+  row: BucketedRow;
+  children: PathTreeNode[];
 };
 
 function collectRows(node: PathTreeNode): BucketedRow[] {
-  return [
-    ...(node.row ? [node.row] : []),
-    ...Array.from(node.children.values()).flatMap(collectRows)
-  ];
+  return [node.row, ...node.children.flatMap(collectRows)];
 }
 
-function pathTreeToGroups(
-  nodes: PathTreeNode[],
-  allRows: BucketedRow[],
-  metadataById: Map<string, ConfigPathMetadata>
-): SwimlaneGroup[] {
-  return nodes
-    .sort((a, b) => a.path.localeCompare(b.path))
-    .map((node) => {
-      const rows = collectRows(node);
-      const children = pathTreeToGroups(
-        Array.from(node.children.values()),
-        allRows,
-        metadataById
-      );
-      const hasChildren = children.length > 0;
+function nearestPresentParentPath(
+  path: string,
+  presentPaths: Set<string>
+): string | undefined {
+  const tokens = tokenizePath(path);
+  for (let end = tokens.length - 1; end > 0; end--) {
+    const parentPath = tokens.slice(0, end).join(PATH_DELIMITER);
+    if (presentPaths.has(parentPath)) return parentPath;
+  }
+  return undefined;
+}
 
-      if (!hasChildren && node.row) {
+function pathTreeToGroups(nodes: PathTreeNode[]): SwimlaneGroup[] {
+  return nodes
+    .sort((a, b) => a.row.name.localeCompare(b.row.name))
+    .map((node) => {
+      const children = pathTreeToGroups(node.children);
+
+      if (children.length === 0) {
         return {
           prefix: node.row.name,
           type: node.row.config?.type,
@@ -306,25 +277,19 @@ function pathTreeToGroups(
         };
       }
 
-      const metadata = metadataForPath(node.path, allRows, metadataById);
-
       return {
-        prefix: node.row?.name ?? metadata.name,
-        type: node.row?.config?.type ?? metadata.type,
+        prefix: node.row.name,
+        type: node.row.config?.type,
         path: node.path,
-        rows,
+        rows: collectRows(node),
         children: [
-          ...(node.row
-            ? [
-                {
-                  prefix: node.row.name,
-                  type: node.row.config?.type,
-                  path: node.path,
-                  rows: [node.row],
-                  isGroup: false
-                }
-              ]
-            : []),
+          {
+            prefix: node.row.name,
+            type: node.row.config?.type,
+            path: node.path,
+            rows: [node.row],
+            isGroup: false
+          },
           ...children
         ],
         isGroup: true
@@ -332,41 +297,23 @@ function pathTreeToGroups(
     });
 }
 
-export function getUnknownPathIds(rows: BucketedRow[]): string[] {
-  const knownIds = new Set(rows.map(rowId).filter(Boolean));
-  const pathIds = rows.flatMap((row) => tokenizePath(rowPath(row)));
-  return Array.from(new Set(pathIds.filter((id) => !knownIds.has(id))));
-}
-
-export function groupRowsByPath(
-  rows: BucketedRow[],
-  metadata: ConfigPathMetadata[] = []
-): SwimlaneGroup[] {
+export function groupRowsByPath(rows: BucketedRow[]): SwimlaneGroup[] {
   if (rows.length === 0) return [];
 
-  const metadataById = new Map(metadata.map((item) => [item.id, item]));
-  const root = new Map<string, PathTreeNode>();
+  const nodesByPath = new Map<string, PathTreeNode>(
+    rows.map((row) => [rowPath(row), { path: rowPath(row), row, children: [] }])
+  );
+  const presentPaths = new Set(nodesByPath.keys());
+  const roots: PathTreeNode[] = [];
 
-  for (const row of rows) {
-    const tokens = tokenizePath(rowPath(row));
-    let children = root;
-    let current: PathTreeNode | undefined;
-    let path = "";
-
-    for (const token of tokens) {
-      path = path ? `${path}${PATH_DELIMITER}${token}` : token;
-      current = children.get(token);
-      if (!current) {
-        current = { path, children: new Map() };
-        children.set(token, current);
-      }
-      children = current.children;
-    }
-
-    if (current) current.row = row;
+  for (const node of nodesByPath.values()) {
+    const parentPath = nearestPresentParentPath(node.path, presentPaths);
+    const parent = parentPath ? nodesByPath.get(parentPath) : undefined;
+    if (parent) parent.children.push(node);
+    else roots.push(node);
   }
 
-  return pathTreeToGroups(Array.from(root.values()), rows, metadataById);
+  return pathTreeToGroups(roots);
 }
 
 export type LabelPlacement = "right" | "left" | "extra" | "none";

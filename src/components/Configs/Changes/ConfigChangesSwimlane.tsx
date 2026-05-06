@@ -1,6 +1,4 @@
-import { ConfigDB } from "@flanksource-ui/api/axios";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
-import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import ConfigChangesSwimlaneLegend from "./Swimlane/Legend";
@@ -16,12 +14,10 @@ import {
   BUCKET_MIN_PX,
   MAX_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
-  ConfigPathMetadata,
   SwimlaneGroup,
   bucketChanges,
   countSeverities,
   generateTimeTicks,
-  getUnknownPathIds,
   groupRowsByPath,
   useContainerWidth,
   useResizableColumn
@@ -32,17 +28,6 @@ type ConfigChangesSwimlaneProps = {
   isLoading?: boolean;
   onItemClicked?: (change: ConfigChange) => void;
 };
-
-async function getConfigPathMetadata(ids: string[]) {
-  if (ids.length === 0) return [];
-  const { data } = await ConfigDB.get<ConfigPathMetadata[]>("config_items", {
-    params: {
-      select: "id,name,type,path",
-      id: `in.(${ids.join(",")})`
-    }
-  });
-  return data;
-}
 
 export default function ConfigChangesSwimlane({
   changes,
@@ -64,7 +49,7 @@ export default function ConfigChangesSwimlane({
   const markersWidth = useContainerWidth(markersRef);
   const numBuckets = Math.max(1, Math.floor(markersWidth / BUCKET_MIN_PX));
 
-  const { rows, unknownPathIds, min, max, ticks } = useMemo(() => {
+  const { groups, min, max, ticks } = useMemo(() => {
     const grouped = new Map<string, ConfigChange[]>();
     for (const c of changes) {
       const key = c.config_id ?? c.config?.id ?? c.id;
@@ -114,25 +99,12 @@ export default function ConfigChangesSwimlane({
     );
 
     return {
-      rows,
-      unknownPathIds: getUnknownPathIds(rows),
+      groups: groupRowsByPath(rows),
       min,
       max,
       ticks: generateTimeTicks(min, max)
     };
   }, [changes, numBuckets]);
-
-  const { data: pathMetadata = [] } = useQuery({
-    queryKey: ["config-path-metadata", unknownPathIds],
-    queryFn: () => getConfigPathMetadata(unknownPathIds),
-    enabled: unknownPathIds.length > 0,
-    staleTime: 5 * 60 * 1000
-  });
-
-  const groups = useMemo(
-    () => groupRowsByPath(rows, pathMetadata),
-    [rows, pathMetadata]
-  );
 
   const toggleGroup = useCallback((prefix: string) => {
     setCollapsedGroups((prev) => {
