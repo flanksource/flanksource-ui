@@ -20,16 +20,18 @@ export default function ConfigChangesSwimlaneLegend({ changes }: Props) {
   if (changeTypes.length === 0) return null;
 
   return (
-    <div className="sticky top-[28px] z-[19] flex gap-x-4 gap-y-0.5 overflow-x-auto border-b border-gray-200 bg-white px-3 py-1">
-      {changeTypes.map(([type, sample]) => (
-        <span
-          key={type}
-          className="inline-flex shrink-0 items-center gap-1 text-xs text-gray-600"
-        >
-          <ChangeIcon change={sample} className="h-3.5 w-3.5" />
-          <span>{type}</span>
-        </span>
-      ))}
+    <div className="relative z-30 shrink-0 border-b border-gray-200 bg-white px-3 py-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        {changeTypes.map(([type, sample]) => (
+          <span
+            key={type}
+            className="inline-flex shrink-0 items-center gap-1.5 text-sm text-gray-600"
+          >
+            <ChangeIcon change={sample} className="h-4 w-4" />
+            <span>{type}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
