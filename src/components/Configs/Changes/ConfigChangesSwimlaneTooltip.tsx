@@ -25,6 +25,7 @@ function ChangeRow({
             filterValue={change.change_type}
             paramKey="changeType"
             paramsToReset={paramsToReset.configChanges}
+            alwaysShowButtons
           >
             <span className="flex shrink-0 items-center gap-1 font-medium">
               <ChangeIcon change={change} className="h-4 w-4" />
@@ -63,6 +64,7 @@ function ChangeRow({
             filterValue={change.summary}
             paramKey="summary"
             paramsToReset={paramsToReset.configChanges}
+            alwaysShowButtons
           >
             <span className="text-gray-600">{change.summary}</span>
           </FilterByCellValue>
@@ -76,6 +78,7 @@ function ChangeRow({
             filterValue={change.created_by || change.external_created_by || ""}
             paramKey={change.created_by ? "created_by" : "external_created_by"}
             paramsToReset={paramsToReset.configChanges}
+            alwaysShowButtons
           >
             <span className="text-gray-600">
               {change.created_by || change.external_created_by}
