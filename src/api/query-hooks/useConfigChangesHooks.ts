@@ -173,7 +173,7 @@ export function useGetConfigChangesByIDQuery(
 }
 
 export function useGetAllConfigsChangesInfiniteQuery({
-  pageSize = 200,
+  pageSize = 1000,
   paramPrefix,
   enabled = true
 }: {
@@ -219,10 +219,14 @@ export function useGetAllConfigsChangesInfiniteQuery({
     queryKey: ["configs", "changes", "infinite", filterProps],
     queryFn: ({ pageParam = 0 }) =>
       getConfigsChanges({ ...filterProps, pageIndex: pageParam }),
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.changes && lastPage.changes.length < pageSize
-        ? undefined
-        : allPages.length,
+    getNextPageParam: (_lastPage, allPages) => {
+      const total = allPages[0]?.total ?? 0;
+      const loaded = allPages.reduce(
+        (count, page) => count + (page.changes?.length ?? 0),
+        0
+      );
+      return loaded < total ? allPages.length : undefined;
+    },
     keepPreviousData: true,
     enabled
   });

@@ -90,11 +90,27 @@ export function ConfigChangesPage() {
     enabled: !isGraphView
   });
 
-  // Graph view: infinite query
+  // Graph view: fetch all pages for the selected time range in batches.
   const infiniteQuery = useGetAllConfigsChangesInfiniteQuery({
-    pageSize: parseInt(pageSize),
     enabled: isGraphView
   });
+
+  useEffect(() => {
+    if (
+      !isGraphView ||
+      !infiniteQuery.hasNextPage ||
+      infiniteQuery.isFetchingNextPage
+    ) {
+      return;
+    }
+
+    infiniteQuery.fetchNextPage();
+  }, [
+    isGraphView,
+    infiniteQuery.hasNextPage,
+    infiniteQuery.isFetchingNextPage,
+    infiniteQuery.fetchNextPage
+  ]);
 
   // Initialize cursor from base data when live tail is turned on
   useEffect(() => {
@@ -167,7 +183,8 @@ export function ConfigChangesPage() {
           changes: allChanges,
           totalChanges: infiniteQuery.data?.pages[0]?.total ?? 0,
           isLoading: infiniteQuery.isLoading,
-          isRefetching: infiniteQuery.isRefetching,
+          isRefetching:
+            infiniteQuery.isRefetching || infiniteQuery.isFetchingNextPage,
           error: infiniteQuery.error,
           refetch: infiniteQuery.refetch
         };
@@ -279,9 +296,6 @@ export function ConfigChangesPage() {
                     changes={changes}
                     isLoading={isLoading}
                     onItemClicked={(change) => setSelectedChange(change)}
-                    fetchNextPage={infiniteQuery.fetchNextPage}
-                    hasNextPage={infiniteQuery.hasNextPage}
-                    isFetchingNextPage={infiniteQuery.isFetchingNextPage}
                   />
                   {selectedChange && (
                     <ConfigDetailChangeModal

@@ -17,7 +17,7 @@ import {
   OctagonAlert,
   TriangleAlert
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import ConfigsTypeIcon from "../ConfigsTypeIcon";
 import ConfigChangesSwimlaneLegend from "./ConfigChangesSwimlaneLegend";
 import {
@@ -167,9 +167,6 @@ type ConfigChangesSwimlaneProps = {
   changes: ConfigChange[];
   isLoading?: boolean;
   onItemClicked?: (change: ConfigChange) => void;
-  fetchNextPage?: () => void;
-  hasNextPage?: boolean;
-  isFetchingNextPage?: boolean;
 };
 
 function ExtraDot({ text }: { text: string }) {
@@ -492,10 +489,7 @@ function GroupParentRow({
 export default function ConfigChangesSwimlane({
   changes,
   isLoading,
-  onItemClicked = () => {},
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage
+  onItemClicked = () => {}
 }: ConfigChangesSwimlaneProps) {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(
     new Set()
@@ -565,8 +559,6 @@ export default function ConfigChangesSwimlane({
     };
   }, [changes, numBuckets]);
 
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
   const toggleGroup = useCallback((prefix: string) => {
     setCollapsedGroups((prev) => {
       const next = new Set(prev);
@@ -575,24 +567,6 @@ export default function ConfigChangesSwimlane({
       return next;
     });
   }, []);
-
-  useEffect(() => {
-    if (
-      !sentinelRef.current ||
-      !fetchNextPage ||
-      !hasNextPage ||
-      isFetchingNextPage
-    )
-      return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) fetchNextPage();
-      },
-      { threshold: 0 }
-    );
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (isLoading) {
     return (
@@ -705,16 +679,6 @@ export default function ConfigChangesSwimlane({
           });
         })()}
       </div>
-
-      {/* Sentinel for infinite scroll */}
-      {hasNextPage && <div ref={sentinelRef} className="h-1" />}
-
-      {/* Loading indicator for infinite scroll */}
-      {isFetchingNextPage && (
-        <div className="flex items-center justify-center py-3 text-sm text-gray-400">
-          Loading more changes...
-        </div>
-      )}
     </div>
   );
 }

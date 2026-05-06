@@ -119,52 +119,6 @@ describe("ConfigChangesSwimlane integration", () => {
     expect(screen.queryByText("No changes to display")).not.toBeInTheDocument();
   });
 
-  it("shows loading indicator when isFetchingNextPage is true", () => {
-    renderSwimlane({
-      changes: allChanges,
-      isFetchingNextPage: true
-    });
-    expect(screen.getByText("Loading more changes...")).toBeInTheDocument();
-  });
-
-  it("calls fetchNextPage when sentinel becomes visible", () => {
-    let observerCallback: IntersectionObserverCallback;
-    const observeMock = jest.fn();
-    const disconnectMock = jest.fn();
-
-    const MockIntersectionObserver = jest.fn(
-      (cb: IntersectionObserverCallback) => {
-        observerCallback = cb;
-        return {
-          observe: observeMock,
-          disconnect: disconnectMock,
-          unobserve: jest.fn()
-        };
-      }
-    );
-    Object.defineProperty(window, "IntersectionObserver", {
-      writable: true,
-      value: MockIntersectionObserver
-    });
-
-    const fetchNextPage = jest.fn();
-    renderSwimlane({
-      changes: allChanges,
-      fetchNextPage,
-      hasNextPage: true,
-      isFetchingNextPage: false
-    });
-
-    expect(observeMock).toHaveBeenCalled();
-
-    observerCallback!(
-      [{ isIntersecting: true } as IntersectionObserverEntry],
-      {} as IntersectionObserver
-    );
-
-    expect(fetchNextPage).toHaveBeenCalled();
-  });
-
   it("renders empty state for empty changes array", () => {
     renderSwimlane({ changes: [] });
     expect(screen.getByText("No changes to display")).toBeInTheDocument();
