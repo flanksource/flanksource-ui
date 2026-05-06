@@ -352,14 +352,14 @@ function SwimlaneRow({
   const allChanges = useMemo(() => row.buckets.flat(), [row.buckets]);
   return (
     <div
-      className={`flex flex-row border-b border-gray-100 hover:bg-gray-100/50 ${bg}`}
+      className={`relative z-0 flex flex-row border-b border-gray-100 hover:z-50 hover:bg-gray-100/50 ${bg}`}
       style={{ minHeight: "36px" }}
     >
       <div
-        className={`sticky left-0 z-10 flex shrink-0 items-center gap-3 overflow-hidden px-2 py-1 text-sm shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] ${bg}`}
+        className={`sticky left-0 z-20 flex shrink-0 items-center gap-3 overflow-visible px-2 py-1 text-sm shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] ${bg}`}
         style={{ width: columnWidth }}
       >
-        <div className={`min-w-0 flex-1 truncate ${indent ? "pl-6" : ""}`}>
+        <div className={`relative z-30 min-w-0 flex-1 ${indent ? "pl-6" : ""}`}>
           <ConfigsTypeIcon config={row.config}>
             <span className="truncate">{row.name}</span>
           </ConfigsTypeIcon>
