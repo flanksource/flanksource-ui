@@ -19,6 +19,7 @@ export function GroupParentRow({
   numBuckets,
   onItemClicked,
   onResizeMouseDown,
+  timelineOffsetWidth = 0,
   min,
   max,
   indentLevel = 0
@@ -30,6 +31,7 @@ export function GroupParentRow({
   numBuckets: number;
   onItemClicked: (change: ConfigChange) => void;
   onResizeMouseDown: (e: React.MouseEvent) => void;
+  timelineOffsetWidth?: number;
   min: number;
   max: number;
   indentLevel?: number;
@@ -110,7 +112,10 @@ export function GroupParentRow({
         <ResizeHandle onMouseDown={onResizeMouseDown} />
       </div>
       {collapsed && (
-        <div className="flex flex-1 flex-row items-stretch border-l border-gray-200">
+        <div
+          className="flex flex-1 flex-row items-stretch border-l border-gray-200"
+          style={{ paddingLeft: timelineOffsetWidth }}
+        >
           <BucketCells
             buckets={mergedBuckets}
             numBuckets={numBuckets}
