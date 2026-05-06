@@ -1,4 +1,9 @@
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import {
+  HoverCard,
+  HoverCardTrigger
+} from "@flanksource-ui/components/ui/hover-card";
+import { PortaledHoverCardContent as HoverCardContent } from "@flanksource-ui/components/ui/portaled-hover-card";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import { SeverityCounts, SwimlaneGroup, mergeBuckets } from "./Utils";
@@ -15,7 +20,8 @@ export function GroupParentRow({
   onItemClicked,
   onResizeMouseDown,
   min,
-  max
+  max,
+  indentLevel = 0
 }: {
   group: SwimlaneGroup;
   collapsed: boolean;
@@ -26,6 +32,7 @@ export function GroupParentRow({
   onResizeMouseDown: (e: React.MouseEvent) => void;
   min: number;
   max: number;
+  indentLevel?: number;
 }) {
   const mergedBuckets = useMemo(
     () => mergeBuckets(group.rows, numBuckets),
@@ -56,6 +63,7 @@ export function GroupParentRow({
   }, [group.rows]);
 
   const Chevron = collapsed ? ChevronRight : ChevronDown;
+  const groupType = group.type?.split("::").at(-1);
 
   return (
     <div
@@ -68,10 +76,27 @@ export function GroupParentRow({
       >
         <button
           className="mr-1 flex min-w-0 flex-1 items-center gap-1 text-gray-600 hover:text-gray-900"
+          style={{ paddingLeft: indentLevel * 24 }}
           onClick={onToggle}
         >
           <Chevron className="h-3.5 w-3.5 shrink-0" />
-          <span className="truncate font-medium">{group.prefix}</span>
+          <HoverCard openDelay={200} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <span className="truncate font-medium">{group.prefix}</span>
+            </HoverCardTrigger>
+            {groupType && (
+              <HoverCardContent
+                side="top"
+                align="start"
+                collisionPadding={16}
+                className="w-fit p-0"
+              >
+                <div className="rounded-lg bg-gray-100 px-2 py-1 text-xs text-gray-700 shadow-sm">
+                  {groupType}
+                </div>
+              </HoverCardContent>
+            )}
+          </HoverCard>
           <span className="shrink-0 text-xs text-gray-400">
             ({group.rows.length})
           </span>

@@ -14,7 +14,7 @@ export function SwimlaneRow({
   onResizeMouseDown,
   min,
   max,
-  indent = false,
+  indentLevel = 0,
   even = false
 }: {
   row: BucketedRow;
@@ -24,7 +24,7 @@ export function SwimlaneRow({
   onResizeMouseDown: (e: React.MouseEvent) => void;
   min: number;
   max: number;
-  indent?: boolean;
+  indentLevel?: number;
   even?: boolean;
 }) {
   const bg = even ? "bg-gray-50/40" : "bg-white";
@@ -39,7 +39,10 @@ export function SwimlaneRow({
         className={`sticky left-0 z-20 flex shrink-0 items-center gap-3 overflow-visible px-2 py-1 text-sm shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] ${bg}`}
         style={{ width: columnWidth }}
       >
-        <div className={`relative z-30 min-w-0 flex-1 ${indent ? "pl-6" : ""}`}>
+        <div
+          className="relative z-30 min-w-0 flex-1"
+          style={{ paddingLeft: indentLevel * 24 }}
+        >
           <ConfigsTypeIcon config={row.config}>
             <span className="truncate">{row.name}</span>
           </ConfigsTypeIcon>

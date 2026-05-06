@@ -1,4 +1,6 @@
+import { ConfigDB } from "@flanksource-ui/api/axios";
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import ConfigChangesSwimlaneLegend from "./Swimlane/Legend";
@@ -14,10 +16,13 @@ import {
   BUCKET_MIN_PX,
   MAX_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
+  ConfigPathMetadata,
+  SwimlaneGroup,
   bucketChanges,
   countSeverities,
   generateTimeTicks,
-  groupRowsByPrefix,
+  getUnknownPathIds,
+  groupRowsByPath,
   useContainerWidth,
   useResizableColumn
 } from "./Swimlane/Utils";
@@ -27,6 +32,17 @@ type ConfigChangesSwimlaneProps = {
   isLoading?: boolean;
   onItemClicked?: (change: ConfigChange) => void;
 };
+
+async function getConfigPathMetadata(ids: string[]) {
+  if (ids.length === 0) return [];
+  const { data } = await ConfigDB.get<ConfigPathMetadata[]>("config_items", {
+    params: {
+      select: "id,name,type,path",
+      id: `in.(${ids.join(",")})`
+    }
+  });
+  return data;
+}
 
 export default function ConfigChangesSwimlane({
   changes,
@@ -48,10 +64,10 @@ export default function ConfigChangesSwimlane({
   const markersWidth = useContainerWidth(markersRef);
   const numBuckets = Math.max(1, Math.floor(markersWidth / BUCKET_MIN_PX));
 
-  const { groups, min, max, ticks } = useMemo(() => {
+  const { rows, unknownPathIds, min, max, ticks } = useMemo(() => {
     const grouped = new Map<string, ConfigChange[]>();
     for (const c of changes) {
-      const key = c.config?.name ?? c.config_id ?? "unknown";
+      const key = c.config_id ?? c.config?.id ?? c.id;
       if (!grouped.has(key)) grouped.set(key, []);
       grouped.get(key)!.push(c);
     }
@@ -69,7 +85,7 @@ export default function ConfigChangesSwimlane({
     }
 
     const rows: BucketedRow[] = Array.from(grouped.entries()).map(
-      ([name, items]) => {
+      ([configId, items]) => {
         const { buckets, preRangeBadge } = bucketChanges(
           items,
           numBuckets,
@@ -81,9 +97,13 @@ export default function ConfigChangesSwimlane({
             dayjs(b.created_at).valueOf() - dayjs(a.created_at).valueOf()
         );
         const totalCount = items.reduce((sum, c) => sum + (c.count || 1), 0);
+        const config = items[0]!.config;
+        const parentPath = items[0]!.path ?? config?.path;
+        const path = parentPath ? `${parentPath}.${configId}` : configId;
         return {
-          name,
-          config: items[0]!.config,
+          name: config?.name ?? items[0]!.name ?? configId,
+          path,
+          config,
           buckets,
           preRangeBadge,
           severity: countSeverities(items),
@@ -94,12 +114,25 @@ export default function ConfigChangesSwimlane({
     );
 
     return {
-      groups: groupRowsByPrefix(rows),
+      rows,
+      unknownPathIds: getUnknownPathIds(rows),
       min,
       max,
       ticks: generateTimeTicks(min, max)
     };
   }, [changes, numBuckets]);
+
+  const { data: pathMetadata = [] } = useQuery({
+    queryKey: ["config-path-metadata", unknownPathIds],
+    queryFn: () => getConfigPathMetadata(unknownPathIds),
+    enabled: unknownPathIds.length > 0,
+    staleTime: 5 * 60 * 1000
+  });
+
+  const groups = useMemo(
+    () => groupRowsByPath(rows, pathMetadata),
+    [rows, pathMetadata]
+  );
 
   const toggleGroup = useCallback((prefix: string) => {
     setCollapsedGroups((prev) => {
@@ -114,6 +147,52 @@ export default function ConfigChangesSwimlane({
   if (changes.length === 0) return <EmptySwimlaneState />;
 
   let rowIdx = 0;
+
+  const renderGroup = (
+    group: SwimlaneGroup,
+    indentLevel = 0
+  ): React.ReactNode => {
+    if (!group.isGroup) {
+      const even = rowIdx % 2 === 0;
+      rowIdx++;
+      return (
+        <SwimlaneRow
+          key={group.path ?? group.prefix}
+          row={group.rows[0]!}
+          columnWidth={columnWidth}
+          numBuckets={numBuckets}
+          onItemClicked={onItemClicked}
+          onResizeMouseDown={onResizeMouseDown}
+          min={min}
+          max={max}
+          indentLevel={indentLevel}
+          even={even}
+        />
+      );
+    }
+
+    const groupKey = group.path ?? group.prefix;
+    const collapsed = collapsedGroups.has(groupKey);
+    rowIdx++;
+    return (
+      <div key={groupKey}>
+        <GroupParentRow
+          group={group}
+          collapsed={collapsed}
+          onToggle={() => toggleGroup(groupKey)}
+          columnWidth={columnWidth}
+          numBuckets={numBuckets}
+          onItemClicked={onItemClicked}
+          onResizeMouseDown={onResizeMouseDown}
+          min={min}
+          max={max}
+          indentLevel={indentLevel}
+        />
+        {!collapsed &&
+          group.children?.map((child) => renderGroup(child, indentLevel + 1))}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -130,64 +209,7 @@ export default function ConfigChangesSwimlane({
 
       <ConfigChangesSwimlaneLegend changes={changes} />
 
-      <div className="flex-1">
-        {groups.map((group) => {
-          if (!group.isGroup) {
-            const even = rowIdx % 2 === 0;
-            rowIdx++;
-            return (
-              <SwimlaneRow
-                key={group.prefix}
-                row={group.rows[0]!}
-                columnWidth={columnWidth}
-                numBuckets={numBuckets}
-                onItemClicked={onItemClicked}
-                onResizeMouseDown={onResizeMouseDown}
-                min={min}
-                max={max}
-                even={even}
-              />
-            );
-          }
-
-          const collapsed = collapsedGroups.has(group.prefix);
-          rowIdx++;
-          return (
-            <div key={group.prefix}>
-              <GroupParentRow
-                group={group}
-                collapsed={collapsed}
-                onToggle={() => toggleGroup(group.prefix)}
-                columnWidth={columnWidth}
-                numBuckets={numBuckets}
-                onItemClicked={onItemClicked}
-                onResizeMouseDown={onResizeMouseDown}
-                min={min}
-                max={max}
-              />
-              {!collapsed &&
-                group.rows.map((row) => {
-                  const even = rowIdx % 2 === 0;
-                  rowIdx++;
-                  return (
-                    <SwimlaneRow
-                      key={row.name}
-                      row={row}
-                      columnWidth={columnWidth}
-                      numBuckets={numBuckets}
-                      onItemClicked={onItemClicked}
-                      onResizeMouseDown={onResizeMouseDown}
-                      min={min}
-                      max={max}
-                      indent
-                      even={even}
-                    />
-                  );
-                })}
-            </div>
-          );
-        })}
-      </div>
+      <div className="flex-1">{groups.map((group) => renderGroup(group))}</div>
     </div>
   );
 }

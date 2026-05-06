@@ -5,7 +5,6 @@ import {
   bucketChanges,
   calcPercent,
   generateTimeTicks,
-  groupRowsByPrefix,
   mergeBuckets
 } from "../Swimlane/Utils";
 
@@ -140,66 +139,6 @@ describe("bucketChanges", () => {
     expect(result.buckets).toHaveLength(4);
     expect(result.buckets.every((b) => b.length === 0)).toBe(true);
     expect(result.preRangeBadge).toBeUndefined();
-  });
-});
-
-// ── groupRowsByPrefix ──
-
-describe("groupRowsByPrefix", () => {
-  test("returns empty array for empty input", () => {
-    expect(groupRowsByPrefix([])).toEqual([]);
-  });
-
-  test("standalone rows when no common prefix", () => {
-    const rows = [makeRow("alpha", 2), makeRow("beta", 2)];
-    const groups = groupRowsByPrefix(rows);
-    expect(groups).toHaveLength(2);
-    expect(groups.every((g) => !g.isGroup)).toBe(true);
-  });
-
-  test("groups rows sharing a hyphen-delimited prefix", () => {
-    const rows = [
-      makeRow("web-server-1", 2),
-      makeRow("web-server-2", 2),
-      makeRow("db-primary", 2)
-    ];
-    const groups = groupRowsByPrefix(rows);
-
-    const webGroup = groups.find((g) => g.isGroup);
-    expect(webGroup).toBeDefined();
-    expect(webGroup!.prefix).toBe("web-server");
-    expect(webGroup!.rows).toHaveLength(2);
-
-    const dbRow = groups.find((g) => g.prefix === "db-primary");
-    expect(dbRow).toBeDefined();
-    expect(dbRow!.isGroup).toBe(false);
-  });
-
-  test("groups rows sharing an underscore-delimited prefix", () => {
-    const rows = [makeRow("app_backend_v1", 2), makeRow("app_backend_v2", 2)];
-    const groups = groupRowsByPrefix(rows);
-    expect(groups).toHaveLength(1);
-    expect(groups[0]!.isGroup).toBe(true);
-    expect(groups[0]!.rows).toHaveLength(2);
-  });
-
-  test("single-member group becomes standalone", () => {
-    const rows = [makeRow("api-gateway", 2), makeRow("web-server-1", 2)];
-    const groups = groupRowsByPrefix(rows);
-    expect(groups.every((g) => !g.isGroup)).toBe(true);
-  });
-
-  test("handles mixed delimiters across rows", () => {
-    const rows = [
-      makeRow("svc-auth-login", 2),
-      makeRow("svc-auth-signup", 2),
-      makeRow("cache_redis_primary", 2),
-      makeRow("cache_redis_replica", 2)
-    ];
-    const groups = groupRowsByPrefix(rows);
-    const groupNames = groups.filter((g) => g.isGroup).map((g) => g.prefix);
-    expect(groupNames).toContain("cache-redis");
-    expect(groupNames).toContain("svc-auth");
   });
 });
 

@@ -61,6 +61,7 @@ export function filterBySeverity(
 
 export type BucketedRow = {
   name: string;
+  path?: string;
   config: ConfigChange["config"];
   buckets: ConfigChange[][];
   preRangeBadge?: string;
@@ -69,9 +70,21 @@ export type BucketedRow = {
   totalCount: number;
 };
 
+export type ConfigPathMetadata = {
+  id: string;
+  name: string;
+  type?: string;
+  path?: string;
+};
+
+export type SwimlaneNode = SwimlaneGroup;
+
 export type SwimlaneGroup = {
   prefix: string;
+  type?: string;
+  path?: string;
   rows: BucketedRow[];
+  children?: SwimlaneNode[];
   isGroup: boolean;
 };
 
@@ -223,76 +236,137 @@ export function useContainerWidth(ref: React.RefObject<HTMLDivElement | null>) {
   return containerWidth;
 }
 
-const DELIMITER_RE = /[-_/]|::/;
+const PATH_DELIMITER = ".";
 
-function tokenize(name: string): string[] {
-  return name.split(DELIMITER_RE).filter(Boolean);
+function tokenizePath(path: string): string[] {
+  return path.split(PATH_DELIMITER).filter(Boolean);
 }
 
-function longestCommonPrefixTokens(a: string[], b: string[]): number {
-  let count = 0;
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
-    if (a[i] === b[i]) count++;
-    else break;
-  }
-  return count;
+function rowPath(row: BucketedRow): string {
+  return row.path ?? row.config?.path ?? row.name;
 }
 
-export function groupRowsByPrefix(rows: BucketedRow[]): SwimlaneGroup[] {
+function rowId(row: BucketedRow): string | undefined {
+  return row.config?.id ?? row.buckets.flat()[0]?.config_id;
+}
+
+function idForPath(path: string): string {
+  return path.split(PATH_DELIMITER).at(-1) ?? path;
+}
+
+function metadataForPath(
+  path: string,
+  rows: BucketedRow[],
+  metadataById: Map<string, ConfigPathMetadata>
+) {
+  const id = idForPath(path);
+  const matchingRow = rows.find((row) => rowId(row) === id);
+  return {
+    name: matchingRow?.name ?? metadataById.get(id)?.name ?? id,
+    type: matchingRow?.config?.type ?? metadataById.get(id)?.type
+  };
+}
+
+type PathTreeNode = {
+  path: string;
+  row?: BucketedRow;
+  children: Map<string, PathTreeNode>;
+};
+
+function collectRows(node: PathTreeNode): BucketedRow[] {
+  return [
+    ...(node.row ? [node.row] : []),
+    ...Array.from(node.children.values()).flatMap(collectRows)
+  ];
+}
+
+function pathTreeToGroups(
+  nodes: PathTreeNode[],
+  allRows: BucketedRow[],
+  metadataById: Map<string, ConfigPathMetadata>
+): SwimlaneGroup[] {
+  return nodes
+    .sort((a, b) => a.path.localeCompare(b.path))
+    .map((node) => {
+      const rows = collectRows(node);
+      const children = pathTreeToGroups(
+        Array.from(node.children.values()),
+        allRows,
+        metadataById
+      );
+      const hasChildren = children.length > 0;
+
+      if (!hasChildren && node.row) {
+        return {
+          prefix: node.row.name,
+          type: node.row.config?.type,
+          path: node.path,
+          rows: [node.row],
+          isGroup: false
+        };
+      }
+
+      const metadata = metadataForPath(node.path, allRows, metadataById);
+
+      return {
+        prefix: node.row?.name ?? metadata.name,
+        type: node.row?.config?.type ?? metadata.type,
+        path: node.path,
+        rows,
+        children: [
+          ...(node.row
+            ? [
+                {
+                  prefix: node.row.name,
+                  type: node.row.config?.type,
+                  path: node.path,
+                  rows: [node.row],
+                  isGroup: false
+                }
+              ]
+            : []),
+          ...children
+        ],
+        isGroup: true
+      };
+    });
+}
+
+export function getUnknownPathIds(rows: BucketedRow[]): string[] {
+  const knownIds = new Set(rows.map(rowId).filter(Boolean));
+  const pathIds = rows.flatMap((row) => tokenizePath(rowPath(row)));
+  return Array.from(new Set(pathIds.filter((id) => !knownIds.has(id))));
+}
+
+export function groupRowsByPath(
+  rows: BucketedRow[],
+  metadata: ConfigPathMetadata[] = []
+): SwimlaneGroup[] {
   if (rows.length === 0) return [];
 
-  const sorted = [...rows].sort((a, b) => a.name.localeCompare(b.name));
-  const groups: SwimlaneGroup[] = [];
-  let i = 0;
+  const metadataById = new Map(metadata.map((item) => [item.id, item]));
+  const root = new Map<string, PathTreeNode>();
 
-  while (i < sorted.length) {
-    const currentTokens = tokenize(sorted[i]!.name);
-    let groupEnd = i + 1;
-    let commonLen = 0;
+  for (const row of rows) {
+    const tokens = tokenizePath(rowPath(row));
+    let children = root;
+    let current: PathTreeNode | undefined;
+    let path = "";
 
-    if (groupEnd < sorted.length) {
-      const nextTokens = tokenize(sorted[groupEnd]!.name);
-      commonLen = longestCommonPrefixTokens(currentTokens, nextTokens);
-    }
-
-    if (commonLen < 1) {
-      groups.push({
-        prefix: sorted[i]!.name,
-        rows: [sorted[i]!],
-        isGroup: false
-      });
-      i++;
-      continue;
-    }
-
-    const prefixTokens = currentTokens.slice(0, commonLen);
-    while (groupEnd < sorted.length) {
-      const nextTokens = tokenize(sorted[groupEnd]!.name);
-      if (longestCommonPrefixTokens(prefixTokens, nextTokens) >= commonLen) {
-        groupEnd++;
-      } else {
-        break;
+    for (const token of tokens) {
+      path = path ? `${path}${PATH_DELIMITER}${token}` : token;
+      current = children.get(token);
+      if (!current) {
+        current = { path, children: new Map() };
+        children.set(token, current);
       }
+      children = current.children;
     }
 
-    const groupRows = sorted.slice(i, groupEnd);
-    if (groupRows.length === 1) {
-      groups.push({
-        prefix: groupRows[0]!.name,
-        rows: groupRows,
-        isGroup: false
-      });
-    } else {
-      groups.push({
-        prefix: prefixTokens.join("-"),
-        rows: groupRows,
-        isGroup: true
-      });
-    }
-    i = groupEnd;
+    if (current) current.row = row;
   }
 
-  return groups;
+  return pathTreeToGroups(Array.from(root.values()), rows, metadataById);
 }
 
 export type LabelPlacement = "right" | "left" | "extra" | "none";
