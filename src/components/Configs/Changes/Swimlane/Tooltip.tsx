@@ -4,9 +4,9 @@ import { Age } from "@flanksource-ui/ui/Age";
 import { ChangeIcon } from "@flanksource-ui/ui/Icons/ChangeIcon";
 import { Maximize2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import ConfigsTypeIcon from "../ConfigsTypeIcon";
-import { paramsToReset } from "./ConfigChangeTable";
-import { GroupedChange } from "./ConfigChangesSwimlaneUtils";
+import ConfigsTypeIcon from "../../ConfigsTypeIcon";
+import { paramsToReset } from "../ConfigChangeTable";
+import { GroupedChange } from "./Utils";
 
 function ChangeRow({
   change,

@@ -7,7 +7,7 @@ import {
   generateTimeTicks,
   groupRowsByPrefix,
   mergeBuckets
-} from "../ConfigChangesSwimlaneUtils";
+} from "../Swimlane/Utils";
 
 function makeChange(overrides: Partial<ConfigChange> = {}): ConfigChange {
   return {
