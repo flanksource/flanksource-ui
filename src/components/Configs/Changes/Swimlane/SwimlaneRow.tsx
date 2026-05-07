@@ -11,7 +11,6 @@ export function SwimlaneRow({
   numBuckets,
   onItemClicked,
   onResizeMouseDown,
-  timelineOffsetWidth = 0,
   min,
   max,
   indentLevel = 0,
@@ -22,7 +21,6 @@ export function SwimlaneRow({
   numBuckets: number;
   onItemClicked: (change: ConfigChange) => void;
   onResizeMouseDown: (e: React.MouseEvent) => void;
-  timelineOffsetWidth?: number;
   min: number;
   max: number;
   indentLevel?: number;
@@ -40,10 +38,7 @@ export function SwimlaneRow({
         />
       }
       timeline={
-        <div
-          className="flex flex-1 flex-row items-stretch border-l border-gray-200"
-          style={{ paddingLeft: timelineOffsetWidth }}
-        >
+        <div className="flex flex-1 flex-row items-stretch border-l border-gray-200">
           {row.preRangeBadge && (
             <span className="flex items-center px-1 text-[10px] text-gray-400">
               {row.preRangeBadge}

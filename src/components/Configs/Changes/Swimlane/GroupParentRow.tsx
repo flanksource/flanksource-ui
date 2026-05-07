@@ -14,7 +14,6 @@ export function GroupParentRow({
   numBuckets,
   onItemClicked,
   onResizeMouseDown,
-  timelineOffsetWidth = 0,
   min,
   max,
   indentLevel = 0
@@ -26,7 +25,6 @@ export function GroupParentRow({
   numBuckets: number;
   onItemClicked: (change: ConfigChange) => void;
   onResizeMouseDown: (e: React.MouseEvent) => void;
-  timelineOffsetWidth?: number;
   min: number;
   max: number;
   indentLevel?: number;
@@ -84,10 +82,7 @@ export function GroupParentRow({
         </div>
       }
       timeline={
-        <div
-          className="flex flex-1 flex-row items-stretch border-l border-gray-200"
-          style={{ paddingLeft: timelineOffsetWidth }}
-        >
+        <div className="flex flex-1 flex-row items-stretch border-l border-gray-200">
           {parentRow.preRangeBadge && !collapsed && (
             <span className="flex items-center px-1 text-[10px] text-gray-400">
               {parentRow.preRangeBadge}

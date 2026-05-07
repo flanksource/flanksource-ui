@@ -5,14 +5,12 @@ import { calcPercent } from "./Utils";
 export function TimeAxisHeader({
   columnWidth,
   markersRef,
-  timelineOffsetWidth = 0,
   ticks,
   min,
   max
 }: {
   columnWidth: number;
   markersRef: React.MutableRefObject<HTMLDivElement | null>;
-  timelineOffsetWidth?: number;
   ticks: number[];
   min: number;
   max: number;
@@ -22,7 +20,6 @@ export function TimeAxisHeader({
       <div className="shrink-0" style={{ width: columnWidth }} />
       <div
         className="relative flex-1 border-l border-gray-200 px-2 py-1"
-        style={{ paddingLeft: timelineOffsetWidth }}
         ref={(el) => {
           markersRef.current = el;
         }}
