@@ -282,16 +282,7 @@ function pathTreeToGroups(nodes: PathTreeNode[]): SwimlaneGroup[] {
         type: node.row.config?.type,
         path: node.path,
         rows: collectRows(node),
-        children: [
-          {
-            prefix: node.row.name,
-            type: node.row.config?.type,
-            path: node.path,
-            rows: [node.row],
-            isGroup: false
-          },
-          ...children
-        ],
+        children,
         isGroup: true
       };
     });
