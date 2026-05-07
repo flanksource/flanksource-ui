@@ -70,7 +70,7 @@ const KratosLogin = () => {
   );
 
   const createFlow = useCallback(
-    async (refresh: boolean, aal: string, returnTo?: string) => {
+    async (refresh: boolean, aal: string, returnTo: string) => {
       try {
         const flowReturnTo = invite
           ? `${returnTo}${returnTo.includes("?") ? "&" : "?"}invite=${encodeURIComponent(invite)}`
