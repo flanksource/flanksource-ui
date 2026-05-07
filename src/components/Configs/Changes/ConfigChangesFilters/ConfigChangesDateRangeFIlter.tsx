@@ -22,11 +22,17 @@ export const configChangesDefaultDateFilter: URLSearchParamsInit = {
   range: "now-2d"
 };
 
-const configChangesGraphDefaultDateFilter = {
+export const configChangesGraphDefaultDateFilter = {
   type: "relative",
   display: "2 hours",
   range: "now-2h"
 } satisfies TimeRangeOption;
+
+export const configChangesGraphDefaultDateFilterParams: URLSearchParamsInit = {
+  rangeType: "relative",
+  display: configChangesGraphDefaultDateFilter.display,
+  range: configChangesGraphDefaultDateFilter.range
+};
 
 const graphRangeOptionsCategories: RangeOptionsCategory[] = [
   {
@@ -101,11 +107,7 @@ export default function ConfigChangesDateRangeFilter({
   const defaultDateFilter = useMemo(
     () =>
       isGraphView
-        ? {
-            rangeType: "relative",
-            display: configChangesGraphDefaultDateFilter.display,
-            range: configChangesGraphDefaultDateFilter.range
-          }
+        ? configChangesGraphDefaultDateFilterParams
         : configChangesDefaultDateFilter,
     [isGraphView]
   );

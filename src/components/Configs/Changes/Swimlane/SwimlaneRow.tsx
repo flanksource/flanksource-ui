@@ -41,6 +41,7 @@ export function SwimlaneRow({
         className={`sticky left-0 z-20 flex shrink-0 items-center gap-3 overflow-visible px-2 py-1 text-sm shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] ${bg}`}
         style={{ width: columnWidth }}
       >
+        {/* config name and link */}
         <div
           className="relative z-30 min-w-0 flex-1"
           style={{ paddingLeft: indentLevel * 24 }}

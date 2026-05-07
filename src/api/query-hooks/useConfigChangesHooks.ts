@@ -1,4 +1,7 @@
-import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
+import {
+  configChangesDefaultDateFilter,
+  configChangesGraphDefaultDateFilterParams
+} from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
@@ -174,16 +177,18 @@ export function useGetConfigChangesByIDQuery(
 
 export function useGetAllConfigsChangesInfiniteQuery({
   pageSize = 1000,
+  maxChanges,
   paramPrefix,
   enabled = true
 }: {
   pageSize?: number;
+  maxChanges?: number;
   paramPrefix?: string;
   enabled?: boolean;
 } = {}) {
   const showChangesFromDeletedConfigs = useShowDeletedConfigs();
   const { timeRangeValue } = useTimeRangeParams(
-    configChangesDefaultDateFilter,
+    configChangesGraphDefaultDateFilterParams,
     paramPrefix
   );
   const [params] = usePrefixedSearchParams(paramPrefix, false, {
@@ -216,16 +221,17 @@ export function useGetAllConfigsChangesInfiniteQuery({
   };
 
   return useInfiniteQuery({
-    queryKey: ["configs", "changes", "infinite", filterProps],
+    queryKey: ["configs", "changes", "infinite", filterProps, maxChanges],
     queryFn: ({ pageParam = 0 }) =>
       getConfigsChanges({ ...filterProps, pageIndex: pageParam }),
     getNextPageParam: (_lastPage, allPages) => {
       const total = allPages[0]?.total ?? 0;
+      const limit = maxChanges ? Math.min(total, maxChanges) : total;
       const loaded = allPages.reduce(
         (count, page) => count + (page.changes?.length ?? 0),
         0
       );
-      return loaded < total ? allPages.length : undefined;
+      return loaded < limit ? allPages.length : undefined;
     },
     keepPreviousData: true,
     enabled

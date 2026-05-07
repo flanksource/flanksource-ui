@@ -22,6 +22,7 @@ import {
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { Loading } from "@flanksource-ui/ui/Loading";
 import { refreshButtonClickedTrigger } from "@flanksource-ui/ui/SlidingSideBar/SlidingSideBar";
 import { useAtom } from "jotai";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -47,6 +48,8 @@ function getLiveTailQueryKey(params: URLSearchParams) {
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
 }
+
+const GRAPH_VIEW_MAX_CHANGES = 2500;
 
 function normalizeChange(c: ConfigChange): ConfigChange {
   return {
@@ -90,27 +93,12 @@ export function ConfigChangesPage() {
     enabled: !isGraphView
   });
 
-  // Graph view: fetch all pages for the selected time range in batches.
+  // Graph view: fetch the capped number of changes in a single request.
   const infiniteQuery = useGetAllConfigsChangesInfiniteQuery({
-    enabled: isGraphView
+    enabled: isGraphView,
+    pageSize: GRAPH_VIEW_MAX_CHANGES,
+    maxChanges: GRAPH_VIEW_MAX_CHANGES
   });
-
-  useEffect(() => {
-    if (
-      !isGraphView ||
-      !infiniteQuery.hasNextPage ||
-      infiniteQuery.isFetchingNextPage
-    ) {
-      return;
-    }
-
-    infiniteQuery.fetchNextPage();
-  }, [
-    isGraphView,
-    infiniteQuery.hasNextPage,
-    infiniteQuery.isFetchingNextPage,
-    infiniteQuery.fetchNextPage
-  ]);
 
   // Initialize cursor from base data when live tail is turned on
   useEffect(() => {
@@ -176,9 +164,9 @@ export function ConfigChangesPage() {
     useMemo(() => {
       if (isGraphView) {
         const allChanges =
-          infiniteQuery.data?.pages.flatMap((p) =>
-            (p.changes ?? []).map(normalizeChange)
-          ) ?? [];
+          infiniteQuery.data?.pages
+            .flatMap((p) => (p.changes ?? []).map(normalizeChange))
+            .slice(0, GRAPH_VIEW_MAX_CHANGES) ?? [];
         return {
           changes: allChanges,
           totalChanges: infiniteQuery.data?.pages[0]?.total ?? 0,
@@ -214,6 +202,10 @@ export function ConfigChangesPage() {
     }, [isGraphView, infiniteQuery, tableQuery, tailedChanges, liveTail]);
 
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
+  const graphLimitReached =
+    isGraphView && totalChanges > GRAPH_VIEW_MAX_CHANGES;
+  const showGraphLoadStatus =
+    isGraphView && !isLoading && infiniteQuery.isFetching;
 
   const [selectedChange, setSelectedChange] = useState<ConfigChange>();
   const { data: changeDetails, isLoading: changeLoading } =
@@ -286,17 +278,35 @@ export function ConfigChangesPage() {
                         onChange={setLiveTail}
                       />
                     )}
-                    <ConfigChangesViewToggle />
+                    <div className="ml-auto flex items-center gap-2">
+                      {graphLimitReached && (
+                        <span className="flex items-center whitespace-nowrap px-2 text-sm font-medium text-amber-700">
+                          ⚠️ Only {GRAPH_VIEW_MAX_CHANGES.toLocaleString()} of{" "}
+                          {totalChanges.toLocaleString()} changes shown
+                        </span>
+                      )}
+                      <ConfigChangesViewToggle />
+                    </div>
                   </>
                 }
               />
               {isGraphView ? (
                 <>
-                  <ConfigChangesSwimlane
-                    changes={changes}
-                    isLoading={isLoading}
-                    onItemClicked={(change) => setSelectedChange(change)}
-                  />
+                  <div className="relative min-h-0 flex-1">
+                    {showGraphLoadStatus && (
+                      <div className="pointer-events-none fixed left-1/2 top-32 z-50 -translate-x-1/2 rounded-md border border-gray-200 bg-white/95 px-4 py-2 text-sm text-gray-700 shadow-md backdrop-blur">
+                        <Loading
+                          text={`Loaded ${changes.length.toLocaleString()} of ${totalChanges.toLocaleString()} changes`}
+                        />
+                      </div>
+                    )}
+
+                    <ConfigChangesSwimlane
+                      changes={changes}
+                      isLoading={isLoading}
+                      onItemClicked={(change) => setSelectedChange(change)}
+                    />
+                  </div>
                   {selectedChange && (
                     <ConfigDetailChangeModal
                       isLoading={changeLoading}
