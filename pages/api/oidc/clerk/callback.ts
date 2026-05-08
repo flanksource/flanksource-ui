@@ -1,27 +1,30 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-function isAllowedBackendCallback(rawURL: string, orgBackendURL?: string) {
+const BACKEND_CALLBACK_PATH = "/oidc/clerk/callback";
+const LOCALHOST_HOSTNAMES = new Set(["localhost", "127.0.0.1"]);
+
+function isValidBackendOrigin(url: URL) {
+  return (
+    url.protocol === "https:" ||
+    (url.protocol === "http:" && LOCALHOST_HOSTNAMES.has(url.hostname))
+  );
+}
+
+function getBackendCallbackURL(orgBackendURL?: string) {
+  if (!orgBackendURL) {
+    return undefined;
+  }
+
   try {
-    const url = new URL(rawURL);
-    const isLocalhost = ["localhost", "127.0.0.1"].includes(url.hostname);
-    const isValidProtocol =
-      url.protocol === "https:" || (url.protocol === "http:" && isLocalhost);
+    const backendURL = new URL(orgBackendURL);
 
-    if (url.pathname !== "/oidc/clerk/callback" || !isValidProtocol) {
-      return false;
+    if (!isValidBackendOrigin(backendURL)) {
+      return undefined;
     }
 
-    if (isLocalhost) {
-      return true;
-    }
-
-    if (!orgBackendURL) {
-      return false;
-    }
-
-    return url.origin === new URL(orgBackendURL).origin;
+    return new URL(BACKEND_CALLBACK_PATH, backendURL.origin);
   } catch {
-    return false;
+    return undefined;
   }
 }
 
@@ -35,10 +38,9 @@ export default async function handler(
   }
 
   const authRequestID = String(req.body?.auth_request_id || "");
-  const backendCallback = String(req.body?.backend_callback || "");
 
-  if (!authRequestID || !backendCallback) {
-    return res.status(400).json({ error: "missing callback parameters" });
+  if (!authRequestID) {
+    return res.status(400).json({ error: "missing auth_request_id" });
   }
 
   const { clerkClient, getAuth } = await import("@clerk/nextjs/server");
@@ -53,7 +55,9 @@ export default async function handler(
   });
   const orgBackendURL = org.publicMetadata?.backend_url as string | undefined;
 
-  if (!isAllowedBackendCallback(backendCallback, orgBackendURL)) {
+  const callbackURL = getBackendCallbackURL(orgBackendURL);
+
+  if (!callbackURL) {
     return res.status(400).json({ error: "invalid backend callback" });
   }
 
@@ -62,7 +66,6 @@ export default async function handler(
     return res.status(401).json({ error: "unable to get session token" });
   }
 
-  const callbackURL = new URL(backendCallback);
   callbackURL.searchParams.set("auth_request_id", authRequestID);
 
   const backendResp = await fetch(callbackURL.toString(), {
