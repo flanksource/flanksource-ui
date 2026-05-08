@@ -1,4 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -6,7 +7,7 @@ function getQueryValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export default function ClerkOIDCCallback() {
+function ClerkOIDCCallbackContent() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
@@ -58,3 +59,7 @@ export default function ClerkOIDCCallback() {
     </>
   );
 }
+
+export default dynamic(() => Promise.resolve(ClerkOIDCCallbackContent), {
+  ssr: false
+});

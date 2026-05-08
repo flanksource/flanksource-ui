@@ -1,13 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const BACKEND_CALLBACK_PATH = "/oidc/clerk/callback";
-const LOCALHOST_HOSTNAMES = new Set(["localhost", "127.0.0.1"]);
 
 function isValidBackendOrigin(url: URL) {
-  return (
-    url.protocol === "https:" ||
-    (url.protocol === "http:" && LOCALHOST_HOSTNAMES.has(url.hostname))
-  );
+  return url.protocol === "https:";
 }
 
 function getBackendCallbackURL(orgBackendURL?: string) {
