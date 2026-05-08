@@ -89,6 +89,7 @@ export default function ConfigChangesSwimlane({
           name: config?.name ?? items[0]!.name ?? configId,
           path,
           config,
+          tags: items[0]!.tags ?? config?.tags,
           buckets,
           preRangeBadge,
           severity: countSeverities(items),

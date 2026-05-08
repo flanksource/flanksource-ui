@@ -63,6 +63,7 @@ export type BucketedRow = {
   name: string;
   path?: string;
   config: ConfigChange["config"];
+  tags?: Record<string, any>;
   buckets: ConfigChange[][];
   preRangeBadge?: string;
   severity: SeverityCounts;

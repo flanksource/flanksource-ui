@@ -1,4 +1,5 @@
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import { TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { useMemo } from "react";
 import ConfigLink from "../../ConfigLink/ConfigLink";
 import { BucketCells } from "./BucketCells";
@@ -27,6 +28,25 @@ export function SwimlaneRow({
   even?: boolean;
 }) {
   const allChanges = useMemo(() => row.buckets.flat(), [row.buckets]);
+  const tags = useMemo(
+    () =>
+      Object.entries(row.tags ?? {})
+        .filter(([key]) => key !== "toString")
+        .map(([key, value]) => ({ key, value: String(value) })),
+    [row.tags]
+  );
+  const tooltipContent =
+    tags.length > 0 ? (
+      <div className="flex max-w-md flex-col gap-2 text-white">
+        <div>{row.config?.type}</div>
+        <TagList
+          tags={tags}
+          layout="row"
+          className="flex flex-row flex-wrap gap-1"
+          childClassName="text-white"
+        />
+      </div>
+    ) : undefined;
 
   return (
     <SwimlaneConfigRowBase
@@ -34,6 +54,7 @@ export function SwimlaneRow({
         <ConfigLink
           config={row.config}
           configId={row.config?.id}
+          tooltipContent={tooltipContent}
           className="min-w-0 text-sm text-zinc-600"
         />
       }

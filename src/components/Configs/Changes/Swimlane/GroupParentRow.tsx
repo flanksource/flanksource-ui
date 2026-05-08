@@ -1,4 +1,5 @@
 import { ConfigChange } from "@flanksource-ui/api/types/configs";
+import { TagList } from "@flanksource-ui/ui/Tags/TagList";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import ConfigLink from "../../ConfigLink/ConfigLink";
@@ -58,6 +59,25 @@ export function GroupParentRow({
   }, [group.rows]);
 
   const parentRow = group.rows[0]!;
+  const tags = useMemo(
+    () =>
+      Object.entries(parentRow.tags ?? {})
+        .filter(([key]) => key !== "toString")
+        .map(([key, value]) => ({ key, value: String(value) })),
+    [parentRow.tags]
+  );
+  const tooltipContent =
+    tags.length > 0 ? (
+      <div className="flex max-w-md flex-col gap-2 text-white">
+        <div>{parentRow.config?.type}</div>
+        <TagList
+          tags={tags}
+          layout="row"
+          className="flex flex-row flex-wrap gap-1"
+          childClassName="text-white"
+        />
+      </div>
+    ) : undefined;
   const displayBuckets = collapsed ? mergedBuckets : parentRow.buckets;
   const Chevron = collapsed ? ChevronRight : ChevronDown;
 
@@ -70,10 +90,17 @@ export function GroupParentRow({
             onClick={onToggle}
           >
             <Chevron className="h-3.5 w-3.5" />
+            <span className="sr-only truncate font-medium">
+              {parentRow.name}
+            </span>
+            <span className="sr-only text-xs text-gray-400">
+              ({group.rows.length})
+            </span>
           </button>
           <ConfigLink
             config={parentRow.config}
             configId={parentRow.config?.id}
+            tooltipContent={tooltipContent}
             className="min-w-0 text-sm font-medium text-zinc-600"
           />
           <span className="shrink-0 text-xs text-gray-400">

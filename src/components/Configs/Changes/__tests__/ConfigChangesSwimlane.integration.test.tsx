@@ -25,6 +25,51 @@ function loadChangesFromHar(): ConfigChange[] {
 
 const allChanges = loadChangesFromHar();
 
+const groupedChanges: ConfigChange[] = [
+  {
+    id: "parent-change",
+    config_id: "parent-config",
+    external_change_id: "parent-change",
+    change_type: "Healthy",
+    source: "test",
+    summary: "parent",
+    details: "",
+    external_created_by: "",
+    created_at: "2024-01-01T00:00:00Z",
+    first_observed: "2024-01-01T00:00:00Z",
+    name: "canary",
+    type: "Kubernetes::Kustomization",
+    path: "mission-control",
+    tags: { namespace: "mission-control" },
+    config: {
+      id: "parent-config",
+      name: "canary",
+      type: "Kubernetes::Kustomization"
+    }
+  },
+  {
+    id: "child-change",
+    config_id: "child-config",
+    external_change_id: "child-change",
+    change_type: "Sync",
+    source: "test",
+    summary: "child",
+    details: "",
+    external_created_by: "",
+    created_at: "2024-01-01T00:01:00Z",
+    first_observed: "2024-01-01T00:01:00Z",
+    name: "k8s-check-not-ready",
+    type: "Kubernetes::Pod",
+    path: "mission-control.parent-config",
+    tags: { namespace: "mission-control" },
+    config: {
+      id: "child-config",
+      name: "k8s-check-not-ready",
+      type: "Kubernetes::Pod"
+    }
+  }
+];
+
 // ── Render helper ──
 
 function renderSwimlane(
@@ -63,7 +108,7 @@ describe("ConfigChangesSwimlane integration", () => {
   });
 
   it("hierarchical grouping creates group rows", () => {
-    renderSwimlane({ changes: allChanges });
+    renderSwimlane({ changes: groupedChanges });
 
     const buttons = screen.getAllByRole("button");
     const groupButtons = buttons.filter((btn) => {
@@ -80,7 +125,7 @@ describe("ConfigChangesSwimlane integration", () => {
   });
 
   it("collapse/expand toggles child visibility", () => {
-    renderSwimlane({ changes: allChanges });
+    renderSwimlane({ changes: groupedChanges });
 
     const buttons = screen.getAllByRole("button");
     const groupButton = buttons.find((btn) => {
