@@ -47,6 +47,12 @@ const config = {
     const isCanary =
       process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
+    // The backend hosts its own static UI server at /ui. Proxy through so the
+    // browser can reach it without auth interference, in every deployment mode.
+    const UI_REWRITES = [
+      { source: "/ui/:path*", destination: `${backendURL}/ui/:path*` }
+    ];
+
     // OIDC protocol endpoints are mounted at the root of the backend (matching the
     // issuer URL). These rewrites let the browser reach those endpoints through the
     // Next.js server without authentication interference.
@@ -85,7 +91,7 @@ const config = {
     // clerk and basic auth use next API routes for app endpoints, but OIDC protocol
     // endpoints still need explicit rewrites.
     if (isClerkAuth || isBasicAuth) {
-      return OIDC_REWRITES;
+      return [...UI_REWRITES, ...OIDC_REWRITES];
     }
 
     const LOCALHOST_ENV_URL_REWRITES = [
@@ -93,6 +99,7 @@ const config = {
         source: "/api/:path*",
         destination: `${backendURL}/api/:path*`
       },
+      ...UI_REWRITES,
       ...OIDC_REWRITES
     ];
 
@@ -111,6 +118,7 @@ const config = {
         source: "/api/:path*",
         destination: `${backendURL}/:path*`
       },
+      ...UI_REWRITES,
       ...OIDC_REWRITES
     ];
     // NODE_ENV is set to "development" when running locally, so we can use it
