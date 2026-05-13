@@ -53,6 +53,24 @@ const config = {
       { source: "/ui/:path*", destination: `${backendURL}/ui/:path*` }
     ];
 
+    // The /ui app makes XHRs to bare backend paths (no /api prefix). Match by
+    // Referer so requests originating from a /ui page get proxied to the
+    // backend, while same-path requests from the main app fall through to
+    // Next.js routing.
+    const UI_REFERER_REWRITES = [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "header",
+            key: "referer",
+            value: ".*://[^/]+/ui(/.*)?"
+          }
+        ],
+        destination: `${backendURL}/:path*`
+      }
+    ];
+
     // OIDC protocol endpoints are mounted at the root of the backend (matching the
     // issuer URL). These rewrites let the browser reach those endpoints through the
     // Next.js server without authentication interference.
@@ -91,7 +109,7 @@ const config = {
     // clerk and basic auth use next API routes for app endpoints, but OIDC protocol
     // endpoints still need explicit rewrites.
     if (isClerkAuth || isBasicAuth) {
-      return [...UI_REWRITES, ...OIDC_REWRITES];
+      return [...UI_REWRITES, ...OIDC_REWRITES, ...UI_REFERER_REWRITES];
     }
 
     const LOCALHOST_ENV_URL_REWRITES = [
@@ -100,7 +118,8 @@ const config = {
         destination: `${backendURL}/api/:path*`
       },
       ...UI_REWRITES,
-      ...OIDC_REWRITES
+      ...OIDC_REWRITES,
+      ...UI_REFERER_REWRITES
     ];
 
     const URL_REWRITES = [
@@ -119,7 +138,8 @@ const config = {
         destination: `${backendURL}/:path*`
       },
       ...UI_REWRITES,
-      ...OIDC_REWRITES
+      ...OIDC_REWRITES,
+      ...UI_REFERER_REWRITES
     ];
     // NODE_ENV is set to "development" when running locally, so we can use it
     // to determine if we are running in a local environment.
