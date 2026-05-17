@@ -113,7 +113,20 @@ const config = {
     // clerk and basic auth use next API routes for app endpoints, but OIDC protocol
     // endpoints still need explicit rewrites.
     if (isClerkAuth || isBasicAuth) {
-      return [...UI_REWRITES, ...OIDC_REWRITES, prodUiRefererRewrite];
+      // Route via internal /api so pages/api/[...paths].ts can resolve the
+      // per-org backend at request time (Clerk publicMetadata.backend_url).
+      // Static destinations would pin to build-time BACKEND_URL, which is
+      // private/unset on multi-tenant Clerk and yields DNS_HOSTNAME_RESOLVED_PRIVATE.
+      return [
+        { source: "/ui", destination: "/api/ui" },
+        { source: "/ui/:path*", destination: "/api/ui/:path*" },
+        ...OIDC_REWRITES,
+        {
+          source: "/:path*",
+          has: UI_REFERER_HAS,
+          destination: "/api/:path*"
+        }
+      ];
     }
 
     const LOCALHOST_ENV_URL_REWRITES = [
