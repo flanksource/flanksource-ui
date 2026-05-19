@@ -22,6 +22,7 @@ export interface ConfigChange extends CreatedAt {
   name?: string;
   created_by?: string;
   tags?: Record<string, any>;
+  path?: string;
   first_observed?: string;
   count?: number;
   inserted_at?: string;
