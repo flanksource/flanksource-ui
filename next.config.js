@@ -76,6 +76,14 @@ const config = {
     };
     const API_PLUGINS_REWRITES = [
       {
+        source: "/api/plugins/:name/assets",
+        destination: `${backendURL}/api/plugins/:name/ui/assets`
+      },
+      {
+        source: "/api/plugins/:name/assets/:path*",
+        destination: `${backendURL}/api/plugins/:name/ui/assets/:path*`
+      },
+      {
         source: "/api/plugins",
         destination: `${backendURL}/api/plugins`
       },

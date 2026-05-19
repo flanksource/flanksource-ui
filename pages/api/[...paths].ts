@@ -30,6 +30,15 @@ async function getTargetURL(req: NextApiRequest) {
 }
 
 function getPathRewrites(req: NextApiRequest) {
+  if (/^\/api\/plugins\/[^/]+\/assets(?:\/|$)/.test(req.url ?? "")) {
+    return [
+      {
+        patternStr: "^/api/plugins/([^/]+)/assets",
+        replaceStr: "/api/plugins/$1/ui/assets"
+      }
+    ];
+  }
+
   if (req.url?.startsWith("/api/plugins")) {
     return [{ patternStr: "^/api/plugins", replaceStr: "/api/plugins" }];
   }
