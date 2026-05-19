@@ -29,7 +29,11 @@ async function getTargetURL(req: NextApiRequest) {
   return process.env.BACKEND_URL;
 }
 
-function getPathRewrites() {
+function getPathRewrites(req: NextApiRequest) {
+  if (req.url?.startsWith("/api/plugins")) {
+    return [{ patternStr: "^/api/plugins", replaceStr: "/api/plugins" }];
+  }
+
   return [{ patternStr: "^/api", replaceStr: "/" }];
 }
 
@@ -46,6 +50,6 @@ export default async function handler(
   return httpProxyMiddleware(req, res, {
     target: target!,
     xfwd: true,
-    pathRewrite: getPathRewrites()
+    pathRewrite: getPathRewrites(req)
   });
 }

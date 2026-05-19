@@ -74,6 +74,16 @@ const config = {
       has: UI_REFERER_HAS,
       destination: `${backendURL}/:path*`
     };
+    const API_PLUGINS_REWRITES = [
+      {
+        source: "/api/plugins",
+        destination: `${backendURL}/api/plugins`
+      },
+      {
+        source: "/api/plugins/:path*",
+        destination: `${backendURL}/api/plugins/:path*`
+      }
+    ];
 
     // OIDC protocol endpoints are mounted at the root of the backend (matching the
     // issuer URL). These rewrites let the browser reach those endpoints through the
@@ -130,6 +140,7 @@ const config = {
     }
 
     const LOCALHOST_ENV_URL_REWRITES = [
+      ...API_PLUGINS_REWRITES,
       {
         source: "/api/:path*",
         destination: `${backendURL}/api/:path*`
@@ -148,6 +159,7 @@ const config = {
         source: "/api/.ory/:path*",
         destination: `${backendURL}/kratos/:path*`
       },
+      ...API_PLUGINS_REWRITES,
       // All other API requests are proxied to the backend on the same path
       // as the request.
       {
