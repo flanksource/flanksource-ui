@@ -14,6 +14,7 @@ import {
   ConfigSummary,
   ConfigTypeRelationships
 } from "../types/configs";
+import { Property } from "../types/topology";
 
 export * from "./configAccess";
 
@@ -163,6 +164,163 @@ export const getConfig = (id: string) =>
   resolvePostGrestRequestWithPagination<ConfigDetail[]>(
     ConfigDB.get(`/config_detail?id=eq.${id}&select=*`)
   );
+
+export type ConfigItemPropertiesResponse = {
+  changed: boolean;
+  properties: Property[];
+};
+
+export type ConfigPropertyRow = {
+  id?: string;
+  config_id: string;
+  scraper_id?: string | null;
+  created_by?: string | null;
+  name: string;
+  label?: string;
+  tooltip?: string;
+  icon?: string;
+  property_type?: string;
+  color?: string;
+  display_order?: number;
+  headline?: boolean;
+  hidden?: boolean;
+  text?: string;
+  value?: number | string;
+  unit?: string;
+  max?: number;
+  min?: number;
+  status?: string;
+  link_url?: string;
+  link_label?: string;
+  link_icon?: string;
+};
+
+const getConfigProperties = async (configId: string) => {
+  const result = await getConfig(configId);
+  return result.data?.[0]?.properties ?? [];
+};
+
+const toConfigPropertyRow = (
+  configId: string,
+  createdBy: string,
+  property: Property
+): ConfigPropertyRow => {
+  const firstLink = property.links?.[0];
+
+  return {
+    config_id: configId,
+    created_by: createdBy,
+    name: property.name,
+    label: property.label,
+    tooltip: property.tooltip,
+    icon: property.icon,
+    property_type: property.type,
+    color: property.color,
+    display_order: property.order,
+    headline: property.headline,
+    hidden: property.hidden,
+    text: property.text,
+    value:
+      property.value instanceof Date
+        ? property.value.getTime()
+        : property.value,
+    unit: property.unit,
+    max: property.max,
+    min: property.min,
+    status: property.status,
+    link_url: property.link ?? property.url ?? firstLink?.url,
+    link_label: property.link_label ?? firstLink?.label
+  };
+};
+
+const toProperty = (row: ConfigPropertyRow): Property => ({
+  name: row.name,
+  label: row.label,
+  tooltip: row.tooltip,
+  icon: row.icon,
+  type: row.property_type as Property["type"],
+  color: row.color,
+  order: row.display_order,
+  headline: row.headline,
+  hidden: row.hidden,
+  text: row.text,
+  value: row.value,
+  unit: row.unit,
+  max: row.max,
+  min: row.min,
+  status: row.status,
+  link: row.link_url,
+  link_label: row.link_label,
+  links: row.link_url
+    ? [
+        {
+          label: row.link_label ?? row.link_url,
+          url: row.link_url
+        }
+      ]
+    : undefined
+});
+
+export const getManualConfigItemProperties = async (
+  configId: string,
+  createdBy: string
+) => {
+  const result = await resolvePostGrestRequestWithPagination<
+    ConfigPropertyRow[]
+  >(
+    ConfigDB.get(
+      `/config_properties?config_id=eq.${configId}&created_by=eq.${createdBy}&order=display_order.asc,name.asc`
+    )
+  );
+
+  return result.data ?? [];
+};
+
+export const createConfigItemProperty = async (
+  configId: string,
+  createdBy: string,
+  property: Property
+): Promise<ConfigItemPropertiesResponse> => {
+  await ConfigDB.post(
+    "/config_properties",
+    toConfigPropertyRow(configId, createdBy, property),
+    { headers: { Prefer: "return=minimal" } }
+  );
+
+  return { changed: true, properties: await getConfigProperties(configId) };
+};
+
+export const updateConfigItemProperty = async (
+  propertyId: string,
+  configId: string,
+  createdBy: string,
+  property: Property
+): Promise<ConfigItemPropertiesResponse> => {
+  const row: Partial<ConfigPropertyRow> = toConfigPropertyRow(
+    configId,
+    createdBy,
+    property
+  );
+  delete row.config_id;
+  delete row.created_by;
+
+  await ConfigDB.patch(`/config_properties?id=eq.${propertyId}`, row, {
+    headers: { Prefer: "return=minimal" }
+  });
+
+  return { changed: true, properties: await getConfigProperties(configId) };
+};
+
+export const deleteConfigItemProperty = async (
+  configId: string,
+  propertyId: string
+) => {
+  await ConfigDB.delete(`/config_properties?id=eq.${propertyId}`);
+
+  return { changed: true, properties: await getConfigProperties(configId) };
+};
+
+export const configPropertyRowToProperty = toProperty;
 
 export type ConfigsTagList = {
   key: string;
