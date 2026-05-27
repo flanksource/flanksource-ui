@@ -1,14 +1,8 @@
-import dayjs from "dayjs";
 import { durationOptions } from "@flanksource-ui/components/JobsHistory/Filters/JobHistoryDurationDropdown";
 import { jobHistoryDefaultDateFilter } from "@flanksource-ui/components/JobsHistory/Filters/JobsHistoryFilters";
 import { JobHistory } from "@flanksource-ui/components/JobsHistory/JobsHistoryTable";
 import { resourceTypeMap } from "@flanksource-ui/components/SchemaResourcePage/SchemaResourceEditJobsTab";
-import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
-import {
-  mappedOptionsTimeRanges,
-  MappedOptionsDisplay
-} from "@flanksource-ui/ui/Dates/TimeRangePicker/rangeOptions";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -55,7 +49,9 @@ export function useJobsHistoryForSettingQuery(
   tableName?: keyof typeof resourceTypeMap,
   nameOverride?: string
 ) {
-  useTimeRangeParams(jobHistoryDefaultDateFilter);
+  const { timeRangeAbsoluteValue } = useTimeRangeParams(
+    jobHistoryDefaultDateFilter
+  );
 
   const [searchParams] = useSearchParams();
   const pageIndex = parseInt(searchParams.get("pageIndex") ?? "0");
@@ -72,11 +68,8 @@ export function useJobsHistoryForSettingQuery(
   const durationMillis = duration
     ? durationOptions[duration].valueInMillis
     : undefined;
-  const rangeType = searchParams.get("rangeType");
-  const range = searchParams.get("range");
-  const from = searchParams.get("from");
-  const to = searchParams.get("to");
-  const timeRange = searchParams.get("timeRange");
+  const startsAt = timeRangeAbsoluteValue?.from ?? undefined;
+  const endsAt = timeRangeAbsoluteValue?.to ?? undefined;
 
   const resourceType = useMemo(() => {
     if (!tableName) {
@@ -93,36 +86,15 @@ export function useJobsHistoryForSettingQuery(
     status,
     sortBy,
     sortOrder,
+    startsAt,
+    endsAt,
     duration: durationMillis,
     resourceId
-  } satisfies Omit<GetJobsHistoryParams, "startsAt" | "endsAt">;
+  } satisfies GetJobsHistoryParams;
 
   return useQuery<Response, Error>(
-    ["jobs_history", params, rangeType, range, from, to, timeRange],
-    () => {
-      let startsAt: string | undefined;
-      let endsAt: string | undefined;
-
-      if (rangeType === "absolute") {
-        startsAt = from ? dayjs(from).toISOString() : undefined;
-        endsAt = to ? dayjs(to).toISOString() : undefined;
-      } else if (rangeType === "relative") {
-        startsAt = range ? parseDateMath(range, false) : undefined;
-        endsAt = undefined;
-      } else if (rangeType === "mapped") {
-        const mapped = mappedOptionsTimeRanges.get(
-          (timeRange ?? "") as MappedOptionsDisplay
-        )?.();
-        startsAt = mapped?.from ? parseDateMath(mapped.from, false) : undefined;
-        endsAt = mapped?.to ? parseDateMath(mapped.to, false) : undefined;
-      }
-
-      return getJobsHistory({
-        ...params,
-        startsAt,
-        endsAt
-      });
-    },
+    ["jobs_history", params],
+    () => getJobsHistory(params),
     options
   );
 }
