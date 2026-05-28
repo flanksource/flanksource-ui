@@ -49,8 +49,12 @@ const config = {
     const canaryPrefix = isCanary ? "" : "/canary";
     // The backend hosts its own static UI server at /ui. Proxy through so the
     // browser can reach it without auth interference, in every deployment mode.
+    // BACKEND_URL may be set with a trailing /api (e.g. when pointed at another
+    // Next.js deployment that exposes the backend under /api); strip it so /ui
+    // lands on the backend's own /ui rather than its /api/ui.
+    const uiHost = backendURL.replace(/\/api\/?$/, "");
     const UI_REWRITES = [
-      { source: "/ui/:path*", destination: `${backendURL}/ui/:path*` }
+      { source: "/ui/:path*", destination: `${uiHost}/ui/:path*` }
     ];
 
     // The /ui app (served from the backend) makes XHRs to bare backend paths
