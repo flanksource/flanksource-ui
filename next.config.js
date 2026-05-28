@@ -52,8 +52,11 @@ const config = {
     // BACKEND_URL may be set with a trailing /api (e.g. when pointed at another
     // Next.js deployment that exposes the backend under /api); strip it so /ui
     // lands on the backend's own /ui rather than its /api/ui.
+    // Two entries are needed: /:path* expansion adds a trailing slash when path
+    // is empty, which the upstream's trailingSlash:false redirects back, looping.
     const uiHost = backendURL.replace(/\/api\/?$/, "");
     const UI_REWRITES = [
+      { source: "/ui", destination: `${uiHost}/ui` },
       { source: "/ui/:path*", destination: `${uiHost}/ui/:path*` }
     ];
 
