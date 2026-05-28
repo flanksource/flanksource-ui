@@ -47,10 +47,12 @@ const config = {
     const isCanary =
       process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER";
     const canaryPrefix = isCanary ? "" : "/canary";
-    // The backend hosts its own static UI server at /ui. Proxy through so the
-    // browser can reach it without auth interference, in every deployment mode.
+    // The backend hosts the new UI under /api/ui. Proxy /ui through to that
+    // path so the browser URL stays at /ui without triggering the backend's
+    // own /ui → /api/ui redirect.
     const UI_REWRITES = [
-      { source: "/ui/:path*", destination: `${backendURL}/ui/:path*` }
+      { source: "/ui", destination: `${backendURL}/api/ui` },
+      { source: "/ui/:path*", destination: `${backendURL}/api/ui/:path*` }
     ];
 
     // The /ui app (served from the backend) makes XHRs to bare backend paths
