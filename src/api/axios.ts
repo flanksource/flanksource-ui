@@ -3,7 +3,7 @@ import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import axios, { AxiosError } from "axios";
 
-const isClerkAuthSystem = !!process.env.NEXT_PUBLIC_AUTH_IS_CLERK === true;
+const isClerkAuthSystem = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
 const isBasicAuthSystem = process.env.NEXT_PUBLIC_AUTH_IS_BASIC === "true";
 
 const API_BASE = "/api";

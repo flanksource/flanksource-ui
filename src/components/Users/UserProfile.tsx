@@ -1,9 +1,10 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Search } from "lucide-react";
-import { IoMdAirplane, IoMdDownload } from "react-icons/io";
+import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { isNewUIPreferred, setNewUIPreference } from "../../utils/uiPreference";
 import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
@@ -34,6 +35,16 @@ export function UserProfileDropdown() {
   ] = useState(false);
   const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
     useState(false);
+  const [newUIEnabled, setNewUIEnabled] = useState(false);
+  useEffect(() => {
+    setNewUIEnabled(isNewUIPreferred());
+  }, []);
+
+  const toggleNewUI = () => {
+    const next = !newUIEnabled;
+    setNewUIPreference(next);
+    window.location.href = next ? "/ui" : "/";
+  };
 
   return (
     <>
@@ -47,6 +58,11 @@ export function UserProfileDropdown() {
           />
           <UserButton signInUrl="/login">
             <UserButton.MenuItems>
+              <UserButton.Action
+                label={newUIEnabled ? "Use Old UI" : "Use New UI"}
+                labelIcon={<IoMdSwap />}
+                onClick={toggleNewUI}
+              />
               <UserButton.Action
                 label="Download kubeconfig"
                 labelIcon={<IoMdDownload />}
