@@ -1,56 +1,48 @@
-import { useField } from "formik";
-import React from "react";
-import { TextInput } from "../../../ui/FormControls/TextInput";
+import { InputHTMLAttributes } from "react";
 
-type FormikNumberInputProps = {
-  name: string;
-  required?: boolean;
+type CustomNumberInputProps = {
   label?: string;
-  className?: string;
   hint?: string;
-} & Omit<React.ComponentProps<typeof TextInput>, "id">;
+  value?: number;
+  onChange?: (value: number | undefined) => void;
+};
+
+type FormikNumberInputProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> &
+  CustomNumberInputProps;
 
 export default function FormikNumberInput({
-  name,
-  required = false,
   label,
-  className = "flex flex-col",
   hint,
+  value,
+  onChange,
   ...props
 }: FormikNumberInputProps) {
-  const [field, meta] = useField({
-    name,
-    type: "number",
-    required,
-    validate: (value) => {
-      if (required && !value) {
-        return "This field is required";
-      }
-      if (value && isNaN(value)) {
-        return "This field must be a number";
-      }
-    }
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val =
+      e.target.value === "" ? undefined : parseInt(e.target.value, 10);
+    onChange?.(val);
+  };
 
   return (
-    <div className={className}>
-      <TextInput
-        label={label}
-        {...props}
-        id={name}
-        type="number"
-        {...field}
-        onChange={() => {
-          const value = field.value;
-          if (value) {
-            field.onChange({ target: { value: parseInt(value) } });
-          }
-        }}
-      />
-      {hint && <p className="py-1 text-sm text-gray-500">{hint}</p>}
-      {meta.touched && meta.error ? (
-        <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
-      ) : null}
+    <div>
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <div className="mt-1">
+        <input
+          type="number"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+          value={value ?? ""}
+          onChange={handleChange}
+          {...props}
+        />
+      </div>
+      {hint && <p className="mt-1 text-sm text-gray-500">{hint}</p>}
     </div>
   );
 }
