@@ -17,6 +17,7 @@ export const tables = {
   feature_flags: "properties",
   logging_backends: "logging_backends",
   integrations: "integrations",
+  plugins: "plugins",
   notifications: "notifications",
   playbooks: "playbooks",
   playbook_runs: "playbook_runs",

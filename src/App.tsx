@@ -7,7 +7,13 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import { FaArchive, FaBell, FaCrosshairs, FaTasks } from "react-icons/fa";
+import {
+  FaArchive,
+  FaBell,
+  FaCrosshairs,
+  FaPlug,
+  FaTasks
+} from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -181,6 +187,12 @@ const HealthPage = dynamic(
 const ConnectionsPage = dynamic(() =>
   import("@flanksource-ui/pages/Settings/ConnectionsPage").then(
     (m) => m.ConnectionsPage
+  )
+);
+
+const PluginsPage = dynamic(() =>
+  import("@flanksource-ui/pages/Settings/PluginsPage").then(
+    (m) => m.PluginsPage
   )
 );
 
@@ -512,6 +524,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: MdOutlineIntegrationInstructions,
       featureName: features["settings.integrations"],
       resourceName: tables.database
+    },
+    {
+      name: "Plugins",
+      href: "/settings/plugins",
+      icon: FaPlug,
+      featureName: features["settings.plugins"],
+      resourceName: tables.plugins
     },
     {
       name: "Views",
@@ -943,6 +962,16 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             />
           </Route>
         </Route>
+
+        <Route
+          path="plugins"
+          element={withAuthorizationAccessCheck(
+            <PluginsPage />,
+            tables.plugins,
+            "read",
+            true
+          )}
+        />
 
         <Route path="views">
           <Route
