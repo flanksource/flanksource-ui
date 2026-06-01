@@ -14,6 +14,9 @@ type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
     search?: string;
     key?: string;
   }[];
+  // extraTabs renders custom controls (e.g. a dropdown tab) inline at the end
+  // of the tab row, after the routed links.
+  extraTabs?: React.ReactNode;
 };
 
 export default function TabbedLinks({
@@ -23,6 +26,7 @@ export default function TabbedLinks({
   containerClassName = "px-4 py-6 bg-white",
   tabLinks,
   activeTabName,
+  extraTabs,
   ...rest
 }: RoutedTabsLinksProps) {
   return (
@@ -54,6 +58,7 @@ export default function TabbedLinks({
             </div>
           </NavLink>
         ))}
+        {extraTabs}
       </div>
       <div className={clsx("flex flex-col", contentClassName)}>{children}</div>
     </div>
