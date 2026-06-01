@@ -10,11 +10,11 @@ import {
   getPluginsForConfig,
   pluginTabPath
 } from "@flanksource-ui/api/services/configPlugins";
-import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { PluginIcon } from "./PluginIcon";
 
 export function ConfigPluginsDropdown() {
   const { id, pluginName: activePlugin } = useParams<{
@@ -49,7 +49,6 @@ export function ConfigPluginsDropdown() {
             : "border-transparent text-gray-500"
         )}
       >
-        <Icon name="puzzle" />
         <span>Plugins</span>
         <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
@@ -60,7 +59,7 @@ export function ConfigPluginsDropdown() {
             onClick={() => navigate(pluginTabPath(id, plugin.name, tab.name))}
             className="flex flex-row items-center space-x-2"
           >
-            <Icon name={tab.icon || "puzzle"} />
+            <PluginIcon name={tab.icon} />
             <span>{tab.name}</span>
           </DropdownMenuItem>
         ))}
