@@ -1,5 +1,3 @@
-// ABOUTME: Renders a plugin/tab icon, supporting iconify-style "lucide:<name>"
-// ABOUTME: names from plugin manifests and falling back to the app icon set.
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import dynamic from "next/dynamic";
 

@@ -1,5 +1,3 @@
-// ABOUTME: Renders a single "Plugins" tab that opens a dropdown of the plugins
-// ABOUTME: available for a catalog item, navigating to the selected plugin tab.
 import {
   DropdownMenu,
   DropdownMenuContent,

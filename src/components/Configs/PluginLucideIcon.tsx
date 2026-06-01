@@ -1,5 +1,3 @@
-// ABOUTME: Renders a Lucide icon by its kebab-case name (e.g. "scroll-text").
-// ABOUTME: Lazy-loaded so the full Lucide icon set stays out of the main bundle.
 import { icons } from "lucide-react";
 
 type PluginLucideIconProps = {

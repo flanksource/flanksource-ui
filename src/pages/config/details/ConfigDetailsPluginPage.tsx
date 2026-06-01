@@ -1,5 +1,3 @@
-// ABOUTME: Renders a catalog plugin's UI tab by embedding the plugin's own
-// ABOUTME: front-end in a sandboxed iframe served through the host's proxy.
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";

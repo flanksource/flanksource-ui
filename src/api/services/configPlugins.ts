@@ -1,5 +1,3 @@
-// ABOUTME: Fetches the UI plugins applicable to a catalog item and builds the
-// ABOUTME: iframe src for embedding a plugin's tab UI on the config detail page.
 import { apiBase } from "../axios";
 
 export type PluginTabSpec = {
