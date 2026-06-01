@@ -12,8 +12,10 @@ const SUBJECT_TYPE_ORDER = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3,
-  access_token_person: 4
+  playbook: 3,
+  plugin: 4,
+  person: 5,
+  access_token_person: 6
 } as const;
 
 export function PermissionsSubjectsPage() {

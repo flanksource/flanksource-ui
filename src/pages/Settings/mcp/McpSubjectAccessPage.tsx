@@ -35,8 +35,10 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3,
-  access_token_person: 4
+  playbook: 3,
+  plugin: 4,
+  person: 5,
+  access_token_person: 6
 };
 
 function getPermissionRefs(
@@ -132,7 +134,12 @@ export default function McpSubjectAccessPage() {
     const loweredSearch = debouncedSearch.trim().toLowerCase();
 
     return subjects
-      .filter((subject) => subject.type !== "access_token_person")
+      .filter(
+        (subject) =>
+          subject.type !== "access_token_person" &&
+          subject.type !== "playbook" &&
+          subject.type !== "plugin"
+      )
       .filter((subject) => {
         if (!loweredSearch) {
           return true;

@@ -35,6 +35,8 @@ const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   access_token_person: "access token",
   team: "team",
   role: "role",
+  playbook: "playbook",
+  plugin: "plugin",
   permission_subject_group: "group"
 };
 
@@ -42,9 +44,15 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3,
-  access_token_person: 4
+  playbook: 3,
+  plugin: 4,
+  person: 5,
+  access_token_person: 6
 };
+
+function isMcpAssignableSubject(subject: PermissionSubject) {
+  return subject.type !== "playbook" && subject.type !== "plugin";
+}
 
 export type SubjectAccess = "deny" | "default" | "allow";
 
@@ -169,7 +177,7 @@ export default function SubjectSelectorPanel({
       "effective-access",
       effectiveAccessResource?.type ?? "none",
       effectiveAccessResource?.id ?? "none",
-      subjects.length
+      subjects.filter(isMcpAssignableSubject).length
     ],
     enabled: false,
     queryFn: async () => {
@@ -187,7 +195,9 @@ export default function SubjectSelectorPanel({
           type: effectiveAccessResource.type
         },
         action: effectiveAccessResource.action ?? "mcp:run",
-        subjects: subjects.map((subject) => subject.id)
+        subjects: subjects
+          .filter(isMcpAssignableSubject)
+          .map((subject) => subject.id)
       });
     }
   });
@@ -241,6 +251,7 @@ export default function SubjectSelectorPanel({
     const query = debouncedSearch;
 
     return subjects
+      .filter(isMcpAssignableSubject)
       .filter((subject) => {
         if (!query) {
           return true;
