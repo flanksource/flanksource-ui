@@ -7,21 +7,32 @@ import {
   DirectAccessState,
   EffectiveAccessMap,
   PermissionResource,
+  RESOURCE_KIND_CONFIG,
+  RESOURCE_KIND_ORDER,
+  ResourceKind,
   ResourceTypeGroup,
   getResourceActionKey,
   isSamePermissionResource
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger
+} from "@flanksource-ui/components/ui/tabs";
 import { RefObject } from "react";
 
 type SubjectPermissionsMatrixContentProps = {
   loading: boolean;
   groupedResources: ResourceTypeGroup[];
+  activeResourceKind: ResourceKind;
+  resourceKindCounts: Record<ResourceKind, number>;
   selectedResource: PermissionResource | null;
   directAccessByResourceAction: Record<string, DirectAccessState>;
   effectiveAccessByAction: EffectiveAccessMap;
   isCheckingEffectiveAccess: boolean;
   isSubmitting: boolean;
   scrollRef: RefObject<HTMLDivElement>;
+  onSelectResourceKind: (kind: ResourceKind) => void;
   onToggleResource: (resource: PermissionResource) => void;
   onPermissionAccessChange: (
     resource: PermissionResource,
@@ -33,12 +44,15 @@ type SubjectPermissionsMatrixContentProps = {
 export default function SubjectPermissionsMatrixContent({
   loading,
   groupedResources,
+  activeResourceKind,
+  resourceKindCounts,
   selectedResource,
   directAccessByResourceAction,
   effectiveAccessByAction,
   isCheckingEffectiveAccess,
   isSubmitting,
   scrollRef,
+  onSelectResourceKind,
   onToggleResource,
   onPermissionAccessChange
 }: SubjectPermissionsMatrixContentProps) {
@@ -48,6 +62,28 @@ export default function SubjectPermissionsMatrixContent({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 px-4 py-4">
+      <div className="flex items-center gap-2">
+        <Tabs
+          value={activeResourceKind}
+          onValueChange={(value) => onSelectResourceKind(value as ResourceKind)}
+        >
+          <TabsList>
+            {RESOURCE_KIND_ORDER.map((kind) => (
+              <TabsTrigger key={kind} value={kind}>
+                {RESOURCE_KIND_CONFIG[kind].label} ({resourceKindCounts[kind]})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        {isCheckingEffectiveAccess ? (
+          <span
+            className="inline-flex h-3.5 w-3.5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600"
+            aria-label="Refreshing effective access"
+            title="Refreshing effective access"
+          />
+        ) : null}
+      </div>
+
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto pr-1">
         {loading ? (
           <div className="flex items-center gap-2 rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
@@ -63,11 +99,8 @@ export default function SubjectPermissionsMatrixContent({
             {groupedResources.map((group) => (
               <ResourceTypeMatrixSection
                 key={group.kind}
-                title={group.label}
-                count={group.resources.length}
                 actions={group.actions}
                 rows={group.resources}
-                isRefreshing={isCheckingEffectiveAccess}
                 onRowClick={onToggleResource}
                 isRowSelected={(resource) => isSelectedResource(resource)}
                 isRowExpanded={(resource) => isSelectedResource(resource)}

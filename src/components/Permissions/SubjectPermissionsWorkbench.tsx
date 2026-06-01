@@ -6,6 +6,9 @@ import SubjectPermissionsHeader from "@flanksource-ui/components/Permissions/Sub
 import SubjectPermissionsMatrixContent from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsMatrixContent";
 import {
   PermissionResource,
+  RESOURCE_KIND_CONFIG,
+  RESOURCE_KIND_ORDER,
+  ResourceKind,
   getDirectAccessState,
   getResourceActionKey,
   groupResourcesByType,
@@ -25,6 +28,8 @@ export default function SubjectPermissionsWorkbench({
   const [search, setSearch] = useState("");
   const [selectedResource, setSelectedResource] =
     useState<PermissionResource | null>(null);
+  const [activeResourceKind, setActiveResourceKind] =
+    useState<ResourceKind>("playbook");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { resources: allResources, isLoading: isLoadingResources } =
@@ -74,21 +79,43 @@ export default function SubjectPermissionsWorkbench({
     });
   }, [allResources, normalizedSearch]);
 
+  const resourceKindCounts = useMemo(() => {
+    return Object.fromEntries(
+      RESOURCE_KIND_ORDER.map((kind) => [
+        kind,
+        filteredResources.filter((resource) => resource.kind === kind).length
+      ])
+    ) as Record<ResourceKind, number>;
+  }, [filteredResources]);
+
+  const activeResources = useMemo(
+    () =>
+      filteredResources.filter(
+        (resource) => resource.kind === activeResourceKind
+      ),
+    [activeResourceKind, filteredResources]
+  );
+
   const groupedResources = useMemo(
-    () => groupResourcesByType(filteredResources),
-    [filteredResources]
+    () => groupResourcesByType(activeResources),
+    [activeResources]
   );
 
   const { effectiveAccessByAction, isCheckingEffectiveAccess } =
     useEffectiveSubjectAccess({
       selectedSubjectId: selectedSubject.id,
-      resources: filteredResources
+      resources: activeResources
     });
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedResource(null);
   }, [selectedSubject.id]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    setSelectedResource(null);
+  }, [activeResourceKind]);
 
   useEffect(() => {
     if (
@@ -131,6 +158,9 @@ export default function SubjectPermissionsWorkbench({
       <SubjectPermissionsMatrixContent
         loading={loading}
         groupedResources={groupedResources}
+        activeResourceKind={activeResourceKind}
+        resourceKindCounts={resourceKindCounts}
+        onSelectResourceKind={setActiveResourceKind}
         selectedResource={selectedResource}
         directAccessByResourceAction={directAccessByResourceAction}
         effectiveAccessByAction={effectiveAccessByAction}
