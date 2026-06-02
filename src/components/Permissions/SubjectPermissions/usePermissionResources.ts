@@ -1,3 +1,4 @@
+import { fetchPluginPermissionSubjects } from "@flanksource-ui/api/services/permissions";
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { getAll } from "@flanksource-ui/api/schemaResources";
@@ -36,6 +37,12 @@ export default function usePermissionResources() {
       const response = await getAll(connectionsSchema);
       return (response.data ?? []) as unknown as Connection[];
     },
+    staleTime: 60_000
+  });
+
+  const { data: plugins = [], isLoading: isLoadingPlugins } = useQuery({
+    queryKey: ["permissions-subjects", "plugins"],
+    queryFn: fetchPluginPermissionSubjects,
     staleTime: 60_000
   });
 
@@ -87,15 +94,31 @@ export default function usePermissionResources() {
         actions: RESOURCE_KIND_CONFIG.connection.actions
       }));
 
+    const pluginResources = plugins.map((plugin) => ({
+      id: plugin.id,
+      kind: "plugin" as const,
+      name: plugin.name,
+      displayName: plugin.name,
+      icon: plugin.icon || "plugin",
+      subtitle: "plugin",
+      selectorKey: RESOURCE_KIND_CONFIG.plugin.selectorKey,
+      actions: ["invoke"]
+    }));
+
     return sortPermissionResources([
       ...playbookResources,
       ...viewResources,
-      ...connectionResources
+      ...connectionResources,
+      ...pluginResources
     ]);
-  }, [connections, playbooks, views]);
+  }, [connections, playbooks, plugins, views]);
 
   return {
     resources,
-    isLoading: isLoadingPlaybooks || isLoadingViews || isLoadingConnections
+    isLoading:
+      isLoadingPlaybooks ||
+      isLoadingViews ||
+      isLoadingConnections ||
+      isLoadingPlugins
   };
 }

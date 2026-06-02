@@ -1,5 +1,6 @@
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Fragment, ReactNode } from "react";
+import { HiPuzzle } from "react-icons/hi";
 
 export type PermissionsMatrixRow = {
   id: string;
@@ -64,10 +65,14 @@ export default function PermissionsMatrixTable<
                     }`}
                   >
                     <div className="flex min-w-0 items-center gap-2">
-                      <Icon
-                        name={row.icon || "database"}
-                        className="h-4 w-4 shrink-0 text-gray-500"
-                      />
+                      {row.icon === "plugin" ? (
+                        <HiPuzzle className="h-4 w-4 shrink-0 text-gray-500" />
+                      ) : (
+                        <Icon
+                          name={row.icon || "database"}
+                          className="h-4 w-4 shrink-0 text-gray-500"
+                        />
+                      )}
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium text-gray-900">
                           {row.displayName}

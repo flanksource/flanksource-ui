@@ -131,13 +131,24 @@ export default function SubjectPermissionsMatrixContent({
                     return <span className="text-xs text-gray-300">—</span>;
                   }
 
+                  const key = getResourceActionKey(resource, action);
+                  const direct = directAccessByResourceAction[key];
+
+                  if (
+                    resource.kind === "plugin" &&
+                    direct?.access !== "default"
+                  ) {
+                    return (
+                      <EffectiveMatrixCell
+                        state={direct.access === "allow" ? "allowed" : "denied"}
+                        notChecked={false}
+                      />
+                    );
+                  }
+
                   return (
                     <EffectiveMatrixCell
-                      state={
-                        effectiveAccessByAction[
-                          getResourceActionKey(resource, action)
-                        ] ?? "unknown"
-                      }
+                      state={effectiveAccessByAction[key] ?? "unknown"}
                       notChecked={false}
                     />
                   );

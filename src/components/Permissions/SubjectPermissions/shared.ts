@@ -6,9 +6,13 @@ import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 
 export type AccessValue = "allow" | "deny" | "default";
-export type ResourceKind = "playbook" | "view" | "connection";
+export type ResourceKind = "playbook" | "view" | "connection" | "plugin";
 export type EffectiveState = "allowed" | "denied" | "unknown";
-export type PermissionSelectorKey = "playbooks" | "views" | "connections";
+export type PermissionSelectorKey =
+  | "playbooks"
+  | "views"
+  | "connections"
+  | "configs";
 
 type SelectorRef = {
   name?: string;
@@ -46,7 +50,8 @@ export type DirectAccessState = {
 export const RESOURCE_KIND_ORDER: ResourceKind[] = [
   "playbook",
   "view",
-  "connection"
+  "connection",
+  "plugin"
 ];
 
 export const RESOURCE_KIND_CONFIG: Record<
@@ -77,6 +82,11 @@ export const RESOURCE_KIND_CONFIG: Record<
     label: "Connections",
     actions: ["read"],
     selectorKey: "connections"
+  },
+  plugin: {
+    label: "Plugins",
+    actions: [],
+    selectorKey: "configs"
   }
 };
 
@@ -91,6 +101,42 @@ export function getResourceActionKey(
   action: string
 ) {
   return `${resource.kind}:${resource.id}:${action}`;
+}
+
+export function getPermissionActionForResource(
+  resource: Pick<PermissionResource, "kind" | "name">,
+  action: string
+) {
+  if (resource.kind === "plugin" && action === "invoke") {
+    return `invoke:${resource.name}:*`;
+  }
+
+  return action;
+}
+
+export function getDisplayActionForPermission(
+  resource: Pick<PermissionResource, "kind" | "name">,
+  action: string
+) {
+  if (resource.kind === "plugin" && action === `invoke:${resource.name}:*`) {
+    return "invoke";
+  }
+
+  return action;
+}
+
+export function getObjectSelectorForResource(resource: PermissionResource) {
+  if (resource.kind === "plugin") {
+    return {
+      configs: [{ name: "*" }]
+    };
+  }
+
+  return {
+    [resource.selectorKey]: [
+      { name: resource.name, namespace: resource.namespace }
+    ]
+  };
 }
 
 export function getRefsForPermission(
@@ -181,10 +227,11 @@ export function getDirectAccessState(
   action: string
 ): DirectAccessState {
   const subjectType = mapSubjectType(subject.type);
+  const permissionAction = getPermissionActionForResource(resource, action);
 
   const matchingPermissions = permissions.filter((permission) => {
     if (
-      permission.action !== action ||
+      permission.action !== permissionAction ||
       permission.subject !== subject.id ||
       permission.subject_type !== subjectType
     ) {
@@ -203,11 +250,13 @@ export function getDirectAccessState(
   const isReadOnly = matchingPermissions.some(
     (permission) => permission.source === "KubernetesCRD"
   );
-  const isWildcard = matchingPermissions.some((permission) =>
-    getRefsForPermission(permission, resource.selectorKey).some(
-      selectorRefIsWildcard
-    )
-  );
+  const isWildcard =
+    resource.kind !== "plugin" &&
+    matchingPermissions.some((permission) =>
+      getRefsForPermission(permission, resource.selectorKey).some(
+        selectorRefIsWildcard
+      )
+    );
 
   return {
     access: matchingPermissions.some((permission) => permission.deny === true)
@@ -230,12 +279,22 @@ export function groupResourcesByType(
     grouped.set(resource.kind, list);
   }
 
-  return RESOURCE_KIND_ORDER.map((kind) => ({
-    kind,
-    label: RESOURCE_KIND_CONFIG[kind].label,
-    actions: RESOURCE_KIND_CONFIG[kind].actions,
-    resources: grouped.get(kind) ?? []
-  })).filter((group) => group.resources.length > 0);
+  return RESOURCE_KIND_ORDER.map((kind) => {
+    const resources = grouped.get(kind) ?? [];
+    const resourceActions = Array.from(
+      new Set(resources.flatMap((resource) => resource.actions))
+    );
+
+    return {
+      kind,
+      label: RESOURCE_KIND_CONFIG[kind].label,
+      actions:
+        resourceActions.length > 0
+          ? resourceActions
+          : RESOURCE_KIND_CONFIG[kind].actions,
+      resources
+    };
+  }).filter((group) => group.resources.length > 0);
 }
 
 export function isSamePermissionResource(

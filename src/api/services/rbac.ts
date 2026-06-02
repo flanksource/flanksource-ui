@@ -59,6 +59,7 @@ export type SubjectAccessReviewResource = {
   playbook?: string;
   view?: string;
   connection?: string;
+  plugin?: string;
   config?: string;
   check?: string;
   global?: string;
@@ -71,6 +72,7 @@ export type SubjectAccessReviewAction =
   | "delete"
   | "mcp:run"
   | "mcp:use"
+  | `invoke:${string}:*`
   | "playbook:run"
   | "playbook:cancel"
   | "playbook:approve";
@@ -121,7 +123,7 @@ export async function reviewSubjectAccess(
 
 export type EffectiveSubjectResourceAccessResource = {
   id: string;
-  type: "playbook" | "view" | "connection";
+  type: "playbook" | "view" | "connection" | "plugin";
 };
 
 export type EffectiveSubjectResourceAccessRequest = {
@@ -132,7 +134,7 @@ export type EffectiveSubjectResourceAccessRequest = {
 
 export type EffectiveSubjectResourceAccessResult = {
   resourceId: string;
-  resourceType: "playbook" | "view" | "connection";
+  resourceType: "playbook" | "view" | "connection" | "plugin";
   allowed: boolean;
 };
 
@@ -145,7 +147,7 @@ export type EffectiveSubjectResourceAccessResponse = {
 type SubjectAccessSearchRequest = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types?: Array<"playbook" | "view" | "connection">;
+  resource_types?: Array<"playbook" | "view" | "connection" | "plugin">;
   search?: string;
   namespace?: string;
 };
@@ -153,7 +155,7 @@ type SubjectAccessSearchRequest = {
 type SubjectAccessSearchResponse = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types: Array<"playbook" | "view" | "connection">;
+  resource_types: Array<"playbook" | "view" | "connection" | "plugin">;
   total: number;
   limit: number;
   offset: number;

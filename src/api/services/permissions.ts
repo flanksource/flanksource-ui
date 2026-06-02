@@ -246,13 +246,20 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
   return response.data ?? [];
 }
 
-type PluginSubject = { id?: string; name?: string; type?: string };
+export type PluginPermissionSubject = {
+  id?: string;
+  name?: string;
+  type?: string;
+  icon?: string | null;
+};
 
 type PluginSubjectResponse =
-  | PluginSubject[]
-  | { plugins?: PluginSubject[]; data?: PluginSubject[] };
+  | PluginPermissionSubject[]
+  | { plugins?: PluginPermissionSubject[]; data?: PluginPermissionSubject[] };
 
-async function fetchPluginPermissionSubjects(): Promise<PermissionSubject[]> {
+export async function fetchPluginPermissionSubjects(): Promise<
+  PermissionSubject[]
+> {
   const response = await apiBase.get<PluginSubjectResponse>("/plugins");
   const plugins = Array.isArray(response.data)
     ? response.data
@@ -272,7 +279,7 @@ async function fetchPluginPermissionSubjects(): Promise<PermissionSubject[]> {
         name,
         type: "plugin" as const,
         owner: null,
-        icon: null
+        icon: plugin.icon ?? null
       };
     })
     .filter((subject): subject is PermissionSubject => subject !== null);

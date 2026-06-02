@@ -2,7 +2,8 @@ import { fetchEffectiveSubjectResourceAccess } from "@flanksource-ui/api/service
 import {
   EffectiveAccessMap,
   PermissionResource,
-  ResourceKind
+  ResourceKind,
+  getPermissionActionForResource
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -40,17 +41,22 @@ export default function useEffectiveSubjectAccess({
       queryFn: async () => {
         const byAction = new Map<
           string,
-          Array<{ id: string; type: ResourceKind }>
+          Array<{ id: string; type: ResourceKind; displayAction: string }>
         >();
 
         for (const resource of resources) {
           for (const action of resource.actions) {
-            const list = byAction.get(action) ?? [];
+            const permissionAction = getPermissionActionForResource(
+              resource,
+              action
+            );
+            const list = byAction.get(permissionAction) ?? [];
             list.push({
               id: resource.id,
-              type: resource.kind
+              type: resource.kind,
+              displayAction: action
             });
-            byAction.set(action, list);
+            byAction.set(permissionAction, list);
           }
         }
 
@@ -59,23 +65,32 @@ export default function useEffectiveSubjectAccess({
 
         await Promise.all(
           Array.from(byAction.entries()).map(
-            async ([action, actionResources]) => {
+            async ([permissionAction, actionResources]) => {
               try {
                 const response = await fetchEffectiveSubjectResourceAccess({
                   subject: selectedSubjectId,
-                  action: action as any,
-                  resources: actionResources
+                  action: permissionAction as any,
+                  resources: actionResources.map(({ id, type }) => ({
+                    id,
+                    type
+                  }))
                 });
 
                 for (const result of response.results ?? []) {
                   next[
-                    `${result.resourceType}:${result.resourceId}:${action}`
+                    `${result.resourceType}:${result.resourceId}:${
+                      actionResources.find(
+                        (resource) => resource.id === result.resourceId
+                      )?.displayAction ?? permissionAction
+                    }`
                   ] = result.allowed ? "allowed" : "denied";
                 }
               } catch {
                 hasEffectiveAccessFetchFailure = true;
                 for (const resource of actionResources) {
-                  next[`${resource.type}:${resource.id}:${action}`] = "unknown";
+                  next[
+                    `${resource.type}:${resource.id}:${resource.displayAction}`
+                  ] = "unknown";
                 }
               }
             }

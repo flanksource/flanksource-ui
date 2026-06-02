@@ -11,6 +11,7 @@ export type PermissionGlobalObject =
   | "canaries"
   | "connection"
   | "playbook"
+  | "plugin"
   | "topology"
   | "mcp";
 

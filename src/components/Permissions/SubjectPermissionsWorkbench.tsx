@@ -25,7 +25,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 const PLAYBOOK_ALLOWED_ACTIONS: Record<ResourceKind, string[]> = {
   playbook: ["read", "playbook:run"],
   view: ["read"],
-  connection: ["read"]
+  connection: ["read"],
+  plugin: []
 };
 
 function getVisibleActionsForSubject(
@@ -34,6 +35,10 @@ function getVisibleActionsForSubject(
   isPlaybookSubject: boolean
 ) {
   if (!isPlaybookSubject) {
+    return actions;
+  }
+
+  if (resourceKind === "plugin") {
     return actions;
   }
 
