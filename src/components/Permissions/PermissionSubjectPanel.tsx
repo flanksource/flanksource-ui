@@ -25,6 +25,30 @@ const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   permission_subject_group: "group"
 };
 
+const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
+  role: 0,
+  permission_subject_group: 1,
+  team: 2,
+  person: 3,
+  access_token_person: 4,
+  playbook: 5,
+  plugin: 6
+};
+
+function sortSubjectGroups(groups: PermissionSubjectGroup[]) {
+  return [...groups].sort((left, right) => {
+    const leftOrder = SUBJECT_TYPE_ORDER[left.type] ?? Number.MAX_SAFE_INTEGER;
+    const rightOrder =
+      SUBJECT_TYPE_ORDER[right.type] ?? Number.MAX_SAFE_INTEGER;
+
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    return left.type.localeCompare(right.type);
+  });
+}
+
 export default function PermissionSubjectPanel({
   subjectSearch,
   onSubjectSearchChange,
@@ -41,7 +65,7 @@ export default function PermissionSubjectPanel({
       />
 
       <div className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto">
-        {groupedSubjects.map((group) => (
+        {sortSubjectGroups(groupedSubjects).map((group) => (
           <div key={group.type} className="space-y-1">
             <div className="px-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
               {TYPE_LABELS[group.type] ?? group.type}
