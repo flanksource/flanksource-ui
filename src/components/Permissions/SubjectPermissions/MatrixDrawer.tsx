@@ -1,3 +1,7 @@
+/**
+ * Animated expansion panel shown under a selected resource row, exposing the
+ * editable direct-access switches for each supported action.
+ */
 import DirectMatrixCell from "@flanksource-ui/components/Permissions/SubjectPermissions/DirectMatrixCell";
 import { AccessValue } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { motion } from "motion/react";

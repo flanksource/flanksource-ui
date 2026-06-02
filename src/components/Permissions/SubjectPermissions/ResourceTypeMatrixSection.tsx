@@ -1,3 +1,7 @@
+/**
+ * Wraps a resource-type group in section styling and forwards rendering to the
+ * reusable permissions matrix table.
+ */
 import PermissionsMatrixTable, {
   PermissionsMatrixRow
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/PermissionsMatrixTable";

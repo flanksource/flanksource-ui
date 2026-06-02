@@ -1,3 +1,7 @@
+/**
+ * Hook that creates, updates, or removes settings-managed direct permissions for
+ * the selected subject/resource/action combination.
+ */
 import {
   addPermission,
   deletePermission,

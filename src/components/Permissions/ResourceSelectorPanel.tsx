@@ -21,8 +21,8 @@ export type McpSubjectResource = {
   displayName?: string;
   namespace?: string;
   icon?: string;
-  subtitle?: string;
 };
+
 type ResourceSelectorPanelProps = {
   selectedSubject: PermissionSubject;
   resources: McpSubjectResource[];
@@ -128,7 +128,7 @@ export default function ResourceSelectorPanel({
       }
 
       const haystack =
-        `${resource.displayName || resource.name} ${resource.name} ${resource.subtitle || ""} ${resource.namespace || ""}`.toLowerCase();
+        `${resource.displayName || resource.name} ${resource.name} ${resource.namespace || ""}`.toLowerCase();
       return haystack.includes(normalizedSearch);
     });
   }, [normalizedSearch, resources]);

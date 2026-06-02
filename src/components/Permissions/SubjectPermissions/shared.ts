@@ -1,3 +1,7 @@
+/**
+ * Shared types, constants, and selector helpers used to build and evaluate the
+ * subject permissions matrix.
+ */
 import {
   isSettingsManagedPermissionSource,
   PermissionSubject
@@ -26,7 +30,6 @@ export type PermissionResource = {
   displayName: string;
   namespace?: string;
   icon?: string;
-  subtitle?: string;
   selectorKey: PermissionSelectorKey;
   actions: string[];
 };

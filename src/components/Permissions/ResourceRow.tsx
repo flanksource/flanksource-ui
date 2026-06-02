@@ -57,11 +57,6 @@ function ResourceRow({
           <div className="truncate text-sm font-medium text-gray-900">
             {resource.displayName || resource.name}
           </div>
-          {resource.subtitle ? (
-            <div className="truncate text-xs text-gray-500">
-              {resource.subtitle}
-            </div>
-          ) : null}
         </div>
       </div>
 

@@ -1,3 +1,7 @@
+/**
+ * Main matrix content area for subject permissions, including resource-kind tabs,
+ * loading/empty states, effective-access cells, and editable row drawers.
+ */
 import EffectiveMatrixCell from "@flanksource-ui/components/Permissions/SubjectPermissions/EffectiveMatrixCell";
 import MatrixDrawer from "@flanksource-ui/components/Permissions/SubjectPermissions/MatrixDrawer";
 import ResourceTypeMatrixSection from "@flanksource-ui/components/Permissions/SubjectPermissions/ResourceTypeMatrixSection";

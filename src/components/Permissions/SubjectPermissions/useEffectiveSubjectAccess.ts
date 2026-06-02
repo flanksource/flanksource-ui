@@ -1,3 +1,7 @@
+/**
+ * Hook that batches effective-access checks for the selected subject across all
+ * visible resources and actions, returning a lookup keyed by resource/action.
+ */
 import { fetchEffectiveSubjectResourceAccess } from "@flanksource-ui/api/services/rbac";
 import {
   EffectiveAccessMap,

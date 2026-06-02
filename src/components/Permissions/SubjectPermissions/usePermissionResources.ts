@@ -1,3 +1,7 @@
+/**
+ * Hook that loads playbooks, views, connections, and plugins, then normalizes
+ * them into sorted permission matrix resources with supported actions.
+ */
 import { fetchPluginPermissionSubjects } from "@flanksource-ui/api/services/permissions";
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { getAllViews } from "@flanksource-ui/api/services/views";
@@ -56,9 +60,6 @@ export default function usePermissionResources() {
       displayName: playbook.title || playbook.name,
       namespace: playbook.namespace,
       icon: playbook.icon || "playbook",
-      subtitle: playbook.namespace
-        ? `${playbook.namespace} · playbook`
-        : "playbook",
       selectorKey: RESOURCE_KIND_CONFIG.playbook.selectorKey,
       actions: RESOURCE_KIND_CONFIG.playbook.actions
     }));
@@ -70,7 +71,6 @@ export default function usePermissionResources() {
       displayName: view.spec?.title || view.name,
       namespace: view.namespace,
       icon: view.spec?.icon || "workflow",
-      subtitle: view.namespace ? `${view.namespace} · view` : "view",
       selectorKey: RESOURCE_KIND_CONFIG.view.selectorKey,
       actions: RESOURCE_KIND_CONFIG.view.actions
     }));
@@ -87,9 +87,6 @@ export default function usePermissionResources() {
         displayName: connection.name,
         namespace: connection.namespace,
         icon: connection.type || "connection",
-        subtitle: connection.namespace
-          ? `${connection.namespace} · ${connection.type || "connection"}`
-          : connection.type || "connection",
         selectorKey: RESOURCE_KIND_CONFIG.connection.selectorKey,
         actions: RESOURCE_KIND_CONFIG.connection.actions
       }));
@@ -100,7 +97,6 @@ export default function usePermissionResources() {
       name: plugin.name,
       displayName: plugin.name,
       icon: plugin.icon || "plugin",
-      subtitle: "plugin",
       selectorKey: RESOURCE_KIND_CONFIG.plugin.selectorKey,
       actions: ["invoke"]
     }));

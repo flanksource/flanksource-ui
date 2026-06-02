@@ -1,3 +1,7 @@
+/**
+ * Generic permissions matrix table that renders resources as rows, actions as
+ * columns, and delegates each access cell to the caller.
+ */
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Fragment, ReactNode } from "react";
 import { HiPuzzle } from "react-icons/hi";
@@ -5,7 +9,6 @@ import { HiPuzzle } from "react-icons/hi";
 export type PermissionsMatrixRow = {
   id: string;
   displayName: string;
-  subtitle?: string;
   icon?: string;
 };
 
@@ -76,9 +79,6 @@ export default function PermissionsMatrixTable<
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium text-gray-900">
                           {row.displayName}
-                        </div>
-                        <div className="truncate text-xs text-gray-500">
-                          {row.subtitle || "—"}
                         </div>
                       </div>
                     </div>
