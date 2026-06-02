@@ -4,7 +4,7 @@
  */
 import EffectiveMatrixCell from "@flanksource-ui/components/Permissions/SubjectPermissions/EffectiveMatrixCell";
 import MatrixDrawer from "@flanksource-ui/components/Permissions/SubjectPermissions/MatrixDrawer";
-import ResourceTypeMatrixSection from "@flanksource-ui/components/Permissions/SubjectPermissions/ResourceTypeMatrixSection";
+import PermissionsMatrixTable from "@flanksource-ui/components/Permissions/SubjectPermissions/PermissionsMatrixTable";
 import {
   AccessValue,
   DEFAULT_DIRECT_STATE,
@@ -101,63 +101,68 @@ export default function SubjectPermissionsMatrixContent({
         ) : (
           <div className="space-y-5">
             {groupedResources.map((group) => (
-              <ResourceTypeMatrixSection
-                key={group.kind}
-                actions={group.actions}
-                rows={group.resources}
-                onRowClick={onToggleResource}
-                isRowSelected={(resource) => isSelectedResource(resource)}
-                isRowExpanded={(resource) => isSelectedResource(resource)}
-                renderExpandedRow={(resource) => (
-                  <MatrixDrawer
-                    rows={resource.actions.map((action) => {
-                      const key = getResourceActionKey(resource, action);
-                      const direct =
-                        directAccessByResourceAction[key] ??
-                        DEFAULT_DIRECT_STATE;
+              <section key={group.kind}>
+                <div className="rounded-md border border-gray-200 bg-white">
+                  <PermissionsMatrixTable
+                    actions={group.actions}
+                    rows={group.resources}
+                    onRowClick={onToggleResource}
+                    isRowSelected={(resource) => isSelectedResource(resource)}
+                    isRowExpanded={(resource) => isSelectedResource(resource)}
+                    renderExpandedRow={(resource) => (
+                      <MatrixDrawer
+                        rows={resource.actions.map((action) => {
+                          const key = getResourceActionKey(resource, action);
+                          const direct =
+                            directAccessByResourceAction[key] ??
+                            DEFAULT_DIRECT_STATE;
 
-                      return {
-                        key: `${resource.id}:${action}`,
-                        action,
-                        access: direct.access,
-                        isReadOnly: direct.isReadOnly,
-                        isWildcard: direct.isWildcard,
-                        disabled: isSubmitting,
-                        onChange: (next) => {
-                          onPermissionAccessChange(resource, action, next);
-                        }
-                      };
-                    })}
-                  />
-                )}
-                renderCell={(resource, action) => {
-                  if (!resource.actions.includes(action)) {
-                    return <span className="text-xs text-gray-300">—</span>;
-                  }
-
-                  const key = getResourceActionKey(resource, action);
-                  const direct = directAccessByResourceAction[key];
-
-                  if (
-                    resource.kind === "plugin" &&
-                    direct?.access !== "default"
-                  ) {
-                    return (
-                      <EffectiveMatrixCell
-                        state={direct.access === "allow" ? "allowed" : "denied"}
-                        notChecked={false}
+                          return {
+                            key: `${resource.id}:${action}`,
+                            action,
+                            access: direct.access,
+                            isReadOnly: direct.isReadOnly,
+                            isWildcard: direct.isWildcard,
+                            disabled: isSubmitting,
+                            onChange: (next) => {
+                              onPermissionAccessChange(resource, action, next);
+                            }
+                          };
+                        })}
                       />
-                    );
-                  }
+                    )}
+                    renderCell={(resource, action) => {
+                      if (!resource.actions.includes(action)) {
+                        return <span className="text-xs text-gray-300">—</span>;
+                      }
 
-                  return (
-                    <EffectiveMatrixCell
-                      state={effectiveAccessByAction[key] ?? "unknown"}
-                      notChecked={false}
-                    />
-                  );
-                }}
-              />
+                      const key = getResourceActionKey(resource, action);
+                      const direct = directAccessByResourceAction[key];
+
+                      if (
+                        resource.kind === "plugin" &&
+                        direct?.access !== "default"
+                      ) {
+                        return (
+                          <EffectiveMatrixCell
+                            state={
+                              direct.access === "allow" ? "allowed" : "denied"
+                            }
+                            notChecked={false}
+                          />
+                        );
+                      }
+
+                      return (
+                        <EffectiveMatrixCell
+                          state={effectiveAccessByAction[key] ?? "unknown"}
+                          notChecked={false}
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              </section>
             ))}
           </div>
         )}
