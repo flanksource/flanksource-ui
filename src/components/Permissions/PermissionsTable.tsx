@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import CRDSource from "../Settings/CRDSource";
 import FilterByCellValue from "@flanksource-ui/ui/DataTable/FilterByCellValue";
 import PermissionResourceCell from "./PermissionResourceCell";
+import SubjectAvatar from "./SubjectAvatar";
 
 const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
   {
@@ -19,8 +20,15 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
     header: "Subject",
     size: 80,
     Cell: ({ row }) => {
-      const { team, group, person, subject, notification, playbook } =
-        row.original;
+      const {
+        team,
+        group,
+        person,
+        subject,
+        subject_type,
+        notification,
+        playbook
+      } = row.original;
 
       if (group) {
         const groupName = group.name || subject;
@@ -30,6 +38,17 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
               {group.name ? "Group: " : "Role: "}
               {groupName}
               {/* Add link to permission group when we have a permission group page */}
+            </span>
+          </div>
+        );
+      }
+
+      if (subject_type === "role" && subject) {
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <SubjectAvatar subject={{ name: subject, type: "role" }} />
+            <span className="truncate font-mono text-sm" title={subject}>
+              Role: {subject}
             </span>
           </div>
         );
@@ -83,6 +102,19 @@ const permissionsTableColumns: MRT_ColumnDef<PermissionsSummary>[] = [
                   <PlaybookSpecIcon playbook={playbook} showLabel />
                 </span>
               </Link>
+            </span>
+          </div>
+        );
+      }
+
+      if (subject_type === "plugin" && subject) {
+        const pluginName = subject.replace(/^plugin:/, "");
+
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <SubjectAvatar subject={{ name: pluginName, type: "plugin" }} />
+            <span className="truncate font-mono text-sm" title={pluginName}>
+              plugin: {pluginName}
             </span>
           </div>
         );
