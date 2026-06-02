@@ -22,15 +22,20 @@ export default function useEffectiveSubjectAccess({
   selectedSubjectId,
   resources
 }: UseEffectiveSubjectAccessProps) {
+  const resourcesToCheck = useMemo(
+    () => resources.filter((resource) => resource.kind !== "plugin"),
+    [resources]
+  );
+
   const scopeKey = useMemo(
     () =>
-      resources
+      resourcesToCheck
         .map(
           (resource) =>
             `${resource.kind}:${resource.id}:${resource.actions.join(",")}`
         )
         .join("|"),
-    [resources]
+    [resourcesToCheck]
   );
 
   const { data: effectiveAccessByAction = {}, isFetching } =
@@ -41,14 +46,14 @@ export default function useEffectiveSubjectAccess({
         selectedSubjectId,
         scopeKey
       ],
-      enabled: resources.length > 0,
+      enabled: resourcesToCheck.length > 0,
       queryFn: async () => {
         const byAction = new Map<
           string,
           Array<{ id: string; type: ResourceKind; displayAction: string }>
         >();
 
-        for (const resource of resources) {
+        for (const resource of resourcesToCheck) {
           for (const action of resource.actions) {
             const permissionAction = getPermissionActionForResource(
               resource,

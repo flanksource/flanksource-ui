@@ -35,6 +35,7 @@ export type PermissionResource = {
 };
 
 export type ResourceTypeGroup = {
+  key: string;
   kind: ResourceKind;
   label: string;
   actions: string[];
@@ -106,23 +107,43 @@ export function getResourceActionKey(
   return `${resource.kind}:${resource.id}:${action}`;
 }
 
+export function getPluginWildcardPermissionAction(
+  resource: Pick<PermissionResource, "kind" | "name">
+) {
+  return `invoke:${resource.name}:*`;
+}
+
 export function getPermissionActionForResource(
   resource: Pick<PermissionResource, "kind" | "name">,
   action: string
 ) {
-  if (resource.kind === "plugin" && action === "invoke") {
-    return `invoke:${resource.name}:*`;
+  if (resource.kind !== "plugin") {
+    return action;
   }
 
-  return action;
+  if (action.startsWith("invoke:")) {
+    return action;
+  }
+
+  if (action === "invoke") {
+    return getPluginWildcardPermissionAction(resource);
+  }
+
+  return `invoke:${resource.name}:${action}`;
 }
 
 export function getDisplayActionForPermission(
   resource: Pick<PermissionResource, "kind" | "name">,
   action: string
 ) {
-  if (resource.kind === "plugin" && action === `invoke:${resource.name}:*`) {
-    return "invoke";
+  if (resource.kind !== "plugin") {
+    return action;
+  }
+
+  const prefix = `invoke:${resource.name}:`;
+
+  if (action.startsWith(prefix)) {
+    return action.slice(prefix.length);
   }
 
   return action;
@@ -231,10 +252,19 @@ export function getDirectAccessState(
 ): DirectAccessState {
   const subjectType = mapSubjectType(subject.type);
   const permissionAction = getPermissionActionForResource(resource, action);
+  const pluginWildcardAction =
+    resource.kind === "plugin"
+      ? getPluginWildcardPermissionAction(resource)
+      : undefined;
 
   const matchingPermissions = permissions.filter((permission) => {
+    const actionMatches =
+      permission.action === permissionAction ||
+      (pluginWildcardAction !== undefined &&
+        permission.action === pluginWildcardAction);
+
     if (
-      permission.action !== permissionAction ||
+      !actionMatches ||
       permission.subject !== subject.id ||
       permission.subject_type !== subjectType
     ) {
@@ -254,12 +284,15 @@ export function getDirectAccessState(
     (permission) => permission.source === "KubernetesCRD"
   );
   const isWildcard =
-    resource.kind !== "plugin" &&
-    matchingPermissions.some((permission) =>
-      getRefsForPermission(permission, resource.selectorKey).some(
-        selectorRefIsWildcard
-      )
-    );
+    resource.kind === "plugin"
+      ? matchingPermissions.some(
+          (permission) => permission.action === pluginWildcardAction
+        )
+      : matchingPermissions.some((permission) =>
+          getRefsForPermission(permission, resource.selectorKey).some(
+            selectorRefIsWildcard
+          )
+        );
 
   return {
     access: matchingPermissions.some((permission) => permission.deny === true)
@@ -282,13 +315,34 @@ export function groupResourcesByType(
     grouped.set(resource.kind, list);
   }
 
-  return RESOURCE_KIND_ORDER.map((kind) => {
+  const groups: ResourceTypeGroup[] = [];
+
+  for (const kind of RESOURCE_KIND_ORDER) {
     const resources = grouped.get(kind) ?? [];
+
+    if (resources.length === 0) {
+      continue;
+    }
+
+    if (kind === "plugin") {
+      for (const resource of resources) {
+        groups.push({
+          key: `${kind}:${resource.id}`,
+          kind,
+          label: resource.displayName,
+          actions: resource.actions,
+          resources: [resource]
+        });
+      }
+      continue;
+    }
+
     const resourceActions = Array.from(
       new Set(resources.flatMap((resource) => resource.actions))
     );
 
-    return {
+    groups.push({
+      key: kind,
       kind,
       label: RESOURCE_KIND_CONFIG[kind].label,
       actions:
@@ -296,8 +350,10 @@ export function groupResourcesByType(
           ? resourceActions
           : RESOURCE_KIND_CONFIG[kind].actions,
       resources
-    };
-  }).filter((group) => group.resources.length > 0);
+    });
+  }
+
+  return groups;
 }
 
 export function isSamePermissionResource(

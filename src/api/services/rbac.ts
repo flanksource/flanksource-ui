@@ -73,6 +73,7 @@ export type SubjectAccessReviewAction =
   | "mcp:run"
   | "mcp:use"
   | `invoke:${string}:*`
+  | `invoke:${string}:${string}`
   | "playbook:run"
   | "playbook:cancel"
   | "playbook:approve";

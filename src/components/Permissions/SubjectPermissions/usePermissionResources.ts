@@ -2,7 +2,10 @@
  * Hook that loads playbooks, views, connections, and plugins, then normalizes
  * them into sorted permission matrix resources with supported actions.
  */
-import { fetchPluginPermissionSubjects } from "@flanksource-ui/api/services/permissions";
+import {
+  fetchPluginPermissionListings,
+  type PluginOperationDefinition
+} from "@flanksource-ui/api/services/permissions";
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { getAll } from "@flanksource-ui/api/schemaResources";
@@ -11,6 +14,7 @@ import { SchemaApi } from "@flanksource-ui/components/SchemaResourcePage/resourc
 import {
   PermissionResource,
   RESOURCE_KIND_CONFIG,
+  getPermissionActionForResource,
   sortPermissionResources
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +25,33 @@ const connectionsSchema: SchemaApi = {
   api: "canary-checker",
   name: "Connections"
 };
+
+function getPluginOperationName(operation: PluginOperationDefinition | string) {
+  if (typeof operation === "string") {
+    return operation.trim();
+  }
+
+  return operation.name?.trim() ?? "";
+}
+
+function getPluginOperationActions(
+  pluginName: string,
+  operations: Array<PluginOperationDefinition | string> = []
+) {
+  return Array.from(
+    new Set(
+      operations
+        .map(getPluginOperationName)
+        .filter(Boolean)
+        .map((operationName) =>
+          getPermissionActionForResource(
+            { kind: "plugin", name: pluginName },
+            operationName
+          )
+        )
+    )
+  );
+}
 
 export default function usePermissionResources() {
   const { data: playbooks = [], isLoading: isLoadingPlaybooks } = useQuery({
@@ -46,7 +77,7 @@ export default function usePermissionResources() {
 
   const { data: plugins = [], isLoading: isLoadingPlugins } = useQuery({
     queryKey: ["permissions-subjects", "plugins"],
-    queryFn: fetchPluginPermissionSubjects,
+    queryFn: fetchPluginPermissionListings,
     staleTime: 60_000
   });
 
@@ -91,15 +122,26 @@ export default function usePermissionResources() {
         actions: RESOURCE_KIND_CONFIG.connection.actions
       }));
 
-    const pluginResources = plugins.map((plugin) => ({
-      id: plugin.id,
-      kind: "plugin" as const,
-      name: plugin.name,
-      displayName: plugin.name,
-      icon: plugin.icon || "plugin",
-      selectorKey: RESOURCE_KIND_CONFIG.plugin.selectorKey,
-      actions: ["invoke"]
-    }));
+    const pluginResources = plugins
+      .map((plugin): PermissionResource | null => {
+        const id = plugin.id ?? plugin.name;
+        const name = plugin.name ?? plugin.id;
+
+        if (!id || !name) {
+          return null;
+        }
+
+        return {
+          id,
+          kind: "plugin" as const,
+          name,
+          displayName: name,
+          icon: plugin.icon || "plugin",
+          selectorKey: RESOURCE_KIND_CONFIG.plugin.selectorKey,
+          actions: getPluginOperationActions(name, plugin.operations)
+        };
+      })
+      .filter((resource): resource is PermissionResource => resource !== null);
 
     return sortPermissionResources([
       ...playbookResources,
