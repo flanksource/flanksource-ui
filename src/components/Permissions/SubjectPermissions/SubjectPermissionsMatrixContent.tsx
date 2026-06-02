@@ -65,7 +65,7 @@ export default function SubjectPermissionsMatrixContent({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 px-4 py-4">
+    <div className="flex flex-col gap-4 px-4 py-4">
       <div className="flex items-center gap-2">
         <Tabs
           value={activeResourceKind}
@@ -88,7 +88,7 @@ export default function SubjectPermissionsMatrixContent({
         ) : null}
       </div>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div ref={scrollRef} className="pr-1">
         {loading ? (
           <div className="flex items-center gap-2 rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />

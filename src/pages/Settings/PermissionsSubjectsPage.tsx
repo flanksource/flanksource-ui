@@ -109,8 +109,8 @@ export function PermissionsSubjectsPage() {
       loading={isLoading || isRefetching || isWorkbenchFetching}
       onRefresh={onRefresh}
     >
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-4 lg:flex-row lg:gap-4">
-        <div className="flex min-h-0 w-full shrink-0 flex-col gap-3 lg:w-[220px]">
+      <div className="flex w-full flex-col gap-4 p-4 lg:flex-row lg:gap-4">
+        <div className="flex w-full shrink-0 flex-col gap-3 lg:w-[220px]">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
           </div>
@@ -124,7 +124,7 @@ export function PermissionsSubjectsPage() {
           />
         </div>
 
-        <div className="min-h-0 min-w-0 flex-1">
+        <div className="min-w-0 flex-1">
           {selectedSubject ? (
             <SubjectPermissionsWorkbench selectedSubject={selectedSubject} />
           ) : (

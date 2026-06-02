@@ -197,7 +197,7 @@ export default function SubjectPermissionsWorkbench({
   const loading = isLoadingResources || isLoadingPermissions;
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-1 flex-col">
       <SubjectPermissionsHeader
         selectedSubject={selectedSubject}
         search={search}

@@ -34,7 +34,7 @@ export default function PermissionsMatrixTable<
   renderExpandedRow
 }: PermissionsMatrixTableProps<TRow>) {
   return (
-    <div className="overflow-x-auto overflow-y-visible">
+    <div className="overflow-x-auto overflow-y-hidden">
       <table className="w-full min-w-max table-auto border-separate border-spacing-0">
         <thead>
           <tr>
