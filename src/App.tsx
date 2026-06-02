@@ -267,6 +267,12 @@ const ConfigDetailsViewPage = dynamic(() =>
   )
 );
 
+const ConfigDetailsPluginPage = dynamic(() =>
+  import("@flanksource-ui/pages/config/details/ConfigDetailsPluginPage").then(
+    (mod) => mod.ConfigDetailsPluginPage
+  )
+);
+
 const ConfigScrapersEditPage = dynamic(
   () => import("@flanksource-ui/pages/config/settings/ConfigScrapersEditPage")
 );
@@ -1212,6 +1218,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="view/:viewId"
             element={withAuthorizationAccessCheck(
               <ConfigDetailsViewPage />,
+              tables.catalog,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path="plugin/:pluginName/:tabName"
+            element={withAuthorizationAccessCheck(
+              <ConfigDetailsPluginPage />,
               tables.catalog,
               "read",
               true

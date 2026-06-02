@@ -41,59 +41,80 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   const accessLogsCount =
     accessLogsData?.totalEntries ?? accessLogsData?.data?.length ?? 0;
 
+  const changesCount = countSummary?.changes ?? 0;
+  const insightsCount = countSummary?.analysis ?? 0;
+  const relationshipsCount = countSummary?.relationships ?? 0;
+  const playbooksCount = countSummary?.playbook_runs ?? 0;
+  const checksCount = countSummary?.checks ?? 0;
+
   const staticTabs: ConfigDetailsTab[] = [
-    { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` },
-    {
+    { label: "Spec", key: "Spec", path: `/catalog/${id}/spec` }
+  ];
+
+  if (changesCount > 0) {
+    staticTabs.push({
       label: (
         <>
           Changes
-          <Badge className="ml-1" text={countSummary?.changes ?? 0} />
+          <Badge className="ml-1" text={changesCount} />
         </>
       ),
       key: "Changes",
       path: `/catalog/${id}/changes`
-    },
-    {
+    });
+  }
+
+  if (insightsCount > 0) {
+    staticTabs.push({
       label: (
         <>
           Insights
-          <Badge className="ml-1" text={countSummary?.analysis ?? 0} />
+          <Badge className="ml-1" text={insightsCount} />
         </>
       ),
       key: "Insights",
       path: `/catalog/${id}/insights`
-    },
-    {
+    });
+  }
+
+  if (relationshipsCount > 0) {
+    staticTabs.push({
       label: (
         <>
           Relationships
-          <Badge className="ml-1" text={countSummary?.relationships ?? 0} />
+          <Badge className="ml-1" text={relationshipsCount} />
         </>
       ),
       key: "Relationships",
       path: `/catalog/${id}/relationships`
-    },
-    {
+    });
+  }
+
+  if (playbooksCount > 0) {
+    staticTabs.push({
       label: (
         <>
           Playbooks
-          <Badge className="ml-1" text={countSummary?.playbook_runs ?? 0} />
+          <Badge className="ml-1" text={playbooksCount} />
         </>
       ),
       key: "Playbooks",
       path: `/catalog/${id}/playbooks`
-    },
-    {
+    });
+  }
+
+  if (checksCount > 0) {
+    staticTabs.push({
       label: (
         <>
           Checks
-          <Badge className="ml-1" text={countSummary?.checks ?? 0} />
+          <Badge className="ml-1" text={checksCount} />
         </>
       ),
       key: "Checks",
       path: `/catalog/${id}/checks`
-    }
-  ];
+    });
+  }
 
   if (accessCount > 0) {
     staticTabs.push({

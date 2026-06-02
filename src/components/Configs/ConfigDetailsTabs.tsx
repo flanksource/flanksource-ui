@@ -11,6 +11,7 @@ import TabbedLinks from "../../ui/Tabs/TabbedLinks";
 import PlaybooksDropdownMenu from "../Playbooks/Runs/Submit/PlaybooksDropdownMenu";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { useConfigDetailsTabs } from "./ConfigTabsLinks";
+import { ConfigPluginsDropdown } from "./ConfigPluginsDropdown";
 import ConfigSidebar from "./Sidebar/ConfigSidebar";
 
 type ConfigDetailsTabsProps = {
@@ -93,6 +94,7 @@ export function ConfigDetailsTabs({
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
+              extraTabs={<ConfigPluginsDropdown />}
               contentClassName={clsx(
                 "bg-white border border-t-0 border-gray-300 flex-1 min-h-0 overflow-auto",
                 className
