@@ -57,7 +57,7 @@ export default function PermissionSubjectPanel({
   onSelectSubject
 }: PermissionSubjectPanelProps) {
   return (
-    <div className="flex w-full min-w-0 flex-col">
+    <div className="flex max-h-[calc(100vh-14rem)] w-full min-w-0 flex-col overflow-hidden">
       <Input
         placeholder="Search subjects..."
         value={subjectSearch}

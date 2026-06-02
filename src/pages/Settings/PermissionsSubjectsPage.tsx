@@ -110,7 +110,7 @@ export function PermissionsSubjectsPage() {
       onRefresh={onRefresh}
     >
       <div className="flex w-full flex-col gap-4 p-4 lg:flex-row lg:gap-4">
-        <div className="flex w-full shrink-0 flex-col gap-3 lg:w-[220px]">
+        <div className="flex w-full shrink-0 flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-10rem)] lg:w-[220px] lg:self-start">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
           </div>
