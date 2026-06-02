@@ -55,14 +55,31 @@ export default function SubjectPermissionsWorkbench({
   const [search, setSearch] = useState("");
   const [selectedResource, setSelectedResource] =
     useState<PermissionResource | null>(null);
-  const [activeResourceKind, setActiveResourceKind] =
-    useState<ResourceKind>("playbook");
+  const [activeResourceKind, setActiveResourceKind] = useState<ResourceKind>(
+    selectedSubject.type === "plugin" ? "connection" : "playbook"
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { resources: allResources, isLoading: isLoadingResources } =
     usePermissionResources();
 
   const isPlaybookSubject = selectedSubject.type === "playbook";
+  const isPluginSubject = selectedSubject.type === "plugin";
+  const visibleResourceKinds = useMemo(
+    () =>
+      RESOURCE_KIND_ORDER.filter((kind) => {
+        if (isPluginSubject) {
+          return kind !== "playbook" && kind !== "view";
+        }
+
+        if (isPlaybookSubject) {
+          return kind !== "plugin" && kind !== "view";
+        }
+
+        return true;
+      }),
+    [isPlaybookSubject, isPluginSubject]
+  );
   const resources = useMemo(
     () =>
       allResources.map((resource) => ({
@@ -129,12 +146,18 @@ export default function SubjectPermissionsWorkbench({
     ) as Record<ResourceKind, number>;
   }, [filteredResources]);
 
+  const visibleActiveResourceKind = visibleResourceKinds.includes(
+    activeResourceKind
+  )
+    ? activeResourceKind
+    : (visibleResourceKinds[0] ?? "plugin");
+
   const activeResources = useMemo(
     () =>
       filteredResources.filter(
-        (resource) => resource.kind === activeResourceKind
+        (resource) => resource.kind === visibleActiveResourceKind
       ),
-    [activeResourceKind, filteredResources]
+    [filteredResources, visibleActiveResourceKind]
   );
 
   const groupedResources = useMemo(
@@ -162,9 +185,15 @@ export default function SubjectPermissionsWorkbench({
   }, [selectedSubject.id]);
 
   useEffect(() => {
+    if (!visibleResourceKinds.includes(activeResourceKind)) {
+      setActiveResourceKind(visibleResourceKinds[0] ?? "plugin");
+    }
+  }, [activeResourceKind, visibleResourceKinds]);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedResource(null);
-  }, [activeResourceKind]);
+  }, [visibleActiveResourceKind]);
 
   useEffect(() => {
     if (
@@ -207,7 +236,8 @@ export default function SubjectPermissionsWorkbench({
       <SubjectPermissionsMatrixContent
         loading={loading}
         groupedResources={groupedResources}
-        activeResourceKind={activeResourceKind}
+        activeResourceKind={visibleActiveResourceKind}
+        visibleResourceKinds={visibleResourceKinds}
         resourceKindCounts={resourceKindCounts}
         onSelectResourceKind={setActiveResourceKind}
         selectedResource={selectedResource}

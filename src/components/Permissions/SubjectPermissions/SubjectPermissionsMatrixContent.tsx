@@ -13,7 +13,6 @@ import {
   EffectiveAccessMap,
   PermissionResource,
   RESOURCE_KIND_CONFIG,
-  RESOURCE_KIND_ORDER,
   ResourceKind,
   ResourceTypeGroup,
   getResourceActionKey,
@@ -30,6 +29,7 @@ type SubjectPermissionsMatrixContentProps = {
   loading: boolean;
   groupedResources: ResourceTypeGroup[];
   activeResourceKind: ResourceKind;
+  visibleResourceKinds: ResourceKind[];
   resourceKindCounts: Record<ResourceKind, number>;
   selectedResource: PermissionResource | null;
   directAccessByResourceAction: Record<string, DirectAccessState>;
@@ -50,6 +50,7 @@ export default function SubjectPermissionsMatrixContent({
   loading,
   groupedResources,
   activeResourceKind,
+  visibleResourceKinds,
   resourceKindCounts,
   selectedResource,
   directAccessByResourceAction,
@@ -73,7 +74,7 @@ export default function SubjectPermissionsMatrixContent({
           onValueChange={(value) => onSelectResourceKind(value as ResourceKind)}
         >
           <TabsList>
-            {RESOURCE_KIND_ORDER.map((kind) => (
+            {visibleResourceKinds.map((kind) => (
               <TabsTrigger key={kind} value={kind}>
                 {RESOURCE_KIND_CONFIG[kind].label} ({resourceKindCounts[kind]})
               </TabsTrigger>
