@@ -6,7 +6,6 @@ import SubjectPermissionsHeader from "@flanksource-ui/components/Permissions/Sub
 import SubjectPermissionsMatrixContent from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsMatrixContent";
 import {
   PermissionResource,
-  RESOURCE_KIND_CONFIG,
   RESOURCE_KIND_ORDER,
   ResourceKind,
   getDirectAccessState,
@@ -19,6 +18,29 @@ import usePermissionResources from "@flanksource-ui/components/Permissions/Subje
 import useSubjectPermissionAccess from "@flanksource-ui/components/Permissions/SubjectPermissions/useSubjectPermissionAccess";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+// Some permissions (actions) do not make sense for some subjects.
+// This map contains the list of applicable permissions when the subject
+// is a playbook.
+const PLAYBOOK_ALLOWED_ACTIONS: Record<ResourceKind, string[]> = {
+  playbook: ["read", "playbook:run"],
+  view: ["read"],
+  connection: ["read"]
+};
+
+function getVisibleActionsForSubject(
+  resourceKind: ResourceKind,
+  actions: string[],
+  isPlaybookSubject: boolean
+) {
+  if (!isPlaybookSubject) {
+    return actions;
+  }
+
+  return actions.filter((action) =>
+    PLAYBOOK_ALLOWED_ACTIONS[resourceKind].includes(action)
+  );
+}
 
 export default function SubjectPermissionsWorkbench({
   selectedSubject
@@ -34,6 +56,20 @@ export default function SubjectPermissionsWorkbench({
 
   const { resources: allResources, isLoading: isLoadingResources } =
     usePermissionResources();
+
+  const isPlaybookSubject = selectedSubject.type === "playbook";
+  const resources = useMemo(
+    () =>
+      allResources.map((resource) => ({
+        ...resource,
+        actions: getVisibleActionsForSubject(
+          resource.kind,
+          resource.actions,
+          isPlaybookSubject
+        )
+      })),
+    [allResources, isPlaybookSubject]
+  );
 
   const {
     data: permissions = [],
@@ -56,19 +92,19 @@ export default function SubjectPermissionsWorkbench({
 
   const directAccessByResourceAction = useMemo(() => {
     return Object.fromEntries(
-      allResources.flatMap((resource) =>
+      resources.flatMap((resource) =>
         resource.actions.map((action) => [
           getResourceActionKey(resource, action),
           getDirectAccessState(permissions, selectedSubject, resource, action)
         ])
       )
     );
-  }, [allResources, permissions, selectedSubject]);
+  }, [permissions, resources, selectedSubject]);
 
   const normalizedSearch = search.trim().toLowerCase();
 
   const filteredResources = useMemo(() => {
-    return allResources.filter((resource) => {
+    return resources.filter((resource) => {
       if (!normalizedSearch) {
         return true;
       }
@@ -77,7 +113,7 @@ export default function SubjectPermissionsWorkbench({
         .toLowerCase()
         .includes(normalizedSearch);
     });
-  }, [allResources, normalizedSearch]);
+  }, [normalizedSearch, resources]);
 
   const resourceKindCounts = useMemo(() => {
     return Object.fromEntries(
@@ -97,8 +133,16 @@ export default function SubjectPermissionsWorkbench({
   );
 
   const groupedResources = useMemo(
-    () => groupResourcesByType(activeResources),
-    [activeResources]
+    () =>
+      groupResourcesByType(activeResources).map((group) => ({
+        ...group,
+        actions: getVisibleActionsForSubject(
+          group.kind,
+          group.actions,
+          isPlaybookSubject
+        )
+      })),
+    [activeResources, isPlaybookSubject]
   );
 
   const { effectiveAccessByAction, isCheckingEffectiveAccess } =
