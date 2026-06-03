@@ -13,6 +13,8 @@ const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   access_token_person: "access token",
   team: "team",
   role: "role",
+  playbook: "playbook",
+  plugin: "plugin",
   permission_subject_group: "group"
 };
 

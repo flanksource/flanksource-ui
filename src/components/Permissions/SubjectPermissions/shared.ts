@@ -1,3 +1,7 @@
+/**
+ * Shared types, constants, and selector helpers used to build and evaluate the
+ * subject permissions matrix.
+ */
 import {
   isSettingsManagedPermissionSource,
   PermissionSubject
@@ -6,9 +10,13 @@ import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
 import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
 
 export type AccessValue = "allow" | "deny" | "default";
-export type ResourceKind = "playbook" | "view" | "connection";
+export type ResourceKind = "playbook" | "view" | "connection" | "plugin";
 export type EffectiveState = "allowed" | "denied" | "unknown";
-export type PermissionSelectorKey = "playbooks" | "views" | "connections";
+export type PermissionSelectorKey =
+  | "playbooks"
+  | "views"
+  | "connections"
+  | "configs";
 
 type SelectorRef = {
   name?: string;
@@ -22,12 +30,12 @@ export type PermissionResource = {
   displayName: string;
   namespace?: string;
   icon?: string;
-  subtitle?: string;
   selectorKey: PermissionSelectorKey;
   actions: string[];
 };
 
 export type ResourceTypeGroup = {
+  key: string;
   kind: ResourceKind;
   label: string;
   actions: string[];
@@ -46,7 +54,8 @@ export type DirectAccessState = {
 export const RESOURCE_KIND_ORDER: ResourceKind[] = [
   "playbook",
   "view",
-  "connection"
+  "connection",
+  "plugin"
 ];
 
 export const RESOURCE_KIND_CONFIG: Record<
@@ -77,6 +86,11 @@ export const RESOURCE_KIND_CONFIG: Record<
     label: "Connections",
     actions: ["read"],
     selectorKey: "connections"
+  },
+  plugin: {
+    label: "Plugins",
+    actions: [],
+    selectorKey: "configs"
   }
 };
 
@@ -91,6 +105,62 @@ export function getResourceActionKey(
   action: string
 ) {
   return `${resource.kind}:${resource.id}:${action}`;
+}
+
+export function getPluginWildcardPermissionAction(
+  resource: Pick<PermissionResource, "kind" | "name">
+) {
+  return `invoke:${resource.name}:*`;
+}
+
+export function getPermissionActionForResource(
+  resource: Pick<PermissionResource, "kind" | "name">,
+  action: string
+) {
+  if (resource.kind !== "plugin") {
+    return action;
+  }
+
+  if (action.startsWith("invoke:")) {
+    return action;
+  }
+
+  if (action === "invoke") {
+    return getPluginWildcardPermissionAction(resource);
+  }
+
+  return `invoke:${resource.name}:${action}`;
+}
+
+export function getDisplayActionForPermission(
+  resource: Pick<PermissionResource, "kind" | "name">,
+  action: string
+) {
+  if (resource.kind !== "plugin") {
+    return action;
+  }
+
+  const prefix = `invoke:${resource.name}:`;
+
+  if (action.startsWith(prefix)) {
+    return action.slice(prefix.length);
+  }
+
+  return action;
+}
+
+export function getObjectSelectorForResource(resource: PermissionResource) {
+  if (resource.kind === "plugin") {
+    return {
+      configs: [{ name: "*" }]
+    };
+  }
+
+  return {
+    [resource.selectorKey]: [
+      { name: resource.name, namespace: resource.namespace }
+    ]
+  };
 }
 
 export function getRefsForPermission(
@@ -181,10 +251,20 @@ export function getDirectAccessState(
   action: string
 ): DirectAccessState {
   const subjectType = mapSubjectType(subject.type);
+  const permissionAction = getPermissionActionForResource(resource, action);
+  const pluginWildcardAction =
+    resource.kind === "plugin"
+      ? getPluginWildcardPermissionAction(resource)
+      : undefined;
 
   const matchingPermissions = permissions.filter((permission) => {
+    const actionMatches =
+      permission.action === permissionAction ||
+      (pluginWildcardAction !== undefined &&
+        permission.action === pluginWildcardAction);
+
     if (
-      permission.action !== action ||
+      !actionMatches ||
       permission.subject !== subject.id ||
       permission.subject_type !== subjectType
     ) {
@@ -203,11 +283,16 @@ export function getDirectAccessState(
   const isReadOnly = matchingPermissions.some(
     (permission) => permission.source === "KubernetesCRD"
   );
-  const isWildcard = matchingPermissions.some((permission) =>
-    getRefsForPermission(permission, resource.selectorKey).some(
-      selectorRefIsWildcard
-    )
-  );
+  const isWildcard =
+    resource.kind === "plugin"
+      ? matchingPermissions.some(
+          (permission) => permission.action === pluginWildcardAction
+        )
+      : matchingPermissions.some((permission) =>
+          getRefsForPermission(permission, resource.selectorKey).some(
+            selectorRefIsWildcard
+          )
+        );
 
   return {
     access: matchingPermissions.some((permission) => permission.deny === true)
@@ -230,12 +315,45 @@ export function groupResourcesByType(
     grouped.set(resource.kind, list);
   }
 
-  return RESOURCE_KIND_ORDER.map((kind) => ({
-    kind,
-    label: RESOURCE_KIND_CONFIG[kind].label,
-    actions: RESOURCE_KIND_CONFIG[kind].actions,
-    resources: grouped.get(kind) ?? []
-  })).filter((group) => group.resources.length > 0);
+  const groups: ResourceTypeGroup[] = [];
+
+  for (const kind of RESOURCE_KIND_ORDER) {
+    const resources = grouped.get(kind) ?? [];
+
+    if (resources.length === 0) {
+      continue;
+    }
+
+    if (kind === "plugin") {
+      for (const resource of resources) {
+        groups.push({
+          key: `${kind}:${resource.id}`,
+          kind,
+          label: resource.displayName,
+          actions: resource.actions,
+          resources: [resource]
+        });
+      }
+      continue;
+    }
+
+    const resourceActions = Array.from(
+      new Set(resources.flatMap((resource) => resource.actions))
+    );
+
+    groups.push({
+      key: kind,
+      kind,
+      label: RESOURCE_KIND_CONFIG[kind].label,
+      actions:
+        resourceActions.length > 0
+          ? resourceActions
+          : RESOURCE_KIND_CONFIG[kind].actions,
+      resources
+    });
+  }
+
+  return groups;
 }
 
 export function isSamePermissionResource(

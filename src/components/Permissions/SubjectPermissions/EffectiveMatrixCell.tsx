@@ -1,3 +1,7 @@
+/**
+ * Displays the evaluated effective-access result for a matrix cell, or a
+ * placeholder when access has not been checked.
+ */
 import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
 import { EffectiveState } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 

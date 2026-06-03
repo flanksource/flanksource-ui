@@ -1,3 +1,7 @@
+/**
+ * Hook that creates, updates, or removes settings-managed direct permissions for
+ * the selected subject/resource/action combination.
+ */
 import {
   addPermission,
   deletePermission,
@@ -15,6 +19,8 @@ import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCar
 import {
   AccessValue,
   PermissionResource,
+  getObjectSelectorForResource,
+  getPermissionActionForResource,
   getRefsForPermission,
   selectorRefMatchesExactResource,
   sortCanonicalPermissions
@@ -46,11 +52,15 @@ export default function useSubjectPermissionAccess({
           selectedSubject.id
         );
         const subjectType = mapSubjectType(selectedSubject.type);
+        const permissionAction = getPermissionActionForResource(
+          resource,
+          action
+        );
 
         const matchingPermissions = sortCanonicalPermissions(
           latestPermissions.filter((permission) => {
             if (
-              permission.action !== action ||
+              permission.action !== permissionAction ||
               permission.subject !== selectedSubject.id ||
               permission.subject_type !== subjectType ||
               !permission.id
@@ -58,8 +68,14 @@ export default function useSubjectPermissionAccess({
               return false;
             }
 
-            return getRefsForPermission(permission, resource.selectorKey).some(
-              (ref) => selectorRefMatchesExactResource(ref, resource)
+            const refs = getRefsForPermission(permission, resource.selectorKey);
+
+            if (resource.kind === "plugin") {
+              return refs.some((ref) => ref.name === "*" && !ref.namespace);
+            }
+
+            return refs.some((ref) =>
+              selectorRefMatchesExactResource(ref, resource)
             );
           })
         );
@@ -76,12 +92,8 @@ export default function useSubjectPermissionAccess({
 
           if (!primary) {
             await addPermission({
-              action,
-              object_selector: {
-                [resource.selectorKey]: [
-                  { name: resource.name, namespace: resource.namespace }
-                ]
-              },
+              action: permissionAction,
+              object_selector: getObjectSelectorForResource(resource),
               subject: selectedSubject.id,
               subject_type: subjectType,
               deny,

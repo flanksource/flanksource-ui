@@ -23,6 +23,10 @@ export function mapSubjectType(type: PermissionSubject["type"]) {
     return "person" as const;
   }
 
+  if (type === "plugin") {
+    return "plugin" as const;
+  }
+
   return type;
 }
 

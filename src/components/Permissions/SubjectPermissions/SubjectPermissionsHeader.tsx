@@ -1,3 +1,7 @@
+/**
+ * Header for the subject permissions view, showing the selected subject and a
+ * search box for filtering resources in the matrix.
+ */
 import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
 import { Input } from "@flanksource-ui/components/ui/input";

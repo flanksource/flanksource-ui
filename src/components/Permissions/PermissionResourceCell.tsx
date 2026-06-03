@@ -24,6 +24,7 @@ const formatScopeText = (scope: ScopeObject): string => {
 type SelectorResourceType =
   | "playbooks"
   | "connections"
+  | "plugins"
   | "configs"
   | "components";
 
@@ -62,7 +63,7 @@ const getSingleResourceSelector = (
   ];
 
   if (
-    !["playbooks", "connections", "configs", "components"].includes(
+    !["playbooks", "connections", "plugins", "configs", "components"].includes(
       resourceType
     ) ||
     selectorItems.length !== 1
@@ -95,6 +96,7 @@ const OBJECT_LABELS: Record<PermissionGlobalObject, string> = {
   canaries: "Canaries",
   connection: "Connection",
   playbook: "Playbook",
+  plugin: "Plugin",
   topology: "Topology",
   mcp: "MCP"
 };
@@ -175,9 +177,11 @@ export default function PermissionResourceCell({
             <span className="text-sm text-gray-600">
               {selectedResource.resourceType === "playbooks"
                 ? "Playbook:"
-                : selectedResource.resourceType === "configs"
-                  ? "Catalog:"
-                  : "Component:"}
+                : selectedResource.resourceType === "plugins"
+                  ? "Plugin:"
+                  : selectedResource.resourceType === "configs"
+                    ? "Catalog:"
+                    : "Component:"}
             </span>
             <span>{selectorLabel}</span>
           </div>

@@ -1,4 +1,4 @@
-import { IncidentCommander } from "../axios";
+import { apiBase, IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
@@ -25,6 +25,8 @@ export type FetchPermissionsInput = {
     | "notification"
     | "component"
     | "role"
+    | "playbook"
+    | "plugin"
     | "access_token_person";
 };
 
@@ -199,8 +201,11 @@ export type PermissionSubject = {
     | "permission_subject_group"
     | "person"
     | "role"
+    | "playbook"
+    | "plugin"
     | "access_token_person";
   owner?: string | null;
+  icon?: string | null;
 };
 
 export async function fetchPermissionSubjectsPaginated({
@@ -214,7 +219,8 @@ export async function fetchPermissionSubjectsPaginated({
 }) {
   const query = search.trim();
 
-  let url = "/permission_subjects?select=id,name,type,owner&order=name.asc";
+  let url =
+    "/permission_subjects?select=id,name,type,owner,icon&order=name.asc";
   url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
 
   if (query) {
@@ -235,23 +241,97 @@ export async function fetchPermissionSubjectsByIds(ids: string[]) {
     return [];
   }
   const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    `/permission_subjects?select=id,name,type,owner&id=in.(${ids.join(",")})&limit=${ids.length}`
+    `/permission_subjects?select=id,name,type,owner,icon&id=in.(${ids.join(",")})&limit=${ids.length}`
   );
   return response.data ?? [];
+}
+
+export type PluginOperationDefinition = {
+  name?: string;
+  description?: string;
+  params_schema?: unknown;
+  result_mime?: string;
+  scope?: string;
+  destructive?: boolean;
+  required_permissions?: string[];
+  http?: unknown[];
+};
+
+export type PluginPermissionSubject = {
+  id?: string;
+  name?: string;
+  type?: string;
+  icon?: string | null;
+  description?: string;
+  version?: string;
+  operations?: Array<PluginOperationDefinition | string>;
+};
+
+type PluginSubjectResponse =
+  | PluginPermissionSubject[]
+  | { plugins?: PluginPermissionSubject[]; data?: PluginPermissionSubject[] };
+
+export async function fetchPluginPermissionListings(): Promise<
+  PluginPermissionSubject[]
+> {
+  const response = await apiBase.get<PluginSubjectResponse>("/plugins");
+
+  return Array.isArray(response.data)
+    ? response.data
+    : (response.data.plugins ?? response.data.data ?? []);
+}
+
+export async function fetchPluginPermissionSubjects(): Promise<
+  PermissionSubject[]
+> {
+  const plugins = await fetchPluginPermissionListings();
+
+  return plugins
+    .map((plugin): PermissionSubject | null => {
+      const id = plugin.id ?? plugin.name;
+      const name = plugin.name ?? plugin.id;
+
+      if (!id || !name) {
+        return null;
+      }
+
+      return {
+        id,
+        name,
+        type: "plugin" as const,
+        owner: null,
+        icon: plugin.icon ?? null
+      };
+    })
+    .filter((subject): subject is PermissionSubject => subject !== null);
 }
 
 async function fetchPermissionSubjectsWithOrder(order: string) {
-  const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    `/permission_subjects?select=id,name,type,owner&order=${order}&limit=5000`
-  );
+  const [response, plugins] = await Promise.all([
+    IncidentCommander.get<PermissionSubject[] | null>(
+      `/permission_subjects?select=id,name,type,owner,icon&order=${order}&limit=5000`
+    ),
+    fetchPluginPermissionSubjects()
+  ]);
 
-  return response.data ?? [];
+  return [...(response.data ?? []), ...plugins];
 }
 
 export async function fetchPermissionSubjects() {
-  return fetchPermissionSubjectsWithOrder("name.asc");
+  const subjects = await fetchPermissionSubjectsWithOrder("name.asc");
+  return subjects.sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+  );
 }
 
 export async function fetchAllPermissionSubjects() {
-  return fetchPermissionSubjectsWithOrder("type.asc,name.asc");
+  const subjects = await fetchPermissionSubjectsWithOrder("type.asc,name.asc");
+  return subjects.sort((a, b) => {
+    const typeDiff = a.type.localeCompare(b.type);
+    if (typeDiff !== 0) {
+      return typeDiff;
+    }
+
+    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+  });
 }

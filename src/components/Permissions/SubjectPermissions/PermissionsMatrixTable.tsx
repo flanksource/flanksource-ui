@@ -1,10 +1,14 @@
+/**
+ * Generic permissions matrix table that renders resources as rows, actions as
+ * columns, and delegates each access cell to the caller.
+ */
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Fragment, ReactNode } from "react";
+import { HiPuzzle } from "react-icons/hi";
 
 export type PermissionsMatrixRow = {
   id: string;
   displayName: string;
-  subtitle?: string;
   icon?: string;
 };
 
@@ -30,7 +34,7 @@ export default function PermissionsMatrixTable<
   renderExpandedRow
 }: PermissionsMatrixTableProps<TRow>) {
   return (
-    <div className="overflow-x-auto overflow-y-visible">
+    <div className="overflow-x-auto overflow-y-hidden">
       <table className="w-full min-w-max table-auto border-separate border-spacing-0">
         <thead>
           <tr>
@@ -64,16 +68,17 @@ export default function PermissionsMatrixTable<
                     }`}
                   >
                     <div className="flex min-w-0 items-center gap-2">
-                      <Icon
-                        name={row.icon || "database"}
-                        className="h-4 w-4 shrink-0 text-gray-500"
-                      />
+                      {row.icon === "plugin" ? (
+                        <HiPuzzle className="h-4 w-4 shrink-0 text-gray-500" />
+                      ) : (
+                        <Icon
+                          name={row.icon || "database"}
+                          className="h-4 w-4 shrink-0 text-gray-500"
+                        />
+                      )}
                       <div className="min-w-0">
                         <div className="truncate text-sm font-medium text-gray-900">
                           {row.displayName}
-                        </div>
-                        <div className="truncate text-xs text-gray-500">
-                          {row.subtitle || "—"}
                         </div>
                       </div>
                     </div>

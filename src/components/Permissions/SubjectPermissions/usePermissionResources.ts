@@ -1,3 +1,11 @@
+/**
+ * Hook that loads playbooks, views, connections, and plugins, then normalizes
+ * them into sorted permission matrix resources with supported actions.
+ */
+import {
+  fetchPluginPermissionListings,
+  type PluginOperationDefinition
+} from "@flanksource-ui/api/services/permissions";
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { getAll } from "@flanksource-ui/api/schemaResources";
@@ -6,6 +14,7 @@ import { SchemaApi } from "@flanksource-ui/components/SchemaResourcePage/resourc
 import {
   PermissionResource,
   RESOURCE_KIND_CONFIG,
+  getPermissionActionForResource,
   sortPermissionResources
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +25,33 @@ const connectionsSchema: SchemaApi = {
   api: "canary-checker",
   name: "Connections"
 };
+
+function getPluginOperationName(operation: PluginOperationDefinition | string) {
+  if (typeof operation === "string") {
+    return operation.trim();
+  }
+
+  return operation.name?.trim() ?? "";
+}
+
+function getPluginOperationActions(
+  pluginName: string,
+  operations: Array<PluginOperationDefinition | string> = []
+) {
+  return Array.from(
+    new Set(
+      operations
+        .map(getPluginOperationName)
+        .filter(Boolean)
+        .map((operationName) =>
+          getPermissionActionForResource(
+            { kind: "plugin", name: pluginName },
+            operationName
+          )
+        )
+    )
+  );
+}
 
 export default function usePermissionResources() {
   const { data: playbooks = [], isLoading: isLoadingPlaybooks } = useQuery({
@@ -39,6 +75,12 @@ export default function usePermissionResources() {
     staleTime: 60_000
   });
 
+  const { data: plugins = [], isLoading: isLoadingPlugins } = useQuery({
+    queryKey: ["permissions-subjects", "plugins"],
+    queryFn: fetchPluginPermissionListings,
+    staleTime: 60_000
+  });
+
   const views = useMemo(() => viewsResponse?.data ?? [], [viewsResponse?.data]);
 
   const resources = useMemo<PermissionResource[]>(() => {
@@ -49,9 +91,6 @@ export default function usePermissionResources() {
       displayName: playbook.title || playbook.name,
       namespace: playbook.namespace,
       icon: playbook.icon || "playbook",
-      subtitle: playbook.namespace
-        ? `${playbook.namespace} · playbook`
-        : "playbook",
       selectorKey: RESOURCE_KIND_CONFIG.playbook.selectorKey,
       actions: RESOURCE_KIND_CONFIG.playbook.actions
     }));
@@ -63,7 +102,6 @@ export default function usePermissionResources() {
       displayName: view.spec?.title || view.name,
       namespace: view.namespace,
       icon: view.spec?.icon || "workflow",
-      subtitle: view.namespace ? `${view.namespace} · view` : "view",
       selectorKey: RESOURCE_KIND_CONFIG.view.selectorKey,
       actions: RESOURCE_KIND_CONFIG.view.actions
     }));
@@ -80,22 +118,45 @@ export default function usePermissionResources() {
         displayName: connection.name,
         namespace: connection.namespace,
         icon: connection.type || "connection",
-        subtitle: connection.namespace
-          ? `${connection.namespace} · ${connection.type || "connection"}`
-          : connection.type || "connection",
         selectorKey: RESOURCE_KIND_CONFIG.connection.selectorKey,
         actions: RESOURCE_KIND_CONFIG.connection.actions
       }));
 
+    const pluginResources = plugins
+      .map((plugin): PermissionResource | null => {
+        const id = plugin.id ?? plugin.name;
+        const name = plugin.name ?? plugin.id;
+
+        if (!id || !name) {
+          return null;
+        }
+
+        return {
+          id,
+          kind: "plugin" as const,
+          name,
+          displayName: name,
+          icon: plugin.icon || "plugin",
+          selectorKey: RESOURCE_KIND_CONFIG.plugin.selectorKey,
+          actions: getPluginOperationActions(name, plugin.operations)
+        };
+      })
+      .filter((resource): resource is PermissionResource => resource !== null);
+
     return sortPermissionResources([
       ...playbookResources,
       ...viewResources,
-      ...connectionResources
+      ...connectionResources,
+      ...pluginResources
     ]);
-  }, [connections, playbooks, views]);
+  }, [connections, playbooks, plugins, views]);
 
   return {
     resources,
-    isLoading: isLoadingPlaybooks || isLoadingViews || isLoadingConnections
+    isLoading:
+      isLoadingPlaybooks ||
+      isLoadingViews ||
+      isLoadingConnections ||
+      isLoadingPlugins
   };
 }

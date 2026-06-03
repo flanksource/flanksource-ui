@@ -12,8 +12,10 @@ const SUBJECT_TYPE_ORDER = {
   role: 0,
   permission_subject_group: 1,
   team: 2,
-  person: 3,
-  access_token_person: 4
+  playbook: 3,
+  plugin: 4,
+  person: 5,
+  access_token_person: 6
 } as const;
 
 export function PermissionsSubjectsPage() {
@@ -107,8 +109,8 @@ export function PermissionsSubjectsPage() {
       loading={isLoading || isRefetching || isWorkbenchFetching}
       onRefresh={onRefresh}
     >
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-4 lg:flex-row lg:gap-4">
-        <div className="flex min-h-0 w-full shrink-0 flex-col gap-3 lg:w-[220px]">
+      <div className="flex w-full flex-col gap-4 p-4 lg:flex-row lg:gap-4">
+        <div className="flex w-full shrink-0 flex-col gap-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-10rem)] lg:w-[220px] lg:self-start">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Subjects</h3>
           </div>
@@ -122,7 +124,7 @@ export function PermissionsSubjectsPage() {
           />
         </div>
 
-        <div className="min-h-0 min-w-0 flex-1">
+        <div className="min-w-0 flex-1">
           {selectedSubject ? (
             <SubjectPermissionsWorkbench selectedSubject={selectedSubject} />
           ) : (

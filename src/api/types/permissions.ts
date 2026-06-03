@@ -11,6 +11,7 @@ export type PermissionGlobalObject =
   | "canaries"
   | "connection"
   | "playbook"
+  | "plugin"
   | "topology"
   | "mcp";
 
@@ -59,6 +60,8 @@ export type PermissionTable = {
     | "notification"
     | "component"
     | "role"
+    | "playbook"
+    | "plugin"
     | "access_token_person";
   created_by: string;
   updated_by: string;

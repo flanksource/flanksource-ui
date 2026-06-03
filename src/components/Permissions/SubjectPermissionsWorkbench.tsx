@@ -6,6 +6,8 @@ import SubjectPermissionsHeader from "@flanksource-ui/components/Permissions/Sub
 import SubjectPermissionsMatrixContent from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsMatrixContent";
 import {
   PermissionResource,
+  RESOURCE_KIND_ORDER,
+  ResourceKind,
   getDirectAccessState,
   getResourceActionKey,
   groupResourcesByType,
@@ -17,6 +19,34 @@ import useSubjectPermissionAccess from "@flanksource-ui/components/Permissions/S
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+// Some permissions (actions) do not make sense for some subjects.
+// This map contains the list of applicable permissions when the subject
+// is a playbook.
+const PLAYBOOK_ALLOWED_ACTIONS: Record<ResourceKind, string[]> = {
+  playbook: ["read", "playbook:run"],
+  view: ["read"],
+  connection: ["read"],
+  plugin: []
+};
+
+function getVisibleActionsForSubject(
+  resourceKind: ResourceKind,
+  actions: string[],
+  isPlaybookSubject: boolean
+) {
+  if (!isPlaybookSubject) {
+    return actions;
+  }
+
+  if (resourceKind === "plugin") {
+    return actions;
+  }
+
+  return actions.filter((action) =>
+    PLAYBOOK_ALLOWED_ACTIONS[resourceKind].includes(action)
+  );
+}
+
 export default function SubjectPermissionsWorkbench({
   selectedSubject
 }: {
@@ -25,10 +55,43 @@ export default function SubjectPermissionsWorkbench({
   const [search, setSearch] = useState("");
   const [selectedResource, setSelectedResource] =
     useState<PermissionResource | null>(null);
+  const [activeResourceKind, setActiveResourceKind] = useState<ResourceKind>(
+    selectedSubject.type === "plugin" ? "connection" : "playbook"
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { resources: allResources, isLoading: isLoadingResources } =
     usePermissionResources();
+
+  const isPlaybookSubject = selectedSubject.type === "playbook";
+  const isPluginSubject = selectedSubject.type === "plugin";
+  const visibleResourceKinds = useMemo(
+    () =>
+      RESOURCE_KIND_ORDER.filter((kind) => {
+        if (isPluginSubject) {
+          return kind !== "playbook" && kind !== "view";
+        }
+
+        if (isPlaybookSubject) {
+          return kind !== "plugin" && kind !== "view";
+        }
+
+        return true;
+      }),
+    [isPlaybookSubject, isPluginSubject]
+  );
+  const resources = useMemo(
+    () =>
+      allResources.map((resource) => ({
+        ...resource,
+        actions: getVisibleActionsForSubject(
+          resource.kind,
+          resource.actions,
+          isPlaybookSubject
+        )
+      })),
+    [allResources, isPlaybookSubject]
+  );
 
   const {
     data: permissions = [],
@@ -51,19 +114,19 @@ export default function SubjectPermissionsWorkbench({
 
   const directAccessByResourceAction = useMemo(() => {
     return Object.fromEntries(
-      allResources.flatMap((resource) =>
+      resources.flatMap((resource) =>
         resource.actions.map((action) => [
           getResourceActionKey(resource, action),
           getDirectAccessState(permissions, selectedSubject, resource, action)
         ])
       )
     );
-  }, [allResources, permissions, selectedSubject]);
+  }, [permissions, resources, selectedSubject]);
 
   const normalizedSearch = search.trim().toLowerCase();
 
   const filteredResources = useMemo(() => {
-    return allResources.filter((resource) => {
+    return resources.filter((resource) => {
       if (!normalizedSearch) {
         return true;
       }
@@ -72,23 +135,65 @@ export default function SubjectPermissionsWorkbench({
         .toLowerCase()
         .includes(normalizedSearch);
     });
-  }, [allResources, normalizedSearch]);
+  }, [normalizedSearch, resources]);
+
+  const resourceKindCounts = useMemo(() => {
+    return Object.fromEntries(
+      RESOURCE_KIND_ORDER.map((kind) => [
+        kind,
+        filteredResources.filter((resource) => resource.kind === kind).length
+      ])
+    ) as Record<ResourceKind, number>;
+  }, [filteredResources]);
+
+  const visibleActiveResourceKind = visibleResourceKinds.includes(
+    activeResourceKind
+  )
+    ? activeResourceKind
+    : (visibleResourceKinds[0] ?? "plugin");
+
+  const activeResources = useMemo(
+    () =>
+      filteredResources.filter(
+        (resource) => resource.kind === visibleActiveResourceKind
+      ),
+    [filteredResources, visibleActiveResourceKind]
+  );
 
   const groupedResources = useMemo(
-    () => groupResourcesByType(filteredResources),
-    [filteredResources]
+    () =>
+      groupResourcesByType(activeResources).map((group) => ({
+        ...group,
+        actions: getVisibleActionsForSubject(
+          group.kind,
+          group.actions,
+          isPlaybookSubject
+        )
+      })),
+    [activeResources, isPlaybookSubject]
   );
 
   const { effectiveAccessByAction, isCheckingEffectiveAccess } =
     useEffectiveSubjectAccess({
       selectedSubjectId: selectedSubject.id,
-      resources: filteredResources
+      resources: activeResources
     });
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedResource(null);
   }, [selectedSubject.id]);
+
+  useEffect(() => {
+    if (!visibleResourceKinds.includes(activeResourceKind)) {
+      setActiveResourceKind(visibleResourceKinds[0] ?? "plugin");
+    }
+  }, [activeResourceKind, visibleResourceKinds]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    setSelectedResource(null);
+  }, [visibleActiveResourceKind]);
 
   useEffect(() => {
     if (
@@ -121,7 +226,7 @@ export default function SubjectPermissionsWorkbench({
   const loading = isLoadingResources || isLoadingPermissions;
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="flex min-w-0 flex-1 flex-col">
       <SubjectPermissionsHeader
         selectedSubject={selectedSubject}
         search={search}
@@ -131,6 +236,10 @@ export default function SubjectPermissionsWorkbench({
       <SubjectPermissionsMatrixContent
         loading={loading}
         groupedResources={groupedResources}
+        activeResourceKind={visibleActiveResourceKind}
+        visibleResourceKinds={visibleResourceKinds}
+        resourceKindCounts={resourceKindCounts}
+        onSelectResourceKind={setActiveResourceKind}
         selectedResource={selectedResource}
         directAccessByResourceAction={directAccessByResourceAction}
         effectiveAccessByAction={effectiveAccessByAction}

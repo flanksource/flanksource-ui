@@ -1,3 +1,7 @@
+/**
+ * Renders the editable direct-access control for a single subject/resource/action
+ * cell, including read-only and wildcard rule hints.
+ */
 import TriStateAccessSwitch from "@flanksource-ui/components/Permissions/TriStateAccessSwitch";
 import { AccessValue } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 
