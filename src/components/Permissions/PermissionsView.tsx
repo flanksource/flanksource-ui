@@ -1,6 +1,8 @@
 import {
   fetchPermissions,
-  FetchPermissionsInput
+  FetchPermissionsInput,
+  type PluginOperationDefinition,
+  type PluginPermissionSubject
 } from "@flanksource-ui/api/services/permissions";
 import {
   PermissionsSummary,
@@ -58,6 +60,44 @@ export type ResourceType =
   | "canary"
   | "view"
   | "global";
+
+function getPluginOperationName(operation: PluginOperationDefinition | string) {
+  if (typeof operation === "string") {
+    return operation.trim();
+  }
+
+  return operation.name?.trim() ?? "";
+}
+
+export function getPluginOperationActions(
+  plugins: PluginPermissionSubject[] = []
+): FormikSelectDropdownOption[] {
+  const actions = plugins.flatMap((plugin) => {
+    const pluginName = (plugin.name ?? plugin.id)?.trim();
+
+    if (!pluginName) {
+      return [];
+    }
+
+    const wildcardAction = `invoke:${pluginName}:*`;
+    const operationActions = (plugin.operations ?? [])
+      .map(getPluginOperationName)
+      .filter(Boolean)
+      .map((operationName) => {
+        const action = `invoke:${pluginName}:${operationName}`;
+        return { value: action, label: action };
+      });
+
+    return [
+      { value: wildcardAction, label: wildcardAction },
+      ...operationActions
+    ];
+  });
+
+  return Array.from(
+    new Map(actions.map((action) => [action.value, action])).values()
+  ).sort((a, b) => a.value.localeCompare(b.value));
+}
 
 export function getActionsForResourceType(
   resourceType?: ResourceType
