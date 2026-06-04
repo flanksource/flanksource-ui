@@ -2,7 +2,8 @@ import {
   addPermission,
   updatePermission,
   fetchPermissionById,
-  recheckPermission
+  recheckPermission,
+  fetchPluginPermissionListings
 } from "@flanksource-ui/api/services/permissions";
 import { PermissionTable } from "@flanksource-ui/api/types/permissions";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
@@ -23,7 +24,11 @@ import { Form, Formik, useFormikContext } from "formik";
 import { useMemo } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { AuthorizationAccessCheck } from "../../AuthorizationAccessCheck";
-import { getActionsForResourceType, ResourceType } from "../../PermissionsView";
+import {
+  getActionsForResourceType,
+  getPluginOperationActions,
+  ResourceType
+} from "../../PermissionsView";
 import DeletePermission from "./DeletePermission";
 import FormikPermissionSelectResourceFields from "./FormikPermissionSelectResourceFields";
 import PermissionResource from "./PermissionResource";
@@ -39,6 +44,16 @@ type PermissionFormProps = {
 
 function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
   const { values } = useFormikContext<Partial<PermissionTable>>();
+  const { data: plugins = [] } = useQuery({
+    queryKey: ["permissions", "plugins", "actions"],
+    queryFn: fetchPluginPermissionListings,
+    staleTime: 60_000
+  });
+
+  const pluginActions = useMemo(
+    () => getPluginOperationActions(plugins),
+    [plugins]
+  );
 
   const resourceType = useMemo<ResourceType | undefined>(() => {
     if (values.playbook_id) return "playbook";
@@ -58,7 +73,15 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
       return [{ value: "mcp:use", label: "mcp:use" }];
     }
 
-    const actions = getActionsForResourceType(resourceType);
+    const canUsePluginActions =
+      resourceType === "catalog" &&
+      (values.subject_type === "person" ||
+        values.subject_type === "team" ||
+        values.subject_type === "role");
+
+    const actions = canUsePluginActions
+      ? [...getActionsForResourceType(resourceType), ...pluginActions]
+      : getActionsForResourceType(resourceType);
 
     // mcp:run is only valid for playbook permissions assigned to person/team subjects.
     if (
@@ -70,7 +93,13 @@ function PermissionActionDropdown({ isDisabled }: { isDisabled?: boolean }) {
     }
 
     return actions;
-  }, [resourceType, values.object, values.playbook_id, values.subject_type]);
+  }, [
+    pluginActions,
+    resourceType,
+    values.object,
+    values.playbook_id,
+    values.subject_type
+  ]);
 
   if (!resourceType) {
     return null;
