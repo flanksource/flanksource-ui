@@ -16,6 +16,17 @@ export type PluginListing = {
 };
 
 /**
+ * When the app is served from the backend's own /ui proxy, XHRs hit bare
+ * backend paths (no /api prefix); the backend resolves them directly. Match
+ * that here so the plugins listing behaves like every other backend call under
+ * /ui. Every other deployment keeps apiBase's /api baseURL.
+ */
+const isUiProxy = (): boolean =>
+  typeof window !== "undefined" &&
+  (window.location.pathname === "/ui" ||
+    window.location.pathname.startsWith("/ui/"));
+
+/**
  * Lists the plugins whose resource selector matches the given config item.
  * Each plugin contributes zero or more tabs rendered on the catalog detail
  * page. Served by mission-control at GET /api/plugins?config_id=X.
@@ -24,7 +35,8 @@ export const getPluginsForConfig = async (
   configId: string
 ): Promise<PluginListing[]> => {
   const res = await apiBase.get<PluginListing[]>(
-    `/plugins?config_id=${encodeURIComponent(configId)}`
+    `/plugins?config_id=${encodeURIComponent(configId)}`,
+    isUiProxy() ? { baseURL: "" } : undefined
   );
   return res.data ?? [];
 };
@@ -41,7 +53,8 @@ export const pluginUiSrc = (
   configId: string
 ): string => {
   const sep = path.startsWith("/") ? "" : "/";
-  return `/api/plugins/${encodeURIComponent(pluginName)}/ui${sep}${path}?config_id=${encodeURIComponent(configId)}`;
+  const prefix = isUiProxy() ? "" : "/api";
+  return `${prefix}/plugins/${encodeURIComponent(pluginName)}/ui${sep}${path}?config_id=${encodeURIComponent(configId)}`;
 };
 
 /**
