@@ -9,7 +9,11 @@ import { TimePickerCalendar } from "./TimePickerCalendar";
 import { TimePickerInput } from "./TimePickerInput";
 import { TimeRangeList } from "./TimeRangeList";
 import { convertRangeValue } from "./helpers";
-import { TimeRangeAbsoluteOption, TimeRangeOption } from "./rangeOptions";
+import {
+  RangeOptionsCategory,
+  TimeRangeAbsoluteOption,
+  TimeRangeOption
+} from "./rangeOptions";
 
 const recentlyUsedTimeRangesAtom = atomWithStorage<TimeRangeAbsoluteOption[]>(
   "recentlyUsedTimeRanges",
@@ -22,6 +26,8 @@ type TimeRangePickerBodyProps = {
   currentRange?: TimeRangeOption;
   changeRangeValue: (range: TimeRangeOption) => void;
   showFutureTimeRanges?: boolean;
+  rangeOptionsCategories?: RangeOptionsCategory[];
+  validateRange?: (range: TimeRangeOption) => string | undefined;
 };
 
 export function TimeRangePickerBody({
@@ -29,7 +35,9 @@ export function TimeRangePickerBody({
   closePicker = () => {},
   currentRange,
   changeRangeValue = () => {},
-  showFutureTimeRanges = false
+  showFutureTimeRanges = false,
+  rangeOptionsCategories,
+  validateRange
 }: TimeRangePickerBodyProps) {
   const [params, setParams] = useSearchParams();
   const [recentRanges, setRecentRanges] = useAtom(recentlyUsedTimeRangesAtom);
@@ -49,6 +57,7 @@ export function TimeRangePickerBody({
   });
   const [valueType, setValueType] = useState<"from" | "to">();
   const [focusToInput, setFocusToInput] = useState<boolean>();
+  const [rangeError, setRangeError] = useState("");
 
   function formatDateValue(val: string): string {
     if (isValidDate(val)) {
@@ -109,16 +118,23 @@ export function TimeRangePickerBody({
 
   const applyTimeRange = useCallback(
     (range: TimeRangeOption) => {
+      const validationError = validateRange?.(range);
+      if (validationError) {
+        setRangeError(validationError);
+        return;
+      }
+
       // if the range is not absolute, add it to the recent ranges list
       if (range.type === "absolute") {
         changeRecentRangesList(range);
       }
+      setRangeError("");
       setShowCalendar(false);
       closePicker();
       setFocusToInput(false);
       changeRangeValue(range);
     },
-    [changeRangeValue, changeRecentRangesList, closePicker]
+    [changeRangeValue, changeRecentRangesList, closePicker, validateRange]
   );
 
   const confirmValidRange = useCallback(
@@ -194,7 +210,7 @@ export function TimeRangePickerBody({
                   showCalendar={() => {
                     onShowCalendar("to");
                   }}
-                  error=""
+                  error={rangeError}
                   focus={focusToInput}
                 />
               </div>
@@ -240,6 +256,8 @@ export function TimeRangePickerBody({
           changeRangeValue={changeRangeValue}
           setShowCalendar={setShowCalendar}
           showFutureTimeRanges={showFutureTimeRanges}
+          rangeOptionsCategories={rangeOptionsCategories}
+          validateRange={validateRange}
         />
       </div>
     </div>

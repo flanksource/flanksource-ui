@@ -1,5 +1,9 @@
 import clsx from "clsx";
-import { TimeRangeOption, rangeOptionsCategories } from "./rangeOptions";
+import {
+  RangeOptionsCategory,
+  TimeRangeOption,
+  rangeOptionsCategories as defaultRangeOptionsCategories
+} from "./rangeOptions";
 
 type TimeRangeListProps = {
   closePicker: () => void;
@@ -7,6 +11,8 @@ type TimeRangeListProps = {
   changeRangeValue: (val: TimeRangeOption) => void;
   setShowCalendar: (val: boolean) => void;
   showFutureTimeRanges?: boolean;
+  rangeOptionsCategories?: RangeOptionsCategory[];
+  validateRange?: (range: TimeRangeOption) => string | undefined;
 } & React.HTMLProps<HTMLDivElement>;
 
 export function TimeRangeList({
@@ -15,6 +21,8 @@ export function TimeRangeList({
   changeRangeValue = () => {},
   setShowCalendar = () => {},
   showFutureTimeRanges = false,
+  rangeOptionsCategories = defaultRangeOptionsCategories,
+  validateRange,
   ...rest
 }: TimeRangeListProps) {
   const isChecked = (option?: TimeRangeOption, value?: TimeRangeOption) => {
@@ -22,6 +30,9 @@ export function TimeRangeList({
   };
 
   const setOption = (option: TimeRangeOption) => {
+    if (validateRange?.(option)) {
+      return;
+    }
     changeRangeValue(option);
     closePicker();
     setShowCalendar(false);
