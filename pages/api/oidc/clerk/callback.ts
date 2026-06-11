@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
@@ -7,20 +6,25 @@ import type { NextApiRequest, NextApiResponse } from "next";
  * Mission Control is the OIDC provider, but Clerk browser login happens on this
  * shared frontend. After Clerk login, pages/oidc/clerk/callback.tsx posts the
  * auth_request_id here. This route verifies the Clerk session, derives the
- * tenant backend from Clerk org metadata, mints a Clerk Backend token, and POSTs
- * it to Mission Control's /oidc/clerk/callback endpoint.
+ * tenant backend from Clerk org metadata, mints a Clerk Backend token, and
+ * responds with an auto-submitting form so the browser POSTs the token to
+ * Mission Control's /oidc/clerk/callback endpoint.
+ *
+ * The browser-mediated POST is load-bearing: Mission Control binds the OIDC
+ * transaction to a __Host- cookie scoped to the tenant backend origin (set
+ * when /authorize created the auth request). Only the browser holds that
+ * cookie, and only a request the browser itself makes to the tenant backend
+ * carries it — a server-side fetch from this route can never present it and
+ * always fails with "invalid oidc transaction". The form POST is same-site
+ * (both hosts are *.flanksource.com), so the SameSite=Lax cookie is attached.
  *
  * Security notes:
  * - This is intentionally not a blind proxy.
- * - The backend URL comes from Clerk org metadata, not from the browser.
- * - Mission Control binds auth_request_id to a short-lived transaction cookie.
- *   Because the backend call below is a server-side fetch, browser cookies are
- *   not forwarded automatically. We forward only the matching OIDC transaction
- *   cookie and never pass through Clerk/session cookies.
+ * - The backend URL comes from Clerk org metadata, not from the browser, so
+ *   the browser cannot choose where a Clerk Backend token is sent.
  */
 const BACKEND_CALLBACK_PATH = "/oidc/clerk/callback";
 const LOCALHOST_HOSTNAMES = new Set(["localhost", "127.0.0.1"]);
-const OIDC_TRANSACTION_COOKIE_PREFIXES = ["__Host-mc_oidc_tx_", "mc_oidc_tx_"];
 
 function isValidBackendOrigin(url: URL) {
   return (
@@ -29,10 +33,10 @@ function isValidBackendOrigin(url: URL) {
   );
 }
 
-// Build the only backend URL this relay is allowed to call. The org metadata
+// Build the only backend URL this relay is allowed to target. The org metadata
 // supplies the tenant origin; the callback path is fixed here so the browser
 // cannot choose where a Clerk Backend token is sent.
-function getBackendCallbackURL(orgBackendURL?: string) {
+export function getBackendCallbackURL(orgBackendURL?: string) {
   if (!orgBackendURL) {
     return undefined;
   }
@@ -50,49 +54,36 @@ function getBackendCallbackURL(orgBackendURL?: string) {
   }
 }
 
-// Keep this in sync with mission-control/auth/oidc/transaction_cookie.go.
-// Mission Control hashes the auth request ID into the cookie name so multiple
-// concurrent OIDC login transactions can coexist in the same browser.
-function oidcTransactionCookieSuffix(authRequestID: string) {
-  return createHash("sha256")
-    .update(authRequestID)
-    .digest("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "")
-    .slice(0, 22);
+function escapeHTML(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
-// Convert the incoming browser Cookie header into the minimal Cookie header
-// needed by Mission Control. Both prefixes are accepted because Mission Control
-// uses __Host- for HTTPS issuers and the plain prefix for local HTTP issuers.
-// All other cookies, including Clerk session cookies, are intentionally dropped.
-export function getOIDCTransactionCookieHeader(
-  cookieHeader: string | undefined,
-  authRequestID: string
+// The interstitial page that completes the OIDC transaction from the browser,
+// so the transaction cookie (host-locked to the tenant backend origin) is
+// attached to the callback request.
+export function buildCallbackFormHTML(
+  action: string,
+  clerkSessionToken: string
 ) {
-  if (!cookieHeader || !authRequestID) {
-    return undefined;
-  }
-
-  const suffix = oidcTransactionCookieSuffix(authRequestID);
-  const allowedNames = new Set(
-    OIDC_TRANSACTION_COOKIE_PREFIXES.map((prefix) => `${prefix}${suffix}`)
-  );
-
-  const cookies = cookieHeader
-    .split(";")
-    .map((cookie) => cookie.trim())
-    .filter((cookie) => {
-      const separator = cookie.indexOf("=");
-      if (separator <= 0) {
-        return false;
-      }
-
-      return allowedNames.has(cookie.slice(0, separator));
-    });
-
-  return cookies.length > 0 ? cookies.join("; ") : undefined;
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Completing login…</title>
+  </head>
+  <body onload="document.forms[0].submit()">
+    <p>Completing login…</p>
+    <form method="post" action="${escapeHTML(action)}">
+      <input type="hidden" name="clerk_session_token" value="${escapeHTML(clerkSessionToken)}" />
+      <noscript><button type="submit">Continue</button></noscript>
+    </form>
+  </body>
+</html>`;
 }
 
 export default async function handler(
@@ -135,33 +126,9 @@ export default async function handler(
 
   callbackURL.searchParams.set("auth_request_id", authRequestID);
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/x-www-form-urlencoded"
-  };
-
-  // This is a server-side fetch, so browser cookies are not sent by default.
-  // Forward only the OIDC transaction cookie required for Mission Control's
-  // login-CSRF protection; never forward req.headers.cookie wholesale.
-  const oidcTransactionCookie = getOIDCTransactionCookieHeader(
-    req.headers.cookie,
-    authRequestID
-  );
-  if (oidcTransactionCookie) {
-    headers.Cookie = oidcTransactionCookie;
-  }
-
-  const backendResp = await fetch(callbackURL.toString(), {
-    method: "POST",
-    redirect: "manual",
-    headers,
-    body: new URLSearchParams({ clerk_session_token: token })
-  });
-
-  const location = backendResp.headers.get("location");
-  if (location && backendResp.status >= 300 && backendResp.status < 400) {
-    return res.redirect(backendResp.status, location);
-  }
-
-  const body = await backendResp.text();
-  return res.status(backendResp.status).send(body);
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  return res
+    .status(200)
+    .send(buildCallbackFormHTML(callbackURL.toString(), token));
 }
