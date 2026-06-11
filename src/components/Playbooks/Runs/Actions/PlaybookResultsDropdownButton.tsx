@@ -16,14 +16,7 @@ type Props = {
   activeTab: string;
   activeTabContentRef: React.RefObject<HTMLDivElement>;
   artifactID?: string;
-  contentType?:
-    | "application/sql"
-    | "text/markdown"
-    | "text/x-shellscript"
-    | "text/plain"
-    | "application/yaml"
-    | "application/log+json"
-    | "application/json";
+  contentType?: string;
 };
 
 // Downloads the rendered content or the artifact
@@ -70,7 +63,9 @@ export default function TabContentDownloadButton({
 }
 
 function getContentTypeExtension(contentType: string) {
-  switch (contentType) {
+  switch (contentType.split(";")[0].trim().toLowerCase()) {
+    case "text/html":
+      return "html";
     case "text/markdown":
       return "md";
     case "text/x-shellscript":
