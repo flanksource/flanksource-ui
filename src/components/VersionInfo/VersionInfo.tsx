@@ -2,7 +2,7 @@ import packageJson from "../../../package.json";
 import { useVersionInfo } from "../../api/query-hooks";
 
 // This is static version from package.json and doesn't change after build
-const frontendVersion = packageJson.version;
+export const frontendVersion = packageJson.version;
 
 export function VersionInfo() {
   const { data, isLoading, isRefetching } = useVersionInfo();

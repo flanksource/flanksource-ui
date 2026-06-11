@@ -1,12 +1,13 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Info, Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
 import { MdSecurity } from "react-icons/md";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { isNewUIPreferred, setNewUIPreference } from "../../utils/uiPreference";
 import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
+import { frontendVersion } from "../VersionInfo/VersionInfo";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
 import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
@@ -85,6 +86,11 @@ export function UserProfileDropdown() {
                   onClick={() => setIsScopeImpersonationModalOpen(true)}
                 />
               )}
+              <UserButton.Action
+                label={`UI Version: ${frontendVersion}`}
+                labelIcon={<Info className="h-4 w-4" />}
+                onClick={() => {}}
+              />
             </UserButton.MenuItems>
           </UserButton>
         </div>
