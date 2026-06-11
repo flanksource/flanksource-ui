@@ -1,46 +1,59 @@
-import { createHash } from "crypto";
-import { getOIDCTransactionCookieHeader } from "../../pages/api/oidc/clerk/callback";
+import {
+  buildCallbackFormHTML,
+  getBackendCallbackURL
+} from "../../pages/api/oidc/clerk/callback";
 
-function oidcCookieSuffix(authRequestID: string) {
-  return createHash("sha256")
-    .update(authRequestID)
-    .digest("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "")
-    .slice(0, 22);
-}
-
-describe("getOIDCTransactionCookieHeader", () => {
-  it("returns only the matching OIDC transaction cookie", () => {
-    const suffix = oidcCookieSuffix("req-123");
-    const otherSuffix = oidcCookieSuffix("other-req");
-
+describe("getBackendCallbackURL", () => {
+  it("builds the fixed callback path on the org backend origin", () => {
     expect(
-      getOIDCTransactionCookieHeader(
-        `__session=clerk; __Host-mc_oidc_tx_${otherSuffix}=other; __Host-mc_oidc_tx_${suffix}=signed; unrelated=value`,
-        "req-123"
-      )
-    ).toBe(`__Host-mc_oidc_tx_${suffix}=signed`);
+      getBackendCallbackURL("https://mc.org-abc.flanksource.com")?.toString()
+    ).toBe("https://mc.org-abc.flanksource.com/oidc/clerk/callback");
   });
 
-  it("supports local non-Host transaction cookies", () => {
-    const suffix = oidcCookieSuffix("req-123");
-
+  it("ignores any path on the org backend URL", () => {
     expect(
-      getOIDCTransactionCookieHeader(
-        `mc_oidc_tx_${suffix}=local; __session=clerk`,
-        "req-123"
-      )
-    ).toBe(`mc_oidc_tx_${suffix}=local`);
+      getBackendCallbackURL(
+        "https://mc.org-abc.flanksource.com/some/path"
+      )?.toString()
+    ).toBe("https://mc.org-abc.flanksource.com/oidc/clerk/callback");
   });
 
-  it("returns undefined when no matching transaction cookie exists", () => {
-    expect(
-      getOIDCTransactionCookieHeader(
-        "__session=clerk; unrelated=value",
-        "req-123"
-      )
-    ).toBeUndefined();
+  it("allows http only for localhost", () => {
+    expect(getBackendCallbackURL("http://localhost:8080")?.toString()).toBe(
+      "http://localhost:8080/oidc/clerk/callback"
+    );
+    expect(getBackendCallbackURL("http://backend.example.com")).toBeUndefined();
+  });
+
+  it("returns undefined for missing or invalid URLs", () => {
+    expect(getBackendCallbackURL(undefined)).toBeUndefined();
+    expect(getBackendCallbackURL("not a url")).toBeUndefined();
+  });
+});
+
+describe("buildCallbackFormHTML", () => {
+  it("posts the Clerk token to the backend callback from the browser", () => {
+    const html = buildCallbackFormHTML(
+      "https://mc.org-abc.flanksource.com/oidc/clerk/callback?auth_request_id=req-123",
+      "clerk-backend-jwt"
+    );
+
+    expect(html).toContain('method="post"');
+    expect(html).toContain(
+      'action="https://mc.org-abc.flanksource.com/oidc/clerk/callback?auth_request_id=req-123"'
+    );
+    expect(html).toContain(
+      'name="clerk_session_token" value="clerk-backend-jwt"'
+    );
+  });
+
+  it("escapes HTML in the action URL and token", () => {
+    const html = buildCallbackFormHTML(
+      'https://mc.example.com/oidc/clerk/callback?a="><script>',
+      '"><script>alert(1)</script>'
+    );
+
+    expect(html).not.toContain("<script>alert");
+    expect(html).toContain("&quot;&gt;&lt;script&gt;");
   });
 });
