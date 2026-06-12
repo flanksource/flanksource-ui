@@ -24,6 +24,7 @@ export const features = {
   "settings.notifications": "settings.notifications",
   "settings.playbooks": "settings.playbooks",
   "settings.integrations": "settings.integrations",
+  "settings.plugins": "settings.plugins",
   "settings.permissions": "settings.permissions",
   "settings.mcp": "settings.mcp",
   "settings.artifacts": "settings.artifacts"
