@@ -237,6 +237,28 @@ describe("PlaybooksRunActionsResults", () => {
     expect(screen.getByText("hello world")).toBeInTheDocument();
   });
 
+  it("renders html content types with charset in an iframe", () => {
+    const html = "<html><body><h1>HTML Report</h1></body></html>";
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html; charset=UTF-8"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const iframe = screen.getByTitle("Stdout");
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute("srcdoc", html);
+  });
+
   it("does not show contentType as its own tab", () => {
     const action = {
       id: "1",
