@@ -31,7 +31,7 @@ const columns: ColumnDef<HealthCheckStatus, any>[] = [
       return (
         <>
           <span data-tooltip-id={`age-tooltip-${status.time}`}>
-            {format(`${status.time} UTC`)}
+            {format(status.time)}
           </span>
           <Tooltip
             id={`age-tooltip-${status.time}`}
