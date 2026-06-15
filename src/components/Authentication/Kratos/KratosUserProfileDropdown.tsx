@@ -20,6 +20,7 @@ import KratosLogoutButton from "./KratosLogoutButton";
 type UserProfileDropdownProps = {
   openKubeConfigModal: () => void;
   openMcpTokenModal: () => void;
+  openCliSetupModal: () => void;
   openResourceSelectorSearchModal: () => void;
   openScopeImpersonationModal: () => void;
   showScopeImpersonation?: boolean;
@@ -28,6 +29,7 @@ type UserProfileDropdownProps = {
 export function KratosUserProfileDropdown({
   openKubeConfigModal,
   openMcpTokenModal,
+  openCliSetupModal,
   openResourceSelectorSearchModal,
   openScopeImpersonationModal,
   showScopeImpersonation = false
@@ -105,6 +107,14 @@ export function KratosUserProfileDropdown({
               className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
             >
               Setup MCP
+            </button>
+          </MenuItem>
+          <MenuItem>
+            <button
+              onClick={openCliSetupModal}
+              className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Setup CLI
             </button>
           </MenuItem>
           <MenuItem>

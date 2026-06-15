@@ -2,7 +2,7 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Info, Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
-import { MdSecurity } from "react-icons/md";
+import { MdSecurity, MdTerminal } from "react-icons/md";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
 import { isNewUIPreferred, setNewUIPreference } from "../../utils/uiPreference";
 import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
@@ -12,6 +12,7 @@ import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
 import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
+import SetupMissionControlCliModal from "./SetupMissionControlCliModal";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
   import("../ResourceSelectorSearch/ResourceSelectorSearchModal").then(
@@ -30,6 +31,7 @@ export function UserProfileDropdown() {
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
     useState(false);
   const [isMcpSetupModalOpen, setIsMcpSetupModalOpen] = useState(false);
+  const [isCliSetupModalOpen, setIsCliSetupModalOpen] = useState(false);
   const [
     isResourceSelectorSearchModalOpen,
     setIsResourceSelectorSearchModalOpen
@@ -75,6 +77,11 @@ export function UserProfileDropdown() {
                 onClick={() => setIsMcpSetupModalOpen(true)}
               />
               <UserButton.Action
+                label="Setup CLI"
+                labelIcon={<MdTerminal />}
+                onClick={() => setIsCliSetupModalOpen(true)}
+              />
+              <UserButton.Action
                 label="Resource selector search"
                 labelIcon={<Search className="h-4 w-4" />}
                 onClick={() => setIsResourceSelectorSearchModalOpen(true)}
@@ -98,6 +105,7 @@ export function UserProfileDropdown() {
         <KratosUserProfileDropdown
           openKubeConfigModal={() => setIsDownloadKubeConfigModalOpen(true)}
           openMcpTokenModal={() => setIsMcpSetupModalOpen(true)}
+          openCliSetupModal={() => setIsCliSetupModalOpen(true)}
           openResourceSelectorSearchModal={() =>
             setIsResourceSelectorSearchModalOpen(true)
           }
@@ -114,6 +122,10 @@ export function UserProfileDropdown() {
       <SetupMcpModal
         isOpen={isMcpSetupModalOpen}
         onClose={() => setIsMcpSetupModalOpen(false)}
+      />
+      <SetupMissionControlCliModal
+        isOpen={isCliSetupModalOpen}
+        onClose={() => setIsCliSetupModalOpen(false)}
       />
       {isResourceSelectorSearchModalOpen && (
         <Suspense fallback={null}>
