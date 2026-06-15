@@ -449,13 +449,15 @@ function renderContent(
         <iframe
           title={title}
           className="h-full min-h-[60vh] w-full rounded bg-white"
-          // Empty sandbox applies all restrictions; the content is also
-          // sanitized since playbook output can embed untrusted data
-          sandbox=""
+          // The sandbox stays permissive for styling, links and same-origin
+          // resources but withholds allow-scripts so no JavaScript can run.
+          // DOMPurify also strips scripts, inline handlers and javascript:
+          // URLs from the content while keeping all CSS intact.
+          sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
           srcDoc={DOMPurify.sanitize(String(content), {
             WHOLE_DOCUMENT: true,
-            // Allow external and inline stylesheets so HTML reports keep
-            // their styling. Scripts are still stripped by default.
+            // Keep external and inline stylesheets so HTML reports retain
+            // their styling.
             ADD_TAGS: ["link"],
             ADD_ATTR: ["rel", "href"]
           })}

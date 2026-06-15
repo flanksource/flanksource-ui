@@ -262,7 +262,7 @@ describe("PlaybooksRunActionsResults", () => {
     );
   });
 
-  it("sanitizes html and keeps the iframe sandbox fully restrictive", () => {
+  it("sanitizes javascript out of html and blocks scripts in the sandbox", () => {
     const html =
       '<h1 onclick="alert(1)">Report</h1><script>alert("xss")</script>';
     const action = {
@@ -285,7 +285,8 @@ describe("PlaybooksRunActionsResults", () => {
     expect(srcDoc).toContain("Report");
     expect(srcDoc).not.toContain("<script");
     expect(srcDoc).not.toContain("onclick");
-    expect(iframe).toHaveAttribute("sandbox", "");
+    // The sandbox must never grant allow-scripts so no JavaScript can run.
+    expect(iframe.getAttribute("sandbox")).not.toContain("allow-scripts");
   });
 
   it("preserves css when rendering html", () => {
