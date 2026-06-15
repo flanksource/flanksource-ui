@@ -256,7 +256,36 @@ describe("PlaybooksRunActionsResults", () => {
 
     const iframe = screen.getByTitle("Stdout");
     expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute("srcdoc", html);
+    expect(iframe).toHaveAttribute(
+      "srcdoc",
+      expect.stringContaining("<h1>HTML Report</h1>")
+    );
+  });
+
+  it("sanitizes html and keeps the iframe sandbox fully restrictive", () => {
+    const html =
+      '<h1 onclick="alert(1)">Report</h1><script>alert("xss")</script>';
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const iframe = screen.getByTitle("Stdout");
+    const srcDoc = iframe.getAttribute("srcdoc");
+    expect(srcDoc).toContain("Report");
+    expect(srcDoc).not.toContain("<script");
+    expect(srcDoc).not.toContain("onclick");
+    expect(iframe).toHaveAttribute("sandbox", "");
   });
 
   it("does not show contentType as its own tab", () => {

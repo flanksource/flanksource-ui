@@ -1,4 +1,5 @@
 import Convert from "ansi-to-html";
+import DOMPurify from "dompurify";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
 import clsx from "clsx";
@@ -448,8 +449,12 @@ function renderContent(
         <iframe
           title={title}
           className="h-full min-h-[60vh] w-full rounded bg-white"
-          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-          srcDoc={String(content)}
+          // Empty sandbox applies all restrictions; the content is also
+          // sanitized since playbook output can embed untrusted data
+          sandbox=""
+          srcDoc={DOMPurify.sanitize(String(content), {
+            WHOLE_DOCUMENT: true
+          })}
         />
       );
 
