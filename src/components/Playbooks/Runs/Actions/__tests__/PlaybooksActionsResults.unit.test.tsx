@@ -288,6 +288,36 @@ describe("PlaybooksRunActionsResults", () => {
     expect(iframe).toHaveAttribute("sandbox", "");
   });
 
+  it("preserves css when rendering html", () => {
+    const html =
+      "<html><head>" +
+      '<link rel="stylesheet" href="https://cdn.example.com/report.css">' +
+      "<style>.box { color: red; }</style>" +
+      '</head><body><div class="box" style="font-weight:bold;">Styled</div></body></html>';
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const srcDoc = screen.getByTitle("Stdout").getAttribute("srcdoc");
+    expect(srcDoc).toContain("<style>.box { color: red; }</style>");
+    expect(srcDoc).toContain('style="font-weight:bold;"');
+    expect(srcDoc).toContain('class="box"');
+    expect(srcDoc).toContain("<link ");
+    expect(srcDoc).toContain('href="https://cdn.example.com/report.css"');
+    expect(srcDoc).toContain('rel="stylesheet"');
+  });
+
   it("does not show contentType as its own tab", () => {
     const action = {
       id: "1",

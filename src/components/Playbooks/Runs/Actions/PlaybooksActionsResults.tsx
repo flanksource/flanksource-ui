@@ -453,7 +453,11 @@ function renderContent(
           // sanitized since playbook output can embed untrusted data
           sandbox=""
           srcDoc={DOMPurify.sanitize(String(content), {
-            WHOLE_DOCUMENT: true
+            WHOLE_DOCUMENT: true,
+            // Allow external and inline stylesheets so HTML reports keep
+            // their styling. Scripts are still stripped by default.
+            ADD_TAGS: ["link"],
+            ADD_ATTR: ["rel", "href"]
           })}
         />
       );
