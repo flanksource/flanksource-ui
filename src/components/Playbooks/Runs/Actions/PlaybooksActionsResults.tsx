@@ -1,5 +1,4 @@
 import Convert from "ansi-to-html";
-import DOMPurify from "dompurify";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
 import clsx from "clsx";
@@ -449,18 +448,12 @@ function renderContent(
         <iframe
           title={title}
           className="h-full min-h-[60vh] w-full rounded bg-white"
-          // The sandbox stays permissive for styling, links and same-origin
-          // resources but withholds allow-scripts so no JavaScript can run.
-          // DOMPurify also strips scripts, inline handlers and javascript:
-          // URLs from the content while keeping all CSS intact.
-          sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-          srcDoc={DOMPurify.sanitize(String(content), {
-            WHOLE_DOCUMENT: true,
-            // Keep external and inline stylesheets so HTML reports retain
-            // their styling.
-            ADD_TAGS: ["link"],
-            ADD_ATTR: ["rel", "href"]
-          })}
+          // The iframe renders untrusted playbook HTML. Omitting allow-scripts
+          // means the browser blocks all JavaScript (scripts, inline handlers,
+          // javascript: URLs) while CSS, images and links still render. Popups
+          // are allowed so report links can open in a new tab.
+          sandbox="allow-popups allow-popups-to-escape-sandbox"
+          srcDoc={String(content)}
         />
       );
 

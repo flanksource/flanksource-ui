@@ -262,7 +262,7 @@ describe("PlaybooksRunActionsResults", () => {
     );
   });
 
-  it("sanitizes javascript out of html and blocks scripts in the sandbox", () => {
+  it("blocks javascript by withholding allow-scripts from the iframe sandbox", () => {
     const html =
       '<h1 onclick="alert(1)">Report</h1><script>alert("xss")</script>';
     const action = {
@@ -281,19 +281,22 @@ describe("PlaybooksRunActionsResults", () => {
     render(<PlaybooksRunActionsResults action={action} />);
 
     const iframe = screen.getByTitle("Stdout");
-    const srcDoc = iframe.getAttribute("srcdoc");
-    expect(srcDoc).toContain("Report");
-    expect(srcDoc).not.toContain("<script");
-    expect(srcDoc).not.toContain("onclick");
-    // The sandbox must never grant allow-scripts so no JavaScript can run.
+    // The sandbox must never grant allow-scripts; the browser then refuses to
+    // execute any script, inline handler or javascript: URL in the content.
     expect(iframe.getAttribute("sandbox")).not.toContain("allow-scripts");
   });
 
-  it("preserves css when rendering html", () => {
+  it("preserves css verbatim when rendering html", () => {
+    // Tailwind-style resets with empty custom properties and pseudo-element
+    // selectors must survive untouched.
+    const css =
+      "*, ::before, ::after { --tw-ring-color: rgb(59 130 246 / 0.5); --tw-pan-x:  ; }" +
+      "::backdrop { --tw-translate-x: 0; }" +
+      "@media (max-width: 600px) { .box { color: blue; } }";
     const html =
       "<html><head>" +
       '<link rel="stylesheet" href="https://cdn.example.com/report.css">' +
-      "<style>.box { color: red; }</style>" +
+      `<style>${css}</style>` +
       '</head><body><div class="box" style="font-weight:bold;">Styled</div></body></html>';
     const action = {
       id: "1",
@@ -311,12 +314,12 @@ describe("PlaybooksRunActionsResults", () => {
     render(<PlaybooksRunActionsResults action={action} />);
 
     const srcDoc = screen.getByTitle("Stdout").getAttribute("srcdoc");
-    expect(srcDoc).toContain("<style>.box { color: red; }</style>");
+    expect(srcDoc).toContain(`<style>${css}</style>`);
     expect(srcDoc).toContain('style="font-weight:bold;"');
     expect(srcDoc).toContain('class="box"');
-    expect(srcDoc).toContain("<link ");
-    expect(srcDoc).toContain('href="https://cdn.example.com/report.css"');
-    expect(srcDoc).toContain('rel="stylesheet"');
+    expect(srcDoc).toContain(
+      '<link rel="stylesheet" href="https://cdn.example.com/report.css">'
+    );
   });
 
   it("does not show contentType as its own tab", () => {
