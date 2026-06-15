@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         run: npm i
-      - uses: chromaui/action@5f2cdb26c04c0364f5c8ca3fc41627a83d6ffc8a # v1
+      - uses: chromaui/action@v17.4.1
         with:
           projectToken: ${{ secrets.CHROMATIC_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
