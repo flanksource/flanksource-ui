@@ -35,10 +35,18 @@ export function handleGetFlowError<S>(
         return;
       case "session_already_available": {
         // User is already signed in; continue the requested flow when return_to is present.
-        const returnTo = new URLSearchParams(window.location.search).get(
-          "return_to"
+        const returnTo = sanitizeReturnTo(
+          new URLSearchParams(window.location.search).get("return_to")
         );
-        await router.push(sanitizeReturnTo(returnTo));
+
+        // /oidc/* is served by the backend via Next rewrites, which only fire on
+        // real navigations, not client-side router.push.
+        if (returnTo.startsWith("/oidc/")) {
+          window.location.assign(returnTo);
+          return;
+        }
+
+        await router.push(returnTo);
         return;
       }
       case "session_refresh_required":
