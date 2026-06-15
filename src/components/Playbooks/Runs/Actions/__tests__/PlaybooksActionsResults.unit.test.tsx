@@ -237,6 +237,91 @@ describe("PlaybooksRunActionsResults", () => {
     expect(screen.getByText("hello world")).toBeInTheDocument();
   });
 
+  it("renders html content types with charset in an iframe", () => {
+    const html = "<html><body><h1>HTML Report</h1></body></html>";
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html; charset=UTF-8"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const iframe = screen.getByTitle("Stdout");
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute(
+      "srcdoc",
+      expect.stringContaining("<h1>HTML Report</h1>")
+    );
+  });
+
+  it("blocks javascript by withholding allow-scripts from the iframe sandbox", () => {
+    const html =
+      '<h1 onclick="alert(1)">Report</h1><script>alert("xss")</script>';
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const iframe = screen.getByTitle("Stdout");
+    // The sandbox must never grant allow-scripts; the browser then refuses to
+    // execute any script, inline handler or javascript: URL in the content.
+    expect(iframe.getAttribute("sandbox")).not.toContain("allow-scripts");
+  });
+
+  it("preserves css verbatim when rendering html", () => {
+    // Tailwind-style resets with empty custom properties and pseudo-element
+    // selectors must survive untouched.
+    const css =
+      "*, ::before, ::after { --tw-ring-color: rgb(59 130 246 / 0.5); --tw-pan-x:  ; }" +
+      "::backdrop { --tw-translate-x: 0; }" +
+      "@media (max-width: 600px) { .box { color: blue; } }";
+    const html =
+      "<html><head>" +
+      '<link rel="stylesheet" href="https://cdn.example.com/report.css">' +
+      `<style>${css}</style>` +
+      '</head><body><div class="box" style="font-weight:bold;">Styled</div></body></html>';
+    const action = {
+      id: "1",
+      name: "exec html",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "exec" as const,
+      result: {
+        stdout: html,
+        contentType: "text/html"
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    const srcDoc = screen.getByTitle("Stdout").getAttribute("srcdoc");
+    expect(srcDoc).toContain(`<style>${css}</style>`);
+    expect(srcDoc).toContain('style="font-weight:bold;"');
+    expect(srcDoc).toContain('class="box"');
+    expect(srcDoc).toContain(
+      '<link rel="stylesheet" href="https://cdn.example.com/report.css">'
+    );
+  });
+
   it("does not show contentType as its own tab", () => {
     const action = {
       id: "1",

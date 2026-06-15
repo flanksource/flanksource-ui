@@ -121,6 +121,8 @@ type Props = {
   className?: string;
 };
 
+type DisplayContentType = string;
+
 type PlaybookActionTab = {
   label: string;
   type?: "artifact" | "error";
@@ -128,15 +130,34 @@ type PlaybookActionTab = {
   content: any;
   artifactID?: string;
   className?: string;
-  displayContentType:
-    | "text/markdown"
-    | "text/x-shellscript"
-    | "text/plain"
-    | "application/yaml"
-    | "application/log+json"
-    | "application/json"
-    | "application/sql";
+  displayContentType: DisplayContentType;
 };
+
+function normalizeContentType(contentType?: string): DisplayContentType {
+  const baseContentType = contentType?.split(";")[0].trim().toLowerCase();
+
+  if (baseContentType === "markdown") {
+    return "text/markdown";
+  }
+
+  return baseContentType || "text/plain";
+}
+
+function isPreviewableContentType(contentType?: string) {
+  switch (normalizeContentType(contentType)) {
+    case "text/html":
+    case "text/markdown":
+    case "text/x-shellscript":
+    case "text/plain":
+    case "application/yaml":
+    case "application/log+json":
+    case "application/json":
+    case "application/sql":
+      return true;
+    default:
+      return false;
+  }
+}
 
 export default function PlaybooksRunActionsResults({
   action,
@@ -267,8 +288,7 @@ export default function PlaybooksRunActionsResults({
             (key === "stdout" || key === "body") &&
             tab.displayContentType === "text/plain"
           ) {
-            tab.displayContentType =
-              resultContentType as PlaybookActionTab["displayContentType"];
+            tab.displayContentType = resultContentType;
           }
 
           if (key === "error") {
@@ -301,13 +321,7 @@ export default function PlaybooksRunActionsResults({
           artifactID: artifact.id,
           type: "artifact",
           content: artifact,
-          displayContentType: artifact.content_type as
-            | "text/markdown"
-            | "text/x-shellscript"
-            | "text/plain"
-            | "application/yaml"
-            | "application/log+json"
-            | "application/json"
+          displayContentType: normalizeContentType(artifact.content_type)
         });
       }
     }
@@ -410,7 +424,7 @@ function renderContent(
   content: any,
   className?: string
 ) {
-  switch (contentType) {
+  switch (normalizeContentType(contentType)) {
     case "text/plain":
     case "text/x-shellscript":
       return <DisplayLogs className={className} logs={String(content)} />;
@@ -427,8 +441,21 @@ function renderContent(
       );
 
     case "text/markdown":
-    case "markdown": // for backwards compatibility
       return <DisplayMarkdown className={className} md={content} />;
+
+    case "text/html":
+      return (
+        <iframe
+          title={title}
+          className="h-full min-h-[60vh] w-full rounded bg-white"
+          // The iframe renders untrusted playbook HTML. Omitting allow-scripts
+          // means the browser blocks all JavaScript (scripts, inline handlers,
+          // javascript: URLs) while CSS, images and links still render. Popups
+          // are allowed so report links can open in a new tab.
+          sandbox="allow-popups allow-popups-to-escape-sandbox"
+          srcDoc={String(content)}
+        />
+      );
 
     case "application/yaml":
     case "application/json":
@@ -450,10 +477,55 @@ function renderContent(
       );
 
     default:
-      throw new Error(
-        `Unknown display content type for tab ${title}: ${contentType}`
+      return (
+        <PreviewNotAvailable
+          content={String(content)}
+          contentType={contentType}
+          filename={title}
+        />
       );
   }
+}
+
+function PreviewNotAvailable({
+  content,
+  contentType,
+  downloadURL,
+  filename
+}: {
+  content?: string;
+  contentType: string;
+  downloadURL?: string;
+  filename: string;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-8 text-center text-gray-500">
+      <p className="mb-4">
+        Preview not available for {contentType || "this file type"}. Click to
+        download.
+      </p>
+      <Button
+        onClick={() => {
+          if (downloadURL) {
+            window.open(downloadURL, "_blank");
+            return;
+          }
+
+          const file = new Blob([content || ""], {
+            type: contentType || "application/octet-stream"
+          });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(file);
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(a.href);
+        }}
+      >
+        <IoMdDownload className="mr-2" />
+        Download
+      </Button>
+    </div>
+  );
 }
 
 function ArtifactContent({
@@ -467,6 +539,7 @@ function ArtifactContent({
 
   const maxFileSize = 50 * 1024 * 1024; // 50MB
   const isSmallFile = artifact.size < maxFileSize;
+  const canPreview = isPreviewableContentType(artifact.content_type);
 
   const {
     data: artifactContent,
@@ -475,7 +548,7 @@ function ArtifactContent({
   } = useQuery({
     queryKey: ["artifact", artifact.id],
     queryFn: () => downloadArtifact(artifact.id),
-    enabled: isSmallFile, // Only fetch if it's a small file
+    enabled: isSmallFile && canPreview, // Only fetch if it's a small file and supported
     staleTime: Infinity, // Artifacts don't change once created
     cacheTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
     retry: 1, // Only retry once on failure
@@ -509,6 +582,16 @@ function ArtifactContent({
             Download
           </Button>
         </div>
+      );
+    }
+
+    if (!canPreview) {
+      return (
+        <PreviewNotAvailable
+          contentType={artifact.content_type}
+          downloadURL={downloadURL}
+          filename={artifact.filename}
+        />
       );
     }
 
