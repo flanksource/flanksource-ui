@@ -2,7 +2,9 @@ import { getNotificationSendHistorySummary } from "@flanksource-ui/api/services/
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import NotificationFilterBar from "../../../components/Notifications/Filters/NotificationFilterBar";
+import NotificationFilterBar, {
+  DEFAULT_NOTIFICATION_STATUS_FILTER
+} from "../../../components/Notifications/Filters/NotificationFilterBar";
 import NotificationTabsLinks from "../../../components/Notifications/NotificationTabsLinks";
 import NotificationSendHistorySummaryList from "@flanksource-ui/components/Notifications/NotificationSendHistorySummary";
 import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
@@ -12,7 +14,8 @@ export default function NotificationsPage() {
 
   const [searchParams] = useSearchParams();
   const resourceType = searchParams.get("resource_type") ?? undefined;
-  const status = searchParams.get("status") ?? undefined;
+  const status =
+    searchParams.get("status") ?? DEFAULT_NOTIFICATION_STATUS_FILTER;
   const search = searchParams.get("search") ?? undefined;
   const tags = searchParams.get("tags") ?? undefined;
 
