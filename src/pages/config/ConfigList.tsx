@@ -102,7 +102,10 @@ export function ConfigListPage() {
             <ConfigsListFilters />
           </div>
 
-          <div className="flex h-full flex-col overflow-y-hidden">
+          <div
+            data-tour="catalog-summary"
+            className="flex h-full flex-col overflow-y-hidden"
+          >
             {showConfigSummaryList ? (
               <ConfigSummaryList
                 isLoading={isLoadingSummary}

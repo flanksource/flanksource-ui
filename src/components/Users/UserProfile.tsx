@@ -1,6 +1,6 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Info, Search } from "lucide-react";
+import { Info, MapPin, Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
 import { MdSecurity, MdTerminal } from "react-icons/md";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
@@ -13,6 +13,7 @@ import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
 import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
 import SetupMissionControlCliModal from "./SetupMissionControlCliModal";
+import { useStartTour } from "../GuidedTour/guidedTourState";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
   import("../ResourceSelectorSearch/ResourceSelectorSearchModal").then(
@@ -39,6 +40,7 @@ export function UserProfileDropdown() {
   const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
     useState(false);
   const [newUIEnabled, setNewUIEnabled] = useState(false);
+  const startTour = useStartTour();
   useEffect(() => {
     setNewUIEnabled(isNewUIPreferred());
   }, []);
@@ -61,6 +63,11 @@ export function UserProfileDropdown() {
           />
           <UserButton signInUrl="/login">
             <UserButton.MenuItems>
+              <UserButton.Action
+                label="Start interactive tour"
+                labelIcon={<MapPin className="h-4 w-4" />}
+                onClick={startTour}
+              />
               <UserButton.Action
                 label={newUIEnabled ? "Use Old UI" : "Use New UI"}
                 labelIcon={<IoMdSwap />}
@@ -112,6 +119,7 @@ export function UserProfileDropdown() {
           openScopeImpersonationModal={() =>
             setIsScopeImpersonationModalOpen(true)
           }
+          startTour={startTour}
           showScopeImpersonation={isRLSEnabled}
         />
       )}

@@ -37,6 +37,8 @@ function ConfigSummaryTypeCell({
 
   return (
     <span
+      data-tour="config-type"
+      data-tour-type={configType}
       className="flex flex-nowrap gap-1"
       style={{
         marginLeft: row.depth * 20

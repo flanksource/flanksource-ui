@@ -37,7 +37,10 @@ export default function CheckRunNow({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div
+      data-tour="check-run-now"
+      className="flex flex-col items-center justify-center"
+    >
       <Button
         className="btn-white"
         text="Run Now"
