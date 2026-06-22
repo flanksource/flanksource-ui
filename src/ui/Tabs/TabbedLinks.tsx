@@ -187,6 +187,7 @@ export default function TabbedLinks({
               tabClassName(isActive || keyMatches(key), overflowMenu)
             }
             key={path}
+            data-tour={key ? `tab-${key}` : undefined}
             to={{
               pathname: path,
               search

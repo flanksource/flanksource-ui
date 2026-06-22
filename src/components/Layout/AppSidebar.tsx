@@ -85,6 +85,14 @@ const SidebarLink = React.forwardRef<
   );
 });
 
+/**
+ * Stable marker used by the interactive tour to target a nav link.
+ * "/" is the dashboard; everything else uses its first path segment.
+ */
+function tourSlug(href: string) {
+  return href === "/" ? "dashboard" : href.replace(/^\//, "").split("/")[0];
+}
+
 const NavItem = React.memo(function NavItem({
   item,
   collapsed,
@@ -101,7 +109,7 @@ const NavItem = React.memo(function NavItem({
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={item.name} isActive={isActive}>
-        <SidebarLink to={item.href}>
+        <SidebarLink to={item.href} data-tour={tourSlug(item.href)}>
           <Icon className="h-5 w-5 fill-white text-white" />
           {!collapsed && (
             <span className={isActive ? "font-medium" : ""}>{item.name}</span>

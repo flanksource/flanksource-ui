@@ -28,6 +28,7 @@ export const mrtConfigListColumns = (
 
       return (
         <div
+          data-tour="catalog-item"
           className="flex flex-row items-center space-x-2"
           style={{
             marginLeft: row.depth * 20

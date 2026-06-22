@@ -8,6 +8,7 @@ import {
   SidebarProvider
 } from "@flanksource-ui/components/ui/sidebar";
 import { AppSidebar } from "@flanksource-ui/components/Layout/AppSidebar";
+import { GuidedTour } from "@flanksource-ui/components/GuidedTour/GuidedTour";
 
 interface Props {
   navigation: NavigationItems;
@@ -25,6 +26,7 @@ export function SidebarLayout({ navigation, settingsNav, checkPath }: Props) {
 
   return (
     <SidebarProvider>
+      <GuidedTour />
       <AppSidebar
         navigation={navigation}
         settingsNav={settingsNav}

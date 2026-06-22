@@ -270,12 +270,17 @@ export function ChecksTable({
         <tbody className={styles.tbodyClass}>
           {table.getRowModel().rows.length > 0 &&
             table.getRowModel().rows.map((row) => {
+              const isLeafCheck = !row.getCanExpand();
               return (
                 <tr
                   key={row.id}
                   className={`${styles.tbodyRowClass} ${
                     row.getCanExpand() ? styles.tbodyRowExpandableClass : ""
                   }`}
+                  data-tour={isLeafCheck ? "check-row" : undefined}
+                  data-tour-status={
+                    isLeafCheck ? row.original?.status : undefined
+                  }
                   style={{}}
                   onClick={
                     isBulkRunMode
