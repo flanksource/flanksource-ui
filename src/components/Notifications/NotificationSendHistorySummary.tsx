@@ -129,12 +129,6 @@ const notificationSendHistoryColumns: MRT_ColumnDef<NotificationSendHistorySumma
                 statusText={`${row.original.suppressed} suppressed`}
               />
             )}
-            {(row.original.in_progress ?? 0) > 0 && (
-              <Status
-                status="unknown"
-                statusText={`${row.original.in_progress} in progress`}
-              />
-            )}
           </div>
         );
       }

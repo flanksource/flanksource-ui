@@ -162,7 +162,6 @@ export type NotificationSendHistorySummary = {
   error: number;
   in_progress: number;
   suppressed: number;
-  in_progress?: number;
 };
 
 export type NotificationSendHistoryApiResponse = NotificationSendHistory & {
