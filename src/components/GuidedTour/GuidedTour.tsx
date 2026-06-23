@@ -1,22 +1,27 @@
 // ABOUTME: Renders the interactive product tour and drives it in controlled mode.
 // ABOUTME: Advances steps gated on navigation, URL params, or clicks on the target element.
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { Joyride, EVENTS, type EventData } from "react-joyride";
-import { tourRunAtom, tourStepIndexAtom } from "./guidedTourState";
+import {
+  tourRunAtom,
+  tourStepIndexAtom,
+  tourStepsAtom
+} from "./guidedTourState";
 import {
   reduceTourEvent,
   resolveAutoAdvance,
   resolveTargetNotFound,
-  tourSteps,
   type TourStepData
 } from "./guidedTourSteps";
+import { TourMenu } from "./TourMenu";
 import { TourTooltip } from "./TourTooltip";
 
 export function GuidedTour() {
   const [run, setRun] = useAtom(tourRunAtom);
   const [stepIndex, setStepIndex] = useAtom(tourStepIndexAtom);
+  const steps = useAtomValue(tourStepsAtom);
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -31,7 +36,7 @@ export function GuidedTour() {
     if (!run) {
       return;
     }
-    const next = resolveAutoAdvance(tourSteps, stepIndex, {
+    const next = resolveAutoAdvance(steps, stepIndex, {
       pathname,
       params: searchParams
     });
@@ -43,29 +48,37 @@ export function GuidedTour() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run, stepIndex, pathname, searchParams]);
 
-  // Advance steps that wait for the user to click the highlighted element
-  // (e.g. the Graph tab, whose selection lives in React state, not the URL).
+  // Advance steps that wait for the user to click an element (e.g. the Graph
+  // tab, whose selection lives in React state, not the URL). The click can be
+  // listened for on a different element than the highlighted one via
+  // data.clickTarget (e.g. highlight a card, advance on its Run button).
   useEffect(() => {
     if (!run) {
       return;
     }
-    const step = tourSteps[stepIndex];
+    const step = steps[stepIndex];
     const data = step?.data as TourStepData | undefined;
-    if (!data?.advanceOnTargetClick || typeof step.target !== "string") {
+    if (!data?.advanceOnTargetClick) {
       return;
     }
-    const element = document.querySelector<HTMLElement>(step.target);
+    const element = data.clickTarget
+      ? data.clickTarget()
+      : typeof step.target === "string"
+        ? document.querySelector<HTMLElement>(step.target)
+        : typeof step.target === "function"
+          ? (step.target as () => HTMLElement | null)()
+          : null;
     // A missing or hidden target (e.g. the Graph tab on tall viewports) can
     // never be clicked, so skip the step per its onMissing setting.
     if (!element || element.offsetParent === null) {
-      const update = resolveTargetNotFound(tourSteps, stepIndex);
+      const update = resolveTargetNotFound(steps, stepIndex);
       setRun(update.run);
       setStepIndex(update.stepIndex);
       return;
     }
     const onClick = () => {
       const next = stepIndex + 1;
-      if (next >= tourSteps.length) {
+      if (next >= steps.length) {
         endTour();
       } else {
         setStepIndex(next);
@@ -78,7 +91,7 @@ export function GuidedTour() {
 
   const handleEvent = (data: EventData) => {
     if (data.type === EVENTS.TARGET_NOT_FOUND) {
-      const update = resolveTargetNotFound(tourSteps, data.index);
+      const update = resolveTargetNotFound(steps, data.index);
       setRun(update.run);
       setStepIndex(update.stepIndex);
       return;
@@ -91,21 +104,24 @@ export function GuidedTour() {
   };
 
   return (
-    <Joyride
-      steps={tourSteps}
-      run={run}
-      stepIndex={stepIndex}
-      continuous
-      onEvent={handleEvent}
-      tooltipComponent={TourTooltip}
-      options={{
-        arrowColor: "#ffffff",
-        overlayColor: "rgba(0, 0, 0, 0.5)",
-        spotlightRadius: 6,
-        closeButtonAction: "skip",
-        overlayClickAction: false,
-        zIndex: 10000
-      }}
-    />
+    <>
+      <TourMenu />
+      <Joyride
+        steps={steps}
+        run={run}
+        stepIndex={stepIndex}
+        continuous
+        onEvent={handleEvent}
+        tooltipComponent={TourTooltip}
+        options={{
+          arrowColor: "#ffffff",
+          overlayColor: "rgba(0, 0, 0, 0.5)",
+          spotlightRadius: 6,
+          closeButtonAction: "skip",
+          overlayClickAction: false,
+          zIndex: 10000
+        }}
+      />
+    </>
   );
 }

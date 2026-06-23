@@ -109,7 +109,11 @@ const NavItem = React.memo(function NavItem({
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild tooltip={item.name} isActive={isActive}>
-        <SidebarLink to={item.href} data-tour={tourSlug(item.href)}>
+        <SidebarLink
+          to={item.href}
+          data-tour={tourSlug(item.href)}
+          data-tour-name={item.name?.toLowerCase()}
+        >
           <Icon className="h-5 w-5 fill-white text-white" />
           {!collapsed && (
             <span className={isActive ? "font-medium" : ""}>{item.name}</span>

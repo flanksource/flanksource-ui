@@ -12,11 +12,21 @@ export type TourStepData = {
   /** Advance once the step's target element is clicked. */
   advanceOnTargetClick?: boolean;
   /**
+   * When advancing on a click, listen on this element instead of the
+   * highlighted target (e.g. highlight a card but advance on its Run button).
+   */
+  clickTarget?: () => HTMLElement | null;
+  /** A "Learn more" documentation link shown in the tooltip. */
+  docLink?: string;
+  /** Marks the first step of a section, so a section can be skipped to/over. */
+  sectionStart?: boolean;
+  /**
    * What to do when the target can't be found:
    * - "skip" (default): move on to the next step.
+   * - "skipSection": jump to the next section (or end if this is the last).
    * - "finish": end the tour.
    */
-  onMissing?: "skip" | "finish";
+  onMissing?: "skip" | "skipSection" | "finish";
 };
 
 /**
@@ -41,6 +51,18 @@ export function findCheckRowTarget(): HTMLElement | null {
 }
 
 /**
+ * Picks the catalog config-class group to highlight, preferring Kubernetes,
+ * then any group. Returns null when no group row is rendered.
+ */
+export function findConfigClassTarget(): HTMLElement | null {
+  return (
+    document.querySelector<HTMLElement>(
+      '[data-tour="config-class"][data-tour-class="Kubernetes"]'
+    ) ?? document.querySelector<HTMLElement>('[data-tour="config-class"]')
+  );
+}
+
+/**
  * Picks the catalog type row to highlight, preferring Kubernetes Pods, then
  * any type. Returns null when no type row is rendered.
  */
@@ -59,7 +81,52 @@ export function findConfigItemTarget(): HTMLElement | null {
   return document.querySelector<HTMLElement>('[data-tour="catalog-item"]');
 }
 
-export const tourSteps: Step[] = [
+/**
+ * Picks the playbook card to highlight, preferring a Kubernetes logs playbook,
+ * then any playbook. Returns null when no playbook card is rendered.
+ */
+export function findPlaybookCardTarget(): HTMLElement | null {
+  return (
+    document.querySelector<HTMLElement>(
+      '[data-tour="playbook-card"][data-tour-name*="kubernetes log"]'
+    ) ?? document.querySelector<HTMLElement>('[data-tour="playbook-card"]')
+  );
+}
+
+/**
+ * Finds the Run button inside the preferred playbook card so the tour can
+ * advance once the user opens its run form.
+ */
+export function findPlaybookRunButtonTarget(): HTMLElement | null {
+  return (
+    findPlaybookCardTarget()?.querySelector<HTMLElement>(
+      '[data-tour="playbook-card-run"]'
+    ) ?? null
+  );
+}
+
+/**
+ * Picks the first past playbook run row to highlight, or null when none exist.
+ */
+export function findPlaybookRunRowTarget(): HTMLElement | null {
+  return document.querySelector<HTMLElement>('[data-tour="playbook-run-row"]');
+}
+
+/**
+ * Picks the sidebar view to highlight, preferring one named "system", then any
+ * view, then the dashboard. Returns null when none are present.
+ */
+export function findViewTarget(): HTMLElement | null {
+  return (
+    document.querySelector<HTMLElement>(
+      '[data-tour="views"][data-tour-name="system"]'
+    ) ??
+    document.querySelector<HTMLElement>('[data-tour="views"]') ??
+    document.querySelector<HTMLElement>('[data-tour="dashboard"]')
+  );
+}
+
+const dashboardSteps: Step[] = [
   {
     target: tourTarget("dashboard"),
     title: "Dashboard",
@@ -67,7 +134,7 @@ export const tourSteps: Step[] = [
     placement: "right",
     skipBeacon: true,
     buttons: [],
-    data: { advanceOnNavigateTo: "/" } as TourStepData
+    data: { advanceOnNavigateTo: "/", sectionStart: true } as TourStepData
   },
   {
     target: tourTarget("dashboard"),
@@ -77,7 +144,10 @@ export const tourSteps: Step[] = [
     placement: "right",
     skipBeacon: true,
     buttons: ["primary"]
-  },
+  }
+];
+
+const healthSteps: Step[] = [
   {
     target: tourTarget("health"),
     title: "Health",
@@ -85,7 +155,7 @@ export const tourSteps: Step[] = [
     placement: "right",
     skipBeacon: true,
     buttons: [],
-    data: { advanceOnNavigateTo: "/health" } as TourStepData
+    data: { advanceOnNavigateTo: "/health", sectionStart: true } as TourStepData
   },
   {
     target: tourTarget("checks-section"),
@@ -106,7 +176,10 @@ export const tourSteps: Step[] = [
     // The checks table has a sticky header; offset the scroll so the
     // highlighted row lands below it instead of behind it.
     scrollOffset: 120,
-    data: { advanceOnParam: "checkId", onMissing: "finish" } as TourStepData
+    data: {
+      advanceOnParam: "checkId",
+      onMissing: "skipSection"
+    } as TourStepData
   },
   {
     target: tourTarget("check-stats"),
@@ -158,12 +231,15 @@ export const tourSteps: Step[] = [
   {
     target: tourTarget("dialog-button-close"),
     title: "That's health checks",
-    content: "Close this check and let's explore the Catalog next.",
+    content: "Close this check when you're ready to move on.",
     placement: "left",
     skipBeacon: true,
     buttons: [],
     data: { advanceOnTargetClick: true, onMissing: "skip" } as TourStepData
-  },
+  }
+];
+
+const catalogSteps: Step[] = [
   {
     target: tourTarget("catalog"),
     title: "Catalog",
@@ -171,7 +247,10 @@ export const tourSteps: Step[] = [
     placement: "right",
     skipBeacon: true,
     buttons: [],
-    data: { advanceOnNavigateTo: "/catalog" } as TourStepData
+    data: {
+      advanceOnNavigateTo: "/catalog",
+      sectionStart: true
+    } as TourStepData
   },
   {
     target: tourTarget("catalog-summary"),
@@ -182,6 +261,16 @@ export const tourSteps: Step[] = [
     buttons: ["primary"]
   },
   {
+    target: findConfigClassTarget,
+    title: "Pick a group",
+    content: "Click a group to expand the resource types inside it.",
+    placement: "right",
+    skipBeacon: true,
+    buttons: [],
+    targetWaitTimeout: 5000,
+    data: { advanceOnTargetClick: true, onMissing: "skip" } as TourStepData
+  },
+  {
     target: findConfigTypeTarget,
     title: "Pick a type",
     content: "Click a type to see the resources of that kind.",
@@ -189,7 +278,10 @@ export const tourSteps: Step[] = [
     skipBeacon: true,
     buttons: [],
     targetWaitTimeout: 5000,
-    data: { advanceOnParam: "configType", onMissing: "finish" } as TourStepData
+    data: {
+      advanceOnParam: "configType",
+      onMissing: "skipSection"
+    } as TourStepData
   },
   {
     target: findConfigItemTarget,
@@ -201,7 +293,7 @@ export const tourSteps: Step[] = [
     targetWaitTimeout: 5000,
     data: {
       advanceOnPathMatch: /^\/catalog\/[0-9a-f]{8}-/i,
-      onMissing: "finish"
+      onMissing: "skipSection"
     } as TourStepData
   },
   {
@@ -234,6 +326,170 @@ export const tourSteps: Step[] = [
     data: { advanceOnTargetClick: true, onMissing: "skip" } as TourStepData
   }
 ];
+
+const playbookSteps: Step[] = [
+  {
+    target: tourTarget("playbooks"),
+    title: "Playbooks",
+    content: "Open Playbooks to see the actions you can run.",
+    placement: "right",
+    skipBeacon: true,
+    buttons: [],
+    data: {
+      advanceOnNavigateTo: "/playbooks",
+      sectionStart: true
+    } as TourStepData
+  },
+  {
+    target: findPlaybookCardTarget,
+    title: "Run an action",
+    content:
+      "Each playbook runs an action on demand. Click Run on this one to launch it.",
+    placement: "bottom",
+    skipBeacon: true,
+    buttons: [],
+    targetWaitTimeout: 5000,
+    data: {
+      advanceOnTargetClick: true,
+      clickTarget: findPlaybookRunButtonTarget,
+      onMissing: "skipSection"
+    } as TourStepData
+  },
+  {
+    target: tourTarget("playbook-params"),
+    title: "Parameters",
+    content: "Set any parameters the action needs here.",
+    placement: "right",
+    skipBeacon: true,
+    buttons: ["primary"],
+    targetWaitTimeout: 5000,
+    data: { onMissing: "skip" } as TourStepData
+  },
+  {
+    target: tourTarget("playbook-run-submit"),
+    title: "Execute",
+    content: "And this is how you execute it.",
+    placement: "top",
+    skipBeacon: true,
+    buttons: ["primary"],
+    data: { onMissing: "skip" } as TourStepData
+  },
+  {
+    target: tourTarget("dialog-button-close"),
+    title: "Past runs",
+    content: "Close this and let's look at previous runs.",
+    placement: "left",
+    skipBeacon: true,
+    buttons: [],
+    data: { advanceOnTargetClick: true, onMissing: "skip" } as TourStepData
+  },
+  {
+    target: tourTarget("tab-Runs"),
+    title: "Runs",
+    content: "Open the Runs tab to see past executions.",
+    placement: "bottom",
+    skipBeacon: true,
+    buttons: [],
+    data: { advanceOnNavigateTo: "/playbooks/runs" } as TourStepData
+  },
+  {
+    target: findPlaybookRunRowTarget,
+    title: "Inspect a run",
+    content: "Click any past run to inspect it.",
+    placement: "bottom",
+    skipBeacon: true,
+    buttons: [],
+    targetWaitTimeout: 5000,
+    data: {
+      advanceOnPathMatch: /^\/playbooks\/runs\/[0-9a-f]{8}-/i,
+      onMissing: "skip"
+    } as TourStepData
+  },
+  {
+    target: tourTarget("playbook-run-details"),
+    title: "Run details",
+    content:
+      "This is where all the run details live — its status, parameters, logs and the result of every action.",
+    placement: "center",
+    skipBeacon: true,
+    buttons: ["primary"],
+    targetWaitTimeout: 8000,
+    data: { onMissing: "skip" } as TourStepData
+  }
+];
+
+const viewSteps: Step[] = [
+  {
+    target: findViewTarget,
+    title: "Views",
+    content: "Open a view to see it.",
+    placement: "right",
+    skipBeacon: true,
+    buttons: [],
+    targetWaitTimeout: 5000,
+    data: {
+      advanceOnTargetClick: true,
+      sectionStart: true,
+      onMissing: "skipSection"
+    } as TourStepData
+  },
+  {
+    target: tourTarget("view-content"),
+    title: "Views",
+    content:
+      "Views are customizable dashboards — compose graphs, tables, charts and more to visualize exactly the data you care about.",
+    placement: "center",
+    skipBeacon: true,
+    buttons: ["primary"],
+    targetWaitTimeout: 8000,
+    data: {
+      docLink: "https://flanksource.com/docs/guide/views",
+      onMissing: "skip"
+    } as TourStepData
+  }
+];
+
+/**
+ * The sections a user can choose from the tour menu. "full" runs them all.
+ */
+export type TourSection = "full" | "health" | "catalog" | "playbooks" | "views";
+
+export type TourCapabilities = {
+  /** When false, the playbooks walkthrough is omitted entirely. */
+  canRunPlaybooks?: boolean;
+};
+
+/**
+ * Builds the step list for a chosen section, or the complete tour. The
+ * playbooks section is omitted unless the user can run playbooks.
+ */
+export function buildTourSteps(
+  section: TourSection,
+  { canRunPlaybooks = true }: TourCapabilities = {}
+): Step[] {
+  switch (section) {
+    case "health":
+      return healthSteps;
+    case "catalog":
+      return catalogSteps;
+    case "playbooks":
+      return canRunPlaybooks ? playbookSteps : [];
+    case "views":
+      return viewSteps;
+    case "full":
+    default:
+      return [
+        ...dashboardSteps,
+        ...healthSteps,
+        ...catalogSteps,
+        ...(canRunPlaybooks ? playbookSteps : []),
+        ...viewSteps
+      ];
+  }
+}
+
+/** The complete tour, used as the default and for menu option "full". */
+export const tourSteps: Step[] = buildTourSteps("full");
 
 /**
  * The state the tour observes to decide when a gated step should advance.
@@ -284,6 +540,15 @@ export function resolveTargetNotFound(
   const data = steps[stepIndex]?.data as TourStepData | undefined;
   if (data?.onMissing === "finish") {
     return { run: false, stepIndex: 0 };
+  }
+  if (data?.onMissing === "skipSection") {
+    const nextSection = steps.findIndex(
+      (step, index) =>
+        index > stepIndex && (step.data as TourStepData)?.sectionStart
+    );
+    return nextSection === -1
+      ? { run: false, stepIndex: 0 }
+      : { run: true, stepIndex: nextSection };
   }
   const next = advanceFrom(steps, stepIndex);
   return next === "finish"
