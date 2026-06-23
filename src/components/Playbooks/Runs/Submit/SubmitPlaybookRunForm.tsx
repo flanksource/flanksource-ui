@@ -136,15 +136,18 @@ export default function SubmitPlaybookRunForm({
                   <div className="mb-4 mt-2 border-b border-gray-200" />
                 )}
 
-                <PlaybookRunParams
-                  isResourceRequired={isResourceRequired}
-                  playbook={playbook}
-                  overrideParams={overrideParams}
-                />
+                <div data-tour="playbook-params">
+                  <PlaybookRunParams
+                    isResourceRequired={isResourceRequired}
+                    playbook={playbook}
+                    overrideParams={overrideParams}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end space-x-2 rounded-b bg-slate-50 p-4 ring-1 ring-black/5">
                 <Button
+                  data-tour="playbook-run-submit"
                   disabled={values.id === undefined || !isValid || isLoading}
                   role="button"
                   type="submit"

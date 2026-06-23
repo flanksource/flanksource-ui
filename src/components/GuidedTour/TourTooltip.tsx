@@ -3,6 +3,7 @@
 import { IoClose } from "react-icons/io5";
 import { type TooltipRenderProps } from "react-joyride";
 import { Button } from "../../ui/Buttons/Button";
+import { type TourStepData } from "./guidedTourSteps";
 
 export function TourTooltip({
   backProps,
@@ -17,6 +18,7 @@ export function TourTooltip({
   const buttons = step.buttons ?? [];
   const showBack = buttons.includes("back");
   const showPrimary = buttons.includes("primary");
+  const docLink = (step.data as TourStepData | undefined)?.docLink;
 
   return (
     <div
@@ -39,6 +41,17 @@ export function TourTooltip({
       <div className="text-sm leading-relaxed text-gray-600">
         {step.content}
       </div>
+
+      {docLink && (
+        <a
+          href={docLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+        >
+          Learn more →
+        </a>
+      )}
 
       <div className="flex items-center justify-between pt-1">
         <span className="text-xs text-gray-400">

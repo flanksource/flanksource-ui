@@ -2,6 +2,9 @@
 // ABOUTME: Covers navigation/param gating, target-not-found handling, and event reduction.
 import { ACTIONS, EVENTS, STATUS, type Step } from "react-joyride";
 import {
+  buildTourSteps,
+  findConfigClassTarget,
+  findPlaybookCardTarget,
   reduceTourEvent,
   resolveAutoAdvance,
   resolveTargetNotFound,
@@ -121,6 +124,29 @@ describe("resolveTargetNotFound", () => {
       stepIndex: 1
     });
   });
+
+  it("jumps to the next section when onMissing is skipSection", () => {
+    const sectioned: Step[] = [
+      { target: "a", content: "x", data: { onMissing: "skipSection" } },
+      { target: "b", content: "y" },
+      { target: "c", content: "z", data: { sectionStart: true } }
+    ];
+    expect(resolveTargetNotFound(sectioned, 0)).toEqual({
+      run: true,
+      stepIndex: 2
+    });
+  });
+
+  it("ends the tour when skipSection has no following section", () => {
+    const sectioned: Step[] = [
+      { target: "a", content: "x", data: { sectionStart: true } },
+      { target: "b", content: "y", data: { onMissing: "skipSection" } }
+    ];
+    expect(resolveTargetNotFound(sectioned, 1)).toEqual({
+      run: false,
+      stepIndex: 0
+    });
+  });
 });
 
 describe("reduceTourEvent", () => {
@@ -174,7 +200,7 @@ describe("tourSteps", () => {
 
     const checkRow = tourSteps.find((s) => typeof s.target === "function");
     expect((checkRow?.data as TourStepData).advanceOnParam).toBe("checkId");
-    expect((checkRow?.data as TourStepData).onMissing).toBe("finish");
+    expect((checkRow?.data as TourStepData).onMissing).toBe("skipSection");
   });
 
   it("gates the catalog nav step on navigation and the type step on the configType param", () => {
@@ -187,7 +213,22 @@ describe("tourSteps", () => {
       (s) => (s.data as TourStepData)?.advanceOnParam === "configType"
     );
     expect(typeStep).toBeDefined();
-    expect((typeStep?.data as TourStepData).onMissing).toBe("finish");
+    expect((typeStep?.data as TourStepData).onMissing).toBe("skipSection");
+  });
+
+  it("makes the user expand a config-class group before picking a type", () => {
+    const classStep = tourSteps.find((s) => s.target === findConfigClassTarget);
+    expect((classStep?.data as TourStepData).advanceOnTargetClick).toBe(true);
+    expect((classStep?.data as TourStepData).onMissing).toBe("skip");
+
+    const classIndex = tourSteps.findIndex(
+      (s) => s.target === findConfigClassTarget
+    );
+    const typeIndex = tourSteps.findIndex(
+      (s) => (s.data as TourStepData)?.advanceOnParam === "configType"
+    );
+    expect(classIndex).toBeGreaterThanOrEqual(0);
+    expect(classIndex).toBeLessThan(typeIndex);
   });
 
   it("gates the catalog item step on navigating to a resource detail path", () => {
@@ -200,6 +241,30 @@ describe("tourSteps", () => {
       true
     );
     expect(pattern.test("/catalog/changes")).toBe(false);
+  });
+
+  it("walks the playbooks section from the nav to a past run's details", () => {
+    const playbooks = buildTourSteps("playbooks");
+    expect((playbooks[0].data as TourStepData).advanceOnNavigateTo).toBe(
+      "/playbooks"
+    );
+
+    const card = playbooks.find((s) => s.target === findPlaybookCardTarget);
+    expect((card?.data as TourStepData).advanceOnTargetClick).toBe(true);
+    expect((card?.data as TourStepData).clickTarget).toBeInstanceOf(Function);
+
+    const runsTab = playbooks.find((s) => s.target === tourTarget("tab-Runs"));
+    expect((runsTab?.data as TourStepData).advanceOnNavigateTo).toBe(
+      "/playbooks/runs"
+    );
+  });
+
+  it("ends the views section with a documentation link", () => {
+    const views = buildTourSteps("views");
+    const explain = views.find((s) => (s.data as TourStepData)?.docLink);
+    expect((explain?.data as TourStepData).docLink).toContain(
+      "flanksource.com/docs/guide/views"
+    );
   });
 
   it("gates the relationships and playbooks tabs on clicking them and skips when absent", () => {
@@ -216,5 +281,39 @@ describe("tourSteps", () => {
     );
     expect((playbooks?.data as TourStepData).advanceOnTargetClick).toBe(true);
     expect((playbooks?.data as TourStepData).onMissing).toBe("skip");
+  });
+});
+
+describe("buildTourSteps", () => {
+  it("returns only the chosen section's steps", () => {
+    const health = buildTourSteps("health");
+    expect(health.length).toBeGreaterThan(0);
+    expect((health[0].data as TourStepData).advanceOnNavigateTo).toBe(
+      "/health"
+    );
+    expect(health.some((s) => s.target === tourTarget("catalog"))).toBe(false);
+  });
+
+  it("concatenates every section, in order, for the full tour", () => {
+    const full = buildTourSteps("full");
+    const sectioned =
+      buildTourSteps("health").length +
+      buildTourSteps("catalog").length +
+      buildTourSteps("playbooks").length +
+      buildTourSteps("views").length;
+    // The full tour additionally opens with the dashboard intro steps.
+    expect(full.length).toBeGreaterThan(sectioned);
+    expect(full[0].target).toBe(tourTarget("dashboard"));
+  });
+
+  it("omits the playbooks section when the user can't run playbooks", () => {
+    const withPlaybooks = buildTourSteps("full", { canRunPlaybooks: true });
+    const withoutPlaybooks = buildTourSteps("full", {
+      canRunPlaybooks: false
+    });
+    expect(withoutPlaybooks.length).toBe(
+      withPlaybooks.length - buildTourSteps("playbooks").length
+    );
+    expect(buildTourSteps("playbooks", { canRunPlaybooks: false })).toEqual([]);
   });
 });

@@ -70,7 +70,11 @@ export default function PlaybookSpecCard({
 
   return (
     <>
-      <Card className="relative flex h-full w-full flex-col">
+      <Card
+        data-tour="playbook-card"
+        data-tour-name={(playbook.title || playbook.name)?.toLowerCase()}
+        className="relative flex h-full w-full flex-col"
+      >
         <CardHeader className="flex flex-row items-center gap-2 px-3 py-2">
           <Icon name={playbook.icon} className="h-6 w-6" />
           <CardTitle className="flex-1 text-lg">
@@ -107,6 +111,7 @@ export default function PlaybookSpecCard({
             History
           </Button>
           <Button
+            data-tour="playbook-card-run"
             variant="default"
             size="sm"
             onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
