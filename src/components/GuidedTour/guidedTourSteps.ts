@@ -21,6 +21,12 @@ export type TourStepData = {
   /** Marks the first step of a section, so a section can be skipped to/over. */
   sectionStart?: boolean;
   /**
+   * Scroll the target into view when the step activates. Needed for targets in
+   * nested scroll containers that react-joyride doesn't scroll (e.g. a catalog
+   * type below the fold).
+   */
+  scrollIntoView?: boolean;
+  /**
    * What to do when the target can't be found:
    * - "skip" (default): move on to the next step.
    * - "skipSection": jump to the next section (or end if this is the last).
@@ -280,7 +286,8 @@ const catalogSteps: Step[] = [
     targetWaitTimeout: 5000,
     data: {
       advanceOnParam: "configType",
-      onMissing: "skipSection"
+      onMissing: "skipSection",
+      scrollIntoView: true
     } as TourStepData
   },
   {
