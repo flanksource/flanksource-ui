@@ -18,6 +18,7 @@ import {
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -116,6 +117,14 @@ function PluginsList({
       {
         header: "Version",
         accessorKey: "version",
+        maxSize: 100,
+        enableResizing: true
+      },
+      {
+        header: "Created",
+        accessorKey: "created_at",
+        Cell: MRTDateCell,
+        sortingFn: "datetime",
         maxSize: 100,
         enableResizing: true
       },
