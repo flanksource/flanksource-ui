@@ -10,6 +10,8 @@ export type ConfigIconProps = {
   showSecondaryIcon?: boolean;
   showLabel?: boolean;
   children?: React.ReactNode;
+  /** Optional replacement content for the existing config type tooltip. */
+  tooltipContent?: React.ReactNode;
 };
 
 export default function ConfigsTypeIcon({
@@ -18,7 +20,8 @@ export default function ConfigsTypeIcon({
   showPrimaryIcon = true,
   showSecondaryIcon = true,
   showLabel = false,
-  children
+  children,
+  tooltipContent
 }: ConfigIconProps) {
   const { type: configType } = config ? config : { type: null };
   const tooltipId = useId();
@@ -85,12 +88,13 @@ export default function ConfigsTypeIcon({
 
       <Tooltip
         id={tooltipId}
-        content={configType}
         place="top-start"
         style={{ zIndex: 9999 }}
         offset={8}
         noArrow={false}
-      />
+      >
+        {tooltipContent ?? configType}
+      </Tooltip>
     </>
   );
 }
