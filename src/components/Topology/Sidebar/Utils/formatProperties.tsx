@@ -28,7 +28,11 @@ type SingleProperty = {
 
 export type PropertyItem = GroupedProperties | SingleProperty;
 
-export function formatProperties(topology?: Pick<Topology, "properties">) {
+export function formatProperties(
+  topology?:
+    | Pick<Topology, "properties">
+    | { properties?: Topology["properties"] | null }
+) {
   if (topology == null) {
     return [];
   }
