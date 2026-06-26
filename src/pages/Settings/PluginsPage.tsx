@@ -18,6 +18,7 @@ import {
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -54,7 +55,7 @@ function PluginUpgradeButton({
   isUpgrading?: boolean;
   onUpgrade: (plugin: PluginListing) => void;
 }) {
-  const isRemotePlugin = Boolean(plugin.agent);
+  const isRemotePlugin = Boolean(plugin.spec?.address);
 
   return (
     <AuthorizationAccessCheck resource={tables.rbac} action="write">
@@ -64,7 +65,7 @@ function PluginUpgradeButton({
         disabled={isRemotePlugin || isUpgrading}
         disabledTooltip={
           isRemotePlugin
-            ? "Remote plugins must be upgraded on their owning agent"
+            ? "Remote plugins must be upgraded outside Mission Control"
             : undefined
         }
         onClick={(event) => {
@@ -102,8 +103,15 @@ function PluginsList({
         enableResizing: true
       },
       {
-        header: "Description",
-        accessorKey: "description",
+        header: "Namespace",
+        accessorKey: "namespace",
+        maxSize: 100,
+        enableResizing: true
+      },
+      {
+        header: "Source",
+        id: "source",
+        accessorFn: (row) => row.spec?.source ?? row.spec?.address ?? "",
         enableResizing: true
       },
       {
@@ -113,9 +121,10 @@ function PluginsList({
         enableResizing: true
       },
       {
-        header: "Agent",
-        id: "agent",
-        accessorFn: (row) => row.agent?.name ?? "Local",
+        header: "Created",
+        accessorKey: "created_at",
+        Cell: MRTDateCell,
+        sortingFn: "datetime",
         maxSize: 100,
         enableResizing: true
       },
@@ -157,11 +166,8 @@ export function PluginsPage() {
     data: plugins,
     refetch
   } = useQuery({
-    queryKey: ["plugins", "all"],
-    queryFn: async () => {
-      const response = await getPlugins();
-      return response.data ?? [];
-    }
+    queryKey: ["plugins", "database"],
+    queryFn: getPlugins
   });
 
   const {
