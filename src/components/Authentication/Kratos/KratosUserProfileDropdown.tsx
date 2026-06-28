@@ -23,7 +23,7 @@ type UserProfileDropdownProps = {
   openCliSetupModal: () => void;
   openResourceSelectorSearchModal: () => void;
   openScopeImpersonationModal: () => void;
-  startTour: () => void;
+  openGettingStarted: () => void;
   showScopeImpersonation?: boolean;
 };
 
@@ -33,7 +33,7 @@ export function KratosUserProfileDropdown({
   openCliSetupModal,
   openResourceSelectorSearchModal,
   openScopeImpersonationModal,
-  startTour,
+  openGettingStarted,
   showScopeImpersonation = false
 }: UserProfileDropdownProps) {
   const { user } = useUser();
@@ -97,10 +97,10 @@ export function KratosUserProfileDropdown({
           ))}
           <MenuItem>
             <button
-              onClick={startTour}
+              onClick={openGettingStarted}
               className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
             >
-              Start interactive tour
+              Getting started
             </button>
           </MenuItem>
           <MenuItem>

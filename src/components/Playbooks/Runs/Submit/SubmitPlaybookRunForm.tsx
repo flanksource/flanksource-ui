@@ -1,4 +1,5 @@
 import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
+import { useRecordTouchpoint } from "@flanksource-ui/components/GuidedTour/useTouchpoints";
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal, ModalSize } from "@flanksource-ui/ui/Modal";
@@ -57,6 +58,7 @@ export default function SubmitPlaybookRunForm({
   );
 
   const navigate = useNavigate();
+  const recordTouchpoint = useRecordTouchpoint();
 
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
     return {
@@ -109,6 +111,7 @@ export default function SubmitPlaybookRunForm({
         initialValues={initialValues}
         validateOnMount
         onSubmit={(values) => {
+          recordTouchpoint("playbooks.run");
           submitPlaybookRun(values as SubmitPlaybookRunFormValues);
         }}
       >

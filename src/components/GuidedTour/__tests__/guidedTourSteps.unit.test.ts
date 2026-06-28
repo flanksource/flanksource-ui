@@ -3,6 +3,7 @@
 import { ACTIONS, EVENTS, STATUS, type Step } from "react-joyride";
 import {
   buildTourSteps,
+  buildTouchpointSteps,
   findConfigClassTarget,
   findPlaybookCardTarget,
   reduceTourEvent,
@@ -12,6 +13,10 @@ import {
   tourTarget,
   type TourStepData
 } from "../guidedTourSteps";
+import { allTouchpointIds } from "../touchpoints";
+
+const stepKeys = (steps: Step[]) =>
+  steps.map((s) => (s.data as TourStepData).key);
 
 const ctx = (pathname: string, search = "") => ({
   pathname,
@@ -259,6 +264,13 @@ describe("tourSteps", () => {
     );
   });
 
+  it("centers the catalog spec tooltip so it stays on-screen", () => {
+    const spec = tourSteps.find(
+      (s) => (s.data as TourStepData)?.touchpoint === "catalog.view-spec"
+    );
+    expect(spec?.placement).toBe("center");
+  });
+
   it("ends the views section with a documentation link", () => {
     const views = buildTourSteps("views");
     const explain = views.find((s) => (s.data as TourStepData)?.docLink);
@@ -281,6 +293,63 @@ describe("tourSteps", () => {
     );
     expect((playbooks?.data as TourStepData).advanceOnTargetClick).toBe(true);
     expect((playbooks?.data as TourStepData).onMissing).toBe("skip");
+  });
+});
+
+describe("buildTouchpointSteps", () => {
+  it("takes the minimum catalog path, skipping spec and relationships", () => {
+    expect(stepKeys(buildTouchpointSteps("catalog.view-playbooks"))).toEqual([
+      "catalog.view",
+      "catalog.expand",
+      "catalog.open-type",
+      "catalog.view-item",
+      "catalog.view-playbooks"
+    ]);
+  });
+
+  it("reaches a past run without opening the run modal", () => {
+    expect(stepKeys(buildTouchpointSteps("playbooks.view-run"))).toEqual([
+      "playbooks.view",
+      "playbooks.runs-tab",
+      "playbooks.open-run",
+      "playbooks.view-run"
+    ]);
+  });
+
+  it("reaches the run button via the card, skipping the params step", () => {
+    expect(stepKeys(buildTouchpointSteps("playbooks.run"))).toEqual([
+      "playbooks.view",
+      "playbooks.open-card",
+      "playbooks.run"
+    ]);
+  });
+
+  it("reaches a check's graph through opening the check", () => {
+    expect(stepKeys(buildTouchpointSteps("health.view-graph"))).toEqual([
+      "health.view",
+      "health.open-check",
+      "health.view-graph"
+    ]);
+  });
+
+  it("returns the single step when a touchpoint has no prerequisites", () => {
+    expect(stepKeys(buildTouchpointSteps("views.open"))).toEqual([
+      "views.open"
+    ]);
+  });
+
+  it("returns an empty walk for an unknown touchpoint", () => {
+    expect(buildTouchpointSteps("nope.nope")).toEqual([]);
+  });
+
+  it("resolves every checklist touchpoint to a walk ending at that touchpoint", () => {
+    for (const id of allTouchpointIds) {
+      const steps = buildTouchpointSteps(id);
+      expect(steps.length).toBeGreaterThan(0);
+      expect((steps[steps.length - 1].data as TourStepData).touchpoint).toBe(
+        id
+      );
+    }
   });
 });
 

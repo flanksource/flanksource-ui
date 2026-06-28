@@ -4,7 +4,11 @@ import { useUser } from "@flanksource-ui/context";
 import { hasPlaybookRunPermission } from "@flanksource-ui/utils/playbookPermissions";
 import { atom, useSetAtom } from "jotai";
 import { type Step } from "react-joyride";
-import { buildTourSteps, type TourSection } from "./guidedTourSteps";
+import {
+  buildTourSteps,
+  buildTouchpointSteps,
+  type TourSection
+} from "./guidedTourSteps";
 
 export const tourRunAtom = atom(false);
 export const tourStepIndexAtom = atom(0);
@@ -45,6 +49,28 @@ export function useStartTourSection() {
 
   return (section: TourSection) => {
     setSteps(buildTourSteps(section, { canRunPlaybooks }));
+    setStepIndex(0);
+    setMenuOpen(false);
+    setRun(true);
+  };
+}
+
+/**
+ * Returns a callback that starts the minimal guided walk reaching a single
+ * checklist touchpoint.
+ */
+export function useStartTouchpoint() {
+  const setMenuOpen = useSetAtom(tourMenuOpenAtom);
+  const setSteps = useSetAtom(tourStepsAtom);
+  const setStepIndex = useSetAtom(tourStepIndexAtom);
+  const setRun = useSetAtom(tourRunAtom);
+
+  return (touchpoint: string) => {
+    const steps = buildTouchpointSteps(touchpoint);
+    if (steps.length === 0) {
+      return;
+    }
+    setSteps(steps);
     setStepIndex(0);
     setMenuOpen(false);
     setRun(true);
