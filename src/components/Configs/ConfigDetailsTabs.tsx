@@ -1,4 +1,5 @@
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
+import { useRecordTouchpointOnMount } from "@flanksource-ui/components/GuidedTour/useTouchpoints";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { ReactNode } from "react";
@@ -42,6 +43,16 @@ export function ConfigDetailsTabs({
   extra
 }: ConfigDetailsTabsProps) {
   const { id } = useParams();
+
+  const tabTouchpoint =
+    activeTabName === "Spec"
+      ? "catalog.view-spec"
+      : activeTabName === "Relationships"
+        ? "catalog.view-relationships"
+        : activeTabName === "Playbooks"
+          ? "catalog.view-playbooks"
+          : undefined;
+  useRecordTouchpointOnMount(tabTouchpoint ?? "", !!tabTouchpoint);
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger

@@ -18,6 +18,7 @@ import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { refreshCheckModalAtomTrigger } from "../ChecksListing";
 import { Duration } from "../renderers";
+import { RecordTouchpointOnMount } from "@flanksource-ui/components/GuidedTour/TouchpointObserver";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import { CheckDetailsTabs } from "./CheckDetailsTabs";
 import CheckLabels from "./CheckLabels";
@@ -254,16 +255,19 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               hidden: !isShort,
               content: (
                 <Short>
-                  <div
-                    data-tour="check-graph"
-                    className="flex h-full w-full flex-col"
-                  >
-                    <CanaryChart
-                      check={check}
-                      timeRange={timeRange}
-                      height="h-full"
-                    />
-                  </div>
+                  <>
+                    <RecordTouchpointOnMount id="health.view-graph" />
+                    <div
+                      data-tour="check-graph"
+                      className="flex h-full w-full flex-col"
+                    >
+                      <CanaryChart
+                        check={check}
+                        timeRange={timeRange}
+                        height="h-full"
+                      />
+                    </div>
+                  </>
                 </Short>
               ),
               class: `flex-1 flex flex-col overflow-y-auto   ${mixins.appleScrollbar}`

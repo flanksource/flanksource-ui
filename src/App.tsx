@@ -56,6 +56,7 @@ import {
 } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
 
+import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
 import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { PermissionsSubjectsPage } from "./pages/Settings/PermissionsSubjectsPage";
@@ -736,6 +737,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
+      </Route>
+
+      <Route path="getting-started" element={sidebar}>
+        <Route index element={<GettingStartedPage />} />
       </Route>
 
       <Route path="views" element={sidebar}>

@@ -19,27 +19,27 @@ const iconClass = "h-5 w-5 shrink-0 text-gray-600";
 // Mission Control logo.
 const options: { label: string; section: TourSection; icon: ReactNode }[] = [
   {
-    label: "Take a complete tour",
+    label: "Take the full tour",
     section: "full",
     icon: <Icon name="mission-control" className={iconClass} />
   },
   {
-    label: "Tell me about health checks",
+    label: "Learn how to monitor resources",
     section: "health",
     icon: <AiFillHeart className={iconClass} />
   },
   {
-    label: "Tell me about the catalog",
+    label: "See all resources that are tracked",
     section: "catalog",
     icon: <VscJson className={iconClass} />
   },
   {
-    label: "Tell me about playbooks",
+    label: "Run actions on your infrastructure",
     section: "playbooks",
     icon: <Icon name="playbook" className={iconClass} />
   },
   {
-    label: "Tell me about views",
+    label: "Build custom dashboards & views",
     section: "views",
     icon: <Icon name="workflow" className={iconClass} />
   }
