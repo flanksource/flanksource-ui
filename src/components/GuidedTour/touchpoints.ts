@@ -22,40 +22,46 @@ export const touchpointCategories: TouchpointCategory[] = [
     id: "health",
     title: "Monitor resources",
     items: [
-      { id: "health.view", label: "Open the health dashboard" },
-      { id: "health.open-check", label: "Open a check's details" },
-      { id: "health.view-graph", label: "View a check's history graph" },
-      { id: "health.run-now", label: "Run a check on demand" }
+      { id: "health.view", label: "See what's healthy and what's broken" },
+      { id: "health.open-check", label: "Investigate a failing check" },
+      { id: "health.view-graph", label: "Spot when a check started failing" },
+      { id: "health.run-now", label: "Re-run a check to confirm a fix" }
     ]
   },
   {
     id: "catalog",
     title: "Explore the catalog",
     items: [
-      { id: "catalog.view", label: "Browse the resource catalog" },
-      { id: "catalog.open-type", label: "Open a resource type" },
-      { id: "catalog.view-item", label: "Open a resource" },
-      { id: "catalog.view-spec", label: "View a resource's spec" },
+      {
+        id: "catalog.view",
+        label: "Find a resource across your infrastructure"
+      },
+      { id: "catalog.open-type", label: "Browse all resources of one kind" },
+      { id: "catalog.view-item", label: "Inspect a single resource" },
+      { id: "catalog.view-spec", label: "Review a resource's configuration" },
       {
         id: "catalog.view-relationships",
-        label: "See how resources are linked"
+        label: "Trace a resource's dependencies"
       },
-      { id: "catalog.view-playbooks", label: "See a resource's playbooks" }
+      {
+        id: "catalog.view-playbooks",
+        label: "Find actions you can run on a resource"
+      }
     ]
   },
   {
     id: "playbooks",
     title: "Run playbooks",
     items: [
-      { id: "playbooks.view", label: "Browse playbooks" },
-      { id: "playbooks.run", label: "Run a playbook" },
-      { id: "playbooks.view-run", label: "Inspect a past run" }
+      { id: "playbooks.view", label: "Discover ready-made automations" },
+      { id: "playbooks.run", label: "Fix an issue with a playbook" },
+      { id: "playbooks.view-run", label: "Review what a past run changed" }
     ]
   },
   {
     id: "views",
     title: "Build custom views",
-    items: [{ id: "views.open", label: "Open a custom view" }]
+    items: [{ id: "views.open", label: "See your data in a custom dashboard" }]
   }
 ];
 
