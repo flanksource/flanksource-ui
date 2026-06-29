@@ -55,7 +55,7 @@ export const touchpointCategories: TouchpointCategory[] = [
     items: [
       { id: "playbooks.view", label: "Discover ready-made automations" },
       { id: "playbooks.run", label: "Fix an issue with a playbook" },
-      { id: "playbooks.view-run", label: "Review what a past run changed" }
+      { id: "playbooks.view-run", label: "Review what a past playbook run did" }
     ]
   },
   {
