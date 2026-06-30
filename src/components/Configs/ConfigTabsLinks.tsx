@@ -2,11 +2,17 @@ import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { useParams } from "react-router-dom";
 import { ConfigItem } from "../../api/types/configs";
 import { getViewsByConfigId } from "../../api/services/views";
+import {
+  getPluginsForConfig,
+  pluginTabKey,
+  pluginTabPath
+} from "../../api/services/configPlugins";
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { ReactNode } from "react";
 import useConfigAccessSummaryQuery from "@flanksource-ui/api/query-hooks/useConfigAccessSummaryQuery";
 import useConfigAccessLogsQuery from "@flanksource-ui/api/query-hooks/useConfigAccessLogsQuery";
+import { PluginIcon } from "./PluginIcon";
 
 type ConfigDetailsTab = {
   label: ReactNode;
@@ -30,6 +36,12 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   } = useQuery({
     queryKey: ["views", id],
     queryFn: () => getViewsByConfigId(id!),
+    enabled: !!id
+  });
+
+  const { data: plugins = [] } = useQuery({
+    queryKey: ["config", "plugins", id],
+    queryFn: () => getPluginsForConfig(id!),
     enabled: !!id
   });
 
@@ -167,10 +179,19 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
     icon: <Icon name={view.icon || "workflow"} />
   }));
 
-  if (viewTabs.length === 0) {
-    return { isLoading, isError, tabs: staticTabs };
-  }
+  const pluginTabs: ConfigDetailsTab[] = plugins.flatMap((plugin) =>
+    (plugin.tabs ?? []).map((tab) => ({
+      label: tab.name,
+      key: pluginTabKey(plugin.name, tab.name),
+      path: pluginTabPath(id!, plugin.name, tab.name),
+      icon: <PluginIcon name={tab.icon} />
+    }))
+  );
 
-  // Views configured for a config should appear ahead of the built-in tabs.
-  return { isLoading, isError, tabs: [...viewTabs, ...staticTabs] };
+  // Views lead the built-in tabs; plugin-contributed tabs trail them.
+  return {
+    isLoading,
+    isError,
+    tabs: [...viewTabs, ...staticTabs, ...pluginTabs]
+  };
 }
