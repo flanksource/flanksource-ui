@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger
 } from "@flanksource-ui/components/ui/dropdown-menu";
 import clsx from "clsx";
-import { MoreHorizontal } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import React, {
   useCallback,
   useLayoutEffect,
@@ -38,7 +38,7 @@ type RoutedTabsLinksProps = React.HTMLProps<HTMLDivElement> & {
 
 // Space to reserve for the overflow dropdown trigger before it has been
 // measured, so the first layout pass leaves room for it.
-const OVERFLOW_TRIGGER_WIDTH = 52;
+const OVERFLOW_TRIGGER_WIDTH = 80;
 
 const tabClassName = (isActive: boolean, overflowMenu: boolean) =>
   clsx(
@@ -195,10 +195,11 @@ export default function TabbedLinks({
               aria-label="More tabs"
               className={clsx(
                 tabClassName(isOverflowActive, overflowMenu),
-                "flex items-center focus:outline-none"
+                "flex items-center space-x-1 focus:outline-none"
               )}
             >
-              <MoreHorizontal className="h-4 w-4" />
+              <span>More</span>
+              <ChevronDown className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {overflowTabs.map(({ label, path, key, search, icon }) => (
