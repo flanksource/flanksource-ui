@@ -93,7 +93,7 @@ export function ConfigDetailsTabs({
             <TabbedLinks
               activeTabName={activeTabName}
               tabLinks={configTabList}
-              scrollable
+              overflowMenu
               contentClassName={clsx(
                 "bg-white border border-t-0 border-gray-300 flex-1 min-h-0 overflow-auto",
                 className
