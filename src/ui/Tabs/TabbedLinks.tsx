@@ -133,7 +133,10 @@ export default function TabbedLinks({
     const trigger =
       container.querySelector<HTMLElement>("[data-tab-overflow]");
     if (trigger) {
-      triggerWidthRef.current = trigger.getBoundingClientRect().width;
+      // Round up and pad so the row always reserves enough room to show the
+      // full "More ▾" trigger without the chevron being clipped.
+      triggerWidthRef.current =
+        Math.ceil(trigger.getBoundingClientRect().width) + 4;
     }
     fitTabs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -199,7 +202,7 @@ export default function TabbedLinks({
               )}
             >
               <span>More</span>
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-4 w-4 shrink-0" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {overflowTabs.map(({ label, path, key, search, icon }) => (
