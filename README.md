@@ -1,5 +1,7 @@
 # Mission Control Frontend
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/flanksource/flanksource-ui/badge)](https://securityscorecards.dev/viewer/?uri=github.com/flanksource/flanksource-ui)
+
 ## Contributing
 
 See [javascript style guide](https://github.com/flanksource/style-guide/blob/master/docs/front-end.md)
