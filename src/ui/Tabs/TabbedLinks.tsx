@@ -68,6 +68,11 @@ export default function TabbedLinks({
   const [visibleCount, setVisibleCount] = useState(tabLinks.length);
   const tabKeys = tabLinks.map(({ key, path }) => key ?? path).join(",");
 
+  // Only treat a tab as active by key when both sides are present, so keyless
+  // tabs don't match a missing activeTabName (undefined === undefined).
+  const keyMatches = (key?: string) =>
+    activeTabName != null && key != null && activeTabName === key;
+
   // Fit as many leading tabs as the row can show, reserving room for the
   // overflow trigger when some tabs must be collapsed. Uses widths captured
   // during the full-render measure pass, so it can run on every resize without
@@ -93,7 +98,9 @@ export default function TabbedLinks({
       used += width;
       count += 1;
     }
-    setVisibleCount(Math.max(count, 1));
+    // Allow zero visible tabs: when even the first tab plus the trigger can't
+    // fit, everything collapses so the "More" trigger stays reachable.
+    setVisibleCount(count);
   }, []);
 
   // Re-measure whenever the tab set changes: show every tab, capture their
@@ -158,7 +165,7 @@ export default function TabbedLinks({
   const visibleTabs = overflowMenu ? tabLinks.slice(0, visibleCount) : tabLinks;
   const overflowTabs = overflowMenu ? tabLinks.slice(visibleCount) : [];
   const isOverflowActive = overflowTabs.some(
-    ({ key, path }) => activeTabName === key || pathname === path
+    ({ key, path }) => keyMatches(key) || pathname === path
   );
 
   return (
@@ -177,7 +184,7 @@ export default function TabbedLinks({
           <NavLink
             data-tab-link
             className={({ isActive }) =>
-              tabClassName(isActive || activeTabName === key, overflowMenu)
+              tabClassName(isActive || keyMatches(key), overflowMenu)
             }
             key={path}
             to={{
@@ -198,7 +205,7 @@ export default function TabbedLinks({
               aria-label="More tabs"
               className={clsx(
                 tabClassName(isOverflowActive, overflowMenu),
-                "flex items-center space-x-1 focus:outline-none"
+                "flex items-center space-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               )}
             >
               <span>More</span>
@@ -211,7 +218,7 @@ export default function TabbedLinks({
                   onClick={() => navigate({ pathname: path, search })}
                   className={clsx(
                     "flex flex-row items-center space-x-2",
-                    (activeTabName === key || pathname === path) &&
+                    (keyMatches(key) || pathname === path) &&
                       "font-medium text-gray-900"
                   )}
                 >
