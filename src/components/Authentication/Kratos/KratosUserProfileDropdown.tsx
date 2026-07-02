@@ -53,7 +53,10 @@ export function KratosUserProfileDropdown({
   return (
     <Menu as="div" className="relative flex-shrink-0">
       <div>
-        <MenuButton className="flex items-center rounded-full text-sm">
+        <MenuButton
+          data-tour="user-menu"
+          className="flex items-center rounded-full text-sm"
+        >
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

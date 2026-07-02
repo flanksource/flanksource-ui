@@ -3,6 +3,8 @@
 import { type ReactNode } from "react";
 import { useAtom } from "jotai";
 import { AiFillHeart } from "react-icons/ai";
+import { IoMdAirplane } from "react-icons/io";
+import { MdTerminal } from "react-icons/md";
 import { VscJson } from "react-icons/vsc";
 import { Modal } from "../../ui/Modal";
 import { Icon } from "../../ui/Icons/Icon";
@@ -42,6 +44,16 @@ const options: { label: string; section: TourSection; icon: ReactNode }[] = [
     label: "Build custom dashboards & views",
     section: "views",
     icon: <Icon name="workflow" className={iconClass} />
+  },
+  {
+    label: "Connect your AI tools",
+    section: "ai",
+    icon: <IoMdAirplane className={iconClass} />
+  },
+  {
+    label: "Use the command line (faro)",
+    section: "faro",
+    icon: <MdTerminal className={iconClass} />
   }
 ];
 

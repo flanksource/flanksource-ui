@@ -55,7 +55,7 @@ export function UserProfileDropdown() {
   return (
     <>
       {authSystem === "clerk" ? (
-        <div className="flex flex-row gap-2 pr-2">
+        <div data-tour="user-menu" className="flex flex-row gap-2 pr-2">
           <OrganizationSwitcher
             hidePersonal
             createOrganizationMode="modal"

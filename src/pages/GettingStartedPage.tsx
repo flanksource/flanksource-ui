@@ -4,6 +4,8 @@ import { type ReactNode } from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { FaRegCircle } from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
+import { IoMdAirplane } from "react-icons/io";
+import { MdTerminal } from "react-icons/md";
 import { VscJson } from "react-icons/vsc";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import {
@@ -30,7 +32,9 @@ const categoryIcons: Record<TouchpointCategory["id"], ReactNode> = {
   health: <AiFillHeart className={iconClass} />,
   catalog: <VscJson className={iconClass} />,
   playbooks: <Icon name="playbook" className={iconClass} />,
-  views: <Icon name="workflow" className={iconClass} />
+  views: <Icon name="workflow" className={iconClass} />,
+  ai: <IoMdAirplane className={iconClass} />,
+  faro: <MdTerminal className={iconClass} />
 };
 
 function CategoryCard({
@@ -93,7 +97,7 @@ function CategoryCard({
               </span>
               <button
                 type="button"
-                onClick={() => onStartItem(item.id)}
+                onClick={() => onStartItem(item.guideVia ?? item.id)}
                 className="ml-auto rounded-md border border-gray-200 px-3 py-1 text-xs font-medium text-blue-600 hover:border-blue-400 hover:bg-blue-50"
               >
                 {isDone ? "Replay" : "Show me"}
@@ -146,9 +150,9 @@ export function GettingStartedPage() {
               </h1>
               <p className="text-sm text-gray-500">
                 Work through this checklist to learn how to monitor resources,
-                explore the catalog, run playbooks and build custom views. Each
-                item ticks off as you try it — click “Show me” for a guided walk
-                through.
+                explore the catalog, run playbooks, build custom views, connect
+                your AI tools and use the CLI. Each item ticks off as you try it
+                — click “Show me” for a guided walk through.
               </p>
             </div>
             {categories.map((category) => (

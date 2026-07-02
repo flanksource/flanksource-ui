@@ -8,7 +8,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 
-const touchpointsKey = (personId?: string) => ["person_touchpoints", personId];
+const touchpointsKey = (personId?: string) => ["person_analytics", personId];
 
 /** Guards against concurrent duplicate writes of the same key across components. */
 const inFlight = new Set<string>();
