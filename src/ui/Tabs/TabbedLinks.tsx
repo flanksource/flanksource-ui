@@ -47,6 +47,7 @@ export default function TabbedLinks({
               )
             }
             key={path}
+            data-tour={key ? `tab-${key}` : undefined}
             to={{
               pathname: path,
               search

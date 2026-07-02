@@ -230,7 +230,10 @@ export function Canary({
         setIsMenuItemOpen={setIsMenuItemOpen}
       />
 
-      <div className="flex h-full flex-1 flex-col overflow-y-auto p-6">
+      <div
+        data-tour="checks-section"
+        className="flex h-full flex-1 flex-col overflow-y-auto p-6"
+      >
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <div
             role="button"

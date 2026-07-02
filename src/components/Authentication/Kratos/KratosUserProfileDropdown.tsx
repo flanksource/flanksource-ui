@@ -23,6 +23,7 @@ type UserProfileDropdownProps = {
   openCliSetupModal: () => void;
   openResourceSelectorSearchModal: () => void;
   openScopeImpersonationModal: () => void;
+  openGettingStarted: () => void;
   showScopeImpersonation?: boolean;
 };
 
@@ -32,6 +33,7 @@ export function KratosUserProfileDropdown({
   openCliSetupModal,
   openResourceSelectorSearchModal,
   openScopeImpersonationModal,
+  openGettingStarted,
   showScopeImpersonation = false
 }: UserProfileDropdownProps) {
   const { user } = useUser();
@@ -51,7 +53,10 @@ export function KratosUserProfileDropdown({
   return (
     <Menu as="div" className="relative flex-shrink-0">
       <div>
-        <MenuButton className="flex items-center rounded-full text-sm">
+        <MenuButton
+          data-tour="user-menu"
+          className="flex items-center rounded-full text-sm"
+        >
           {user?.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -93,6 +98,14 @@ export function KratosUserProfileDropdown({
               </a>
             </MenuItem>
           ))}
+          <MenuItem>
+            <button
+              onClick={openGettingStarted}
+              className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Getting started
+            </button>
+          </MenuItem>
           <MenuItem>
             <button
               onClick={openKubeConfigModal}

@@ -4,6 +4,7 @@ import {
 } from "@flanksource-ui/api/services/topology";
 import { HealthCheck } from "@flanksource-ui/api/types/health";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { useRecordTouchpoint } from "@flanksource-ui/components/GuidedTour/useTouchpoints";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMutation } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
@@ -22,6 +23,7 @@ export default function CheckRunNow({
   onSuccessfulRun = () => {}
 }: Props) {
   const { roles } = useUserAccessStateContext();
+  const recordTouchpoint = useRecordTouchpoint();
 
   const { isLoading, mutate: runNow } = useMutation({
     mutationFn: runHealthCheckNow,
@@ -37,7 +39,10 @@ export default function CheckRunNow({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div
+      data-tour="check-run-now"
+      className="flex flex-col items-center justify-center"
+    >
       <Button
         className="btn-white"
         text="Run Now"
@@ -49,6 +54,7 @@ export default function CheckRunNow({
           )
         }
         onClick={() => {
+          recordTouchpoint("health.run-now");
           runNow(check.id);
         }}
       />

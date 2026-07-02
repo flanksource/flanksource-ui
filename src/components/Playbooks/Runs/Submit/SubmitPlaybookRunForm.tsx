@@ -1,4 +1,5 @@
 import { useSubmitPlaybookRunMutation } from "@flanksource-ui/api/query-hooks/playbooks";
+import { useRecordTouchpoint } from "@flanksource-ui/components/GuidedTour/useTouchpoints";
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal, ModalSize } from "@flanksource-ui/ui/Modal";
@@ -57,6 +58,7 @@ export default function SubmitPlaybookRunForm({
   );
 
   const navigate = useNavigate();
+  const recordTouchpoint = useRecordTouchpoint();
 
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
     return {
@@ -109,6 +111,7 @@ export default function SubmitPlaybookRunForm({
         initialValues={initialValues}
         validateOnMount
         onSubmit={(values) => {
+          recordTouchpoint("playbooks.run");
           submitPlaybookRun(values as SubmitPlaybookRunFormValues);
         }}
       >
@@ -136,15 +139,18 @@ export default function SubmitPlaybookRunForm({
                   <div className="mb-4 mt-2 border-b border-gray-200" />
                 )}
 
-                <PlaybookRunParams
-                  isResourceRequired={isResourceRequired}
-                  playbook={playbook}
-                  overrideParams={overrideParams}
-                />
+                <div data-tour="playbook-params">
+                  <PlaybookRunParams
+                    isResourceRequired={isResourceRequired}
+                    playbook={playbook}
+                    overrideParams={overrideParams}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end space-x-2 rounded-b bg-slate-50 p-4 ring-1 ring-black/5">
                 <Button
+                  data-tour="playbook-run-submit"
                   disabled={values.id === undefined || !isValid || isLoading}
                   role="button"
                   type="submit"

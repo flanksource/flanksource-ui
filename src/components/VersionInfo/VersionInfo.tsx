@@ -1,25 +1,31 @@
+import { forwardRef } from "react";
 import packageJson from "../../../package.json";
 import { useVersionInfo } from "../../api/query-hooks";
 
 // This is static version from package.json and doesn't change after build
 export const frontendVersion = packageJson.version;
 
-export function VersionInfo() {
-  const { data, isLoading, isRefetching } = useVersionInfo();
-  const versionInfo = data?.data as any;
+export const VersionInfo = forwardRef<HTMLDivElement>(
+  function VersionInfo(_props, ref) {
+    const { data, isLoading, isRefetching } = useVersionInfo();
+    const versionInfo = data?.data as any;
 
-  if (isLoading || isRefetching) {
-    return null;
+    if (isLoading || isRefetching) {
+      return null;
+    }
+
+    return (
+      <div
+        ref={ref}
+        className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+      >
+        <div>
+          Frontend: <b className="text-xs">{frontendVersion}</b>
+        </div>
+        <div>
+          Backend: <b className="text-xs">{versionInfo?.backend || "NA"}</b>
+        </div>
+      </div>
+    );
   }
-
-  return (
-    <div className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-      <div>
-        Frontend: <b className="text-xs">{frontendVersion}</b>
-      </div>
-      <div>
-        Backend: <b className="text-xs">{versionInfo?.backend || "NA"}</b>
-      </div>
-    </div>
-  );
-}
+);

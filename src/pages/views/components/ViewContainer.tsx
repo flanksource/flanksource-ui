@@ -118,7 +118,10 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ id }) => {
           )
         }
       >
-        <div className="relative flex h-full w-full flex-1 flex-col overflow-hidden">
+        <div
+          data-tour="view-content"
+          className="relative flex h-full w-full flex-1 flex-col overflow-hidden"
+        >
           <ViewContent
             className="flex h-full w-full flex-1 flex-col overflow-y-auto px-6"
             viewResult={viewResult}

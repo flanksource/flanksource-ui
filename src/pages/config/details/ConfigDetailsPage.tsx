@@ -120,7 +120,10 @@ export function ConfigDetailsPage() {
     >
       <div className="relative flex min-h-0 flex-1 flex-col">
         {!isLoading ? (
-          <div className="relative flex min-h-0 w-full flex-1 flex-col border-gray-300 bg-white">
+          <div
+            data-tour="config-spec"
+            className="relative flex min-h-0 w-full flex-1 flex-col border-gray-300 bg-white"
+          >
             <JSONViewer
               code={code}
               format={format}

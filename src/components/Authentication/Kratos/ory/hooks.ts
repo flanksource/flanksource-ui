@@ -17,13 +17,13 @@ export function handleGetFlowError<S>(
   resetFlow: Dispatch<SetStateAction<S | undefined>>
 ) {
   return async (err: AxiosError<any>) => {
-    switch (err.response?.data.error?.id) {
+    switch (err.response?.data?.error?.id) {
       case "session_inactive":
         await router.push("/login?return_to=" + window.location.href);
         return;
       case "session_aal2_required":
-        if (err.response?.data.redirect_browser_to) {
-          const redirectTo = new URL(err.response?.data.redirect_browser_to);
+        if (err.response?.data?.redirect_browser_to) {
+          const redirectTo = new URL(err.response?.data?.redirect_browser_to);
           if (flowType === "settings") {
             redirectTo.searchParams.set("return_to", window.location.href);
           }
@@ -51,7 +51,7 @@ export function handleGetFlowError<S>(
       }
       case "session_refresh_required":
         // We need to re-authenticate to perform this action
-        window.location.href = err.response?.data.redirect_browser_to;
+        window.location.href = err.response?.data?.redirect_browser_to;
         return;
       case "self_service_flow_return_to_forbidden":
         // The flow expired, let's request a new one.
@@ -82,7 +82,7 @@ export function handleGetFlowError<S>(
         return;
       case "browser_location_change_required":
         // Ory Kratos asked us to point the user to this URL.
-        window.location.href = err.response.data.redirect_browser_to;
+        window.location.href = err.response?.data?.redirect_browser_to;
         return;
     }
 

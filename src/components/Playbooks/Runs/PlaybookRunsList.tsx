@@ -20,7 +20,11 @@ const playbookRunsTableColumns: MRT_ColumnDef<PlaybookRun>[] = [
     header: "Name",
     accessorKey: "name",
     Cell: ({ row }) => {
-      return <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />;
+      return (
+        <span data-tour="playbook-run-row">
+          <PlaybookSpecIcon playbook={row.original.playbooks!} showLabel />
+        </span>
+      );
     },
     size: 400
   },
