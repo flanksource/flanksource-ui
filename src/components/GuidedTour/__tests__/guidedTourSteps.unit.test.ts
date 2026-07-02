@@ -13,7 +13,7 @@ import {
   tourTarget,
   type TourStepData
 } from "../guidedTourSteps";
-import { allTouchpointIds } from "../touchpoints";
+import { touchpointCategories } from "../touchpoints";
 
 const stepKeys = (steps: Step[]) =>
   steps.map((s) => (s.data as TourStepData).key);
@@ -342,12 +342,13 @@ describe("buildTouchpointSteps", () => {
     expect(buildTouchpointSteps("nope.nope")).toEqual([]);
   });
 
-  it("resolves every checklist touchpoint to a walk ending at that touchpoint", () => {
-    for (const id of allTouchpointIds) {
-      const steps = buildTouchpointSteps(id);
+  it("resolves every checklist item to a walk ending at its guide touchpoint", () => {
+    for (const item of touchpointCategories.flatMap((c) => c.items)) {
+      const guide = item.guideVia ?? item.id;
+      const steps = buildTouchpointSteps(guide);
       expect(steps.length).toBeGreaterThan(0);
       expect((steps[steps.length - 1].data as TourStepData).touchpoint).toBe(
-        id
+        guide
       );
     }
   });
@@ -384,5 +385,28 @@ describe("buildTourSteps", () => {
       withPlaybooks.length - buildTourSteps("playbooks").length
     );
     expect(buildTourSteps("playbooks", { canRunPlaybooks: false })).toEqual([]);
+  });
+
+  it("points the AI section at the user menu to set up MCP", () => {
+    const ai = buildTourSteps("ai");
+    expect(ai).toHaveLength(1);
+    expect(ai[0].target).toBe(tourTarget("user-menu"));
+    expect((ai[0].data as TourStepData).touchpoint).toBe("ai.setup-mcp");
+    expect((ai[0].data as TourStepData).sectionStart).toBe(true);
+  });
+
+  it("points the Faro section at the user menu to set up the CLI", () => {
+    const faro = buildTourSteps("faro");
+    expect(faro).toHaveLength(1);
+    expect(faro[0].target).toBe(tourTarget("user-menu"));
+    expect((faro[0].data as TourStepData).touchpoint).toBe("faro.setup-cli");
+    expect((faro[0].data as TourStepData).sectionStart).toBe(true);
+  });
+
+  it("includes the AI and Faro sections in the full tour", () => {
+    const full = buildTourSteps("full");
+    const touchpoints = full.map((s) => (s.data as TourStepData)?.touchpoint);
+    expect(touchpoints).toContain("ai.setup-mcp");
+    expect(touchpoints).toContain("faro.setup-cli");
   });
 });

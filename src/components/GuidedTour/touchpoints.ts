@@ -1,5 +1,3 @@
-// ABOUTME: Canonical getting-started checklist: categories and the touchpoints they track.
-// ABOUTME: Each touchpoint id is the `key` recorded in person_touchpoints when the user does it.
 import { type TourSection } from "./guidedTourSteps";
 
 export type TouchpointItem = {
@@ -7,6 +5,12 @@ export type TouchpointItem = {
   id: string;
   /** Checklist label shown to the user. */
   label: string;
+  /**
+   * Touchpoint whose guided walk "Show me" runs instead of this item's own.
+   * Used for items completed outside the UI (e.g. CLI actions), which we still
+   * point at the relevant setup step.
+   */
+  guideVia?: string;
 };
 
 export type TouchpointCategory = {
@@ -62,6 +66,35 @@ export const touchpointCategories: TouchpointCategory[] = [
     id: "views",
     title: "Build custom views",
     items: [{ id: "views.open", label: "See your data in a custom dashboard" }]
+  },
+  {
+    id: "ai",
+    title: "Set up AI",
+    items: [
+      { id: "ai.setup-mcp", label: "Connect your AI client with MCP" },
+      {
+        id: "ai.use-mcp",
+        label: "Troubleshoot an issue with AI",
+        guideVia: "ai.setup-mcp"
+      }
+    ]
+  },
+  {
+    id: "faro",
+    title: "Use the command line",
+    items: [
+      { id: "faro.setup-cli", label: "Set up the faro CLI" },
+      {
+        id: "faro.try-plugin",
+        label: "Run plugins from your CLI",
+        guideVia: "faro.setup-cli"
+      },
+      {
+        id: "faro.run-playbook",
+        label: "Run a playbook from your terminal",
+        guideVia: "faro.setup-cli"
+      }
+    ]
   }
 ];
 

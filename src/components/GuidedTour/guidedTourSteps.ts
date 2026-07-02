@@ -6,6 +6,8 @@ import { healthSteps } from "./steps/health";
 import { catalogSteps } from "./steps/catalog";
 import { playbookSteps } from "./steps/playbooks";
 import { viewSteps } from "./steps/views";
+import { aiSteps } from "./steps/ai";
+import { faroSteps } from "./steps/faro";
 import { type TourStepData } from "./steps/shared";
 
 export * from "./steps/shared";
@@ -13,7 +15,14 @@ export * from "./steps/shared";
 /**
  * The sections a user can choose from the tour menu. "full" runs them all.
  */
-export type TourSection = "full" | "health" | "catalog" | "playbooks" | "views";
+export type TourSection =
+  | "full"
+  | "health"
+  | "catalog"
+  | "playbooks"
+  | "views"
+  | "ai"
+  | "faro";
 
 export type TourCapabilities = {
   /** When false, the playbooks walkthrough is omitted entirely. */
@@ -24,7 +33,9 @@ const sectionSteps: Record<Exclude<TourSection, "full">, Step[]> = {
   health: healthSteps,
   catalog: catalogSteps,
   playbooks: playbookSteps,
-  views: viewSteps
+  views: viewSteps,
+  ai: aiSteps,
+  faro: faroSteps
 };
 
 /**
@@ -44,6 +55,10 @@ export function buildTourSteps(
       return canRunPlaybooks ? playbookSteps : [];
     case "views":
       return viewSteps;
+    case "ai":
+      return aiSteps;
+    case "faro":
+      return faroSteps;
     case "full":
     default:
       return [
@@ -51,7 +66,9 @@ export function buildTourSteps(
         ...healthSteps,
         ...catalogSteps,
         ...(canRunPlaybooks ? playbookSteps : []),
-        ...viewSteps
+        ...viewSteps,
+        ...aiSteps,
+        ...faroSteps
       ];
   }
 }
@@ -62,7 +79,9 @@ const allSteps: Step[] = [
   ...healthSteps,
   ...catalogSteps,
   ...playbookSteps,
-  ...viewSteps
+  ...viewSteps,
+  ...aiSteps,
+  ...faroSteps
 ];
 
 function stepData(step: Step): TourStepData {
