@@ -83,16 +83,16 @@ const AuditReport: React.FC<AuditReportProps> = ({ namespace, name }) => {
       const opt = {
         margin: 0.25,
         filename: `audit-report-${new Date().toISOString().split("T")[0]}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
+        image: { type: "jpeg" as const, quality: 0.98 },
         html2canvas: {
           scale: 2,
           useCORS: true,
           letterRendering: true
         },
         jsPDF: {
-          unit: "in",
-          format: "a4",
-          orientation: "landscape"
+          unit: "in" as const,
+          format: "a4" as const,
+          orientation: "landscape" as const
         }
       };
 
