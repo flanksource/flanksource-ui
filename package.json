@@ -248,6 +248,7 @@
     "msw-storybook-addon": "^2.0.4",
     "next": "^15.5.20",
     "node-html-parser": "^6.1.12",
+    "node-static": "^0.7.11",
     "npm": "^11.18.0",
     "postcss": "^8.5.10",
     "postcss-loader": "^7.0.1",
