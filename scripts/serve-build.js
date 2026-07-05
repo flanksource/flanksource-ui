@@ -1,7 +1,7 @@
 const http = require("http");
 const httpProxy = require("http-proxy");
-const statik = require("node-static");
 const fs = require("fs");
+const path = require("path");
 
 if (process.env.NODE_ENV !== "development") {
   console.error(
@@ -21,7 +21,51 @@ const appDeployment = process.env.APP_DEPLOYMENT;
 const { proxy: proxyTarget } = JSON.parse(fs.readFileSync(packagePath));
 const indexHTML = fs.readFileSync(indexHTMLPath, { encoding: "utf8" });
 
-const staticServer = new statik.Server(staticDir, { gzip: true });
+const contentTypes = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".js": "application/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".map": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".txt": "text/plain; charset=utf-8"
+};
+
+function getStaticFilePath(url) {
+  const decodedPath = decodeURIComponent((url || "/").split("?")[0]);
+  const filePath = path.resolve(staticDir, `.${decodedPath}`);
+
+  const staticRoot = path.resolve(staticDir);
+
+  if (
+    filePath !== staticRoot &&
+    !filePath.startsWith(`${staticRoot}${path.sep}`)
+  ) {
+    return null;
+  }
+
+  return filePath;
+}
+
+function serveStaticFile(req, res, filePath) {
+  const acceptsGzip = req.headers["accept-encoding"]?.includes("gzip");
+  const gzipPath = `${filePath}.gz`;
+  const pathToServe =
+    acceptsGzip && fs.existsSync(gzipPath) ? gzipPath : filePath;
+  const ext = path.extname(filePath);
+
+  res.setHeader(
+    "Content-Type",
+    contentTypes[ext] || "application/octet-stream"
+  );
+
+  if (pathToServe === gzipPath) {
+    res.setHeader("Content-Encoding", "gzip");
+  }
+
+  fs.createReadStream(pathToServe).pipe(res);
+}
 
 var proxy = httpProxy.createProxyServer({
   changeOrigin: true
@@ -30,9 +74,9 @@ var proxy = httpProxy.createProxyServer({
 var server = http.createServer((req, res) => {
   req
     .addListener("end", () => {
-      const reqPath = `${staticDir}${req.url}`;
+      const reqPath = getStaticFilePath(req.url);
 
-      if (!fs.existsSync(reqPath)) {
+      if (!reqPath || !fs.existsSync(reqPath)) {
         console.info(`Proxying "${req.url}" -> ${proxyTarget}`);
         proxy.web(req, res, {
           target: proxyTarget
@@ -41,7 +85,7 @@ var server = http.createServer((req, res) => {
         res.write(indexHTML.replace("__APP_DEPLOYMENT__", appDeployment));
         res.end();
       } else {
-        staticServer.serve(req, res);
+        serveStaticFile(req, res, reqPath);
       }
     })
     .resume();
