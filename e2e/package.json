@@ -10,10 +10,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.41.2",
+    "@playwright/test": "^1.55.1",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "dotenv": "^16.4.4",
     "eslint": "^8.56.0"
+  },
+  "overrides": {
+    "js-yaml": "4.2.0",
+    "picomatch": "2.3.2",
+    "flatted": "3.4.2",
+    "minimatch": "3.1.4",
+    "braces": "3.0.3"
   }
 }
