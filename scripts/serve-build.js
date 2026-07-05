@@ -10,8 +10,6 @@ if (process.env.NODE_ENV !== "development") {
   process.exit(1);
 }
 
-const appTypes = ["INCIDENT_MANAGER", "CANARY_CHECKER"];
-
 const staticDir = `${__dirname}/../build`;
 const port = 5050;
 const packagePath = `${__dirname}/../package.json`;
