@@ -12,6 +12,12 @@ export function ConfigSummaryTableVirtualAggregateColumn({
     const count = row.subRows.reduce((acc, row) => acc + row.original.count, 0);
     return (
       <div
+        data-tour={
+          row.groupingColumnId === "config_class" ? "config-class" : undefined
+        }
+        data-tour-class={
+          row.groupingColumnId === "config_class" ? groupingValue : undefined
+        }
         className="flex flex-row items-center gap-1"
         style={{
           marginLeft: row.depth * 20

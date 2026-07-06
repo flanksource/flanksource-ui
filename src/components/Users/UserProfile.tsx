@@ -1,6 +1,6 @@
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Info, Search } from "lucide-react";
+import { Info, MapPin, Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
 import { MdSecurity, MdTerminal } from "react-icons/md";
 import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
@@ -13,6 +13,7 @@ import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
 import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
 import SetupMissionControlCliModal from "./SetupMissionControlCliModal";
+import { useNavigate } from "react-router-dom";
 
 const LazyResourceSelectorSearchModal = lazy(() =>
   import("../ResourceSelectorSearch/ResourceSelectorSearchModal").then(
@@ -39,6 +40,8 @@ export function UserProfileDropdown() {
   const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
     useState(false);
   const [newUIEnabled, setNewUIEnabled] = useState(false);
+  const navigate = useNavigate();
+  const openGettingStarted = () => navigate("/getting-started");
   useEffect(() => {
     setNewUIEnabled(isNewUIPreferred());
   }, []);
@@ -52,7 +55,7 @@ export function UserProfileDropdown() {
   return (
     <>
       {authSystem === "clerk" ? (
-        <div className="flex flex-row gap-2 pr-2">
+        <div data-tour="user-menu" className="flex flex-row gap-2 pr-2">
           <OrganizationSwitcher
             hidePersonal
             createOrganizationMode="modal"
@@ -61,6 +64,11 @@ export function UserProfileDropdown() {
           />
           <UserButton signInUrl="/login">
             <UserButton.MenuItems>
+              <UserButton.Action
+                label="Getting started"
+                labelIcon={<MapPin className="h-4 w-4" />}
+                onClick={openGettingStarted}
+              />
               <UserButton.Action
                 label={newUIEnabled ? "Use Old UI" : "Use New UI"}
                 labelIcon={<IoMdSwap />}
@@ -112,6 +120,7 @@ export function UserProfileDropdown() {
           openScopeImpersonationModal={() =>
             setIsScopeImpersonationModalOpen(true)
           }
+          openGettingStarted={openGettingStarted}
           showScopeImpersonation={isRLSEnabled}
         />
       )}

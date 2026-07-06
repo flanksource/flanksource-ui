@@ -18,6 +18,7 @@ import { DropdownStandaloneWrapper } from "../../Dropdown/StandaloneWrapper";
 import { TimeRange, timeRanges } from "../../Dropdown/TimeRange";
 import { refreshCheckModalAtomTrigger } from "../ChecksListing";
 import { Duration } from "../renderers";
+import { RecordTouchpointOnMount } from "@flanksource-ui/components/GuidedTour/TouchpointObserver";
 import { CanaryCheckDetailsSpecTab } from "./CanaryCheckDetailsSpec";
 import { CheckDetailsTabs } from "./CheckDetailsTabs";
 import CheckLabels from "./CheckLabels";
@@ -118,7 +119,7 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
       <div {...rest} ref={containerRef}>
         <div className="flex flex-col" ref={statsRef}>
           <CheckLabels check={check} />
-          <div className="flex flex-row flex-wrap">
+          <div data-tour="check-stats" className="flex flex-row flex-wrap">
             <Stat
               containerClassName="w-44 mb-4"
               title="Uptime"
@@ -240,7 +241,13 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
           tabs={{
             statusHistory: {
               label: "History",
-              content: <StatusHistory timeRange={timeRange} check={check} />,
+              content: (
+                <StatusHistory
+                  data-tour="check-timeline"
+                  timeRange={timeRange}
+                  check={check}
+                />
+              ),
               class: `flex-1 flex flex-col h-full`
             },
             graph: {
@@ -248,11 +255,19 @@ export function CheckDetails({ check, ...rest }: CheckDetailsProps) {
               hidden: !isShort,
               content: (
                 <Short>
-                  <CanaryChart
-                    check={check}
-                    timeRange={timeRange}
-                    height="h-full"
-                  />
+                  <>
+                    <RecordTouchpointOnMount id="health.view-graph" />
+                    <div
+                      data-tour="check-graph"
+                      className="flex h-full w-full flex-col"
+                    >
+                      <CanaryChart
+                        check={check}
+                        timeRange={timeRange}
+                        height="h-full"
+                      />
+                    </div>
+                  </>
                 </Short>
               ),
               class: `flex-1 flex flex-col overflow-y-auto   ${mixins.appleScrollbar}`

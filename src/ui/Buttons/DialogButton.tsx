@@ -14,6 +14,7 @@ export default function DialogButton({
     <div className="pointer-events-none flex sm:pointer-events-auto">
       <button
         type="button"
+        data-tour={name ? `dialog-button-${name}` : undefined}
         className="text-gray-400 hover:text-gray-500 focus:outline-none"
         onClick={onClick}
       >

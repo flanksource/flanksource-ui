@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RecordTouchpointOnMount } from "@flanksource-ui/components/GuidedTour/TouchpointObserver";
 import { CreateTokenResponse } from "@flanksource-ui/api/services/tokens";
 import { useAgentsBaseURL } from "@flanksource-ui/components/Agents/InstalAgentInstruction/useAgentsBaseURL";
 import {
@@ -80,6 +81,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
       allowBodyScroll
       bodyClass="flex w-full flex-col"
     >
+      {isOpen && <RecordTouchpointOnMount id="ai.setup-mcp" />}
       <div className="flex w-full flex-col gap-4 p-4">
         <div className="">
           <h3 className="text-md text-base font-semibold text-gray-900">

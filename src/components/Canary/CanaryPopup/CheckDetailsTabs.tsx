@@ -81,6 +81,7 @@ export function CheckDetailsTabs({
             type="button"
             key={key}
             hidden={tab.hidden}
+            data-tour={`check-tab-${key}`}
             onClick={() => setSelected(key)}
             className={`${
               buttonStyles[variant as keyof typeof buttonStyles].button
