@@ -2,7 +2,7 @@ import {
   Flow,
   Messages,
   Methods
-} from "@flanksource-ui/components/Authentication/Kratos/ory";
+} from "@flanksource-ui/components/Authentication/Kratos/ory/ui";
 import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { SettingsFlow, UiText, UpdateSettingsFlowBody } from "@ory/client";

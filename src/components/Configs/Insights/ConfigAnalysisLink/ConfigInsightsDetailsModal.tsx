@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { sanitize } from "dompurify";
+import DOMPurify from "dompurify";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   FiCheckCircle,
@@ -225,7 +225,7 @@ export default function ConfigInsightsDetailsModal({
   }, [configInsight]);
 
   const sanitizedMessageHTML = useMemo(() => {
-    return sanitize(configInsight?.message ?? "");
+    return DOMPurify.sanitize(configInsight?.message ?? "");
   }, [configInsight]);
 
   // Render the analysis object as YAML if it exists and is non-empty
