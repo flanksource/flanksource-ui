@@ -16,13 +16,24 @@ const staticDir = path.resolve(__dirname, "../build");
 const port = 5050;
 const packagePath = path.resolve(__dirname, "../package.json");
 const indexHTMLPath = path.join(staticDir, "index.html");
-const appDeployment = process.env.APP_DEPLOYMENT;
+const appDeployment = process.env.APP_DEPLOYMENT ?? "";
 
 const { proxy: proxyTarget } = JSON.parse(fs.readFileSync(packagePath));
 const indexHTML = fs.readFileSync(indexHTMLPath, { encoding: "utf8" });
 
 const proxy = httpProxy.createProxyServer({
   changeOrigin: true
+});
+
+proxy.on("error", (err, req, res) => {
+  console.error(`Proxy error for "${req?.url}":`, err.message);
+
+  if (!res || res.headersSent) {
+    return;
+  }
+
+  res.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("Bad gateway");
 });
 
 const contentTypes = {
@@ -35,24 +46,21 @@ const contentTypes = {
   ".txt": "text/plain; charset=utf-8"
 };
 
-function getStaticPath(url = "/") {
-  try {
-    const pathname = decodeURIComponent(
-      new URL(url, "http://localhost").pathname
-    );
-    const requestedPath = path.resolve(staticDir, `.${pathname}`);
+function getPathname(url = "/") {
+  return decodeURIComponent(new URL(url, "http://localhost").pathname);
+}
 
-    if (
-      requestedPath !== staticDir &&
-      !requestedPath.startsWith(`${staticDir}${path.sep}`)
-    ) {
-      return undefined;
-    }
+function getStaticPath(pathname) {
+  const requestedPath = path.resolve(staticDir, `.${pathname}`);
 
-    return requestedPath;
-  } catch {
+  if (
+    requestedPath !== staticDir &&
+    !requestedPath.startsWith(`${staticDir}${path.sep}`)
+  ) {
     return undefined;
   }
+
+  return requestedPath;
 }
 
 function serveFile(req, res, filePath) {
@@ -79,7 +87,17 @@ function serveFile(req, res, filePath) {
 }
 
 const server = http.createServer((req, res) => {
-  const reqPath = getStaticPath(req.url);
+  let pathname;
+
+  try {
+    pathname = getPathname(req.url);
+  } catch {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Bad request");
+    return;
+  }
+
+  const reqPath = getStaticPath(pathname);
 
   if (!reqPath || !fs.existsSync(reqPath)) {
     console.info(`Proxying "${req.url}" -> ${proxyTarget}`);
@@ -89,8 +107,8 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.url === "/" || req.url === "/index.html") {
-    res.write(indexHTML.replace("__APP_DEPLOYMENT__", appDeployment));
+  if (pathname === "/" || pathname === "/index.html") {
+    res.write(indexHTML.replaceAll("__APP_DEPLOYMENT__", appDeployment));
     res.end();
     return;
   }

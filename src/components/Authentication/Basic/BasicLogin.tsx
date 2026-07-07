@@ -1,3 +1,4 @@
+import { sanitizeReturnTo } from "@flanksource-ui/components/Authentication/Kratos/ory/returnTo";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -6,25 +7,11 @@ import { FormEvent, useMemo, useState } from "react";
 function getSafeReturnTo(rawReturnTo: string | string[] | undefined) {
   const candidate = Array.isArray(rawReturnTo) ? rawReturnTo[0] : rawReturnTo;
 
-  if (typeof candidate !== "string") {
-    return { pathname: "/" };
-  }
+  const sanitizedReturnTo = sanitizeReturnTo(candidate, "/");
+  const url = new URL(sanitizedReturnTo, "https://flanksource.local");
+  const query = Object.fromEntries(url.searchParams.entries());
 
-  try {
-    const url = new URL(candidate, "https://flanksource.local");
-    if (
-      url.origin !== "https://flanksource.local" ||
-      !url.pathname.startsWith("/") ||
-      url.pathname.startsWith("//")
-    ) {
-      return { pathname: "/" };
-    }
-
-    const query = Object.fromEntries(url.searchParams.entries());
-    return { pathname: url.pathname, query, hash: url.hash };
-  } catch {
-    return { pathname: "/" };
-  }
+  return { pathname: url.pathname, query, hash: url.hash };
 }
 
 export default function BasicLogin() {
