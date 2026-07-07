@@ -13,6 +13,10 @@ on:
       - main
     paths:
       - "e2e/**"
+
+permissions:
+  contents: read
+
 jobs:
   docker:
     runs-on: ubuntu-latest

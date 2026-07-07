@@ -1,9 +1,15 @@
 name: release-prod
 on:
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   release-prod:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@446798f8213ac2e75931c1b0769676d927801858 # v2.10.3

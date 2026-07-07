@@ -1,7 +1,31 @@
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+
+function getSafeReturnTo(rawReturnTo: string | string[] | undefined) {
+  const candidate = Array.isArray(rawReturnTo) ? rawReturnTo[0] : rawReturnTo;
+
+  if (typeof candidate !== "string") {
+    return { pathname: "/" };
+  }
+
+  try {
+    const url = new URL(candidate, "https://flanksource.local");
+    if (
+      url.origin !== "https://flanksource.local" ||
+      !url.pathname.startsWith("/") ||
+      url.pathname.startsWith("//")
+    ) {
+      return { pathname: "/" };
+    }
+
+    const query = Object.fromEntries(url.searchParams.entries());
+    return { pathname: url.pathname, query, hash: url.hash };
+  } catch {
+    return { pathname: "/" };
+  }
+}
 
 export default function BasicLogin() {
   const [username, setUsername] = useState("");
@@ -10,15 +34,10 @@ export default function BasicLogin() {
   const [submitting, setSubmitting] = useState(false);
 
   const router = useRouter();
-  const rawReturnTo = Array.isArray(router.query.return_to)
-    ? router.query.return_to[0]
-    : router.query.return_to;
-  const returnTo =
-    typeof rawReturnTo === "string" &&
-    rawReturnTo.startsWith("/") &&
-    !rawReturnTo.startsWith("//")
-      ? rawReturnTo
-      : "/";
+  const returnTo = useMemo(
+    () => getSafeReturnTo(router.query.return_to),
+    [router.query.return_to]
+  );
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
