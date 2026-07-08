@@ -16,7 +16,6 @@ import { VscFileCode } from "react-icons/vsc";
 import { FaCog } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
 import PlaybookSpecIcon from "../../Settings/PlaybookSpecIcon";
 import { ApprovePlaybookButton } from "../ApprovePlaybookButton";
 import { CancelPlaybookButton } from "../CancelPlaybookButton";
@@ -36,6 +35,8 @@ import { AiFeatureRequest } from "@flanksource-ui/ui/Layout/AiFeatureLoader";
 import { useFeatureFlagsContext } from "@flanksource-ui/context/FeatureFlagsContext";
 import { features } from "@flanksource-ui/services/permissions/features";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { formatAICost } from "./cost";
+import { AICostTooltip } from "./AICostTooltip";
 
 const LazyDiagnoseButton = lazy(() =>
   import("../DiagnosePlaybookFailureButton").then((module) => ({
@@ -145,6 +146,8 @@ export default function PlaybookRunDetailView({
       totalOutputTokens: outputTokens
     };
   }, [data.actions]);
+
+  const totalTokens = totalInputTokens + totalOutputTokens;
 
   return (
     <div className="flex flex-1 flex-col gap-2 pl-2">
@@ -335,14 +338,15 @@ export default function PlaybookRunDetailView({
             <div className="mb-2 ml-[-25px] mr-[-15px] flex flex-row items-center justify-between border-t border-gray-200 py-2 pl-[25px]">
               <div className="font-semibold text-gray-600">
                 Actions{" "}
-                {(totalInputTokens > 0 || totalOutputTokens > 0) && (
-                  <span
-                    data-tooltip-id="action-cost-tooltip"
-                    data-tooltip-content={`${(totalInputTokens + totalOutputTokens).toLocaleString()} tokens (${totalInputTokens.toLocaleString()} input + ${totalOutputTokens.toLocaleString()} output)`}
-                    className="font-mono text-sm text-gray-500"
+                {totalTokens > 0 && (
+                  <AICostTooltip
+                    cost={runCost}
+                    details={`${totalTokens.toLocaleString()} tokens (${totalInputTokens.toLocaleString()} input + ${totalOutputTokens.toLocaleString()} output)`}
                   >
-                    (${runCost.toFixed(2)})
-                  </span>
+                    <span className="cursor-help font-mono text-sm text-gray-500">
+                      ({formatAICost(runCost)})
+                    </span>
+                  </AICostTooltip>
                 )}
               </div>
             </div>
@@ -465,9 +469,6 @@ export default function PlaybookRunDetailView({
           </div>
         </div>
       </div>
-
-      {/* Tooltips */}
-      <Tooltip id="action-cost-tooltip" />
 
       {/* Modals */}
       <ViewPlaybookSpecModal
