@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React, { useMemo } from "react";
 
 type TabItemProps = {
-  label: string;
+  label: React.ReactNode;
   value: string;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onSelectTab: () => void;
@@ -26,7 +26,7 @@ function TabItem({
 
   return (
     <div
-      key={label}
+      key={value}
       onClick={(event) => {
         onClick?.(event);
         onSelectTab?.();
@@ -51,12 +51,12 @@ function TabItem({
 }
 
 type TabProps = {
-  label: string;
+  label: React.ReactNode;
   value: string;
   icon?: React.ReactNode;
-} & React.HTMLProps<HTMLDivElement>;
+} & Omit<React.HTMLProps<HTMLDivElement>, "label" | "value">;
 
-export function Tab({ children, ...props }: TabProps) {
+export function Tab({ children, label, value, icon, ...props }: TabProps) {
   return <div {...props}>{children}</div>;
 }
 
@@ -103,7 +103,7 @@ export function Tabs<Tabs extends string = string>({
         content: child
       };
     }) satisfies {
-      label: string;
+      label: React.ReactNode;
       value: string;
       icon?: React.ReactNode;
       onSelectTab: () => void;
@@ -125,7 +125,7 @@ export function Tabs<Tabs extends string = string>({
       >
         {tabs?.map((tab) => (
           <TabItem
-            key={tab.label}
+            key={tab.value}
             label={tab.label!}
             value={tab.value!}
             icon={tab.icon}

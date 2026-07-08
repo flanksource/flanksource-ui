@@ -341,4 +341,35 @@ describe("PlaybooksRunActionsResults", () => {
     expect(screen.queryByText("ContentType")).not.toBeInTheDocument();
     expect(screen.queryByText("text/markdown")).not.toBeInTheDocument();
   });
+
+  it("shows small AI action costs and exact cost on hover", async () => {
+    const action = {
+      id: "1",
+      name: "ai action",
+      status: "completed" as const,
+      playbook_run_id: "1",
+      start_time: "2024-01-01",
+      type: "ai" as const,
+      result: {
+        json: '{ "answer": "ok" }',
+        generationInfo: [
+          {
+            cost: 0.0018809
+          },
+          {
+            cost: 0.0017708999999999997
+          }
+        ]
+      }
+    };
+
+    render(<PlaybooksRunActionsResults action={action} />);
+
+    fireEvent.pointerMove(screen.getByText("AI ($0.0037)"), {
+      pointerType: "mouse"
+    });
+
+    expect(screen.getByText("AI ($0.0037)")).toBeInTheDocument();
+    expect(await screen.findAllByText("$0.0036518")).toHaveLength(2);
+  });
 });

@@ -74,3 +74,53 @@ UndefinedResult.args = {
     result: undefined
   }
 };
+
+export const AIWithSmallCost = Template.bind({});
+AIWithSmallCost.args = {
+  action: {
+    name: "Analyze incident",
+    status: "completed",
+    id: "1",
+    start_time: "2026-07-08T12:53:40Z",
+    end_time: "2026-07-08T12:53:49Z",
+    playbook_run_id: "1",
+    type: "ai",
+    result: {
+      json: JSON.stringify(
+        {
+          headline:
+            "flanksource-ui/Release Unhealthy: Repository Access Blocked",
+          summary:
+            "The workflow is unhealthy because repository access is blocked.",
+          recommended_fix:
+            "Verify repository access and GitHub token permissions."
+        },
+        null,
+        2
+      ),
+      generationInfo: [
+        {
+          cost: 0.0018809,
+          model: "gemini-2.5-flash",
+          inputTokens: 778,
+          outputTokens: 131,
+          reasoningTokens: 528
+        },
+        {
+          cost: 0.0017708999999999997,
+          model: "gemini-2.5-flash",
+          inputTokens: 4053,
+          outputTokens: 10,
+          reasoningTokens: 212
+        }
+      ]
+    }
+  }
+};
+AIWithSmallCost.decorators = [
+  (Story) => (
+    <div className="h-[500px] w-[780px] pt-16">
+      <Story />
+    </div>
+  )
+];

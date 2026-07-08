@@ -2,7 +2,7 @@ import Convert from "ansi-to-html";
 import linkifyHtml from "linkify-html";
 import { Opts } from "linkifyjs";
 import clsx from "clsx";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   PlaybookArtifact,
@@ -25,6 +25,8 @@ import { darkTheme } from "@flanksource-ui/ui/Code/JSONViewerTheme";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import path from "path";
 import { LogsTable } from "@flanksource-ui/components/Logs/Table/LogsTable";
+import { formatAICost } from "./cost";
+import { AICostTooltip } from "./AICostTooltip";
 
 const options = {
   className: "text-blue-500 hover:underline pointer",
@@ -125,6 +127,7 @@ type DisplayContentType = string;
 
 type PlaybookActionTab = {
   label: string;
+  labelContent?: ReactNode;
   type?: "artifact" | "error";
   contentSize?: string;
   content: any;
@@ -163,13 +166,14 @@ export default function PlaybooksRunActionsResults({
   action,
   className = "whitespace-pre-wrap break-all"
 }: Props) {
-  const { result, error, artifacts } = action;
+  const { result: actionResult, error, artifacts } = action;
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const activeTabContentRef = useRef<HTMLDivElement>(null);
 
   const availableTabs = useMemo(() => {
     const tabs: PlaybookActionTab[] = [];
-    if (result) {
+    if (actionResult) {
+      const result = { ...actionResult };
       // AI action can have a cost
       let actionCost = 0;
       if (action.type === "ai" && result["generationInfo"]) {
@@ -233,7 +237,13 @@ export default function PlaybooksRunActionsResults({
           };
 
           if (actionCost) {
-            tab.label = `${tab.label} ($${actionCost.toFixed(2)})`;
+            const label = `${tab.label} (${formatAICost(actionCost)})`;
+            tab.label = label;
+            tab.labelContent = (
+              <AICostTooltip cost={actionCost}>
+                <span className="cursor-help">{label}</span>
+              </AICostTooltip>
+            );
           }
 
           // Pre-process the content for certain types
@@ -342,7 +352,7 @@ export default function PlaybooksRunActionsResults({
     });
 
     return tabs;
-  }, [result, error, artifacts, action.type]);
+  }, [actionResult, error, artifacts, action.type]);
 
   useMemo(() => {
     if (availableTabs.length > 0 && !activeTab) {
@@ -364,7 +374,7 @@ export default function PlaybooksRunActionsResults({
         contentClassName="flex-1 overflow-y-auto border border-t-0 border-gray-600 bg-black p-4"
       >
         {availableTabs.map((tab) => {
-          let label = tab.label;
+          let label: ReactNode = tab.labelContent ?? tab.label;
           if (tab.contentSize) {
             label = `${label} (${tab.contentSize})`;
           }
