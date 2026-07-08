@@ -1,7 +1,18 @@
+import { sanitizeReturnTo } from "@flanksource-ui/components/Authentication/Kratos/ory/returnTo";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+
+function getSafeReturnTo(rawReturnTo: string | string[] | undefined) {
+  const candidate = Array.isArray(rawReturnTo) ? rawReturnTo[0] : rawReturnTo;
+
+  const sanitizedReturnTo = sanitizeReturnTo(candidate, "/");
+  const url = new URL(sanitizedReturnTo, "https://flanksource.local");
+  const query = Object.fromEntries(url.searchParams.entries());
+
+  return { pathname: url.pathname, query, hash: url.hash };
+}
 
 export default function BasicLogin() {
   const [username, setUsername] = useState("");
@@ -10,15 +21,10 @@ export default function BasicLogin() {
   const [submitting, setSubmitting] = useState(false);
 
   const router = useRouter();
-  const rawReturnTo = Array.isArray(router.query.return_to)
-    ? router.query.return_to[0]
-    : router.query.return_to;
-  const returnTo =
-    typeof rawReturnTo === "string" &&
-    rawReturnTo.startsWith("/") &&
-    !rawReturnTo.startsWith("//")
-      ? rawReturnTo
-      : "/";
+  const returnTo = useMemo(
+    () => getSafeReturnTo(router.query.return_to),
+    [router.query.return_to]
+  );
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

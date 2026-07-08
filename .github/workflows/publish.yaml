@@ -3,9 +3,15 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  contents: read
+
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       release-version: ${{ steps.semantic.outputs.release-version }}
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
@@ -94,6 +100,8 @@ jobs:
 
   helm:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [semantic-release, docker]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     outputs:
@@ -130,6 +138,8 @@ jobs:
 
   push-helm-chart:
     needs: helm
+    permissions:
+      contents: read
     if: always() && needs.helm.result == 'success'
     uses: flanksource/action-workflows/.github/workflows/push-helm-chart.yml@4b41aaf6cf7727789c0d21cd0bc262e850ba543f # main
     with:
@@ -141,6 +151,9 @@ jobs:
 
   update-canary-checker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [docker, push-helm-chart, semantic-release]
     if: ${{ needs.semantic-release.outputs.new-release-published == 'true' }}
     steps:
