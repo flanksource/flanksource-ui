@@ -14,7 +14,10 @@ import NotificationResourceDisplay from "../NotificationResourceDisplay";
 import { notificationSendHistoryStatus } from "../NotificationsStatusCell";
 import blockKitToMarkdown, { SlackMessage } from "@flanksource-ui/utils/slack";
 import { DisplayMarkdown } from "@flanksource-ui/components/Utils/Markdown";
-import { getNotificationSilencesByID } from "@flanksource-ui/api/services/notifications";
+import {
+  getNotificationSendHistoryById,
+  getNotificationSilencesByID
+} from "@flanksource-ui/api/services/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { Status } from "@flanksource-ui/components/Status";
 import { sanitizeHTMLContent } from "@flanksource-ui/utils/common";
@@ -64,8 +67,7 @@ export default function NotificationDetails({
 
     try {
       const parsed = JSON.parse(legacyBody.trim()) as
-        | SlackMessage
-        | SlackMessage[];
+        SlackMessage | SlackMessage[];
 
       if (Array.isArray(parsed)) {
         const [firstMessage] = parsed;
@@ -91,6 +93,29 @@ export default function NotificationDetails({
     enabled: !!notification.silenced_by,
     queryFn: () => getNotificationSilencesByID(notification.silenced_by!)
   });
+
+  const shouldFetchInhibitor =
+    notification.status === "inhibited" && !!notification.parent_id;
+
+  const { data: inhibitor, isLoading: isLoadingInhibitor } = useQuery({
+    queryKey: ["notification_send_history_inhibitor", notification.parent_id],
+    enabled: shouldFetchInhibitor,
+    queryFn: () => getNotificationSendHistoryById(notification.parent_id!)
+  });
+
+  const inhibitorLink = useMemo(() => {
+    if (!inhibitor) {
+      return undefined;
+    }
+
+    const params = new URLSearchParams({ id: inhibitor.id });
+    if (inhibitor.body_payload) {
+      params.set("hasBodyPayload", "1");
+    }
+    return `/notifications/resource/${encodeURIComponent(
+      inhibitor.resource_id
+    )}?${params.toString()}`;
+  }, [inhibitor]);
 
   return (
     <div className="flex flex-col gap-3 overflow-auto">
@@ -178,6 +203,34 @@ export default function NotificationDetails({
               >
                 {silencer?.name}
               </Link>
+            }
+          />
+        )}
+
+        {shouldFetchInhibitor && (
+          <VerticalDescription
+            label="Inhibited By"
+            value={
+              inhibitor ? (
+                <div className="flex flex-col gap-1">
+                  <NotificationResourceDisplay
+                    resource={inhibitor.resource}
+                    resourceKind={inhibitor.resource_kind}
+                  />
+                  {inhibitorLink && (
+                    <Link
+                      className="text-xs font-medium text-blue-500 hover:cursor-pointer hover:underline"
+                      to={inhibitorLink}
+                    >
+                      View notification
+                    </Link>
+                  )}
+                </div>
+              ) : isLoadingInhibitor ? (
+                "Loading..."
+              ) : (
+                "Unknown"
+              )
             }
           />
         )}
