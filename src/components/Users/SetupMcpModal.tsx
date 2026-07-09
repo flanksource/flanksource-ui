@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { RecordTouchpointOnMount } from "@flanksource-ui/components/GuidedTour/TouchpointObserver";
 import { CreateTokenResponse } from "@flanksource-ui/api/services/tokens";
 import { useAgentsBaseURL } from "@flanksource-ui/components/Agents/InstalAgentInstruction/useAgentsBaseURL";
@@ -19,11 +19,29 @@ type Props = {
 
 type SetupMode = "as-user" | "access-token";
 
-type ClientKey = "claude-code" | "vscode-copilot";
+type ClientKey = "claude-code" | "vscode-copilot" | "claude-desktop";
 
-const mcpUsageInstructionsByClient: Partial<Record<ClientKey, string>> = {
+type AsUserClientConfig = {
+  label: string;
+  config?: string;
+  content?: ReactNode;
+};
+
+const mcpUsageInstructionsByClient: Partial<Record<ClientKey, ReactNode>> = {
   "claude-code": "Add this to .mcp.json in your project root",
-  "vscode-copilot": "Add this to .vscode/mcp.json in your project root"
+  "vscode-copilot": "Add this to .vscode/mcp.json in your project root",
+  "claude-desktop": (
+    <div className="space-y-1">
+      <div>
+        Open Claude Desktop, go to <strong>Settings &gt; Connectors</strong>,
+        then select <strong>Add &gt; Custom connector</strong>.
+      </div>
+      <div>
+        Enter the values above, select <strong>Add</strong>, then select{" "}
+        <strong>Connect</strong> and complete the OAuth flow.
+      </div>
+    </div>
+  )
 };
 
 const ACCESS_TOKEN_FORM_ID = "setup-mcp-access-token-form";
@@ -44,7 +62,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
     onClose();
   };
 
-  const asUserConfigs: Record<ClientKey, { label: string; config: string }> = {
+  const asUserConfigs: Record<ClientKey, AsUserClientConfig> = {
     "claude-code": {
       label: "Claude Code",
       config: `{
@@ -70,6 +88,42 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
   },
   "inputs": []
 }`
+    },
+    "claude-desktop": {
+      label: "Claude Desktop",
+      content: (
+        <div className="space-y-3 text-sm text-gray-800">
+          <p>
+            Claude Desktop uses custom connectors for remote MCP servers. Add a
+            custom connector with these values:
+          </p>
+          <dl className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+            <dt className="font-medium text-gray-600">Name</dt>
+            <dd>
+              <code className="break-all rounded bg-gray-100 px-2 py-1">
+                Mission-Control
+              </code>
+            </dd>
+
+            <dt className="font-medium text-gray-600">Remote MCP server URL</dt>
+            <dd>
+              <code className="break-all rounded bg-gray-100 px-2 py-1">
+                {baseUrl}
+              </code>
+            </dd>
+
+            <dt className="font-medium text-gray-600">OAuth Client ID</dt>
+            <dd>
+              <code className="break-all rounded bg-gray-100 px-2 py-1">
+                mc-cli
+              </code>
+            </dd>
+
+            <dt className="font-medium text-gray-600">OAuth Client Secret</dt>
+            <dd>Leave empty</dd>
+          </dl>
+        </div>
+      )
     }
   };
 
@@ -109,15 +163,19 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
                 onSelectTab={(tab) => setActiveClient(tab as ClientKey)}
               >
                 {Object.entries(asUserConfigs).map(
-                  ([key, { label, config }]) => (
+                  ([key, { label, config, content }]) => (
                     <Tab key={key} label={label} value={key} className="p-4">
                       <div className="max-h-80 overflow-y-auto">
-                        <JSONViewer
-                          code={config}
-                          format="json"
-                          showLineNo
-                          hideCopyButton={false}
-                        />
+                        {config ? (
+                          <JSONViewer
+                            code={config}
+                            format="json"
+                            showLineNo
+                            hideCopyButton={false}
+                          />
+                        ) : (
+                          content
+                        )}
                       </div>
                     </Tab>
                   )
