@@ -2,7 +2,7 @@ FROM node:22.14@sha256:bac8ff0b5302b06924a5e288fb4ceecef9c8bb0bb92515985d2efdc3a
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json* .npmrc ./
 RUN npm ci
 
 # Rebuild the source code only when needed
@@ -31,6 +31,8 @@ RUN cp .next/routes-manifest.json .next/routes-manifest.orig.json
 # Production image, copy all the files and run next
 FROM node:22.14@sha256:bac8ff0b5302b06924a5e288fb4ceecef9c8bb0bb92515985d2efdc3a2447052 AS runner
 WORKDIR /app
+ARG APP_DEPLOYMENT=INCIDENT_MANAGER
+ARG ORY_KRATOS_URL
 
 ENV NEXT_PUBLIC_APP_DEPLOYMENT=${APP_DEPLOYMENT}
 ENV ORY_KRATOS_URL=${ORY_KRATOS_URL}
