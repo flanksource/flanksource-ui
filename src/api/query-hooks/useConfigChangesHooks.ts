@@ -1,10 +1,17 @@
-import { configChangesDefaultDateFilter } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
+import {
+  configChangesDefaultDateFilter,
+  configChangesGraphDefaultDateFilterParams
+} from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesDateRangeFIlter";
 import { useShowDeletedConfigs } from "@flanksource-ui/store/preference.state";
 import { useConfigChangesArbitraryFilters } from "@flanksource-ui/hooks/useConfigChangesArbitraryFilters";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import useTimeRangeParams from "@flanksource-ui/ui/Dates/TimeRangePicker/useTimeRangeParams";
-import { UseQueryOptions, useQuery } from "@tanstack/react-query";
+import {
+  UseQueryOptions,
+  useInfiniteQuery,
+  useQuery
+} from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { usePrefixedSearchParams } from "@flanksource-ui/hooks/usePrefixedSearchParams";
@@ -165,5 +172,68 @@ export function useGetConfigChangesByIDQuery(
     queryKey: ["configs", "changes", props],
     queryFn: () => getConfigsChanges(props),
     ...queryOptions
+  });
+}
+
+export function useGetAllConfigsChangesInfiniteQuery({
+  pageSize = 1000,
+  maxChanges,
+  paramPrefix,
+  enabled = true
+}: {
+  pageSize?: number;
+  maxChanges?: number;
+  paramPrefix?: string;
+  enabled?: boolean;
+} = {}) {
+  const showChangesFromDeletedConfigs = useShowDeletedConfigs();
+  const { timeRangeValue } = useTimeRangeParams(
+    configChangesGraphDefaultDateFilterParams,
+    paramPrefix
+  );
+  const [params] = usePrefixedSearchParams(paramPrefix, false, {
+    sortBy: "created_at",
+    sortDirection: "desc"
+  });
+  const changeType = params.get("changeType") ?? undefined;
+  const severity = params.get("severity") ?? undefined;
+  const configType = params.get("configType") ?? undefined;
+  const from = timeRangeValue?.from ?? undefined;
+  const to = timeRangeValue?.to ?? undefined;
+  const [sortBy] = useReactTableSortState({ paramPrefix });
+  const configTypes = params.get("configTypes") ?? "all";
+  const tags = useConfigChangesTagsFilter(paramPrefix);
+  const arbitraryFilter = useConfigChangesArbitraryFilters(paramPrefix);
+
+  const filterProps = {
+    include_deleted_configs: showChangesFromDeletedConfigs,
+    changeType,
+    severity,
+    from,
+    to,
+    configTypes,
+    configType,
+    sortBy: sortBy[0]?.id,
+    sortOrder: (sortBy[0]?.desc ? "desc" : "asc") as "asc" | "desc",
+    pageSize,
+    arbitraryFilter,
+    tags
+  };
+
+  return useInfiniteQuery({
+    queryKey: ["configs", "changes", "infinite", filterProps, maxChanges],
+    queryFn: ({ pageParam = 0 }) =>
+      getConfigsChanges({ ...filterProps, pageIndex: pageParam }),
+    getNextPageParam: (_lastPage, allPages) => {
+      const total = allPages[0]?.total ?? 0;
+      const limit = maxChanges ? Math.min(total, maxChanges) : total;
+      const loaded = allPages.reduce(
+        (count, page) => count + (page.changes?.length ?? 0),
+        0
+      );
+      return loaded < limit ? allPages.length : undefined;
+    },
+    keepPreviousData: true,
+    enabled
   });
 }
