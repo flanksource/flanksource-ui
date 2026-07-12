@@ -39,9 +39,14 @@ jobs:
             build_args: |
               APP_DEPLOYMENT=INCIDENT_MANAGER
               WITHOUT_AUTH=false
-    uses: flanksource/action-workflows/.github/workflows/publish-docker-image.yml@main
+    uses: flanksource/action-workflows/.github/workflows/publish-docker-image.yml@d8fee444922a72525e94481babc8304bcbe32e2d
     with:
       platforms: linux/amd64,linux/arm64
+      buildx_driver: cloud
+      buildx_endpoint: flanksource/node
+      buildx_install: true
+      cache_from: ""
+      cache_to: ""
       login_to_ecr: true
       image_tags: |
         flanksource/${{ matrix.image }}:latest
