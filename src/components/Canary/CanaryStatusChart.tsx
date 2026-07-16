@@ -85,7 +85,10 @@ export function CanaryStatusChart({
   // we need to lift this up
   const { data: graphData, isLoading } = useCanaryGraphQuery(timeRange, check);
 
-  const data = useMemo(() => (graphData?.status ?? []).reverse(), [graphData]);
+  const data = useMemo(
+    () => [...(graphData?.status ?? [])].reverse(),
+    [graphData]
+  );
 
   useEffect(() => {
     const updatedFormat = getUpdatedFormat(timeRange);
