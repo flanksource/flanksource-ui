@@ -15,6 +15,17 @@ const config = {
       "https://audit-report.app.flanksource.com",
     NEXT_PUBLIC_ACCOUNTS_URL: "https://accounts.flanksource.com"
   },
+  headers: async () => [
+    {
+      source: "/:path*",
+      headers: [
+        {
+          key: "X-Content-Type-Options",
+          value: "nosniff"
+        }
+      ]
+    }
+  ],
   redirects: async () => {
     if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
       return [];
