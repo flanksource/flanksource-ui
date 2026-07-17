@@ -1,10 +1,17 @@
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo
+} from "react";
 import { useGetFeatureFlagsFromAPI } from "../api/query-hooks/useFeatureFlags";
 import { features } from "../services/permissions/features";
 import {
   FeatureFlag,
   permissionService
 } from "../services/permissions/permissionsService";
+import { updateContentSecurityPolicy } from "../utils/contentSecurityPolicy";
 
 export type FeatureFlagsState = {
   featureFlags: FeatureFlag[];
@@ -29,9 +36,19 @@ export const FeatureFlagsContextProvider = ({
 }) => {
   const {
     data: featureFlags = [],
+    isError,
     isSuccess,
     refetch
   } = useGetFeatureFlagsFromAPI();
+
+  useEffect(() => {
+    if (isSuccess) {
+      updateContentSecurityPolicy(featureFlags);
+    } else if (isError) {
+      // The policy is enabled by default if properties cannot be loaded.
+      updateContentSecurityPolicy([]);
+    }
+  }, [featureFlags, isError, isSuccess]);
 
   const refreshFeatureFlags = useCallback(() => {
     refetch();
