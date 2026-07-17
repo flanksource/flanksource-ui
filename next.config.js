@@ -22,6 +22,11 @@ const config = {
         {
           key: "X-Content-Type-Options",
           value: "nosniff"
+        },
+        // Plugin UIs are embedded from same-origin /api/plugins routes.
+        {
+          key: "X-Frame-Options",
+          value: "SAMEORIGIN"
         }
       ]
     }
