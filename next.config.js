@@ -15,6 +15,17 @@ const config = {
       "https://audit-report.app.flanksource.com",
     NEXT_PUBLIC_ACCOUNTS_URL: "https://accounts.flanksource.com"
   },
+  headers: async () => [
+    {
+      source: "/:path*",
+      headers: [
+        {
+          key: "X-Content-Type-Options",
+          value: "nosniff"
+        }
+      ]
+    }
+  ],
   redirects: async () => {
     if (process.env.NEXT_PUBLIC_APP_DEPLOYMENT === "CANARY_CHECKER") {
       return [];
@@ -198,8 +209,8 @@ const config = {
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
     ? {
-        output: "standalone"
-      }
+      output: "standalone"
+    }
     : {}),
   experimental: {
     // increase the default timeout for the proxy from 30s to 10m to allow for
