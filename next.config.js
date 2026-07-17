@@ -22,11 +22,6 @@ const config = {
         {
           key: "X-Content-Type-Options",
           value: "nosniff"
-        },
-        // Plugin UIs are embedded from same-origin /api/plugins routes.
-        {
-          key: "X-Frame-Options",
-          value: "SAMEORIGIN"
         }
       ]
     }
@@ -214,8 +209,8 @@ const config = {
   // https://github.com/vercel/next.js/tree/canary/examples/with-docker#in-existing-projects
   ...(process.env.NEXT_STANDALONE_DEPLOYMENT === "true"
     ? {
-        output: "standalone"
-      }
+      output: "standalone"
+    }
     : {}),
   experimental: {
     // increase the default timeout for the proxy from 30s to 10m to allow for
