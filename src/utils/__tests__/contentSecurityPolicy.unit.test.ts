@@ -14,6 +14,15 @@ describe("updateContentSecurityPolicy", () => {
     expect(meta).not.toBeNull();
     expect(meta).toHaveAttribute("http-equiv", "Content-Security-Policy");
     expect(meta?.content).toContain("default-src 'self'");
+    expect(meta?.content).toContain(
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:"
+    );
+    expect(meta?.content).toContain(
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net"
+    );
+    expect(meta?.content).toContain(
+      "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net"
+    );
   });
 
   it("disables CSP only when the Mission Control property is false", () => {
