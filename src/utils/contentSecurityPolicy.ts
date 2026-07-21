@@ -6,10 +6,12 @@ const CONTENT_SECURITY_POLICY = [
   "base-uri 'self'",
   "object-src 'none'",
   "form-action 'self'",
-  // Next.js emits inline bootstrap data, and the UI uses inline styles.
-  "script-src 'self' 'unsafe-inline' https:",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' data: https://fonts.gstatic.com",
+  // Next.js emits inline bootstrap data. UI snippets and Ory WebAuthn use
+  // dynamic functions, while Shiki compiles its syntax highlighter from WASM.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+  // Monaco's CDN stylesheet loads its codicon font from the same origin.
+  "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net",
   "img-src 'self' data: blob: https:",
   "connect-src 'self' https: wss:",
   "worker-src 'self' blob:",
