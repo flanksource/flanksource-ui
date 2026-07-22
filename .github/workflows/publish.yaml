@@ -103,7 +103,7 @@ jobs:
     permissions:
       contents: read
     if: always() && needs.helm.result == 'success'
-    uses: flanksource/action-workflows/.github/workflows/push-helm-chart.yml@4b41aaf6cf7727789c0d21cd0bc262e850ba543f # main
+    uses: flanksource/action-workflows/.github/workflows/push-helm-chart.yml@5d7f5f3616936fd703e58c5ee7e4527dc9f6adcc # main
     with:
       filename_regex: "flanksource-ui-*.tgz"
       version: ${{ needs.helm.outputs.release-version }}
