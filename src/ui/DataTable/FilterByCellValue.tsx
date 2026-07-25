@@ -12,6 +12,7 @@ type FilterByCellProps = {
   filterValue: string;
   paramsToReset?: string[];
   paramPrefix?: string;
+  alwaysShowButtons?: boolean;
 };
 
 export function FilterByCellValue({
@@ -19,7 +20,8 @@ export function FilterByCellValue({
   children,
   filterValue,
   paramsToReset = [],
-  paramPrefix
+  paramPrefix,
+  alwaysShowButtons = false
 }: FilterByCellProps) {
   const [, setParams] = usePrefixedSearchParams(paramPrefix, false);
 
@@ -63,7 +65,13 @@ export function FilterByCellValue({
       <div className="min-w-0 flex-1 overflow-hidden text-ellipsis">
         {children}
       </div>
-      <div className="flex flex-row gap-1 px-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <div
+        className={`flex flex-row gap-1 px-1 transition-opacity ${
+          alwaysShowButtons
+            ? "opacity-100"
+            : "opacity-0 group-hover:opacity-100"
+        }`}
+      >
         <IconButton
           onClick={(e) => onClick(e, "include")}
           icon={<PiMagnifyingGlassPlusThin size={18} />}
