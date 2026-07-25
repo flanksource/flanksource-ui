@@ -8,6 +8,7 @@ export type Property = {
   name: string;
   icon?: string;
   label?: string;
+  tooltip?: string;
   type?: "url" | "badge" | "currency" | "text" | "age" | "hidden";
   text?: string;
   max?: number;
@@ -16,8 +17,13 @@ export type Property = {
   value?: ValueType;
   unit?: string;
   color?: string;
+  order?: number;
+  hidden?: boolean;
+  status?: string;
   namespace?: string;
   url?: string;
+  link?: string;
+  link_label?: string;
   links?: {
     label: string;
     url: string;
