@@ -55,6 +55,9 @@ const expectValue = (value: unknown) =>
 
 const checkbox = (name: RegExp) => screen.getByRole("checkbox", { name });
 
+const removeButton = (name: string) =>
+  screen.getByRole("button", { name: `Remove ${name}` });
+
 beforeEach(() => {
   jest.clearAllMocks();
   (searchApi.searchResources as jest.Mock).mockResolvedValue({
@@ -115,16 +118,222 @@ describe("FormikConfigsSelector", () => {
     await expectValue({ search: "grafana" });
   });
 
-  it("hydrates checked items from an initial id value", async () => {
+  it("hydrates pre-selected items into chips without opening the results", async () => {
     renderSelector(JSON.stringify({ id: grafana.id }));
 
-    await waitFor(() => expect(checkbox(/grafana/)).toBeChecked());
+    await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
 
     expect(searchApi.searchResources).toHaveBeenCalledWith(
       expect.objectContaining({
         configs: [expect.objectContaining({ search: `id=${grafana.id}` })]
       })
     );
-    expect(checkbox(/prometheus/)).not.toBeChecked();
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+  });
+
+  it("shows the results only while the field is focused", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox"), "grafana");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    await user.click(document.body);
+
+    await waitFor(() =>
+      expect(screen.queryByRole("checkbox")).not.toBeInTheDocument()
+    );
+  });
+
+  it("shows checked items as chips once the results are closed", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    await user.type(screen.getByRole("textbox"), "grafana");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+    await user.click(checkbox(/grafana/));
+
+    // while open the list shows search results only, never the checked items
+    expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument();
+
+    await user.click(document.body);
+
+    await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
+    await expectValue({ id: grafana.id });
+  });
+
+  it("stays open when a result row is clicked", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    // a query that is not itself a result name, so the pinned "Use query" row
+    // does not collide with the result row in the lookup below
+    await user.type(screen.getByRole("textbox"), "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    // clicking the row itself, not the checkbox: the row is not focusable, so a
+    // naive blur handler would tear the list down before the click lands
+    await user.click(screen.getByText("grafana"));
+
+    expect(checkbox(/grafana/)).toBeChecked();
+    expect(checkbox(/prometheus/)).toBeInTheDocument();
+    await expectValue({ id: grafana.id });
+  });
+
+  it("checks and unchecks the highlighted item with the arrow keys and enter", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    // first row is highlighted by default
+    await user.keyboard("{Enter}");
+    await expectValue({ id: grafana.id });
+
+    await user.keyboard("{ArrowDown}{Enter}");
+    await expectValue({ id: `${grafana.id},${prometheus.id}` });
+
+    await user.keyboard("{ArrowUp}{Enter}");
+    await expectValue({ id: prometheus.id });
+  });
+
+  it("offers the typed query as a pinned option that closes the results", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "type=Kubernetes::Deployment");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    await user.click(checkbox(/grafana/));
+
+    const useQuery = screen.getByRole("button", { name: /Use query/ });
+    await user.click(useQuery);
+
+    // choosing the query drops the checked items and closes the results
+    await waitFor(() =>
+      expect(screen.queryByRole("checkbox")).not.toBeInTheDocument()
+    );
+    expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument();
+    await expectValue({ search: "type=Kubernetes::Deployment" });
+  });
+
+  it("does not offer the query option when nothing has been typed", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    await user.click(screen.getByRole("textbox"));
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    expect(screen.queryByRole("button", { name: /Use query/ })).not.toBeInTheDocument();
+  });
+
+  it("clears the typed text on close when items are checked", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+    await user.click(checkbox(/grafana/));
+
+    await user.click(document.body);
+
+    await waitFor(() => expect(input).toHaveValue(""));
+    await expectValue({ id: grafana.id });
+  });
+
+  it("clears the typed text on close when nothing was chosen", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    await user.click(document.body);
+
+    await waitFor(() => expect(input).toHaveValue(""));
+    expect(screen.getByTestId("value")).toHaveTextContent("");
+  });
+
+  it("keeps the text on close once the query option was chosen", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    await user.click(screen.getByRole("button", { name: /Use query/ }));
+    await user.click(document.body);
+
+    expect(input).toHaveValue("kube");
+    await expectValue({ search: "kube" });
+  });
+
+  it("drops a committed query once an item is checked", async () => {
+    const user = userEvent.setup();
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+    await user.click(screen.getByRole("button", { name: /Use query/ }));
+
+    // reopen and check an item instead
+    await user.click(input);
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+    await user.click(checkbox(/grafana/));
+    await user.click(document.body);
+
+    await waitFor(() => expect(input).toHaveValue(""));
+    await expectValue({ id: grafana.id });
+  });
+
+  it("swallows escape while the results are open so the modal stays up", async () => {
+    const user = userEvent.setup();
+    const onWindowEscape = jest.fn();
+    window.addEventListener("keydown", onWindowEscape);
+    renderSelector();
+
+    const input = screen.getByRole("textbox");
+    await user.type(input, "kube");
+    await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
+
+    await user.keyboard("{Escape}");
+
+    // the results closed, but the surrounding modal never saw the key
+    await waitFor(() =>
+      expect(screen.queryByRole("checkbox")).not.toBeInTheDocument()
+    );
+    expect(
+      onWindowEscape.mock.calls.filter(([e]) => e.key === "Escape")
+    ).toHaveLength(0);
+
+    // with the results closed the modal gets its escape back
+    await user.keyboard("{Escape}");
+    expect(
+      onWindowEscape.mock.calls.filter(([e]) => e.key === "Escape")
+    ).toHaveLength(1);
+
+    window.removeEventListener("keydown", onWindowEscape);
+  });
+
+  it("removes a chip when its remove button is clicked", async () => {
+    const user = userEvent.setup();
+    renderSelector(JSON.stringify({ id: grafana.id }));
+
+    await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
+
+    await user.click(removeButton("grafana"));
+
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument()
+    );
   });
 });

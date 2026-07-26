@@ -23,6 +23,10 @@ export const submitPlaybookRunFormModalSizesAtom = atom<
   SubmitPlaybookRunFormModalSizes | undefined
 >(undefined);
 
+// TEMPORARY(configs-picker): name of the configs parameter injected into every
+// playbook so the picker can be exercised without editing a playbook spec.
+export const TEMP_CONFIGS_PARAM = "_test_configs";
+
 export type SubmitPlaybookRunFormValues = {
   // if this is present in the form, we show step to add params
   id: string;
@@ -112,7 +116,17 @@ export default function SubmitPlaybookRunForm({
         validateOnMount
         onSubmit={(values) => {
           recordTouchpoint("playbooks.run");
-          submitPlaybookRun(values as SubmitPlaybookRunFormValues);
+          // TEMPORARY(configs-picker): the injected test parameter is not in any
+          // playbook spec, so the API rejects it as an unknown parameter.
+          const { [TEMP_CONFIGS_PARAM]: testConfigs, ...params } =
+            values.params ?? {};
+          if (testConfigs) {
+            console.log("configs param value:", testConfigs);
+          }
+          submitPlaybookRun({
+            ...values,
+            params
+          } as SubmitPlaybookRunFormValues);
         }}
       >
         {({ values, handleSubmit, isValid }) => {

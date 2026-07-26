@@ -16,7 +16,8 @@ import YAML from "yaml";
 import PlaybookParamsFieldsRenderer from "./PlaybookParamsFieldsRenderer";
 import {
   SubmitPlaybookRunFormValues,
-  submitPlaybookRunFormModalSizesAtom
+  submitPlaybookRunFormModalSizesAtom,
+  TEMP_CONFIGS_PARAM
 } from "./SubmitPlaybookRunForm";
 
 function parseCodeDefaultValue(parameter: PlaybookParam) {
@@ -129,9 +130,21 @@ export default function PlaybookRunParams({
 
   // if no resource is required, show the playbook parameters, as they are not
   // dependent on the resource and are always available
-  const parameters = isResourceRequired
+  const specParameters = isResourceRequired
     ? data?.params
     : playbook.spec?.parameters || [];
+
+  // TEMPORARY(configs-picker): injected so the configs picker can be exercised
+  // on any playbook. Remove along with TEMP_CONFIGS_PARAM in
+  // SubmitPlaybookRunForm.tsx.
+  const parameters: PlaybookParam[] = [
+    ...(specParameters ?? []).filter((p) => p.name !== TEMP_CONFIGS_PARAM),
+    {
+      name: TEMP_CONFIGS_PARAM,
+      label: "Configs (test)",
+      type: "configs"
+    }
+  ];
 
   return (
     <div className="flex flex-col">
