@@ -34,6 +34,7 @@ function renderSelector(
   options: {
     validate?: jest.Mock;
     externalValues?: { label: string; value?: string }[];
+    required?: boolean;
   } = {}
 ) {
   render(
@@ -44,8 +45,12 @@ function renderSelector(
     >
       {({ values, setFieldValue }) => (
         <Form>
-          <FormikConfigsSelector name="params.targets" />
+          <FormikConfigsSelector
+            name="params.targets"
+            required={options.required}
+          />
           <div data-testid="value">{values.params.targets ?? ""}</div>
+          {options.required && <button type="submit">Submit</button>}
           {options.externalValues?.map(({ label, value }) => (
             <button
               key={label}
@@ -125,6 +130,29 @@ describe("FormikConfigsSelector", () => {
     expect(
       screen.queryByRole("button", { name: "Remove prometheus" })
     ).not.toBeInTheDocument();
+  });
+
+  it("shows required errors after the field is closed", async () => {
+    const user = userEvent.setup();
+    renderSelector(undefined, { required: true });
+
+    await user.click(screen.getByRole("textbox"));
+    await user.click(document.body);
+
+    expect(
+      await screen.findByText("This field is required")
+    ).toBeInTheDocument();
+  });
+
+  it("shows required errors when the form is submitted", async () => {
+    const user = userEvent.setup();
+    renderSelector(undefined, { required: true });
+
+    await user.click(screen.getByRole("button", { name: "Submit" }));
+
+    expect(
+      await screen.findByText("This field is required")
+    ).toBeInTheDocument();
   });
 
   it("submits the raw search query when no items are checked", async () => {

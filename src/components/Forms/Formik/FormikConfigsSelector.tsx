@@ -101,16 +101,11 @@ export default function FormikConfigsSelector({
     initialIds.map((id) => ({ id }) as SearchedResource)
   );
   const [preselectedIds, setPreselectedIds] = useState(initialIds);
-  const [isTouched, setIsTouched] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const { setValue } = helpers;
+  const { setValue, setTouched } = helpers;
   const serializedSelector = serializeSelector(selected, query);
-  const fieldValueRef = useRef(field.value);
-  fieldValueRef.current = field.value;
-  const serializedSelectorRef = useRef(serializedSelector);
-  serializedSelectorRef.current = serializedSelector;
   const previousSerializedSelector = useRef(serializedSelector);
 
   useEffect(() => {
@@ -119,10 +114,10 @@ export default function FormikConfigsSelector({
     }
     previousSerializedSelector.current = serializedSelector;
 
-    if (fieldValueRef.current !== serializedSelector) {
+    if (field.value !== serializedSelector) {
       setValue(serializedSelector);
     }
-  }, [serializedSelector, setValue]);
+  }, [field.value, serializedSelector, setValue]);
 
   const selectors = useMemo(
     () => (filter?.length ? filter : [{} as PlaybookResourceSelector]),
@@ -184,7 +179,7 @@ export default function FormikConfigsSelector({
 
     // Local edits have already produced this field value, so preserve the
     // resolved selected resources rather than replacing them with placeholders.
-    if (field.value === serializedSelectorRef.current) {
+    if (field.value === serializedSelector) {
       return;
     }
 
@@ -198,7 +193,7 @@ export default function FormikConfigsSelector({
     setCommittedQuery(nextQuery);
     setSelected(ids.map((id) => ({ id }) as SearchedResource));
     setPreselectedIds(ids);
-  }, [field.value, handleSearchDebounced]);
+  }, [field.value, handleSearchDebounced, serializedSelector]);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
@@ -234,7 +229,7 @@ export default function FormikConfigsSelector({
     setQuery(committedQuery);
     setSearchText(committedQuery);
     setIsOpen(false);
-    setIsTouched(true);
+    setTouched(true);
   };
 
   // The results stay open while focus moves within the field, so clicking a
@@ -425,7 +420,7 @@ export default function FormikConfigsSelector({
           />
         )}
       </p>
-      {isTouched && meta.error ? (
+      {meta.touched && meta.error ? (
         <p className="w-full py-1 text-sm text-red-500">{meta.error}</p>
       ) : null}
     </div>
