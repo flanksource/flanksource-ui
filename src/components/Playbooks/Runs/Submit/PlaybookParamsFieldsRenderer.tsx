@@ -1,4 +1,5 @@
 import FormikBytesTextField from "@flanksource-ui/components/Forms/Formik/FormikBytesTextField";
+import FormikConfigsSelector from "@flanksource-ui/components/Forms/Formik/FormikConfigsSelector";
 import FormikMillicoresTextField from "@flanksource-ui/components/Forms/Formik/FormikMillicoresTextField";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikDurationDropdown from "@flanksource-ui/components/Forms/Formik/FormikDurationDropdown";
@@ -95,6 +96,14 @@ export default function PlaybookParamsFieldsRenderer({
           name={`params.${fieldName}`}
           required={required}
           configResourceSelector={params.properties?.filter}
+        />
+      );
+    case "configs":
+      return (
+        <FormikConfigsSelector
+          name={`params.${fieldName}`}
+          required={required}
+          filter={params.properties?.filter}
         />
       );
     case "check":

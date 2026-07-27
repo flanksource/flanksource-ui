@@ -265,6 +265,13 @@ export type PlaybookParamComponentConfigCheck = PlaybookParamCommonFields & {
   };
 };
 
+export type PlaybookParamConfigs = PlaybookParamCommonFields & {
+  type: "configs";
+  properties?: ParamProperties & {
+    filter: PlaybookResourceSelector[];
+  };
+};
+
 export type PlaybookParamPeople = PlaybookParamCommonFields & {
   type: "people";
   properties?: ParamProperties & {
@@ -285,6 +292,7 @@ export type PlaybookParam =
   | PlaybookParamCodeEditor
   | PlaybookParamCheckbox
   | PlaybookParamComponentConfigCheck
+  | PlaybookParamConfigs
   | PlaybookParamPeople
   | PlaybookParamTeam;
 

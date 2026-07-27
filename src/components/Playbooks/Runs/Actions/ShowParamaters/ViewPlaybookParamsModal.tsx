@@ -14,6 +14,32 @@ type RenderParamValueProps = {
   paramValue: any;
 };
 
+function RenderConfigsParamValue({ paramValue }: { paramValue: any }) {
+  let selector: { search?: string; id?: string } = {};
+  try {
+    selector = JSON.parse(paramValue);
+  } catch {
+    selector = { search: paramValue };
+  }
+
+  const ids = (selector.id ?? "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  if (ids.length === 0) {
+    return <span className="text-sm">{selector.search}</span>;
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      {ids.map((id) => (
+        <ConfigLink key={id} configId={id} variant="link" />
+      ))}
+    </div>
+  );
+}
+
 function RenderParamValue({ paramSpec, paramValue }: RenderParamValueProps) {
   switch (paramSpec.type) {
     // for code, we want to render the code in a JSONViewer
@@ -32,6 +58,8 @@ function RenderParamValue({ paramSpec, paramValue }: RenderParamValueProps) {
       return <TopologyLink topologyId={paramValue} viewType="link" />;
     case "config":
       return <ConfigLink configId={paramValue} variant="link" />;
+    case "configs":
+      return <RenderConfigsParamValue paramValue={paramValue} />;
     default:
       return <span className="text-sm">{paramValue}</span>;
   }
