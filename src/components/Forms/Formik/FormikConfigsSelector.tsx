@@ -83,8 +83,8 @@ export default function FormikConfigsSelector({
     )
   });
 
-  // The initial value is the only source of pre-selection, so it is read once
-  // and then owned by the local state below.
+  // Seed the local state from the field; later external field updates are
+  // synchronized below.
   const initialSelector = useRef(parseSelector(field.value)).current;
   const initialIds = useMemo(
     () => selectorIds(initialSelector),
@@ -100,15 +100,29 @@ export default function FormikConfigsSelector({
   const [selected, setSelected] = useState<SearchedResource[]>(() =>
     initialIds.map((id) => ({ id }) as SearchedResource)
   );
+  const [preselectedIds, setPreselectedIds] = useState(initialIds);
   const [isTouched, setIsTouched] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const { setValue } = helpers;
+  const serializedSelector = serializeSelector(selected, query);
+  const fieldValueRef = useRef(field.value);
+  fieldValueRef.current = field.value;
+  const serializedSelectorRef = useRef(serializedSelector);
+  serializedSelectorRef.current = serializedSelector;
+  const previousSerializedSelector = useRef(serializedSelector);
+
   useEffect(() => {
-    setValue(serializeSelector(selected, query));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, query]);
+    if (previousSerializedSelector.current === serializedSelector) {
+      return;
+    }
+    previousSerializedSelector.current = serializedSelector;
+
+    if (fieldValueRef.current !== serializedSelector) {
+      setValue(serializedSelector);
+    }
+  }, [serializedSelector, setValue]);
 
   const selectors = useMemo(
     () => (filter?.length ? filter : [{} as PlaybookResourceSelector]),
@@ -134,13 +148,13 @@ export default function FormikConfigsSelector({
   });
 
   const { data: preselected } = useQuery({
-    queryKey: ["searchResources", "configs", "byId", initialIds],
+    queryKey: ["searchResources", "configs", "byId", preselectedIds],
     queryFn: () =>
       searchResources({
-        configs: [{ search: `id=${initialIds.join(",")}`, agent: "all" }]
+        configs: [{ search: `id=${preselectedIds.join(",")}`, agent: "all" }]
       }),
     select: (data) => data?.configs ?? [],
-    enabled: initialIds.length > 0
+    enabled: preselectedIds.length > 0
   });
 
   // Replace the id-only placeholders with the resolved catalog items so they
@@ -160,6 +174,31 @@ export default function FormikConfigsSelector({
   const handleSearchDebounced = useRef(
     debounce((value: string) => setSearchText(value), 300)
   ).current;
+
+  const previousFieldValue = useRef(field.value);
+  useEffect(() => {
+    if (previousFieldValue.current === field.value) {
+      return;
+    }
+    previousFieldValue.current = field.value;
+
+    // Local edits have already produced this field value, so preserve the
+    // resolved selected resources rather than replacing them with placeholders.
+    if (field.value === serializedSelectorRef.current) {
+      return;
+    }
+
+    const selector = parseSelector(field.value);
+    const ids = selectorIds(selector);
+    const nextQuery = selector.search ?? "";
+
+    handleSearchDebounced.cancel();
+    setQuery(nextQuery);
+    setSearchText(nextQuery);
+    setCommittedQuery(nextQuery);
+    setSelected(ids.map((id) => ({ id }) as SearchedResource));
+    setPreselectedIds(ids);
+  }, [field.value, handleSearchDebounced]);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);

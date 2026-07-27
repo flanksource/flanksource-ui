@@ -29,16 +29,32 @@ const prometheus = {
   labels: {}
 };
 
-function renderSelector(initialValue?: string) {
+function renderSelector(
+  initialValue?: string,
+  options: {
+    validate?: jest.Mock;
+    externalValues?: { label: string; value?: string }[];
+  } = {}
+) {
   render(
     <Formik
       initialValues={{ params: { targets: initialValue } }}
       onSubmit={jest.fn()}
+      validate={options.validate}
     >
-      {({ values }) => (
+      {({ values, setFieldValue }) => (
         <Form>
           <FormikConfigsSelector name="params.targets" />
           <div data-testid="value">{values.params.targets ?? ""}</div>
+          {options.externalValues?.map(({ label, value }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => setFieldValue("params.targets", value)}
+            >
+              {label}
+            </button>
+          ))}
         </Form>
       )}
     </Formik>
@@ -66,6 +82,51 @@ beforeEach(() => {
 });
 
 describe("FormikConfigsSelector", () => {
+  it("does not rewrite the unchanged field value on mount", async () => {
+    const validate = jest.fn(() => ({}));
+    const initialValue = JSON.stringify({ id: grafana.id });
+
+    renderSelector(initialValue, { validate });
+
+    await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
+    expect(screen.getByTestId("value")).toHaveTextContent(initialValue, {
+      normalizeWhitespace: false
+    });
+    expect(validate).not.toHaveBeenCalled();
+  });
+
+  it("synchronizes local state when the field value changes externally", async () => {
+    const user = userEvent.setup();
+    renderSelector(JSON.stringify({ search: "grafana" }), {
+      externalValues: [
+        {
+          label: "Select prometheus externally",
+          value: JSON.stringify({ id: prometheus.id })
+        },
+        {
+          label: "Set query externally",
+          value: JSON.stringify({ search: "kube" })
+        }
+      ]
+    });
+
+    await user.click(
+      screen.getByRole("button", { name: "Select prometheus externally" })
+    );
+    await waitFor(() => expect(removeButton("prometheus")).toBeInTheDocument());
+    expect(screen.getByRole("textbox")).toHaveValue("");
+
+    await user.click(
+      screen.getByRole("button", { name: "Set query externally" })
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("textbox")).toHaveValue("kube")
+    );
+    expect(
+      screen.queryByRole("button", { name: "Remove prometheus" })
+    ).not.toBeInTheDocument();
+  });
+
   it("submits the raw search query when no items are checked", async () => {
     const user = userEvent.setup();
     renderSelector();
@@ -156,7 +217,9 @@ describe("FormikConfigsSelector", () => {
     await user.click(checkbox(/grafana/));
 
     // while open the list shows search results only, never the checked items
-    expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Remove/ })
+    ).not.toBeInTheDocument();
 
     await user.click(document.body);
 
@@ -218,7 +281,9 @@ describe("FormikConfigsSelector", () => {
     await waitFor(() =>
       expect(screen.queryByRole("checkbox")).not.toBeInTheDocument()
     );
-    expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Remove/ })
+    ).not.toBeInTheDocument();
     await expectValue({ search: "type=Kubernetes::Deployment" });
   });
 
@@ -229,7 +294,9 @@ describe("FormikConfigsSelector", () => {
     await user.click(screen.getByRole("textbox"));
     await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
 
-    expect(screen.queryByRole("button", { name: /Use query/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Use query/ })
+    ).not.toBeInTheDocument();
   });
 
   it("clears the typed text on close when items are checked", async () => {
@@ -333,7 +400,9 @@ describe("FormikConfigsSelector", () => {
     await user.click(removeButton("grafana"));
 
     await waitFor(() =>
-      expect(screen.queryByRole("button", { name: /Remove/ })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole("button", { name: /Remove/ })
+      ).not.toBeInTheDocument()
     );
   });
 });
