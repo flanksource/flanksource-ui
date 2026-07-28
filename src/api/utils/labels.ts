@@ -1,3 +1,16 @@
+const quoteJsonPathKey = (key: string) =>
+  key.includes("/")
+    ? `"${key.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`
+    : key;
+
+const buildColumnFilter = (
+  columnName: string,
+  key: string,
+  operator: "eq" | "neq",
+  value: string
+) =>
+  `${columnName}->>${quoteJsonPathKey(key)}.${operator}.${encodeURIComponent(value)}`;
+
 export const buildLabelFilterQueries = (
   columnName: string,
   rawValue?: string | null
@@ -16,9 +29,7 @@ export const buildLabelFilterQueries = (
     }
 
     const operator = parseInt(operand ?? "", 10) === -1 ? "neq" : "eq";
-    filterQueries.push(
-      `${columnName}->>${key}.${operator}.${encodeURIComponent(value)}`
-    );
+    filterQueries.push(buildColumnFilter(columnName, key, operator, value));
   });
 
   return filterQueries;
