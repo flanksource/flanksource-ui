@@ -28,13 +28,14 @@ export function ConfigListPage() {
 
   const configType = searchParams.get("configType") ?? undefined;
   const search = searchParams.get("search") ?? undefined;
+  const label = searchParams.get("label") ?? undefined;
   const labels = searchParams.get("labels") ?? undefined;
   const groupBy = useGroupBySearchParam();
 
   // Show summary if no search, tag/label, or configType is provided
   const showConfigSummaryList = useMemo(
-    () => !configType && !search && !labels,
-    [configType, labels, search]
+    () => !configType && !search && !labels && (!label || label === "All"),
+    [configType, label, labels, search]
   );
 
   const {

@@ -1,5 +1,5 @@
 const quoteJsonPathKey = (key: string) =>
-  key.includes("/")
+  /[/\\"]/.test(key)
     ? `"${key.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`
     : key;
 
