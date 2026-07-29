@@ -1,13 +1,13 @@
 import { useMemo } from "react";
-import { PlaybookNames } from "../../../api/types/playbooks";
+import { PlaybookSummary } from "../../../api/types/playbooks";
 import PlaybookSpecCard from "./PlaybookSpecCard";
 
 type GroupedPlaybooks = {
-  [key: string]: PlaybookNames[];
+  [key: string]: PlaybookSummary[];
 };
 
 type Props = {
-  data: PlaybookNames[];
+  data: PlaybookSummary[];
   refetch?: () => void;
 } & Omit<React.HTMLProps<HTMLDivElement>, "data">;
 

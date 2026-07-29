@@ -175,6 +175,10 @@ export type PlaybookNames = {
   description?: string;
 };
 
+export type PlaybookSummary = PlaybookNames & {
+  source: PlaybookSpec["source"];
+};
+
 export type PlaybookParamCommonFields = {
   name: string;
   label: string;

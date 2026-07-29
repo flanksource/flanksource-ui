@@ -13,6 +13,7 @@ import {
   CategorizedPlaybookRunAction,
   PlaybookRunWithActions,
   PlaybookSpec,
+  PlaybookSummary,
   RunnablePlaybook,
   UpdatePlaybookSpec,
   Playbook
@@ -21,6 +22,17 @@ import {
 export async function getAllPlaybooksSpecs() {
   const res = await IncidentCommander.get<PlaybookSpec[] | null>(
     `/playbooks?select=*,created_by(${AVATAR_INFO})&deleted_at=is.null&order=created_at.desc`
+  );
+  return res.data ?? [];
+}
+
+/*
+ * The playbook_names view does not expose the source, so the listing reads the
+ * same columns off the table, minus the spec.
+ */
+export async function getAllPlaybookSummaries() {
+  const res = await IncidentCommander.get<PlaybookSummary[] | null>(
+    `/playbooks?select=id,name,namespace,title,icon,category,description,source&deleted_at=is.null&order=title.asc`
   );
   return res.data ?? [];
 }

@@ -153,6 +153,65 @@ describe("PlaybookSpecCard", () => {
     fireEvent.click(screen.getByText("History"));
   });
 
+  describe("card menu", () => {
+    // The authorization check resolves asynchronously, so the menu button only
+    // appears once it has granted write access.
+    const renderCard = async (playbook: PlaybookSpec) => {
+      const queryClient = createQueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <AuthContext.Provider value={FakeUser([Roles.admin])}>
+            <UserAccessStateContextProvider>
+              <MemoryRouter>
+                <PlaybookSpecCard playbook={playbook} />
+              </MemoryRouter>
+            </UserAccessStateContextProvider>
+          </AuthContext.Provider>
+        </QueryClientProvider>
+      );
+      fireEvent.click(
+        await screen.findByRole("button", { name: /Playbook options/i })
+      );
+    };
+
+    it("offers edit and delete for a playbook created in the UI", async () => {
+      await renderCard(mockPlaybook);
+      expect(
+        await screen.findByRole("menuitem", { name: /Edit/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("menuitem", { name: /Delete/i })
+      ).toBeInTheDocument();
+    });
+
+    it("offers view instead of edit for a playbook managed by a CRD", async () => {
+      await renderCard({ ...mockPlaybook, source: "KubernetesCRD" });
+      expect(
+        await screen.findByRole("menuitem", { name: /View/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("menuitem", { name: /Edit/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not offer delete for a playbook managed by a CRD", async () => {
+      await renderCard({ ...mockPlaybook, source: "KubernetesCRD" });
+      expect(
+        await screen.findByRole("menuitem", { name: /View/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("menuitem", { name: /Delete/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("still offers permissions for a playbook managed by a CRD", async () => {
+      await renderCard({ ...mockPlaybook, source: "KubernetesCRD" });
+      expect(
+        await screen.findByRole("menuitem", { name: /Permissions/i })
+      ).toBeInTheDocument();
+    });
+  });
+
   it("opens the SubmitPlaybookRunForm when the Run button is clicked", async () => {
     const queryClient = createQueryClient();
     render(

@@ -1,7 +1,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BsTrash } from "react-icons/bs";
-import { MdEdit, MdSecurity } from "react-icons/md";
+import { MdEdit, MdSecurity, MdVisibility } from "react-icons/md";
 import { IconButton } from "../../../ui/Buttons/IconButton";
 
 type PlaybookCardMenuDropdownProps = {
@@ -9,16 +9,21 @@ type PlaybookCardMenuDropdownProps = {
   onEditPlaybook?: () => void;
   onManagePermissions?: () => void;
   onHistory?: () => void;
+  isReadOnly?: boolean;
 };
 
 export default function PlaybookCardMenuDropdown({
   onDeletePlaybook = () => {},
   onEditPlaybook = () => {},
-  onManagePermissions = () => {}
+  onManagePermissions = () => {},
+  isReadOnly = false
 }: PlaybookCardMenuDropdownProps) {
   return (
     <Menu>
-      <MenuButton className="min-w-7 rounded-full p-0.5 text-gray-400 hover:text-gray-500">
+      <MenuButton
+        aria-label="Playbook options"
+        className="min-w-7 rounded-full p-0.5 text-gray-400 hover:text-gray-500"
+      >
         <DotsVerticalIcon className="h-6 w-6" />
       </MenuButton>
       <MenuItems
@@ -43,13 +48,20 @@ export default function PlaybookCardMenuDropdown({
                 fill: "transparent"
               }}
               icon={
-                <MdEdit
-                  className="border-l-1 border-0 border-gray-200 text-gray-600"
-                  size={16}
-                />
+                isReadOnly ? (
+                  <MdVisibility
+                    className="border-l-1 border-0 border-gray-200 text-gray-600"
+                    size={16}
+                  />
+                ) : (
+                  <MdEdit
+                    className="border-l-1 border-0 border-gray-200 text-gray-600"
+                    size={16}
+                  />
+                )
               }
             />
-            <span>Edit</span>
+            <span>{isReadOnly ? "View" : "Edit"}</span>
           </>
         </MenuItem>
         <MenuItem
@@ -67,21 +79,23 @@ export default function PlaybookCardMenuDropdown({
             <span>Permissions</span>
           </>
         </MenuItem>
-        <MenuItem
-          as="div"
-          className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-sm leading-5 text-gray-700 hover:bg-gray-200"
-          onClick={() => {
-            onDeletePlaybook();
-          }}
-        >
-          <>
-            <BsTrash
-              className="border-l-1 border-0 border-gray-200 text-gray-600"
-              size={16}
-            />
-            <span>Delete</span>
-          </>
-        </MenuItem>
+        {!isReadOnly && (
+          <MenuItem
+            as="div"
+            className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-sm leading-5 text-gray-700 hover:bg-gray-200"
+            onClick={() => {
+              onDeletePlaybook();
+            }}
+          >
+            <>
+              <BsTrash
+                className="border-l-1 border-0 border-gray-200 text-gray-600"
+                size={16}
+              />
+              <span>Delete</span>
+            </>
+          </MenuItem>
+        )}
       </MenuItems>
     </Menu>
   );
