@@ -16,7 +16,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePlaybookSpec } from "../../../api/services/playbooks";
-import { PlaybookNames } from "../../../api/types/playbooks";
+import { PlaybookSummary } from "../../../api/types/playbooks";
 import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
@@ -25,7 +25,7 @@ import PlaybookPermissionsModal from "./PlaybookPermissionsModal";
 import PlaybookSpecFormModal from "./PlaybookSpecFormModal";
 
 type PlaybookSpecCardProps = {
-  playbook: PlaybookNames;
+  playbook: PlaybookSummary;
   refetch?: () => void;
 };
 
@@ -45,6 +45,10 @@ export default function PlaybookSpecCard({
       isSubmitPlaybookRunFormOpen ||
       isPermissionsModalOpen
   });
+
+  // Only playbooks created in the UI can be changed from here, everything else
+  // is reconciled from its source.
+  const isReadOnly = playbook.source !== "UI";
 
   const { permissions, roles } = useUser();
   const isAdminOrEditor = roles.includes("admin") || roles.includes("editor");
@@ -87,6 +91,7 @@ export default function PlaybookSpecCard({
             key="add-connection"
           >
             <PlaybookCardMenu
+              isReadOnly={isReadOnly}
               onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
               onManagePermissions={() => setIsPermissionsModalOpen(true)}
               onDeletePlaybook={() => setIsDeleteConfirmOpen(true)}

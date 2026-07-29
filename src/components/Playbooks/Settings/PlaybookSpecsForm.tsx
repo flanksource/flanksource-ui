@@ -16,6 +16,7 @@ import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
+import CanEditResource from "../../Settings/CanEditResource";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
 type PlaybookSpecsFormProps = {
@@ -30,6 +31,17 @@ export default function PlaybookSpecsForm({
   refresh = () => {}
 }: PlaybookSpecsFormProps) {
   const { user } = useUser();
+
+  // Only playbooks created in the UI are editable. Everything else is
+  // reconciled from its source, so an edit here would be reverted.
+  const isReadOnly = !!playbook && playbook.source !== "UI";
+
+  const readOnlyOwner =
+    playbook?.source === "ConfigFile"
+      ? "a local file"
+      : playbook?.source === "KubernetesCRD"
+        ? "Kubernetes CRD"
+        : "an external source";
 
   const { mutate: createPlaybook } = useMutation({
     mutationFn: async (payload: NewPlaybookSpec) => {
@@ -135,7 +147,20 @@ export default function PlaybookSpecsForm({
               className={clsx("mb-2 flex flex-1 flex-col overflow-y-auto px-2")}
             >
               <div className="flex flex-1 flex-col space-y-4 overflow-y-auto p-4">
-                <FormikTextInput name="title" label="Title" required />
+                {isReadOnly && (
+                  <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+                    <p className="font-medium">
+                      Read-Only Mode: This playbook is managed by{" "}
+                      {readOnlyOwner} and cannot be edited from the UI.
+                    </p>
+                  </div>
+                )}
+                <FormikTextInput
+                  name="title"
+                  label="Title"
+                  required
+                  disabled={isReadOnly}
+                />
                 <FormikCodeEditor
                   fieldName="spec"
                   label="Spec"
@@ -144,28 +169,48 @@ export default function PlaybookSpecsForm({
                   jsonSchemaUrl="/api/schemas/playbook-spec.schema.json"
                   required
                   enableSpecUnwrap
+                  disabled={isReadOnly}
                 />
               </div>
             </div>
           </div>
           <div className="flex items-center justify-between bg-gray-100 px-5 py-4">
             {playbook?.id && (
-              <Button
-                type="button"
-                text={isDeleting ? "Deleting..." : "Delete"}
-                icon={<FaTrash />}
-                onClick={() => {
-                  deletePlaybook(playbook.id);
-                }}
-                className="btn-danger"
-              />
+              <CanEditResource
+                id={playbook.id}
+                namespace={playbook.namespace}
+                name={playbook.name}
+                resourceType="playbooks"
+                source={playbook.source}
+                hideSourceLink
+                className="flex flex-row gap-2"
+              >
+                <Button
+                  type="button"
+                  text={isDeleting ? "Deleting..." : "Delete"}
+                  icon={<FaTrash />}
+                  onClick={() => {
+                    deletePlaybook(playbook.id);
+                  }}
+                  className="btn-danger"
+                />
+              </CanEditResource>
             )}
 
-            <Button
-              type="submit"
-              text={playbook?.id ? "Update" : "Save"}
-              className="btn-primary ml-auto"
-            />
+            <CanEditResource
+              id={playbook?.id}
+              namespace={playbook?.namespace}
+              name={playbook?.name}
+              resourceType="playbooks"
+              source={playbook?.source}
+              className="ml-auto flex flex-row gap-2"
+            >
+              <Button
+                type="submit"
+                text={playbook?.id ? "Update" : "Save"}
+                className="btn-primary"
+              />
+            </CanEditResource>
           </div>
         </Form>
       )}

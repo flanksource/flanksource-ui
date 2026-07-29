@@ -7,6 +7,7 @@ import {
 import { SubmitPlaybookRunFormValues } from "../../components/Playbooks/Runs/Submit/SubmitPlaybookRunForm";
 import {
   getAllPlaybookNames,
+  getAllPlaybookSummaries,
   getPlaybookSpec,
   getPlaybookSpecsByIDs,
   getPlaybookToRunForResource,
@@ -15,15 +16,16 @@ import {
 import {
   PlaybookNames,
   PlaybookSpec,
+  PlaybookSummary,
   RunnablePlaybook
 } from "../types/playbooks";
 
 export function useGetAllPlaybookSpecs(
-  options: UseQueryOptions<PlaybookNames[], Error> = {}
+  options: UseQueryOptions<PlaybookSummary[], Error> = {}
 ) {
-  return useQuery<PlaybookNames[], Error>(
+  return useQuery<PlaybookSummary[], Error>(
     ["playbooks", "all"],
-    getAllPlaybookNames,
+    getAllPlaybookSummaries,
     {
       cacheTime: 0,
       staleTime: 0,
