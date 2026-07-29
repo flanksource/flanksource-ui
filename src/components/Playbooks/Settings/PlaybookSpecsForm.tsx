@@ -9,6 +9,7 @@ import {
   UpdatePlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";
 import { useUser } from "@flanksource-ui/context";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
@@ -16,6 +17,7 @@ import { Form, Formik } from "formik";
 import { FaTrash } from "react-icons/fa";
 import { FormikCodeEditor } from "../../Forms/Formik/FormikCodeEditor";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
+import { AuthorizationAccessCheck } from "../../Permissions/AuthorizationAccessCheck";
 import CanEditResource from "../../Settings/CanEditResource";
 import { toastError, toastSuccess } from "../../Toast/toast";
 
@@ -176,41 +178,51 @@ export default function PlaybookSpecsForm({
           </div>
           <div className="flex items-center justify-between bg-gray-100 px-5 py-4">
             {playbook?.id && (
-              <CanEditResource
-                id={playbook.id}
-                namespace={playbook.namespace}
-                name={playbook.name}
-                resourceType="playbooks"
-                source={playbook.source}
-                hideSourceLink
-                className="flex flex-row gap-2"
+              <AuthorizationAccessCheck
+                resource={tables.playbooks}
+                action="write"
               >
-                <Button
-                  type="button"
-                  text={isDeleting ? "Deleting..." : "Delete"}
-                  icon={<FaTrash />}
-                  onClick={() => {
-                    deletePlaybook(playbook.id);
-                  }}
-                  className="btn-danger"
-                />
-              </CanEditResource>
+                <CanEditResource
+                  id={playbook.id}
+                  namespace={playbook.namespace}
+                  name={playbook.name}
+                  resourceType="playbooks"
+                  source={playbook.source}
+                  hideSourceLink
+                  className="flex flex-row gap-2"
+                >
+                  <Button
+                    type="button"
+                    text={isDeleting ? "Deleting..." : "Delete"}
+                    icon={<FaTrash />}
+                    onClick={() => {
+                      deletePlaybook(playbook.id);
+                    }}
+                    className="btn-danger"
+                  />
+                </CanEditResource>
+              </AuthorizationAccessCheck>
             )}
 
-            <CanEditResource
-              id={playbook?.id}
-              namespace={playbook?.namespace}
-              name={playbook?.name}
-              resourceType="playbooks"
-              source={playbook?.source}
-              className="ml-auto flex flex-row gap-2"
+            <AuthorizationAccessCheck
+              resource={tables.playbooks}
+              action="write"
             >
-              <Button
-                type="submit"
-                text={playbook?.id ? "Update" : "Save"}
-                className="btn-primary"
-              />
-            </CanEditResource>
+              <CanEditResource
+                id={playbook?.id}
+                namespace={playbook?.namespace}
+                name={playbook?.name}
+                resourceType="playbooks"
+                source={playbook?.source}
+                className="ml-auto flex flex-row gap-2"
+              >
+                <Button
+                  type="submit"
+                  text={playbook?.id ? "Update" : "Save"}
+                  className="btn-primary"
+                />
+              </CanEditResource>
+            </AuthorizationAccessCheck>
           </div>
         </Form>
       )}
