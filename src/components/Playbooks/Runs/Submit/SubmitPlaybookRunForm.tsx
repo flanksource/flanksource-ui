@@ -13,6 +13,7 @@ import PlaybookSpecModalTitle from "../../PlaybookSpecModalTitle";
 import { getResourceForRun } from "../services";
 import PlaybookRunParams from "./PlaybookRunParams";
 import PlaybookSelectResource from "./PlaybookSelectResource";
+import { getPlaybookParamDefaults } from "./playbookParamDefaults";
 
 type SubmitPlaybookRunFormModalSizes = {
   width: ModalSize;
@@ -61,16 +62,29 @@ export default function SubmitPlaybookRunForm({
   const recordTouchpoint = useRecordTouchpoint();
 
   const initialValues: Partial<SubmitPlaybookRunFormValues> = useMemo(() => {
+    // params resolved by the API are seeded once they load, see PlaybookRunParams
+    const defaults = overrideParams
+      ? {}
+      : getPlaybookParamDefaults(playbook.spec?.parameters);
     return {
       id: playbook.id,
       component_id: componentId,
       check_id: checkId,
       config_id: configId,
       params: {
+        ...defaults,
         ...params
       }
     };
-  }, [checkId, componentId, configId, params, playbook.id]);
+  }, [
+    checkId,
+    componentId,
+    configId,
+    overrideParams,
+    params,
+    playbook.id,
+    playbook.spec?.parameters
+  ]);
 
   const { mutate: submitPlaybookRun, isLoading } = useSubmitPlaybookRunMutation(
     {

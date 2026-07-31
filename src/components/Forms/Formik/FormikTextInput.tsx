@@ -7,6 +7,7 @@ export type FormikTextInputProps = {
   required?: boolean;
   label?: string;
   className?: string;
+  inputClassName?: string;
   hint?: string;
   hintPosition?: "top" | "bottom";
 } & Omit<React.ComponentProps<typeof TextInput>, "id">;
@@ -16,6 +17,7 @@ export default function FormikTextInput({
   required = false,
   label,
   className = "flex flex-col",
+  inputClassName,
   hintPosition = "bottom",
   hint,
   type = "text",
@@ -43,7 +45,13 @@ export default function FormikTextInput({
         {hint && hintPosition === "top" && (
           <p className="py-1 text-sm text-gray-500">{hint}</p>
         )}
-        <TextInput {...props} id={name} type={type} {...field} />
+        <TextInput
+          {...props}
+          id={name}
+          type={type}
+          {...field}
+          className={inputClassName}
+        />
         {hint && hintPosition === "bottom" && (
           <p className="py-1 text-sm text-gray-500">{hint}</p>
         )}
