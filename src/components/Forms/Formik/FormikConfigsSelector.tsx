@@ -23,7 +23,6 @@ import { IoMdClose } from "react-icons/io";
 
 type ConfigsSelector = {
   search?: string;
-  id?: string;
 };
 
 // Playbook parameters are stored as strings, so the selector travels as JSON.
@@ -38,16 +37,35 @@ function parseSelector(value?: string): ConfigsSelector {
   }
 }
 
+const configIDPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function idSearch(ids: string[]) {
+  return ids.map((id) => `id=${id}`).join(";");
+}
+
 function selectorIds(selector: ConfigsSelector) {
-  return (selector.id ?? "")
-    .split(",")
-    .map((id) => id.trim())
+  const clauses = (selector.search ?? "")
+    .split(";")
+    .map((clause) => clause.trim())
     .filter(Boolean);
+  if (clauses.length === 0) {
+    return [];
+  }
+
+  const ids = clauses.map((clause) => {
+    const match = clause.match(/^id\s*=\s*(.+)$/i);
+    const id = match?.[1]?.trim() ?? "";
+    return configIDPattern.test(id) ? id : undefined;
+  });
+  return ids.every((id): id is string => Boolean(id)) ? ids : [];
 }
 
 function serializeSelector(selected: SearchedResource[], search: string) {
   if (selected.length > 0) {
-    return JSON.stringify({ id: selected.map((c) => c.id).join(",") });
+    return JSON.stringify({
+      search: idSearch(selected.map((config) => config.id))
+    });
   }
   const trimmed = search.trim();
   return trimmed ? JSON.stringify({ search: trimmed }) : undefined;
@@ -91,12 +109,12 @@ export default function FormikConfigsSelector({
     [initialSelector]
   );
 
-  const [query, setQuery] = useState(initialSelector.search ?? "");
-  const [searchText, setSearchText] = useState(initialSelector.search ?? "");
+  const initialQuery =
+    initialIds.length > 0 ? "" : (initialSelector.search ?? "");
+  const [query, setQuery] = useState(initialQuery);
+  const [searchText, setSearchText] = useState(initialQuery);
   // the last query the user explicitly committed via the query option
-  const [committedQuery, setCommittedQuery] = useState(
-    initialSelector.search ?? ""
-  );
+  const [committedQuery, setCommittedQuery] = useState(initialQuery);
   const [selected, setSelected] = useState<SearchedResource[]>(() =>
     initialIds.map((id) => ({ id }) as SearchedResource)
   );
@@ -146,7 +164,7 @@ export default function FormikConfigsSelector({
     queryKey: ["searchResources", "configs", "byId", preselectedIds],
     queryFn: () =>
       searchResources({
-        configs: [{ search: `id=${preselectedIds.join(",")}`, agent: "all" }]
+        configs: [{ search: idSearch(preselectedIds), agent: "all" }]
       }),
     select: (data) => data?.configs ?? [],
     enabled: preselectedIds.length > 0
@@ -185,7 +203,7 @@ export default function FormikConfigsSelector({
 
     const selector = parseSelector(field.value);
     const ids = selectorIds(selector);
-    const nextQuery = selector.search ?? "";
+    const nextQuery = ids.length > 0 ? "" : (selector.search ?? "");
 
     handleSearchDebounced.cancel();
     setQuery(nextQuery);
@@ -293,11 +311,7 @@ export default function FormikConfigsSelector({
   return (
     <div className={className}>
       {label && <label className="form-label">{label}</label>}
-      <div
-        className="flex flex-col gap-2"
-        onFocus={() => setIsOpen(true)}
-        onBlur={handleBlur}
-      >
+      <div className="flex flex-col gap-2" onBlur={handleBlur}>
         <input
           type="text"
           name={name}
@@ -305,6 +319,7 @@ export default function FormikConfigsSelector({
           placeholder="Search catalog e.g. type=Kubernetes::Deployment grafana"
           className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           onChange={(e) => handleQueryChange(e.target.value)}
+          onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           // the input can already hold focus while the results are closed, so
           // a click has to reopen them on its own
