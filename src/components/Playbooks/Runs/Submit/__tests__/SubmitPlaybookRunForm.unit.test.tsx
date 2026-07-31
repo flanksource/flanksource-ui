@@ -192,6 +192,29 @@ describe("SubmitPlaybookRunForm", () => {
     userEvent.click(btn);
   });
 
+  it("should keep params supplied to the form when the query resolves", async () => {
+    const queryClient = createQueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SubmitPlaybookRunForm
+          isOpen={true}
+          playbook={playbook}
+          componentId={componentId}
+          params={{ name: "supplied" }}
+        />
+      </QueryClientProvider>
+    );
+
+    // the field only renders once the params query has resolved
+    const input = await screen.findByLabelText("Label");
+
+    await waitFor(() => {
+      expect(playbooksApi.getPlaybookParams).toHaveBeenCalled();
+    });
+
+    expect(input).toHaveValue("supplied");
+  });
+
   describe("playbook without a resource", () => {
     const renderForm = () =>
       render(

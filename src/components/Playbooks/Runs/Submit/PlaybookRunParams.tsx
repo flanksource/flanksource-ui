@@ -31,8 +31,7 @@ export default function PlaybookRunParams({
 }: PlaybookRunParamsProps) {
   const [, setModalSize] = useAtom(submitPlaybookRunFormModalSizesAtom);
 
-  const { setFieldValue, values } =
-    useFormikContext<SubmitPlaybookRunFormValues>();
+  const { setValues, values } = useFormikContext<SubmitPlaybookRunFormValues>();
 
   const componentId = values.component_id;
   const configId = values.config_id;
@@ -82,17 +81,19 @@ export default function PlaybookRunParams({
   }, [data, setModalSize]);
 
   // API resolved params only arrive after mount, so their defaults are seeded
-  // here rather than in the form's initial values. We don't want to override
-  // form values if they are already set by user action, like for instance when
-  // re-running a playbook with the same parameters
+  // here rather than in the form's initial values. Defaults only fill in params
+  // the form has no value for, so anything supplied to the form or typed by the
+  // user survives, including across a refetch
   useEffect(() => {
     if (overrideParams || !data?.params) {
       return;
     }
-    Object.entries(getPlaybookParamDefaults(data.params)).forEach(
-      ([name, value]) => setFieldValue(`params.${name}`, value)
-    );
-  }, [data?.params, overrideParams, setFieldValue]);
+    const defaults = getPlaybookParamDefaults(data.params);
+    setValues((current) => ({
+      ...current,
+      params: { ...defaults, ...current.params }
+    }));
+  }, [data?.params, overrideParams, setValues]);
 
   // if no resource is selected, show a message and hide the parameters
   if (!componentId && !configId && !checkId && isResourceRequired) {
