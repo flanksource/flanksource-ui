@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useField } from "formik";
 import React from "react";
 import { TextArea } from "../../../ui/FormControls/TextArea";
@@ -7,6 +8,7 @@ type FormikTextAreaProps = {
   required?: boolean;
   label?: string;
   hint?: string;
+  inputClassName?: string;
 } & Omit<React.HTMLProps<HTMLTextAreaElement>, "id">;
 
 export default function FormikTextArea({
@@ -14,6 +16,7 @@ export default function FormikTextArea({
   required = false,
   label,
   className = "flex flex-col",
+  inputClassName,
   hint,
   defaultValue,
   ...props
@@ -38,7 +41,7 @@ export default function FormikTextArea({
         required={required}
         id={name}
         {...field}
-        className="resize-none"
+        className={clsx("resize-none", inputClassName)}
       />
       {hint && <p className="py-1 text-sm text-gray-500">{hint}</p>}
       {meta.touched && meta.error ? (

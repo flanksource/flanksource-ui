@@ -4,6 +4,8 @@ import FormikMillicoresTextField from "@flanksource-ui/components/Forms/Formik/F
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikDurationDropdown from "@flanksource-ui/components/Forms/Formik/FormikDurationDropdown";
 import { ModalSize } from "@flanksource-ui/ui/Modal";
+import { useField } from "formik";
+import React from "react";
 import { PlaybookParam } from "../../../../api/types/playbooks";
 import FormikCheckbox from "../../../Forms/Formik/FormikCheckbox";
 import { FormikCodeEditor } from "../../../Forms/Formik/FormikCodeEditor";
@@ -29,6 +31,21 @@ export default function PlaybookParamsFieldsRenderer({
   params
 }: PlaybookParamsFieldsRendererProps) {
   const { type, name: fieldName, required, label } = params;
+  const [field] = useField(`params.${fieldName}`);
+
+  // A text value that is still the spec default is dimmed and gets selected on
+  // focus, so that typing replaces it in one go
+  const isUnchangedDefault =
+    params.default !== undefined && field.value === params.default;
+  const textDefaultProps = {
+    inputClassName: isUnchangedDefault ? "text-gray-400" : undefined,
+    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (isUnchangedDefault) {
+        e.target.select();
+      }
+    }
+  };
+
   switch (type) {
     case "code":
       const size = params.properties?.size ?? "small";
@@ -119,6 +136,7 @@ export default function PlaybookParamsFieldsRenderer({
       if (params.properties?.multiline) {
         return (
           <FormikTextArea
+            {...textDefaultProps}
             maxLength={params.properties?.maxLength}
             minLength={params.properties?.minLength}
             pattern={params.properties?.regex}
@@ -131,6 +149,7 @@ export default function PlaybookParamsFieldsRenderer({
       if (params.properties?.format === "bytes") {
         return (
           <FormikBytesTextField
+            onFocus={textDefaultProps.onFocus}
             name={`params.${fieldName}`}
             required={required}
             min={params.properties?.min}
@@ -142,6 +161,7 @@ export default function PlaybookParamsFieldsRenderer({
       if (params.properties?.format === "millicores") {
         return (
           <FormikMillicoresTextField
+            onFocus={textDefaultProps.onFocus}
             name={`params.${fieldName}`}
             required={required}
             min={params.properties?.min}
@@ -153,6 +173,7 @@ export default function PlaybookParamsFieldsRenderer({
       if (params.properties?.format === "dns1123") {
         return (
           <FormikTextInput
+            {...textDefaultProps}
             name={`params.${fieldName}`}
             required={required}
             pattern="[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"
@@ -162,6 +183,7 @@ export default function PlaybookParamsFieldsRenderer({
 
       return (
         <FormikTextInput
+          {...textDefaultProps}
           type={params.properties?.format}
           min={params.properties?.min}
           max={params.properties?.max}

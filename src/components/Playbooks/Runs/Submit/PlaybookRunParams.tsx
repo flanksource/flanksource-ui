@@ -1,7 +1,6 @@
 import { getPlaybookParams } from "@flanksource-ui/api/services/playbooks";
 import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import {
-  PlaybookParam,
   PlaybookParamCodeEditor,
   PlaybookSpec
 } from "@flanksource-ui/api/types/playbooks";
@@ -10,28 +9,14 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useFormikContext } from "formik";
 import { useAtom } from "jotai/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
-import YAML from "yaml";
 import PlaybookParamsFieldsRenderer from "./PlaybookParamsFieldsRenderer";
 import {
   SubmitPlaybookRunFormValues,
   submitPlaybookRunFormModalSizesAtom
 } from "./SubmitPlaybookRunForm";
-
-function parseCodeDefaultValue(parameter: PlaybookParam) {
-  if (parameter.type !== "code" || !parameter.default) {
-    return parameter.default;
-  }
-  const language = parameter.properties?.language ?? "yaml";
-  if (language === "yaml") {
-    return YAML.parse(parameter.default);
-  }
-  if (language === "json") {
-    return JSON.parse(parameter.default);
-  }
-  return parameter.default;
-}
+import { getPlaybookParamDefaults } from "./playbookParamDefaults";
 
 type PlaybookRunParamsProps = {
   isResourceRequired: boolean;
@@ -76,6 +61,13 @@ export default function PlaybookRunParams({
     staleTime: 0
   });
 
+  // parameters that depend on a resource are resolved by the API, the rest are
+  // read straight off the spec and are always available
+  const parameters = useMemo(
+    () => (isResourceRequired ? data?.params : playbook.spec?.parameters) ?? [],
+    [data?.params, isResourceRequired, playbook.spec?.parameters]
+  );
+
   // update modal size when params are loaded
   useEffect(() => {
     data?.params
@@ -89,20 +81,18 @@ export default function PlaybookRunParams({
       });
   }, [data, setModalSize]);
 
-  // After the params are loaded, set the default values for the form
+  // API resolved params only arrive after mount, so their defaults are seeded
+  // here rather than in the form's initial values. We don't want to override
+  // form values if they are already set by user action, like for instance when
+  // re-running a playbook with the same parameters
   useEffect(() => {
-    if (data?.params && data.params.length > 0) {
-      data.params.forEach((param) => {
-        // We don't want to override form values if they are already set by user
-        // action, like for instance when re-running a playbook with the same
-        // parameters, we don't want to set the default values again
-        if (param.default !== undefined && !overrideParams) {
-          const defaultValue = parseCodeDefaultValue(param);
-          setFieldValue(`params.${param.name}`, defaultValue);
-        }
-      });
+    if (overrideParams || !data?.params) {
+      return;
     }
-  }, [data, overrideParams, setFieldValue]);
+    Object.entries(getPlaybookParamDefaults(data.params)).forEach(
+      ([name, value]) => setFieldValue(`params.${name}`, value)
+    );
+  }, [data?.params, overrideParams, setFieldValue]);
 
   // if no resource is selected, show a message and hide the parameters
   if (!componentId && !configId && !checkId && isResourceRequired) {
@@ -127,16 +117,10 @@ export default function PlaybookRunParams({
     );
   }
 
-  // if no resource is required, show the playbook parameters, as they are not
-  // dependent on the resource and are always available
-  const parameters = isResourceRequired
-    ? data?.params
-    : playbook.spec?.parameters || [];
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-2">
-        {parameters && parameters.length > 0 ? (
+        {parameters.length > 0 ? (
           parameters.map((i) => (
             <div
               className={clsx(
