@@ -89,7 +89,7 @@ beforeEach(() => {
 describe("FormikConfigsSelector", () => {
   it("does not rewrite the unchanged field value on mount", async () => {
     const validate = jest.fn(() => ({}));
-    const initialValue = JSON.stringify({ id: grafana.id });
+    const initialValue = JSON.stringify({ search: `id=${grafana.id}` });
 
     renderSelector(initialValue, { validate });
 
@@ -106,7 +106,7 @@ describe("FormikConfigsSelector", () => {
       externalValues: [
         {
           label: "Select prometheus externally",
-          value: JSON.stringify({ id: prometheus.id })
+          value: JSON.stringify({ search: `id=${prometheus.id}` })
         },
         {
           label: "Set query externally",
@@ -173,7 +173,7 @@ describe("FormikConfigsSelector", () => {
 
     await user.click(checkbox(/grafana/));
 
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
   });
 
   it("keeps checked items when the search query changes", async () => {
@@ -190,7 +190,7 @@ describe("FormikConfigsSelector", () => {
     await waitFor(() => expect(checkbox(/prometheus/)).toBeInTheDocument());
     await user.click(checkbox(/prometheus/));
 
-    await expectValue({ id: `${grafana.id},${prometheus.id}` });
+    await expectValue({ search: `id=${grafana.id};id=${prometheus.id}` });
   });
 
   it("falls back to the search query when the last item is unchecked", async () => {
@@ -201,14 +201,14 @@ describe("FormikConfigsSelector", () => {
     await waitFor(() => expect(checkbox(/grafana/)).toBeInTheDocument());
 
     await user.click(checkbox(/grafana/));
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
 
     await user.click(checkbox(/grafana/));
     await expectValue({ search: "grafana" });
   });
 
   it("hydrates pre-selected items into chips without opening the results", async () => {
-    renderSelector(JSON.stringify({ id: grafana.id }));
+    renderSelector(JSON.stringify({ search: `id=${grafana.id}` }));
 
     await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
 
@@ -252,7 +252,7 @@ describe("FormikConfigsSelector", () => {
     await user.click(document.body);
 
     await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
   });
 
   it("stays open when a result row is clicked", async () => {
@@ -270,7 +270,7 @@ describe("FormikConfigsSelector", () => {
 
     expect(checkbox(/grafana/)).toBeChecked();
     expect(checkbox(/prometheus/)).toBeInTheDocument();
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
   });
 
   it("checks and unchecks the highlighted item with the arrow keys and enter", async () => {
@@ -283,13 +283,13 @@ describe("FormikConfigsSelector", () => {
 
     // first row is highlighted by default
     await user.keyboard("{Enter}");
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
 
     await user.keyboard("{ArrowDown}{Enter}");
-    await expectValue({ id: `${grafana.id},${prometheus.id}` });
+    await expectValue({ search: `id=${grafana.id};id=${prometheus.id}` });
 
     await user.keyboard("{ArrowUp}{Enter}");
-    await expectValue({ id: prometheus.id });
+    await expectValue({ search: `id=${prometheus.id}` });
   });
 
   it("offers the typed query as a pinned option that closes the results", async () => {
@@ -339,7 +339,7 @@ describe("FormikConfigsSelector", () => {
     await user.click(document.body);
 
     await waitFor(() => expect(input).toHaveValue(""));
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
   });
 
   it("clears the typed text on close when nothing was chosen", async () => {
@@ -387,7 +387,7 @@ describe("FormikConfigsSelector", () => {
     await user.click(document.body);
 
     await waitFor(() => expect(input).toHaveValue(""));
-    await expectValue({ id: grafana.id });
+    await expectValue({ search: `id=${grafana.id}` });
   });
 
   it("swallows escape while the results are open so the modal stays up", async () => {
@@ -419,18 +419,33 @@ describe("FormikConfigsSelector", () => {
     window.removeEventListener("keydown", onWindowEscape);
   });
 
-  it("removes a chip when its remove button is clicked", async () => {
+  it("rebuilds the selector when selected chips are removed", async () => {
     const user = userEvent.setup();
-    renderSelector(JSON.stringify({ id: grafana.id }));
+    renderSelector(
+      JSON.stringify({ search: `id=${grafana.id};id=${prometheus.id}` })
+    );
 
     await waitFor(() => expect(removeButton("grafana")).toBeInTheDocument());
+    expect(removeButton("prometheus")).toBeInTheDocument();
+    expect(searchApi.searchResources).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configs: [
+          expect.objectContaining({
+            search: `id=${grafana.id};id=${prometheus.id}`
+          })
+        ]
+      })
+    );
 
     await user.click(removeButton("grafana"));
+    await expectValue({ search: `id=${prometheus.id}` });
 
+    await user.click(removeButton("prometheus"));
     await waitFor(() =>
       expect(
         screen.queryByRole("button", { name: /Remove/ })
       ).not.toBeInTheDocument()
     );
+    expect(screen.getByTestId("value")).toHaveTextContent("");
   });
 });
