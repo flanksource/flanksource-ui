@@ -127,6 +127,14 @@ export interface ConfigAccessSummaryByUser {
   latest_grant?: string | null;
 }
 
+export interface ExternalUser {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  aliases?: string[] | null;
+  user_type?: string | null;
+}
+
 export interface ConfigAccessSummaryByConfig {
   config_id: string;
   config_name: string;

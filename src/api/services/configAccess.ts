@@ -5,7 +5,8 @@ import {
   ConfigAccessLog,
   ConfigAccessSummary,
   ConfigAccessSummaryByConfig,
-  ConfigAccessSummaryByUser
+  ConfigAccessSummaryByUser,
+  ExternalUser
 } from "../types/configs";
 
 export type GetConfigAccessSummaryParams = {
@@ -205,6 +206,96 @@ export const getConfigAccessLogs = (configId: string) =>
       }
     )
   );
+
+export type SearchExternalUsersParams = {
+  query?: string;
+  excludeId?: string;
+  limit?: number;
+};
+
+const uuidPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function searchExternalUsers({
+  query = "",
+  excludeId,
+  limit = 20
+}: SearchExternalUsersParams = {}): Promise<ExternalUser[]> {
+  const queryParams = new URLSearchParams({
+    select: "id,name,email,aliases,user_type",
+    deleted_at: "is.null",
+    order: "name.asc.nullslast,email.asc.nullslast",
+    limit: limit.toString()
+  });
+
+  if (excludeId) {
+    queryParams.set("id", `neq.${excludeId}`);
+  }
+
+  // PostgREST's logical-filter syntax treats these characters as grammar.
+  // Removing them keeps free-text searches from producing malformed filters.
+  const search = query
+    .trim()
+    .replace(/[*,()%"{}\\]/g, " ")
+    .trim();
+  if (search) {
+    const filters = [`name.ilike.*${search}*`, `email.ilike.*${search}*`];
+    if (!/\s/.test(search)) {
+      filters.push(`aliases.cs.{${search.toLowerCase()}}`);
+    }
+    if (uuidPattern.test(search)) {
+      filters.push(`id.eq.${search}`);
+    }
+    queryParams.set("or", `(${filters.join(",")})`);
+  }
+
+  const response = await ConfigDB.get<ExternalUser[]>(
+    `/external_users?${queryParams.toString()}`
+  );
+  return response.data ?? [];
+}
+
+export type AddExternalUserAliasParams = {
+  externalUserId: string;
+  alias: string;
+  createdBy?: string;
+};
+
+export async function addExternalUserAlias({
+  externalUserId,
+  alias,
+  createdBy
+}: AddExternalUserAliasParams) {
+  const payload: Record<string, string> = {
+    p_external_user_id: externalUserId,
+    p_alias: alias
+  };
+  if (createdBy) payload.p_created_by = createdBy;
+
+  const response = await ConfigDB.post("/rpc/add_external_user_alias", payload);
+  return response.data;
+}
+
+export type MergeExternalUsersParams = {
+  primaryId: string;
+  duplicateId: string;
+  createdBy?: string;
+};
+
+export async function mergeExternalUsers({
+  primaryId,
+  duplicateId,
+  createdBy
+}: MergeExternalUsersParams) {
+  const payload: Record<string, string> = {
+    p_primary_id: primaryId,
+    p_duplicate_id: duplicateId
+  };
+  if (createdBy) payload.p_created_by = createdBy;
+
+  const response = await ConfigDB.post("/rpc/merge_external_users", payload);
+  return response.data;
+}
 
 export type ConfigAccessFilterOptionsParams = {
   configId?: string;
