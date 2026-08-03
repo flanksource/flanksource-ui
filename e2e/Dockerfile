@@ -1,6 +1,6 @@
-FROM node:latest
-COPY package.json package.json
-RUN npm install
+FROM node:latest@sha256:a9875b5ccb02aa527cf7f2297b16ae425a0ff3da2f7d87fce3df41f04ffa0524
+COPY package.json package-lock.json ./
+RUN npm ci
 RUN npx playwright install --with-deps chromium
 COPY . .
 # COPY node_modules node_modules

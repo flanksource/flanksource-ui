@@ -13,7 +13,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    uses: flanksource/action-workflows/.github/workflows/create-release.yml@main
+    uses: flanksource/action-workflows/.github/workflows/create-release.yml@c628197234fd2c4c3aebcb3c2b60dd399251adaf # main
     with:
       extra_plugins: |
         @semantic-release/git
@@ -131,8 +131,10 @@ jobs:
           path: ./canary-checker
       - name: Install yq
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - |\
-          tar xz && sudo mv ${BINARY} /usr/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O /tmp/yq.tar.gz
+          echo "eecdb0e43ccc5ddb7387104ceb66a3a2f991dd1fd44faa5fb49e57fc1631f7e9  /tmp/yq.tar.gz" | sha256sum --check --strict
+          tar xzf /tmp/yq.tar.gz
+          sudo mv ${BINARY} /usr/bin/yq
         env:
           VERSION: v4.25.1
           BINARY: yq_linux_amd64
@@ -141,7 +143,7 @@ jobs:
           cd canary-checker
           yq eval-all -i  '(.dependencies[] | select(.name == "flanksource-ui")) ref $d | $d.version = "${{ needs.semantic-release.outputs.version }}"' chart/Chart.yaml
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
           commit-message: "chore: update flanksource-ui to ${{ needs.semantic-release.outputs.version }}"
           token: ${{ secrets.FLANKBOT }}
