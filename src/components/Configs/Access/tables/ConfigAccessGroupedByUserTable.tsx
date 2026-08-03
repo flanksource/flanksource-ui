@@ -1,14 +1,22 @@
 import { useConfigAccessGroupedByUserQuery } from "@flanksource-ui/api/query-hooks/useConfigAccessGroupedQuery";
 import { ConfigAccessSummaryByUser } from "@flanksource-ui/api/types/configs";
+import {
+  AddExternalUserAliasDialog,
+  ExternalUserAction,
+  ExternalUserActionsMenu,
+  MergeExternalUserDialog
+} from "@flanksource-ui/components/Configs/Access/ExternalUserActions";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX,
   useCatalogAccessUrlState
 } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/useReactTablePaginationState";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { MRT_ColumnDef } from "mantine-react-table";
-import { useCallback } from "react";
+import { MRT_ColumnDef, MRT_Row } from "mantine-react-table";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   GroupedByUserIdentityCell,
   GroupedByUserLastSignedInCell,
@@ -54,6 +62,52 @@ export function ConfigAccessGroupedByUserTable() {
   const {
     actions: { drillDownByUser }
   } = useCatalogAccessUrlState();
+  const { hasResourceAccess, roles } = useUserAccessStateContext();
+  const [canManageExternalUsers, setCanManageExternalUsers] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<{
+    action: ExternalUserAction;
+    user: ConfigAccessSummaryByUser;
+  }>();
+
+  useEffect(() => {
+    let active = true;
+    setCanManageExternalUsers(false);
+    void hasResourceAccess(tables.catalog, "write")
+      .then((hasAccess) => {
+        if (active) setCanManageExternalUsers(hasAccess);
+      })
+      .catch(() => {
+        if (active) setCanManageExternalUsers(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [hasResourceAccess, roles]);
+
+  const openAction = useCallback(
+    (action: ExternalUserAction, user: ConfigAccessSummaryByUser) => {
+      setSelectedAction({ action, user });
+    },
+    []
+  );
+
+  const columns = useMemo<MRT_ColumnDef<ConfigAccessSummaryByUser>[]>(() => {
+    if (!canManageExternalUsers) return groupedByUserColumns;
+
+    return [
+      ...groupedByUserColumns,
+      {
+        header: "Actions",
+        id: "actions",
+        enableSorting: false,
+        enableColumnActions: false,
+        size: 60,
+        Cell: ({ row }: { row: MRT_Row<ConfigAccessSummaryByUser> }) => (
+          <ExternalUserActionsMenu user={row.original} onAction={openAction} />
+        )
+      }
+    ];
+  }, [canManageExternalUsers, openAction]);
 
   const { pageSize } = useReactTablePaginationState({
     paramPrefix: CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX,
@@ -85,19 +139,40 @@ export function ConfigAccessGroupedByUserTable() {
   }
 
   return (
-    <MRTDataTable
-      columns={groupedByUserColumns}
-      data={rows}
-      isLoading={isLoading}
-      isRefetching={isRefetching}
-      enableServerSideSorting
-      enableServerSidePagination
-      totalRowCount={totalRecords}
-      manualPageCount={totalPages}
-      disableHiding
-      defaultPageSize={pageSize}
-      onRowClick={handleRowClick}
-      urlParamPrefix={CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX}
-    />
+    <>
+      <MRTDataTable
+        columns={columns}
+        data={rows}
+        isLoading={isLoading}
+        isRefetching={isRefetching}
+        enableServerSideSorting
+        enableServerSidePagination
+        totalRowCount={totalRecords}
+        manualPageCount={totalPages}
+        disableHiding
+        defaultPageSize={pageSize}
+        onRowClick={handleRowClick}
+        urlParamPrefix={CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX}
+      />
+
+      {selectedAction?.action === "alias" && (
+        <AddExternalUserAliasDialog
+          user={selectedAction.user}
+          open
+          onOpenChange={(open) => {
+            if (!open) setSelectedAction(undefined);
+          }}
+        />
+      )}
+      {selectedAction?.action === "merge" && (
+        <MergeExternalUserDialog
+          primary={selectedAction.user}
+          open
+          onOpenChange={(open) => {
+            if (!open) setSelectedAction(undefined);
+          }}
+        />
+      )}
+    </>
   );
 }

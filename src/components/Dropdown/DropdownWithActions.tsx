@@ -9,6 +9,7 @@ import clsx from "clsx";
 interface IDropdownWithActionsProps<T> {
   label: string;
   name: string;
+  inputId?: string;
   onQuery: (s: string) => Promise<T[]>;
   creatable?: boolean;
   displayOption: (props: {
@@ -25,6 +26,7 @@ interface IDropdownWithActionsProps<T> {
 export function DropdownWithActions<T extends IItem>({
   label,
   name,
+  inputId,
   creatable,
   onQuery,
   value = { value: null, description: "" } as T,
@@ -101,6 +103,8 @@ export function DropdownWithActions<T extends IItem>({
   return creatable ? (
     <AsyncCreatableSelect
       name={name}
+      inputId={inputId ?? name}
+      aria-label={label}
       className="relative mt-1"
       cacheOptions
       defaultOptions={defaultOptions}
@@ -147,6 +151,8 @@ export function DropdownWithActions<T extends IItem>({
   ) : (
     <AsyncSelect
       name={name}
+      inputId={inputId ?? name}
+      aria-label={label}
       className="relative mt-1"
       cacheOptions
       defaultOptions={defaultOptions}
