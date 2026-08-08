@@ -214,6 +214,19 @@ export type SearchExternalUsersParams = {
   limit?: number;
 };
 
+function quotePostgrestValue(value: string) {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
+function postgresTextArray(value: string) {
+  const element = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return `{"${element}"}`;
+}
+
+function escapePostgresLikePattern(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/_/g, "\\_");
+}
+
 export async function searchExternalUsers({
   query = "",
   excludeId,
@@ -232,19 +245,24 @@ export async function searchExternalUsers({
 
   // PostgREST's logical-filter syntax treats these characters as grammar.
   // Removing them keeps free-text searches from producing malformed filters.
-  const search = query
-    .trim()
-    .replace(/[*,()%"{}\\]/g, " ")
+  const rawSearch = query.trim();
+  const search = rawSearch
+    .replace(/[*,()%"{}]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+  if (rawSearch && !search) return [];
+
   if (search) {
-    const ilikeSearch = search.replace(/_/g, "\\_");
+    const ilikePattern = quotePostgrestValue(
+      `*${escapePostgresLikePattern(search)}*`
+    );
     const filters = [
-      `name.ilike.*${ilikeSearch}*`,
-      `email.ilike.*${ilikeSearch}*`
+      `name.ilike.${ilikePattern}`,
+      `email.ilike.${ilikePattern}`
     ];
     if (!/\s/.test(search)) {
-      filters.push(`aliases.cs.{${search.toLowerCase()}}`);
+      const alias = postgresTextArray(search.toLowerCase());
+      filters.push(`aliases.cs.${quotePostgrestValue(alias)}`);
     }
     if (UUID_PATTERN.test(search)) {
       filters.push(`id.eq.${search}`);
