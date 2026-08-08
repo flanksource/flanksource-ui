@@ -55,6 +55,28 @@ describe("external user mapping API", () => {
     );
   });
 
+  it("strips PostgREST grammar characters from free-text searches", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "a,b)(c" });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe("(name.ilike.*a b c*,email.ilike.*a b c*)");
+  });
+
+  it("escapes underscores in case-insensitive text filters", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "a_b" });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe(
+      "(name.ilike.*a\\_b*,email.ilike.*a\\_b*,aliases.cs.{a_b})"
+    );
+  });
+
   it("searches any PostgreSQL UUID, including UUIDv7", async () => {
     mockedGet.mockResolvedValue({ data: [] });
     const uuidV7 = "019f1234-5678-7abc-8def-0123456789ab";
@@ -71,7 +93,7 @@ describe("external user mapping API", () => {
 
     await addExternalUserAlias({
       externalUserId: "10000000-0000-4000-8000-000000000001",
-      alias: "github://user",
+      alias: "  GitHub://User  ",
       createdBy: "30000000-0000-4000-8000-000000000003"
     });
 

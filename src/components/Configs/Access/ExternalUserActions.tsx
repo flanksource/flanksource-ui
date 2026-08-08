@@ -23,6 +23,7 @@ import {
   DialogTitle
 } from "@flanksource-ui/components/ui/dialog";
 import { Input } from "@flanksource-ui/components/ui/input";
+import { UUID_PATTERN } from "@flanksource-ui/utils/uuid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
@@ -33,11 +34,8 @@ import {
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { FaCircleNotch } from "react-icons/fa";
 
-const uuidPattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 function auditUserID(userID?: string) {
-  return userID && uuidPattern.test(userID) ? userID : undefined;
+  return userID && UUID_PATTERN.test(userID) ? userID : undefined;
 }
 
 function userLabel(user: {

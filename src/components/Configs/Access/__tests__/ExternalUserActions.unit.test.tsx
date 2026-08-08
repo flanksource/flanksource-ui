@@ -24,6 +24,7 @@ jest.mock(
 );
 
 jest.mock("../../../Toast/toast", () => ({
+  toastError: jest.fn(),
   toastSuccess: jest.fn()
 }));
 
@@ -33,7 +34,12 @@ jest.mock("../../../Dropdown/DropdownWithActions", () => ({
       type="button"
       onClick={async () => {
         const options = await onQuery("duplicate");
-        setValue(name, options[0]);
+        const option = options[0];
+        setValue(name, {
+          ...option,
+          value: option.value,
+          description: option.description
+        });
       }}
     >
       Select duplicate
