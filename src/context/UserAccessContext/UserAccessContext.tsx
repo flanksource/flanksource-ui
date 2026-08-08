@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { ActionType, useUser } from "..";
 
 export type UserAccessState = {
@@ -40,17 +40,20 @@ export const UserAccessStateContextProvider = ({
 
   const isViewer = roles.includes("viewer") || roles.includes("guest");
 
+  const value = useMemo<UserAccessState>(
+    () => ({
+      isLoading,
+      hasResourceAccess: authorizer.hasResourceAccess,
+      hasAnyResourceAccess: authorizer.hasAnyResourceAccess,
+      isViewer,
+      isAdmin,
+      roles
+    }),
+    [authorizer, isAdmin, isLoading, isViewer, roles]
+  );
+
   return (
-    <UserAccessStateContext.Provider
-      value={{
-        isLoading,
-        hasResourceAccess: authorizer.hasResourceAccess,
-        hasAnyResourceAccess: authorizer.hasAnyResourceAccess,
-        isViewer,
-        isAdmin,
-        roles: roles
-      }}
-    >
+    <UserAccessStateContext.Provider value={value}>
       {children}
     </UserAccessStateContext.Provider>
   );

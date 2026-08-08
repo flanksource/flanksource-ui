@@ -1,4 +1,5 @@
 import { tristateOutputToQueryParamValue } from "@flanksource-ui/lib/tristate";
+import { UUID_PATTERN } from "@flanksource-ui/utils/uuid";
 import { ConfigDB } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import {
@@ -213,8 +214,18 @@ export type SearchExternalUsersParams = {
   limit?: number;
 };
 
-const uuidPattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function quotePostgrestValue(value: string) {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
+function postgresTextArray(value: string) {
+  const element = value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return `{"${element}"}`;
+}
+
+function escapePostgresLikePattern(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/_/g, "\\_");
+}
 
 export async function searchExternalUsers({
   query = "",
@@ -234,16 +245,26 @@ export async function searchExternalUsers({
 
   // PostgREST's logical-filter syntax treats these characters as grammar.
   // Removing them keeps free-text searches from producing malformed filters.
-  const search = query
-    .trim()
-    .replace(/[*,()%"{}\\]/g, " ")
+  const rawSearch = query.trim();
+  const search = rawSearch
+    .replace(/[*,()%"{}]/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
+  if (rawSearch && !search) return [];
+
   if (search) {
-    const filters = [`name.ilike.*${search}*`, `email.ilike.*${search}*`];
+    const ilikePattern = quotePostgrestValue(
+      `*${escapePostgresLikePattern(search)}*`
+    );
+    const filters = [
+      `name.ilike.${ilikePattern}`,
+      `email.ilike.${ilikePattern}`
+    ];
     if (!/\s/.test(search)) {
-      filters.push(`aliases.cs.{${search.toLowerCase()}}`);
+      const alias = postgresTextArray(search.toLowerCase());
+      filters.push(`aliases.cs.${quotePostgrestValue(alias)}`);
     }
-    if (uuidPattern.test(search)) {
+    if (UUID_PATTERN.test(search)) {
       filters.push(`id.eq.${search}`);
     }
     queryParams.set("or", `(${filters.join(",")})`);
@@ -268,7 +289,7 @@ export async function addExternalUserAlias({
 }: AddExternalUserAliasParams) {
   const payload: Record<string, string> = {
     p_external_user_id: externalUserId,
-    p_alias: alias
+    p_alias: alias.trim().toLowerCase()
   };
   if (createdBy) payload.p_created_by = createdBy;
 

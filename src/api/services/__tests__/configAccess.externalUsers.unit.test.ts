@@ -38,20 +38,85 @@ describe("external user mapping API", () => {
     expect(params.get("deleted_at")).toBe("is.null");
     expect(params.get("id")).toBe("neq.10000000-0000-4000-8000-000000000001");
     expect(params.get("or")).toBe(
-      "(name.ilike.*dup*,email.ilike.*dup*,aliases.cs.{dup})"
+      String.raw`(name.ilike."*dup*",email.ilike."*dup*",aliases.cs."{\"dup\"}")`
     );
     expect(params.get("limit")).toBe("20");
   });
 
-  it("normalizes alias searches while preserving case-insensitive text search", async () => {
+  it("quotes reserved characters in URI alias searches", async () => {
     mockedGet.mockResolvedValue({ data: [] });
 
-    await searchExternalUsers({ query: "GitHub://SomeUser" });
+    await searchExternalUsers({ query: "GitHub://Some.User" });
 
     const requestURL = mockedGet.mock.calls[0][0] as string;
     const params = new URLSearchParams(requestURL.split("?")[1]);
     expect(params.get("or")).toBe(
-      "(name.ilike.*GitHub://SomeUser*,email.ilike.*GitHub://SomeUser*,aliases.cs.{github://someuser})"
+      String.raw`(name.ilike."*GitHub://Some.User*",email.ilike."*GitHub://Some.User*",aliases.cs."{\"github://some.user\"}")`
+    );
+  });
+
+  it("quotes email searches containing periods", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "user@example.com" });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe(
+      String.raw`(name.ilike."*user@example.com*",email.ilike."*user@example.com*",aliases.cs."{\"user@example.com\"}")`
+    );
+  });
+
+  it("preserves escaped backslashes in text and alias searches", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: String.raw`GitHub://Some.User\Name` });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe(
+      String.raw`(name.ilike."*GitHub://Some.User\\\\Name*",email.ilike."*GitHub://Some.User\\\\Name*",aliases.cs."{\"github://some.user\\\\name\"}")`
+    );
+  });
+
+  it("strips PostgREST grammar characters from free-text searches", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "a,b)(c" });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe(
+      `(name.ilike."*a b c*",email.ilike."*a b c*")`
+    );
+  });
+
+  it("returns no matches when a non-empty search sanitizes to empty", async () => {
+    const result = await searchExternalUsers({ query: `(*,)%"{}` });
+
+    expect(result).toEqual([]);
+    expect(mockedGet).not.toHaveBeenCalled();
+  });
+
+  it("keeps an actually empty search unfiltered", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "   " });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.has("or")).toBe(false);
+  });
+
+  it("escapes underscores in case-insensitive text filters", async () => {
+    mockedGet.mockResolvedValue({ data: [] });
+
+    await searchExternalUsers({ query: "a_b" });
+
+    const requestURL = mockedGet.mock.calls[0][0] as string;
+    const params = new URLSearchParams(requestURL.split("?")[1]);
+    expect(params.get("or")).toBe(
+      String.raw`(name.ilike."*a\\_b*",email.ilike."*a\\_b*",aliases.cs."{\"a_b\"}")`
     );
   });
 
@@ -71,7 +136,7 @@ describe("external user mapping API", () => {
 
     await addExternalUserAlias({
       externalUserId: "10000000-0000-4000-8000-000000000001",
-      alias: "github://user",
+      alias: "  GitHub://User  ",
       createdBy: "30000000-0000-4000-8000-000000000003"
     });
 

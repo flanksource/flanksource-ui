@@ -4,6 +4,7 @@ import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUIS
 import FullPageSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FullPageSkeletonLoader";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useMemo } from "react";
 import ErrorPage from "../../Errors/ErrorPage";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -31,6 +32,12 @@ export default function KratosAuthContextProvider({ children }: Props) {
     backendURL: backendURL
   });
 
+  const roles = useMemo(() => payload?.roles ?? [], [payload?.roles]);
+  const authorizer = useMemo(
+    () => (payload ? createAuthorizer(payload) : undefined),
+    [payload]
+  );
+
   if (isLoading && !payload) {
     return <FullPageSkeletonLoader />;
   }
@@ -42,11 +49,11 @@ export default function KratosAuthContextProvider({ children }: Props) {
   return (
     <AuthContext.Provider
       value={{
-        authorizer: createAuthorizer(payload),
+        authorizer: authorizer!,
         isLoading,
         user: payload.user,
         backendUrl: backendURL,
-        roles: payload.roles,
+        roles,
         permissions: payload.permissions
       }}
     >

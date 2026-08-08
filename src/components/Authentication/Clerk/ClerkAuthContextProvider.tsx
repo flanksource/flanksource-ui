@@ -4,6 +4,7 @@ import useClerkAttachAuthInterceptorsToAxios from "@flanksource-ui/hooks/useCler
 import { useFlanksourceUISnippet } from "@flanksource-ui/hooks/useFlanksourceUISnippet";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useMemo } from "react";
 import { WhoamiResponse, whoami } from "../../../api/services/users";
 import { AuthContext, createAuthorizer } from "../../../context";
 import FullPageSkeletonLoader from "../../../ui/SkeletonLoader/FullPageSkeletonLoader";
@@ -41,6 +42,12 @@ export default function ClerkAuthContextProvider({
 
   useFlanksourceUISnippet(payload?.user, organization ?? undefined);
 
+  const roles = useMemo(() => payload?.roles ?? [], [payload?.roles]);
+  const authorizer = useMemo(
+    () => (payload ? createAuthorizer(payload) : undefined),
+    [payload]
+  );
+
   // if the organization backend is not yet created, we need to wait for it to
   // be created before showing the UI
   if (!backendURL) {
@@ -69,10 +76,10 @@ export default function ClerkAuthContextProvider({
     <FeatureFlagsContextProvider>
       <AuthContext.Provider
         value={{
-          authorizer: createAuthorizer(payload),
+          authorizer: authorizer!,
           isLoading,
           user: payload.user ?? (payload as any),
-          roles: payload.roles,
+          roles,
           permissions: payload.permissions,
           backendUrl: backendURL as string,
           orgSlug: organization?.slug ?? undefined
