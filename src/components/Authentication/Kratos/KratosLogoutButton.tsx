@@ -1,4 +1,4 @@
-import { useCreateLogoutHandler } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { useCreateLogoutHandler } from "@flanksource-ui/components/Authentication/Kratos/ory/hooks";
 import { useLocation } from "react-router-dom";
 
 export default function KratosLogoutButton() {

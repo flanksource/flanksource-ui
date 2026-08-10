@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 // Import render helpers
 import { handleFlowError } from "@flanksource-ui/components/Authentication/Kratos/ory/errors";
 // Import the SDK
-import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory/ui";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 
 // Renders the registration page
