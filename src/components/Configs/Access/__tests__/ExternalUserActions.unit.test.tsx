@@ -4,6 +4,7 @@ import {
   searchExternalUsers
 } from "../../../../api/services/configAccess";
 import { ConfigAccessSummaryByUser } from "../../../../api/types/configs";
+import { AuthContext, FakeUser, Roles } from "../../../../context";
 import { toastSuccess } from "../../../Toast/toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -17,11 +18,6 @@ jest.mock("../../../../api/services/configAccess", () => ({
   mergeExternalUsers: jest.fn(),
   searchExternalUsers: jest.fn()
 }));
-
-jest.mock(
-  "../../../Authentication/useCurrentUser",
-  () => () => "019f1234-5678-7abc-8def-0123456789ab"
-);
 
 jest.mock("../../../Toast/toast", () => ({
   toastError: jest.fn(),
@@ -75,7 +71,11 @@ function renderWithQueryClient(component: React.ReactElement) {
     .mockResolvedValue(undefined);
 
   render(
-    <QueryClientProvider client={queryClient}>{component}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        {component}
+      </AuthContext.Provider>
+    </QueryClientProvider>
   );
 
   return { invalidate };
@@ -114,7 +114,7 @@ describe("external user actions", () => {
       expect(mockedAddAlias).toHaveBeenCalledWith({
         externalUserId: primary.external_user_id,
         alias: "github://someuser",
-        createdBy: "019f1234-5678-7abc-8def-0123456789ab"
+        createdBy: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7"
       });
     });
     expect(invalidate).toHaveBeenCalledWith({
@@ -152,7 +152,7 @@ describe("external user actions", () => {
       expect(mockedMerge).toHaveBeenCalledWith({
         primaryId: primary.external_user_id,
         duplicateId: "20000000-0000-4000-8000-000000000002",
-        createdBy: "019f1234-5678-7abc-8def-0123456789ab"
+        createdBy: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7"
       });
     });
     expect(invalidate).toHaveBeenCalledWith({
