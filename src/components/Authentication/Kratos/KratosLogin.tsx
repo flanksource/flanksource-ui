@@ -1,7 +1,5 @@
-import {
-  Flow,
-  handleGetFlowError as HandleError
-} from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { handleGetFlowError as HandleError } from "@flanksource-ui/components/Authentication/Kratos/ory/hooks";
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory/ui";
 import { sanitizeReturnTo } from "@flanksource-ui/components/Authentication/Kratos/ory/returnTo";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";

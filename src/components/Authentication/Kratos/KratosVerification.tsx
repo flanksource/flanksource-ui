@@ -1,4 +1,4 @@
-import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory";
+import { Flow } from "@flanksource-ui/components/Authentication/Kratos/ory/ui";
 import ory from "@flanksource-ui/components/Authentication/Kratos/ory/sdk";
 import { UpdateVerificationFlowBody, VerificationFlow } from "@ory/client";
 import { AxiosError } from "axios";
