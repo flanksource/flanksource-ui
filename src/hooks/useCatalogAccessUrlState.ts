@@ -1,4 +1,3 @@
-import { ConfigAccessGroupBy } from "@flanksource-ui/api/types/configs";
 import { toTriStateIncludeParamValue } from "@flanksource-ui/lib/tristate";
 import { useCallback, useMemo } from "react";
 import { usePrefixedSearchParams } from "./usePrefixedSearchParams";
@@ -45,17 +44,6 @@ function mapModeToGroupByParam(mode: CatalogAccessMode) {
   }
 }
 
-function mapModeToGroupBy(mode: CatalogAccessMode): ConfigAccessGroupBy | null {
-  switch (mode) {
-    case "group-user":
-      return "user";
-    case "group-config":
-      return "config";
-    default:
-      return null;
-  }
-}
-
 export function resolveCatalogAccessMode(
   params: URLSearchParams
 ): CatalogAccessMode {
@@ -64,15 +52,11 @@ export function resolveCatalogAccessMode(
   }
 
   const mode = params.get("mode");
-  if (mode === "flat" || mode === "group-user" || mode === "group-config") {
+  if (mode === "group-user" || mode === "group-config") {
     return mode;
   }
 
   const groupBy = params.get("groupBy");
-  if (groupBy === "none") {
-    return "flat";
-  }
-
   if (groupBy === "user") {
     return "group-user";
   }
@@ -102,8 +86,6 @@ export function useCatalogAccessUrlState() {
   );
 
   const mode = useMemo(() => resolveCatalogAccessMode(params), [params]);
-
-  const groupBy = useMemo(() => mapModeToGroupBy(mode), [mode]);
 
   const resetPageIndexes = useCallback((nextParams: URLSearchParams) => {
     CATALOG_ACCESS_PAGE_INDEX_KEYS.forEach((key) => {
@@ -159,9 +141,7 @@ export function useCatalogAccessUrlState() {
   return {
     configType,
     mode,
-    groupBy,
     isGrouped: mode !== "flat",
-    hasDrillDownFilter: hasDrillDownFilter(params),
     filters,
     actions: {
       setMode,

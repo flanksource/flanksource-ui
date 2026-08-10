@@ -2,7 +2,7 @@ import { useAllConfigAccessSummaryQuery } from "@flanksource-ui/api/query-hooks/
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
 import { ConfigAccessFilters } from "@flanksource-ui/components/Configs/Access/ConfigAccessFilters";
-import { ConfigAccessGroupByDropdown } from "@flanksource-ui/components/Configs/Access/ConfigAccessGroupByDropdown";
+import { ConfigAccessGroupByTabs } from "@flanksource-ui/components/Configs/Access/ConfigAccessGroupByTabs";
 import { ConfigAccessFlatTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessFlatTable";
 import { ConfigAccessGroupedByCatalogTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByCatalogTable";
 import { ConfigAccessGroupedByUserTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByUserTable";
@@ -27,9 +27,7 @@ export function ConfigAccessPage() {
 
   const {
     configType,
-    groupBy,
     isGrouped,
-    hasDrillDownFilter,
     mode,
     actions: { setMode }
   } = useCatalogAccessUrlState();
@@ -106,19 +104,19 @@ export function ConfigAccessPage() {
             <InfoMessage message={errorMessage} />
           ) : (
             <div className="flex h-full flex-1 flex-col overflow-y-auto">
-              {!hasDrillDownFilter && (
-                <div className="flex flex-wrap items-center gap-2 pb-2">
-                  <ConfigAccessGroupByDropdown mode={mode} onChange={setMode} />
-                </div>
-              )}
-
               {isGrouped ? (
-                <div className="flex w-full flex-1 flex-col overflow-y-auto">
-                  {groupBy === "user" && <ConfigAccessGroupedByUserTable />}
-                  {groupBy === "config" && (
-                    <ConfigAccessGroupedByCatalogTable />
-                  )}
-                </div>
+                <>
+                  <div className="pb-2">
+                    <ConfigAccessGroupByTabs mode={mode} onChange={setMode} />
+                  </div>
+                  <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto">
+                    {mode === "group-user" ? (
+                      <ConfigAccessGroupedByUserTable />
+                    ) : (
+                      <ConfigAccessGroupedByCatalogTable />
+                    )}
+                  </div>
+                </>
               ) : (
                 <>
                   <ConfigAccessFilters />
