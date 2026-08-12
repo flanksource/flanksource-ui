@@ -5,8 +5,10 @@ describe("resolveCatalogAccessMode", () => {
     ["", "group-config"],
     ["mode=group-config", "group-config"],
     ["mode=group-user", "group-user"],
+    ["mode=group-group", "group-group"],
     ["groupBy=config", "group-config"],
     ["groupBy=user", "group-user"],
+    ["groupBy=group", "group-group"],
     ["mode=flat", "group-config"],
     ["groupBy=none", "group-config"]
   ])("resolves %s to %s", (query, expected) => {

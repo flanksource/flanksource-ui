@@ -105,12 +105,12 @@ export interface ConfigAccessSummary {
   config_id?: string;
   config_name?: string | null;
   config_type?: string | null;
-  external_user_id: string;
+  external_user_id: string | null;
   user: string;
   email: string;
   role?: string | null;
   user_type?: string | null;
-  external_group_id?: string | null;
+  external_group_id: string | null;
   last_signed_in_at?: string | null;
   last_reviewed_at?: string | null;
   created_at: string;
@@ -125,6 +125,19 @@ export interface ConfigAccessSummaryByUser {
   distinct_configs: number;
   last_signed_in_at?: string | null;
   latest_grant?: string | null;
+  config_types?: string[] | null;
+}
+
+export interface ConfigAccessSummaryByGroup {
+  external_group_id: string;
+  group: string;
+  access_count: number;
+  distinct_users: number;
+  distinct_roles: number;
+  distinct_configs: number;
+  last_signed_in_at?: string | null;
+  latest_grant?: string | null;
+  config_types?: string[] | null;
 }
 
 export interface ExternalUser {
@@ -146,7 +159,7 @@ export interface ConfigAccessSummaryByConfig {
   latest_grant?: string | null;
 }
 
-export type ConfigAccessGroupBy = "user" | "config";
+export type ConfigAccessGroupBy = "user" | "group" | "config";
 
 export interface ConfigAccessLog {
   config_id: string;

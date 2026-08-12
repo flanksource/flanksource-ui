@@ -52,6 +52,8 @@ function useConfigAccessFilterOptions() {
     if (configId) result.configId = configId;
     const userId = extractIncludeValue(filters.external_user_id);
     if (userId) result.userId = userId;
+    const groupId = extractIncludeValue(filters.external_group_id);
+    if (groupId) result.groupId = groupId;
     const role = extractIncludeValue(filters.role);
     if (role) result.role = role;
     const userType = extractIncludeValue(filters.user_type);
@@ -87,6 +89,18 @@ function useUserOptions(data: ConfigAccessFilterOptions | undefined) {
         value: item.external_user_id
       })),
     [data?.users]
+  );
+}
+
+function useGroupOptions(data: ConfigAccessFilterOptions | undefined) {
+  return useMemo<TriStateOptions[]>(
+    () =>
+      (data?.groups ?? []).map((item) => ({
+        id: item.external_group_id,
+        label: item.group,
+        value: item.external_group_id
+      })),
+    [data?.groups]
   );
 }
 
@@ -172,6 +186,36 @@ function UserDropdown({
   );
 }
 
+function GroupDropdown({
+  data,
+  isLoading
+}: {
+  data: ConfigAccessFilterOptions | undefined;
+  isLoading: boolean;
+}) {
+  const [field] = useField({ name: "external_group_id" });
+  const options = useGroupOptions(data);
+
+  return (
+    <TristateReactSelect
+      options={options}
+      isLoading={isLoading}
+      value={field.value}
+      minMenuWidth="16rem"
+      onChange={(value) => {
+        if (value && value !== "all") {
+          field.onChange({ target: { name: "external_group_id", value } });
+        } else {
+          field.onChange({
+            target: { name: "external_group_id", value: undefined }
+          });
+        }
+      }}
+      label="Group"
+    />
+  );
+}
+
 function RoleDropdown({
   data,
   isLoading
@@ -234,11 +278,18 @@ export function ConfigAccessFilters() {
   return (
     <FormikFilterForm
       paramsToReset={paramsToReset}
-      filterFields={["config_id", "external_user_id", "role", "user_type"]}
+      filterFields={[
+        "config_id",
+        "external_user_id",
+        "external_group_id",
+        "role",
+        "user_type"
+      ]}
     >
       <div className="flex flex-wrap items-center gap-2 pb-2">
         <CatalogDropdown data={data} isLoading={isLoading} />
         <UserDropdown data={data} isLoading={isLoading} />
+        <GroupDropdown data={data} isLoading={isLoading} />
         <RoleDropdown data={data} isLoading={isLoading} />
         <TypeDropdown data={data} isLoading={isLoading} />
       </div>

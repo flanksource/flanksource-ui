@@ -5,6 +5,7 @@ import { ConfigAccessFilters } from "@flanksource-ui/components/Configs/Access/C
 import { ConfigAccessGroupByTabs } from "@flanksource-ui/components/Configs/Access/ConfigAccessGroupByTabs";
 import { ConfigAccessFlatTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessFlatTable";
 import { ConfigAccessGroupedByCatalogTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByCatalogTable";
+import { ConfigAccessGroupedByGroupTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByGroupTable";
 import { ConfigAccessGroupedByUserTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByUserTable";
 import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
 import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
@@ -112,6 +113,8 @@ export function ConfigAccessPage() {
                   <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto">
                     {mode === "group-user" ? (
                       <ConfigAccessGroupedByUserTable />
+                    ) : mode === "group-group" ? (
+                      <ConfigAccessGroupedByGroupTable />
                     ) : (
                       <ConfigAccessGroupedByCatalogTable />
                     )}

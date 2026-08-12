@@ -1,6 +1,7 @@
 import {
   ConfigAccessSummary,
   ConfigAccessSummaryByConfig,
+  ConfigAccessSummaryByGroup,
   ConfigAccessSummaryByUser
 } from "@flanksource-ui/api/types/configs";
 import ConfigLink from "@flanksource-ui/components/Configs/ConfigLink/ConfigLink";
@@ -50,10 +51,20 @@ export const FlatUserCell = ({ row }: MRTCellProps<ConfigAccessSummary>) => {
     return <span className="text-gray-400">—</span>;
   }
 
+  const filterValue =
+    row.original.external_user_id ?? row.original.external_group_id;
+  const paramKey = row.original.external_user_id
+    ? "external_user_id"
+    : "external_group_id";
+
+  if (!filterValue) {
+    return <ExternalUserCell user={user} />;
+  }
+
   return (
     <FilterByCellValue
-      filterValue={row.original.external_user_id}
-      paramKey="external_user_id"
+      filterValue={filterValue}
+      paramKey={paramKey}
       paramsToReset={paramsToReset}
     >
       <ExternalUserCell user={user} />
@@ -137,29 +148,54 @@ export const GroupedByUserIdentityCell = ({
   );
 };
 
-export const GroupedByUserLastSignedInCell = ({
-  cell
-}: MRTCellProps<ConfigAccessSummaryByUser>) => {
-  const value = cell.getValue<string | null>();
+export const GroupedByGroupIdentityCell = ({
+  row
+}: MRTCellProps<ConfigAccessSummaryByGroup>) => (
+  <div className="flex flex-row items-center gap-2">
+    <span>{row.original.group}</span>
+    <Badge text={row.original.access_count} />
+  </div>
+);
 
+function GroupedOptionalDateValue({ value }: { value?: string | null }) {
   if (!value) {
     return <span className="text-gray-400">Never</span>;
   }
 
   return <Age from={value} />;
-};
+}
 
-export const GroupedByUserLatestGrantCell = ({
+export const GroupedByUserLastSignedInCell = ({
   cell
-}: MRTCellProps<ConfigAccessSummaryByUser>) => {
-  const value = cell.getValue<string | null>();
+}: MRTCellProps<ConfigAccessSummaryByUser>) => (
+  <GroupedOptionalDateValue value={cell.getValue<string | null>()} />
+);
 
+export const GroupedByGroupLastSignedInCell = ({
+  cell
+}: MRTCellProps<ConfigAccessSummaryByGroup>) => (
+  <GroupedOptionalDateValue value={cell.getValue<string | null>()} />
+);
+
+function GroupedLatestGrantValue({ value }: { value?: string | null }) {
   if (!value) {
     return <span className="text-gray-400">—</span>;
   }
 
   return <Age from={value} />;
-};
+}
+
+export const GroupedByUserLatestGrantCell = ({
+  cell
+}: MRTCellProps<ConfigAccessSummaryByUser>) => (
+  <GroupedLatestGrantValue value={cell.getValue<string | null>()} />
+);
+
+export const GroupedByGroupLatestGrantCell = ({
+  cell
+}: MRTCellProps<ConfigAccessSummaryByGroup>) => (
+  <GroupedLatestGrantValue value={cell.getValue<string | null>()} />
+);
 
 export const GroupedByCatalogIdentityCell = ({
   row

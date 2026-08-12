@@ -36,6 +36,7 @@ describe("external user mapping API", () => {
     expect(requestURL.startsWith("/external_users?")).toBe(true);
     expect(params.get("select")).toBe("id,name,email,aliases,user_type");
     expect(params.get("deleted_at")).toBe("is.null");
+    expect(params.get("user_type")).toBe("neq.group");
     expect(params.get("id")).toBe("neq.10000000-0000-4000-8000-000000000001");
     expect(params.get("or")).toBe(
       String.raw`(name.ilike."*dup*",email.ilike."*dup*",aliases.cs."{\"dup\"}")`
