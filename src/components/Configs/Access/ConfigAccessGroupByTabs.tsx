@@ -5,7 +5,7 @@ import {
 } from "@flanksource-ui/components/ui/tabs";
 import { CatalogAccessMode } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 
-const groupedModes = ["group-config", "group-user"] as const;
+const groupedModes = ["group-config", "group-user", "group-group"] as const;
 type GroupedCatalogAccessMode = (typeof groupedModes)[number];
 
 type ConfigAccessGroupByTabsProps = {
@@ -29,6 +29,7 @@ export function ConfigAccessGroupByTabs({
       <TabsList aria-label="Catalog access views">
         <TabsTrigger value="group-config">Catalogs</TabsTrigger>
         <TabsTrigger value="group-user">Users</TabsTrigger>
+        <TabsTrigger value="group-group">Groups</TabsTrigger>
       </TabsList>
     </Tabs>
   );

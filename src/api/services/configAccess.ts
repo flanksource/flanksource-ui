@@ -6,6 +6,7 @@ import {
   ConfigAccessLog,
   ConfigAccessSummary,
   ConfigAccessSummaryByConfig,
+  ConfigAccessSummaryByGroup,
   ConfigAccessSummaryByUser,
   ExternalUser
 } from "../types/configs";
@@ -117,10 +118,12 @@ export const getConfigAccessSummaryByUser = ({
 
   queryParams.set(
     "select",
-    "external_user_id,user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant"
+    "external_user_id,user,email,access_count,distinct_roles,distinct_configs,last_signed_in_at,latest_grant,config_types"
   );
 
-  applyConfigAccessSummaryFilters(queryParams, { configType });
+  if (configType) {
+    queryParams.set("config_types", `cs.{${configType}}`);
+  }
 
   if (pageIndex !== undefined && pageSize !== undefined) {
     queryParams.set("limit", pageSize.toString());
@@ -142,6 +145,51 @@ export const getConfigAccessSummaryByUser = ({
 
   return resolvePostGrestRequestWithPagination<ConfigAccessSummaryByUser[]>(
     ConfigDB.get(`/config_access_summary_by_user?${queryParams.toString()}`, {
+      headers: {
+        Prefer: "count=exact"
+      }
+    })
+  );
+};
+
+export const getConfigAccessSummaryByGroup = ({
+  configType,
+  pageIndex,
+  pageSize,
+  sortBy = "access_count",
+  sortOrder = "desc"
+}: GetConfigAccessGroupedParams = {}) => {
+  const queryParams = new URLSearchParams();
+
+  queryParams.set(
+    "select",
+    "external_group_id,group,access_count,distinct_users,distinct_roles,distinct_configs,last_signed_in_at,latest_grant,config_types"
+  );
+
+  if (configType) {
+    queryParams.set("config_types", `cs.{${configType}}`);
+  }
+
+  if (pageIndex !== undefined && pageSize !== undefined) {
+    queryParams.set("limit", pageSize.toString());
+    queryParams.set("offset", `${pageIndex * pageSize}`);
+  }
+
+  const sortableFieldMap: Record<string, string> = {
+    group: "group",
+    access_count: "access_count",
+    distinct_users: "distinct_users",
+    distinct_roles: "distinct_roles",
+    distinct_configs: "distinct_configs",
+    last_signed_in_at: "last_signed_in_at",
+    latest_grant: "latest_grant"
+  };
+
+  const safeSortBy = sortableFieldMap[sortBy] ?? "access_count";
+  queryParams.set("order", `${safeSortBy}.${sortOrder}`);
+
+  return resolvePostGrestRequestWithPagination<ConfigAccessSummaryByGroup[]>(
+    ConfigDB.get(`/config_access_summary_by_group?${queryParams.toString()}`, {
       headers: {
         Prefer: "count=exact"
       }
@@ -235,6 +283,7 @@ export async function searchExternalUsers({
   const queryParams = new URLSearchParams({
     select: "id,name,email,aliases,user_type",
     deleted_at: "is.null",
+    user_type: "neq.group",
     order: "name.asc.nullslast,email.asc.nullslast",
     limit: limit.toString()
   });
@@ -322,6 +371,7 @@ export type ConfigAccessFilterOptionsParams = {
   configId?: string;
   configType?: string;
   userId?: string;
+  groupId?: string;
   role?: string;
   userType?: string;
 };
@@ -333,6 +383,10 @@ export type ConfigAccessFilterOptions = {
     user: string;
     email?: string | null;
   }[];
+  groups: {
+    external_group_id: string;
+    group: string;
+  }[];
   roles: { role: string }[];
   user_types: { user_type: string }[];
 };
@@ -340,6 +394,7 @@ export type ConfigAccessFilterOptions = {
 const emptyFilterOptions: ConfigAccessFilterOptions = {
   catalogs: [],
   users: [],
+  groups: [],
   roles: [],
   user_types: []
 };
@@ -352,6 +407,7 @@ export const getConfigAccessFilterOptions = async (
   if (params.configId) queryParams.set("p_config_id", params.configId);
   if (params.configType) queryParams.set("p_config_type", params.configType);
   if (params.userId) queryParams.set("p_user_id", params.userId);
+  if (params.groupId) queryParams.set("p_group_id", params.groupId);
   if (params.role) queryParams.set("p_role", params.role);
   if (params.userType) queryParams.set("p_user_type", params.userType);
 

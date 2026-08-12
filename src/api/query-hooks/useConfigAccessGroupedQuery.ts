@@ -1,5 +1,6 @@
 import {
   CATALOG_ACCESS_GROUP_CONFIG_TABLE_PREFIX,
+  CATALOG_ACCESS_GROUP_GROUP_TABLE_PREFIX,
   CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX,
   useCatalogAccessUrlState
 } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
@@ -8,6 +9,7 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import { useQuery } from "@tanstack/react-query";
 import {
   getConfigAccessSummaryByUser,
+  getConfigAccessSummaryByGroup,
   getConfigAccessSummaryByConfig
 } from "../services/configAccess";
 
@@ -44,6 +46,32 @@ export function useConfigAccessGroupedByUserQuery() {
     ],
     () =>
       getConfigAccessSummaryByUser({
+        configType,
+        pageIndex,
+        pageSize,
+        sortBy: sortField,
+        sortOrder
+      }),
+    {
+      keepPreviousData: true
+    }
+  );
+}
+
+export function useConfigAccessGroupedByGroupQuery() {
+  const { configType, pageIndex, pageSize, sortField, sortOrder } =
+    useGroupedPaginationAndSort(CATALOG_ACCESS_GROUP_GROUP_TABLE_PREFIX);
+
+  return useQuery(
+    [
+      "config",
+      "access-summary",
+      "grouped",
+      "group",
+      { configType, pageIndex, pageSize, sortField, sortOrder }
+    ],
+    () =>
+      getConfigAccessSummaryByGroup({
         configType,
         pageIndex,
         pageSize,
