@@ -225,6 +225,7 @@ export type CatalogChangesSearchResponse = {
 export type GetConfigsRelatedChangesParams = {
   id?: string;
   type_filter?: "all" | "upstream" | "downstream" | "none";
+  soft?: boolean;
   include_deleted_configs: boolean;
   changeType?: string;
   severity?: string;
@@ -248,6 +249,7 @@ export type GetConfigsRelatedChangesParams = {
 export async function getConfigsChanges({
   id,
   type_filter,
+  soft,
   include_deleted_configs = false,
   changeType,
   severity,
@@ -354,6 +356,9 @@ export async function getConfigsChanges({
     requestData.set("depth", 5);
   } else {
     requestData.set("recursive", "none");
+  }
+  if (soft !== undefined) {
+    requestData.set("soft", soft);
   }
 
   if (severity) {
