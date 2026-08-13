@@ -112,6 +112,7 @@ export function useGetConfigChangesByIDQuery(
   const [params] = usePrefixedSearchParams(undefined, false, {
     downstream: "true",
     upstream: "false",
+    soft: "false",
     sortBy: "created_at",
     sortDirection: "desc"
   });
@@ -124,6 +125,7 @@ export function useGetConfigChangesByIDQuery(
   const [sortBy] = useReactTableSortState();
   const upstream = params.get("upstream") === "true";
   const downstream = params.get("downstream") === "true";
+  const soft = params.get("soft") === "true";
   const all = upstream && downstream;
 
   const arbitraryFilter = useConfigChangesArbitraryFilters();
@@ -146,6 +148,7 @@ export function useGetConfigChangesByIDQuery(
   const props = {
     id,
     type_filter: relationshipType,
+    soft,
     include_deleted_configs: showChangesFromDeletedConfigs,
     changeType: change_type,
     severity,
