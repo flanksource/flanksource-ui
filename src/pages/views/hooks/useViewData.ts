@@ -4,8 +4,7 @@ import {
   getViewDataById,
   getViewDisplayPluginVariables,
   getViewMetadataById,
-  getSectionResultByViewRef,
-  type DashboardResponse
+  getSectionResultByViewRef
 } from "../../../api/services/views";
 import {
   useAggregatedViewVariables,
@@ -59,13 +58,20 @@ export interface UseViewDataResult {
  * `aggregatedVariables` is intentionally emptied in this mode because the
  * global variable filter UI should not be shown inside an embedded tab.
  *
- * **Fetching strategy** — when `sectionResults` are already present on
- * `/api/dashboard` or `/api/view/metadata/:id`, those prefetched section
- * payloads are used directly and per-section POST calls are skipped. Otherwise,
- * section data is fetched exactly once inside `useAggregatedViewVariables`
- * (which also aggregates section variables) and surfaced here as `sectionData`.
- * `ViewSection` components receive that data as props rather than issuing their
- * own queries.
+ * **Fetching strategy** — `/api/view/metadata/:id` describes the view: its
+ * sections, variable definitions and their defaults, none of which depend on
+ * the selected variable values. It is fetched independently of the data
+ * endpoint and carries prefetched `sectionResults`, so a view whose variables
+ * are all at their defaults costs a single request. The data endpoint
+ * (`/api/view/:id`) is only used once a variable is set to something other
+ * than its default, and section data is then fetched inside
+ * `useAggregatedViewVariables` (which also aggregates section variables) and
+ * surfaced here as `sectionData`. `ViewSection` components receive that data
+ * as props rather than issuing their own queries.
+ *
+ * Variables are aggregated metadata-first so the set of keys can only grow
+ * while requests are in flight. A variable that vanished mid-fetch would be
+ * dropped from the URL by the filter form and reset to its default.
  *
  * **Force-refresh** — `handleForceRefresh` re-fetches the top-level view with
  * a `cache-control: max-age=1` header to bypass server-side caching, then
@@ -111,52 +117,24 @@ export function useViewData({
     [standardModeVariables]
   );
 
-  // Include standard-mode variables in the query key so that the primary
-  // view data (panels, table, fingerprint) is re-fetched whenever the
-  // global filter values change.  The metadata endpoint does not accept
-  // variables, so we switch to the data endpoint when any are present.
-  const viewQueryKey = isDisplayPluginMode
-    ? ["viewDataById", viewId, configId, variables]
-    : hasStandardModeVariables
-      ? ["viewDataById", viewId, viewVarParamsString]
-      : ["view-metadata", viewId];
+  const refreshHeaders = () =>
+    forceRefreshRef.current ? { "cache-control": "max-age=1" } : undefined;
 
   const {
-    data: viewResult,
-    isLoading: isLoadingViewResult,
-    isFetching: isFetchingViewResult,
-    isPreviousData,
-    error: viewResultError,
-    refetch
+    data: metadataResult,
+    isLoading: isLoadingMetadata,
+    isFetching: isFetchingMetadata,
+    error: metadataError,
+    refetch: refetchMetadata
   } = useQuery({
-    queryKey: viewQueryKey,
-    queryFn: () => {
-      const headers = forceRefreshRef.current
-        ? { "cache-control": "max-age=1" }
-        : undefined;
-
-      if (isDisplayPluginMode) {
-        return getViewDataById(viewId, variables, headers);
-      }
-
-      if (hasStandardModeVariables) {
-        return getViewDataById(viewId, standardModeVariables, headers);
-      }
-
-      return getViewMetadataById(viewId, headers);
-    },
-    enabled: isDisplayPluginMode ? !!variables : !!viewId,
-    staleTime: 5 * 60 * 1000,
-    keepPreviousData: true
+    queryKey: ["view-metadata", viewId],
+    queryFn: () => getViewMetadataById(viewId, refreshHeaders()),
+    enabled: !isDisplayPluginMode && !!viewId,
+    staleTime: 5 * 60 * 1000
   });
 
   useEffect(() => {
-    if (isDisplayPluginMode || !viewResult?.name) {
-      return;
-    }
-
-    const metadataResult = viewResult as DashboardResponse;
-    if (!metadataResult.id) {
+    if (isDisplayPluginMode || !metadataResult?.name || !metadataResult.id) {
       return;
     }
 
@@ -194,32 +172,16 @@ export function useViewData({
         sectionResult
       );
     });
-  }, [isDisplayPluginMode, queryClient, viewResult]);
-
-  const allSectionRefs = useMemo<ViewRef[]>(() => {
-    if (!viewResult?.sections) {
-      return [];
-    }
-
-    return viewResult.sections
-      .filter((section) => !!section.viewRef)
-      .map((section) => ({
-        namespace: section.viewRef?.namespace ?? "",
-        name: section.viewRef?.name ?? ""
-      }))
-      .filter((ref) => !!ref.name);
-  }, [viewResult?.sections]);
+  }, [isDisplayPluginMode, queryClient, metadataResult]);
 
   const prefetchedSectionData = useMemo(() => {
     const sectionDataMap = new Map<string, SectionDataEntry>();
 
-    if (isDisplayPluginMode || !viewResult?.sections) {
+    if (isDisplayPluginMode || !metadataResult?.sections) {
       return sectionDataMap;
     }
 
-    const metadataResult = viewResult as DashboardResponse;
-
-    metadataResult.sections?.forEach((section) => {
+    metadataResult.sections.forEach((section) => {
       if (!section.viewRef?.name) {
         return;
       }
@@ -241,7 +203,7 @@ export function useViewData({
     });
 
     return sectionDataMap;
-  }, [isDisplayPluginMode, viewResult]);
+  }, [isDisplayPluginMode, metadataResult]);
 
   const prefetchedSectionAggregatedVariables = useMemo(
     () =>
@@ -253,13 +215,17 @@ export function useViewData({
     [prefetchedSectionData]
   );
 
-  const shouldFetchSectionsForStandardModeVariables = useMemo(() => {
-    if (isDisplayPluginMode || !hasStandardModeVariables) {
+  // The filter form seeds the URL with every variable's default, so the mere
+  // presence of URL variables says nothing about whether the user changed
+  // anything. Only a value that differs from its default needs the data
+  // endpoint; anything else is already covered by the metadata response.
+  const hasNonDefaultVariables = useMemo(() => {
+    if (isDisplayPluginMode || !hasStandardModeVariables || !metadataResult) {
       return false;
     }
 
     const metadataVariables = aggregateVariables([
-      viewResult?.variables,
+      metadataResult.variables,
       prefetchedSectionAggregatedVariables
     ]);
 
@@ -290,13 +256,66 @@ export function useViewData({
   }, [
     hasStandardModeVariables,
     isDisplayPluginMode,
+    metadataResult,
     prefetchedSectionAggregatedVariables,
-    standardModeVariables,
-    viewResult?.variables
+    standardModeVariables
   ]);
 
+  const isDataQueryEnabled = isDisplayPluginMode
+    ? !!variables
+    : hasNonDefaultVariables;
+
+  const {
+    data: dataResult,
+    isLoading: isLoadingDataResult,
+    isFetching: isFetchingDataResult,
+    isPreviousData,
+    error: dataResultError,
+    refetch: refetchData
+  } = useQuery({
+    queryKey: isDisplayPluginMode
+      ? ["viewDataById", viewId, configId, variables]
+      : ["viewDataById", viewId, viewVarParamsString],
+    queryFn: () =>
+      getViewDataById(
+        viewId,
+        isDisplayPluginMode ? variables : standardModeVariables,
+        refreshHeaders()
+      ),
+    enabled: isDataQueryEnabled,
+    staleTime: 5 * 60 * 1000,
+    keepPreviousData: true
+  });
+
+  // `keepPreviousData` keeps serving the previous key's response after the
+  // query is disabled, so a reset back to the defaults would otherwise keep
+  // rendering the last non-default result forever.
+  const viewResult = isDisplayPluginMode
+    ? dataResult
+    : isDataQueryEnabled
+      ? (dataResult ?? metadataResult)
+      : metadataResult;
+
+  const allSectionRefs = useMemo<ViewRef[]>(() => {
+    const sections = isDisplayPluginMode
+      ? dataResult?.sections
+      : metadataResult?.sections;
+
+    if (!sections) {
+      return [];
+    }
+
+    return sections
+      .filter((section) => !!section.viewRef)
+      .map((section) => ({
+        namespace: section.viewRef?.namespace ?? "",
+        name: section.viewRef?.name ?? ""
+      }))
+      .filter((ref) => !!ref.name);
+  }, [isDisplayPluginMode, dataResult?.sections, metadataResult?.sections]);
+
   const sectionsToQuery = useMemo<ViewRef[]>(() => {
-    if (isDisplayPluginMode || shouldFetchSectionsForStandardModeVariables) {
+    if (isDisplayPluginMode || hasNonDefaultVariables) {
       return allSectionRefs;
     }
 
@@ -308,7 +327,7 @@ export function useViewData({
     allSectionRefs,
     isDisplayPluginMode,
     prefetchedSectionData,
-    shouldFetchSectionsForStandardModeVariables
+    hasNonDefaultVariables
   ]);
 
   const {
@@ -332,22 +351,22 @@ export function useViewData({
     return mergedSectionData;
   }, [prefetchedSectionData, queriedSectionData]);
 
-  const metadataSectionVariables =
-    !isDisplayPluginMode && !shouldFetchSectionsForStandardModeVariables
-      ? prefetchedSectionAggregatedVariables
-      : EMPTY_VARIABLES;
-
+  // Metadata first: its keys, labels and defaults are stable across fetches,
+  // so the aggregate can only gain keys as data responses arrive. Later
+  // sources still contribute their options, which `aggregateVariables` unions.
   const aggregatedVariables = useMemo(
     () =>
       aggregateVariables([
-        viewResult?.variables,
-        metadataSectionVariables,
+        metadataResult?.variables,
+        prefetchedSectionAggregatedVariables,
+        dataResult?.variables,
         queriedSectionAggregatedVariables
       ]),
     [
-      metadataSectionVariables,
-      queriedSectionAggregatedVariables,
-      viewResult?.variables
+      dataResult?.variables,
+      metadataResult?.variables,
+      prefetchedSectionAggregatedVariables,
+      queriedSectionAggregatedVariables
     ]
   );
 
@@ -357,10 +376,15 @@ export function useViewData({
 
   const handleForceRefresh = useCallback(async () => {
     forceRefreshRef.current = true;
-    const result = await refetch();
+    const results = await Promise.all([
+      isDisplayPluginMode ? undefined : refetchMetadata(),
+      isDataQueryEnabled ? refetchData() : undefined
+    ]);
     forceRefreshRef.current = false;
 
-    if (result.isError) {
+    const result = results.find((it) => it?.isError);
+
+    if (result?.isError) {
       const err = result.error as any;
       toastError(
         err?.message ||
@@ -396,18 +420,25 @@ export function useViewData({
   }, [
     allSectionRefs,
     configId,
+    isDataQueryEnabled,
     isDisplayPluginMode,
     queryClient,
-    refetch,
+    refetchData,
+    refetchMetadata,
     viewId
   ]);
 
   return {
     viewResult,
-    isLoading: isLoadingViewResult || isLoadingDisplayPluginVariables,
-    isFetching: isFetchingViewResult || isFetchingDisplayPluginVariables,
+    isLoading: isDisplayPluginMode
+      ? isLoadingDataResult || isLoadingDisplayPluginVariables
+      : isLoadingMetadata,
+    isFetching:
+      isFetchingMetadata ||
+      (isDataQueryEnabled && isFetchingDataResult) ||
+      isFetchingDisplayPluginVariables,
     isPreviousData,
-    error: displayPluginVariablesError || viewResultError,
+    error: displayPluginVariablesError || dataResultError || metadataError,
     aggregatedVariables: isDisplayPluginMode
       ? EMPTY_VARIABLES
       : aggregatedVariables,

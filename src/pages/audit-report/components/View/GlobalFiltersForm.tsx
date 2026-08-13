@@ -1,5 +1,5 @@
 import { Form, Formik, useFormikContext } from "formik";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { usePrefixedSearchParams } from "../../../../hooks/usePrefixedSearchParams";
 import { ViewVariable } from "../../types";
 
@@ -21,25 +21,45 @@ function GlobalFiltersListener({
   const { values } = useFormikContext<Record<string, string | undefined>>();
   const [, setGlobalParams] = usePrefixedSearchParams(globalVarPrefix);
 
+  // Keep a stable ref so the form→URL effect doesn't re-run on every URL
+  // change. React-router recreates setSearchParams on each URL change, which
+  // would cause this effect to fight external navigations with stale values.
+  // Published from an Effect, declared first so the sync below always reads
+  // the setter from the render that actually committed.
+  const setGlobalParamsRef = useRef(setGlobalParams);
+
+  useEffect(() => {
+    setGlobalParamsRef.current = setGlobalParams;
+  });
+
   // Sync form → URL whenever values change.
   // The reverse direction (URL → form) is handled by initialValues in the
   // parent so that we avoid an Effect chain (write URL → read URL → set field
   // → write URL → …).
+  //
+  // Only the variables this form knows about are written. Params for other
+  // keys are left untouched: `variables` is derived from in-flight requests
+  // and a key that is momentarily absent must not lose its value.
   useEffect(() => {
-    setGlobalParams(() => {
-      const newParams = new URLSearchParams();
+    setGlobalParamsRef.current(
+      (currentParams) => {
+        let changed = false;
+        const nextParams = new URLSearchParams(currentParams);
 
-      variables.forEach((variable) => {
-        const value = values[variable.key];
-        if (value) {
-          newParams.set(variable.key, value);
-        }
-      });
+        variables.forEach((variable) => {
+          const value = values[variable.key];
+          if (value && nextParams.get(variable.key) !== value) {
+            nextParams.set(variable.key, value);
+            changed = true;
+          }
+        });
 
-      return newParams;
-    });
+        return changed ? nextParams : currentParams;
+      },
+      { replace: true }
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, setGlobalParams]);
+  }, [values]);
 
   return children as React.ReactElement;
 }
