@@ -263,8 +263,8 @@ describe("ViewContainer metadata loading", () => {
           key: "namespace",
           value: "",
           type: "select",
-          options: ["ns-a"],
-          default: "ns-a"
+          options: ["ns-a", "ns-b"],
+          default: "ns-b"
         }
       ],
       sections: [
@@ -285,8 +285,8 @@ describe("ViewContainer metadata loading", () => {
       }
     });
 
-    // When URL vars are present, the data endpoint is used instead of
-    // metadata so the primary view panels/table reflect the variables.
+    // When a URL var differs from its default, the data endpoint is used
+    // instead of metadata so the primary view panels/table reflect it.
     renderWithProviders("/?viewvar__namespace=ns-a");
 
     await waitFor(() => {
