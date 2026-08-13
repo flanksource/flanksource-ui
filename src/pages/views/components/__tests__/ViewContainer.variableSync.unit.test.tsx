@@ -153,6 +153,12 @@ describe("view loading with variables", () => {
     // Let every knock-on fetch settle.
     await new Promise((resolve) => setTimeout(resolve, 100));
 
+    // The default really was written to the URL — without this the request
+    // counts below could pass simply because no sync happened at all.
+    expect(searchHistory[searchHistory.length - 1]).toContain(
+      "viewvar__namespace=ns-a"
+    );
+
     expect({
       metadata: mockedGetViewMetadataById.mock.calls.length,
       viewData: mockedGetViewDataById.mock.calls.length,
@@ -217,5 +223,58 @@ describe("changing a global filter", () => {
     expect(searchHistory[searchHistory.length - 1]).toContain(
       "viewvar__namespace=ns-b"
     );
+
+    // Changing a second variable must not clobber the first: each write
+    // touches only its own key.
+    await userEvent.selectOptions(screen.getByLabelText("Cluster"), "c2");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    expect(screen.getByLabelText("Cluster")).toHaveValue("c2");
+    expect(screen.getByLabelText("Namespace")).toHaveValue("ns-b");
+  });
+});
+
+describe("resetting a global filter to its default", () => {
+  it("renders the metadata result rather than the retained non-default data", async () => {
+    mockedGetViewMetadataById.mockResolvedValue({
+      id: "view-1",
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: "primary:default",
+      variables: [namespaceVariable]
+    });
+
+    mockedGetViewDataById.mockImplementation(async (_id, variables) => ({
+      namespace: "mission-control",
+      name: "cluster-view",
+      requestFingerprint: `primary:${variables?.namespace ?? "none"}`,
+      variables: [namespaceVariable]
+    }));
+
+    renderView("/");
+
+    const namespaceSelect = await screen.findByLabelText("Namespace");
+    await waitFor(() => {
+      expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
+        "primary:default"
+      );
+    });
+
+    await userEvent.selectOptions(namespaceSelect, "ns-b");
+    await waitFor(() => {
+      expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
+        "primary:ns-b"
+      );
+    });
+
+    // Back to the default: the data query switches off, so the metadata
+    // result — not the retained ns-b response — is what should render.
+    await userEvent.selectOptions(screen.getByLabelText("Namespace"), "ns-a");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("view-fingerprint")).toHaveTextContent(
+        "primary:default"
+      );
+    });
   });
 });

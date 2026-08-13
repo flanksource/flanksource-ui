@@ -287,9 +287,14 @@ export function useViewData({
     keepPreviousData: true
   });
 
+  // `keepPreviousData` keeps serving the previous key's response after the
+  // query is disabled, so a reset back to the defaults would otherwise keep
+  // rendering the last non-default result forever.
   const viewResult = isDisplayPluginMode
     ? dataResult
-    : (dataResult ?? metadataResult);
+    : isDataQueryEnabled
+      ? (dataResult ?? metadataResult)
+      : metadataResult;
 
   const allSectionRefs = useMemo<ViewRef[]>(() => {
     const sections = isDisplayPluginMode

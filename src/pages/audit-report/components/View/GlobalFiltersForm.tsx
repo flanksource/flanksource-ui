@@ -24,8 +24,13 @@ function GlobalFiltersListener({
   // Keep a stable ref so the form→URL effect doesn't re-run on every URL
   // change. React-router recreates setSearchParams on each URL change, which
   // would cause this effect to fight external navigations with stale values.
+  // Published from an Effect, declared first so the sync below always reads
+  // the setter from the render that actually committed.
   const setGlobalParamsRef = useRef(setGlobalParams);
-  setGlobalParamsRef.current = setGlobalParams;
+
+  useEffect(() => {
+    setGlobalParamsRef.current = setGlobalParams;
+  });
 
   // Sync form → URL whenever values change.
   // The reverse direction (URL → form) is handled by initialValues in the
