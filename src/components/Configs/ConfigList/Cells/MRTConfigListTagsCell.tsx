@@ -16,6 +16,7 @@ type MRTConfigListTagsCellProps<
    * Optional prefix to namespace the search params.
    */
   paramPrefix?: string;
+  maxVisibleTags?: number;
 };
 
 export default function MRTConfigListTagsCell<
@@ -25,7 +26,8 @@ export default function MRTConfigListTagsCell<
   hideGroupByView = false,
   enableFilterByTag = false,
   filterByTagParamKey = "tags",
-  paramPrefix
+  paramPrefix,
+  maxVisibleTags
 }: MRTConfigListTagsCellProps<T>): JSX.Element | null {
   const [params] = usePrefixedSearchParams(paramPrefix, false);
 
@@ -80,6 +82,7 @@ export default function MRTConfigListTagsCell<
       tags={tagMap}
       filterByTagParamKey={filterByTagParamKey}
       paramPrefix={paramPrefix}
+      maxVisibleTags={maxVisibleTags}
     />
   );
 }

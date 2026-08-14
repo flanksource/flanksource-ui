@@ -50,6 +50,8 @@ const configChangesColumn = (
     meta: {
       cellClassName: "text-ellipsis overflow-hidden"
     },
+    minSize: 100,
+    size: 120,
     maxSize: 160,
     Cell: ({ cell, row, column }) => {
       const dateString = row?.getValue<string>(column.id);
@@ -146,9 +148,12 @@ const configChangesColumn = (
         {...props}
         enableFilterByTag
         paramPrefix={paramPrefix}
+        maxVisibleTags={1}
       />
     ),
-    size: 100
+    minSize: 120,
+    size: 180,
+    maxSize: 260
   },
   {
     header: "Created By",
