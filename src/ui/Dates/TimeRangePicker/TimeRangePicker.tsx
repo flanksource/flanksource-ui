@@ -5,7 +5,7 @@ import { useCallback, useMemo } from "react";
 import { FiClock } from "react-icons/fi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { TimeRangePickerBody } from "./TimeRangePickerBody";
-import { TimeRangeOption } from "./rangeOptions";
+import { RangeOptionsCategory, TimeRangeOption } from "./rangeOptions";
 
 type TimeRangePickerType = Omit<
   React.HTMLProps<HTMLDivElement>,
@@ -15,6 +15,8 @@ type TimeRangePickerType = Omit<
   onChange: (val: TimeRangeOption) => void;
   buttonClassName?: string;
   showFutureTimeRanges?: boolean;
+  rangeOptionsCategories?: RangeOptionsCategory[];
+  validateRange?: (range: TimeRangeOption) => string | undefined;
 };
 
 export function TimeRangePicker({
@@ -22,7 +24,9 @@ export function TimeRangePicker({
   value,
   className = "w-fit",
   buttonClassName = " border-gray-300 hover:bg-gray-50",
-  showFutureTimeRanges = false
+  showFutureTimeRanges = false,
+  rangeOptionsCategories,
+  validateRange
 }: TimeRangePickerType) {
   const currentRange = useMemo((): TimeRangeOption | undefined => {
     return value;
@@ -204,6 +208,8 @@ export function TimeRangePicker({
                 currentRange={currentRange}
                 changeRangeValue={changeRangeValue}
                 showFutureTimeRanges={showFutureTimeRanges}
+                rangeOptionsCategories={rangeOptionsCategories}
+                validateRange={validateRange}
               />
             );
           }}
