@@ -197,6 +197,7 @@ export default function SpecEditorForm({
                   <Tab label="Code" value="Code">
                     <FormikCodeEditor
                       format={specFormat}
+                      className="flex h-[min(600px,calc(90vh))] flex-col"
                       fieldName="spec"
                       schemaFileName={selectedSpec.schemaFileName}
                     />
