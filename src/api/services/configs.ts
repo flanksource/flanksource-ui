@@ -993,7 +993,7 @@ export const getAllConfigInsights = async (
 
 export const getConfigAnalysis = async <T>(configId: string) => {
   const res = await ConfigDB.get<T>(
-    `/configs?id=eq.${configId}&select=cost_per_minute,cost_total_1d,cost_total_7d,cost_total_30d`
+    `/configs?id=eq.${configId}&select=cost_per_minute,cost_total_1d,cost_total_30d`
   );
   return res.data;
 };
