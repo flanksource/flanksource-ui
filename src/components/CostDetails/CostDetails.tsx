@@ -57,13 +57,11 @@ export function CostInfo({ label, value, defaultValue }: CostInfoProps) {
 export function CostDetailsTable({
   cost_per_minute,
   cost_total_1d,
-  cost_total_7d,
   cost_total_30d
 }: CostDetailsTableProps) {
   return (
     <div className="flex flex-row">
       <CostInfo value={cost_total_1d} label="1d" defaultValue="" />
-      <CostInfo value={cost_total_7d} label="7d" defaultValue="" />
       <CostInfo value={cost_total_30d} label="30d" defaultValue="" />
     </div>
   );

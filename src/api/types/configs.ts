@@ -37,16 +37,12 @@ export interface Change {
 export interface Costs {
   cost_per_minute?: number;
   cost_total_1d?: number;
-  cost_total_7d?: number;
   cost_total_30d?: number;
 }
 
 export function isCostsEmpty(costs: Costs) {
   return (
-    !costs.cost_per_minute &&
-    !costs.cost_total_1d &&
-    !costs.cost_total_7d &&
-    !costs.cost_total_30d
+    !costs.cost_per_minute && !costs.cost_total_1d && !costs.cost_total_30d
   );
 }
 
@@ -219,7 +215,6 @@ export type ConfigSummary = {
   };
   cost_per_minute?: number;
   cost_total_1d?: number;
-  cost_total_7d?: number;
   cost_total_30d?: number;
   agent?: {
     id: string;

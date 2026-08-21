@@ -32,7 +32,6 @@ export const aggregatedCosts = (
   return subRows.reduce((acc, row) => {
     if (row.original) {
       acc.cost_total_30d! += row.original.cost_total_30d ?? 0;
-      acc.cost_total_7d! += row.original.cost_total_7d ?? 0;
       acc.cost_total_1d! += row.original.cost_total_1d ?? 0;
       acc.cost_per_minute! = row.original.cost_per_minute ?? 0;
     }
@@ -43,7 +42,6 @@ export const aggregatedCosts = (
 export function ConfigListCostAggregate({ row }: CellContext<ConfigItem, any>) {
   const configGroupCosts = aggregatedCosts(row, {
     cost_total_30d: 0,
-    cost_total_7d: 0,
     cost_total_1d: 0,
     cost_per_minute: 0
   } as Required<Costs>);
