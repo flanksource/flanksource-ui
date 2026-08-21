@@ -232,7 +232,6 @@ export const mrtConfigListColumns = (
     AggregatedCell: ({ row }) => {
       const configGroupCosts = aggregatedCosts(row, {
         cost_total_30d: 0,
-        cost_total_7d: 0,
         cost_total_1d: 0,
         cost_per_minute: 0
       } as Required<Costs>);

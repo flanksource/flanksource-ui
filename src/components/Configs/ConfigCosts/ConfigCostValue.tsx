@@ -57,7 +57,6 @@ export default function ConfigCostValue({
           cost_per_minute={config.cost_per_minute}
           cost_total_1d={config.cost_total_1d}
           cost_total_30d={config.cost_total_30d}
-          cost_total_7d={config.cost_total_7d}
         />
       </Popover.Panel>
     </Popover>
