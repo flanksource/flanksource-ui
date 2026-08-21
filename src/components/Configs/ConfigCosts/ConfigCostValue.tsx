@@ -13,11 +13,7 @@ export default function ConfigCostValue({
   config: Costs;
   popover?: boolean;
 }) {
-  if (
-    !config.cost_total_1d ||
-    !config.cost_total_7d ||
-    !config.cost_total_30d
-  ) {
+  if (!config.cost_total_1d || !config.cost_total_30d) {
     return null;
   }
 
