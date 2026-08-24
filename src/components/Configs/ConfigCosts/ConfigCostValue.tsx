@@ -13,26 +13,45 @@ export default function ConfigCostValue({
   config: Costs;
   popover?: boolean;
 }) {
-  if (!config.cost_total_1d || !config.cost_total_30d) {
+  // Spend in several currencies has no single total. Saying so beats an empty cell, which
+  // reads as "no cost".
+  if (config.mixed_currency) {
+    return (
+      <span
+        className="whitespace-nowrap text-sm text-gray-500"
+        title="Spend is recorded in more than one currency, so it cannot be shown as a single total."
+      >
+        multi-currency
+      </span>
+    );
+  }
+
+  if (!config.cost_total_30d) {
     return null;
   }
 
-  let trend = config.cost_total_1d - config.cost_total_30d / 30;
-
-  let val = (
+  const val = (
     <FormatCurrency
       value={config.cost_total_30d}
       defaultValue=""
       hideMinimumValue
+      currency={config.billing_currency}
     />
   );
+
+  // The trend compares the last day against the 30-day daily average, so it only means
+  // anything once a day of spend has actually landed.
+  const dailyAverage = config.cost_total_30d / 30;
   let trendIcon = null;
 
-  if (Math.abs(trend) / (config.cost_total_30d / 30) > 0.1) {
-    let percent = (trend / (config.cost_total_30d / 30)) * 100;
-    trendIcon = (
-      <Percentage value={percent} increaseColor="red" decreaseColor="green" />
-    );
+  if (config.cost_total_1d && dailyAverage > 0) {
+    const trend = config.cost_total_1d - dailyAverage;
+    if (Math.abs(trend) / dailyAverage > 0.1) {
+      const percent = (trend / dailyAverage) * 100;
+      trendIcon = (
+        <Percentage value={percent} increaseColor="red" decreaseColor="green" />
+      );
+    }
   }
 
   if (!popover) {
@@ -55,8 +74,10 @@ export default function ConfigCostValue({
       <Popover.Panel className="absolute z-10 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm dark:bg-gray-700">
         <CostDetailsTable
           cost_per_minute={config.cost_per_minute}
+          cost_total_1h={config.cost_total_1h}
           cost_total_1d={config.cost_total_1d}
           cost_total_30d={config.cost_total_30d}
+          billing_currency={config.billing_currency}
         />
       </Popover.Panel>
     </Popover>

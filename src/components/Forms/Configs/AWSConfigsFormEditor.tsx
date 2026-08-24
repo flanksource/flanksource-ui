@@ -117,25 +117,36 @@ export default function AWSConfigsFormEditor({
         ]}
       />
 
-      <FormikCheckboxFieldsGroup name="costReporting" label="Cost Report">
+      <FormikCheckboxFieldsGroup
+        name={`${fieldName}.costReporting`}
+        label="Cost Report"
+      >
         <div className="flex flex-col space-y-2">
           <label className="text-sm font-semibold">Cost Reporting</label>
           <div className="flex flex-col space-y-2 rounded-md border border-gray-200 p-4">
             <FormikTextInput
-              name={`${fieldName}.cost_reporting.s3_bucket_path`}
+              name={`${fieldName}.costReporting.s3BucketPath`}
               label="S3 Bucket Path"
+              hint="Where Athena writes query results. This is not the bucket holding the cost and usage report."
             />
             <FormikTextInput
-              name={`${fieldName}.cost_reporting.table`}
+              name={`${fieldName}.costReporting.table`}
               label="Table"
             />
             <FormikTextInput
-              name={`${fieldName}.cost_reporting.database`}
+              name={`${fieldName}.costReporting.database`}
               label="Database"
             />
             <FormikTextInput
-              name={`${fieldName}.cost_reporting.region`}
+              name={`${fieldName}.costReporting.region`}
               label="Region"
+              hint="Region of the Athena workgroup."
+            />
+            <FormikTextInput
+              name={`${fieldName}.costReporting.lookbackDays`}
+              label="Lookback Days"
+              type="number"
+              hint="How far back each scrape reads. Defaults to 45 days, which is a full scan of the report on every run."
             />
           </div>
         </div>
