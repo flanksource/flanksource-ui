@@ -33,7 +33,20 @@ export const aggregatedCosts = (
     if (row.original) {
       acc.cost_total_30d! += row.original.cost_total_30d ?? 0;
       acc.cost_total_1d! += row.original.cost_total_1d ?? 0;
+      acc.cost_total_1h! += row.original.cost_total_1h ?? 0;
       acc.cost_per_minute! = row.original.cost_per_minute ?? 0;
+
+      // Totals in different currencies cannot be added. Once a group spans more than one,
+      // the sum above is meaningless and the group has to render as mixed instead.
+      if (row.original.mixed_currency) {
+        acc.mixed_currency = true;
+      } else if (row.original.billing_currency) {
+        if (!acc.billing_currency) {
+          acc.billing_currency = row.original.billing_currency;
+        } else if (acc.billing_currency !== row.original.billing_currency) {
+          acc.mixed_currency = true;
+        }
+      }
     }
     return aggregatedCosts(row, acc);
   }, data);
@@ -43,7 +56,10 @@ export function ConfigListCostAggregate({ row }: CellContext<ConfigItem, any>) {
   const configGroupCosts = aggregatedCosts(row, {
     cost_total_30d: 0,
     cost_total_1d: 0,
-    cost_per_minute: 0
+    cost_total_1h: 0,
+    cost_per_minute: 0,
+    billing_currency: "",
+    mixed_currency: false
   } as Required<Costs>);
   return <ConfigCostValue config={configGroupCosts} />;
 }

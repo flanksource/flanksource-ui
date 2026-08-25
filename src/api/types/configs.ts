@@ -36,13 +36,28 @@ export interface Change {
 
 export interface Costs {
   cost_per_minute?: number;
+  cost_total_1h?: number;
   cost_total_1d?: number;
   cost_total_30d?: number;
+  /** Currency the totals are denominated in. */
+  billing_currency?: string;
+  /**
+   * Set when an item has spend in more than one currency. The totals are null in that
+   * case, because adding amounts across currencies would produce a meaningless figure.
+   */
+  mixed_currency?: boolean;
 }
 
 export function isCostsEmpty(costs: Costs) {
+  // Multi-currency spend has no single total to show, but it is not an absence of cost.
+  if (costs.mixed_currency) {
+    return false;
+  }
   return (
-    !costs.cost_per_minute && !costs.cost_total_1d && !costs.cost_total_30d
+    !costs.cost_per_minute &&
+    !costs.cost_total_1h &&
+    !costs.cost_total_1d &&
+    !costs.cost_total_30d
   );
 }
 
