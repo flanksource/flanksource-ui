@@ -114,12 +114,13 @@ export function tristateOutputToQueryParamValue(
  */
 export function tristateOutputToQueryFilterParam(
   param: string | undefined,
-  key: string
+  key: string,
+  encodeValue = false
 ) {
   if (param === undefined) {
     return "";
   }
-  const paramValue = tristateOutputToQueryParamValue(param);
+  const paramValue = tristateOutputToQueryParamValue(param, encodeValue);
   return `&${key}.filter=${paramValue}`;
 }
 
