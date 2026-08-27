@@ -1,4 +1,8 @@
 import {
+  decodeTristateKey,
+  parseTristateKeyState
+} from "@flanksource-ui/lib/tristate";
+import {
   tristateOutputToQueryFilterParam,
   tristateOutputToQueryParamValue
 } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
@@ -930,10 +934,46 @@ export const getAllConfigInsights = async (
     }
 
     if (/(^|,).+:(-1|1)(,|$)/.test(value)) {
-      return tristateOutputToQueryFilterParam(value, key);
+      const parsedValues = value
+        .split(",")
+        .map(parseTristateKeyState)
+        .filter((item): item is NonNullable<typeof item> => item !== null);
+      const included = parsedValues
+        .filter(({ state }) => state === 1)
+        .map(({ key }) => decodeTristateKey(key));
+      const excluded = parsedValues
+        .filter(({ state }) => state === -1)
+        .map(({ key }) => decodeTristateKey(key));
+
+      const buildFilter = (
+        values: string[],
+        singleOperator: "eq" | "neq",
+        multipleOperator: "in" | "not.in"
+      ) => {
+        if (values.length === 0) {
+          return "";
+        }
+
+        const expression =
+          values.length === 1
+            ? `${singleOperator}.${values[0]}`
+            : `${multipleOperator}.(${values
+                .map(
+                  (item) =>
+                    `"${item.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`
+                )
+                .join(",")})`;
+
+        return `&${key}=${encodeURIComponent(expression)}`;
+      };
+
+      return [
+        buildFilter(included, "eq", "in"),
+        buildFilter(excluded, "neq", "not.in")
+      ].join("");
     }
 
-    return `&${key}=eq.${value}`;
+    return `&${key}=${encodeURIComponent(`eq.${value}`)}`;
   };
 
   const params = {
