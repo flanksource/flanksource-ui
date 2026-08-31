@@ -3,9 +3,9 @@ import { CostDetailsTable } from "./CostDetails";
 
 const costs = {
   cost_per_minute: 0.01,
-  cost_total_1h: 0.5,
-  cost_total_1d: 12,
-  cost_total_30d: 360
+  cost_1h: 0.5,
+  cost_1d: 12,
+  cost_30d: 360
 };
 
 const meta = {
@@ -47,11 +47,7 @@ export const NonDollarCurrency: Story = {
 export const WithoutHourlyTotal: Story = {
   render: () => (
     <Panel>
-      <CostDetailsTable
-        cost_per_minute={0.01}
-        cost_total_1d={12}
-        cost_total_30d={360}
-      />
+      <CostDetailsTable cost_per_minute={0.01} cost_1d={12} cost_30d={360} />
     </Panel>
   )
 };
@@ -62,9 +58,9 @@ export const NoRecentSpend: Story = {
     <Panel>
       <CostDetailsTable
         cost_per_minute={0}
-        cost_total_1h={0}
-        cost_total_1d={0}
-        cost_total_30d={76.71}
+        cost_1h={0}
+        cost_1d={0}
+        cost_30d={76.71}
         billing_currency="USD"
       />
     </Panel>

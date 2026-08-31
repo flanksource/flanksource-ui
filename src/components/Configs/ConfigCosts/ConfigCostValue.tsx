@@ -26,13 +26,13 @@ export default function ConfigCostValue({
     );
   }
 
-  if (!config.cost_total_30d) {
+  if (!config.cost_30d) {
     return null;
   }
 
   const val = (
     <FormatCurrency
-      value={config.cost_total_30d}
+      value={config.cost_30d}
       defaultValue=""
       hideMinimumValue
       currency={config.billing_currency}
@@ -41,11 +41,11 @@ export default function ConfigCostValue({
 
   // The trend compares the last day against the 30-day daily average, so it only means
   // anything once a day of spend has actually landed.
-  const dailyAverage = config.cost_total_30d / 30;
+  const dailyAverage = config.cost_30d / 30;
   let trendIcon = null;
 
-  if (config.cost_total_1d && dailyAverage > 0) {
-    const trend = config.cost_total_1d - dailyAverage;
+  if (config.cost_1d && dailyAverage > 0) {
+    const trend = config.cost_1d - dailyAverage;
     if (Math.abs(trend) / dailyAverage > 0.1) {
       const percent = (trend / dailyAverage) * 100;
       trendIcon = (
@@ -74,9 +74,9 @@ export default function ConfigCostValue({
       <Popover.Panel className="absolute z-10 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm dark:bg-gray-700">
         <CostDetailsTable
           cost_per_minute={config.cost_per_minute}
-          cost_total_1h={config.cost_total_1h}
-          cost_total_1d={config.cost_total_1d}
-          cost_total_30d={config.cost_total_30d}
+          cost_1h={config.cost_1h}
+          cost_1d={config.cost_1d}
+          cost_30d={config.cost_30d}
           billing_currency={config.billing_currency}
         />
       </Popover.Panel>

@@ -229,13 +229,13 @@ export const mrtConfigListColumns = (
     // Sort and group on the same total the cell renders, so ordering the column by
     // clicking it cannot reorder rows by a figure that is not on screen.
     header: "Cost (30d)",
-    accessorKey: "cost_total_30d",
+    accessorKey: "cost_30d",
     aggregationFn: "sum",
     AggregatedCell: ({ row }) => {
       const configGroupCosts = aggregatedCosts(row, {
-        cost_total_30d: 0,
-        cost_total_1d: 0,
-        cost_total_1h: 0,
+        cost_30d: 0,
+        cost_1d: 0,
+        cost_1h: 0,
         cost_per_minute: 0,
         billing_currency: "",
         mixed_currency: false

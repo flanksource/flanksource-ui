@@ -16,9 +16,9 @@ export const Default: Story = {
   args: {
     config: {
       cost_per_minute: 0.01,
-      cost_total_1h: 0.5,
-      cost_total_1d: 12,
-      cost_total_30d: 360,
+      cost_1h: 0.5,
+      cost_1d: 12,
+      cost_30d: 360,
       billing_currency: "USD"
     },
     popover: false
@@ -29,9 +29,9 @@ export const Default: Story = {
 export const Trending: Story = {
   args: {
     config: {
-      cost_total_1h: 1.2,
-      cost_total_1d: 24,
-      cost_total_30d: 360,
+      cost_1h: 1.2,
+      cost_1d: 24,
+      cost_30d: 360,
       billing_currency: "USD"
     },
     popover: false
@@ -41,8 +41,8 @@ export const Trending: Story = {
 export const NonDollarCurrency: Story = {
   args: {
     config: {
-      cost_total_1d: 12,
-      cost_total_30d: 360,
+      cost_1d: 12,
+      cost_30d: 360,
       billing_currency: "EUR"
     },
     popover: false
@@ -65,9 +65,9 @@ export const MixedCurrency: Story = {
 export const NoRecentSpend: Story = {
   args: {
     config: {
-      cost_total_1h: 0,
-      cost_total_1d: 0,
-      cost_total_30d: 76.71,
+      cost_1h: 0,
+      cost_1d: 0,
+      cost_30d: 76.71,
       billing_currency: "USD"
     },
     popover: false

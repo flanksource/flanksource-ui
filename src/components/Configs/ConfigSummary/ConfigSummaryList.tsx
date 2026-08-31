@@ -169,7 +169,7 @@ const configSummaryColumns: ColumnDef<ConfigSummary, any>[] = [
   },
   {
     header: () => <div title="Cost">Cost (30d)</div>,
-    accessorKey: "cost_total_30d",
+    accessorKey: "cost_30d",
     cell: ConfigListCostCell,
     maxSize: 60
   },
