@@ -1,12 +1,5 @@
 import { useMemo } from "react";
-import { CostsData } from "../../api/types/common";
-
-// Topology shares CostsData, and components carry neither an hourly total nor a currency,
-// so those arrive only from the catalog and stay optional here.
-type CostDetailsTableProps = CostsData & {
-  cost_total_1h?: number;
-  billing_currency?: string;
-};
+import { Costs } from "../../api/types/configs";
 
 type FormatCurrencyProps = {
   value: number | string | undefined;
@@ -79,29 +72,29 @@ export function CostInfo({
 }
 
 export function CostDetailsTable({
-  cost_total_1h,
-  cost_total_1d,
-  cost_total_30d,
+  cost_1h,
+  cost_1d,
+  cost_30d,
   billing_currency
-}: CostDetailsTableProps) {
+}: Costs) {
   return (
     <div className="flex flex-row">
-      {cost_total_1h != null && (
+      {cost_1h != null && (
         <CostInfo
-          value={cost_total_1h}
+          value={cost_1h}
           label="1h"
           defaultValue=""
           currency={billing_currency}
         />
       )}
       <CostInfo
-        value={cost_total_1d}
+        value={cost_1d}
         label="1d"
         defaultValue=""
         currency={billing_currency}
       />
       <CostInfo
-        value={cost_total_30d}
+        value={cost_30d}
         label="30d"
         defaultValue=""
         currency={billing_currency}

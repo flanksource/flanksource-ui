@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { BsCardList } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useGetSettingsResourceDetails } from "../../../api/query-hooks/settingsResourcesHooks";
-import { isCostsEmpty } from "../../../api/types/configs";
+import { Costs, isCostsEmpty } from "../../../api/types/configs";
 import { Topology } from "../../../api/types/topology";
 import { Age } from "../../../ui/Age";
 import CollapsiblePanel from "../../../ui/CollapsiblePanel/CollapsiblePanel";
@@ -89,10 +89,18 @@ export default function TopologyDetails({
       });
     }
 
-    if (!isCostsEmpty(topology)) {
+    // The components table names its totals cost_total_*, while the shared cost
+    // renderer reads the cost_* names the catalog returns.
+    const costs: Costs = {
+      cost_per_minute: topology.cost_per_minute,
+      cost_1d: topology.cost_total_1d,
+      cost_30d: topology.cost_total_30d
+    };
+
+    if (!isCostsEmpty(costs)) {
       items.push({
         label: "Costs",
-        value: <ConfigCostValue config={topology} />
+        value: <ConfigCostValue config={costs} />
       });
     }
 

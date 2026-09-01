@@ -31,9 +31,9 @@ export const aggregatedCosts = (
   // @ts-ignore
   return subRows.reduce((acc, row) => {
     if (row.original) {
-      acc.cost_total_30d! += row.original.cost_total_30d ?? 0;
-      acc.cost_total_1d! += row.original.cost_total_1d ?? 0;
-      acc.cost_total_1h! += row.original.cost_total_1h ?? 0;
+      acc.cost_30d! += row.original.cost_30d ?? 0;
+      acc.cost_1d! += row.original.cost_1d ?? 0;
+      acc.cost_1h! += row.original.cost_1h ?? 0;
       acc.cost_per_minute! = row.original.cost_per_minute ?? 0;
 
       // Totals in different currencies cannot be added. Once a group spans more than one,
@@ -54,9 +54,9 @@ export const aggregatedCosts = (
 
 export function ConfigListCostAggregate({ row }: CellContext<ConfigItem, any>) {
   const configGroupCosts = aggregatedCosts(row, {
-    cost_total_30d: 0,
-    cost_total_1d: 0,
-    cost_total_1h: 0,
+    cost_30d: 0,
+    cost_1d: 0,
+    cost_1h: 0,
     cost_per_minute: 0,
     billing_currency: "",
     mixed_currency: false

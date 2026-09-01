@@ -158,6 +158,14 @@ export const useComponentNameQuery = (
   );
 };
 
+// PostgREST resolves order against table columns, so the cost aliases used in
+// the select have to be mapped back to their column before ordering.
+const costColumnAliases: Record<string, string> = {
+  cost_1h: "cost_total_1h",
+  cost_1d: "cost_total_1d",
+  cost_30d: "cost_total_30d"
+};
+
 type ConfigListFilterQueryOptions = {
   search?: string | null;
   configType?: string | null;
@@ -189,7 +197,7 @@ export function prepareConfigListQuery({
 }: ConfigListFilterQueryOptions) {
   const query = new URLSearchParams({
     select:
-      "id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_total_1h,cost_total_1d,cost_total_30d,billing_currency,mixed_currency,changes,analysis"
+      "id,type,config_class,status,health,labels,name,tags,created_at,updated_at,deleted_at,cost_per_minute,cost_1h:cost_total_1h,cost_1d:cost_total_1d,cost_30d:cost_total_30d,billing_currency,mixed_currency,changes,analysis"
   });
 
   if (includeAgents) {
@@ -226,7 +234,8 @@ export function prepareConfigListQuery({
   }
 
   if (sortBy && sortOrder) {
-    const sortField = sortBy === "type" ? `${sortBy},name` : sortBy;
+    const sortColumn = costColumnAliases[sortBy] ?? sortBy;
+    const sortField = sortColumn === "type" ? `${sortColumn},name` : sortColumn;
     query.append("order", `${sortField}.${sortOrder}`);
   }
 
