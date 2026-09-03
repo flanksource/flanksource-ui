@@ -287,7 +287,9 @@ const View: React.FC<ViewProps> = ({
               className="grid gap-4"
               style={{
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gridAutoRows: "minmax(250px, auto)"
+                // Keep the upper track size definite so percentage-height chart
+                // children cannot repeatedly increase an intrinsically sized row.
+                gridAutoRows: "minmax(auto, 250px)"
               }}
             >
               {groupAndRenderPanels(panels)}
