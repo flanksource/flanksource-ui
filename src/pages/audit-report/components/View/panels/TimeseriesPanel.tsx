@@ -20,6 +20,7 @@ import {
 import { formatTick, parseTimestamp } from "@flanksource-ui/lib/timeseries";
 import { getSeriesColor } from "./utils";
 import { buildEvenlySpacedRange } from "./timeRange";
+import { buildSeriesKey } from "./seriesKey";
 import PanelHeader from "./PanelHeader";
 
 interface TimeseriesPanelProps {
@@ -108,11 +109,7 @@ const TimeseriesPanel: React.FC<TimeseriesPanelProps> = ({ summary }) => {
       const { numericValue, label } = parseTimestamp(row[timeKey], index);
       if (!Number.isFinite(numericValue)) return;
 
-      const labelKeys = Object.keys(row).filter(
-        (key) => key !== timeKey && key !== valueKey
-      );
-      const labelPairs = labelKeys.map((key) => `${key}=${row[key]}`);
-      const seriesKey = labelPairs.join(", ") || "default";
+      const seriesKey = buildSeriesKey(row, timeKey, valueKey);
 
       if (!seriesMap.has(seriesKey)) {
         seriesMap.set(seriesKey, {
