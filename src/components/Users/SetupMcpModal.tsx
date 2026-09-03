@@ -70,10 +70,7 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
     "mission-control": {
       "name": "mission-control",
       "type": "http",
-      "url": "${baseUrl}",
-      "oauth": {
-        "clientId": "mc-cli"
-      }
+      "url": "${baseUrl}"
     }
   }
 }`
@@ -111,16 +108,6 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
                 {baseUrl}
               </code>
             </dd>
-
-            <dt className="font-medium text-gray-600">OAuth Client ID</dt>
-            <dd>
-              <code className="break-all rounded bg-gray-100 px-2 py-1">
-                mc-cli
-              </code>
-            </dd>
-
-            <dt className="font-medium text-gray-600">OAuth Client Secret</dt>
-            <dd>Leave empty</dd>
           </dl>
         </div>
       )
@@ -143,7 +130,10 @@ export default function SetupMcpModal({ isOpen, onClose }: Props) {
           </h3>
           <p className="mt-1 text-sm text-gray-700">
             You can connect MCP either as your own user (full permissions) or
-            with a dedicated access token (restricted permissions).
+            with a dedicated access token (restricted permissions). When
+            connecting as yourself, clients authenticate with OAuth and register
+            themselves via Dynamic Client Registration (DCR) or Client ID
+            Metadata Documents (CIMD). No client ID is required.
           </p>
         </div>
 
