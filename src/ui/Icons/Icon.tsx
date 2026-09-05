@@ -160,6 +160,8 @@ export const aliases: IconMap = {
   bash: "console",
   "cert-manager.io": "cert-manager",
   cmd: "console",
+  cnpg: "cloudnative-pg",
+  tailscale: "tailscale-inverted",
   deletingnode: "trash",
   invaliddiskcapacity: "warning",
   resourceupdated: "edit",
@@ -636,6 +638,8 @@ export var prefixes: IconMap = {
   ready: "check",
   notready: "broken-heart",
   cilium: "cilium",
+  cnpg: "cloudnative-pg",
+  tailscale: "tailscale-inverted",
   pending: "hourglass",
   invalid: "error",
   wait: "hourglass",
@@ -797,13 +801,13 @@ export function findIconName(name?: string): IconType | undefined {
     return undefined;
   }
 
+  if (aliases[name as keyof typeof aliases]) {
+    return Icons[aliases[name] as keyof typeof Icons];
+  }
+
   let icon = Icons[name as keyof typeof Icons];
   if (icon != null) {
     return icon;
-  }
-
-  if (aliases[name as keyof typeof aliases]) {
-    return Icons[aliases[name] as keyof typeof Icons];
   }
 
   for (let prefix in prefixes) {
