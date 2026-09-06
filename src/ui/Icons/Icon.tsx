@@ -638,8 +638,6 @@ export var prefixes: IconMap = {
   ready: "check",
   notready: "broken-heart",
   cilium: "cilium",
-  cnpg: "cloudnative-pg",
-  tailscale: "tailscale-inverted",
   pending: "hourglass",
   invalid: "error",
   wait: "hourglass",
