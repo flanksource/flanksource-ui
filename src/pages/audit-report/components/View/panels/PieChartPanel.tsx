@@ -2,7 +2,12 @@ import React, { useMemo } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 import { PanelResult } from "../../../types";
 import PanelHeader from "./PanelHeader";
-import { COLOR_PALETTE, getSeverityOfText, severityToHex } from "./utils";
+import {
+  COLOR_PALETTE,
+  formatDisplayValue,
+  getSeverityOfText,
+  severityToHex
+} from "./utils";
 import {
   ChartConfig,
   ChartContainer,
@@ -15,6 +20,15 @@ import {
 interface PieChartPanelProps {
   summary: PanelResult;
 }
+
+/**
+ * Renders a value at full precision, dropping the trailing artifacts that
+ * floating point sums leave behind (90.20230000000001 -> 90.2023).
+ */
+const formatExactValue = (value: number) =>
+  Number(value.toPrecision(15)).toLocaleString(undefined, {
+    maximumFractionDigits: 20
+  });
 
 /**
  * Transforms raw data rows into pie chart compatible format with intelligent color assignment.
@@ -87,6 +101,8 @@ export const generatePieChartData = (
  * @param props.summary - Panel data containing rows, title, description, and chart config
  */
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
+  const showLabels = summary.piechart?.showLabels === true;
+
   const chartData = useMemo(() => {
     return generatePieChartData(summary.rows || [], summary.piechart?.colors);
   }, [summary.rows, summary.piechart?.colors]);
@@ -99,23 +115,32 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
   }, [chartData]);
 
   return (
-    <div className="flex h-full min-h-[300px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
+    <div className="flex h-full min-h-[340px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
       <PanelHeader title={summary.name} description={summary.description} />
       <div className="flex flex-1 items-center justify-center">
         <ChartContainer
           config={chartConfig}
-          className="flex h-full min-h-[240px] w-full flex-1 items-center justify-center"
+          className="flex h-full min-h-[280px] w-full flex-1 items-center justify-center"
         >
-          <PieChart margin={{ top: 8, right: 80, bottom: 8, left: 8 }}>
-            <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
+          <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  nameKey="name"
+                  valueFormatter={formatExactValue}
+                />
+              }
+            />
             <Pie
               data={chartData}
               dataKey="value"
               nameKey="name"
               stroke={chartData.length === 1 ? "none" : undefined}
+              outerRadius={showLabels ? "65%" : "85%"}
               label={
-                summary.piechart?.showLabels === true
-                  ? (entry: any) => entry.value
+                showLabels
+                  ? (entry: any) =>
+                      formatDisplayValue(entry.value, undefined, 1)
                   : false
               }
             >
@@ -124,14 +149,9 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
               ))}
             </Pie>
             <ChartLegend
-              layout="vertical"
-              align="right"
-              verticalAlign="middle"
+              verticalAlign="bottom"
               content={
-                <ChartLegendContent
-                  nameKey="name"
-                  className="!w-auto !flex-col !items-start !gap-2 !pt-0"
-                />
+                <ChartLegendContent nameKey="name" className="justify-center" />
               }
             />
           </PieChart>
