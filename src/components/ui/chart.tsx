@@ -279,10 +279,23 @@ const ChartLegendContent = React.forwardRef<
     Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
       hideIcon?: boolean;
       nameKey?: string;
+      onItemMouseEnter?: (
+        item: NonNullable<RechartsPrimitive.LegendProps["payload"]>[number],
+        index: number
+      ) => void;
+      onItemMouseLeave?: () => void;
     }
 >(
   (
-    { className, hideIcon = false, payload, verticalAlign = "bottom", nameKey },
+    {
+      className,
+      hideIcon = false,
+      payload,
+      verticalAlign = "bottom",
+      nameKey,
+      onItemMouseEnter,
+      onItemMouseLeave
+    },
     ref
   ) => {
     const { config } = useChart();
@@ -302,7 +315,7 @@ const ChartLegendContent = React.forwardRef<
       >
         {payload
           .filter((item) => item.type !== "none")
-          .map((item) => {
+          .map((item, index) => {
             const key = `${nameKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const label =
@@ -312,8 +325,15 @@ const ChartLegendContent = React.forwardRef<
             return (
               <div
                 key={item.value}
+                onMouseEnter={
+                  onItemMouseEnter
+                    ? () => onItemMouseEnter(item, index)
+                    : undefined
+                }
+                onMouseLeave={onItemMouseLeave}
                 className={cn(
-                  "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
+                  "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground",
+                  onItemMouseEnter && "cursor-default"
                 )}
               >
                 {itemConfig?.icon && !hideIcon ? (

@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { PieChart, Pie, Cell } from "recharts";
+import React, { useMemo, useState } from "react";
+import { PieChart, Pie, Cell, Sector } from "recharts";
 import { PanelResult } from "../../../types";
 import PanelHeader from "./PanelHeader";
 import {
@@ -20,6 +20,8 @@ import {
 interface PieChartPanelProps {
   summary: PanelResult;
 }
+
+const RADIAN = Math.PI / 180;
 
 /**
  * Renders a value at full precision, dropping the trailing artifacts that
@@ -102,6 +104,10 @@ export const generatePieChartData = (
  */
 const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
   const showLabels = summary.piechart?.showLabels === true;
+  const [active, setActive] = useState<{
+    index: number;
+    source: "legend" | "sector";
+  }>();
 
   const chartData = useMemo(() => {
     return generatePieChartData(summary.rows || [], summary.piechart?.colors);
@@ -113,6 +119,29 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
       return acc;
     }, {});
   }, [chartData]);
+
+  // Hovering a sector shows the tooltip at the cursor, so the value is only
+  // drawn on the slice when the highlight came from the legend.
+  const renderActiveShape = (props: any) => (
+    <g>
+      <Sector {...props} outerRadius={props.outerRadius + 6} />
+      {active?.source === "legend" && (
+        <text
+          x={props.cx + props.middleRadius * Math.cos(-props.midAngle * RADIAN)}
+          y={props.cy + props.middleRadius * Math.sin(-props.midAngle * RADIAN)}
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-xs font-semibold"
+          fill="#fff"
+          stroke="rgba(0,0,0,0.45)"
+          strokeWidth={3}
+          paintOrder="stroke"
+        >
+          {formatExactValue(props.value)}
+        </text>
+      )}
+    </g>
+  );
 
   return (
     <div className="flex h-full min-h-[340px] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4">
@@ -137,6 +166,12 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
               nameKey="name"
               stroke={chartData.length === 1 ? "none" : undefined}
               outerRadius={showLabels ? "65%" : "85%"}
+              activeIndex={active?.index}
+              activeShape={renderActiveShape}
+              onMouseEnter={(_, index) =>
+                setActive({ index, source: "sector" })
+              }
+              onMouseLeave={() => setActive(undefined)}
               label={
                 showLabels
                   ? (entry: any) =>
@@ -151,7 +186,19 @@ const PieChartPanel: React.FC<PieChartPanelProps> = ({ summary }) => {
             <ChartLegend
               verticalAlign="bottom"
               content={
-                <ChartLegendContent nameKey="name" className="justify-center" />
+                <ChartLegendContent
+                  nameKey="name"
+                  className="justify-center"
+                  onItemMouseEnter={(item) => {
+                    const index = chartData.findIndex(
+                      (entry) => entry.name === item.value
+                    );
+                    if (index >= 0) {
+                      setActive({ index, source: "legend" });
+                    }
+                  }}
+                  onItemMouseLeave={() => setActive(undefined)}
+                />
               }
             />
           </PieChart>
