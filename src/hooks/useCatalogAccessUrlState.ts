@@ -1,4 +1,7 @@
-import { toTriStateIncludeParamValue } from "@flanksource-ui/lib/tristate";
+import {
+  parseTristateKeyState,
+  toTriStateIncludeParamValue
+} from "@flanksource-ui/lib/tristate";
 import { useCallback, useMemo } from "react";
 import { usePrefixedSearchParams } from "./usePrefixedSearchParams";
 
@@ -8,22 +11,24 @@ export type CatalogAccessMode =
   | "group-group"
   | "group-config";
 
-type CatalogAccessFilterKey =
-  | "config_id"
-  | "external_user_id"
-  | "external_group_id"
-  | "role"
-  | "user_type";
+type CatalogAccessFilters = Record<string, string>;
 
-type CatalogAccessFilters = Partial<Record<CatalogAccessFilterKey, string>>;
+function isTristateFilterValue(value: string) {
+  const items = value.split(",");
+  return (
+    items.length > 0 &&
+    items.every((item) => {
+      const parsed = parseTristateKeyState(item);
+      return parsed?.state === 1 || parsed?.state === -1;
+    })
+  );
+}
 
-const FILTER_KEYS: CatalogAccessFilterKey[] = [
-  "config_id",
-  "external_user_id",
-  "external_group_id",
-  "role",
-  "user_type"
-];
+function getFilterKeys(params: URLSearchParams) {
+  return Array.from(params.entries())
+    .filter(([, value]) => isTristateFilterValue(value))
+    .map(([key]) => key);
+}
 
 export const CATALOG_ACCESS_FLAT_TABLE_PREFIX = "accessFlat";
 export const CATALOG_ACCESS_GROUP_USER_TABLE_PREFIX = "accessGroupUser";
@@ -38,7 +43,7 @@ const CATALOG_ACCESS_PAGE_INDEX_KEYS = [
 ];
 
 function hasDrillDownFilter(params: URLSearchParams) {
-  return FILTER_KEYS.some((key) => params.has(key));
+  return getFilterKeys(params).length > 0;
 }
 
 function mapModeToGroupByParam(mode: CatalogAccessMode) {
@@ -93,8 +98,8 @@ export function useCatalogAccessUrlState() {
 
   const filters = useMemo(
     () =>
-      FILTER_KEYS.reduce((acc, key) => {
-        const value = params.get(key) ?? undefined;
+      getFilterKeys(params).reduce((acc, key) => {
+        const value = params.get(key);
         if (value) {
           acc[key] = value;
         }
@@ -120,7 +125,7 @@ export function useCatalogAccessUrlState() {
         nextParams.set("groupBy", mapModeToGroupByParam(nextMode));
 
         if (nextMode !== "flat") {
-          FILTER_KEYS.forEach((key) => {
+          getFilterKeys(nextParams).forEach((key) => {
             nextParams.delete(key);
           });
         }
@@ -134,14 +139,14 @@ export function useCatalogAccessUrlState() {
   );
 
   const setDrillDown = useCallback(
-    (key: CatalogAccessFilterKey, value: string) => {
+    (key: string, value: string) => {
       setParams((current) => {
         const nextParams = new URLSearchParams(current);
 
         nextParams.set("mode", "flat");
         nextParams.set("groupBy", "none");
 
-        FILTER_KEYS.forEach((filterKey) => {
+        getFilterKeys(nextParams).forEach((filterKey) => {
           if (filterKey !== key) {
             nextParams.delete(filterKey);
           }

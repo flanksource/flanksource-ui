@@ -1,4 +1,7 @@
-import { tristateOutputToQueryParamValue } from "@flanksource-ui/lib/tristate";
+import {
+  decodeTristateKey,
+  parseTristateKeyState
+} from "@flanksource-ui/lib/tristate";
 import { UUID_PATTERN } from "@flanksource-ui/utils/uuid";
 import { ConfigDB } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
@@ -11,6 +14,8 @@ import {
   ExternalUser
 } from "../types/configs";
 
+export type ConfigAccessFilters = Record<string, string>;
+
 export type GetConfigAccessSummaryParams = {
   configId?: string;
   configType?: string;
@@ -18,13 +23,55 @@ export type GetConfigAccessSummaryParams = {
   pageSize?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-  arbitraryFilter?: Record<string, string>;
+  arbitraryFilter?: ConfigAccessFilters;
 };
 
 export type ConfigAccessSummaryFilterParams = Pick<
   GetConfigAccessSummaryParams,
   "configType" | "arbitraryFilter"
 >;
+
+function formatPostgrestFilterValue(value: string) {
+  if (/[,.():"\\]/.test(value)) {
+    return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  }
+  return value;
+}
+
+function applyExactAccessFilter(
+  queryParams: URLSearchParams,
+  key: string,
+  value: string
+) {
+  const includes: string[] = [];
+  const excludes: string[] = [];
+
+  value.split(",").forEach((item) => {
+    const parsed = parseTristateKeyState(item);
+    if (!parsed || (parsed.state !== 1 && parsed.state !== -1)) {
+      throw new Error(`Invalid filter value for ${key}`);
+    }
+
+    const filterValue = formatPostgrestFilterValue(
+      decodeTristateKey(parsed.key)
+    );
+    (parsed.state === -1 ? excludes : includes).push(filterValue);
+  });
+
+  if (includes.length > 0 && excludes.length > 0) {
+    throw new Error(`Cannot mix included and excluded values for ${key}`);
+  }
+
+  if (includes.length === 1) {
+    queryParams.set(key, `eq.${includes[0]}`);
+  } else if (includes.length > 1) {
+    queryParams.set(key, `in.(${includes.join(",")})`);
+  } else if (excludes.length === 1) {
+    queryParams.set(key, `neq.${excludes[0]}`);
+  } else if (excludes.length > 1) {
+    queryParams.set(key, `not.in.(${excludes.join(",")})`);
+  }
+}
 
 function applyConfigAccessSummaryFilters(
   queryParams: URLSearchParams,
@@ -36,11 +83,7 @@ function applyConfigAccessSummaryFilters(
 
   if (arbitraryFilter) {
     Object.entries(arbitraryFilter).forEach(([key, value]) => {
-      const filterExpression = tristateOutputToQueryParamValue(value);
-
-      if (filterExpression) {
-        queryParams.set(`${key}.filter`, filterExpression);
-      }
+      applyExactAccessFilter(queryParams, key, value);
     });
   }
 }

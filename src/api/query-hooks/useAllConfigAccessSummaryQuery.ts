@@ -6,7 +6,10 @@ import useReactTablePaginationState from "@flanksource-ui/ui/DataTable/Hooks/use
 import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactTableSortState";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getConfigAccessSummary } from "../services/configAccess";
+import {
+  ConfigAccessFilters,
+  getConfigAccessSummary
+} from "../services/configAccess";
 
 type ConfigAccessSummaryResponse = Awaited<
   ReturnType<typeof getConfigAccessSummary>
@@ -24,7 +27,7 @@ export function useAllConfigAccessSummaryQuery(
     () =>
       Object.fromEntries(
         Object.entries(filters).filter(([, value]) => Boolean(value))
-      ) as Record<string, string>,
+      ) as ConfigAccessFilters,
     [filters]
   );
 

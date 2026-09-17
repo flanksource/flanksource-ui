@@ -18,9 +18,15 @@ describe("resolveCatalogAccessMode", () => {
   it("uses the flat view when a grouped row has been selected", () => {
     expect(
       resolveCatalogAccessMode(
-        new URLSearchParams(
-          "mode=group-config&external_user_id=include:user-id"
-        )
+        new URLSearchParams("mode=group-config&external_user_id=user-id:1")
+      )
+    ).toBe("flat");
+  });
+
+  it("recognizes newly added UI filters from their tristate value", () => {
+    expect(
+      resolveCatalogAccessMode(
+        new URLSearchParams("mode=group-config&future_field=value:1")
       )
     ).toBe("flat");
   });
