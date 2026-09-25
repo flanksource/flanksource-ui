@@ -135,11 +135,13 @@ export default function TokenDisplayModal({
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
-      <TokenDisplayContent
-        tokenResponse={tokenResponse}
-        formValues={formValues}
-        isMcp={isMcp}
-      />
+      <div className="flex min-h-0 flex-1 flex-col p-4">
+        <TokenDisplayContent
+          tokenResponse={tokenResponse}
+          formValues={formValues}
+          isMcp={isMcp}
+        />
+      </div>
 
       <div className="flex flex-row justify-end gap-4 p-4">
         <Button text="Close" onClick={onClose} className="btn-primary" />
