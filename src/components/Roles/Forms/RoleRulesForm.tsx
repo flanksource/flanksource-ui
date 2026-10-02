@@ -59,12 +59,22 @@ function RoleRuleFields({
           placeholder="e.g. read-staging"
           className="flex flex-1 flex-col"
         />
-        <FormikSelectDropdown
-          name={`${path}.action`}
-          label="Action"
-          options={actionOptions}
-          className="flex flex-1 flex-col"
-        />
+        {/* Labelled here rather than by FormikSelectDropdown, whose label has a
+            bottom margin that the text input's label doesn't */}
+        <div className="flex flex-1 flex-col">
+          <label
+            htmlFor={`${path}.action`}
+            className="text-sm font-medium text-gray-700"
+          >
+            Action
+          </label>
+          <FormikSelectDropdown
+            name={`${path}.action`}
+            inputId={`${path}.action`}
+            options={actionOptions}
+            className="flex flex-col"
+          />
+        </div>
         {onRemove && (
           <button
             type="button"
@@ -127,17 +137,21 @@ function RoleRuleFields({
         className="flex flex-col"
       />
 
-      <FormikCheckbox
-        name={`${path}.deny`}
-        label="Deny this action instead of allowing it"
-        hint={
-          canDeny
+      <div className="flex flex-col gap-1">
+        <FormikCheckbox
+          name={`${path}.deny`}
+          label="Deny this action instead of allowing it"
+          labelClassName="text-sm font-medium text-gray-700"
+          disabled={!canDeny}
+          inline
+        />
+        {/* Indented by the checkbox's width and gap, to line up with its label */}
+        <p className="pl-6 text-xs text-gray-500">
+          {canDeny
             ? "A deny overrides every allow, from any role or permission, for everyone but admins."
-            : `${contract?.label} can't be denied yet.`
-        }
-        disabled={!canDeny}
-        inline
-      />
+            : `${contract?.label} can't be denied yet.`}
+        </p>
+      </div>
     </div>
   );
 }
