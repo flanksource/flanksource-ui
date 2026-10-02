@@ -4,6 +4,7 @@ import { Avatar } from "@flanksource-ui/ui/Avatar";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
+import { RbacObjectStatus } from "@flanksource-ui/components/Permissions/Rbac/RbacObjectStatus";
 import { MRT_ColumnDef } from "mantine-react-table";
 
 const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
@@ -33,6 +34,12 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
         </span>
       );
     }
+  },
+  {
+    header: "Status",
+    id: "status",
+    size: 60,
+    Cell: ({ row }) => <RbacObjectStatus {...row.original} />
   },
   {
     header: "Description",

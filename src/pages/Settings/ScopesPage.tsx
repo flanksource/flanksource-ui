@@ -3,14 +3,9 @@ import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 import ScopesTable from "@flanksource-ui/components/Scopes/ScopesTable";
 import ScopeForm from "@flanksource-ui/components/Scopes/Forms/ScopeForm";
 import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
-import { Head } from "@flanksource-ui/ui/Head";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import {
-  BreadcrumbNav,
-  BreadcrumbRoot
-} from "@flanksource-ui/ui/BreadcrumbNav";
-import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import AddScopeButton from "@flanksource-ui/components/Scopes/Forms/AddScopeButton";
 
 export default function ScopesPage() {
@@ -21,27 +16,20 @@ export default function ScopesPage() {
 
   return (
     <>
-      <Head prefix="Scopes" />
-      <SearchLayout
-        title={
-          <BreadcrumbNav
-            list={[
-              <BreadcrumbRoot link="/settings/scopes" key="scopes-root-item">
-                Scopes
-              </BreadcrumbRoot>,
-              <AuthorizationAccessCheck
-                key={"add-button"}
-                resource={tables.scopes}
-                action="write"
-              >
-                <AddScopeButton />
-              </AuthorizationAccessCheck>
-            ]}
-          />
-        }
-        onRefresh={() => refetch()}
-        contentClass="p-0 h-full"
+      <PermissionsTabsLinks
+        activeTab="Scopes"
         loading={isLoading}
+        onRefresh={() => refetch()}
+        headerAction={
+          // Scopes are written through /api/rbac, which requires update on rbac
+          <AuthorizationAccessCheck
+            key={"add-button"}
+            resource={tables.rbac}
+            action="write"
+          >
+            <AddScopeButton />
+          </AuthorizationAccessCheck>
+        }
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
           <div className="flex h-full flex-col overflow-y-auto py-6">
@@ -67,7 +55,7 @@ export default function ScopesPage() {
             )}
           </div>
         </div>
-      </SearchLayout>
+      </PermissionsTabsLinks>
 
       {selectedScope && (
         <ScopeForm

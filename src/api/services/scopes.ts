@@ -1,4 +1,6 @@
-import { ScopeDB, ScopeDisplay } from "../types/scopes";
+import { RbacManifest } from "../types/rbacResources";
+import { ScopeDB, ScopeDisplay, ScopeSpec } from "../types/scopes";
+import { createRbacObject, updateRbacObject } from "./rbacResources";
 import { AxiosResponse } from "axios";
 import { IncidentCommander } from "../axios";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
@@ -27,28 +29,15 @@ export async function getScopeById(id: string): Promise<ScopeDisplay> {
   return response.data[0];
 }
 
-// Create Scope
+// Scopes are written through /api/rbac/scopes, which validates them and refuses writes through /db.
 export async function createScope(
-  data: Partial<ScopeDB>
-): Promise<AxiosResponse<ScopeDB>> {
-  return IncidentCommander.post("/scopes", data, {
-    headers: { Prefer: "return=representation" }
-  });
+  manifest: RbacManifest<ScopeSpec>
+): Promise<ScopeDB> {
+  return createRbacObject<ScopeDB>("scopes", manifest);
 }
 
-// Update Scope
 export async function updateScope(
-  id: string,
-  data: Partial<ScopeDB>
-): Promise<AxiosResponse<ScopeDB>> {
-  return IncidentCommander.patch(`/scopes?id=eq.${id}`, data, {
-    headers: { Prefer: "return=representation" }
-  });
-}
-
-// Delete Scope (soft delete)
-export async function deleteScope(id: string): Promise<AxiosResponse<void>> {
-  return IncidentCommander.patch(`/scopes?id=eq.${id}`, {
-    deleted_at: new Date().toISOString()
-  });
+  manifest: RbacManifest<ScopeSpec>
+): Promise<ScopeDB> {
+  return updateRbacObject<ScopeDB>("scopes", manifest);
 }
