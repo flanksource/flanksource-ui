@@ -123,6 +123,9 @@ it("creates a binding with the role's namespace and its constraint", async () =>
   fireEvent.click(await screen.findByRole("menuitem", { name: "Teams" }));
   pickFirstOption(screen.getByLabelText("Teams"));
 
+  // The constraint is optional, so it's hidden until added
+  expect(screen.queryByLabelText("Resource")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText("Add constraint"));
   const resourceInput = screen.getByLabelText("Resource");
   fireEvent.focus(resourceInput);
   fireEvent.keyDown(resourceInput, { key: "ArrowDown" });

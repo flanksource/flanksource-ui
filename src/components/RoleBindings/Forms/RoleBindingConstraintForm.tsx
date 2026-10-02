@@ -2,7 +2,9 @@ import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 import { RoleRule } from "@flanksource-ui/api/types/roles";
 import FormikRoleScopeSelect from "@flanksource-ui/components/Roles/Forms/FormikRoleScopeSelect";
 import { useFormikContext } from "formik";
-import { useMemo } from "react";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { useMemo, useState } from "react";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import {
   ConstraintSideEffect,
   getConstraintEffects
@@ -126,18 +128,50 @@ export default function RoleBindingConstraintForm({
   rules,
   namespace
 }: RoleBindingConstraintFormProps) {
-  const { values } = useFormikContext<RoleBindingFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleBindingFormValues>();
   const isSet = !!values.constraint.resource || !!values.constraint.target;
+  // Hidden until it's added, or the binding already has one
+  const [isShown, setIsShown] = useState(isSet);
+
+  if (!isShown) {
+    return (
+      <div className="flex flex-col items-start gap-1">
+        <Button
+          text="Add constraint"
+          icon={<FaPlus />}
+          className="btn-white"
+          onClick={() => setIsShown(true)}
+        />
+        <p className="text-xs text-gray-500">
+          Optional. Limits where the role applies, e.g. to one tenant&apos;s
+          resources.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
-        <label className="form-label">Constraint</label>
-        <p className="text-xs text-gray-500">
-          Optional. Limits where the role applies: the resource, or target, of
-          every operation the role allows must also be in these scopes. The
-          whole role is granted, and deny rules are never narrowed.
-        </p>
+      <div className="flex flex-row items-start justify-between gap-2">
+        <div>
+          <label className="form-label">Constraint</label>
+          <p className="text-xs text-gray-500">
+            Limits where the role applies: the resource, or target, of every
+            operation the role allows must also be in these scopes. The whole
+            role is granted, and deny rules are never narrowed.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="p-1 text-gray-500 hover:text-red-600"
+          title="Remove constraint"
+          onClick={() => {
+            setIsShown(false);
+            setFieldValue("constraint", { resource: "", target: "" });
+          }}
+        >
+          <FaTimes />
+        </button>
       </div>
 
       <div className="flex flex-col gap-3 rounded-md border border-gray-200 p-4">
