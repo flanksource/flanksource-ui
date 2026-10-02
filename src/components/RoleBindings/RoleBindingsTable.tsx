@@ -77,14 +77,14 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     )
   },
   {
-    header: "Rules",
+    header: "Constraints",
     id: "constraints",
     size: 60,
     Cell: ({ row }) => {
       const count = row.original.constraints?.length ?? 0;
       return (
         <span className="text-sm text-gray-600">
-          {count > 0 ? `${plural(count, "rule")} selected` : "All rules"}
+          {count > 0 ? plural(count, "constraint") : "None"}
         </span>
       );
     }
