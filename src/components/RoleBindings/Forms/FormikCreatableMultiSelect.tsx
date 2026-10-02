@@ -15,6 +15,8 @@ type FormikCreatableMultiSelectProps = {
   options: CreatableOption[];
   isLoading?: boolean;
   placeholder?: string;
+  // Keeps the label for screen readers when a heading above already names the field
+  hideLabel?: boolean;
 };
 
 // A multi-select of string values that also accepts values that aren't listed,
@@ -25,7 +27,8 @@ export default function FormikCreatableMultiSelect({
   hint,
   options,
   isLoading = false,
-  placeholder
+  placeholder,
+  hideLabel = false
 }: FormikCreatableMultiSelectProps) {
   const [field, meta, helpers] = useField<string[]>(name);
 
@@ -43,7 +46,10 @@ export default function FormikCreatableMultiSelect({
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={name} className="text-sm font-medium text-gray-700">
+      <label
+        htmlFor={name}
+        className={hideLabel ? "sr-only" : "text-sm font-medium text-gray-700"}
+      >
         {label}
       </label>
       <CreatableSelect<CreatableOption, true>

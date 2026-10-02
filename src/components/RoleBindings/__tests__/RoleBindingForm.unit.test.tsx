@@ -54,12 +54,14 @@ jest.mock("../../Permissions/AuthorizationAccessCheck", () => ({
     children
 }));
 
-function renderForm() {
+function renderForm(
+  props: Partial<React.ComponentProps<typeof RoleBindingForm>> = {}
+) {
   return render(
     <QueryClientProvider client={new QueryClient()}>
       <MemoryRouter>
         <TooltipProvider>
-          <RoleBindingForm isOpen onClose={() => {}} />
+          <RoleBindingForm isOpen onClose={() => {}} {...props} />
         </TooltipProvider>
       </MemoryRouter>
     </QueryClientProvider>
@@ -93,6 +95,10 @@ it("creates a binding with the role's namespace and its constraints", async () =
     "monitoring"
   );
 
+  // Only subjects that are added are shown
+  expect(screen.queryByLabelText("Teams")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByText("Add subject"));
+  fireEvent.click(screen.getByRole("menuitem", { name: /^Teams/ }));
   pickFirstOption(screen.getByLabelText("Teams"));
 
   fireEvent.click(screen.getByText("Add constraint"));
@@ -130,4 +136,30 @@ it("doesn't submit without a subject", async () => {
     await screen.findByText("At least one subject is required")
   ).toBeInTheDocument();
   expect(mockPost).not.toHaveBeenCalled();
+});
+
+it("shows only the subjects an existing binding uses", async () => {
+  renderForm({
+    data: {
+      id: "b1",
+      name: "ops",
+      namespace: "monitoring",
+      source: "UI",
+      role: "operator",
+      subjects: {
+        people: ["alice@example.com"],
+        scrapers: [{ name: "*" }]
+      },
+      created_at: "",
+      updated_at: ""
+    }
+  });
+
+  expect(await screen.findByText("alice@example.com")).toBeInTheDocument();
+  expect(screen.getByDisplayValue("*")).toBeInTheDocument();
+  expect(screen.queryByLabelText("Teams")).not.toBeInTheDocument();
+
+  // Removing a subject clears it
+  fireEvent.click(screen.getByTitle("Remove people"));
+  expect(screen.queryByText("alice@example.com")).not.toBeInTheDocument();
 });

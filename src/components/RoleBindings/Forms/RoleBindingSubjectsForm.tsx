@@ -9,44 +9,80 @@ import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextI
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useQuery } from "@tanstack/react-query";
 import { FieldArray, useFormikContext } from "formik";
-import { useMemo } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { useMemo, useState } from "react";
+import { FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import {
   RoleBindingFormErrors,
   RoleBindingFormValues
 } from "../roleBindingFormValues";
 import FormikCreatableMultiSelect from "./FormikCreatableMultiSelect";
 
-const builtInRoleDescriptions: Record<string, string> = {
-  everyone: "Every Mission Control user, guests and agents included",
-  guest: "Every guest",
-  agent: "Every agent"
-};
+// The fields of spec.subjects
+type SubjectKind =
+  | "people"
+  | "teams"
+  | "roles"
+  | "oidc"
+  | RoleBindingResourceSubjectKind;
 
-// Labelled by their field in spec.subjects
-const resourceSubjectFields: Record<
-  RoleBindingResourceSubjectKind,
-  { label: string; hint: string }
-> = {
-  playbooks: { label: "Playbooks", hint: "Playbooks, while they run." },
-  notifications: {
+const subjectKinds: { kind: SubjectKind; label: string; hint: string }[] = [
+  { kind: "people", label: "People", hint: "Mission Control users, by email." },
+  {
+    kind: "teams",
+    label: "Teams",
+    hint: "Every member of the teams, as members join and leave."
+  },
+  { kind: "roles", label: "Roles", hint: "Everyone with a built-in role." },
+  {
+    kind: "oidc",
+    label: "OIDC",
+    hint: "Users of an external identity provider whose token matches a CEL expression over claims, e.g. 'operators' in claims.groups. Use true to match every user."
+  },
+  { kind: "playbooks", label: "Playbooks", hint: "Playbooks, while they run." },
+  {
+    kind: "notifications",
     label: "Notifications",
     hint: "Notifications, e.g. reading the resources they report on."
   },
-  topologies: { label: "Topologies", hint: "Topologies, while they run." },
-  scrapers: { label: "Scrapers", hint: "Config scrapers, while they run." },
-  canaries: { label: "Canaries", hint: "Canaries, while they run." }
+  {
+    kind: "topologies",
+    label: "Topologies",
+    hint: "Topologies, while they run."
+  },
+  {
+    kind: "scrapers",
+    label: "Scrapers",
+    hint: "Config scrapers, while they run."
+  },
+  { kind: "canaries", label: "Canaries", hint: "Canaries, while they run." }
+];
+
+const builtInRoleDescriptions: Record<string, string> = {
+  everyone: "every Mission Control user, guests and agents included",
+  guest: "every guest",
+  agent: "every agent"
 };
 
-function PeopleAndTeams() {
-  const { data: people, isLoading: isLoadingPeople } = useQuery(
+function isResourceKind(
+  kind: SubjectKind
+): kind is RoleBindingResourceSubjectKind {
+  return (roleBindingResourceSubjectKinds as readonly string[]).includes(kind);
+}
+
+function hasValues(values: RoleBindingFormValues, kind: SubjectKind) {
+  return isResourceKind(kind)
+    ? values.resourceSubjects[kind].length > 0
+    : values[kind].length > 0;
+}
+
+function PeopleField() {
+  const { data: people, isLoading } = useQuery(
     ["people-roles", undefined],
     async () => (await fetchPeopleWithRoles()).data ?? []
   );
-  const { data: teams, isLoading: isLoadingTeams } = useGetAllTeams();
 
-  // People are bound by email, teams by name
-  const peopleOptions = useMemo(
+  // People are bound by email
+  const options = useMemo(
     () =>
       (people ?? [])
         .filter((person) => person.email)
@@ -58,83 +94,73 @@ function PeopleAndTeams() {
     [people]
   );
 
-  const teamOptions = useMemo(
+  return (
+    <FormikCreatableMultiSelect
+      name="people"
+      label="People"
+      hideLabel
+      options={options}
+      isLoading={isLoading}
+      placeholder="Select people or type an email..."
+    />
+  );
+}
+
+function TeamsField() {
+  const { data: teams, isLoading } = useGetAllTeams();
+
+  // Teams are bound by name
+  const options = useMemo(
     () => (teams ?? []).map((team) => ({ value: team.name, label: team.name })),
     [teams]
   );
 
   return (
-    <>
-      <FormikCreatableMultiSelect
-        name="people"
-        label="People"
-        hint="Mission Control users, by email."
-        options={peopleOptions}
-        isLoading={isLoadingPeople}
-        placeholder="Select people or type an email..."
-      />
-      <FormikCreatableMultiSelect
-        name="teams"
-        label="Teams"
-        hint="Every member of the teams, as members join and leave."
-        options={teamOptions}
-        isLoading={isLoadingTeams}
-        placeholder="Select teams..."
-      />
-    </>
+    <FormikCreatableMultiSelect
+      name="teams"
+      label="Teams"
+      hideLabel
+      options={options}
+      isLoading={isLoading}
+      placeholder="Select teams..."
+    />
   );
 }
 
-function BuiltInRoles() {
+function RolesField() {
   const { values, setFieldValue } = useFormikContext<RoleBindingFormValues>();
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium text-gray-700">Roles</label>
-      <p className="text-xs text-gray-500">Everyone with a built-in role.</p>
-      <div className="flex flex-col gap-1">
-        {bindableBuiltInRoles.map((role) => (
-          <label key={role} className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={values.roles.includes(role)}
-              onChange={(event) =>
-                setFieldValue(
-                  "roles",
-                  event.target.checked
-                    ? [...values.roles, role]
-                    : values.roles.filter((item) => item !== role)
-                )
-              }
-            />
-            <span className="font-medium">{role}</span>
-            <span className="text-gray-500">
-              {builtInRoleDescriptions[role]}
-            </span>
-          </label>
-        ))}
-      </div>
+      {bindableBuiltInRoles.map((role) => (
+        <label key={role} className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={values.roles.includes(role)}
+            onChange={(event) =>
+              setFieldValue(
+                "roles",
+                event.target.checked
+                  ? [...values.roles, role]
+                  : values.roles.filter((item) => item !== role)
+              )
+            }
+          />
+          <span className="font-medium">{role}</span>
+          <span className="text-gray-500">{builtInRoleDescriptions[role]}</span>
+        </label>
+      ))}
     </div>
   );
 }
 
-function OIDCSubjects() {
+function OIDCField() {
   const { values } = useFormikContext<RoleBindingFormValues>();
 
   return (
     <FieldArray name="oidc">
       {({ push, remove }) => (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">OIDC</label>
-          <p className="text-xs text-gray-500">
-            Users of an ExternalIdentityProvider whose token matches a CEL
-            expression over <code>claims</code>, e.g.{" "}
-            <code>
-              &apos;operators&apos; in claims.groups &amp;&amp; claims.tenant ==
-              &apos;a&apos;
-            </code>
-            . Use <code>true</code> to match every user of the provider.
-          </p>
           {values.oidc.map((_, index) => (
             <div key={index} className="flex flex-row items-start gap-2">
               <FormikTextInput
@@ -181,19 +207,11 @@ function ResourceSubjectField({
   kind: RoleBindingResourceSubjectKind;
 }) {
   const { values } = useFormikContext<RoleBindingFormValues>();
-  const { label, hint } = resourceSubjectFields[kind];
 
   return (
     <FieldArray name={`resourceSubjects.${kind}`}>
       {({ push, remove }) => (
         <div className="flex flex-col gap-2">
-          <div>
-            <label className="text-sm font-medium text-gray-700">{label}</label>
-            <p className="text-xs text-gray-500">
-              {hint} Set a name (<code>*</code> for any), a namespace (empty for
-              any), or both.
-            </p>
-          </div>
           {values.resourceSubjects[kind].map((_, index) => (
             <div key={index} className="flex flex-row items-start gap-2">
               <FormikTextInput
@@ -205,7 +223,7 @@ function ResourceSubjectField({
               <FormikTextInput
                 name={`resourceSubjects.${kind}.${index}.name`}
                 label="Name"
-                placeholder="Name or *"
+                placeholder="Name, or * for any"
                 className="flex flex-1 flex-col"
               />
               <button
@@ -232,25 +250,150 @@ function ResourceSubjectField({
   );
 }
 
+function SubjectField({ kind }: { kind: SubjectKind }) {
+  switch (kind) {
+    case "people":
+      return <PeopleField />;
+    case "teams":
+      return <TeamsField />;
+    case "roles":
+      return <RolesField />;
+    case "oidc":
+      return <OIDCField />;
+    default:
+      return <ResourceSubjectField kind={kind} />;
+  }
+}
+
+// Lists the kinds of subject not shown yet. It isn't portalled, so it works inside the modal.
+function AddSubjectMenu({
+  kinds,
+  onAdd
+}: {
+  kinds: typeof subjectKinds;
+  onAdd: (kind: SubjectKind) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (kinds.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="relative">
+      <Button
+        text="Add subject"
+        icon={<FaPlus />}
+        className="btn-white"
+        onClick={() => setIsOpen(!isOpen)}
+      />
+      {isOpen && (
+        <>
+          {/* Closes the menu on a click anywhere else */}
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
+          />
+          <div
+            role="menu"
+            className="absolute left-0 z-20 mt-1 w-80 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+          >
+            {kinds.map(({ kind, label, hint }) => (
+              <button
+                key={kind}
+                type="button"
+                role="menuitem"
+                className="flex w-full flex-col px-3 py-1.5 text-left hover:bg-gray-100"
+                onClick={() => {
+                  setIsOpen(false);
+                  onAdd(kind);
+                }}
+              >
+                <span className="text-sm font-medium text-gray-700">
+                  {label}
+                </span>
+                <span className="text-xs text-gray-500">{hint}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function RoleBindingSubjectsForm() {
-  const { errors, submitCount } = useFormikContext<RoleBindingFormValues>();
+  const { values, errors, submitCount, setFieldValue } =
+    useFormikContext<RoleBindingFormValues>();
   // Set by validateRoleBindingForm; not a field of the form
   const subjectsError = (errors as RoleBindingFormErrors).subjects;
 
+  // Only the kinds of subject the binding uses, or that were just added, are shown
+  const [shown, setShown] = useState<SubjectKind[]>(() =>
+    subjectKinds
+      .filter(({ kind }) => hasValues(values, kind))
+      .map(({ kind }) => kind)
+  );
+
+  const add = (kind: SubjectKind) => {
+    setShown([...shown, kind]);
+    // Lists of objects start with an empty entry to fill in
+    if (kind === "oidc") {
+      setFieldValue("oidc", [{ provider: "", match: "" }]);
+    } else if (isResourceKind(kind)) {
+      setFieldValue(`resourceSubjects.${kind}`, [{ namespace: "", name: "" }]);
+    }
+  };
+
+  const remove = (kind: SubjectKind) => {
+    setShown(shown.filter((item) => item !== kind));
+    setFieldValue(isResourceKind(kind) ? `resourceSubjects.${kind}` : kind, []);
+  };
+
+  const shownKinds = subjectKinds.filter(({ kind }) => shown.includes(kind));
+
   return (
-    <div className="flex flex-col gap-4 rounded-md border border-gray-200 p-4">
+    <div className="flex flex-col gap-3">
       <div>
-        <label className="form-label">Subjects</label>
+        <label className="form-label">
+          Subjects <span className="text-red-500">*</span>
+        </label>
         <p className="text-xs text-gray-500">
           Who gets the role. Someone matched more than once gets it once.
         </p>
       </div>
-      <PeopleAndTeams />
-      <BuiltInRoles />
-      <OIDCSubjects />
-      {roleBindingResourceSubjectKinds.map((kind) => (
-        <ResourceSubjectField key={kind} kind={kind} />
-      ))}
+
+      {shownKinds.length > 0 && (
+        <div className="flex flex-col divide-y divide-gray-200 rounded-md border border-gray-200">
+          {shownKinds.map(({ kind, label, hint }) => (
+            <div key={kind} className="flex flex-col gap-2 p-3">
+              <div className="flex flex-row items-start justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-gray-700">
+                    {label}
+                  </div>
+                  <p className="text-xs text-gray-500">{hint}</p>
+                </div>
+                <button
+                  type="button"
+                  className="p-1 text-gray-500 hover:text-red-600"
+                  title={`Remove ${label.toLowerCase()}`}
+                  onClick={() => remove(kind)}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              <SubjectField kind={kind} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <AddSubjectMenu
+        kinds={subjectKinds.filter(({ kind }) => !shown.includes(kind))}
+        onAdd={add}
+      />
+
       {submitCount > 0 && subjectsError && (
         <p className="text-sm text-red-500">{subjectsError}</p>
       )}
