@@ -40,6 +40,15 @@ export type ScopeDB = {
   updated_at: string;
   deleted_at?: string;
   created_by?: string;
+  // Why the scope isn't in effect. Empty when it's valid.
+  error?: string | null;
+  error_reason?: string | null;
+};
+
+// The spec of a Scope, as sent to /api/rbac/scopes
+export type ScopeSpec = {
+  description?: string;
+  targets: ScopeTarget[];
 };
 
 // For display in UI (with joined created_by info)

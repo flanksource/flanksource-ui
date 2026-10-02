@@ -3,10 +3,8 @@ import {
   getScopes,
   getScopeById,
   createScope,
-  updateScope,
-  deleteScope
+  updateScope
 } from "../services/scopes";
-import { ScopeDB } from "../types/scopes";
 
 export function useScopesQuery(params?: any) {
   return useQuery({
@@ -36,18 +34,7 @@ export function useCreateScopeMutation() {
 export function useUpdateScopeMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ScopeDB> }) =>
-      updateScope(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scopes"] });
-    }
-  });
-}
-
-export function useDeleteScopeMutation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteScope,
+    mutationFn: updateScope,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scopes"] });
     }

@@ -13,7 +13,7 @@ import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 
 type PermissionsTabsLinksProps = {
-  activeTab: "Permissions" | "Subjects";
+  activeTab: "Permissions" | "Subjects" | "Scopes" | "Roles" | "Role Bindings";
   children: React.ReactNode;
   className?: string;
   onRefresh?: () => void;
@@ -47,6 +47,22 @@ export default function PermissionsTabsLinks({
         path: "/settings/permissions/subjects",
         key: "Subjects",
         search
+      },
+      {
+        // The permission filters in the query don't apply to scopes
+        label: "Scopes",
+        path: "/settings/permissions/scopes",
+        key: "Scopes"
+      },
+      {
+        label: "Roles",
+        path: "/settings/permissions/roles",
+        key: "Roles"
+      },
+      {
+        label: "Role Bindings",
+        path: "/settings/permissions/role-bindings",
+        key: "Role Bindings"
       }
     ];
   }, [searchParams]);

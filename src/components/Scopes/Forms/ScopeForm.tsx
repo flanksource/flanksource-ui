@@ -5,7 +5,19 @@ import { FaSpinner } from "react-icons/fa";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import ScopeTargetsForm from "./ScopeTargetsForm";
-import DeleteScope from "./DeleteScope";
+import DeleteRbacObjectButton from "@flanksource-ui/components/Permissions/Rbac/DeleteRbacObjectButton";
+import {
+  RbacObjectNotInEffect,
+  RbacObjectStatus
+} from "@flanksource-ui/components/Permissions/Rbac/RbacObjectStatus";
+import { RbacObjectYaml } from "@flanksource-ui/components/Permissions/Rbac/RbacObjectYaml";
+import { notifyRbacSaved } from "@flanksource-ui/components/Permissions/Rbac/notifyRbacSaved";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@flanksource-ui/components/ui/tabs";
 import {
   useCreateScopeMutation,
   useUpdateScopeMutation
@@ -14,16 +26,18 @@ import {
   ScopeDisplay,
   ScopeDB,
   ScopeTargetForm,
-  ScopeResourceSelectorForm
+  ScopeResourceSelectorForm,
+  ScopeTarget
 } from "@flanksource-ui/api/types/scopes";
 import {
-  toastSuccess,
-  toastError
-} from "@flanksource-ui/components/Toast/toast";
+  RBAC_DEFAULT_NAMESPACE,
+  getRbacReadOnlyReason,
+  toRbacManifest
+} from "@flanksource-ui/api/types/rbacResources";
+import { toastError } from "@flanksource-ui/components/Toast/toast";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { useUser } from "@flanksource-ui/context";
 import { JSONViewer } from "@flanksource-ui/ui/Code/JSONViewer";
 import YAML from "yaml";
 
@@ -34,8 +48,8 @@ type ScopeFormProps = {
 };
 
 export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
-  const isReadOnly = data?.source === "KubernetesCRD";
-  const { user } = useUser();
+  const readOnlyReason = getRbacReadOnlyReason("scopes", data);
+  const isReadOnly = !!readOnlyReason;
 
   const { mutate: create, isLoading: isCreating } = useCreateScopeMutation();
   const { mutate: update, isLoading: isUpdating } = useUpdateScopeMutation();
@@ -88,44 +102,33 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
       }
     );
 
-    const payload = {
-      ...values,
-      targets: transformedTargets,
-      source: values.source || "UI"
-    };
+    // The namespace and name of an existing scope can't change
+    const manifest = toRbacManifest(
+      "scopes",
+      {
+        name: data?.name ?? values.name!,
+        namespace: data?.namespace ?? values.namespace
+      },
+      {
+        description: values.description || undefined,
+        targets: (transformedTargets ?? []) as ScopeTarget[]
+      }
+    );
+
+    const mutationOptions = (verb: "created" | "updated") => ({
+      onSuccess: (saved: ScopeDB) => {
+        notifyRbacSaved("scopes", verb, saved);
+        onClose();
+      },
+      onError: (error: unknown) => {
+        toastError(error);
+      }
+    });
 
     if (data?.id) {
-      update(
-        {
-          id: data.id,
-          data: payload
-        },
-        {
-          onSuccess: () => {
-            toastSuccess("Scope updated");
-            onClose();
-          },
-          onError: (error: any) => {
-            toastError(error.message);
-          }
-        }
-      );
+      update(manifest, mutationOptions("updated"));
     } else {
-      create(
-        {
-          ...payload,
-          created_by: user?.id!
-        },
-        {
-          onSuccess: () => {
-            toastSuccess("Scope created");
-            onClose();
-          },
-          onError: (error: any) => {
-            toastError(error.message);
-          }
-        }
-      );
+      create(manifest, mutationOptions("created"));
     }
   };
 
@@ -189,7 +192,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
       <Formik<Partial<ScopeDB>>
         initialValues={{
           name: data?.name || "",
-          namespace: data?.namespace || "",
+          namespace: data ? data.namespace || "" : RBAC_DEFAULT_NAMESPACE,
           description: data?.description || "",
           targets: initialTargets,
           source: data?.source || "UI"
@@ -201,6 +204,19 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           // Validate name
           if (!values.name) {
             errors.name = "Name is required";
+          }
+
+          // The API requires a namespace that's a DNS label
+          if (!data) {
+            if (!values.namespace) {
+              errors.namespace = "Namespace is required";
+            } else if (
+              values.namespace.length > 63 ||
+              !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(values.namespace)
+            ) {
+              errors.namespace =
+                "Use lowercase letters, numbers and '-', starting and ending with a letter or number";
+            }
           }
 
           // Validate targets
@@ -251,17 +267,16 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           return errors;
         }}
       >
-        {({ isValid, isSubmitting, errors, submitCount }) => (
-          <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
-            <div className="flex flex-1 flex-col space-y-3 overflow-y-auto p-4">
-              {isReadOnly && (
+        {({ isSubmitting, submitCount }) => {
+          const fields = (
+            <div className="flex flex-col space-y-3">
+              {readOnlyReason && (
                 <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
-                  <p className="font-medium">
-                    Read-Only Mode: This resource is managed by Kubernetes CRD
-                    and cannot be edited from the UI.
-                  </p>
+                  <p className="font-medium">{readOnlyReason}</p>
                 </div>
               )}
+
+              {data && <RbacObjectNotInEffect {...data} />}
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
@@ -270,20 +285,25 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                   name="name"
                   label="Name"
                   required
-                  disabled={isReadOnly}
+                  // The API identifies a scope by namespace and name, so it can't be renamed
+                  disabled={isReadOnly || !!data}
                 />
               </div>
 
-              {/* Only show namespace field for KubernetesCRD sources (read-only) */}
-              {isReadOnly && (
-                <div className="pointer-events-none opacity-60">
-                  <FormikTextInput
-                    name="namespace"
-                    label="Namespace"
-                    disabled={true}
-                  />
-                </div>
-              )}
+              <div className={data ? "pointer-events-none opacity-60" : ""}>
+                <FormikTextInput
+                  name="namespace"
+                  label="Namespace"
+                  required
+                  hint={
+                    data
+                      ? undefined
+                      : "Roles and role bindings can only use scopes in their own namespace."
+                  }
+                  // The API identifies a scope by namespace and name, so it can't be moved
+                  disabled={!!data}
+                />
+              </div>
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
@@ -313,39 +333,84 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                 />
               )}
             </div>
+          );
 
-            <CanEditResource
-              id={data?.id}
-              resourceType="scopes"
-              source={data?.source}
-              className="flex items-center justify-between bg-gray-100 px-5 py-4"
-            >
-              <div>
-                {data?.id && data.source === "UI" && (
-                  <AuthorizationAccessCheck
-                    resource={tables.scopes}
-                    action="write"
-                  >
-                    <DeleteScope scopeId={data.id} onDeleted={onClose} />
-                  </AuthorizationAccessCheck>
+          return (
+            <Form className="flex flex-1 flex-col gap-2 overflow-y-auto">
+              <div className="flex flex-1 flex-col overflow-y-auto p-4">
+                {data ? (
+                  <Tabs defaultValue="form" className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <TabsList>
+                        <TabsTrigger value="form">Form</TabsTrigger>
+                        <TabsTrigger value="yaml">YAML</TabsTrigger>
+                      </TabsList>
+                      <RbacObjectStatus {...data} />
+                    </div>
+                    <TabsContent value="form">{fields}</TabsContent>
+                    <TabsContent value="yaml">
+                      <RbacObjectYaml
+                        manifest={toRbacManifest("scopes", data, {
+                          description: data.description || undefined,
+                          targets: data.targets
+                        })}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                ) : (
+                  fields
                 )}
               </div>
-              <AuthorizationAccessCheck resource={tables.scopes} action="write">
-                <Button
-                  type="submit"
-                  text={data?.id ? "Save" : "Create"}
-                  className="btn-primary"
-                  icon={
-                    isLoading ? (
-                      <FaSpinner className="animate-spin" />
-                    ) : undefined
-                  }
-                  disabled={isLoading || isSubmitting}
-                />
-              </AuthorizationAccessCheck>
-            </CanEditResource>
-          </Form>
-        )}
+
+              <CanEditResource
+                id={data?.id}
+                resourceType="scopes"
+                source={data?.source}
+                namespace={data?.namespace ?? undefined}
+                name={data?.name}
+                className="flex items-center justify-between bg-gray-100 px-5 py-4"
+              >
+                {isReadOnly ? (
+                  <div />
+                ) : (
+                  <>
+                    <div>
+                      {data?.namespace && (
+                        <AuthorizationAccessCheck
+                          resource={tables.rbac}
+                          action="write"
+                        >
+                          <DeleteRbacObjectButton
+                            resource="scopes"
+                            namespace={data.namespace}
+                            name={data.name}
+                            onDeleted={onClose}
+                          />
+                        </AuthorizationAccessCheck>
+                      )}
+                    </div>
+                    <AuthorizationAccessCheck
+                      resource={tables.rbac}
+                      action="write"
+                    >
+                      <Button
+                        type="submit"
+                        text={data?.id ? "Save" : "Create"}
+                        className="btn-primary"
+                        icon={
+                          isLoading ? (
+                            <FaSpinner className="animate-spin" />
+                          ) : undefined
+                        }
+                        disabled={isLoading || isSubmitting}
+                      />
+                    </AuthorizationAccessCheck>
+                  </>
+                )}
+              </CanEditResource>
+            </Form>
+          );
+        }}
       </Formik>
     </Modal>
   );

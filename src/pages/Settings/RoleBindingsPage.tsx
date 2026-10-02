@@ -1,33 +1,39 @@
-import { useState } from "react";
-import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
-import ScopesTable from "@flanksource-ui/components/Scopes/ScopesTable";
-import ScopeForm from "@flanksource-ui/components/Scopes/Forms/ScopeForm";
-import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
+import { useRoleBindingsQuery } from "@flanksource-ui/api/query-hooks/useRoleBindingsQuery";
+import { RoleBindingDisplay } from "@flanksource-ui/api/types/roleBindings";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
+import AddRoleBindingButton from "@flanksource-ui/components/RoleBindings/Forms/AddRoleBindingButton";
+import RoleBindingForm from "@flanksource-ui/components/RoleBindings/Forms/RoleBindingForm";
+import RoleBindingsTable from "@flanksource-ui/components/RoleBindings/RoleBindingsTable";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import AddScopeButton from "@flanksource-ui/components/Scopes/Forms/AddScopeButton";
+import { useState } from "react";
 
-export default function ScopesPage() {
-  const { data: scopes, isLoading, isError, error, refetch } = useScopesQuery();
-  const [selectedScope, setSelectedScope] = useState<
-    ScopeDisplay | undefined
+export default function RoleBindingsPage() {
+  const {
+    data: roleBindings,
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useRoleBindingsQuery();
+  const [selectedRoleBinding, setSelectedRoleBinding] = useState<
+    RoleBindingDisplay | undefined
   >();
 
   return (
     <>
       <PermissionsTabsLinks
-        activeTab="Scopes"
+        activeTab="Role Bindings"
         loading={isLoading}
         onRefresh={() => refetch()}
         headerAction={
-          // Scopes are written through /api/rbac, which requires update on rbac
+          // Role bindings are written through /api/rbac, which requires update on rbac
           <AuthorizationAccessCheck
-            key={"add-button"}
+            key="add-button"
             resource={tables.rbac}
             action="write"
           >
-            <AddScopeButton />
+            <AddRoleBindingButton />
           </AuthorizationAccessCheck>
         }
       >
@@ -37,7 +43,7 @@ export default function ScopesPage() {
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
                   <p className="mb-2 font-medium text-red-600">
-                    Error loading scopes
+                    Error loading role bindings
                   </p>
                   <p className="text-sm text-gray-600">
                     {error instanceof Error
@@ -47,24 +53,21 @@ export default function ScopesPage() {
                 </div>
               </div>
             ) : (
-              <ScopesTable
-                data={scopes || []}
+              <RoleBindingsTable
+                data={roleBindings || []}
                 isLoading={isLoading}
-                handleRowClick={(row) => setSelectedScope(row)}
+                handleRowClick={(row) => setSelectedRoleBinding(row)}
               />
             )}
           </div>
         </div>
       </PermissionsTabsLinks>
 
-      {selectedScope && (
-        <ScopeForm
-          isOpen={!!selectedScope}
-          onClose={() => {
-            setSelectedScope(undefined);
-            refetch();
-          }}
-          data={selectedScope}
+      {selectedRoleBinding && (
+        <RoleBindingForm
+          isOpen={!!selectedRoleBinding}
+          onClose={() => setSelectedRoleBinding(undefined)}
+          data={selectedRoleBinding}
         />
       )}
     </>

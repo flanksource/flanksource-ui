@@ -7,13 +7,7 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
 import { BsLink, BsToggles } from "react-icons/bs";
-import {
-  FaArchive,
-  FaBell,
-  FaCrosshairs,
-  FaPlug,
-  FaTasks
-} from "react-icons/fa";
+import { FaArchive, FaBell, FaPlug, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
 import {
@@ -66,6 +60,8 @@ import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
 import McpSubjectAccessPage from "./pages/Settings/mcp/McpSubjectAccessPage";
 import McpCheckAccessPage from "./pages/Settings/mcp/McpCheckAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
+import RolesPage from "./pages/Settings/RolesPage";
+import RoleBindingsPage from "./pages/Settings/RoleBindingsPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
@@ -435,13 +431,6 @@ const settingsNav: SettingsNavigationItems = {
       icon: RiShieldUserFill,
       featureName: features["settings.permissions"],
       resourceName: tables.permissions
-    },
-    {
-      name: "Scopes",
-      href: "/settings/scopes",
-      icon: FaCrosshairs,
-      featureName: features["settings.permissions"],
-      resourceName: tables.scopes
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -866,10 +855,30 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
-          path="scopes"
+          path="permissions/scopes"
           element={withAuthorizationAccessCheck(
             <ScopesPage />,
             tables.scopes,
+            "read"
+          )}
+        />
+        <Route
+          path="scopes"
+          element={<Navigate to="/settings/permissions/scopes" replace />}
+        />
+        <Route
+          path="permissions/roles"
+          element={withAuthorizationAccessCheck(
+            <RolesPage />,
+            tables.rbac,
+            "read"
+          )}
+        />
+        <Route
+          path="permissions/role-bindings"
+          element={withAuthorizationAccessCheck(
+            <RoleBindingsPage />,
+            tables.rbac,
             "read"
           )}
         />

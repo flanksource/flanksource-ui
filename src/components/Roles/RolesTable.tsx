@@ -1,13 +1,13 @@
-import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
-import { Badge } from "@flanksource-ui/ui/Badge/Badge";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { RoleDisplay } from "@flanksource-ui/api/types/roles";
+import { RbacObjectStatus } from "@flanksource-ui/components/Permissions/Rbac/RbacObjectStatus";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
+import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { RbacObjectStatus } from "@flanksource-ui/components/Permissions/Rbac/RbacObjectStatus";
 import { MRT_ColumnDef } from "mantine-react-table";
 
-const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
+const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
   {
     header: "Name",
     id: "name",
@@ -23,15 +23,29 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     }
   },
   {
-    header: "Targets",
-    id: "targets",
-    size: 80,
+    header: "Rules",
+    id: "rules",
+    size: 150,
     Cell: ({ row }) => {
-      const { targets } = row.original;
+      const rules = row.original.rules ?? [];
+      const actions = Array.from(new Set(rules.map((rule) => rule.action)));
+      const hasDeny = rules.some((rule) => rule.deny);
       return (
-        <span className="text-sm text-gray-600">
-          {targets.length} {targets.length === 1 ? "target" : "targets"}
-        </span>
+        <div className="flex flex-wrap items-center gap-1">
+          {actions.map((action) => (
+            <span
+              key={action}
+              className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-700"
+            >
+              {action}
+            </span>
+          ))}
+          {hasDeny && (
+            <span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
+              deny
+            </span>
+          )}
+        </div>
       );
     }
   },
@@ -44,7 +58,7 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
   {
     header: "Description",
     id: "description",
-    size: 200,
+    size: 150,
     accessorFn: (row) => row.description
   },
   {
@@ -66,33 +80,29 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     id: "createdBy",
     size: 40,
     Cell: ({ row }) => {
-      const createdBy = row.original.created_by;
-      const source = row.original.source;
-
-      if (source?.toLowerCase() === "KubernetesCRD".toLowerCase()) {
-        const id = row.original.id;
+      const { created_by, source, id } = row.original;
+      if (source !== "UI") {
         return <CRDSource source={source} id={id} showMinimal />;
       }
-
-      return <Avatar user={createdBy} />;
+      return <Avatar user={created_by} />;
     }
   }
 ];
 
-type ScopesTableProps = {
-  data: ScopeDisplay[];
+type RolesTableProps = {
+  data: RoleDisplay[];
   isLoading: boolean;
-  handleRowClick?: (row: ScopeDisplay) => void;
+  handleRowClick?: (row: RoleDisplay) => void;
 };
 
-export default function ScopesTable({
+export default function RolesTable({
   data,
   isLoading,
   handleRowClick = () => {}
-}: ScopesTableProps) {
+}: RolesTableProps) {
   return (
     <MRTDataTable
-      columns={scopesTableColumns}
+      columns={rolesTableColumns}
       data={data}
       isLoading={isLoading}
       onRowClick={handleRowClick}
