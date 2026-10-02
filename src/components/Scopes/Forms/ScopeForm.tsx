@@ -102,10 +102,13 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
       }
     );
 
-    // New scopes go to the default namespace; the namespace and name of an existing one can't change
+    // The namespace and name of an existing scope can't change
     const manifest = toRbacManifest(
       "scopes",
-      { name: data?.name ?? values.name!, namespace: data?.namespace },
+      {
+        name: data?.name ?? values.name!,
+        namespace: data?.namespace ?? values.namespace
+      },
       {
         description: values.description || undefined,
         targets: (transformedTargets ?? []) as ScopeTarget[]
@@ -189,7 +192,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
       <Formik<Partial<ScopeDB>>
         initialValues={{
           name: data?.name || "",
-          namespace: data?.namespace || "",
+          namespace: data ? data.namespace || "" : RBAC_DEFAULT_NAMESPACE,
           description: data?.description || "",
           targets: initialTargets,
           source: data?.source || "UI"
@@ -201,6 +204,19 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           // Validate name
           if (!values.name) {
             errors.name = "Name is required";
+          }
+
+          // The API requires a namespace that's a DNS label
+          if (!data) {
+            if (!values.namespace) {
+              errors.namespace = "Namespace is required";
+            } else if (
+              values.namespace.length > 63 ||
+              !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(values.namespace)
+            ) {
+              errors.namespace =
+                "Use lowercase letters, numbers and '-', starting and ending with a letter or number";
+            }
           }
 
           // Validate targets
@@ -274,20 +290,20 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                 />
               </div>
 
-              {data ? (
-                <div className="pointer-events-none opacity-60">
-                  <FormikTextInput
-                    name="namespace"
-                    label="Namespace"
-                    disabled={true}
-                  />
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  The scope is created in the{" "}
-                  <code>{RBAC_DEFAULT_NAMESPACE}</code> namespace.
-                </p>
-              )}
+              <div className={data ? "pointer-events-none opacity-60" : ""}>
+                <FormikTextInput
+                  name="namespace"
+                  label="Namespace"
+                  required
+                  hint={
+                    data
+                      ? undefined
+                      : "Roles and role bindings can only use scopes in their own namespace."
+                  }
+                  // The API identifies a scope by namespace and name, so it can't be moved
+                  disabled={!!data}
+                />
+              </div>
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
