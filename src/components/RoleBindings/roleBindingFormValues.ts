@@ -7,13 +7,11 @@ import {
   RoleBindingSubjects,
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
-import { RoleRule } from "@flanksource-ui/api/types/roles";
 
+// spec.constraints[]: narrows one allow rule of the Role
 export type ConstraintFormValues = {
   rule: string;
-  // Whether the binding grants the rule. Only used when constraintMode is "selected".
-  include: boolean;
-  // Scopes, in the binding's namespace, that narrow the rule's resource and target
+  // Scopes, in the binding's namespace, the rule's resource and target must also belong to
   resource: string;
   target: string;
 };
@@ -37,9 +35,7 @@ export type RoleBindingFormValues = {
     RoleBindingResourceSubjectKind,
     ResourceSubjectFormValues[]
   >;
-  // "all" grants every rule of the Role as written. "selected" grants only the included
-  // allow rules, so a rule added to the Role later isn't granted until it's included here.
-  constraintMode: "all" | "selected";
+  // Without constraints the binding grants every rule of the Role; with them, only the allow rules they name
   constraints: ConstraintFormValues[];
 };
 
@@ -77,38 +73,12 @@ export function roleBindingToFormValues(
     roles: subjects.roles ?? [],
     oidc: (subjects.oidc ?? []).map((subject) => ({ ...subject })),
     resourceSubjects,
-    constraintMode: constraints.length > 0 ? "selected" : "all",
     constraints: constraints.map((constraint) => ({
       rule: constraint.rule,
-      include: true,
       resource: constraint.resource?.scopeRef ?? "",
       target: constraint.target?.scopeRef ?? ""
     }))
   };
-}
-
-/**
- * Lists a constraint for every allow rule of the Role, keeping what's already set.
- * Constraints on rules the Role no longer has are kept, so they can be seen and removed.
- */
-export function syncConstraintsWithRole(
-  constraints: ConstraintFormValues[],
-  rules: RoleRule[]
-): ConstraintFormValues[] {
-  const allowRules = rules.filter((rule) => !rule.deny);
-  const fromRole = allowRules.map(
-    (rule) =>
-      constraints.find((constraint) => constraint.rule === rule.name) ?? {
-        rule: rule.name,
-        include: false,
-        resource: "",
-        target: ""
-      }
-  );
-  const stale = constraints.filter(
-    (constraint) => !allowRules.some((rule) => rule.name === constraint.rule)
-  );
-  return [...fromRole, ...stale];
 }
 
 function nonEmpty<T>(values: T[]): T[] | undefined {
@@ -154,19 +124,17 @@ export function formValuesToSubjects(
 export function formValuesToConstraints(
   values: RoleBindingFormValues
 ): RoleBindingConstraint[] | undefined {
-  if (values.constraintMode === "all") {
+  if (values.constraints.length === 0) {
     return undefined;
   }
 
-  return values.constraints
-    .filter((constraint) => constraint.include)
-    .map((constraint) => ({
-      rule: constraint.rule,
-      ...(constraint.resource
-        ? { resource: { scopeRef: constraint.resource } }
-        : {}),
-      ...(constraint.target ? { target: { scopeRef: constraint.target } } : {})
-    }));
+  return values.constraints.map((constraint) => ({
+    rule: constraint.rule,
+    ...(constraint.resource
+      ? { resource: { scopeRef: constraint.resource } }
+      : {}),
+    ...(constraint.target ? { target: { scopeRef: constraint.target } } : {})
+  }));
 }
 
 export function formValuesToSpec(
@@ -195,7 +163,7 @@ export type RoleBindingFormErrors = {
       ({ namespace?: string; name?: string } | undefined)[]
     >
   >;
-  constraints?: string;
+  constraints?: ({ rule?: string } | undefined)[];
 };
 
 // Checks what the API rejects on its own, apart from compiling the CEL in oidc.match.
@@ -264,12 +232,22 @@ export function validateRoleBindingForm(
     }
   });
 
-  // An empty list of constraints grants every rule, the opposite of what "selected" means
-  if (
-    values.constraintMode === "selected" &&
-    !values.constraints.some((constraint) => constraint.include)
-  ) {
-    errors.constraints = "Select at least one rule to grant";
+  // The API rejects a constraint without a rule, and a rule constrained twice
+  const constraintErrors = values.constraints.map((constraint, index) => {
+    if (!constraint.rule) {
+      return { rule: "Rule is required" };
+    }
+    if (
+      values.constraints.findIndex(
+        (other) => other.rule === constraint.rule
+      ) !== index
+    ) {
+      return { rule: `${constraint.rule} is already constrained` };
+    }
+    return undefined;
+  });
+  if (constraintErrors.some(Boolean)) {
+    errors.constraints = constraintErrors;
   }
 
   return errors;

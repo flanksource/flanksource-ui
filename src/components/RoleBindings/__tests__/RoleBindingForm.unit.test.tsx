@@ -77,7 +77,7 @@ beforeEach(() => {
   mockPost.mockResolvedValue({ data: { id: "new" } });
 });
 
-it("creates a binding with the role's namespace and only the selected rules", async () => {
+it("creates a binding with the role's namespace and its constraints", async () => {
   renderForm();
   await screen.findByText("Add Role Binding");
 
@@ -95,12 +95,14 @@ it("creates a binding with the role's namespace and only the selected rules", as
 
   pickFirstOption(screen.getByLabelText("Teams"));
 
-  fireEvent.click(screen.getByLabelText(/Only selected rules/));
-  // Deny rules can't be selected: they always apply
-  expect(
-    screen.getByText(/Deny rules always apply while the binding is in effect/)
-  ).toHaveTextContent("no-delete");
-  fireEvent.click(screen.getByRole("checkbox", { name: /^run/ }));
+  fireEvent.click(screen.getByText("Add constraint"));
+  // Deny rules can't be constrained, so only read and run are offered
+  const ruleInput = screen.getByLabelText(/^Rule/);
+  fireEvent.focus(ruleInput);
+  fireEvent.keyDown(ruleInput, { key: "ArrowDown" });
+  expect(screen.queryByText("no-delete")).not.toBeInTheDocument();
+  fireEvent.keyDown(ruleInput, { key: "ArrowDown" });
+  fireEvent.keyDown(ruleInput, { key: "Enter" });
 
   fireEvent.click(screen.getByText("Create"));
 

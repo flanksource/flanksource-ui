@@ -1,13 +1,11 @@
 import { RoleRule } from "@flanksource-ui/api/types/roles";
+import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikRoleScopeSelect from "@flanksource-ui/components/Roles/Forms/FormikRoleScopeSelect";
 import { getActionContract } from "@flanksource-ui/components/Roles/roleActions";
-import { useFormikContext } from "formik";
-import { useEffect } from "react";
-import {
-  RoleBindingFormErrors,
-  RoleBindingFormValues,
-  syncConstraintsWithRole
-} from "../roleBindingFormValues";
+import { Button } from "@flanksource-ui/ui/Buttons/Button";
+import { FieldArray, useFormikContext } from "formik";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { RoleBindingFormValues } from "../roleBindingFormValues";
 
 type RoleBindingConstraintsFormProps = {
   // Rules of the bound Role; undefined until a Role that exists is picked
@@ -15,147 +13,136 @@ type RoleBindingConstraintsFormProps = {
   namespace?: string;
 };
 
+// spec.constraints: each narrows one allow rule of the Role to Scopes in the binding's namespace
 export default function RoleBindingConstraintsForm({
   rules,
   namespace
 }: RoleBindingConstraintsFormProps) {
-  const { values, errors, submitCount, setFieldValue } =
-    useFormikContext<RoleBindingFormValues>();
+  const { values } = useFormikContext<RoleBindingFormValues>();
 
-  // List every allow rule of the Role, keeping what's set
-  useEffect(() => {
-    if (!rules) {
-      return;
-    }
-    const synced = syncConstraintsWithRole(values.constraints, rules);
-    if (JSON.stringify(synced) !== JSON.stringify(values.constraints)) {
-      setFieldValue("constraints", synced);
-    }
-  }, [rules, values.constraints, setFieldValue]);
-
-  // A message for the list as a whole, set by validateRoleBindingForm
-  const constraintsError = (errors as RoleBindingFormErrors).constraints;
-  const denyRules = (rules ?? []).filter((rule) => rule.deny);
+  const ruleOptions = (rules ?? [])
+    .filter((rule) => !rule.deny)
+    .map((rule) => ({
+      value: rule.name,
+      label: (
+        <div className="flex flex-row items-baseline gap-2">
+          <span>{rule.name}</span>
+          <span className="font-mono text-xs text-gray-500">
+            {rule.action} on {rule.resource.scopeRef}
+            {rule.target ? ` with ${rule.target.scopeRef}` : ""}
+          </span>
+        </div>
+      )
+    }));
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-gray-200 p-4">
-      <label className="form-label">Rules granted</label>
-
-      <label className="flex items-start gap-2 text-sm">
-        <input
-          type="radio"
-          name="constraintMode"
-          className="mt-1"
-          checked={values.constraintMode === "all"}
-          onChange={() => setFieldValue("constraintMode", "all")}
-        />
-        <span>
-          <span className="font-medium">All rules of the role</span>
-          <span className="block text-gray-500">
-            Rules added to the role later are granted too.
-          </span>
-        </span>
-      </label>
-
-      <label className="flex items-start gap-2 text-sm">
-        <input
-          type="radio"
-          name="constraintMode"
-          className="mt-1"
-          checked={values.constraintMode === "selected"}
-          onChange={() => setFieldValue("constraintMode", "selected")}
-        />
-        <span>
-          <span className="font-medium">Only selected rules</span>
-          <span className="block text-gray-500">
-            Each can be narrowed to scopes in this binding&apos;s namespace.
-            Rules added to the role later aren&apos;t granted until they&apos;re
-            selected here.
-          </span>
-        </span>
-      </label>
-
-      {values.constraintMode === "selected" && (
-        <div className="flex flex-col gap-3 pl-6">
-          {!rules && values.constraints.length === 0 && (
-            <p className="text-sm text-gray-500">
-              Pick a role to choose its rules.
+    <FieldArray name="constraints">
+      {({ push, remove }) => (
+        <div className="flex flex-col gap-3">
+          <div>
+            <label className="form-label">Constraints</label>
+            <p className="text-xs text-gray-500">
+              Without constraints, the binding grants every rule of the role as
+              defined. With constraints, it grants only the allow rules they
+              name, each narrowed to the scopes set. Deny rules always apply as
+              written.
             </p>
-          )}
+          </div>
 
           {values.constraints.map((constraint, index) => {
+            const path = `constraints.${index}`;
             const rule = rules?.find((item) => item.name === constraint.rule);
             const contract = getActionContract(rule?.action);
-            const path = `constraints.${index}`;
+            // A saved constraint on a rule the role doesn't have is still listed
+            const options =
+              constraint.rule &&
+              !ruleOptions.some((option) => option.value === constraint.rule)
+                ? [
+                    ...ruleOptions,
+                    { value: constraint.rule, label: constraint.rule }
+                  ]
+                : ruleOptions;
 
             return (
               <div
-                key={constraint.rule}
-                className="flex flex-col gap-2 rounded-md border border-gray-200 p-3"
+                key={index}
+                className="flex flex-col gap-2 rounded-md border border-gray-200 p-4"
               >
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={constraint.include}
-                    onChange={(event) =>
-                      setFieldValue(`${path}.include`, event.target.checked)
-                    }
-                  />
-                  <span className="font-medium">{constraint.rule}</span>
-                  {rule && (
-                    <span className="font-mono text-xs text-gray-500">
-                      {rule.action} on {rule.resource.scopeRef}
-                      {rule.target ? ` with ${rule.target.scopeRef}` : ""}
-                    </span>
-                  )}
-                </label>
+                <div className="flex flex-row items-start gap-3">
+                  <div className="flex flex-1 flex-col">
+                    <label
+                      htmlFor={`${path}.rule`}
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Rule <span className="text-red-500">*</span>
+                    </label>
+                    <FormikSelectDropdown
+                      name={`${path}.rule`}
+                      inputId={`${path}.rule`}
+                      options={options}
+                      placeholder={
+                        rules ? "Select a rule..." : "Pick a role first"
+                      }
+                      className="flex flex-col"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="mt-7 p-1 text-gray-500 hover:text-red-600"
+                    title="Remove constraint"
+                    onClick={() => remove(index)}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
 
-                {rules && !rule && (
+                {rules && constraint.rule && !rule && (
                   <p className="text-xs text-yellow-700">
-                    The role has no allow rule named {constraint.rule}; the
-                    binding won&apos;t be in effect while it&apos;s selected.
+                    The role has no rule named {constraint.rule}; the binding
+                    won&apos;t be in effect until it does.
+                  </p>
+                )}
+                {rule?.deny && (
+                  <p className="text-xs text-yellow-700">
+                    {rule.name} is a deny rule, which a constraint can&apos;t
+                    name; the binding won&apos;t be in effect.
                   </p>
                 )}
 
-                {constraint.include && (
-                  <div className="flex flex-col gap-2 pl-6">
-                    <FormikRoleScopeSelect
-                      name={`${path}.resource`}
-                      label="Narrow resource to scope"
-                      hint="Optional. The resource must also be in this scope."
-                      namespace={namespace}
-                      contract={contract}
-                      input="resource"
-                    />
-                    {/* A constraint can't add a target to a rule without one */}
-                    {(rule?.target || constraint.target) && (
-                      <FormikRoleScopeSelect
-                        name={`${path}.target`}
-                        label="Narrow target to scope"
-                        hint="Optional. The target must also be in this scope."
-                        namespace={namespace}
-                        contract={contract}
-                        input="target"
-                      />
-                    )}
-                  </div>
+                <FormikRoleScopeSelect
+                  name={`${path}.resource`}
+                  label="Resource"
+                  hint="Optional. A scope the rule's resource must also belong to."
+                  namespace={namespace}
+                  contract={contract}
+                  input="resource"
+                />
+
+                {/* A constraint can't add a target to a rule without one */}
+                {(rule?.target || constraint.target) && (
+                  <FormikRoleScopeSelect
+                    name={`${path}.target`}
+                    label="Target"
+                    hint="Optional. A scope the rule's target must also belong to."
+                    namespace={namespace}
+                    contract={contract}
+                    input="target"
+                  />
                 )}
               </div>
             );
           })}
 
-          {submitCount > 0 && constraintsError && (
-            <p className="text-sm text-red-500">{constraintsError}</p>
-          )}
+          <div>
+            <Button
+              text="Add constraint"
+              icon={<FaPlus />}
+              className="btn-white"
+              onClick={() => push({ rule: "", resource: "", target: "" })}
+            />
+          </div>
         </div>
       )}
-
-      {denyRules.length > 0 && (
-        <p className="text-xs text-gray-500">
-          Deny rules always apply while the binding is in effect:{" "}
-          {denyRules.map((rule) => rule.name).join(", ")}.
-        </p>
-      )}
-    </div>
+    </FieldArray>
   );
 }

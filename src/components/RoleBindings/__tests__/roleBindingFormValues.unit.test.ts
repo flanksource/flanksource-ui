@@ -3,7 +3,6 @@ import {
   RoleBindingFormValues,
   formValuesToSpec,
   roleBindingToFormValues,
-  syncConstraintsWithRole,
   validateRoleBindingForm
 } from "../roleBindingFormValues";
 
@@ -28,21 +27,21 @@ describe("formValuesToSpec", () => {
     });
   });
 
-  it("sends the selected rules with their scopes", () => {
+  it("sends constraints with only the scopes set", () => {
     const spec = formValuesToSpec(
       makeValues({
-        constraintMode: "selected",
         constraints: [
-          { rule: "read", include: true, resource: "tenant-a", target: "" },
-          { rule: "run", include: true, resource: "", target: "tenant-a" },
-          { rule: "delete", include: false, resource: "x", target: "" }
+          { rule: "read", resource: "tenant-a", target: "" },
+          { rule: "run", resource: "", target: "tenant-a" },
+          { rule: "cancel", resource: "", target: "" }
         ]
       })
     );
 
     expect(spec.constraints).toEqual([
       { rule: "read", resource: { scopeRef: "tenant-a" } },
-      { rule: "run", target: { scopeRef: "tenant-a" } }
+      { rule: "run", target: { scopeRef: "tenant-a" } },
+      { rule: "cancel" }
     ]);
   });
 
@@ -63,42 +62,13 @@ describe("formValuesToSpec", () => {
     } as RoleBindingDisplay;
 
     const values = roleBindingToFormValues(binding);
-    expect(values.constraintMode).toBe("selected");
+    expect(values.constraints).toHaveLength(1);
     expect(formValuesToSpec(values)).toEqual({
       description: "Tenant A",
       role: "operator",
       subjects: binding.subjects,
       constraints: binding.constraints
     });
-  });
-});
-
-describe("syncConstraintsWithRole", () => {
-  it("lists allow rules, keeps what's set, and keeps rules the role lost", () => {
-    const synced = syncConstraintsWithRole(
-      [
-        { rule: "read", include: true, resource: "a", target: "" },
-        { rule: "removed", include: true, resource: "", target: "" }
-      ],
-      [
-        { name: "read", action: "read", resource: { scopeRef: "s" } },
-        { name: "run", action: "playbook:run", resource: { scopeRef: "p" } },
-        {
-          name: "no-delete",
-          action: "delete",
-          resource: { scopeRef: "s" },
-          deny: true
-        }
-      ]
-    );
-
-    expect(synced.map((constraint) => constraint.rule)).toEqual([
-      "read",
-      "run",
-      "removed"
-    ]);
-    expect(synced[0].resource).toBe("a");
-    expect(synced[1].include).toBe(false);
   });
 });
 
@@ -130,15 +100,20 @@ describe("validateRoleBindingForm", () => {
     ]);
   });
 
-  it("refuses selected rules with none selected, which would grant every rule", () => {
+  it("rejects a constraint without a rule, and a rule constrained twice", () => {
     const errors = validateRoleBindingForm(
       makeValues({
-        constraintMode: "selected",
         constraints: [
-          { rule: "read", include: false, resource: "", target: "" }
+          { rule: "read", resource: "", target: "" },
+          { rule: "", resource: "", target: "" },
+          { rule: "read", resource: "a", target: "" }
         ]
       })
     );
-    expect(errors.constraints).toBe("Select at least one rule to grant");
+    expect(errors.constraints).toEqual([
+      undefined,
+      { rule: "Rule is required" },
+      { rule: "read is already constrained" }
+    ]);
   });
 });
