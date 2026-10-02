@@ -30,7 +30,28 @@ jest.mock("../../../api/services/roles", () => ({
 }));
 
 jest.mock("../../../api/services/scopes", () => ({
-  getScopes: jest.fn().mockResolvedValue({ data: [] })
+  getScopes: jest.fn().mockResolvedValue({
+    data: [
+      {
+        id: "s1",
+        name: "configs",
+        namespace: "monitoring",
+        targets: [{ config: { name: "*" } }]
+      },
+      {
+        id: "s2",
+        name: "playbooks",
+        namespace: "monitoring",
+        targets: [{ playbook: { name: "*" } }]
+      },
+      {
+        id: "s3",
+        name: "tenant-a",
+        namespace: "monitoring",
+        targets: [{ config: { tagSelector: "tenant=a" } }]
+      }
+    ]
+  })
 }));
 
 jest.mock("../../../api/services/users", () => ({
@@ -79,7 +100,7 @@ beforeEach(() => {
   mockPost.mockResolvedValue({ data: { id: "new" } });
 });
 
-it("creates a binding with the role's namespace and its constraints", async () => {
+it("creates a binding with the role's namespace and its constraint", async () => {
   renderForm();
   await screen.findByText("Add Role Binding");
 
@@ -102,14 +123,20 @@ it("creates a binding with the role's namespace and its constraints", async () =
   fireEvent.click(await screen.findByRole("menuitem", { name: "Teams" }));
   pickFirstOption(screen.getByLabelText("Teams"));
 
-  fireEvent.click(screen.getByText("Add constraint"));
-  // Deny rules can't be constrained, so only read and run are offered
-  const ruleInput = screen.getByLabelText(/^Rule/);
-  fireEvent.focus(ruleInput);
-  fireEvent.keyDown(ruleInput, { key: "ArrowDown" });
-  expect(screen.queryByText("no-delete")).not.toBeInTheDocument();
-  fireEvent.keyDown(ruleInput, { key: "ArrowDown" });
-  fireEvent.keyDown(ruleInput, { key: "Enter" });
+  const resourceInput = screen.getByLabelText("Resource");
+  fireEvent.focus(resourceInput);
+  fireEvent.keyDown(resourceInput, { key: "ArrowDown" });
+  fireEvent.click(await screen.findByText("tenant-a"));
+
+  // tenant-a selects configs only: it narrows read, but shares no type with run's playbooks
+  const rows = screen.getAllByRole("row");
+  expect(rows[1]).toHaveTextContent(/read.*Narrowed to config.*Yes/);
+  expect(rows[2]).toHaveTextContent(/run.*No type in common.*No/);
+  expect(
+    screen.getByText(
+      /Deny rules are never narrowed and always apply: no-delete/
+    )
+  ).toBeInTheDocument();
 
   fireEvent.click(screen.getByText("Create"));
 
@@ -121,7 +148,7 @@ it("creates a binding with the role's namespace and its constraints", async () =
       spec: {
         role: "operator",
         subjects: { teams: ["platform"] },
-        constraints: [{ rule: "run" }]
+        constraint: { resource: { scopeRef: "tenant-a" } }
       }
     })
   );

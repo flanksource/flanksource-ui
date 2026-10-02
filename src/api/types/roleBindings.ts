@@ -39,9 +39,10 @@ export type RoleBindingSubjects = {
   Record<RoleBindingResourceSubjectKind, RoleBindingResourceSubject[]>
 >;
 
-// Narrows one allow rule of the Role for the binding's subjects
+// Narrows every allow rule of the Role for the binding's subjects, one side at a time:
+// an operation's resource (or target) must also be in the constraint's Scope.
+// At least one of resource and target is set. Deny rules are never narrowed.
 export type RoleBindingConstraint = {
-  rule: string;
   resource?: ScopeReference;
   target?: ScopeReference;
 };
@@ -51,7 +52,8 @@ export type RoleBindingSpec = {
   description?: string;
   role: string;
   subjects: RoleBindingSubjects;
-  constraints?: RoleBindingConstraint[];
+  // Without a constraint, the binding grants the Role's rules as written
+  constraint?: RoleBindingConstraint;
 };
 
 // Database model (from PostgREST)
@@ -59,7 +61,7 @@ export type RoleBindingDB = RbacStoredObject & {
   description?: string;
   role: string;
   subjects: RoleBindingSubjects;
-  constraints?: RoleBindingConstraint[] | null;
+  constraint?: RoleBindingConstraint | null;
   created_by?: string;
   created_at: string;
   updated_at: string;

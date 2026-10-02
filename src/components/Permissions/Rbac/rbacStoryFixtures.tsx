@@ -51,7 +51,12 @@ export const scopes: ScopeDisplay[] = [
     id: "s4",
     name: "tenant-a",
     namespace: "default",
-    targets: [{ config: { tagSelector: "tenant=a" } }],
+    description: "Tenant A's configs, and the playbooks they may run",
+    // One scope per tenant serves both sides of a binding's constraint
+    targets: [
+      { config: { tagSelector: "tenant=a" } },
+      { playbook: { name: "*" } }
+    ],
     source: "UI",
     ...timestamps
   },
@@ -153,10 +158,10 @@ export const roleBindings: RoleBindingDisplay[] = [
       oidc: [{ provider: "oipa", match: "claims.tenant == 'a'" }],
       playbooks: [{ namespace: "default", name: "cleanup-pods" }]
     },
-    constraints: [
-      { rule: "read-staging", resource: { scopeRef: "tenant-a" } },
-      { rule: "run-playbooks", target: { scopeRef: "tenant-a" } }
-    ],
+    constraint: {
+      resource: { scopeRef: "tenant-a" },
+      target: { scopeRef: "tenant-a" }
+    },
     created_by: admin,
     ...timestamps
   },

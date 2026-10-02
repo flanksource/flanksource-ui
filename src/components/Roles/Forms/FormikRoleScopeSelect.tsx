@@ -111,7 +111,7 @@ export default function FormikRoleScopeSelect({
       {field.value && !selected && !isLoading && (
         <p className="text-xs text-yellow-700">
           Scope {field.value} doesn&apos;t exist
-          {namespace ? ` in ${namespace}` : ""}; the role won&apos;t be in
+          {namespace ? ` in ${namespace}` : ""}; what uses it won&apos;t be in
           effect until it does.
         </p>
       )}

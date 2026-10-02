@@ -77,15 +77,19 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     )
   },
   {
-    header: "Constraints",
-    id: "constraints",
-    size: 60,
+    header: "Constraint",
+    id: "constraint",
+    size: 80,
     Cell: ({ row }) => {
-      const count = row.original.constraints?.length ?? 0;
+      const { resource, target } = row.original.constraint ?? {};
+      if (!resource && !target) {
+        return <span className="text-sm text-gray-500">None</span>;
+      }
       return (
-        <span className="text-sm text-gray-600">
-          {count > 0 ? plural(count, "constraint") : "None"}
-        </span>
+        <div className="flex flex-col text-xs text-gray-700">
+          {resource && <span>resource: {resource.scopeRef}</span>}
+          {target && <span>target: {target.scopeRef}</span>}
+        </div>
       );
     }
   },

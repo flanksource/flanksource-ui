@@ -41,7 +41,7 @@ import {
   validateRoleBindingForm
 } from "../roleBindingFormValues";
 import FormikBindingRoleSelect from "./FormikBindingRoleSelect";
-import RoleBindingConstraintsForm from "./RoleBindingConstraintsForm";
+import RoleBindingConstraintForm from "./RoleBindingConstraintForm";
 import RoleBindingSubjectsForm from "./RoleBindingSubjectsForm";
 
 type RoleBindingFormProps = {
@@ -145,8 +145,6 @@ export default function RoleBindingForm({
                 <FormikBindingRoleSelect
                   namespace={data?.namespace ?? undefined}
                   onRoleChange={(picked) => {
-                    // Constraints name rules of the previous role
-                    setFieldValue("constraints", []);
                     if (!data) {
                       setFieldValue("namespace", picked?.namespace);
                     }
@@ -183,7 +181,7 @@ export default function RoleBindingForm({
                 }
               >
                 <RoleBindingSubjectsForm />
-                <RoleBindingConstraintsForm
+                <RoleBindingConstraintForm
                   rules={role?.rules}
                   namespace={namespace}
                 />
@@ -210,10 +208,7 @@ export default function RoleBindingForm({
                           description: data.description || undefined,
                           role: data.role,
                           subjects: data.subjects,
-                          constraints:
-                            data.constraints && data.constraints.length > 0
-                              ? data.constraints
-                              : undefined
+                          constraint: data.constraint ?? undefined
                         })}
                       />
                     </TabsContent>

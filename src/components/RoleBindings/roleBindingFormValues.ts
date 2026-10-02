@@ -8,10 +8,9 @@ import {
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
 
-// spec.constraints[]: narrows one allow rule of the Role
+// spec.constraint: Scopes, in the binding's namespace, that every allow rule's
+// resource and target must also be in. Empty means that side isn't narrowed.
 export type ConstraintFormValues = {
-  rule: string;
-  // Scopes, in the binding's namespace, the rule's resource and target must also belong to
   resource: string;
   target: string;
 };
@@ -35,8 +34,8 @@ export type RoleBindingFormValues = {
     RoleBindingResourceSubjectKind,
     ResourceSubjectFormValues[]
   >;
-  // Without constraints the binding grants every rule of the Role; with them, only the allow rules they name
-  constraints: ConstraintFormValues[];
+  // With neither side set, there's no constraint and the binding grants the Role's rules as written
+  constraint: ConstraintFormValues;
 };
 
 const dnsSubdomain =
@@ -54,7 +53,6 @@ export function roleBindingToFormValues(
   binding?: RoleBindingDisplay
 ): RoleBindingFormValues {
   const subjects = binding?.subjects ?? {};
-  const constraints = binding?.constraints ?? [];
   const resourceSubjects = emptyResourceSubjects();
   roleBindingResourceSubjectKinds.forEach((kind) => {
     resourceSubjects[kind] = (subjects[kind] ?? []).map((subject) => ({
@@ -73,11 +71,10 @@ export function roleBindingToFormValues(
     roles: subjects.roles ?? [],
     oidc: (subjects.oidc ?? []).map((subject) => ({ ...subject })),
     resourceSubjects,
-    constraints: constraints.map((constraint) => ({
-      rule: constraint.rule,
-      resource: constraint.resource?.scopeRef ?? "",
-      target: constraint.target?.scopeRef ?? ""
-    }))
+    constraint: {
+      resource: binding?.constraint?.resource?.scopeRef ?? "",
+      target: binding?.constraint?.target?.scopeRef ?? ""
+    }
   };
 }
 
@@ -121,33 +118,32 @@ export function formValuesToSubjects(
   );
 }
 
-export function formValuesToConstraints(
+export function formValuesToConstraint(
   values: RoleBindingFormValues
-): RoleBindingConstraint[] | undefined {
-  if (values.constraints.length === 0) {
+): RoleBindingConstraint | undefined {
+  const { resource, target } = values.constraint;
+  // The API rejects a constraint that sets neither side; leaving both empty means no constraint
+  if (!resource && !target) {
     return undefined;
   }
 
-  return values.constraints.map((constraint) => ({
-    rule: constraint.rule,
-    ...(constraint.resource
-      ? { resource: { scopeRef: constraint.resource } }
-      : {}),
-    ...(constraint.target ? { target: { scopeRef: constraint.target } } : {})
-  }));
+  return {
+    ...(resource ? { resource: { scopeRef: resource } } : {}),
+    ...(target ? { target: { scopeRef: target } } : {})
+  };
 }
 
 export function formValuesToSpec(
   values: RoleBindingFormValues
 ): RoleBindingSpec {
-  const constraints = formValuesToConstraints(values);
+  const constraint = formValuesToConstraint(values);
   return {
     ...(values.description.trim()
       ? { description: values.description.trim() }
       : {}),
     role: values.role,
     subjects: formValuesToSubjects(values),
-    ...(constraints ? { constraints } : {})
+    ...(constraint ? { constraint } : {})
   };
 }
 
@@ -163,7 +159,6 @@ export type RoleBindingFormErrors = {
       ({ namespace?: string; name?: string } | undefined)[]
     >
   >;
-  constraints?: ({ rule?: string } | undefined)[];
 };
 
 // Checks what the API rejects on its own, apart from compiling the CEL in oidc.match.
@@ -231,24 +226,6 @@ export function validateRoleBindingForm(
       };
     }
   });
-
-  // The API rejects a constraint without a rule, and a rule constrained twice
-  const constraintErrors = values.constraints.map((constraint, index) => {
-    if (!constraint.rule) {
-      return { rule: "Rule is required" };
-    }
-    if (
-      values.constraints.findIndex(
-        (other) => other.rule === constraint.rule
-      ) !== index
-    ) {
-      return { rule: `${constraint.rule} is already constrained` };
-    }
-    return undefined;
-  });
-  if (constraintErrors.some(Boolean)) {
-    errors.constraints = constraintErrors;
-  }
 
   return errors;
 }

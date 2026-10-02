@@ -27,22 +27,18 @@ describe("formValuesToSpec", () => {
     });
   });
 
-  it("sends constraints with only the scopes set", () => {
-    const spec = formValuesToSpec(
-      makeValues({
-        constraints: [
-          { rule: "read", resource: "tenant-a", target: "" },
-          { rule: "run", resource: "", target: "tenant-a" },
-          { rule: "cancel", resource: "", target: "" }
-        ]
-      })
-    );
+  it("sends the constraint with only the sides set", () => {
+    expect(
+      formValuesToSpec(
+        makeValues({ constraint: { resource: "", target: "tenant-a" } })
+      ).constraint
+    ).toEqual({ target: { scopeRef: "tenant-a" } });
+  });
 
-    expect(spec.constraints).toEqual([
-      { rule: "read", resource: { scopeRef: "tenant-a" } },
-      { rule: "run", target: { scopeRef: "tenant-a" } },
-      { rule: "cancel" }
-    ]);
+  it("sends no constraint when neither side is set, which the API would reject", () => {
+    expect(
+      formValuesToSpec(makeValues({ constraint: { resource: "", target: "" } }))
+    ).not.toHaveProperty("constraint");
   });
 
   it("round-trips a stored binding", () => {
@@ -58,16 +54,18 @@ describe("formValuesToSpec", () => {
         playbooks: [{ namespace: "default", name: "cleanup" }],
         scrapers: [{ name: "*" }]
       },
-      constraints: [{ rule: "read", resource: { scopeRef: "tenant-a" } }]
+      constraint: {
+        resource: { scopeRef: "tenant-a" },
+        target: { scopeRef: "tenant-a" }
+      }
     } as RoleBindingDisplay;
 
     const values = roleBindingToFormValues(binding);
-    expect(values.constraints).toHaveLength(1);
     expect(formValuesToSpec(values)).toEqual({
       description: "Tenant A",
       role: "operator",
       subjects: binding.subjects,
-      constraints: binding.constraints
+      constraint: binding.constraint
     });
   });
 });
@@ -97,23 +95,6 @@ describe("validateRoleBindingForm", () => {
       { namespace: expect.any(String) },
       { name: expect.any(String) },
       undefined
-    ]);
-  });
-
-  it("rejects a constraint without a rule, and a rule constrained twice", () => {
-    const errors = validateRoleBindingForm(
-      makeValues({
-        constraints: [
-          { rule: "read", resource: "", target: "" },
-          { rule: "", resource: "", target: "" },
-          { rule: "read", resource: "a", target: "" }
-        ]
-      })
-    );
-    expect(errors.constraints).toEqual([
-      undefined,
-      { rule: "Rule is required" },
-      { rule: "read is already constrained" }
     ]);
   });
 });
