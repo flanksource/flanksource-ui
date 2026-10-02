@@ -10,6 +10,12 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useQuery } from "@tanstack/react-query";
 import { FieldArray, useFormikContext } from "formik";
 import { useMemo, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@flanksource-ui/components/ui/dropdown-menu";
 import { FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import {
   RoleBindingFormErrors,
@@ -265,7 +271,8 @@ function SubjectField({ kind }: { kind: SubjectKind }) {
   }
 }
 
-// Lists the kinds of subject not shown yet. It isn't portalled, so it works inside the modal.
+// Lists the kinds of subject not shown yet. The menu is portalled to the body, so the
+// modal's scrolling body doesn't clip it.
 function AddSubjectMenu({
   kinds,
   onAdd
@@ -273,52 +280,31 @@ function AddSubjectMenu({
   kinds: typeof subjectKinds;
   onAdd: (kind: SubjectKind) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-
   if (kinds.length === 0) {
     return null;
   }
 
   return (
-    <div className="relative">
-      <Button
-        text="Add subject"
-        icon={<FaPlus />}
-        className="btn-white"
-        onClick={() => setIsOpen(!isOpen)}
-      />
-      {isOpen && (
-        <>
-          {/* Closes the menu on a click anywhere else */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-          <div
-            role="menu"
-            className="absolute left-0 z-20 mt-1 w-80 rounded-md border border-gray-200 bg-white py-1 shadow-lg"
+    // Not modal: a modal menu would lock the dialog it opens from
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <div>
+          <Button text="Add subject" icon={<FaPlus />} className="btn-white" />
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-48 bg-white">
+        {/* Labels only, to keep the menu short; each section shows its description */}
+        {kinds.map(({ kind, label }) => (
+          <DropdownMenuItem
+            key={kind}
+            className="cursor-pointer text-sm text-gray-700"
+            onSelect={() => onAdd(kind)}
           >
-            {kinds.map(({ kind, label, hint }) => (
-              <button
-                key={kind}
-                type="button"
-                role="menuitem"
-                className="flex w-full flex-col px-3 py-1.5 text-left hover:bg-gray-100"
-                onClick={() => {
-                  setIsOpen(false);
-                  onAdd(kind);
-                }}
-              >
-                <span className="text-sm font-medium text-gray-700">
-                  {label}
-                </span>
-                <span className="text-xs text-gray-500">{hint}</span>
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

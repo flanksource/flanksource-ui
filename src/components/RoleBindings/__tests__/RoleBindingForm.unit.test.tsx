@@ -97,8 +97,9 @@ it("creates a binding with the role's namespace and its constraints", async () =
 
   // Only subjects that are added are shown
   expect(screen.queryByLabelText("Teams")).not.toBeInTheDocument();
-  fireEvent.click(screen.getByText("Add subject"));
-  fireEvent.click(screen.getByRole("menuitem", { name: /^Teams/ }));
+  // The menu opens on pointer down or Enter, which jsdom only supports by key
+  fireEvent.keyDown(screen.getByText("Add subject"), { key: "Enter" });
+  fireEvent.click(await screen.findByRole("menuitem", { name: "Teams" }));
   pickFirstOption(screen.getByLabelText("Teams"));
 
   fireEvent.click(screen.getByText("Add constraint"));
