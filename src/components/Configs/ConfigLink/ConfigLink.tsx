@@ -33,7 +33,8 @@ export default function ConfigLink({
   className = "text-zinc-600 text-sm whitespace-nowrap overflow-hidden overflow-ellipsis",
   showLabel = false,
   showPrimaryIcon = true,
-  showSecondaryIcon = true
+  showSecondaryIcon = true,
+  tooltipContent
 }: ConfigLinkProps) {
   const { data: configFromRequest } = useQuery({
     queryKey: ["config", configId, config],
@@ -65,6 +66,7 @@ export default function ConfigLink({
           showLabel={showLabel}
           showPrimaryIcon={showPrimaryIcon}
           showSecondaryIcon={showSecondaryIcon}
+          tooltipContent={tooltipContent}
         >
           <span className="flex-1 overflow-hidden text-ellipsis">
             {data.name}{" "}
