@@ -2,7 +2,10 @@ import { createContext, useContext } from "react";
 import { User } from "../api/types/users";
 import { Authorizer as casbinAuthorizer } from "casbin.js";
 import { permDefs, tables } from "./UserAccessContext/permissions";
-import { WhoamiResponse } from "@flanksource-ui/api/services/users";
+import {
+  AccessSummary,
+  WhoamiResponse
+} from "@flanksource-ui/api/services/users";
 export type ActionType = "write" | "read";
 
 export const Roles = {
@@ -85,6 +88,8 @@ export function createAuthorizer(ctx: WhoamiResponse["payload"]): Authorizer {
     );
   });
 
+  applyAccessSummary(builtPerms, ctx.access);
+
   authorizer.setPermission(builtPerms);
   return {
     hasResourceAccess: (resourceName, action) => {
@@ -94,6 +99,47 @@ export function createAuthorizer(ctx: WhoamiResponse["payload"]): Authorizer {
       return authorizer.canAny(action, resourceNames);
     }
   };
+}
+
+// accessSummaryTables maps the resource types of the access summary to the tables of their pages.
+const accessSummaryTables: Record<string, string> = {
+  config: tables.catalog,
+  component: tables.topologies,
+  canary: tables.canaries,
+  playbook: tables.playbooks,
+  connection: tables.connections
+};
+
+// applyAccessSummary decides access to the pages of the summary's resource types from the summary alone.
+// A type is readable unless its read is none, and writable unless create, update and delete are all none.
+function applyAccessSummary(
+  perms: Record<ActionType, string[]>,
+  access?: AccessSummary
+) {
+  if (!access) {
+    return;
+  }
+
+  Object.entries(accessSummaryTables).forEach(([resourceType, table]) => {
+    const actions = access[resourceType];
+    if (!actions) {
+      return;
+    }
+
+    const allowed: Record<ActionType, boolean> = {
+      read: actions.read !== "none",
+      write: [actions.create, actions.update, actions.delete].some(
+        (a) => a !== "none"
+      )
+    };
+
+    (Object.keys(allowed) as ActionType[]).forEach((action) => {
+      perms[action] = perms[action].filter((object) => object !== table);
+      if (allowed[action]) {
+        perms[action].push(table);
+      }
+    });
+  });
 }
 
 export type Authorizer = {

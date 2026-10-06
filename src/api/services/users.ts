@@ -208,8 +208,16 @@ export type WhoamiResponse = {
     roles: string[];
     permissions: Permission[];
     user: User;
+    access?: AccessSummary;
   };
 };
+
+export type Access = "all" | "some" | "none";
+
+export type AccessSummary = Record<
+  string,
+  Record<"read" | "create" | "update" | "delete", Access>
+>;
 
 export async function whoami() {
   const res = await Auth.get<WhoamiResponse>(`/whoami`);
