@@ -3,7 +3,6 @@ import SelectDropdown from "@flanksource-ui/ui/Dropdowns/SelectDropdown";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikViewSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikViewSelectorDropdown";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
-import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
@@ -32,8 +31,8 @@ export default function ScopeTargetsForm({
   const agentOptions = useMemo(
     () =>
       (agents || []).map((agent: any) => ({
-        label: agent.name || agent.id,
-        value: agent.id
+        label: agent.name,
+        value: agent.name
       })),
     [agents]
   );
@@ -53,7 +52,6 @@ export default function ScopeTargetsForm({
                       name: "",
                       agent: "",
                       tagSelector: "",
-                      tags: {},
                       wildcard: false
                     }
                   })
@@ -150,6 +148,20 @@ function TargetBlock({
   ) || "config") as keyof ScopeTargetForm;
   const resourceType = scopeTargetLabels[resourceKey];
   const isWholeType = wholeTypeScopeTargets.includes(resourceKey);
+
+  // Keep the selector lossless: conflicting equalities select nothing, not the last value.
+  const tagValues = new Map<string, string>();
+  const hasConflictingTags = (
+    values.targets?.[index]?.[resourceKey]?.tagSelector || ""
+  )
+    .split(",")
+    .some((pair: string) => {
+      const [key, value] = pair.split("=").map((part) => part.trim());
+      if (value === undefined) return false;
+      const conflicting = tagValues.has(key) && tagValues.get(key) !== value;
+      tagValues.set(key, value);
+      return conflicting;
+    });
 
   // Get wildcard value from formik
   const isWildcard = values.targets?.[index]?.[resourceKey]?.wildcard || false;
@@ -350,11 +362,20 @@ function TargetBlock({
               disabled || isWildcard ? "pointer-events-none opacity-50" : ""
             }
           >
-            <FormikKeyValueMapField
-              name={`targets.${index}.${resourceKey}.tags`}
+            <FormikTextInput
+              name={`targets.${index}.${resourceKey}.tagSelector`}
               label="Tags"
-              hint="Resources must match ALL these tags"
+              hint="Comma-separated key=value pairs. Resources must match ALL these tags."
+              placeholder="env=prod,team=platform"
+              disabled={disabled || isWildcard}
             />
+            {hasConflictingTags && !isWildcard && (
+              <p role="status" className="mt-2 text-sm text-orange-700">
+                These tags require different values for the same key, so this
+                target matches nothing. Use separate targets to match either
+                value.
+              </p>
+            )}
           </div>
         )}
       </div>

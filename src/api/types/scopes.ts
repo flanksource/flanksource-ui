@@ -46,7 +46,6 @@ export const wholeTypeScopeTargets: (keyof ScopeTarget)[] = [
 
 // Form-specific extensions for UI (includes additional fields for form editing)
 export type ScopeResourceSelectorForm = ScopeResourceSelector & {
-  tags?: Record<string, string>; // Object form of tagSelector for easier editing
   wildcard?: boolean; // Indicates "match all" mode
 };
 

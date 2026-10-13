@@ -1,17 +1,12 @@
 // ABOUTME: React hook that syncs impersonated scope state from sessionStorage.
 // ABOUTME: Listens for custom events so all consumers stay in sync.
 
-import { ScopeDB, ScopeTargetForm } from "@flanksource-ui/api/types/scopes";
 import { useCallback, useSyncExternalStore } from "react";
 import {
   clearImpersonatedScopes,
   getImpersonatedScopeIds,
-  getImpersonatedTargets,
-  getImpersonationMode,
-  ImpersonationMode,
   SCOPE_IMPERSONATION_CHANGE_EVENT,
-  setImpersonatedScopes,
-  setImpersonatedTargets
+  setImpersonatedScopes
 } from "./scopeImpersonationStore";
 
 function subscribe(callback: () => void) {
@@ -21,30 +16,25 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot(): string {
-  return sessionStorage.getItem("flanksource-impersonated-scope-payload") ?? "";
+  return sessionStorage.getItem("flanksource-impersonated-scope-ids") ?? "";
 }
 
 function getServerSnapshot(): string {
   return "";
 }
 
+/** Keeps the scope picker in sync with the named request limits stored for this session. */
 export function useImpersonatedScopes() {
-  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const active = raw !== "";
   const scopeIds = getImpersonatedScopeIds();
-  const mode: ImpersonationMode = getImpersonationMode();
-  const targets: ScopeTargetForm[] = getImpersonatedTargets();
+  const active = scopeIds.length > 0;
 
   const setScopes = useCallback(
-    (scopes: ScopeDB[]) => setImpersonatedScopes(scopes),
-    []
-  );
-  const setTargets = useCallback(
-    (t: ScopeTargetForm[]) => setImpersonatedTargets(t),
+    (ids: string[]) => setImpersonatedScopes(ids),
     []
   );
   const clear = useCallback(() => clearImpersonatedScopes(), []);
 
-  return { scopeIds, targets, mode, active, setScopes, setTargets, clear };
+  return { scopeIds, active, setScopes, clear };
 }

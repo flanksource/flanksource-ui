@@ -1,4 +1,4 @@
-import { getImpersonatedPayload } from "@flanksource-ui/components/Scopes/Impersonation/scopeImpersonationStore";
+import { getImpersonatedScopeIds } from "@flanksource-ui/components/Scopes/Impersonation/scopeImpersonationStore";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
 import axios, { AxiosError } from "axios";
@@ -234,9 +234,9 @@ for (const client of [
   NotificationAPI
 ]) {
   client.interceptors.request.use((config) => {
-    const payload = getImpersonatedPayload();
-    if (payload) {
-      config.headers["X-Flanksource-Scope"] = JSON.stringify(payload);
+    const scopeIds = getImpersonatedScopeIds();
+    if (scopeIds.length > 0) {
+      config.headers["X-Flanksource-Scope"] = JSON.stringify(scopeIds);
     }
     return config;
   });
