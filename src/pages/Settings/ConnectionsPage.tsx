@@ -1,20 +1,19 @@
 import {
-  createResource,
-  deleteResource,
-  getAll,
-  updateResource
-} from "@flanksource-ui/api/schemaResources";
+  createConnection as createConnectionRequest,
+  deleteConnection as deleteConnectionRequest,
+  getConnection,
+  getConnections,
+  updateConnection as updateConnectionRequest
+} from "@flanksource-ui/api/services/connections";
 import ConnectionFormModal, {
   Connection
 } from "@flanksource-ui/components/Connections/ConnectionFormModal";
 import { ConnectionList } from "@flanksource-ui/components/Connections/ConnectionsList";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
-import { SchemaApi } from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
 import {
   toastError,
   toastSuccess
 } from "@flanksource-ui/components/Toast/toast";
-import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   BreadcrumbNav,
@@ -24,18 +23,11 @@ import useReactTableSortState from "@flanksource-ui/ui/DataTable/Hooks/useReactT
 import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
 
-const connectionsSchemaConnection: SchemaApi = {
-  table: "connections",
-  api: "canary-checker",
-  name: "Connections"
-};
-
 export function ConnectionsPage() {
-  const user = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const connectionId = searchParams.get("id") ?? undefined;
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -47,19 +39,19 @@ export function ConnectionsPage() {
     refetch
   } = useQuery({
     queryKey: ["connections", "all", sortState],
-    queryFn: async () => {
-      const response = await getAll(connectionsSchemaConnection, sortState);
-      return (response.data ?? []) as unknown as Connection[];
-    }
+    queryFn: () => getConnections(sortState)
   });
 
-  const selectedConnection = useMemo(() => {
-    if (!connectionId) {
-      return undefined;
+  // The list is read from connection_details, which has no URL; the form needs the whole connection, masked.
+  const { data: selectedConnection } = useQuery({
+    queryKey: ["connections", "detail", connectionId],
+    queryFn: () => getConnection(connectionId!),
+    enabled: !!connectionId,
+    cacheTime: 0,
+    onError: (ex) => {
+      toastError(ex as Error);
     }
-
-    return connections?.find((connection) => connection.id === connectionId);
-  }, [connectionId, connections]);
+  });
 
   const isOpen = isCreateModalOpen || !!selectedConnection;
 
@@ -101,17 +93,18 @@ export function ConnectionsPage() {
       return createConnection(data);
     }
 
-    return updateConnection({ ...data, id: selectedConnection.id });
+    // PUT replaces the connection, so fields the form doesn't submit, e.g. some types' namespace, are kept from the loaded one
+    return updateConnection({
+      ...selectedConnection,
+      ...data,
+      id: selectedConnection.id
+    });
   }
 
   const { isLoading: isCreatingConnection, mutate: createConnection } =
     useMutation({
       mutationFn: async (data: Connection) => {
-        const response = await createResource(connectionsSchemaConnection, {
-          ...data,
-          created_by: user.user?.id
-        });
-        return response?.data;
+        return createConnectionRequest(data);
       },
       onSuccess: () => {
         refetch();
@@ -126,11 +119,7 @@ export function ConnectionsPage() {
   const { isLoading: isUpdatingConnection, mutate: updateConnection } =
     useMutation({
       mutationFn: async (data: Connection) => {
-        const response = await updateResource(connectionsSchemaConnection, {
-          ...data,
-          created_by: user.user?.id
-        });
-        return response?.data;
+        return updateConnectionRequest(data.id!, data);
       },
       onSuccess: () => {
         refetch();
@@ -144,11 +133,7 @@ export function ConnectionsPage() {
 
   const { mutate: deleteConnection, isLoading: isDeleting } = useMutation({
     mutationFn: async (data: Connection) => {
-      const response = await deleteResource(
-        connectionsSchemaConnection,
-        data.id!
-      );
-      return response?.data;
+      return deleteConnectionRequest(data.id!);
     },
     onSuccess: () => {
       refetch();
