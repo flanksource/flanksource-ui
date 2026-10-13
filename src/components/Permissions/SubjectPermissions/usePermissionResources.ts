@@ -8,9 +8,8 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
 import { getAllViews } from "@flanksource-ui/api/services/views";
-import { getAll } from "@flanksource-ui/api/schemaResources";
+import { getConnectionNames } from "@flanksource-ui/api/services/connections";
 import { Connection } from "@flanksource-ui/components/Connections/ConnectionFormModal";
-import { SchemaApi } from "@flanksource-ui/components/SchemaResourcePage/resourceTypes";
 import {
   PermissionResource,
   RESOURCE_KIND_CONFIG,
@@ -19,12 +18,6 @@ import {
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-
-const connectionsSchema: SchemaApi = {
-  table: "connections",
-  api: "canary-checker",
-  name: "Connections"
-};
 
 function getPluginOperationName(operation: PluginOperationDefinition | string) {
   if (typeof operation === "string") {
@@ -68,10 +61,7 @@ export default function usePermissionResources() {
 
   const { data: connections = [], isLoading: isLoadingConnections } = useQuery({
     queryKey: ["permissions-subjects", "connections"],
-    queryFn: async () => {
-      const response = await getAll(connectionsSchema);
-      return (response.data ?? []) as unknown as Connection[];
-    },
+    queryFn: getConnectionNames,
     staleTime: 60_000
   });
 

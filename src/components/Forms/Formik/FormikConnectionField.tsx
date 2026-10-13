@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAll } from "../../../api/schemaResources";
+import { getConnectionNames } from "../../../api/services/connections";
 import { Icon } from "../../../ui/Icons/Icon";
-import { Connection } from "../../Connections/ConnectionFormModal";
 import { toastError } from "../../Toast/toast";
 import FormikSelectDropdown from "./FormikSelectDropdown";
 
@@ -20,14 +19,7 @@ export default function FormikConnectionField({
 }: Props) {
   const { data: connections = [], isLoading } = useQuery({
     queryKey: ["connections", "canary-checker"],
-    queryFn: async () => {
-      const res = await getAll({
-        table: "connections",
-        api: "canary-checker",
-        name: "Connections"
-      });
-      return (res.data as Connection[]) ?? [];
-    },
+    queryFn: getConnectionNames,
     select: (connections) => {
       return connections.map((connection) => {
         return {
