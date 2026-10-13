@@ -38,8 +38,8 @@ export function SchemaResourcePage({
                 {name}
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
-                resource={resourceInfo.table}
-                action="write"
+                resource={resourceInfo.resourceName}
+                action="create"
                 key="add-button"
               >
                 <AddSchemaResourceModal

@@ -189,7 +189,7 @@ export function ConnectionForm({
               {formValue?.id && (
                 <AuthorizationAccessCheck
                   resource={tables.connections}
-                  action="write"
+                  action="delete"
                 >
                   <CanEditResource
                     id={formValue?.id}
@@ -224,7 +224,7 @@ export function ConnectionForm({
               )}
               <AuthorizationAccessCheck
                 resource={tables.connections}
-                action="write"
+                action={formValue?.id ? "update" : "create"}
               >
                 <CanEditResource
                   id={formValue?.id}

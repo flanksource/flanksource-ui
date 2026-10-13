@@ -1,9 +1,20 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 const defaultStaleTime = 1000 * 60 * 5;
 
 export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status === 403 &&
+        query.queryKey[1] !== "whoami"
+      ) {
+        void queryClient.invalidateQueries({ queryKey: ["user", "whoami"] });
+      }
+    }
+  }),
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: true,

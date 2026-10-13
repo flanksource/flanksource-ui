@@ -4,11 +4,11 @@ import {
   BreadcrumbRoot
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
+import { useUser } from "@flanksource-ui/context";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import clsx from "clsx";
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 
@@ -29,43 +29,34 @@ export default function PermissionsTabsLinks({
   loading = false,
   headerAction
 }: PermissionsTabsLinksProps) {
-  const [searchParams] = useSearchParams();
+  const { access } = useUser();
 
   const tabLinks = useMemo(() => {
-    const query = searchParams.toString();
-    const search = query ? `?${query}` : "";
-
     return [
-      {
-        label: "Permissions",
-        path: "/settings/permissions",
-        key: "Permissions",
-        search
-      },
-      {
-        label: "Subjects",
-        path: "/settings/permissions/subjects",
-        key: "Subjects",
-        search
-      },
       {
         // The permission filters in the query don't apply to scopes
         label: "Scopes",
         path: "/settings/permissions/scopes",
-        key: "Scopes"
+        key: "Scopes",
+        type: "scope"
       },
       {
         label: "Roles",
         path: "/settings/permissions/roles",
-        key: "Roles"
+        key: "Roles",
+        type: "role"
       },
       {
         label: "Role Bindings",
         path: "/settings/permissions/role-bindings",
-        key: "Role Bindings"
+        key: "Role Bindings",
+        type: "roleBinding"
       }
-    ];
-  }, [searchParams]);
+    ].filter(
+      ({ type }) =>
+        access?.[type]?.read === "all" || access?.[type]?.read === "some"
+    );
+  }, [access]);
 
   return (
     <>

@@ -27,11 +27,10 @@ export default function RoleBindingsPage() {
         loading={isLoading}
         onRefresh={() => refetch()}
         headerAction={
-          // Role bindings are written through /api/rbac, which requires update on rbac
           <AuthorizationAccessCheck
             key="add-button"
-            resource={tables.rbac}
-            action="write"
+            resource={tables.role_bindings}
+            action="create"
           >
             <AddRoleBindingButton />
           </AuthorizationAccessCheck>

@@ -58,7 +58,7 @@ function PluginUpgradeButton({
   const isRemotePlugin = Boolean(plugin.spec?.address);
 
   return (
-    <AuthorizationAccessCheck resource={tables.rbac} action="write">
+    <AuthorizationAccessCheck resource={tables.plugins} action="write">
       <Button
         className="btn-white"
         size="xs"

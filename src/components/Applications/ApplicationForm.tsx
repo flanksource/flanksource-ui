@@ -115,8 +115,8 @@ export function ApplicationForm({
 
               {formValue?.id && (
                 <AuthorizationAccessCheck
-                  resource={tables.database}
-                  action="write"
+                  resource={tables.applications}
+                  action="delete"
                 >
                   <CanEditResource
                     id={formValue?.id}
@@ -142,8 +142,8 @@ export function ApplicationForm({
               )}
 
               <AuthorizationAccessCheck
-                resource={tables.database}
-                action="write"
+                resource={tables.applications}
+                action={formValue?.id ? "update" : "create"}
               >
                 <CanEditResource
                   id={formValue?.id}

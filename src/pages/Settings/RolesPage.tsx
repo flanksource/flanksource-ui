@@ -19,11 +19,10 @@ export default function RolesPage() {
         loading={isLoading}
         onRefresh={() => refetch()}
         headerAction={
-          // Roles are written through /api/rbac, which requires update on rbac
           <AuthorizationAccessCheck
             key="add-button"
-            resource={tables.rbac}
-            action="write"
+            resource={tables.roles}
+            action="create"
           >
             <AddRoleButton />
           </AuthorizationAccessCheck>

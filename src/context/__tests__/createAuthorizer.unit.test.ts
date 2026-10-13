@@ -47,13 +47,13 @@ describe("createAuthorizer", () => {
       false
     );
     expect(await authorizer.hasResourceAccess(tables.catalog, "read")).toBe(
-      true
+      false
     );
   });
 
-  it("offers write controls when any write is some", async () => {
+  it("offers write controls when a write is all", async () => {
     const authorizer = authorizerFor(["viewer"], {
-      config: { ...none, read: "all", update: "some" }
+      config: { ...none, read: "all", update: "all" }
     });
 
     expect(await authorizer.hasResourceAccess(tables.catalog, "write")).toBe(
@@ -61,8 +61,8 @@ describe("createAuthorizer", () => {
     );
   });
 
-  it("falls back to roles when whoami has no summary", async () => {
-    const authorizer = authorizerFor(["guest"]);
+  it("does not infer access from admin roles without a summary", async () => {
+    const authorizer = authorizerFor(["admin"]);
 
     expect(await authorizer.hasResourceAccess(tables.catalog, "read")).toBe(
       false

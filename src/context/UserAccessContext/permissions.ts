@@ -1,97 +1,34 @@
 export const tables = {
-  database: "database",
-  rbac: "rbac",
   auth: "auth",
   responder: "responder",
   incident: "incident",
   evidences: "evidences",
   comments: "comments",
-  canaries: "canaries",
-  catalog: "catalog",
-  topologies: "topologies",
-  config_scrapers: "config_scrapers",
-  identities: "identities",
-  connections: "connections",
+  canaries: "canary",
+  catalog: "config",
+  topologies: "component",
+  config_scrapers: "scraper",
+  people: "person",
+  connections: "connection",
   kratos: "kratos",
-  agents: "agents",
+  agents: "agent",
   feature_flags: "properties",
   logging_backends: "logging_backends",
   integrations: "integrations",
   plugins: "plugins",
-  notifications: "notifications",
-  playbooks: "playbooks",
+  notifications: "notification",
+  notification_silences: "notificationSilence",
+  playbooks: "playbook",
   playbook_runs: "playbook_runs",
-  permissions: "permissions",
-  scopes: "scopes",
+  roles: "role",
+  role_bindings: "roleBinding",
+  scopes: "scope",
   views: "views",
-  teams: "teams",
-  applications: "applications",
-  artifacts: "artifacts"
-};
-
-const viewerReadObjects = [
-  ...Object.values(tables).filter(
-    (v) =>
-      ![
-        tables.rbac,
-        tables.identities,
-        tables.connections,
-        tables.applications
-      ].includes(v)
-  )
-];
-
-export const permDefs = {
-  admin: {
-    read: [...Object.values(tables)],
-    write: [...Object.values(tables)]
-  },
-  editor: {
-    read: [
-      ...Object.values(tables).filter(
-        (item) =>
-          ![tables.connections, tables.identities, tables.rbac].includes(item)
-      )
-    ],
-    write: [
-      ...Object.values(tables).filter(
-        (item) =>
-          ![tables.connections, tables.identities, tables.rbac].includes(item)
-      )
-    ]
-  },
-  commander: {
-    read: [
-      ...Object.values(tables).filter(
-        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
-      )
-    ],
-    write: [
-      tables.responder,
-      tables.incident,
-      tables.evidences,
-      tables.comments
-    ]
-  },
-  responder: {
-    read: [
-      ...Object.values(tables).filter(
-        (v) => ![tables.rbac, tables.identities, tables.connections].includes(v)
-      )
-    ],
-    write: [
-      tables.responder,
-      tables.incident,
-      tables.evidences,
-      tables.comments
-    ]
-  },
-  viewer: {
-    read: viewerReadObjects,
-    write: []
-  },
-  guest: {
-    read: [],
-    write: []
-  }
+  teams: "team",
+  applications: "application",
+  artifacts: "artifacts",
+  tokens: "tokens",
+  jobs: "job:read",
+  events: "event:read",
+  mcp: "mcp:use"
 };

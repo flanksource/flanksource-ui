@@ -190,16 +190,24 @@ export default function AgentForm({
                   </div>
                 </div>
               </div>
-              <AuthorizationAccessCheck resource={tables.agents} action="write">
-                <div
-                  className={clsx(
-                    "flex items-center bg-gray-100 px-5 py-4",
-                    agent?.id ? "justify-between" : "justify-end"
-                  )}
-                >
-                  {agent?.id && (
+              <div
+                className={clsx(
+                  "flex items-center bg-gray-100 px-5 py-4",
+                  agent?.id ? "justify-between" : "justify-end"
+                )}
+              >
+                {agent?.id && (
+                  <AuthorizationAccessCheck
+                    resource={tables.agents}
+                    action="delete"
+                  >
                     <DeleteAgentButton agentId={agent.id} onDeleted={onClose} />
-                  )}
+                  </AuthorizationAccessCheck>
+                )}
+                <AuthorizationAccessCheck
+                  resource={tables.agents}
+                  action={agent?.id ? "update" : "create"}
+                >
                   <Button
                     icon={
                       isLoading ? (
@@ -212,8 +220,8 @@ export default function AgentForm({
                     }
                     className="btn-primary"
                   />
-                </div>
-              </AuthorizationAccessCheck>
+                </AuthorizationAccessCheck>
+              </div>
             </Form>
           )}
         </Formik>

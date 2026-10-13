@@ -1,12 +1,13 @@
 import { createContext, useContext } from "react";
 import { User } from "../api/types/users";
-import { Authorizer as casbinAuthorizer } from "casbin.js";
-import { permDefs, tables } from "./UserAccessContext/permissions";
+import { tables } from "./UserAccessContext/permissions";
 import {
+  AccessActions,
   AccessSummary,
   WhoamiResponse
 } from "@flanksource-ui/api/services/users";
-export type ActionType = "write" | "read";
+
+export type ActionType = "write" | "read" | "create" | "update" | "delete";
 
 export const Roles = {
   admin: "admin",
@@ -17,129 +18,46 @@ export const Roles = {
   responder: "responder"
 };
 
+/** Page and write-control gates use only the server summary; missing grants deny access. */
 export function createAuthorizer(ctx: WhoamiResponse["payload"]): Authorizer {
-  const authorizer = new casbinAuthorizer("manual");
-  const builtPerms: Record<ActionType, string[]> = {
-    read: [],
-    write: []
-  };
-  const deniedPerms: Record<ActionType, Set<string>> = {
-    read: new Set(),
-    write: new Set()
-  };
-
-  const expandObjects = (object: string) => {
-    return object === "*" ? Object.values(tables) : [object];
-  };
-
-  const expandActions = (action: string): ActionType[] => {
-    const actions = action.split(",").map((item) => item.trim());
-    const expanded = new Set<ActionType>();
-
-    if (actions.includes("*") || actions.includes("read")) {
-      expanded.add("read");
+  const can = (resource: string, action: ActionType): boolean => {
+    resource = tables[resource as keyof typeof tables] ?? resource;
+    if (!ctx.user) {
+      return false;
     }
     if (
-      actions.includes("*") ||
-      actions.includes("write") ||
-      actions.includes("create") ||
-      actions.includes("update") ||
-      actions.includes("delete")
+      action === "read" &&
+      [tables.artifacts, tables.tokens, tables.feature_flags].includes(resource)
     ) {
-      expanded.add("write");
+      return true;
     }
-
-    return [...expanded];
+    if (resource === tables.people && action !== "read") {
+      return ctx.access_actions?.["person:manage"] === true;
+    }
+    if (resource === tables.feature_flags && action !== "read") {
+      return ctx.access_actions?.["property:manage"] === true;
+    }
+    if (resource in (ctx.access_actions ?? {})) {
+      return ctx.access_actions?.[resource] === true;
+    }
+    const access = ctx.access?.[resource];
+    if (action === "read") {
+      return access?.read === "all" || access?.read === "some";
+    }
+    if (action === "write") {
+      return [access?.create, access?.update, access?.delete].some(
+        (answer) => answer === "all"
+      );
+    }
+    return access?.[action] === "all";
   };
 
-  (ctx.roles ?? []).forEach((role) => {
-    const permissions = permDefs[role as keyof typeof permDefs] ?? {};
-    Object.entries(permissions).forEach(([key, value]) => {
-      builtPerms[key as ActionType] = [
-        ...builtPerms[key as ActionType],
-        ...(value as string[])
-      ];
-    });
-  });
-
-  (ctx.permissions ?? []).forEach((permission) => {
-    // Resource selector/ABAC permissions are evaluated by the backend against
-    // concrete resources. UI route guards only use simple global object grants.
-    if (!permission.object || permission.condition) {
-      return;
-    }
-
-    const objects = expandObjects(permission.object);
-    const actions = expandActions(permission.action);
-
-    actions.forEach((action) => {
-      if (permission.deny) {
-        objects.forEach((object) => deniedPerms[action].add(object));
-      } else {
-        builtPerms[action] = [...builtPerms[action], ...objects];
-      }
-    });
-  });
-
-  (Object.keys(builtPerms) as ActionType[]).forEach((action) => {
-    builtPerms[action] = [...new Set(builtPerms[action])].filter(
-      (object) =>
-        !deniedPerms[action].has("*") && !deniedPerms[action].has(object)
-    );
-  });
-
-  applyAccessSummary(builtPerms, ctx.access);
-
-  authorizer.setPermission(builtPerms);
   return {
-    hasResourceAccess: (resourceName, action) => {
-      return authorizer.can(action, resourceName);
-    },
-    hasAnyResourceAccess: (resourceNames, action) => {
-      return authorizer.canAny(action, resourceNames);
-    }
+    hasResourceAccess: (resource, action) =>
+      Promise.resolve(can(resource, action)),
+    hasAnyResourceAccess: (resources, action) =>
+      Promise.resolve(resources.some((resource) => can(resource, action)))
   };
-}
-
-// accessSummaryTables maps the resource types of the access summary to the tables of their pages.
-const accessSummaryTables: Record<string, string> = {
-  config: tables.catalog,
-  component: tables.topologies,
-  canary: tables.canaries,
-  playbook: tables.playbooks,
-  connection: tables.connections
-};
-
-// applyAccessSummary decides access to the pages of the summary's resource types from the summary alone.
-// A type is readable unless its read is none, and writable unless create, update and delete are all none.
-function applyAccessSummary(
-  perms: Record<ActionType, string[]>,
-  access?: AccessSummary
-) {
-  if (!access) {
-    return;
-  }
-
-  Object.entries(accessSummaryTables).forEach(([resourceType, table]) => {
-    const actions = access[resourceType];
-    if (!actions) {
-      return;
-    }
-
-    const allowed: Record<ActionType, boolean> = {
-      read: actions.read !== "none",
-      write: [actions.create, actions.update, actions.delete].some(
-        (a) => a !== "none"
-      )
-    };
-
-    (Object.keys(allowed) as ActionType[]).forEach((action) => {
-      perms[action] = perms[action].filter((object) => object !== table);
-      if (allowed[action]) {
-        perms[action].push(table);
-      }
-    });
-  });
 }
 
 export type Authorizer = {
@@ -167,6 +85,8 @@ interface IAuthContext {
   orgSlug?: string;
   roles: string[];
   permissions: Permission[];
+  access?: AccessSummary;
+  access_actions?: AccessActions;
   isLoading?: boolean;
   authorizer: Authorizer;
 }
@@ -183,24 +103,44 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const useUser = () => useContext(AuthContext);
 
-export const FakeUser = (roles: string[]): IAuthContext => {
-  let user = {
+/** Signed-in story fixture; callers can supply a restricted summary. */
+export const FakeUser = (
+  roles: string[],
+  access: AccessSummary = Object.fromEntries(
+    Object.values(tables).map((type) => [
+      type,
+      { read: "all", create: "all", update: "all", delete: "all" }
+    ])
+  )
+): IAuthContext => {
+  const user = {
     id: "b149b5ee-db1c-4c0c-9711-98d06f1f1ce7",
     email: "admin@local",
     name: "John Doe"
   };
+  const access_actions = {
+    "person:manage": true,
+    "property:manage": true,
+    "mcp:use": true,
+    "event:read": true,
+    "job:read": true
+  };
   return {
-    roles: roles,
-    user: user,
+    roles,
+    user,
     permissions: [],
+    access,
+    access_actions,
     isLoading: false,
     backendUrl: "https://testurl.com",
     authorizer: createAuthorizer({
-      roles: roles,
+      roles,
       database: "",
       hostname: "",
       permissions: [],
-      user: user
+      user,
+      access,
+      access_actions
     })
   };
 };

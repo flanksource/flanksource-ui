@@ -25,7 +25,8 @@ const homepageFallbacks = [
   { resource: tables.incident, path: "/incidents" },
   { resource: tables.catalog, path: "/catalog" },
   { resource: tables.playbooks, path: "/playbooks" },
-  { resource: tables.applications, path: "/applications" }
+  { resource: tables.applications, path: "/applications" },
+  { resource: tables.tokens, path: "/settings/tokens" }
 ];
 
 /**

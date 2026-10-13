@@ -16,6 +16,8 @@ import FormikNotificationGroupByDropdown from "@flanksource-ui/components/Forms/
 import FormikNotificationInhibitionsField from "@flanksource-ui/components/Forms/Formik/FormikNotificationInhibitionsField";
 import { parse as parseYaml } from "yaml";
 import { User } from "@flanksource-ui/api/types/users";
+import { AuthorizationAccessCheck } from "../../Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 
 type NotificationsFormProps = {
   onSubmit: (notification: Partial<NotificationRules>) => void;
@@ -195,11 +197,16 @@ export default function NotificationsRulesForm({
                   )}
                   <div className="flex-1" />
                   {(notification?.source === "UI" || !notification?.source) && (
-                    <Button
-                      type="submit"
-                      text={!!notification ? "Update" : "Save"}
-                      className="btn-primary"
-                    />
+                    <AuthorizationAccessCheck
+                      resource={tables.notifications}
+                      action={notification ? "update" : "create"}
+                    >
+                      <Button
+                        type="submit"
+                        text={!!notification ? "Update" : "Save"}
+                        className="btn-primary"
+                      />
+                    </AuthorizationAccessCheck>
                   )}
                 </div>
               </CanEditResource>

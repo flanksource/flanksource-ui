@@ -5,7 +5,6 @@ import PermissionsView, {
   permissionsActionsList
 } from "@flanksource-ui/components/Permissions/PermissionsView";
 import { ReactSelectDropdown } from "@flanksource-ui/components/ReactSelectDropdown";
-import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { parseTristateKeyState } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -65,7 +64,7 @@ export function PermissionsPage() {
       headerAction={
         <AuthorizationAccessCheck
           key={"add-button"}
-          resource={tables.permissions}
+          resource="legacy-permissions"
           action="write"
         >
           <AddPermissionButton />

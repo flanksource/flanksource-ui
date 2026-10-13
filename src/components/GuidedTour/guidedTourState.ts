@@ -1,7 +1,6 @@
 // ABOUTME: Jotai atoms holding the interactive product tour's run flag, steps and current step.
 // ABOUTME: Shared between the menu trigger, the section picker and the GuidedTour renderer.
 import { useUser } from "@flanksource-ui/context";
-import { hasPlaybookRunPermission } from "@flanksource-ui/utils/playbookPermissions";
 import { atom, useSetAtom } from "jotai";
 import { type Step } from "react-joyride";
 import {
@@ -16,15 +15,11 @@ export const tourMenuOpenAtom = atom(false);
 export const tourStepsAtom = atom<Step[]>([]);
 
 /**
- * Whether the user may run playbooks, gating the playbooks walkthrough.
+ * The walkthrough follows page access; submitting a run is authorized by the server.
  */
 export function useCanRunPlaybooks() {
-  const { permissions, roles } = useUser();
-  return (
-    roles.includes("admin") ||
-    roles.includes("editor") ||
-    hasPlaybookRunPermission(permissions)
-  );
+  const { access } = useUser();
+  return access?.playbook?.read === "all" || access?.playbook?.read === "some";
 }
 
 /**

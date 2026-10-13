@@ -47,10 +47,8 @@ describe("CheckRunNow", () => {
         <UserAccessStateContext.Provider
           value={{
             refresh: jest.fn(),
-            isAdmin: true,
-            isViewer: false,
             hasResourceAccess: jest.fn(),
-            hasAnyResourceAccess: jest.fn(),
+            hasAnyResourceAccess: jest.fn(() => Promise.resolve(true)),
             roles: ["admin"]
           }}
         >
@@ -63,7 +61,7 @@ describe("CheckRunNow", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /Run Now/i })
+      await screen.findByRole("button", { name: /Run Now/i })
     ).toBeInTheDocument();
 
     userEvent.click(screen.getByRole("button", { name: /Run Now/i }));
@@ -89,10 +87,8 @@ describe("CheckRunNow", () => {
         <UserAccessStateContext.Provider
           value={{
             refresh: jest.fn(),
-            isAdmin: true,
-            isViewer: false,
             hasResourceAccess: jest.fn(),
-            hasAnyResourceAccess: jest.fn(),
+            hasAnyResourceAccess: jest.fn(() => Promise.resolve(false)),
             roles: ["guest"]
           }}
         >

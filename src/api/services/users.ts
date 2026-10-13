@@ -214,10 +214,13 @@ export type WhoamiResponse = {
     permissions: Permission[];
     user: User;
     access?: AccessSummary;
+    access_actions?: AccessActions;
   };
 };
 
 export type Access = "all" | "some" | "none";
+
+export type AccessActions = Record<string, boolean>;
 
 export type AccessSummary = Record<
   string,

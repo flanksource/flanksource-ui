@@ -180,7 +180,7 @@ export default function PlaybookSpecsForm({
             {playbook?.id && (
               <AuthorizationAccessCheck
                 resource={tables.playbooks}
-                action="write"
+                action="delete"
               >
                 <CanEditResource
                   id={playbook.id}
@@ -206,7 +206,7 @@ export default function PlaybookSpecsForm({
 
             <AuthorizationAccessCheck
               resource={tables.playbooks}
-              action="write"
+              action={playbook?.id ? "update" : "create"}
             >
               <CanEditResource
                 id={playbook?.id}

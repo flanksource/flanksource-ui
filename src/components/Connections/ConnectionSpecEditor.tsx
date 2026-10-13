@@ -89,7 +89,7 @@ export default function ConnectionSpecEditor({
             {formValue?.id && (
               <AuthorizationAccessCheck
                 resource={tables.connections}
-                action="write"
+                action="delete"
               >
                 <CanEditResource
                   id={formValue?.id}
@@ -122,7 +122,7 @@ export default function ConnectionSpecEditor({
               {formValue?.id && <TestConnection connectionId={formValue.id} />}
               <AuthorizationAccessCheck
                 resource={tables.connections}
-                action="write"
+                action={formValue?.id ? "update" : "create"}
               >
                 <CanEditResource
                   id={formValue?.id}

@@ -179,7 +179,7 @@ function ActionMenu({
         </MenuItems>
       </Menu>
     </div>,
-    tables.identities,
+    tables.people,
     "write"
   );
 }
@@ -204,7 +204,7 @@ export function UserList({
 
   useEffect(() => {
     (async () => {
-      const result = await hasResourceAccess(tables.identities, "write");
+      const result = await hasResourceAccess(tables.people, "write");
       setCanDeleteUser(result);
     })();
   }, [hasResourceAccess, roles]);
