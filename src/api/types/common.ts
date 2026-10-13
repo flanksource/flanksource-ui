@@ -6,6 +6,9 @@ export type PaginationInfo = {
 export type VersionInfo = {
   frontend?: string;
   backend: string;
+  commit?: string;
+  buildDate?: string;
+  chart?: string;
 };
 
 export type CostsData = {

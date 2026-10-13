@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import packageJson from "../../../package.json";
 import { useVersionInfo } from "../../api/query-hooks";
+import { VersionInfo as VersionInfoData } from "../../api/types/common";
 
 // This is static version from package.json and doesn't change after build
 export const frontendVersion = packageJson.version;
@@ -8,7 +9,11 @@ export const frontendVersion = packageJson.version;
 export const VersionInfo = forwardRef<HTMLDivElement>(
   function VersionInfo(_props, ref) {
     const { data, isLoading, isRefetching } = useVersionInfo();
-    const versionInfo = data?.data as any;
+    const versionInfo = data?.data as VersionInfoData | undefined;
+    const commit =
+      versionInfo?.commit && versionInfo.commit !== "none"
+        ? versionInfo.commit.slice(0, 8)
+        : undefined;
 
     if (isLoading || isRefetching) {
       return null;
@@ -24,7 +29,20 @@ export const VersionInfo = forwardRef<HTMLDivElement>(
         </div>
         <div>
           Backend: <b className="text-xs">{versionInfo?.backend || "NA"}</b>
+          {commit && (
+            <span
+              className="ml-1 text-xs text-gray-500"
+              title={versionInfo?.buildDate}
+            >
+              ({commit})
+            </span>
+          )}
         </div>
+        {versionInfo?.chart && (
+          <div>
+            Chart: <b className="text-xs">{versionInfo.chart}</b>
+          </div>
+        )}
       </div>
     );
   }
