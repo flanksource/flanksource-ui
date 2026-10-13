@@ -1,7 +1,8 @@
 // ABOUTME: Tests that the playbook spec form is read-only for playbooks owned
 // outside the UI, and stays fully editable for UI-created playbooks.
 import { PlaybookSpec } from "@flanksource-ui/api/types/playbooks";
-import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
+import { AccessSummary } from "@flanksource-ui/api/services/users";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -46,11 +47,11 @@ const mockPlaybook: PlaybookSpec = {
   updated_at: "2024-01-14T23:18:26.592563+00:00"
 };
 
-function renderForm(playbook?: PlaybookSpec, roles: string[] = [Roles.admin]) {
+function renderForm(playbook?: PlaybookSpec, access?: AccessSummary) {
   return render(
     <MemoryRouter>
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser(roles)}>
+        <AuthContext.Provider value={FakeUser([], access)}>
           <UserAccessStateContextProvider>
             <PlaybookSpecsForm playbook={playbook} onClose={() => {}} />
           </UserAccessStateContextProvider>
@@ -127,7 +128,14 @@ describe("PlaybookSpecsForm", () => {
 
   describe("when the user cannot write playbooks", () => {
     it("renders neither mutation button for an existing playbook", async () => {
-      renderForm(mockPlaybook, [Roles.viewer]);
+      renderForm(mockPlaybook, {
+        playbook: {
+          read: "all",
+          create: "none",
+          update: "none",
+          delete: "none"
+        }
+      });
       expect(await screen.findByLabelText("Title")).toBeInTheDocument();
       await waitFor(() => {
         expect(
@@ -140,7 +148,14 @@ describe("PlaybookSpecsForm", () => {
     });
 
     it("renders no save button when creating a playbook", async () => {
-      renderForm(undefined, [Roles.viewer]);
+      renderForm(undefined, {
+        playbook: {
+          read: "all",
+          create: "none",
+          update: "none",
+          delete: "none"
+        }
+      });
       expect(await screen.findByLabelText("Title")).toBeInTheDocument();
       await waitFor(() => {
         expect(

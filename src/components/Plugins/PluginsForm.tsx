@@ -108,7 +108,7 @@ export default function PluginsForm({
             )}
             {formValue?.id && !isReadOnly && (
               <AuthorizationAccessCheck
-                resource={tables.database}
+                resource={tables.plugins}
                 action="write"
               >
                 <Button
@@ -130,7 +130,7 @@ export default function PluginsForm({
             <div className="flex flex-1 justify-end gap-2">
               {!isReadOnly && (
                 <AuthorizationAccessCheck
-                  resource={tables.database}
+                  resource={tables.plugins}
                   action="write"
                 >
                   <Button

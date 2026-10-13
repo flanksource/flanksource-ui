@@ -107,10 +107,7 @@ export function UsersPage() {
         >
           <div className="flex justify-end">
             <div className="flex flex-row space-x-4">
-              <AuthorizationAccessCheck
-                resource={tables.identities}
-                action="write"
-              >
+              <AuthorizationAccessCheck resource={tables.people} action="write">
                 <button
                   className="btn-primary"
                   onClick={() => {

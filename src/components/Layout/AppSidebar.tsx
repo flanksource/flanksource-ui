@@ -1,4 +1,3 @@
-import { UserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { MissionControlLogo, MissionControl } from "@flanksource/icons/mi";
 import { ChevronRight, ChevronUp } from "lucide-react";
 import React, { useContext } from "react";
@@ -261,7 +260,6 @@ const AppSidebarInner = React.memo(function AppSidebarInner({
   pathname
 }: AppSidebarInnerProps) {
   const { isFeatureDisabled } = useFeatureFlagsContext();
-  const { isViewer } = useContext(UserAccessStateContext);
   const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
 
@@ -326,22 +324,21 @@ const AppSidebarInner = React.memo(function AppSidebarInner({
         <SidebarSeparator />
 
         {/* Settings Section */}
-        {!isViewer &&
-          withAuthorizationAccessCheck(
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SettingsNavGroup
-                    settings={settingsNav}
-                    checkPath={checkPath}
-                    pathname={pathname}
-                  />
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>,
-            settingsNav.submenu.map((item) => item.resourceName),
-            "read"
-          )}
+        {withAuthorizationAccessCheck(
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SettingsNavGroup
+                  settings={settingsNav}
+                  checkPath={checkPath}
+                  pathname={pathname}
+                />
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>,
+          settingsNav.submenu.map((item) => item.resourceName),
+          "read"
+        )}
       </SidebarContent>
     </Sidebar>
   );

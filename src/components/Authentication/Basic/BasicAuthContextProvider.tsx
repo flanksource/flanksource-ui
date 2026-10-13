@@ -63,7 +63,9 @@ export default function BasicAuthContextProvider({ children }: Props) {
         user: payload.user,
         backendUrl: backendURL,
         roles,
-        permissions: payload.permissions
+        permissions: payload.permissions,
+        access: payload.access,
+        access_actions: payload.access_actions
       }}
     >
       {children}

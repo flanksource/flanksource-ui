@@ -42,7 +42,7 @@ export default function DeleteResource({
 
   return (
     <>
-      <AuthorizationAccessCheck resource={table} action="write">
+      <AuthorizationAccessCheck resource={table} action="delete">
         <Button
           text="Delete"
           disabled={isLoading}

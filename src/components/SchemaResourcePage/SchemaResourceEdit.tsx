@@ -1,4 +1,5 @@
 import { SchemaResourceI } from "@flanksource-ui/api/schemaResources";
+import { useUser } from "@flanksource-ui/context";
 import AutoCompleteDropdown from "@flanksource-ui/ui/AutoCompleteDropdown/AutoCompleteDropdown";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import clsx from "clsx";
@@ -71,6 +72,8 @@ export function SchemaResourceEdit({
   agent,
   resourceInfo
 }: Props) {
+  const { access_actions } = useUser();
+  const canReadJobs = access_actions?.["job:read"] === true;
   //FIXME
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [disabled, setDisabled] = useState(false);
@@ -99,8 +102,10 @@ export function SchemaResourceEdit({
     if (!resourceType) {
       return [];
     }
-    return resourceType.subNav;
-  }, [resourceName]);
+    return resourceType.subNav.filter(
+      (nav) => nav.value !== "jobHistory" || canReadJobs
+    );
+  }, [resourceName, canReadJobs]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -471,8 +476,8 @@ export function SchemaResourceEdit({
                               />
                             )}
                             <AuthorizationAccessCheck
-                              resource={resourceInfo.table}
-                              action="write"
+                              resource={resourceInfo.resourceName}
+                              action={id ? "update" : "create"}
                             >
                               <Button
                                 type="submit"

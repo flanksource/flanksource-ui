@@ -21,11 +21,10 @@ export default function ScopesPage() {
         loading={isLoading}
         onRefresh={() => refetch()}
         headerAction={
-          // Scopes are written through /api/rbac, which requires update on rbac
           <AuthorizationAccessCheck
             key={"add-button"}
-            resource={tables.rbac}
-            action="write"
+            resource={tables.scopes}
+            action="create"
           >
             <AddScopeButton />
           </AuthorizationAccessCheck>

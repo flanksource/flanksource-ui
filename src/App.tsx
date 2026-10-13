@@ -52,7 +52,6 @@ import { tables } from "./context/UserAccessContext/permissions";
 
 import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
-import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { PermissionsSubjectsPage } from "./pages/Settings/PermissionsSubjectsPage";
 import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
 import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
@@ -368,7 +367,7 @@ const navigation: NavigationItems = [
     href: "/logs",
     icon: LogsIcon,
     featureName: features.logs,
-    resourceName: tables.database
+    resourceName: "logs"
   },
   {
     name: "Playbooks",
@@ -430,7 +429,21 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/permissions",
       icon: RiShieldUserFill,
       featureName: features["settings.permissions"],
-      resourceName: tables.permissions
+      resourceName: tables.roles
+    },
+    {
+      name: "Role Bindings",
+      href: "/settings/permissions/role-bindings",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.role_bindings
+    },
+    {
+      name: "Scopes",
+      href: "/settings/permissions/scopes",
+      icon: RiShieldUserFill,
+      featureName: features["settings.permissions"],
+      resourceName: tables.scopes
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -440,22 +453,22 @@ const settingsNav: SettingsNavigationItems = {
             href: "/settings/users",
             icon: HiUser,
             featureName: features["settings.users"],
-            resourceName: tables.identities
+            resourceName: tables.people
           }
         ]),
-    ...schemaResourceTypes
-      // remove catalog_scraper from settings
-      .filter((resource) => resource.table !== "config_scrapers")
-      .map((x) => ({
-        ...x,
-        href: `/settings/${x.table}`
-      })),
+    ...schemaResourceTypes.map((x) => ({
+      ...x,
+      href:
+        x.table === "config_scrapers"
+          ? "/catalog/scrapers"
+          : `/settings/${x.table}`
+    })),
     {
       name: "Jobs History",
       href: "/settings/jobs",
       icon: FaTasks,
       featureName: features["settings.job_history"],
-      resourceName: tables.database
+      resourceName: tables.jobs
     },
     {
       name: "MCP",
@@ -464,42 +477,42 @@ const settingsNav: SettingsNavigationItems = {
         <Icon name="mcp" className={`${className} [&_path]:!fill-white`} />
       ),
       featureName: features["settings.mcp"],
-      resourceName: tables.database
+      resourceName: tables.mcp
     },
     {
       name: "Feature Flags",
       href: "/settings/feature-flags",
       icon: BsToggles,
       featureName: features["settings.feature_flags"],
-      resourceName: tables.database
+      resourceName: tables.feature_flags
     },
     {
       name: "Log Backends",
       href: "/settings/log-backends",
       icon: LogsIcon,
       featureName: features["logs"],
-      resourceName: tables.database
+      resourceName: tables.logging_backends
     },
     {
       name: "Event Queue",
       href: "/settings/event-queue-status",
       icon: FaTasks,
       featureName: features["settings.event_queue_status"],
-      resourceName: tables.database
+      resourceName: tables.events
     },
     {
       name: "Agents",
       href: "/settings/agents",
       icon: MdOutlineSupportAgent,
       featureName: features.agents,
-      resourceName: tables.database
+      resourceName: tables.agents
     },
     {
       name: "Tokens",
       href: "/settings/tokens",
       icon: VscKey,
       featureName: features.agents,
-      resourceName: tables.database
+      resourceName: tables.tokens
     },
     {
       name: "Notifications",
@@ -509,11 +522,18 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.notifications
     },
     {
+      name: "Notification Silences",
+      href: "/notifications/silences",
+      icon: FaBell,
+      featureName: features["settings.notifications"],
+      resourceName: tables.notification_silences
+    },
+    {
       name: "Integrations",
       href: "/settings/integrations",
       icon: MdOutlineIntegrationInstructions,
       featureName: features["settings.integrations"],
-      resourceName: tables.database
+      resourceName: tables.integrations
     },
     {
       name: "Plugins",
@@ -629,7 +649,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <TopologyPage />,
-            tables.database,
+            tables.topologies,
             "read",
             true
           )}
@@ -770,7 +790,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={withAuthorizationAccessCheck(
             <NotificationsPage />,
-            tables.database,
+            tables.notifications,
             "read",
             true
           )}
@@ -780,7 +800,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="rules"
           element={withAuthorizationAccessCheck(
             <NotificationRulesPage />,
-            tables.database,
+            tables.notifications,
             "read",
             true
           )}
@@ -790,7 +810,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="resource/:resourceId"
           element={withAuthorizationAccessCheck(
             <ResourceNotificationsPage />,
-            tables.database,
+            tables.notifications,
             "read",
             true
           )}
@@ -801,7 +821,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <NotificationsSilencedPage />,
-              tables.database,
+              tables.notification_silences,
               "read",
               true
             )}
@@ -811,8 +831,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="add"
             element={withAuthorizationAccessCheck(
               <NotificationSilencedAddPage />,
-              tables.database,
-              "write",
+              tables.notification_silences,
+              "create",
               true
             )}
           />
@@ -840,18 +860,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
         <Route
           path="permissions"
-          element={withAuthorizationAccessCheck(
-            <PermissionsPage />,
-            tables.permissions,
-            "read"
-          )}
+          element={<Navigate to="/settings/permissions/roles" replace />}
         />
         <Route
           path="permissions/subjects"
           element={withAuthorizationAccessCheck(
             <PermissionsSubjectsPage />,
-            tables.permissions,
-            "read"
+            "subject-access",
+            "read",
+            true
           )}
         />
         <Route
@@ -859,7 +876,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <ScopesPage />,
             tables.scopes,
-            "read"
+            "read",
+            true
           )}
         />
         <Route
@@ -870,31 +888,34 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="permissions/roles"
           element={withAuthorizationAccessCheck(
             <RolesPage />,
-            tables.rbac,
-            "read"
+            tables.roles,
+            "read",
+            true
           )}
         />
         <Route
           path="permissions/role-bindings"
           element={withAuthorizationAccessCheck(
             <RoleBindingsPage />,
-            tables.rbac,
-            "read"
+            tables.role_bindings,
+            "read",
+            true
           )}
         />
         <Route
           path="users"
           element={withAuthorizationAccessCheck(
             <UsersPage />,
-            tables.identities,
-            "read"
+            tables.people,
+            "read",
+            true
           )}
         />
         <Route
           path="jobs"
           element={withAuthorizationAccessCheck(
             <JobsHistorySettingsPage />,
-            tables.database,
+            tables.jobs,
             "read",
             true
           )}
@@ -903,7 +924,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="jobs/:jobName"
           element={withAuthorizationAccessCheck(
             <JobsHistoryDrilldownSettingsPage />,
-            tables.database,
+            tables.jobs,
             "read",
             true
           )}
@@ -913,7 +934,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="feature-flags"
           element={withAuthorizationAccessCheck(
             <FeatureFlagsPage />,
-            tables.database,
+            tables.feature_flags,
             "read",
             true
           )}
@@ -923,7 +944,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="event-queue-status"
           element={withAuthorizationAccessCheck(
             <EventQueueStatusPage />,
-            tables.database,
+            tables.events,
             "read",
             true
           )}
@@ -946,7 +967,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <TokensPage />,
-              tables.database,
+              tables.tokens,
               "read",
               true
             )}
@@ -1005,8 +1026,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="overview"
             element={withAuthorizationAccessCheck(
               <McpOverviewPage />,
-              tables.database,
-              "write",
+              tables.mcp,
+              "read",
               true
             )}
           />
@@ -1014,8 +1035,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="playbooks"
             element={withAuthorizationAccessCheck(
               <McpPlaybooksPage />,
-              tables.database,
-              "write",
+              tables.mcp,
+              "read",
               true
             )}
           />
@@ -1023,8 +1044,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="views"
             element={withAuthorizationAccessCheck(
               <McpViewsPage />,
-              tables.database,
-              "write",
+              tables.mcp,
+              "read",
               true
             )}
           />
@@ -1032,8 +1053,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="subject-access"
             element={withAuthorizationAccessCheck(
               <McpSubjectAccessPage />,
-              tables.database,
-              "write",
+              tables.mcp,
+              "read",
               true
             )}
           />
@@ -1041,8 +1062,8 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="check-access"
             element={withAuthorizationAccessCheck(
               <McpCheckAccessPage />,
-              tables.database,
-              "write",
+              tables.mcp,
+              "read",
               true
             )}
           />
@@ -1060,9 +1081,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                     <SchemaResourcePage
                       resourceInfo={x as SchemaResourceType & { href: string }}
                     />,
-                    tables[
-                      (x as SchemaResourceType).table as keyof typeof tables
-                    ] ?? tables.database,
+                    x.resourceName,
                     "read",
                     true
                   )}
@@ -1072,9 +1091,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
                   path={`:id`}
                   element={withAuthorizationAccessCheck(
                     <SchemaResource resourceInfo={x as SchemaResourceType} />,
-                    tables[
-                      (x as SchemaResourceType).table as keyof typeof tables
-                    ] ?? tables.database,
+                    x.resourceName,
                     "read",
                     true
                   )}
@@ -1089,12 +1106,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           index
           element={
             <ErrorBoundary>
-              {withAuthorizationAccessCheck(
-                <LogsPage />,
-                tables.database,
-                "read",
-                true
-              )}
+              {withAuthorizationAccessCheck(<LogsPage />, "logs", "read", true)}
             </ErrorBoundary>
           }
         />
@@ -1145,7 +1157,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <ConfigScrapersPage />,
-              tables.catalog,
+              tables.config_scrapers,
               "read",
               true
             )}
@@ -1155,7 +1167,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path=":id"
             element={withAuthorizationAccessCheck(
               <ConfigScrapersEditPage />,
-              tables.catalog,
+              tables.config_scrapers,
               "read",
               true
             )}

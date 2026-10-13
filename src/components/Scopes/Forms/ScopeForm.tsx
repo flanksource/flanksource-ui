@@ -377,8 +377,8 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                     <div>
                       {data?.namespace && (
                         <AuthorizationAccessCheck
-                          resource={tables.rbac}
-                          action="write"
+                          resource={tables.scopes}
+                          action="delete"
                         >
                           <DeleteRbacObjectButton
                             resource="scopes"
@@ -390,8 +390,8 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                       )}
                     </div>
                     <AuthorizationAccessCheck
-                      resource={tables.rbac}
-                      action="write"
+                      resource={tables.scopes}
+                      action={data?.id ? "update" : "create"}
                     >
                       <Button
                         type="submit"

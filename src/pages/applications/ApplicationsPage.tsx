@@ -147,8 +147,8 @@ export function ApplicationsPage() {
                 Applications
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
-                resource={tables.database}
-                action="write"
+                resource={tables.applications}
+                action="create"
                 key="add-application"
               >
                 <button

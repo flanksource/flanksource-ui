@@ -15,7 +15,6 @@ import {
   toastSuccess
 } from "@flanksource-ui/components/Toast/toast";
 import { useUser } from "@flanksource-ui/context";
-import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -421,7 +420,7 @@ export default function PermissionForm({
               <div className="flex items-center gap-2">
                 {permissionData?.id && permissionData.source === "UI" && (
                   <AuthorizationAccessCheck
-                    resource={tables.permissions}
+                    resource="legacy-permissions"
                     action="write"
                   >
                     <DeletePermission
@@ -432,7 +431,7 @@ export default function PermissionForm({
                 )}
               </div>
               <AuthorizationAccessCheck
-                resource={tables.permissions}
+                resource="legacy-permissions"
                 action="write"
               >
                 <Button

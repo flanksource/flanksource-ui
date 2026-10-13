@@ -260,8 +260,8 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
                     <div>
                       {data?.namespace && (
                         <AuthorizationAccessCheck
-                          resource={tables.rbac}
-                          action="write"
+                          resource={tables.roles}
+                          action="delete"
                         >
                           <DeleteRbacObjectButton
                             resource="roles"
@@ -273,8 +273,8 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
                       )}
                     </div>
                     <AuthorizationAccessCheck
-                      resource={tables.rbac}
-                      action="write"
+                      resource={tables.roles}
+                      action={data ? "update" : "create"}
                     >
                       <Button
                         type="submit"

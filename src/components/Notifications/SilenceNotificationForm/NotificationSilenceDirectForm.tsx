@@ -15,6 +15,8 @@ import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextAr
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import DeleteButton from "@flanksource-ui/ui/Buttons/DeleteButton";
+import { AuthorizationAccessCheck } from "../../Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { parseDateMath } from "@flanksource-ui/ui/Dates/TimeRangePicker/parseDateMath";
 import ErrorMessage from "@flanksource-ui/ui/FormControls/ErrorMessage";
 import { useMutation } from "@tanstack/react-query";
@@ -280,12 +282,17 @@ export default function NotificationSilenceDirectForm({
               <div className={`${footerClassName}`}>
                 {data?.id && (
                   <>
-                    <DeleteButton
-                      title="Delete Silence"
-                      description="Are you sure you want to delete this silence?"
-                      yesLabel="Delete"
-                      onConfirm={() => deleteSilence(data.id!)}
-                    />
+                    <AuthorizationAccessCheck
+                      resource={tables.notification_silences}
+                      action="delete"
+                    >
+                      <DeleteButton
+                        title="Delete Silence"
+                        description="Are you sure you want to delete this silence?"
+                        yesLabel="Delete"
+                        onConfirm={() => deleteSilence(data.id!)}
+                      />
+                    </AuthorizationAccessCheck>
 
                     <div className="flex-1" />
 
@@ -300,14 +307,21 @@ export default function NotificationSilenceDirectForm({
                   </>
                 )}
 
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={isLoading}
+                <AuthorizationAccessCheck
+                  resource={tables.notification_silences}
+                  action={data?.id ? "update" : "create"}
                 >
-                  {isLoading && <FaCircleNotch className="mr-2 animate-spin" />}
-                  {data?.id ? "Update" : "Submit"}
-                </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <FaCircleNotch className="mr-2 animate-spin" />
+                    )}
+                    {data?.id ? "Update" : "Submit"}
+                  </button>
+                </AuthorizationAccessCheck>
               </div>
             </Form>
           );

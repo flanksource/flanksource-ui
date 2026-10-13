@@ -159,7 +159,7 @@ export function ConnectionsPage() {
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
                 resource={tables.connections}
-                action="write"
+                action="create"
                 key="add-connection"
               >
                 <button type="button" className="" onClick={openCreateModal}>

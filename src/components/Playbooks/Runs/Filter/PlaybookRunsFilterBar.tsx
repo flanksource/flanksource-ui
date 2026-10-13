@@ -88,7 +88,7 @@ export default function PlaybookRunsFilterBar({
           <div className="flex-1" />
           <AuthorizationAccessCheck
             resource={tables.playbooks}
-            action="write"
+            action="update"
             key="edit-playbook"
           >
             <Button
@@ -112,7 +112,7 @@ export default function PlaybookRunsFilterBar({
               </Button>
               <AuthorizationAccessCheck
                 resource={tables.playbooks}
-                action="write"
+                action="read"
               >
                 <SubmitPlaybookRunForm
                   isOpen={isSubmitPlaybookRunFormOpen}

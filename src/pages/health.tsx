@@ -2,7 +2,7 @@ import BulkCheckRunContext from "@flanksource-ui/components/Canary/BulkCheckRun/
 import CanaryStatsCards from "@flanksource-ui/components/Canary/CanaryStatsCard";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { useHealthPageContext } from "@flanksource-ui/context/HealthPageContext";
-import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
+import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useCallback, useMemo, useState } from "react";
@@ -17,8 +17,6 @@ import { schemaResourceTypes } from "../components/SchemaResourcePage/resourceTy
 import { BreadcrumbNav, BreadcrumbRoot } from "../ui/BreadcrumbNav";
 import { Head } from "../ui/Head";
 import { SearchLayout } from "../ui/Layout/SearchLayout";
-
-const bulkRunAllowedRoles = ["admin", "editor", "responder", "commander"];
 
 type Props = {
   url: string;
@@ -49,8 +47,8 @@ export function HealthPage({ url }: Props) {
     new Set()
   );
 
-  const { roles } = useUserAccessStateContext();
-  const canRunChecks = roles.some((role) => bulkRunAllowedRoles.includes(role));
+  const { access } = useUser();
+  const canRunChecks = access?.canary?.create === "all";
 
   const toggleCheck = useCallback((id: string) => {
     setSelectedCheckIds((prev) => {

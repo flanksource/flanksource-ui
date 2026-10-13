@@ -46,8 +46,6 @@ function createQueryClient() {
 function renderWithProviders(accessOverrides?: Partial<UserAccessState>) {
   const queryClient = createQueryClient();
   const accessState: UserAccessState = {
-    isAdmin: false,
-    isViewer: false,
     roles: [],
     hasResourceAccess: jest.fn((resourceName: string) =>
       Promise.resolve(
@@ -146,8 +144,6 @@ describe("HomepageRedirect", () => {
       <QueryClientProvider client={queryClient}>
         <UserAccessStateContext.Provider
           value={{
-            isAdmin: false,
-            isViewer: false,
             roles: [],
             hasResourceAccess: jest.fn((resourceName: string) =>
               Promise.resolve(

@@ -245,7 +245,7 @@ export default function ConfigPluginsPage() {
               ]}
             />
             <AuthorizationAccessCheck
-              resource={tables.database}
+              resource={tables.plugins}
               action="write"
               key="add-plugin"
             >

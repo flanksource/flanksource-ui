@@ -17,6 +17,7 @@ import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { AuthorizationAccessCheck } from "../Permissions/AuthorizationAccessCheck";
 import { BsBell, BsBellSlash, BsBraces } from "react-icons/bs";
+import { useUser } from "@flanksource-ui/context";
 
 type NotificationTabsLinksProps = {
   activeTab: "Notifications" | "Rules" | "Silences";
@@ -39,6 +40,7 @@ export default function NotificationTabsLinks({
 }: NotificationTabsLinksProps) {
   const pageTitle = isAddSilence ? "Add Notification Silence" : activeTab;
   const [searchParams] = useSearchParams();
+  const { access } = useUser();
 
   const [, setRefreshButtonClickedTrigger] = useAtom(
     refreshButtonClickedTrigger
@@ -54,6 +56,7 @@ export default function NotificationTabsLinks({
         path: "/notifications",
         key: "Notifications",
         icon: <BsBell />,
+        type: tables.notifications,
         search
       },
       {
@@ -61,6 +64,7 @@ export default function NotificationTabsLinks({
         path: "/notifications/rules",
         key: "Rules",
         icon: <BsBraces />,
+        type: tables.notifications,
         search
       },
       {
@@ -68,10 +72,14 @@ export default function NotificationTabsLinks({
         path: "/notifications/silences",
         key: "Silences",
         icon: <BsBellSlash />,
+        type: tables.notification_silences,
         search
       }
-    ];
-  }, [searchParams]);
+    ].filter(
+      ({ type }) =>
+        access?.[type]?.read === "all" || access?.[type]?.read === "some"
+    );
+  }, [searchParams, access]);
 
   return (
     <>
@@ -89,7 +97,7 @@ export default function NotificationTabsLinks({
 
                     <AuthorizationAccessCheck
                       resource={tables.notifications}
-                      action="write"
+                      action="create"
                       key="add-notifications"
                     >
                       <button
@@ -117,8 +125,8 @@ export default function NotificationTabsLinks({
                         ]
                       : [
                           <AuthorizationAccessCheck
-                            resource={tables.notifications}
-                            action="write"
+                            resource={tables.notification_silences}
+                            action="create"
                             key="add-notifications"
                           >
                             <button

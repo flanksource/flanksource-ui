@@ -66,7 +66,7 @@ export default function AgentsPage() {
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
                 resource={tables.agents}
-                action="write"
+                action="create"
                 key="add-agent"
               >
                 <AddAgent refresh={refetch} key={"add-agent"} />

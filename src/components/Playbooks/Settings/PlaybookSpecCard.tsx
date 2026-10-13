@@ -9,9 +9,7 @@ import {
   CardHeader,
   CardTitle
 } from "@flanksource-ui/components/ui/card";
-import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { hasPlaybookRunPermission } from "@flanksource-ui/utils/playbookPermissions";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -49,11 +47,6 @@ export default function PlaybookSpecCard({
   // Only playbooks created in the UI can be changed from here, everything else
   // is reconciled from its source.
   const isReadOnly = playbook.source !== "UI";
-
-  const { permissions, roles } = useUser();
-  const isAdminOrEditor = roles.includes("admin") || roles.includes("editor");
-  const canRunPlaybooks =
-    isAdminOrEditor || hasPlaybookRunPermission(permissions);
 
   const navigate = useNavigate();
 
@@ -120,12 +113,6 @@ export default function PlaybookSpecCard({
             variant="default"
             size="sm"
             onClick={() => setIsSubmitPlaybookRunFormOpen(true)}
-            disabled={!canRunPlaybooks}
-            title={
-              !canRunPlaybooks
-                ? "You don't have permission to run playbooks"
-                : undefined
-            }
           >
             Run
           </Button>

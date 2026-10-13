@@ -72,7 +72,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     api: "incident-commander",
     icon: UserGroupIcon,
     featureName: features["settings.teams"],
-    resourceName: tables.database,
+    resourceName: tables.teams,
     subNav: [
       {
         label: "Spec",
@@ -109,7 +109,7 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     api: "incident-commander",
     icon: AlarmIcon,
     featureName: features["incidents"],
-    resourceName: tables.database,
+    resourceName: tables.incident,
     subNav: [
       {
         label: "Spec",

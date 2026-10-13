@@ -81,6 +81,8 @@ export default function ClerkAuthContextProvider({
           user: payload.user ?? (payload as any),
           roles,
           permissions: payload.permissions,
+          access: payload.access,
+          access_actions: payload.access_actions,
           backendUrl: backendURL as string,
           orgSlug: organization?.slug ?? undefined
         }}

@@ -231,8 +231,8 @@ export default function RoleBindingForm({
                     <div>
                       {data?.namespace && (
                         <AuthorizationAccessCheck
-                          resource={tables.rbac}
-                          action="write"
+                          resource={tables.role_bindings}
+                          action="delete"
                         >
                           <DeleteRbacObjectButton
                             resource="role-bindings"
@@ -244,8 +244,8 @@ export default function RoleBindingForm({
                       )}
                     </div>
                     <AuthorizationAccessCheck
-                      resource={tables.rbac}
-                      action="write"
+                      resource={tables.role_bindings}
+                      action={data ? "update" : "create"}
                     >
                       <Button
                         type="submit"

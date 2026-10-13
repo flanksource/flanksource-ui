@@ -1,7 +1,7 @@
 import { ReactElement, useCallback, useEffect, useState } from "react";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import UnauthorizedPage, { UnauthorizedMessage } from "./UnauthorizedPage";
-import { ActionType } from "@flanksource-ui/context";
+import { ActionType, useUser } from "@flanksource-ui/context";
 
 type AuthorizationAccessCheckProps = {
   resource: string | string[];
@@ -19,6 +19,7 @@ export function AuthorizationAccessCheck({
   hideNavbar = false
 }: AuthorizationAccessCheckProps) {
   const [isChecking, setIsChecking] = useState(true);
+  const { access } = useUser();
 
   const { hasAnyResourceAccess, roles, isLoading, isLoaded } =
     useUserAccessStateContext();
@@ -41,7 +42,24 @@ export function AuthorizationAccessCheck({
   }, [action, checkAccess, resource, roles]);
 
   if (hasAccess) {
-    return children;
+    const partial =
+      action === "read" &&
+      (Array.isArray(resource) ? resource : [resource]).some(
+        (type) => access?.[type]?.read === "some"
+      );
+    return (
+      <>
+        {showUnauthorizedMessage && partial && (
+          <div
+            role="status"
+            className="border-b bg-blue-50 px-4 py-2 text-sm text-blue-900"
+          >
+            Showing only resources you have access to.
+          </div>
+        )}
+        {children}
+      </>
+    );
   }
 
   if (!showUnauthorizedMessage || isLoading || !isLoaded || isChecking) {

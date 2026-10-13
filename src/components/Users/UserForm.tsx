@@ -159,7 +159,7 @@ export default function UserForm({
           )}
         </div>
         <div className="sm:col-span-2">
-          <AuthorizationAccessCheck resource={tables.identities} action="write">
+          <AuthorizationAccessCheck resource={tables.people} action="write">
             <button type="submit" className="btn-primary float-right">
               {isSubmitting && (
                 <AiOutlineLoading3Quarters className="mr-2 animate-spin" />
