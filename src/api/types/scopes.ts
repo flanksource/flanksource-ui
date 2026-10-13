@@ -1,17 +1,48 @@
 export type ScopeResourceSelector = {
+  id?: string;
   agent?: string;
   name?: string;
+  namespace?: string;
+  types?: string[];
   tagSelector?: string;
+  labelSelector?: string;
 };
 
+export const scopeTargetLabels = {
+  config: "Config",
+  component: "Component",
+  check: "Check",
+  playbook: "Playbook",
+  canary: "Canary",
+  view: "View",
+  connection: "Connection",
+  scraper: "Scraper",
+  application: "Application",
+  notification: "Notification",
+  notificationSilence: "Notification Silence",
+  agent: "Agent",
+  person: "Person",
+  team: "Team",
+  scope: "Scope",
+  role: "Role",
+  roleBinding: "Role Binding"
+} as const;
+
 export type ScopeTarget = {
-  config?: ScopeResourceSelector;
-  component?: ScopeResourceSelector;
-  playbook?: ScopeResourceSelector;
-  canary?: ScopeResourceSelector;
-  view?: ScopeResourceSelector;
-  global?: ScopeResourceSelector;
+  [K in keyof typeof scopeTargetLabels]?: ScopeResourceSelector;
 };
+
+export const wholeTypeScopeTargets: (keyof ScopeTarget)[] = [
+  "application",
+  "notification",
+  "notificationSilence",
+  "agent",
+  "person",
+  "team",
+  "scope",
+  "role",
+  "roleBinding"
+];
 
 // Form-specific extensions for UI (includes additional fields for form editing)
 export type ScopeResourceSelectorForm = ScopeResourceSelector & {
@@ -20,12 +51,7 @@ export type ScopeResourceSelectorForm = ScopeResourceSelector & {
 };
 
 export type ScopeTargetForm = {
-  config?: ScopeResourceSelectorForm;
-  component?: ScopeResourceSelectorForm;
-  playbook?: ScopeResourceSelectorForm;
-  canary?: ScopeResourceSelectorForm;
-  view?: ScopeResourceSelectorForm;
-  global?: ScopeResourceSelectorForm;
+  [K in keyof ScopeTarget]?: ScopeResourceSelectorForm;
 };
 
 // Database model (from PostgREST)

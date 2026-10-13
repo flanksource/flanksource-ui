@@ -244,17 +244,6 @@ describe("buildPayload", () => {
     expect(payload.view).toEqual([{ names: ["v1"] }]);
   });
 
-  it("expands global to all resource types except playbook", () => {
-    const payload = buildPayload([
-      makeScope({ targets: [{ global: { name: "*" } }] })
-    ]);
-    expect(payload.config).toEqual([{ names: ["*"] }]);
-    expect(payload.component).toEqual([{ names: ["*"] }]);
-    expect(payload.canary).toEqual([{ names: ["*"] }]);
-    expect(payload.view).toEqual([{ names: ["*"] }]);
-    expect(payload.playbook).toBeUndefined();
-  });
-
   it("aggregates targets from multiple scopes", () => {
     const payload = buildPayload([
       makeScope({
@@ -319,17 +308,6 @@ describe("buildPayloadFromTargets", () => {
       { config: { name: "x", tagSelector: "a=b" } }
     ]);
     expect(payload.config![0].tags).toEqual({ a: "b" });
-  });
-
-  it("expands global to all types except playbook", () => {
-    const payload = buildPayloadFromTargets([
-      { global: { name: "*", wildcard: true } }
-    ]);
-    expect(payload.config).toEqual([{ names: ["*"] }]);
-    expect(payload.component).toEqual([{ names: ["*"] }]);
-    expect(payload.canary).toEqual([{ names: ["*"] }]);
-    expect(payload.view).toEqual([{ names: ["*"] }]);
-    expect(payload.playbook).toBeUndefined();
   });
 
   it("does not include scopes field", () => {

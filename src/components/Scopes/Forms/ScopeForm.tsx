@@ -87,18 +87,11 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           );
         };
 
-        return {
-          config: target.config ? transformTarget(target.config) : undefined,
-          component: target.component
-            ? transformTarget(target.component)
-            : undefined,
-          playbook: target.playbook
-            ? transformTarget(target.playbook)
-            : undefined,
-          canary: target.canary ? transformTarget(target.canary) : undefined,
-          view: target.view ? transformTarget(target.view) : undefined,
-          global: target.global ? transformTarget(target.global) : undefined
-        };
+        return Object.fromEntries(
+          Object.entries(target)
+            .filter(([_, selector]) => !!selector)
+            .map(([kind, selector]) => [kind, transformTarget(selector)])
+        );
       }
     );
 
@@ -140,7 +133,10 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
 
           // Check if this is a wildcard selector (name: "*" and no other fields)
           const isWildcard =
-            selector.name === "*" && !selector.agent && !selector.tagSelector;
+            selector.name === "*" &&
+            !Object.entries(selector).some(
+              ([key, value]) => key !== "name" && !!value
+            );
 
           // Convert tagSelector string to tags object
           const tags: Record<string, string> = {};
@@ -156,18 +152,11 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           return { ...selector, tags, wildcard: isWildcard };
         };
 
-        return {
-          config: target.config ? convertSelector(target.config) : undefined,
-          component: target.component
-            ? convertSelector(target.component)
-            : undefined,
-          playbook: target.playbook
-            ? convertSelector(target.playbook)
-            : undefined,
-          canary: target.canary ? convertSelector(target.canary) : undefined,
-          view: target.view ? convertSelector(target.view) : undefined,
-          global: target.global ? convertSelector(target.global) : undefined
-        };
+        return Object.fromEntries(
+          Object.entries(target)
+            .filter(([_, selector]) => !!selector)
+            .map(([kind, selector]) => [kind, convertSelector(selector)])
+        );
       })
     : [
         {
@@ -225,14 +214,9 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
           } else {
             // Validate each target has exactly one resource type
             values.targets.forEach((target: any, index: number) => {
-              const resourceTypes = [
-                target.config,
-                target.component,
-                target.playbook,
-                target.canary,
-                target.view,
-                target.global
-              ].filter(Boolean);
+              const resourceTypes = Object.values(target).filter(
+                Boolean
+              ) as ScopeResourceSelectorForm[];
 
               if (resourceTypes.length === 0) {
                 if (!errors.targets) errors.targets = [];
@@ -253,7 +237,15 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
 
                 // If wildcard is enabled, validation passes
                 const isEmpty =
-                  !wildcard && tagsLength === 0 && name === "" && agent === "";
+                  !wildcard &&
+                  tagsLength === 0 &&
+                  name === "" &&
+                  agent === "" &&
+                  !selectedResource.id &&
+                  !selectedResource.namespace &&
+                  !selectedResource.types?.length &&
+                  !selectedResource.labelSelector &&
+                  !selectedResource.tagSelector;
 
                 if (isEmpty) {
                   if (!errors.targets) errors.targets = [];

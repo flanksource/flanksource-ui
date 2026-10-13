@@ -1,15 +1,20 @@
 import { useFormikContext, FieldArray } from "formik";
-import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
+import SelectDropdown from "@flanksource-ui/ui/Dropdowns/SelectDropdown";
 import FormikResourceSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikResourceSelectorDropdown";
 import FormikViewSelectorDropdown from "@flanksource-ui/components/Forms/Formik/FormikViewSelectorDropdown";
+import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import FormikKeyValueMapField from "@flanksource-ui/components/Forms/Formik/FormikKeyValueMapField";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useAllAgentNamesQuery } from "@flanksource-ui/api/query-hooks";
-import { useMemo, useState, useEffect } from "react";
-import { ScopeTargetForm } from "@flanksource-ui/api/types/scopes";
+import { useMemo, useEffect } from "react";
+import {
+  ScopeTargetForm,
+  scopeTargetLabels,
+  wholeTypeScopeTargets
+} from "@flanksource-ui/api/types/scopes";
 
 type ScopeTargetsFormProps = {
   disabled?: boolean;
@@ -140,34 +145,11 @@ function TargetBlock({
 }: TargetBlockProps) {
   const { setFieldValue, values } = useFormikContext<any>();
 
-  // Determine which resource type is selected
-  const getInitialResourceType = ():
-    | "Config"
-    | "Component"
-    | "Playbook"
-    | "Canary"
-    | "View"
-    | "Global" => {
-    if (target.config) return "Config";
-    if (target.component) return "Component";
-    if (target.playbook) return "Playbook";
-    if (target.canary) return "Canary";
-    if (target.view) return "View";
-    if (target.global) return "Global";
-    return "Config";
-  };
-
-  const [resourceType, setResourceType] = useState<
-    "Config" | "Component" | "Playbook" | "Canary" | "View" | "Global"
-  >(getInitialResourceType());
-
-  const resourceKey = resourceType.toLowerCase() as
-    | "config"
-    | "component"
-    | "playbook"
-    | "canary"
-    | "view"
-    | "global";
+  const resourceKey = (Object.keys(target).find(
+    (key) => target[key as keyof ScopeTargetForm]
+  ) || "config") as keyof ScopeTargetForm;
+  const resourceType = scopeTargetLabels[resourceKey];
+  const isWholeType = wholeTypeScopeTargets.includes(resourceKey);
 
   // Get wildcard value from formik
   const isWildcard = values.targets?.[index]?.[resourceKey]?.wildcard || false;
@@ -179,22 +161,11 @@ function TargetBlock({
     }
   }, [isWildcard, index, resourceKey, setFieldValue]);
 
-  const handleResourceTypeChange = (
-    newType: "Config" | "Component" | "Playbook" | "Canary" | "View" | "Global"
-  ) => {
-    setResourceType(newType);
-    // Clear all resource type fields
-    // View doesn't need agent field
-    const baseFields = {
-      name: "",
-      tagSelector: "",
-      tags: {},
-      wildcard: false
-    };
-
+  const handleResourceTypeChange = (newType: keyof ScopeTargetForm) => {
     setFieldValue(`targets.${index}`, {
-      [newType.toLowerCase()]:
-        newType === "View" ? baseFields : { ...baseFields, agent: "" }
+      [newType]: wholeTypeScopeTargets.includes(newType)
+        ? { name: "*", wildcard: true }
+        : { name: "", wildcard: false }
     });
   };
 
@@ -215,35 +186,43 @@ function TargetBlock({
         {/* Resource Type Selector */}
         <div className={disabled ? "pointer-events-none opacity-60" : ""}>
           <div className="flex flex-col gap-2">
-            <label className="form-label">Resource Type</label>
-            <Switch
-              options={[
-                "Config",
-                "Component",
-                "Playbook",
-                "Canary",
-                "View",
-                "Global"
-              ]}
-              className="w-auto"
-              value={resourceType}
+            <label className="form-label" htmlFor={`target-type-${index}`}>
+              Resource Type
+            </label>
+            <SelectDropdown<keyof ScopeTargetForm>
+              inputId={`target-type-${index}`}
+              options={Object.entries(scopeTargetLabels).map(
+                ([value, label]) => ({
+                  value,
+                  label
+                })
+              )}
+              value={resourceKey}
               onChange={handleResourceTypeChange}
+              isDisabled={disabled}
             />
           </div>
         </div>
 
         {/* Wildcard Toggle */}
-        <div className={disabled ? "pointer-events-none opacity-60" : ""}>
-          <FormikCheckbox
-            name={`targets.${index}.${resourceKey}.wildcard`}
-            label="Match all (wildcard)"
-            hint="When enabled, this target will match all resources of this type"
-            hintPosition="tooltip"
-            checkboxStyle="toggle"
-            inline
-            disabled={disabled}
-          />
-        </div>
+        {isWholeType ? (
+          <p className="text-sm text-gray-500">
+            This resource type can only be selected entirely. All resources of
+            this type will match.
+          </p>
+        ) : (
+          <div className={disabled ? "pointer-events-none opacity-60" : ""}>
+            <FormikCheckbox
+              name={`targets.${index}.${resourceKey}.wildcard`}
+              label="Match all (wildcard)"
+              hint="When enabled, this target will match all resources of this type"
+              hintPosition="tooltip"
+              checkboxStyle="toggle"
+              inline
+              disabled={disabled}
+            />
+          </div>
+        )}
 
         {/* Validation Error for this target */}
         {error && (
@@ -252,108 +231,120 @@ function TargetBlock({
           </div>
         )}
 
-        {/* Global Warning */}
-        {resourceType === "Global" && (
-          <div className="rounded-md border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900">
-            <p className="font-medium">
-              When targeting all resources globally, tags only apply to Config
-              resources. Agent selection applies to all resources except
-              Playbooks.
-            </p>
+        {/* Resource Name and Agent Selector - Horizontal layout */}
+        {!isWholeType && (
+          <div
+            className={`flex gap-3 ${isWildcard ? "pointer-events-none opacity-50" : ""}`}
+          >
+            <div className="flex-1">
+              {resourceType === "Config" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.config.name`}
+                  label="Name"
+                  configResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "Component" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.component.name`}
+                  label="Name"
+                  componentResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "Check" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.check.name`}
+                  label="Name"
+                  checkResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "Connection" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.connection.name`}
+                  label="Name"
+                  connectionResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "Scraper" && (
+                <FormikTextInput
+                  name={`targets.${index}.scraper.name`}
+                  label="Name"
+                  disabled={disabled || isWildcard}
+                />
+              )}
+
+              {resourceType === "Playbook" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.playbook.name`}
+                  label="Name"
+                  playbookResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "Canary" && (
+                <FormikResourceSelectorDropdown
+                  name={`targets.${index}.canary.name`}
+                  label="Name"
+                  canaryResourceSelector={[{}]}
+                  hintLink={false}
+                  className="flex flex-col space-y-2"
+                  valueField="name"
+                  disabled={isWildcard}
+                />
+              )}
+
+              {resourceType === "View" && (
+                <FormikViewSelectorDropdown
+                  name={`targets.${index}.view.name`}
+                  label="View"
+                  disabled={isWildcard}
+                  className="flex flex-col space-y-2"
+                />
+              )}
+            </div>
+
+            {/* Connections, playbooks and views don't support agent selectors. */}
+            {resourceType !== "Playbook" &&
+              resourceType !== "View" &&
+              resourceType !== "Connection" && (
+                <div className="flex-1">
+                  <FormikSelectDropdown
+                    name={`targets.${index}.${resourceKey}.agent`}
+                    label="Agent"
+                    options={agentOptions}
+                    hint="Select the agent for this resource"
+                    isDisabled={disabled || isWildcard}
+                  />
+                </div>
+              )}
           </div>
         )}
 
-        {/* Resource Name and Agent Selector - Horizontal layout */}
-        <div
-          className={`flex gap-3 ${isWildcard ? "pointer-events-none opacity-50" : ""}`}
-        >
-          <div className="flex-1">
-            {resourceType === "Config" && (
-              <FormikResourceSelectorDropdown
-                name={`targets.${index}.config.name`}
-                label="Name"
-                configResourceSelector={[{}]}
-                hintLink={false}
-                className="flex flex-col space-y-2"
-                valueField="name"
-                disabled={isWildcard}
-              />
-            )}
-
-            {resourceType === "Component" && (
-              <FormikResourceSelectorDropdown
-                name={`targets.${index}.component.name`}
-                label="Name"
-                componentResourceSelector={[{}]}
-                hintLink={false}
-                className="flex flex-col space-y-2"
-                valueField="name"
-                disabled={isWildcard}
-              />
-            )}
-
-            {resourceType === "Playbook" && (
-              <FormikResourceSelectorDropdown
-                name={`targets.${index}.playbook.name`}
-                label="Name"
-                playbookResourceSelector={[{}]}
-                hintLink={false}
-                className="flex flex-col space-y-2"
-                valueField="name"
-                disabled={isWildcard}
-              />
-            )}
-
-            {resourceType === "Canary" && (
-              <FormikResourceSelectorDropdown
-                name={`targets.${index}.canary.name`}
-                label="Name"
-                canaryResourceSelector={[{}]}
-                hintLink={false}
-                className="flex flex-col space-y-2"
-                valueField="name"
-                disabled={isWildcard}
-              />
-            )}
-
-            {resourceType === "View" && (
-              <FormikViewSelectorDropdown
-                name={`targets.${index}.view.name`}
-                label="View"
-                disabled={isWildcard}
-                className="flex flex-col space-y-2"
-              />
-            )}
-
-            {resourceType === "Global" && (
-              <FormikResourceSelectorDropdown
-                name={`targets.${index}.global.name`}
-                label="Name"
-                configResourceSelector={[{}]}
-                hintLink={false}
-                className="flex flex-col space-y-2"
-                valueField="name"
-                disabled={isWildcard}
-              />
-            )}
-          </div>
-
-          {/* Agent Selector - Hide for Playbooks and Views */}
-          {resourceType !== "Playbook" && resourceType !== "View" && (
-            <div className="flex-1">
-              <FormikSelectDropdown
-                name={`targets.${index}.${resourceKey}.agent`}
-                label="Agent"
-                options={agentOptions}
-                hint="Select the agent for this resource"
-                isDisabled={disabled || isWildcard}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Tags Field - Only show for Config and Global */}
-        {(resourceType === "Config" || resourceType === "Global") && (
+        {resourceType === "Config" && (
           <div
             className={
               disabled || isWildcard ? "pointer-events-none opacity-50" : ""

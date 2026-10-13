@@ -90,14 +90,6 @@ export function buildPayload(scopes: ScopeDB[]): RLSPayload {
           addScopeToPayload(payload, resourceType, selector);
         }
       }
-
-      // "global" expands to all resource types except playbook
-      if (target.global) {
-        for (const resourceType of RESOURCE_TYPES) {
-          if (resourceType === "playbook") continue;
-          addScopeToPayload(payload, resourceType, target.global);
-        }
-      }
     }
   }
 
@@ -150,13 +142,6 @@ export function buildPayloadFromTargets(
       const selector = target[resourceType as keyof ScopeTargetForm];
       if (selector) {
         addFormScopeToPayload(payload, resourceType, selector);
-      }
-    }
-
-    if (target.global) {
-      for (const resourceType of RESOURCE_TYPES) {
-        if (resourceType === "playbook") continue;
-        addFormScopeToPayload(payload, resourceType, target.global);
       }
     }
   }
