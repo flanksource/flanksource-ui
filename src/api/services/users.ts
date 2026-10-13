@@ -157,22 +157,27 @@ export const inviteUser = ({
 };
 
 export const getVersionInfo = async () => {
-  let backend: string | undefined;
-
   if (isCanaryUI) {
     const { data } = await CanaryChecker.get<{ Version?: string }>("/about");
-    backend = data.Version;
-  } else {
-    const { data } = await apiBase.get<{
-      appVersion?: string;
-      chartVersion?: string;
-    }>("/about");
-    backend = data.chartVersion || data.appVersion;
+    return {
+      data: { backend: data.Version || "NA" } satisfies VersionInfo,
+      error: null
+    };
   }
+
+  const { data } = await apiBase.get<{
+    appVersion?: string;
+    commit?: string;
+    buildDate?: string;
+    chartVersion?: string;
+  }>("/about");
 
   return {
     data: {
-      backend: backend || "NA"
+      backend: data.appVersion || "NA",
+      commit: data.commit || undefined,
+      buildDate: data.buildDate || undefined,
+      chart: data.chartVersion || undefined
     } satisfies VersionInfo,
     error: null
   };
