@@ -30,6 +30,7 @@ import {
   TabsTrigger
 } from "@flanksource-ui/components/ui/tabs";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
+import { useUser } from "@flanksource-ui/context";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
 import { Form, Formik } from "formik";
@@ -58,7 +59,10 @@ export default function RoleBindingForm({
   const readOnlyReason = getRbacReadOnlyReason("role-bindings", data);
   const isReadOnly = !!readOnlyReason;
 
-  const { data: roles } = useRolesQuery();
+  const { access } = useUser();
+  const canReadRoles =
+    access?.role?.read === "all" || access?.role?.read === "some";
+  const { data: roles } = useRolesQuery(canReadRoles);
   const { mutate: create, isLoading: isCreating } =
     useCreateRoleBindingMutation();
   const { mutate: update, isLoading: isUpdating } =
@@ -109,7 +113,7 @@ export default function RoleBindingForm({
         {({ values, setFieldValue, isSubmitting }) => {
           // A binding grants a Role in its own namespace
           const namespace = data?.namespace ?? values.namespace;
-          const role = (roles ?? []).find(
+          const role = (canReadRoles ? (roles ?? []) : []).find(
             (item) => item.namespace === namespace && item.name === values.role
           );
 
@@ -122,6 +126,16 @@ export default function RoleBindingForm({
               )}
 
               {data && <RbacObjectNotInEffect {...data} />}
+              {!!data?.subjects.roles?.length && (
+                <p
+                  role="alert"
+                  className="rounded-md bg-yellow-50 p-3 text-sm text-yellow-900"
+                >
+                  This binding has unsupported legacy role subjects. They will
+                  be removed when saving. Select people, teams, OIDC users, or
+                  resources to replace them; agents cannot be binding subjects.
+                </p>
+              )}
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
@@ -135,6 +149,14 @@ export default function RoleBindingForm({
                 />
               </div>
 
+              <FormikTextInput
+                name="namespace"
+                label="Binding Namespace"
+                placeholder="default"
+                hint="Role and constraint Scope names resolve in this namespace. Leave empty to use default, or select a Role to use its namespace."
+                disabled={isReadOnly || !!data}
+              />
+
               <div
                 className={
                   isReadOnly
@@ -143,9 +165,9 @@ export default function RoleBindingForm({
                 }
               >
                 <FormikBindingRoleSelect
-                  namespace={data?.namespace ?? undefined}
+                  namespace={namespace || undefined}
                   onRoleChange={(picked) => {
-                    if (!data) {
+                    if (!data && picked?.namespace) {
                       setFieldValue("namespace", picked?.namespace);
                     }
                   }}
@@ -176,14 +198,14 @@ export default function RoleBindingForm({
                 disabled={isReadOnly}
                 className={
                   isReadOnly
-                    ? "pointer-events-none flex flex-col space-y-4 opacity-60"
-                    : "flex flex-col space-y-4"
+                    ? "pointer-events-none flex min-w-0 flex-col space-y-4 opacity-60"
+                    : "flex min-w-0 flex-col space-y-4"
                 }
               >
                 <RoleBindingSubjectsForm />
                 <RoleBindingConstraintForm
                   rules={role?.rules}
-                  namespace={namespace}
+                  namespace={namespace || "default"}
                 />
               </fieldset>
             </div>

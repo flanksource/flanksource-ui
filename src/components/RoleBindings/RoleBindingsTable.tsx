@@ -15,7 +15,7 @@ function plural(count: number, word: string) {
   return `${count} ${count === 1 ? word : `${word}s`}`;
 }
 
-// A short label per kind of subject, e.g. "platform", "3 people", "everyone"
+// A short label per kind of subject, with obsolete subjects explicitly marked.
 export function summarizeSubjects(subjects: RoleBindingSubjects = {}) {
   const labels: string[] = [];
   const people = subjects.people ?? [];
@@ -25,7 +25,7 @@ export function summarizeSubjects(subjects: RoleBindingSubjects = {}) {
     labels.push(plural(people.length, "person").replace("persons", "people"));
   }
   (subjects.teams ?? []).forEach((team) => labels.push(`team ${team}`));
-  (subjects.roles ?? []).forEach((role) => labels.push(role));
+  (subjects.roles ?? []).forEach((role) => labels.push(`unsupported: ${role}`));
   (subjects.oidc ?? []).forEach((subject) =>
     labels.push(`${subject.provider} users`)
   );

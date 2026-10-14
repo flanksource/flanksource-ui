@@ -1,6 +1,7 @@
 import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 import { RoleRule } from "@flanksource-ui/api/types/roles";
 import FormikRoleScopeSelect from "@flanksource-ui/components/Roles/Forms/FormikRoleScopeSelect";
+import { useUser } from "@flanksource-ui/context";
 import { useFormikContext } from "formik";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useMemo, useState } from "react";
@@ -38,17 +39,20 @@ function ConstraintEffects({
   namespace?: string;
 }) {
   const { values } = useFormikContext<RoleBindingFormValues>();
-  const { data: scopes } = useScopesQuery();
+  const { access } = useUser();
+  const canRead =
+    access?.scope?.read === "all" || access?.scope?.read === "some";
+  const { data: scopes } = useScopesQuery(undefined, canRead);
 
   const effects = useMemo(() => {
     // The Role's and the constraint's Scopes are all in the binding's namespace
     const targetsByName = Object.fromEntries(
-      (scopes ?? [])
+      (canRead ? (scopes ?? []) : [])
         .filter((scope) => scope.namespace === namespace)
         .map((scope) => [scope.name, scope.targets])
     );
     return getConstraintEffects(rules, values.constraint, targetsByName);
-  }, [rules, values.constraint, scopes, namespace]);
+  }, [rules, values.constraint, scopes, namespace, canRead]);
 
   const denyRules = rules.filter((rule) => rule.deny);
 
@@ -183,6 +187,7 @@ export default function RoleBindingConstraintForm({
           hint="The resource of every operation must also be in this scope."
           namespace={namespace}
           input="resource"
+          allowManual
         />
         <FormikRoleScopeSelect
           name="constraint.target"
@@ -190,6 +195,7 @@ export default function RoleBindingConstraintForm({
           hint="The target of every operation must also be in this scope. Rules whose action takes no target, like read, skip it."
           namespace={namespace}
           input="target"
+          allowManual
         />
 
         {isSet && rules && rules.length > 0 && (

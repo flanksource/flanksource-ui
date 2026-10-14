@@ -28,7 +28,6 @@ export type RoleBindingFormValues = {
   role: string;
   people: string[];
   teams: string[];
-  roles: string[];
   oidc: { provider: string; match: string }[];
   resourceSubjects: Record<
     RoleBindingResourceSubjectKind,
@@ -68,7 +67,6 @@ export function roleBindingToFormValues(
     role: binding?.role ?? "",
     people: subjects.people ?? [],
     teams: subjects.teams ?? [],
-    roles: subjects.roles ?? [],
     oidc: (subjects.oidc ?? []).map((subject) => ({ ...subject })),
     resourceSubjects,
     constraint: {
@@ -88,7 +86,6 @@ export function formValuesToSubjects(
   const subjects: RoleBindingSubjects = {
     people: nonEmpty(values.people),
     teams: nonEmpty(values.teams),
-    roles: nonEmpty(values.roles),
     oidc: nonEmpty(
       values.oidc.map((subject) => ({
         provider: subject.provider.trim(),
@@ -149,6 +146,7 @@ export function formValuesToSpec(
 
 export type RoleBindingFormErrors = {
   name?: string;
+  namespace?: string;
   role?: string;
   subjects?: string;
   people?: string;
@@ -177,6 +175,16 @@ export function validateRoleBindingForm(
 
   if (!values.role) {
     errors.role = "Role is required";
+  } else if (values.role.includes("/") || /\s/.test(values.role)) {
+    errors.role = "Use a Role name in the binding's namespace";
+  }
+
+  if (
+    values.namespace &&
+    (values.namespace.length > 63 ||
+      !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(values.namespace))
+  ) {
+    errors.namespace = "Use a lowercase DNS label of at most 63 characters";
   }
 
   const subjects = formValuesToSubjects(values);

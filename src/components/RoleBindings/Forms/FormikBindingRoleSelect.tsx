@@ -1,13 +1,16 @@
 import { useRolesQuery } from "@flanksource-ui/api/query-hooks/useRolesQuery";
 import { RoleDisplay } from "@flanksource-ui/api/types/roles";
+import { useUser } from "@flanksource-ui/context";
 import { useField } from "formik";
 import { useMemo } from "react";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
+
+type RoleOption = Pick<RoleDisplay, "id" | "name" | "namespace">;
 
 type FormikBindingRoleSelectProps = {
   // Only Roles in this namespace can be granted. Every namespace is offered when it's unset.
   namespace?: string;
-  onRoleChange: (role?: RoleDisplay) => void;
+  onRoleChange: (role?: Pick<RoleDisplay, "name" | "namespace">) => void;
 };
 
 export default function FormikBindingRoleSelect({
@@ -15,14 +18,16 @@ export default function FormikBindingRoleSelect({
   onRoleChange
 }: FormikBindingRoleSelectProps) {
   const [field, meta, helpers] = useField<string>("role");
-  const { data: roles, isLoading } = useRolesQuery();
+  const { access } = useUser();
+  const canRead = access?.role?.read === "all" || access?.role?.read === "some";
+  const { data: roles, isFetching, isError } = useRolesQuery(canRead);
 
   const options = useMemo(
     () =>
-      (roles ?? [])
+      (canRead ? (roles ?? []) : [])
         .filter((role) => role.namespace)
         .filter((role) => !namespace || role.namespace === namespace),
-    [roles, namespace]
+    [roles, namespace, canRead]
   );
 
   const selected = field.value
@@ -34,17 +39,27 @@ export default function FormikBindingRoleSelect({
       <label htmlFor="role" className="text-sm font-medium text-gray-700">
         Role <span className="text-red-500">*</span>
       </label>
-      <Select<RoleDisplay>
+      <CreatableSelect<RoleOption>
         inputId="role"
-        isLoading={isLoading}
-        placeholder="Select a role..."
+        isLoading={canRead && isFetching}
+        placeholder="Select a role or enter its name..."
+        getNewOptionData={(name) => ({
+          id: name,
+          name: `Use Role "${name}"`,
+          __isNew__: true
+        })}
+        onCreateOption={(name) => {
+          helpers.setValue(name.trim());
+          onRoleChange({
+            name: name.trim(),
+            namespace: namespace || "default"
+          });
+        }}
         options={options}
         // A saved reference to a Role that doesn't exist is shown as is
         value={
           selected ??
-          (field.value
-            ? ({ id: field.value, name: field.value } as RoleDisplay)
-            : null)
+          (field.value ? { id: field.value, name: field.value } : null)
         }
         getOptionValue={(role) => role.id}
         getOptionLabel={(role) => role.name}
@@ -67,11 +82,21 @@ export default function FormikBindingRoleSelect({
         }
         styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
       />
-      {field.value && !selected && !isLoading && (
+      <p className="text-xs text-gray-500">
+        Enter a Role name even if you cannot browse it. References resolve only
+        in the binding&apos;s namespace.
+      </p>
+      {field.value && !selected && !(canRead && isFetching) && (
         <p className="text-xs text-yellow-700">
-          Role {field.value} doesn&apos;t exist
-          {namespace ? ` in ${namespace}` : ""}; the binding won&apos;t be in
-          effect until it does.
+          Role {field.value} cannot be verified
+          {namespace ? ` in ${namespace}` : ""}. A missing or invalid Role
+          grants nothing; the server reports the binding&apos;s status after
+          saving.
+        </p>
+      )}
+      {canRead && isError && (
+        <p role="status" className="text-xs text-yellow-700">
+          Unable to load Roles. You can still enter a name manually.
         </p>
       )}
       {meta.touched && meta.error && (

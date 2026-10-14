@@ -4,6 +4,8 @@ import {
   withAdmin
 } from "@flanksource-ui/components/Permissions/Rbac/rbacStoryFixtures";
 import { Meta, StoryObj } from "@storybook/react";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
+import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { mswLoader } from "msw-storybook-addon";
 import RoleBindingForm from "./Forms/RoleBindingForm";
 import RoleBindingsTable from "./RoleBindingsTable";
@@ -41,5 +43,41 @@ export const WithConstraints: StoryObj<typeof RoleBindingForm> = {
 export const RoleBindingFromKubernetes: StoryObj<typeof RoleBindingForm> = {
   render: () => (
     <RoleBindingForm isOpen onClose={() => {}} data={roleBindings[2]} />
+  )
+};
+
+export const PluginSubjects: StoryObj<typeof RoleBindingForm> = {
+  render: () => (
+    <RoleBindingForm
+      isOpen
+      onClose={() => {}}
+      data={{
+        ...roleBindings[0],
+        name: "plugin-connections",
+        subjects: { plugins: [{ namespace: "integrations", name: "logs" }] },
+        error:
+          "Plugin subjects require connection-only read or connection:use rules",
+        error_reason: "InvalidRole"
+      }}
+    />
+  )
+};
+
+export const WithoutCatalogueAccess: StoryObj<typeof RoleBindingForm> = {
+  render: () => (
+    <AuthContext.Provider
+      value={FakeUser([], {
+        roleBinding: {
+          read: "all",
+          create: "all",
+          update: "all",
+          delete: "all"
+        }
+      })}
+    >
+      <UserAccessStateContextProvider>
+        <RoleBindingForm isOpen onClose={() => {}} />
+      </UserAccessStateContextProvider>
+    </AuthContext.Provider>
   )
 };

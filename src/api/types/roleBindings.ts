@@ -19,20 +19,19 @@ export const roleBindingResourceSubjectKinds = [
   "notifications",
   "topologies",
   "scrapers",
-  "canaries"
+  "canaries",
+  "plugins"
 ] as const;
 
 export type RoleBindingResourceSubjectKind =
   (typeof roleBindingResourceSubjectKinds)[number];
-
-// The built-in roles a binding can select subjects by
-export const bindableBuiltInRoles = ["everyone", "guest", "agent"] as const;
 
 export type RoleBindingSubjects = {
   // Emails of Mission Control users
   people?: string[];
   // Team names
   teams?: string[];
+  // Legacy stored subjects only; the API rejects nonempty roles on write.
   roles?: string[];
   oidc?: RoleBindingOIDCSubject[];
 } & Partial<

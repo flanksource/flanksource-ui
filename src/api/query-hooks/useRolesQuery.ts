@@ -6,10 +6,11 @@ import {
   updateRole
 } from "../services/roles";
 
-export function useRolesQuery() {
+export function useRolesQuery(enabled = true) {
   return useQuery({
     queryKey: ["roles"],
-    queryFn: getRoles
+    queryFn: getRoles,
+    enabled
   });
 }
 

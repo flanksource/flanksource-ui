@@ -49,7 +49,7 @@ describe("formValuesToSpec", () => {
       description: "Tenant A",
       subjects: {
         people: ["alice@example.com"],
-        roles: ["guest"],
+        plugins: [{ namespace: "integrations", name: "logs" }],
         oidc: [{ provider: "oipa", match: "claims.tenant == 'a'" }],
         playbooks: [{ namespace: "default", name: "cleanup" }],
         scrapers: [{ name: "*" }]

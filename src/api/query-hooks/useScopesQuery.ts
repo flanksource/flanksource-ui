@@ -6,10 +6,11 @@ import {
   updateScope
 } from "../services/scopes";
 
-export function useScopesQuery(params?: any) {
+export function useScopesQuery(params?: any, enabled = true) {
   return useQuery({
     queryKey: ["scopes", params],
-    queryFn: () => getScopes(params).then((res) => res.data)
+    queryFn: () => getScopes(params).then((res) => res.data),
+    enabled
   });
 }
 
