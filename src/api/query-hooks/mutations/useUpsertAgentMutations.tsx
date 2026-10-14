@@ -4,6 +4,8 @@ import {
   GeneratedAgent,
   addAgent,
   deleteAgent,
+  deleteAgentToken,
+  generateAgentToken,
   updateAgent
 } from "../../services/agents";
 import { Agent } from "../../../components/Agents/AgentPage";
@@ -42,5 +44,29 @@ export function useDeleteAgentMutations(
     ...options,
     mutationFn: async ({ id, cleanup }: DeleteAgentProps) =>
       deleteAgent(id, cleanup)
+  });
+}
+
+type DeleteAgentTokenProps = {
+  agentId: string;
+  tokenId: string;
+};
+
+export function useDeleteAgentTokenMutation(
+  options?: UseMutationOptions<void, Error, DeleteAgentTokenProps>
+) {
+  return useMutation({
+    ...options,
+    mutationFn: async ({ agentId, tokenId }: DeleteAgentTokenProps) =>
+      deleteAgentToken(agentId, tokenId)
+  });
+}
+
+export function useGenerateAgentTokenMutation(
+  options?: UseMutationOptions<GeneratedAgent, Error, string>
+) {
+  return useMutation({
+    ...options,
+    mutationFn: async (agentName: string) => generateAgentToken(agentName)
   });
 }

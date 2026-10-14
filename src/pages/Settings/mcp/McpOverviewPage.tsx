@@ -278,8 +278,6 @@ export default function McpOverviewPage() {
           isLoading={isTokensLoading}
           isRefetching={isTokensRefetching}
           refresh={refetchTokens}
-          showHideAgentsToggle={false}
-          defaultHideAgents={true}
           tokenIdSearchParamKey="mcpTokenId"
         />
       </div>

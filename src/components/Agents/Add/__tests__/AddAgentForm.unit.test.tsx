@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import AgentForm from "./../AddAgentForm";
+import { Access, AccessSummary } from "@flanksource-ui/api/services/users";
 import * as agentsApi from "../../../../api/services/agents";
 
 // Mock the API functions directly
@@ -11,7 +12,8 @@ jest.mock("../../../../api/services/agents", () => ({
   ...jest.requireActual("../../../../api/services/agents"),
   addAgent: jest.fn(),
   updateAgent: jest.fn(),
-  getAgentsSummaryByID: jest.fn()
+  getAgentsSummaryByID: jest.fn(),
+  getAgentTokens: jest.fn()
 }));
 
 const mockAgent = {
@@ -30,6 +32,15 @@ beforeEach(() => {
   );
   (agentsApi.updateAgent as jest.Mock).mockResolvedValue(mockAgent);
   (agentsApi.getAgentsSummaryByID as jest.Mock).mockResolvedValue(mockAgent);
+  (agentsApi.getAgentTokens as jest.Mock).mockResolvedValue([
+    {
+      id: "token-1",
+      name: "default",
+      person_id: "agent-person",
+      created_at: "2026-01-01T00:00:00Z",
+      expires_at: "2027-01-01T00:00:00Z"
+    }
+  ]);
 });
 
 afterEach(() => {
@@ -170,4 +181,44 @@ describe("AgentForm", () => {
       expect(onUpdated).toHaveBeenCalled();
     });
   });
+
+  const renderWithAgentAccess = (read: Access, update: Access) => {
+    const access: AccessSummary = {
+      ...FakeUser().access,
+      agent: { read, create: "all", update, delete: "all" }
+    };
+    render(
+      <QueryClientProvider client={createQueryClient()}>
+        <AuthContext.Provider value={FakeUser(access)}>
+          <UserAccessStateContextProvider>
+            <AgentForm id="123" isOpen={true} onClose={onClose} />
+          </UserAccessStateContextProvider>
+        </AuthContext.Provider>
+      </QueryClientProvider>
+    );
+  };
+
+  it("hides the access tokens tab without read on all agents", async () => {
+    renderWithAgentAccess("some", "all");
+
+    expect(await screen.findByLabelText("Name")).toHaveValue(agent.name);
+    expect(screen.queryByText("Access tokens")).not.toBeInTheDocument();
+    expect(agentsApi.getAgentTokens).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { update: "all", actions: true },
+    { update: "none", actions: false }
+  ] as const)(
+    "lists the agent's tokens, with actions only for update=$update",
+    async ({ update, actions }) => {
+      renderWithAgentAccess("all", update);
+
+      userEvent.click(await screen.findByText("Access tokens"));
+      expect(await screen.findByText("default")).toBeInTheDocument();
+      expect(agentsApi.getAgentTokens).toHaveBeenCalledWith("123");
+      expect(!!screen.queryByText("Revoke")).toBe(actions);
+      expect(!!screen.queryByText("Generate new token")).toBe(actions);
+    }
+  );
 });

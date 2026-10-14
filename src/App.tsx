@@ -496,7 +496,7 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.agents
     },
     {
-      name: "Tokens",
+      name: "Personal access tokens",
       href: "/settings/tokens",
       icon: VscKey,
       featureName: features.agents,

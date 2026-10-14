@@ -3,13 +3,11 @@ import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteToken, Token } from "../../api/services/tokens";
-import { Avatar } from "../../ui/Avatar";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
-import { useUser } from "@flanksource-ui/context";
 
 type TokenDetailsModalProps = {
   token: Token;
@@ -24,9 +22,6 @@ export default function TokenDetailsModal({
 }: TokenDetailsModalProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const queryClient = useQueryClient();
-  const { access } = useUser();
-  const isAgent = token.person.type === "agent";
-  const canDelete = !isAgent || access?.agent?.update === "all";
 
   const { mutate: deleteTokenMutation, isLoading: isDeleting } = useMutation({
     mutationFn: deleteToken,
@@ -65,22 +60,6 @@ export default function TokenDetailsModal({
 
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              Token Identity
-            </label>
-            <div className="flex items-center space-x-3">
-              <Avatar
-                user={{
-                  name: token.person.name,
-                  avatar: token.person.avatar
-                }}
-                size="sm"
-              />
-              <span className="text-sm text-gray-900">{token.person.name}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium text-gray-700">
               Created At
             </label>
             <Age from={formattedCreatedAt} />
@@ -88,15 +67,10 @@ export default function TokenDetailsModal({
 
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              {isAgent ? "Agent Access" : "Limiting Roles"}
+              Limiting Roles
             </label>
             <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-              {isAgent ? (
-                <p className="text-sm text-gray-700">
-                  Agent tokens do not use roles. Access is restricted to the
-                  agent's own data and assigned work.
-                </p>
-              ) : token.roles?.length ? (
+              {token.roles?.length ? (
                 token.roles.map((role) => (
                   <div
                     key={`${role.namespace}/${role.name}`}
@@ -112,32 +86,28 @@ export default function TokenDetailsModal({
                 </p>
               )}
             </div>
-            {!isAgent && (
-              <p className="text-sm text-gray-500">
-                Access is the intersection of the owner's current grants and
-                these roles, not a fixed list of permissions. Missing or invalid
-                roles grant nothing.
-              </p>
-            )}
+            <p className="text-sm text-gray-500">
+              Access is the intersection of your current grants and these roles,
+              not a fixed list of permissions. Missing or invalid roles grant
+              nothing.
+            </p>
           </div>
         </div>
 
         <div className="flex items-center justify-end bg-gray-100 px-6 py-4">
-          {canDelete && (
-            <Button
-              text="Delete"
-              disabled={isDeleting}
-              icon={
-                !isDeleting ? (
-                  <FaTrash />
-                ) : (
-                  <FaCircleNotch className="animate-spin" />
-                )
-              }
-              className="btn-danger"
-              onClick={() => setShowDeleteConfirm(true)}
-            />
-          )}
+          <Button
+            text="Delete"
+            disabled={isDeleting}
+            icon={
+              !isDeleting ? (
+                <FaTrash />
+              ) : (
+                <FaCircleNotch className="animate-spin" />
+              )
+            }
+            className="btn-danger"
+            onClick={() => setShowDeleteConfirm(true)}
+          />
         </div>
       </Modal>
 

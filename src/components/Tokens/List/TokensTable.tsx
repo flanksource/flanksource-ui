@@ -1,6 +1,5 @@
-import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Token } from "../../../api/services/tokens";
 import { tokensTableColumns } from "./TokensTableColumns";
@@ -11,8 +10,6 @@ type TokensTableProps = {
   isLoading?: boolean;
   isRefetching?: boolean;
   refresh?: () => void;
-  showHideAgentsToggle?: boolean;
-  defaultHideAgents?: boolean;
   tokenIdSearchParamKey?: string;
 };
 
@@ -21,8 +18,6 @@ export default function TokensTable({
   isLoading,
   isRefetching,
   refresh,
-  showHideAgentsToggle = true,
-  defaultHideAgents = true,
   tokenIdSearchParamKey = "id"
 }: TokensTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,30 +28,10 @@ export default function TokensTable({
     return tokens.find((token) => token.id === tokenId);
   }, [tokens, tokenId]);
 
-  const [hideAgents, setHideAgents] = useState(defaultHideAgents);
-  const filteredTokens = useMemo(() => {
-    if (hideAgents) {
-      return tokens.filter((token) => token.person.type !== "agent");
-    } else {
-      return tokens;
-    }
-  }, [tokens, hideAgents]);
-
   return (
     <div className="flex h-full w-full flex-col gap-4">
-      {showHideAgentsToggle && (
-        <Toggle
-          value={hideAgents}
-          label="Hide Agents"
-          className="inline-flex items-center"
-          onChange={(val) => {
-            setHideAgents(val);
-          }}
-        />
-      )}
-
       <MRTDataTable
-        data={filteredTokens}
+        data={tokens}
         columns={columns}
         isLoading={isLoading}
         isRefetching={isRefetching}
