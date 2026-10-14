@@ -336,7 +336,7 @@ const AppSidebarInner = React.memo(function AppSidebarInner({
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>,
-          settingsNav.submenu.map((item) => item.resourceName),
+          settingsNav.submenu.flatMap((item) => item.resourceName),
           "read"
         )}
       </SidebarContent>
