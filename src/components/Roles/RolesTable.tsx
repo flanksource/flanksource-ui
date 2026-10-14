@@ -41,8 +41,11 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
             </span>
           ))}
           {hasDeny && (
-            <span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
-              deny
+            <span
+              className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800"
+              title="Deny rules aren't supported: rules only allow"
+            >
+              deny (unsupported)
             </span>
           )}
         </div>

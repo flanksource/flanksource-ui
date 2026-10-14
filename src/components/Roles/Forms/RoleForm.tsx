@@ -1,6 +1,7 @@
 import {
   useCreateRoleMutation,
   useRoleBindingNamesForRoleQuery,
+  useRoleReportQuery,
   useUpdateRoleMutation
 } from "@flanksource-ui/api/query-hooks/useRolesQuery";
 import {
@@ -8,7 +9,11 @@ import {
   getRbacReadOnlyReason,
   toRbacManifest
 } from "@flanksource-ui/api/types/rbacResources";
-import { RoleDB, RoleDisplay } from "@flanksource-ui/api/types/roles";
+import {
+  RoleBindingUnappliedRules,
+  RoleDB,
+  RoleDisplay
+} from "@flanksource-ui/api/types/roles";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
@@ -21,6 +26,7 @@ import { RbacObjectYaml } from "@flanksource-ui/components/Permissions/Rbac/Rbac
 import { notifyRbacSaved } from "@flanksource-ui/components/Permissions/Rbac/notifyRbacSaved";
 import CRDSource from "@flanksource-ui/components/Settings/CRDSource";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
+import toast from "react-hot-toast";
 import {
   Tabs,
   TabsContent,
@@ -113,6 +119,53 @@ function RoleBindingsForRole({ role }: { role: RoleDisplay }) {
   );
 }
 
+// Rules a binding's constraint can't narrow don't apply through that binding. That's reported, and doesn't
+// make the role invalid, so it's shown apart from the role's status.
+function UnappliedRulesWarning({
+  bindings
+}: {
+  bindings?: RoleBindingUnappliedRules[];
+}) {
+  if (!bindings?.length) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-md border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-900">
+      <p className="font-medium">
+        Some rules don&apos;t apply through these role bindings, because their
+        constraint can&apos;t narrow them:
+      </p>
+      <ul className="mt-1 list-disc pl-5">
+        {bindings.map((binding) => (
+          <li key={binding.name} className="break-words">
+            <code>{binding.name}</code>: {binding.rules.join(", ")}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function RoleUnappliedRules({ role }: { role: RoleDisplay }) {
+  const { data } = useRoleReportQuery(role.namespace, role.name);
+  return (
+    <UnappliedRulesWarning bindings={data?.bindings_with_unapplied_rules} />
+  );
+}
+
+function notifyUnappliedRules(bindings?: RoleBindingUnappliedRules[]) {
+  if (!bindings?.length) {
+    return;
+  }
+  toast(
+    `Some rules don't apply through role bindings whose constraint can't narrow them: ${bindings
+      .map((binding) => `${binding.name} (${binding.rules.join(", ")})`)
+      .join("; ")}`,
+    { icon: "⚠️", duration: 10000 }
+  );
+}
+
 type RoleFormProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -141,6 +194,7 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
     const mutationOptions = (verb: "created" | "updated") => ({
       onSuccess: (saved: RoleDB) => {
         notifyRbacSaved("roles", verb, saved);
+        notifyUnappliedRules(saved.bindings_with_unapplied_rules);
         onClose();
       },
       onError: (error: unknown) => {
@@ -178,6 +232,22 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
               )}
 
               {data && <RbacObjectNotInEffect {...data} />}
+
+              {data?.rules?.some((rule) => rule.deny) && (
+                <div className="rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-900">
+                  <p className="font-medium">
+                    This role has deny rules, which aren&apos;t supported
+                  </p>
+                  <p>
+                    Rules only allow.{" "}
+                    {isReadOnly
+                      ? "Remove the deny rules where this role is defined."
+                      : "Remove the deny rules below before saving: they're never saved as allow rules."}
+                  </p>
+                </div>
+              )}
+
+              {data?.namespace && <RoleUnappliedRules role={data} />}
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}

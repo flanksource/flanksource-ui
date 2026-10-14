@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createRole,
   getRoleBindingNamesForRole,
+  getRoleReport,
   getRoles,
   updateRole
 } from "../services/roles";
@@ -22,6 +23,14 @@ export function useRoleBindingNamesForRoleQuery(
     queryKey: ["role-bindings", "by-role", namespace, role],
     queryFn: () => getRoleBindingNamesForRole(namespace!, role!),
     enabled: !!namespace && !!role
+  });
+}
+
+export function useRoleReportQuery(namespace?: string | null, name?: string) {
+  return useQuery({
+    queryKey: ["roles", "report", namespace, name],
+    queryFn: () => getRoleReport(namespace!, name!),
+    enabled: !!namespace && !!name
   });
 }
 

@@ -29,12 +29,15 @@ export default function RoleRulesList({ rules }: { rules: RoleRule[] }) {
                 <td className="px-3 py-2">
                   <span className="font-mono">{rule.action}</span>
                   {rule.deny && (
-                    <span className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
-                      deny
+                    <span
+                      className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800"
+                      title="Deny rules aren't supported: rules only allow"
+                    >
+                      deny (unsupported)
                     </span>
                   )}
                 </td>
-                <td className="px-3 py-2">{rule.resource?.scopeRef}</td>
+                <td className="px-3 py-2">{rule.resource?.scopeRef ?? "—"}</td>
                 <td className="px-3 py-2">{rule.target?.scopeRef ?? "—"}</td>
               </tr>
             ))}

@@ -27,6 +27,15 @@ export async function updateRbacObject<T>(
   return response.data;
 }
 
+export async function getRbacObject<T>(
+  resource: RbacResource,
+  namespace: string,
+  name: string
+): Promise<T> {
+  const response = await Rback.get<T>(objectPath(resource, namespace, name));
+  return response.data;
+}
+
 export async function deleteRbacObject(
   resource: RbacResource,
   namespace: string,
