@@ -36,7 +36,7 @@ export default function TokensTable({
   const [hideAgents, setHideAgents] = useState(defaultHideAgents);
   const filteredTokens = useMemo(() => {
     if (hideAgents) {
-      return tokens.filter((token) => !token.name.startsWith("agent-"));
+      return tokens.filter((token) => token.person.type !== "agent");
     } else {
       return tokens;
     }
