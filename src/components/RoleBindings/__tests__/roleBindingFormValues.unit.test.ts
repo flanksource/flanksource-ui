@@ -49,7 +49,7 @@ describe("formValuesToSpec", () => {
       description: "Tenant A",
       subjects: {
         people: ["alice@example.com"],
-        roles: ["guest"],
+        plugins: [{ namespace: "integrations", name: "logs" }],
         oidc: [{ provider: "oipa", match: "claims.tenant == 'a'" }],
         playbooks: [{ namespace: "default", name: "cleanup" }],
         scrapers: [{ name: "*" }]
@@ -72,7 +72,9 @@ describe("formValuesToSpec", () => {
 
 describe("validateRoleBindingForm", () => {
   it("accepts a valid binding", () => {
-    expect(validateRoleBindingForm(makeValues())).toEqual({});
+    expect(
+      validateRoleBindingForm(makeValues({ people: ["*"], teams: [] }))
+    ).toEqual({});
   });
 
   it("requires a subject and a role", () => {

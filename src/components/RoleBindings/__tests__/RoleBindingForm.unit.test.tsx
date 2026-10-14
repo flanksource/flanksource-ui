@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@flanksource-ui/components/ui/tooltip";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -82,7 +83,9 @@ function renderForm(
     <QueryClientProvider client={new QueryClient()}>
       <MemoryRouter>
         <TooltipProvider>
-          <RoleBindingForm isOpen onClose={() => {}} {...props} />
+          <AuthContext.Provider value={FakeUser([])}>
+            <RoleBindingForm isOpen onClose={() => {}} {...props} />
+          </AuthContext.Provider>
         </TooltipProvider>
       </MemoryRouter>
     </QueryClientProvider>

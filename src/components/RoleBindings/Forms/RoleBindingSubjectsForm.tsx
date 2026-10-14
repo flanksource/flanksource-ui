@@ -1,7 +1,6 @@
 import { useGetAllTeams } from "@flanksource-ui/api/query-hooks/responders";
 import {
   RoleBindingResourceSubjectKind,
-  bindableBuiltInRoles,
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
 import { fetchPeopleWithRoles } from "@flanksource-ui/api/services/users";
@@ -24,21 +23,19 @@ import {
 import FormikCreatableMultiSelect from "./FormikCreatableMultiSelect";
 
 // The fields of spec.subjects
-type SubjectKind =
-  | "people"
-  | "teams"
-  | "roles"
-  | "oidc"
-  | RoleBindingResourceSubjectKind;
+type SubjectKind = "people" | "teams" | "oidc" | RoleBindingResourceSubjectKind;
 
 const subjectKinds: { kind: SubjectKind; label: string; hint: string }[] = [
-  { kind: "people", label: "People", hint: "Mission Control users, by email." },
+  {
+    kind: "people",
+    label: "People",
+    hint: 'Mission Control human users, by verified email. Select "All human users" to send the standalone * wildcard. Agents and external-provider users do not match.'
+  },
   {
     kind: "teams",
     label: "Teams",
     hint: "Every member of the teams, as members join and leave."
   },
-  { kind: "roles", label: "Roles", hint: "Everyone with a built-in role." },
   {
     kind: "oidc",
     label: "OIDC",
@@ -60,14 +57,13 @@ const subjectKinds: { kind: SubjectKind; label: string; hint: string }[] = [
     label: "Scrapers",
     hint: "Config scrapers, while they run."
   },
-  { kind: "canaries", label: "Canaries", hint: "Canaries, while they run." }
+  { kind: "canaries", label: "Canaries", hint: "Canaries, while they run." },
+  {
+    kind: "plugins",
+    label: "Plugins",
+    hint: "Plugins, while they run. Use an exact namespace and name for sensitive access."
+  }
 ];
-
-const builtInRoleDescriptions: Record<string, string> = {
-  everyone: "every Mission Control user, guests and agents included",
-  guest: "every guest",
-  agent: "every agent"
-};
 
 function isResourceKind(
   kind: SubjectKind
@@ -87,16 +83,22 @@ function PeopleField() {
     async () => (await fetchPeopleWithRoles()).data ?? []
   );
 
-  // People are bound by email
+  // The wildcard is a distinct subject for all human users, not a placeholder for listed people.
   const options = useMemo(
-    () =>
-      (people ?? [])
+    () => [
+      {
+        value: "*",
+        label: "All human users",
+        description: "*"
+      },
+      ...(people ?? [])
         .filter((person) => person.email)
         .map((person) => ({
           value: person.email,
           label: person.name || person.email,
           description: person.email
-        })),
+        }))
+    ],
     [people]
   );
 
@@ -107,7 +109,7 @@ function PeopleField() {
       hideLabel
       options={options}
       isLoading={isLoading}
-      placeholder="Select people or type an email..."
+      placeholder="Select all human users, people, or type an email..."
     />
   );
 }
@@ -130,33 +132,6 @@ function TeamsField() {
       isLoading={isLoading}
       placeholder="Select teams..."
     />
-  );
-}
-
-function RolesField() {
-  const { values, setFieldValue } = useFormikContext<RoleBindingFormValues>();
-
-  return (
-    <div className="flex flex-col gap-1">
-      {bindableBuiltInRoles.map((role) => (
-        <label key={role} className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={values.roles.includes(role)}
-            onChange={(event) =>
-              setFieldValue(
-                "roles",
-                event.target.checked
-                  ? [...values.roles, role]
-                  : values.roles.filter((item) => item !== role)
-              )
-            }
-          />
-          <span className="font-medium">{role}</span>
-          <span className="text-gray-500">{builtInRoleDescriptions[role]}</span>
-        </label>
-      ))}
-    </div>
   );
 }
 
@@ -219,7 +194,10 @@ function ResourceSubjectField({
       {({ push, remove }) => (
         <div className="flex flex-col gap-2">
           {values.resourceSubjects[kind].map((_, index) => (
-            <div key={index} className="flex flex-row items-start gap-2">
+            <div
+              key={index}
+              className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start"
+            >
               <FormikTextInput
                 name={`resourceSubjects.${kind}.${index}.namespace`}
                 label="Namespace"
@@ -234,7 +212,7 @@ function ResourceSubjectField({
               />
               <button
                 type="button"
-                className="mt-7 p-1 text-gray-500 hover:text-red-600"
+                className="self-end p-1 text-gray-500 hover:text-red-600 sm:mt-7"
                 title="Remove"
                 onClick={() => remove(index)}
               >
@@ -262,8 +240,6 @@ function SubjectField({ kind }: { kind: SubjectKind }) {
       return <PeopleField />;
     case "teams":
       return <TeamsField />;
-    case "roles":
-      return <RolesField />;
     case "oidc":
       return <OIDCField />;
     default:
@@ -370,6 +346,17 @@ export default function RoleBindingSubjectsForm() {
                 </button>
               </div>
               <SubjectField kind={kind} />
+              {kind === "plugins" && (
+                <p
+                  role="note"
+                  className="rounded-md bg-yellow-50 p-3 text-xs text-yellow-900"
+                >
+                  Every rule in the Role must use read or connection:use with
+                  connection-only scopes. Otherwise the entire binding grants
+                  nothing, including to any people or teams in it. Constraints
+                  cannot make an incompatible Role valid for plugins.
+                </p>
+              )}
             </div>
           ))}
         </div>

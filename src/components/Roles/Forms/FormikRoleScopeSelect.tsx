@@ -1,8 +1,10 @@
 import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
 import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
+import { useUser } from "@flanksource-ui/context";
 import { useField } from "formik";
 import { useMemo } from "react";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { RoleActionContract, getScopeMismatch } from "../roleActions";
 
 type ScopeOption = {
@@ -21,6 +23,7 @@ type FormikRoleScopeSelectProps = {
   input: "resource" | "target";
   required?: boolean;
   disabled?: boolean;
+  allowManual?: boolean;
   onScopeChange?: (scope?: ScopeDisplay) => void;
 };
 
@@ -33,19 +36,30 @@ export default function FormikRoleScopeSelect({
   input,
   required = false,
   disabled = false,
+  allowManual = false,
   onScopeChange = () => {}
 }: FormikRoleScopeSelectProps) {
   const [field, meta, helpers] = useField<string>(name);
-  const { data: scopes, isLoading } = useScopesQuery();
+  const { access } = useUser();
+  const canRead =
+    !allowManual ||
+    access?.scope?.read === "all" ||
+    access?.scope?.read === "some";
+  const {
+    data: scopes,
+    isFetching,
+    isError
+  } = useScopesQuery(undefined, canRead);
+  const ScopeSelect = allowManual ? CreatableSelect : Select;
 
   const options = useMemo<ScopeOption[]>(
     () =>
-      (scopes ?? [])
+      (canRead ? (scopes ?? []) : [])
         // Scopes without a namespace can't be referenced by any Role
         .filter((scope) => scope.namespace)
         .filter((scope) => !namespace || scope.namespace === namespace)
         .map((scope) => ({ value: scope.id, scope })),
-    [scopes, namespace]
+    [scopes, namespace, canRead]
   );
 
   const selected = useMemo(
@@ -64,12 +78,18 @@ export default function FormikRoleScopeSelect({
         {label}
         {required && <span className="text-red-500"> *</span>}
       </label>
-      <Select<ScopeOption>
+      <ScopeSelect<ScopeOption>
         inputId={name}
-        isLoading={isLoading}
+        isLoading={canRead && isFetching}
         isClearable={!required}
         isDisabled={disabled}
-        placeholder="Select a scope..."
+        placeholder={
+          allowManual
+            ? "Select a scope or enter its name..."
+            : "Select a scope..."
+        }
+        formatCreateLabel={(value) => `Use Scope "${value}"`}
+        onCreateOption={(value) => helpers.setValue(value.trim())}
         options={options}
         // A saved reference to a Scope that doesn't exist is shown as is
         value={
@@ -85,11 +105,11 @@ export default function FormikRoleScopeSelect({
               } as unknown as ScopeOption)
             : null)
         }
-        getOptionLabel={(option) => option.scope.name}
+        getOptionLabel={(option) => option.scope?.name ?? option.value}
         formatOptionLabel={(option) => (
           <div className="flex items-center justify-between gap-2">
-            <span>{option.scope.name}</span>
-            {option.scope.namespace && (
+            <span>{option.scope?.name ?? option.value}</span>
+            {option.scope?.namespace && (
               <span className="text-xs text-gray-500">
                 {option.scope.namespace}
               </span>
@@ -108,11 +128,24 @@ export default function FormikRoleScopeSelect({
         styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
       />
       {hint && <p className="text-xs text-gray-500">{hint}</p>}
-      {field.value && !selected && !isLoading && (
+      {allowManual && (
+        <p className="text-xs text-gray-500">
+          You can enter a Scope name without browsing it. It must be in the
+          binding&apos;s namespace; a missing or invalid Scope makes the binding
+          ineffective.
+        </p>
+      )}
+      {canRead && isError && allowManual && (
+        <p role="status" className="text-xs text-yellow-700">
+          Unable to load Scopes. You can still enter a name manually.
+        </p>
+      )}
+      {field.value && !selected && !(canRead && isFetching) && (
         <p className="text-xs text-yellow-700">
-          Scope {field.value} doesn&apos;t exist
+          Scope {field.value}{" "}
+          {allowManual ? "cannot be verified" : "doesn't exist"}
           {namespace ? ` in ${namespace}` : ""}; what uses it won&apos;t be in
-          effect until it does.
+          effect unless it exists and is valid.
         </p>
       )}
       {mismatch && <p className="text-xs text-yellow-700">{mismatch}</p>}
