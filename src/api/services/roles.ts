@@ -2,7 +2,11 @@ import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { IncidentCommander } from "../axios";
 import { RbacManifest } from "../types/rbacResources";
 import { RoleDB, RoleDisplay, RoleSpec } from "../types/roles";
-import { createRbacObject, updateRbacObject } from "./rbacResources";
+import {
+  createRbacObject,
+  getRbacObject,
+  updateRbacObject
+} from "./rbacResources";
 
 // Roles are read through PostgREST, which can join their author.
 export async function getRoles(): Promise<RoleDisplay[]> {
@@ -14,6 +18,14 @@ export async function getRoles(): Promise<RoleDisplay[]> {
     }
   });
   return response.data;
+}
+
+// The API's view of a Role adds what PostgREST doesn't have: the bindings its rules don't apply through.
+export async function getRoleReport(
+  namespace: string,
+  name: string
+): Promise<RoleDB> {
+  return getRbacObject<RoleDB>("roles", namespace, name);
 }
 
 // Roles are written through /api/rbac/roles, which validates them and refuses writes through /db.

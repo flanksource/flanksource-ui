@@ -6,7 +6,8 @@ import {
 import {
   PLUGIN_ACTION,
   PLUGIN_ACTION_PREFIX,
-  getActionContract
+  getActionContract,
+  takesResource
 } from "./roleActions";
 
 export type RoleRuleFormValues = {
@@ -18,7 +19,9 @@ export type RoleRuleFormValues = {
   operation: string;
   resource: string;
   target: string;
-  deny: boolean;
+  // A deny rule stored before deny was rejected. It's never sent: the role can't be
+  // saved until the rule is removed, since saving it as an allow would grant what it denied.
+  legacyDeny: boolean;
 };
 
 export type RoleFormValues = {
@@ -41,6 +44,9 @@ export const RESERVED_ROLE_NAMES = [
   "agent"
 ];
 
+export const LEGACY_DENY_MESSAGE =
+  "Deny rules aren't supported: rules only allow. Remove this rule to save the role. Saving it as an allow rule would grant what it denied.";
+
 const MAX_RULES = 50;
 const dnsLabel = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 const dnsSubdomain =
@@ -55,7 +61,7 @@ export const emptyRule: RoleRuleFormValues = {
   operation: "",
   resource: "",
   target: "",
-  deny: false
+  legacyDeny: false
 };
 
 export function ruleToFormValues(rule: RoleRule): RoleRuleFormValues {
@@ -72,7 +78,7 @@ export function ruleToFormValues(rule: RoleRule): RoleRuleFormValues {
     operation,
     resource: rule.resource?.scopeRef ?? "",
     target: rule.target?.scopeRef ?? "",
-    deny: rule.deny ?? false
+    legacyDeny: rule.deny === true
   };
 }
 
@@ -102,12 +108,13 @@ export function formValuesToRule(values: RoleRuleFormValues): RoleRule {
       ? { description: values.description.trim() }
       : {}),
     action,
-    resource: { scopeRef: values.resource },
-    // Fields the action doesn't take are dropped: the API rejects them
+    // Fields the action doesn't take are dropped: the API rejects them. deny is never sent.
+    ...(takesResource(contract)
+      ? { resource: { scopeRef: values.resource } }
+      : {}),
     ...(values.target && contract?.targets.length
       ? { target: { scopeRef: values.target } }
-      : {}),
-    ...(values.deny && contract?.allowsDeny ? { deny: true } : {})
+      : {})
   };
 }
 
@@ -176,8 +183,12 @@ export function validateRoleForm(values: RoleFormValues): RoleFormErrors {
       }
     }
 
-    if (!rule.resource) {
+    if (!rule.resource && takesResource(getActionContract(rule.action))) {
       e.resource = "Scope is required";
+    }
+
+    if (rule.legacyDeny) {
+      e.legacyDeny = LEGACY_DENY_MESSAGE;
     }
 
     return Object.keys(e).length > 0 ? e : undefined;

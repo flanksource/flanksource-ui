@@ -40,18 +40,16 @@ describe("formValuesToSpec", () => {
           },
           {
             ...emptyRule,
-            name: "no-read-deny",
-            action: "read",
-            resource: "configs",
-            deny: true
+            name: "manage-people",
+            action: "person:manage",
+            resource: "leftover"
           },
           {
             ...emptyRule,
             name: "run",
             action: "playbook:run",
             resource: "playbooks",
-            target: "configs",
-            deny: true
+            target: "configs"
           }
         ]
       })
@@ -65,16 +63,14 @@ describe("formValuesToSpec", () => {
           resource: { scopeRef: "pods" }
         },
         {
-          name: "no-read-deny",
-          action: "read",
-          resource: { scopeRef: "configs" }
+          name: "manage-people",
+          action: "person:manage"
         },
         {
           name: "run",
           action: "playbook:run",
           resource: { scopeRef: "playbooks" },
-          target: { scopeRef: "configs" },
-          deny: true
+          target: { scopeRef: "configs" }
         }
       ]
     });

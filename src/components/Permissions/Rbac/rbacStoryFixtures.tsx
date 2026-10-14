@@ -61,6 +61,24 @@ export const scopes: ScopeDisplay[] = [
     ...timestamps
   },
   {
+    id: "s6",
+    name: "all-connections",
+    namespace: "default",
+    description: "Every connection",
+    targets: [{ connection: { name: "*" } }],
+    source: "UI",
+    ...timestamps
+  },
+  {
+    id: "s7",
+    name: "slack-connections",
+    namespace: "default",
+    description: "Connections named slack-*",
+    targets: [{ connection: { name: "slack-*" } }],
+    source: "UI",
+    ...timestamps
+  },
+  {
     id: "s5",
     name: "monitoring-playbooks",
     namespace: "monitoring",
@@ -90,10 +108,9 @@ export const roles: RoleDisplay[] = [
         target: { scopeRef: "staging-configs" }
       },
       {
-        name: "no-delete",
-        action: "delete",
-        resource: { scopeRef: "all-configs" },
-        deny: true
+        name: "send-to-slack",
+        action: "connection:use",
+        resource: { scopeRef: "slack-connections" }
       }
     ],
     created_by: admin,
@@ -132,6 +149,92 @@ export const roles: RoleDisplay[] = [
     ...timestamps
   }
 ];
+
+// Roles that only some stories use, so the table and bindings stories stay as they were
+export const platformAdminRole: RoleDisplay = {
+  id: "r4",
+  name: "platform-admin",
+  namespace: "default",
+  description: "Manage accounts and read Mission Control's internals",
+  source: "UI",
+  rules: [
+    { name: "manage-people", action: "person:manage" },
+    { name: "read-jobs", action: "job:read" },
+    { name: "use-mcp", action: "mcp:use" },
+    { name: "read-events", action: "event:read" },
+    { name: "manage-properties", action: "property:manage" }
+  ],
+  created_by: admin,
+  ...timestamps
+};
+
+export const scopeShapeRole: RoleDisplay = {
+  id: "r5",
+  name: "connection-operator",
+  namespace: "default",
+  description: "Scopes that don't fit what their actions need",
+  source: "UI",
+  error:
+    "rule edit-staging: update needs whole-type targets, but scope staging-configs selects config with tagSelector",
+  error_reason: "ScopeShapeMismatch",
+  rules: [
+    {
+      name: "edit-staging",
+      action: "update",
+      resource: { scopeRef: "staging-configs" }
+    },
+    {
+      name: "read-slack",
+      action: "read",
+      resource: { scopeRef: "slack-connections" }
+    },
+    {
+      name: "send-to-slack",
+      action: "connection:use",
+      resource: { scopeRef: "slack-connections" }
+    },
+    {
+      name: "run-on-staging",
+      action: "playbook:run",
+      resource: { scopeRef: "all-playbooks" },
+      target: { scopeRef: "staging-configs" }
+    }
+  ],
+  created_by: admin,
+  ...timestamps
+};
+
+export const legacyDenyRole: RoleDisplay = {
+  id: "r6",
+  name: "no-delete-operator",
+  namespace: "default",
+  description: "Saved before deny rules were rejected",
+  source: "UI",
+  rules: [
+    {
+      name: "read-configs",
+      action: "read",
+      resource: { scopeRef: "all-configs" }
+    },
+    {
+      name: "no-delete",
+      action: "delete",
+      resource: { scopeRef: "all-configs" },
+      deny: true
+    }
+  ],
+  created_by: admin,
+  ...timestamps
+};
+
+// What GET /api/rbac/roles/:namespace/:name reports for a role, beyond the stored object
+const roleReports: Record<string, unknown> = {
+  "connection-operator": {
+    bindings_with_unapplied_rules: [
+      { name: "tenant-a-operators", rules: ["read-slack", "send-to-slack"] }
+    ]
+  }
+};
 
 export const roleBindings: RoleBindingDisplay[] = [
   {
@@ -218,6 +321,23 @@ export const rbacHandlers = [
   http.get("*/api/db/people_roles", () => HttpResponse.json(people)),
   http.get("*/api/db/teams", () => HttpResponse.json(teams)),
   http.get("*/api/db/*", () => HttpResponse.json([])),
+  http.get("*/api/rbac/roles/:namespace/:name", ({ params }) => {
+    const role = [
+      ...roles,
+      platformAdminRole,
+      scopeShapeRole,
+      legacyDenyRole
+    ].find(
+      (role) => role.namespace === params.namespace && role.name === params.name
+    );
+    return role
+      ? HttpResponse.json({
+          ...role,
+          bindings_with_unapplied_rules: [],
+          ...(roleReports[role.name] as object)
+        })
+      : HttpResponse.json({ error: "not found" }, { status: 404 });
+  }),
   http.post("*/api/rbac/:resource", ({ request }) => stored(request)),
   http.put("*/api/rbac/:resource/:namespace/:name", ({ request }) =>
     stored(request)

@@ -1,4 +1,3 @@
-import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
@@ -6,8 +5,18 @@ import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { FieldArray, useFormikContext } from "formik";
 import { useEffect } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { PLUGIN_ACTION, getActionContract, roleActions } from "../roleActions";
-import { RoleFormValues, emptyRule } from "../roleFormValues";
+import {
+  PLUGIN_ACTION,
+  RoleActionContract,
+  getActionContract,
+  roleActions,
+  takesResource
+} from "../roleActions";
+import {
+  LEGACY_DENY_MESSAGE,
+  RoleFormValues,
+  emptyRule
+} from "../roleFormValues";
 import FormikRoleScopeSelect from "./FormikRoleScopeSelect";
 
 const actionOptions = roleActions.map((action) => ({
@@ -36,23 +45,43 @@ function RoleRuleFields({
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const rule = values.rules[index];
   const contract = getActionContract(rule.action);
+  const hasResource = takesResource(contract);
   const takesTarget = !!contract && contract.targets.length > 0;
-  const canDeny = !contract || contract.allowsDeny;
   const path = `rules.${index}`;
 
   // Clear what the new action doesn't take, so it isn't sent and rejected
   useEffect(() => {
+    if (!hasResource && rule.resource) {
+      setFieldValue(`${path}.resource`, "");
+    }
     if (!takesTarget && rule.target) {
       setFieldValue(`${path}.target`, "");
     }
-    if (!canDeny && rule.deny) {
-      setFieldValue(`${path}.deny`, false);
-    }
-  }, [takesTarget, canDeny, rule.target, rule.deny, path, setFieldValue]);
+  }, [
+    hasResource,
+    takesTarget,
+    rule.resource,
+    rule.target,
+    path,
+    setFieldValue
+  ]);
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-gray-200 p-4">
-      <div className="flex flex-row items-start gap-3">
+    <div
+      className={`flex flex-col gap-3 rounded-md border p-4 ${rule.legacyDeny ? "border-red-300 bg-red-50" : "border-gray-200"}`}
+    >
+      {rule.legacyDeny && (
+        <div className="flex flex-col gap-1 text-sm text-red-900">
+          <p className="font-medium">
+            <span className="mr-2 rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
+              deny
+            </span>
+            Unsupported deny rule
+          </p>
+          <p>{LEGACY_DENY_MESSAGE}</p>
+        </div>
+      )}
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start">
         <FormikTextInput
           name={`${path}.name`}
           label="Rule name"
@@ -78,7 +107,7 @@ function RoleRuleFields({
         {onRemove && (
           <button
             type="button"
-            className="mt-7 p-1 text-gray-500 hover:text-red-600"
+            className="self-end p-1 text-gray-500 hover:text-red-600 sm:mt-7 sm:self-auto"
             title="Remove rule"
             onClick={onRemove}
           >
@@ -88,7 +117,7 @@ function RoleRuleFields({
       </div>
 
       {rule.action === PLUGIN_ACTION && (
-        <div className="flex flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <FormikTextInput
             name={`${path}.plugin`}
             label="Plugin"
@@ -104,20 +133,33 @@ function RoleRuleFields({
         </div>
       )}
 
-      <FormikRoleScopeSelect
-        name={`${path}.resource`}
-        label="Resource scope"
-        hint={
-          contract
-            ? `The ${contract.resources.join(", ")} the action is performed on.`
-            : "The resources the action is performed on."
-        }
-        namespace={namespace}
-        contract={contract}
-        input="resource"
-        required
-        onScopeChange={onScopeChange}
-      />
+      {contract?.privilegeWarning && (
+        <p
+          role="alert"
+          className="rounded-md border border-yellow-300 bg-yellow-50 p-2 text-xs text-yellow-900"
+        >
+          {contract.privilegeWarning}
+        </p>
+      )}
+
+      {hasResource ? (
+        <FormikRoleScopeSelect
+          name={`${path}.resource`}
+          label="Resource scope"
+          hint={resourceHint(contract)}
+          namespace={namespace}
+          contract={contract}
+          input="resource"
+          required
+          onScopeChange={onScopeChange}
+        />
+      ) : (
+        <p className="text-xs text-gray-500">
+          {contract!.label} isn&apos;t performed on a resource, so it takes no
+          scope. A role binding with a constraint can&apos;t narrow it, so it
+          doesn&apos;t apply through one.
+        </p>
+      )}
 
       {takesTarget && (
         <FormikRoleScopeSelect
@@ -136,24 +178,29 @@ function RoleRuleFields({
         label="Description"
         className="flex flex-col"
       />
-
-      <div className="flex flex-col gap-1">
-        <FormikCheckbox
-          name={`${path}.deny`}
-          label="Deny this action instead of allowing it"
-          labelClassName="text-sm font-medium text-gray-700"
-          disabled={!canDeny}
-          inline
-        />
-        {/* Indented by the checkbox's width and gap, to line up with its label */}
-        <p className="pl-6 text-xs text-gray-500">
-          {canDeny
-            ? "A deny overrides every allow, from any role or permission, for everyone but admins."
-            : `${contract?.label} can't be denied yet.`}
-        </p>
-      </div>
     </div>
   );
+}
+
+function resourceHint(contract?: RoleActionContract) {
+  if (!contract) {
+    return "The resources the action is performed on.";
+  }
+  // read and create/update/delete accept almost every type, so they say which they don't
+  const hint =
+    contract.resources.length > 4
+      ? `The resources the action is performed on: any type but ${contract.value === "read" ? "view" : "check, person and view"}.`
+      : `The ${contract.resources.join(", ")} the action is performed on.`;
+  if (contract.value === "connection:use") {
+    return `${hint} The scope may select any connections.`;
+  }
+  if (contract.wholeTypeOnly.length === contract.resources.length) {
+    return `${hint} ${contract.label} is only checked on all resources of a type, so the scope must use whole-type targets (name: "*" and nothing else).`;
+  }
+  if (contract.wholeTypeOnly.length > 0) {
+    return `${hint} Connections must be selected with a whole-type target (name: "*" and nothing else).`;
+  }
+  return hint;
 }
 
 type RoleRulesFormProps = {
