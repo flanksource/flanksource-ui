@@ -49,6 +49,8 @@ import {
   useUserAccessStateContext
 } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
+import { useUser } from "./context";
+import { PERMISSIONS_TAB_RESOURCES } from "./components/Permissions/PermissionsTabsLinks";
 
 import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
@@ -400,7 +402,7 @@ export type SettingsNavigationItems = {
         href: string;
         icon: React.ComponentType<{ className: string }>;
         featureName: string;
-        resourceName: string;
+        resourceName: string | string[];
       }
   )[];
 };
@@ -429,21 +431,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/settings/permissions",
       icon: RiShieldUserFill,
       featureName: features["settings.permissions"],
-      resourceName: tables.roles
-    },
-    {
-      name: "Role Bindings",
-      href: "/settings/permissions/role-bindings",
-      icon: RiShieldUserFill,
-      featureName: features["settings.permissions"],
-      resourceName: tables.role_bindings
-    },
-    {
-      name: "Scopes",
-      href: "/settings/permissions/scopes",
-      icon: RiShieldUserFill,
-      featureName: features["settings.permissions"],
-      resourceName: tables.scopes
+      resourceName: PERMISSIONS_TAB_RESOURCES.map(({ resource }) => resource)
     },
     ...(process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true"
       ? []
@@ -519,14 +507,7 @@ const settingsNav: SettingsNavigationItems = {
       href: "/notifications/rules",
       icon: FaBell,
       featureName: features["settings.notifications"],
-      resourceName: tables.notifications
-    },
-    {
-      name: "Notification Silences",
-      href: "/notifications/silences",
-      icon: FaBell,
-      featureName: features["settings.notifications"],
-      resourceName: tables.notification_silences
+      resourceName: [tables.notifications, tables.notification_silences]
     },
     {
       name: "Integrations",
@@ -557,7 +538,7 @@ const settingsNav: SettingsNavigationItems = {
 const GLOBAL_PAGE_ACCESS_RESOURCES = [
   ...new Set([
     ...navigation.map((item) => item.resourceName),
-    ...settingsNav.submenu.map((item) => item.resourceName),
+    ...settingsNav.submenu.flatMap((item) => item.resourceName),
     tables.views
   ])
 ];
@@ -858,10 +839,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             true
           )}
         />
-        <Route
-          path="permissions"
-          element={<Navigate to="/settings/permissions/roles" replace />}
-        />
+        <Route path="permissions" element={<PermissionsIndexRedirect />} />
         <Route
           path="permissions/subjects"
           element={withAuthorizationAccessCheck(
@@ -1448,4 +1426,14 @@ export function App() {
       </Provider>
     </BrowserRouter>
   );
+}
+
+// The Permissions sidebar entry opens the first of its tabs the user may read.
+function PermissionsIndexRedirect() {
+  const { access } = useUser();
+  const tab = PERMISSIONS_TAB_RESOURCES.find(
+    ({ type }) =>
+      access?.[type]?.read === "all" || access?.[type]?.read === "some"
+  );
+  return <Navigate to={tab?.path ?? "/settings/permissions/roles"} replace />;
 }
