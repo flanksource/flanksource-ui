@@ -5,6 +5,7 @@ import { useCallback, useSyncExternalStore } from "react";
 import {
   clearImpersonatedScopes,
   getImpersonatedScopeIds,
+  hasLegacyScopeLimit,
   SCOPE_IMPERSONATION_CHANGE_EVENT,
   setImpersonatedScopes
 } from "./scopeImpersonationStore";
@@ -16,11 +17,14 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot(): string {
-  return sessionStorage.getItem("flanksource-impersonated-scope-ids") ?? "";
+  return JSON.stringify({
+    scopeIds: getImpersonatedScopeIds(),
+    legacyLimit: hasLegacyScopeLimit()
+  });
 }
 
 function getServerSnapshot(): string {
-  return "";
+  return JSON.stringify({ scopeIds: [], legacyLimit: false });
 }
 
 /** Keeps the scope picker in sync with the named request limits stored for this session. */
@@ -28,6 +32,7 @@ export function useImpersonatedScopes() {
   useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const scopeIds = getImpersonatedScopeIds();
+  const legacyLimit = hasLegacyScopeLimit();
   const active = scopeIds.length > 0;
 
   const setScopes = useCallback(
@@ -36,5 +41,5 @@ export function useImpersonatedScopes() {
   );
   const clear = useCallback(() => clearImpersonatedScopes(), []);
 
-  return { scopeIds, active, setScopes, clear };
+  return { scopeIds, legacyLimit, active, setScopes, clear };
 }

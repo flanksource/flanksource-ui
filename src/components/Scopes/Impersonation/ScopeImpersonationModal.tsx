@@ -23,6 +23,7 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
   const { data: scopes, isLoading } = useScopesQuery();
   const {
     scopeIds: impersonatedIds,
+    legacyLimit,
     active,
     setScopes,
     clear
@@ -30,6 +31,7 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const [storageError, setStorageError] = useState(false);
 
   const options: ScopeOption[] = useMemo(() => {
     if (!scopes) return [];
@@ -43,6 +45,7 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
   // Sync local state from stored impersonation when modal opens
   if (isOpen && !initialized) {
     setSelectedIds(impersonatedIds);
+    setStorageError(false);
     setInitialized(true);
   }
   if (!isOpen && initialized) {
@@ -50,14 +53,22 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
   }
 
   function handleApplyScopes() {
-    setScopes(selectedIds);
-    onClose();
+    if (setScopes(selectedIds)) {
+      setStorageError(false);
+      onClose();
+    } else {
+      setStorageError(true);
+    }
   }
 
   function handleReset() {
-    clear();
-    setSelectedIds([]);
-    onClose();
+    if (clear()) {
+      setStorageError(false);
+      setSelectedIds([]);
+      onClose();
+    } else {
+      setStorageError(true);
+    }
   }
 
   return (
@@ -69,6 +80,25 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
       bodyClass="flex flex-col flex-1 overflow-y-auto p-4"
     >
       <div className="flex flex-col gap-4">
+        {legacyLimit && (
+          <p
+            role="alert"
+            className="rounded border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900"
+          >
+            Your previous Custom Targets scope limit is no longer supported and
+            is not applied. Select named scopes to limit requests again, or
+            Reset to dismiss this notice.
+          </p>
+        )}
+        {storageError && (
+          <p
+            role="alert"
+            className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-900"
+          >
+            Unable to update the scope limit. Browser session storage is
+            unavailable or full. Allow session storage and try again.
+          </p>
+        )}
         {active && (
           <p className="text-xs text-green-600">
             Scope impersonation is active ({impersonatedIds.length} scope

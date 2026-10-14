@@ -1,7 +1,10 @@
-import { getImpersonatedScopeIds } from "@flanksource-ui/components/Scopes/Impersonation/scopeImpersonationStore";
+import {
+  getImpersonatedScopeIds,
+  hasLegacyScopeLimit
+} from "@flanksource-ui/components/Scopes/Impersonation/scopeImpersonationStore";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { isCanaryUI } from "@flanksource-ui/context/Environment";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 const isClerkAuthSystem = process.env.NEXT_PUBLIC_AUTH_IS_CLERK === "true";
 const isBasicAuthSystem = process.env.NEXT_PUBLIC_AUTH_IS_BASIC === "true";
@@ -212,6 +215,23 @@ for (const client of [
   );
 }
 
+// Notify once per page load if obsolete custom targets no longer limit requests.
+let legacyScopeLimitNotified = false;
+
+/** Shares the named-scope header and legacy migration notice across API clients. */
+function attachScopeLimit(config: InternalAxiosRequestConfig) {
+  const scopeIds = getImpersonatedScopeIds();
+  if (scopeIds.length > 0) {
+    config.headers["X-Flanksource-Scope"] = JSON.stringify(scopeIds);
+  } else if (hasLegacyScopeLimit() && !legacyScopeLimitNotified) {
+    legacyScopeLimitNotified = true;
+    toastError(
+      "Your previous Custom Targets scope limit is no longer supported and is not applied. Select named scopes from Impersonate Scope to limit requests again."
+    );
+  }
+  return config;
+}
+
 // Attach X-Flanksource-Scope header when scope impersonation is active
 for (const client of [
   apiBase,
@@ -233,13 +253,7 @@ for (const client of [
   Rback,
   NotificationAPI
 ]) {
-  client.interceptors.request.use((config) => {
-    const scopeIds = getImpersonatedScopeIds();
-    if (scopeIds.length > 0) {
-      config.headers["X-Flanksource-Scope"] = JSON.stringify(scopeIds);
-    }
-    return config;
-  });
+  client.interceptors.request.use(attachScopeLimit);
 }
 
 export function redirectToLoginPageOnSessionExpiry(error: AxiosError) {

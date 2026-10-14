@@ -165,6 +165,13 @@ function TargetBlock({
 
   // Get wildcard value from formik
   const isWildcard = values.targets?.[index]?.[resourceKey]?.wildcard || false;
+  const additionalRestrictions = Object.entries(
+    target[resourceKey] || {}
+  ).filter(
+    ([key, value]) =>
+      ["id", "namespace", "types", "labelSelector"].includes(key) &&
+      (Array.isArray(value) ? value.length > 0 : !!value)
+  );
 
   // When wildcard is toggled, set name to "*" or clear it
   useEffect(() => {
@@ -233,6 +240,30 @@ function TargetBlock({
               inline
               disabled={disabled}
             />
+          </div>
+        )}
+
+        {additionalRestrictions.length > 0 && (
+          <div
+            role="status"
+            className="rounded border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900"
+          >
+            <p className="font-medium">Additional restrictions (read-only)</p>
+            <dl className="my-2 space-y-1">
+              {additionalRestrictions.map(([key, value]) => (
+                <div key={key} className="flex gap-2">
+                  <dt className="font-medium">{key}:</dt>
+                  <dd className="break-all">
+                    {Array.isArray(value) ? value.join(", ") : String(value)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p>
+              {isWildcard
+                ? "Match all is enabled. These restrictions will be removed when you save."
+                : "These restrictions are preserved on save. Enabling Match all removes them."}
+            </p>
           </div>
         )}
 
