@@ -1,7 +1,12 @@
 import { AgentSummary } from "@flanksource-ui/components/Agents/AgentPage";
 import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import { getAgentsList, getAgentsSummaryByID } from "../services/agents";
+import {
+  AgentAccessToken,
+  getAgentsList,
+  getAgentsSummaryByID,
+  getAgentTokens
+} from "../services/agents";
 import { DatabaseResponse } from "./useNotificationsQuery";
 
 export function useAgentsListQuery(
@@ -34,6 +39,17 @@ export function useAgentQuery(
   return useQuery<AgentSummary | null, Error>(
     ["agents", id],
     () => getAgentsSummaryByID(id),
+    options
+  );
+}
+
+export function useAgentTokensQuery(
+  agentId: string,
+  options?: UseQueryOptions<AgentAccessToken[], Error>
+) {
+  return useQuery<AgentAccessToken[], Error>(
+    ["agents", agentId, "tokens"],
+    () => getAgentTokens(agentId),
     options
   );
 }

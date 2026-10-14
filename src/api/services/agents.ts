@@ -106,3 +106,32 @@ export const getAllAgents = () => {
     `/agents?select=id,name,description&deleted_at=is.null`
   );
 };
+
+export type AgentAccessToken = {
+  id: string;
+  name: string;
+  person_id: string;
+  created_at: string;
+  expires_at?: string | null;
+  auto_renew?: boolean;
+};
+
+export async function getAgentTokens(agentId: string) {
+  const res = await AgentAPI.get<{
+    message?: string;
+    payload: AgentAccessToken[] | null;
+  }>(`/${agentId}/tokens`);
+  return res.data.payload ?? [];
+}
+
+export async function deleteAgentToken(agentId: string, tokenId: string) {
+  await AgentAPI.delete(`/${agentId}/tokens/${tokenId}`);
+}
+
+export async function generateAgentToken(agentName: string, autoRenew = false) {
+  const res = await AgentAPI.post<GeneratedAgent>("/token", {
+    agent_name: agentName,
+    auto_renew: autoRenew
+  });
+  return res.data;
+}

@@ -10,7 +10,8 @@ export type Token = {
   name: string;
   created_at: string;
   expires_at?: string | null;
-  person: {
+  /** Always the caller: a personal token signs in as its owner. */
+  person?: {
     avatar?: string;
     id: string;
     name: string;

@@ -21,6 +21,8 @@ import { toastError, toastSuccess } from "../../Toast/toast";
 import { Agent } from "../AgentPage";
 import DeleteAgentButton from "../DeleteAgentButton";
 import FormikScheduleField from "@flanksource-ui/components/Forms/Formik/FormikScheduleField";
+import { Tab, Tabs } from "@flanksource-ui/ui/Tabs/Tabs";
+import AgentTokensTab from "../Tokens/AgentTokensTab";
 
 export type AgentFormValues = GenerateAgent & {
   kubernetes?: Record<string, any>;
@@ -29,6 +31,8 @@ export type AgentFormValues = GenerateAgent & {
     topologyName?: string;
   };
 };
+
+type AgentModalTab = "details" | "tokens";
 
 type Props = {
   id?: string;
@@ -45,7 +49,9 @@ export default function AgentForm({
   onSuccess = () => {},
   onUpdated = () => {}
 }: Props) {
-  const { backendUrl } = useUser();
+  const { backendUrl, access } = useUser();
+  const canReadTokens = access?.agent?.read === "all";
+  const [activeTab, setActiveTab] = useState<AgentModalTab>("details");
   const [formValues, setFormValues] = useState<AgentFormValues>();
 
   const { data, isLoading: isLoadingAgent } = useAgentQuery(id!, {
@@ -91,6 +97,129 @@ export default function AgentForm({
     addAgent(dbValues);
   };
 
+  const detailsForm =
+    isLoadingAgent && id ? (
+      <FormSkeletonLoader />
+    ) : (
+      <Formik<AgentFormValues>
+        initialValues={{
+          name: agent?.name ?? "",
+          properties: agent?.properties ?? {},
+          kubernetes: {
+            schedule: "30m",
+            enabled: false
+          },
+          pushTelemetry: {
+            enabled: false,
+            topologyName: backendUrl ?? ""
+          }
+        }}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {({ handleSubmit, values }) => (
+          <Form
+            className="flex flex-1 flex-col overflow-y-auto"
+            onSubmit={handleSubmit}
+          >
+            <div className={clsx("my-2 flex h-full flex-col overflow-y-auto")}>
+              <div className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}>
+                <div className="flex flex-col space-y-4 overflow-y-auto p-4">
+                  <FormikTextInput
+                    readOnly={agent?.id !== undefined}
+                    name="name"
+                    label="Name"
+                    required
+                    hintPosition="top"
+                    hint="e.g. Cluster name, or if running a cluster per region/dc/account it can be the region name"
+                  />
+                  <FormikKeyValueMapField
+                    hint="Labels that are automatically added to all resources created by this agent"
+                    name="properties"
+                    label="Properties"
+                  />
+                  <FormikSwitchField
+                    options={[
+                      { label: "Enabled", key: true },
+                      { label: "Disabled", key: false }
+                    ]}
+                    name="kubernetes.enabled"
+                    label={
+                      <div className="flex w-full flex-col">
+                        <span>Kubernetes</span>
+                      </div>
+                    }
+                    hintPosition="top"
+                    hint="Scrapes built-in and custom resource definitions and creates catalog items and a topology from Cluster --> Namespace --> Pod"
+                  />
+                  {Boolean(values.kubernetes?.enabled) === true && (
+                    <FormikScheduleField
+                      type="scraper"
+                      name="kubernetes.schedule"
+                      label="Scrape Interval"
+                      hintPosition="top"
+                      hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
+                    />
+                  )}
+
+                  <FormikSwitchField
+                    options={[
+                      { label: "Enabled", key: true },
+                      { label: "Disabled", key: false }
+                    ]}
+                    name="pushTelemetry.enabled"
+                    label={
+                      <div className="flex w-full flex-col">
+                        <span>Telemetry</span>
+                      </div>
+                    }
+                  />
+                  {Boolean(values.pushTelemetry?.enabled) === true && (
+                    <FormikTextInput
+                      name="pushTelemetry.topologyName"
+                      label="Label"
+                      hintPosition="top"
+                      hint='A unique name describing the company and cluster in which the agent is running, e.g. "acme-prod"'
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div
+              className={clsx(
+                "flex items-center bg-gray-100 px-5 py-4",
+                agent?.id ? "justify-between" : "justify-end"
+              )}
+            >
+              {agent?.id && (
+                <AuthorizationAccessCheck
+                  resource={tables.agents}
+                  action="delete"
+                >
+                  <DeleteAgentButton agentId={agent.id} onDeleted={onClose} />
+                </AuthorizationAccessCheck>
+              )}
+              <AuthorizationAccessCheck
+                resource={tables.agents}
+                action={agent?.id ? "update" : "create"}
+              >
+                <Button
+                  icon={
+                    isLoading ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : undefined
+                  }
+                  type="submit"
+                  text={agent?.id ? "Save" : isLoading ? "Saving ..." : "Next"}
+                  className="btn-primary"
+                />
+              </AuthorizationAccessCheck>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    );
+
   return (
     <Modal
       title={agent?.id ? agent.name : "Create new agent"}
@@ -99,132 +228,34 @@ export default function AgentForm({
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
       helpLink="/installation/saas/agent"
     >
-      {isLoadingAgent && id ? (
-        <FormSkeletonLoader />
-      ) : (
-        <Formik<AgentFormValues>
-          initialValues={{
-            name: agent?.name ?? "",
-            properties: agent?.properties ?? {},
-            kubernetes: {
-              schedule: "30m",
-              enabled: false
-            },
-            pushTelemetry: {
-              enabled: false,
-              topologyName: backendUrl ?? ""
-            }
-          }}
-          onSubmit={handleSubmit}
-          enableReinitialize
+      {agent?.id && canReadTokens ? (
+        <Tabs<AgentModalTab>
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          className="px-4 pt-2"
+          contentClassName="flex flex-1 flex-col overflow-y-auto"
         >
-          {({ handleSubmit, values }) => (
-            <Form
-              className="flex flex-1 flex-col overflow-y-auto"
-              onSubmit={handleSubmit}
-            >
-              <div
-                className={clsx("my-2 flex h-full flex-col overflow-y-auto")}
-              >
-                <div
-                  className={clsx("mb-2 flex flex-col overflow-y-auto px-2")}
-                >
-                  <div className="flex flex-col space-y-4 overflow-y-auto p-4">
-                    <FormikTextInput
-                      readOnly={agent?.id !== undefined}
-                      name="name"
-                      label="Name"
-                      required
-                      hintPosition="top"
-                      hint="e.g. Cluster name, or if running a cluster per region/dc/account it can be the region name"
-                    />
-                    <FormikKeyValueMapField
-                      hint="Labels that are automatically added to all resources created by this agent"
-                      name="properties"
-                      label="Properties"
-                    />
-                    <FormikSwitchField
-                      options={[
-                        { label: "Enabled", key: true },
-                        { label: "Disabled", key: false }
-                      ]}
-                      name="kubernetes.enabled"
-                      label={
-                        <div className="flex w-full flex-col">
-                          <span>Kubernetes</span>
-                        </div>
-                      }
-                      hintPosition="top"
-                      hint="Scrapes built-in and custom resource definitions and creates catalog items and a topology from Cluster --> Namespace --> Pod"
-                    />
-                    {Boolean(values.kubernetes?.enabled) === true && (
-                      <FormikScheduleField
-                        type="scraper"
-                        name="kubernetes.schedule"
-                        label="Scrape Interval"
-                        hintPosition="top"
-                        hint="How often to perform a full reconciliation of changes (in addition to real-time changes from Kubernetes events), set higher for larger clusters."
-                      />
-                    )}
-
-                    <FormikSwitchField
-                      options={[
-                        { label: "Enabled", key: true },
-                        { label: "Disabled", key: false }
-                      ]}
-                      name="pushTelemetry.enabled"
-                      label={
-                        <div className="flex w-full flex-col">
-                          <span>Telemetry</span>
-                        </div>
-                      }
-                    />
-                    {Boolean(values.pushTelemetry?.enabled) === true && (
-                      <FormikTextInput
-                        name="pushTelemetry.topologyName"
-                        label="Label"
-                        hintPosition="top"
-                        hint='A unique name describing the company and cluster in which the agent is running, e.g. "acme-prod"'
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div
-                className={clsx(
-                  "flex items-center bg-gray-100 px-5 py-4",
-                  agent?.id ? "justify-between" : "justify-end"
-                )}
-              >
-                {agent?.id && (
-                  <AuthorizationAccessCheck
-                    resource={tables.agents}
-                    action="delete"
-                  >
-                    <DeleteAgentButton agentId={agent.id} onDeleted={onClose} />
-                  </AuthorizationAccessCheck>
-                )}
-                <AuthorizationAccessCheck
-                  resource={tables.agents}
-                  action={agent?.id ? "update" : "create"}
-                >
-                  <Button
-                    icon={
-                      isLoading ? (
-                        <FaSpinner className="animate-spin" />
-                      ) : undefined
-                    }
-                    type="submit"
-                    text={
-                      agent?.id ? "Save" : isLoading ? "Saving ..." : "Next"
-                    }
-                    className="btn-primary"
-                  />
-                </AuthorizationAccessCheck>
-              </div>
-            </Form>
-          )}
-        </Formik>
+          <Tab
+            label="Details"
+            value="details"
+            className="flex flex-1 flex-col overflow-y-auto"
+          >
+            {detailsForm}
+          </Tab>
+          <Tab
+            label="Access tokens"
+            value="tokens"
+            className="flex flex-1 flex-col overflow-y-auto"
+          >
+            <AgentTokensTab
+              agentId={agent.id}
+              agentName={agent.name}
+              agentProperties={agent.properties}
+            />
+          </Tab>
+        </Tabs>
+      ) : (
+        detailsForm
       )}
     </Modal>
   );

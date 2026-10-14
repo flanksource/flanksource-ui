@@ -19,13 +19,13 @@ export default function TokensPage() {
 
   return (
     <>
-      <Head prefix="Tokens" />
+      <Head prefix="Personal access tokens" />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
               <BreadcrumbRoot key={"root-tokens"} link="/settings/tokens">
-                Tokens
+                Personal access tokens
               </BreadcrumbRoot>,
               <AddToken refresh={refetch} key={"add-token"} />
             ]}
