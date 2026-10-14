@@ -80,7 +80,7 @@ export const AllHumanUsers: StoryObj<typeof RoleBindingForm> = {
 export const WithoutCatalogueAccess: StoryObj<typeof RoleBindingForm> = {
   render: () => (
     <AuthContext.Provider
-      value={FakeUser([], {
+      value={FakeUser({
         roleBinding: {
           read: "all",
           create: "all",

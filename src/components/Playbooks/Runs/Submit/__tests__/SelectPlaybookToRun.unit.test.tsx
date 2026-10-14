@@ -1,4 +1,4 @@
-import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { render, screen, waitFor } from "@flanksource-ui/test-utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -80,7 +80,7 @@ describe("SelectPlaybookToRun", () => {
     const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <PlaybooksDropdownMenu component_id="component_id" />
           </UserAccessStateContextProvider>
@@ -108,7 +108,7 @@ describe("SelectPlaybookToRun", () => {
     const queryClient = createQueryClient();
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <PlaybooksDropdownMenu check_id="check_id" />
           </UserAccessStateContextProvider>

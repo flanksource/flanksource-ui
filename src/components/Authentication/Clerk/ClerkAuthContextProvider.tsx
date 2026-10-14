@@ -42,7 +42,6 @@ export default function ClerkAuthContextProvider({
 
   useFlanksourceUISnippet(payload?.user, organization ?? undefined);
 
-  const roles = useMemo(() => payload?.roles ?? [], [payload?.roles]);
   const authorizer = useMemo(
     () => (payload ? createAuthorizer(payload) : undefined),
     [payload]
@@ -79,8 +78,6 @@ export default function ClerkAuthContextProvider({
           authorizer: authorizer!,
           isLoading,
           user: payload.user ?? (payload as any),
-          roles,
-          permissions: payload.permissions,
           access: payload.access,
           access_actions: payload.access_actions,
           backendUrl: backendURL as string,

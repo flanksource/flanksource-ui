@@ -17,7 +17,6 @@ import {
   Team,
   User
 } from "../types/users";
-import { Permission } from "@flanksource-ui/context";
 
 export const getPerson = (id: string) =>
   resolvePostGrestRequestWithPagination<User[]>(
@@ -210,8 +209,6 @@ export type WhoamiResponse = {
   payload: {
     database: string;
     hostname: string;
-    roles: string[];
-    permissions: Permission[];
     user: User;
     access?: AccessSummary;
     access_actions?: AccessActions;

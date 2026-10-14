@@ -46,7 +46,6 @@ function createQueryClient() {
 function renderWithProviders(accessOverrides?: Partial<UserAccessState>) {
   const queryClient = createQueryClient();
   const accessState: UserAccessState = {
-    roles: [],
     hasResourceAccess: jest.fn((resourceName: string) =>
       Promise.resolve(
         resourceName === tables.views || resourceName === tables.canaries
@@ -144,7 +143,6 @@ describe("HomepageRedirect", () => {
       <QueryClientProvider client={queryClient}>
         <UserAccessStateContext.Provider
           value={{
-            roles: [],
             hasResourceAccess: jest.fn((resourceName: string) =>
               Promise.resolve(
                 resourceName === tables.views ||

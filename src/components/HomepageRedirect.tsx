@@ -73,7 +73,7 @@ function seedDashboardCache(
 
 export function HomepageRedirect() {
   const queryClient = useQueryClient();
-  const { hasResourceAccess, roles } = useUserAccessStateContext();
+  const { hasResourceAccess } = useUserAccessStateContext();
   const [fallbackPath, setFallbackPath] = useState<string | null>(null);
   const [canReadViews, setCanReadViews] = useState(false);
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
@@ -105,7 +105,7 @@ export function HomepageRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [hasResourceAccess, roles]);
+  }, [hasResourceAccess]);
 
   const {
     data: dashboard,

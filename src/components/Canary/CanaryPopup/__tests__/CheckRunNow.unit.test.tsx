@@ -48,8 +48,7 @@ describe("CheckRunNow", () => {
           value={{
             refresh: jest.fn(),
             hasResourceAccess: jest.fn(),
-            hasAnyResourceAccess: jest.fn(() => Promise.resolve(true)),
-            roles: ["admin"]
+            hasAnyResourceAccess: jest.fn(() => Promise.resolve(true))
           }}
         >
           <CheckRunNow
@@ -88,8 +87,7 @@ describe("CheckRunNow", () => {
           value={{
             refresh: jest.fn(),
             hasResourceAccess: jest.fn(),
-            hasAnyResourceAccess: jest.fn(() => Promise.resolve(false)),
-            roles: ["guest"]
+            hasAnyResourceAccess: jest.fn(() => Promise.resolve(false))
           }}
         >
           <CheckRunNow check={{ id: "1", name: "Test Check" }} />

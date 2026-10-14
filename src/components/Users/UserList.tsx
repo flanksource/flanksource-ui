@@ -199,7 +199,7 @@ export function UserList({
   className,
   ...rest
 }: UserListProps) {
-  const { hasResourceAccess, roles } = useUserAccessStateContext();
+  const { hasResourceAccess } = useUserAccessStateContext();
   const [canDeleteUser, setCanDeleteUser] = useState(false);
 
   useEffect(() => {
@@ -207,7 +207,7 @@ export function UserList({
       const result = await hasResourceAccess(tables.people, "write");
       setCanDeleteUser(result);
     })();
-  }, [hasResourceAccess, roles]);
+  }, [hasResourceAccess]);
 
   const columns = useMemo(() => {
     return getColumns(deleteUser, editUser, canDeleteUser);

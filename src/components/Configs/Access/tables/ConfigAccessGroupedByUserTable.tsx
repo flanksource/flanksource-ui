@@ -62,7 +62,7 @@ export function ConfigAccessGroupedByUserTable() {
   const {
     actions: { drillDownByUser }
   } = useCatalogAccessUrlState();
-  const { hasResourceAccess, roles } = useUserAccessStateContext();
+  const { hasResourceAccess } = useUserAccessStateContext();
   const [canManageExternalUsers, setCanManageExternalUsers] = useState(false);
   const [selectedAction, setSelectedAction] = useState<{
     action: ExternalUserAction;
@@ -82,7 +82,7 @@ export function ConfigAccessGroupedByUserTable() {
     return () => {
       active = false;
     };
-  }, [hasResourceAccess, roles]);
+  }, [hasResourceAccess]);
 
   const openAction = useCallback(
     (action: ExternalUserAction, user: ConfigAccessSummaryByUser) => {

@@ -1,7 +1,7 @@
 import { RoleBindingDisplay } from "@flanksource-ui/api/types/roleBindings";
 import { RoleDisplay } from "@flanksource-ui/api/types/roles";
 import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
-import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { Decorator } from "@storybook/react";
 import { HttpResponse, http } from "msw";
@@ -349,7 +349,7 @@ export const rbacHandlers = [
 
 // Signs in as an admin, so the forms show their save and delete buttons
 export const withAdmin: Decorator = (Story) => (
-  <AuthContext.Provider value={FakeUser([Roles.admin])}>
+  <AuthContext.Provider value={FakeUser()}>
     <UserAccessStateContextProvider>
       <div className="h-screen">
         <Story />

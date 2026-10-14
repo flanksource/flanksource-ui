@@ -14,7 +14,7 @@ type KratosAuthSessionCheckerProps = {
  *
  * The ory.toSession() call only matters for its HTTP status code (redirect to
  * login on 401/403/422) — the response body is never used. The actual user
- * identity, roles, and permissions come from /api/auth/whoami (via
+ * identity and access summary come from /api/auth/whoami (via
  * KratosAuthContextProvider). So there's no reason to gate the entire app on
  * this call completing.
  */

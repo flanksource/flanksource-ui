@@ -11,10 +11,8 @@ const none = {
   delete: "none"
 } as const;
 
-function authorizerFor(roles: string[], access?: AccessSummary) {
+function authorizerFor(access?: AccessSummary) {
   return createAuthorizer({
-    roles,
-    permissions: [],
     database: "",
     hostname: "",
     user,
@@ -24,7 +22,7 @@ function authorizerFor(roles: string[], access?: AccessSummary) {
 
 describe("createAuthorizer", () => {
   it("shows a guest the page of a type it may read some of", async () => {
-    const authorizer = authorizerFor(["guest"], {
+    const authorizer = authorizerFor({
       config: { ...none, read: "some" },
       component: none
     });
@@ -41,7 +39,7 @@ describe("createAuthorizer", () => {
   });
 
   it("hides a page the summary says is none, whatever the role grants", async () => {
-    const authorizer = authorizerFor(["viewer"], { component: none });
+    const authorizer = authorizerFor({ component: none });
 
     expect(await authorizer.hasResourceAccess(tables.topologies, "read")).toBe(
       false
@@ -52,7 +50,7 @@ describe("createAuthorizer", () => {
   });
 
   it("offers write controls when a write is all", async () => {
-    const authorizer = authorizerFor(["viewer"], {
+    const authorizer = authorizerFor({
       config: { ...none, read: "all", update: "all" }
     });
 
@@ -61,8 +59,8 @@ describe("createAuthorizer", () => {
     );
   });
 
-  it("does not infer access from admin roles without a summary", async () => {
-    const authorizer = authorizerFor(["admin"]);
+  it("denies access without a summary", async () => {
+    const authorizer = authorizerFor();
 
     expect(await authorizer.hasResourceAccess(tables.catalog, "read")).toBe(
       false
