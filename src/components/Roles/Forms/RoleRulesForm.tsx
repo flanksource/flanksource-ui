@@ -57,7 +57,14 @@ function RoleRuleFields({
     if (!takesTarget && rule.target) {
       setFieldValue(`${path}.target`, "");
     }
-  }, [hasResource, takesTarget, rule.resource, rule.target, path, setFieldValue]);
+  }, [
+    hasResource,
+    takesTarget,
+    rule.resource,
+    rule.target,
+    path,
+    setFieldValue
+  ]);
 
   return (
     <div
@@ -171,7 +178,6 @@ function RoleRuleFields({
         label="Description"
         className="flex flex-col"
       />
-
     </div>
   );
 }
@@ -180,7 +186,11 @@ function resourceHint(contract?: RoleActionContract) {
   if (!contract) {
     return "The resources the action is performed on.";
   }
-  const hint = `The ${contract.resources.join(", ")} the action is performed on.`;
+  // read and create/update/delete accept almost every type, so they say which they don't
+  const hint =
+    contract.resources.length > 4
+      ? `The resources the action is performed on: any type but ${contract.value === "read" ? "view" : "check, person and view"}.`
+      : `The ${contract.resources.join(", ")} the action is performed on.`;
   if (contract.value === "connection:use") {
     return `${hint} The scope may select any connections.`;
   }

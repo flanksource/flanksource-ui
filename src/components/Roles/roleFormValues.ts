@@ -109,7 +109,9 @@ export function formValuesToRule(values: RoleRuleFormValues): RoleRule {
       : {}),
     action,
     // Fields the action doesn't take are dropped: the API rejects them. deny is never sent.
-    ...(takesResource(contract) ? { resource: { scopeRef: values.resource } } : {}),
+    ...(takesResource(contract)
+      ? { resource: { scopeRef: values.resource } }
+      : {}),
     ...(values.target && contract?.targets.length
       ? { target: { scopeRef: values.target } }
       : {})

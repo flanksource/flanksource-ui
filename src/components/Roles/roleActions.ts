@@ -224,7 +224,11 @@ function getPartialTypes(targets: ScopeTarget[]): string[] {
       const fields = Object.entries(selector).filter(
         ([, value]) => value !== undefined && value !== ""
       );
-      if (fields.length !== 1 || fields[0][0] !== "name" || fields[0][1] !== "*") {
+      if (
+        fields.length !== 1 ||
+        fields[0][0] !== "name" ||
+        fields[0][1] !== "*"
+      ) {
         types.add(type);
       }
     });
