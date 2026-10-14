@@ -19,7 +19,9 @@ function plural(count: number, word: string) {
 export function summarizeSubjects(subjects: RoleBindingSubjects = {}) {
   const labels: string[] = [];
   const people = subjects.people ?? [];
-  if (people.length === 1) {
+  if (people.includes("*")) {
+    labels.push("all human users");
+  } else if (people.length === 1) {
     labels.push(people[0]);
   } else if (people.length > 1) {
     labels.push(plural(people.length, "person").replace("persons", "people"));

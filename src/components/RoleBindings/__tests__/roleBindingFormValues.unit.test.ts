@@ -72,7 +72,9 @@ describe("formValuesToSpec", () => {
 
 describe("validateRoleBindingForm", () => {
   it("accepts a valid binding", () => {
-    expect(validateRoleBindingForm(makeValues())).toEqual({});
+    expect(
+      validateRoleBindingForm(makeValues({ people: ["*"], teams: [] }))
+    ).toEqual({});
   });
 
   it("requires a subject and a role", () => {

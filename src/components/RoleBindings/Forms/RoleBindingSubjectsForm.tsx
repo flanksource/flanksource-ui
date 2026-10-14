@@ -29,7 +29,7 @@ const subjectKinds: { kind: SubjectKind; label: string; hint: string }[] = [
   {
     kind: "people",
     label: "People",
-    hint: "Mission Control human users, by verified email. Agents and external-provider users do not match."
+    hint: 'Mission Control human users, by verified email. Select "All human users" to send the standalone * wildcard. Agents and external-provider users do not match.'
   },
   {
     kind: "teams",
@@ -83,16 +83,22 @@ function PeopleField() {
     async () => (await fetchPeopleWithRoles()).data ?? []
   );
 
-  // People are bound by email
+  // The wildcard is a distinct subject for all human users, not a placeholder for listed people.
   const options = useMemo(
-    () =>
-      (people ?? [])
+    () => [
+      {
+        value: "*",
+        label: "All human users",
+        description: "*"
+      },
+      ...(people ?? [])
         .filter((person) => person.email)
         .map((person) => ({
           value: person.email,
           label: person.name || person.email,
           description: person.email
-        })),
+        }))
+    ],
     [people]
   );
 
@@ -103,7 +109,7 @@ function PeopleField() {
       hideLabel
       options={options}
       isLoading={isLoading}
-      placeholder="Select people or type an email..."
+      placeholder="Select all human users, people, or type an email..."
     />
   );
 }

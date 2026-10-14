@@ -63,6 +63,20 @@ export const PluginSubjects: StoryObj<typeof RoleBindingForm> = {
   )
 };
 
+export const AllHumanUsers: StoryObj<typeof RoleBindingForm> = {
+  render: () => (
+    <RoleBindingForm
+      isOpen
+      onClose={() => {}}
+      data={{
+        ...roleBindings[0],
+        name: "all-human-viewers",
+        subjects: { people: ["*"] }
+      }}
+    />
+  )
+};
+
 export const WithoutCatalogueAccess: StoryObj<typeof RoleBindingForm> = {
   render: () => (
     <AuthContext.Provider

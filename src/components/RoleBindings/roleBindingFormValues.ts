@@ -192,8 +192,12 @@ export function validateRoleBindingForm(
     errors.subjects = "At least one subject is required";
   }
 
-  const invalidPerson = values.people.find((person) => !email.test(person));
-  if (invalidPerson) {
+  const invalidPerson = values.people.find(
+    (person) => person !== "*" && !email.test(person)
+  );
+  if (values.people.includes("*") && values.people.length > 1) {
+    errors.people = '"All human users" cannot be combined with email addresses';
+  } else if (invalidPerson) {
     errors.people = `${invalidPerson} isn't an email address`;
   }
 

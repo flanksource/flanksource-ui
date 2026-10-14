@@ -27,7 +27,7 @@ export type RoleBindingResourceSubjectKind =
   (typeof roleBindingResourceSubjectKinds)[number];
 
 export type RoleBindingSubjects = {
-  // Emails of Mission Control users
+  // Verified emails of Mission Control humans, or standalone "*" for every human user
   people?: string[];
   // Team names
   teams?: string[];
