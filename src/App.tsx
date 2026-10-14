@@ -563,7 +563,7 @@ const GLOBAL_PAGE_ACCESS_RESOURCES = [
 ];
 
 function useHasAnyPageAccess() {
-  const { hasAnyResourceAccess, roles } = useUserAccessStateContext();
+  const { hasAnyResourceAccess } = useUserAccessStateContext();
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [hasAnyPageAccess, setHasAnyPageAccess] = useState(false);
 
@@ -585,7 +585,7 @@ function useHasAnyPageAccess() {
     return () => {
       cancelled = true;
     };
-  }, [hasAnyResourceAccess, roles]);
+  }, [hasAnyResourceAccess]);
 
   return { hasAnyPageAccess, isCheckingAccess };
 }

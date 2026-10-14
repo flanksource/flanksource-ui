@@ -83,7 +83,7 @@ function renderForm(
     <QueryClientProvider client={new QueryClient()}>
       <MemoryRouter>
         <TooltipProvider>
-          <AuthContext.Provider value={FakeUser([])}>
+          <AuthContext.Provider value={FakeUser()}>
             <RoleBindingForm isOpen onClose={() => {}} {...props} />
           </AuthContext.Provider>
         </TooltipProvider>

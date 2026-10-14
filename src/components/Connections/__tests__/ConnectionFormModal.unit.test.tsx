@@ -1,4 +1,4 @@
-import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -51,7 +51,7 @@ describe("ConnectionForm", () => {
   it("renders form when provided with initial value", async () => {
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionFormModal
               formValue={formInitialValue}
@@ -95,7 +95,7 @@ describe("ConnectionForm", () => {
   it("renders list of connection types", async () => {
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionFormModal
               formValue={undefined}
@@ -116,7 +116,7 @@ describe("ConnectionForm", () => {
   it("renders form when connection type is selected", async () => {
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionFormModal
               formValue={undefined}

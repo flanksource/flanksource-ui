@@ -21,7 +21,7 @@ export function AuthorizationAccessCheck({
   const [isChecking, setIsChecking] = useState(true);
   const { access } = useUser();
 
-  const { hasAnyResourceAccess, roles, isLoading, isLoaded } =
+  const { hasAnyResourceAccess, isLoading, isLoaded } =
     useUserAccessStateContext();
 
   const [hasAccess, setHasAccess] = useState(false);
@@ -39,7 +39,7 @@ export function AuthorizationAccessCheck({
 
   useEffect(() => {
     checkAccess();
-  }, [action, checkAccess, resource, roles]);
+  }, [action, checkAccess, resource]);
 
   if (hasAccess) {
     const partial =

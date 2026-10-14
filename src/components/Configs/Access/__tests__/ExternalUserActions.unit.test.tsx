@@ -4,7 +4,7 @@ import {
   searchExternalUsers
 } from "../../../../api/services/configAccess";
 import { ConfigAccessSummaryByUser } from "../../../../api/types/configs";
-import { AuthContext, FakeUser, Roles } from "../../../../context";
+import { AuthContext, FakeUser } from "../../../../context";
 import { toastSuccess } from "../../../Toast/toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -72,7 +72,7 @@ function renderWithQueryClient(component: React.ReactElement) {
 
   render(
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={FakeUser([Roles.admin])}>
+      <AuthContext.Provider value={FakeUser()}>
         {component}
       </AuthContext.Provider>
     </QueryClientProvider>

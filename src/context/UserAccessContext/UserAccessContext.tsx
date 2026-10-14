@@ -3,7 +3,6 @@ import { ActionType, useUser } from "..";
 
 export type UserAccessState = {
   refresh?: () => Promise<unknown>;
-  roles: string[];
   isLoading?: boolean;
   isLoaded?: boolean;
   hasResourceAccess: (
@@ -17,7 +16,6 @@ export type UserAccessState = {
 };
 
 const initialState: UserAccessState = {
-  roles: [],
   hasResourceAccess: (resourceName, action) => Promise.resolve(false),
   hasAnyResourceAccess: (resourceNames, action) => Promise.resolve(false),
   isLoading: false
@@ -30,17 +28,16 @@ export const UserAccessStateContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { user, roles, isLoading, authorizer } = useUser();
+  const { user, isLoading, authorizer } = useUser();
 
   const value = useMemo<UserAccessState>(
     () => ({
       isLoading,
       isLoaded: !!user && !isLoading,
       hasResourceAccess: authorizer.hasResourceAccess,
-      hasAnyResourceAccess: authorizer.hasAnyResourceAccess,
-      roles
+      hasAnyResourceAccess: authorizer.hasAnyResourceAccess
     }),
-    [authorizer, isLoading, roles, user]
+    [authorizer, isLoading, user]
   );
 
   return (

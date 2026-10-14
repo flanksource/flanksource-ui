@@ -32,7 +32,6 @@ export default function BasicAuthContextProvider({ children }: Props) {
     backendURL: backendURL
   });
 
-  const roles = useMemo(() => payload?.roles ?? [], [payload?.roles]);
   const authorizer = useMemo(
     () => (payload ? createAuthorizer(payload) : undefined),
     [payload]
@@ -62,8 +61,6 @@ export default function BasicAuthContextProvider({ children }: Props) {
         isLoading,
         user: payload.user,
         backendUrl: backendURL,
-        roles,
-        permissions: payload.permissions,
         access: payload.access,
         access_actions: payload.access_actions
       }}

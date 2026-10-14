@@ -1,4 +1,4 @@
-import { AuthContext, FakeUser, Roles } from "@flanksource-ui/context";
+import { AuthContext, FakeUser } from "@flanksource-ui/context";
 import { UserAccessStateContextProvider } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -62,7 +62,7 @@ describe("ConnectionForm", () => {
     const onConnectionSubmit = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -104,7 +104,7 @@ describe("ConnectionForm", () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -132,7 +132,7 @@ describe("ConnectionForm", () => {
     const onConnectionDelete = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -154,7 +154,7 @@ describe("ConnectionForm", () => {
     const handleBack = jest.fn();
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -178,7 +178,7 @@ describe("ConnectionForm", () => {
 
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}
@@ -205,7 +205,7 @@ describe("ConnectionForm", () => {
 
     render(
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([Roles.admin])}>
+        <AuthContext.Provider value={FakeUser()}>
           <UserAccessStateContextProvider>
             <ConnectionForm
               connectionType={connectionType}

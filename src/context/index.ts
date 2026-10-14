@@ -71,20 +71,10 @@ export type Authorizer = {
   ) => Promise<boolean>;
 };
 
-export type Permission = {
-  subject: string;
-  object: string;
-  deny?: boolean;
-  action: string;
-  condition?: string;
-};
-
 interface IAuthContext {
   user?: User;
   backendUrl?: string;
   orgSlug?: string;
-  roles: string[];
-  permissions: Permission[];
   access?: AccessSummary;
   access_actions?: AccessActions;
   isLoading?: boolean;
@@ -92,8 +82,6 @@ interface IAuthContext {
 }
 
 export const AuthContext = createContext<IAuthContext>({
-  roles: [],
-  permissions: [],
   isLoading: false,
   authorizer: {
     hasResourceAccess: () => Promise.resolve(false),
@@ -105,7 +93,6 @@ export const useUser = () => useContext(AuthContext);
 
 /** Signed-in story fixture; callers can supply a restricted summary. */
 export const FakeUser = (
-  roles: string[],
   access: AccessSummary = Object.fromEntries(
     Object.values(tables).map((type) => [
       type,
@@ -126,18 +113,14 @@ export const FakeUser = (
     "job:read": true
   };
   return {
-    roles,
     user,
-    permissions: [],
     access,
     access_actions,
     isLoading: false,
     backendUrl: "https://testurl.com",
     authorizer: createAuthorizer({
-      roles,
       database: "",
       hostname: "",
-      permissions: [],
       user,
       access,
       access_actions

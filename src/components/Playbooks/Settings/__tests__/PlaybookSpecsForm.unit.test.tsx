@@ -51,7 +51,7 @@ function renderForm(playbook?: PlaybookSpec, access?: AccessSummary) {
   return render(
     <MemoryRouter>
       <QueryClientProvider client={client}>
-        <AuthContext.Provider value={FakeUser([], access)}>
+        <AuthContext.Provider value={FakeUser(access)}>
           <UserAccessStateContextProvider>
             <PlaybookSpecsForm playbook={playbook} onClose={() => {}} />
           </UserAccessStateContextProvider>
