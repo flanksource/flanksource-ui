@@ -11,7 +11,7 @@ export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
     enableSorting: true
   },
   {
-    header: "Created By",
+    header: "Token Identity",
     accessorKey: "person",
     Cell: MRTAvatarCell,
     maxSize: 50
@@ -28,7 +28,13 @@ export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
     accessorKey: "expires_at",
     Cell: (props) => {
       const expiresAt = props.row.original.expires_at;
-      return expiresAt ? <MRTDateCell {...props} /> : "Never";
+      return expiresAt ? (
+        <MRTDateCell {...props} />
+      ) : expiresAt === null ? (
+        "Never"
+      ) : (
+        "Not provided"
+      );
     },
     sortingFn: "datetime",
     maxSize: 50

@@ -54,6 +54,24 @@ export function TokenDisplayContent({
         </div>
       </div>
 
+      {formValues && (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-gray-700">
+            Limiting Roles:
+          </label>
+          <div className="rounded-md bg-gray-100 px-3 py-2 text-sm">
+            {formValues.roles.map((role) => (
+              <div key={role} className="break-all">
+                {role}
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-500">
+            This token is limited by both your current access and these roles.
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium text-gray-700">
           Access Token:

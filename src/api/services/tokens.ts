@@ -1,19 +1,24 @@
 import { apiBase } from "../axios";
-import { Permission } from "./rbac";
+
+export type TokenRole = {
+  namespace: string;
+  name: string;
+};
 
 export type Token = {
   id: string;
   name: string;
   created_at: string;
-  expires_at: string;
+  expires_at?: string | null;
   person: {
     avatar?: string;
     id: string;
     name: string;
+    type?: string;
     properties: Record<string, any>;
   };
   person_id: string;
-  deny_roles?: string[];
+  roles?: TokenRole[];
 };
 
 export type TokensResponse = {
@@ -24,8 +29,8 @@ export type TokensResponse = {
 export type CreateTokenRequest = {
   name: string;
   expiry: string;
-  autoRenew?: boolean;
-  scope?: Permission[];
+  auto_renew?: boolean;
+  roles: TokenRole[];
 };
 
 export type CreateTokenResponse = {

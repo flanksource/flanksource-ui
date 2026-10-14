@@ -8,23 +8,17 @@ import {
   CreateTokenRequest,
   CreateTokenResponse
 } from "../../../api/services/tokens";
-import { Permission } from "../../../api/services/rbac";
 import { Button } from "../../../ui/Buttons/Button";
 import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
 import { toastSuccess } from "../../Toast/toast";
-import {
-  OBJECTS,
-  getActionsForObject,
-  getAllObjectActions
-} from "../tokenUtils";
-import TokenScopeFieldsGroup from "./TokenScopeFieldsGroup";
+import TokenRolesFieldsGroup from "./TokenRolesFieldsGroup";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
-export type TokenFormValues = CreateTokenRequest & {
-  objectActions: Record<string, boolean>;
+export type TokenFormValues = Omit<CreateTokenRequest, "roles"> & {
+  roles: string[];
 };
 
 type CreateTokenFormProps = {
@@ -52,7 +46,7 @@ const expiryOptions = [
   { label: "90 days", value: "90d" },
   { label: "180 days", value: "180d" },
   { label: "1 year", value: "365d" },
-  { label: "Never", value: "" }
+  { label: "Server default", value: "" }
 ];
 
 export function CreateTokenFormContent({
@@ -74,56 +68,17 @@ export function CreateTokenFormContent({
     }
   });
 
-  const allObjectActions = getAllObjectActions();
-
-  const getInitialObjectActions = () => {
-    const initialActions = Object.fromEntries(
-      allObjectActions.map((objAction) => [objAction, false])
-    );
-
-    if (isMcpSetup) {
-      // For MCP setup, pre-select mcp:* (will be shown in Custom mode)
-      allObjectActions
-        .filter((objAction) => objAction.startsWith("mcp:"))
-        .forEach((mcpAction) => {
-          initialActions[mcpAction] = true;
-        });
-    } else {
-      // For regular token creation, apply "Read" preset by default
-      // This matches the default selected scope in TokenScopeFieldsGroup
-      OBJECTS.forEach((object) => {
-        const actions = getActionsForObject(object);
-        if (actions.includes("read")) {
-          initialActions[`${object}:read`] = true;
-        } else if (object === "mcp" && actions.includes("*")) {
-          initialActions[`${object}:*`] = true;
-        }
-      });
-    }
-
-    return initialActions;
-  };
-
   const handleFormSubmit = (values: TokenFormValues) => {
-    const selectedScopes: Permission[] = Object.entries(values.objectActions)
-      .filter(([_, isChecked]) => isChecked === true)
-      .map(([scopeId]) => {
-        // Split by first colon only to handle cases like "playbooks:playbook:run"
-        const colonIndex = scopeId.indexOf(":");
-        const object = scopeId.substring(0, colonIndex);
-        const action = scopeId.substring(colonIndex + 1);
-        return {
-          subject: "", // subject is handled at server
-          object,
-          action
-        } as Permission;
-      });
+    if (isLoading) return;
 
     const tokenRequest: CreateTokenRequest = {
-      name: values.name,
+      name: values.name.trim(),
       expiry: values.expiry,
-      autoRenew: values.autoRenew,
-      scope: selectedScopes
+      auto_renew: values.auto_renew,
+      roles: values.roles.map((role) => {
+        const [namespace, name] = role.split("/");
+        return { namespace, name };
+      })
     };
 
     setSubmitError(null);
@@ -140,15 +95,23 @@ export function CreateTokenFormContent({
       initialValues={{
         name: "",
         expiry: "90d",
-        autoRenew: false,
-        objectActions: getInitialObjectActions()
+        auto_renew: false,
+        roles: isMcpSetup ? [] : ["mission-control-builtin/viewer"]
       }}
       enableReinitialize
+      validateOnMount
       onSubmit={handleFormSubmit}
       validate={(values) => {
-        const errors: any = {};
+        const errors: { name?: string; roles?: string } = {};
         if (!values.name.trim()) {
           errors.name = "Name is required";
+        }
+        if (values.roles.length === 0) {
+          errors.roles = "Select at least one limiting role";
+        } else if (
+          values.roles.some((role) => !/^[^\s/]+\/[^\s/]+$/.test(role))
+        ) {
+          errors.roles = "Enter each role as namespace/name";
         }
         return errors;
       }}
@@ -175,13 +138,13 @@ export function CreateTokenFormContent({
                   hint="When this token should expire"
                 />
                 <FormikCheckbox
-                  name="autoRenew"
+                  name="auto_renew"
                   label="Auto Renew"
-                  hint="If the token is being used continuously, it's expiry is renewed"
+                  hint="Renew the expiry automatically while the token is in use"
                   checkboxStyle="toggle"
                 />
 
-                <TokenScopeFieldsGroup isMcpSetup={isMcpSetup} />
+                <TokenRolesFieldsGroup isMcpSetup={isMcpSetup} />
               </div>
             </div>
           </div>

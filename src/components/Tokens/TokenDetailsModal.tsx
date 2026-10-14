@@ -1,16 +1,15 @@
 import { useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteToken, Token } from "../../api/services/tokens";
-import { getPermissions } from "../../api/services/rbac";
 import { Avatar } from "../../ui/Avatar";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
-import { getAllObjectActions } from "./tokenUtils";
+import { useUser } from "@flanksource-ui/context";
 
 type TokenDetailsModalProps = {
   token: Token;
@@ -25,27 +24,9 @@ export default function TokenDetailsModal({
 }: TokenDetailsModalProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const queryClient = useQueryClient();
-
-  const { data: tokenPermissions = [] } = useQuery({
-    queryKey: ["permissions", token.id],
-    queryFn: () => getPermissions(token.id),
-    enabled: isOpen
-  });
-
-  const availablePermissions = useMemo(() => {
-    const allObjectActions = getAllObjectActions();
-    const deniedPermissions = new Set(
-      tokenPermissions
-        .filter(
-          (permission) => permission.deny || permission.subject !== token.id
-        )
-        .map((permission) => `${permission.object}:${permission.action}`)
-    );
-
-    return allObjectActions.filter(
-      (objectAction) => !deniedPermissions.has(objectAction)
-    );
-  }, [tokenPermissions, token.id]);
+  const { access } = useUser();
+  const isAgent = token.person.type === "agent";
+  const canDelete = !isAgent || access?.agent?.update === "all";
 
   const { mutate: deleteTokenMutation, isLoading: isDeleting } = useMutation({
     mutationFn: deleteToken,
@@ -84,7 +65,7 @@ export default function TokenDetailsModal({
 
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              Created By
+              Token Identity
             </label>
             <div className="flex items-center space-x-3">
               <Avatar
@@ -107,40 +88,56 @@ export default function TokenDetailsModal({
 
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              Token Permissions
+              {isAgent ? "Agent Access" : "Limiting Roles"}
             </label>
             <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-              {availablePermissions.map((permissionKey) => (
-                <div key={permissionKey} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={true}
-                    disabled={true}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
-                  />
-                  <label className="text-sm font-medium text-gray-700">
-                    {permissionKey}
-                  </label>
-                </div>
-              ))}
+              {isAgent ? (
+                <p className="text-sm text-gray-700">
+                  Agent tokens do not use roles. Access is restricted to the
+                  agent's own data and assigned work.
+                </p>
+              ) : token.roles?.length ? (
+                token.roles.map((role) => (
+                  <div
+                    key={`${role.namespace}/${role.name}`}
+                    className="break-all text-sm text-gray-700"
+                  >
+                    {role.namespace}/{role.name}
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-orange-700">
+                  No limiting roles. Personal tokens without roles are not
+                  valid; create a replacement token.
+                </p>
+              )}
             </div>
+            {!isAgent && (
+              <p className="text-sm text-gray-500">
+                Access is the intersection of the owner's current grants and
+                these roles, not a fixed list of permissions. Missing or invalid
+                roles grant nothing.
+              </p>
+            )}
           </div>
         </div>
 
         <div className="flex items-center justify-end bg-gray-100 px-6 py-4">
-          <Button
-            text="Delete"
-            disabled={isDeleting}
-            icon={
-              !isDeleting ? (
-                <FaTrash />
-              ) : (
-                <FaCircleNotch className="animate-spin" />
-              )
-            }
-            className="btn-danger"
-            onClick={() => setShowDeleteConfirm(true)}
-          />
+          {canDelete && (
+            <Button
+              text="Delete"
+              disabled={isDeleting}
+              icon={
+                !isDeleting ? (
+                  <FaTrash />
+                ) : (
+                  <FaCircleNotch className="animate-spin" />
+                )
+              }
+              className="btn-danger"
+              onClick={() => setShowDeleteConfirm(true)}
+            />
+          )}
         </div>
       </Modal>
 
