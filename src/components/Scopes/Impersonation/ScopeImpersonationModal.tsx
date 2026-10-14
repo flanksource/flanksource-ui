@@ -1,18 +1,10 @@
-// ABOUTME: Modal for selecting scopes to impersonate or defining custom targets.
-// ABOUTME: Persists selections in sessionStorage, attaching them as a header on all API requests.
+// This picker only names stored Scopes; request limits never accept client-authored selectors.
 
 import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
-import {
-  ScopeDisplay,
-  ScopeTargetForm
-} from "@flanksource-ui/api/types/scopes";
-import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
+import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { Form, Formik } from "formik";
 import { useMemo, useState } from "react";
 import Select from "react-select";
-import ScopeTargetsForm from "../Forms/ScopeTargetsForm";
-import { ImpersonationMode } from "./scopeImpersonationStore";
 import { useImpersonatedScopes } from "./useImpersonatedScopes";
 
 type ScopeOption = {
@@ -26,41 +18,20 @@ type Props = {
   onClose: () => void;
 };
 
-const DEFAULT_TARGET: ScopeTargetForm = {
-  config: {
-    name: "",
-    agent: "",
-    tagSelector: "",
-    tags: {},
-    wildcard: false
-  }
-};
-
-const MODE_OPTIONS = ["Existing Scopes", "Custom Targets"] as const;
-
-function modeToOption(mode: ImpersonationMode): (typeof MODE_OPTIONS)[number] {
-  return mode === "scopes" ? "Existing Scopes" : "Custom Targets";
-}
-
-function optionToMode(option: string): ImpersonationMode {
-  return option === "Existing Scopes" ? "scopes" : "targets";
-}
-
+/** Selects existing Scopes to narrow this session's requests without changing its grants. */
 export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
   const { data: scopes, isLoading } = useScopesQuery();
   const {
     scopeIds: impersonatedIds,
-    targets: impersonatedTargets,
-    mode: storedMode,
+    legacyLimit,
     active,
     setScopes,
-    setTargets,
     clear
   } = useImpersonatedScopes();
 
-  const [mode, setMode] = useState<ImpersonationMode>("scopes");
-  const [selected, setSelected] = useState<ScopeOption[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const [storageError, setStorageError] = useState(false);
 
   const options: ScopeOption[] = useMemo(() => {
     if (!scopes) return [];
@@ -73,9 +44,8 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
 
   // Sync local state from stored impersonation when modal opens
   if (isOpen && !initialized) {
-    setMode(storedMode);
-    const initial = options.filter((o) => impersonatedIds.includes(o.value));
-    setSelected(initial);
+    setSelectedIds(impersonatedIds);
+    setStorageError(false);
     setInitialized(true);
   }
   if (!isOpen && initialized) {
@@ -83,20 +53,23 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
   }
 
   function handleApplyScopes() {
-    setScopes(selected.map((o) => o.scope));
-    onClose();
+    if (setScopes(selectedIds)) {
+      setStorageError(false);
+      onClose();
+    } else {
+      setStorageError(true);
+    }
   }
 
   function handleReset() {
-    clear();
-    setSelected([]);
-    onClose();
+    if (clear()) {
+      setStorageError(false);
+      setSelectedIds([]);
+      onClose();
+    } else {
+      setStorageError(true);
+    }
   }
-
-  const initialTargets =
-    storedMode === "targets" && impersonatedTargets.length > 0
-      ? impersonatedTargets
-      : [DEFAULT_TARGET];
 
   return (
     <Modal
@@ -107,97 +80,80 @@ export default function ScopeImpersonationModal({ isOpen, onClose }: Props) {
       bodyClass="flex flex-col flex-1 overflow-y-auto p-4"
     >
       <div className="flex flex-col gap-4">
-        <Switch
-          options={[...MODE_OPTIONS]}
-          value={modeToOption(mode)}
-          onChange={(val) => setMode(optionToMode(val))}
-        />
-
+        {legacyLimit && (
+          <p
+            role="alert"
+            className="rounded border border-orange-300 bg-orange-50 p-3 text-sm text-orange-900"
+          >
+            Your previous Custom Targets scope limit is no longer supported and
+            is not applied. Select named scopes to limit requests again, or
+            Reset to dismiss this notice.
+          </p>
+        )}
+        {storageError && (
+          <p
+            role="alert"
+            className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-900"
+          >
+            Unable to update the scope limit. Browser session storage is
+            unavailable or full. Allow session storage and try again.
+          </p>
+        )}
         {active && (
           <p className="text-xs text-green-600">
-            Scope impersonation is active (
-            {storedMode === "scopes"
-              ? `${impersonatedIds.length} scope${impersonatedIds.length !== 1 ? "s" : ""}`
-              : "custom targets"}
-            )
+            Scope impersonation is active ({impersonatedIds.length} scope
+            {impersonatedIds.length !== 1 ? "s" : ""})
           </p>
         )}
 
-        {mode === "scopes" ? (
-          <>
-            <p className="text-sm text-gray-600">
-              Select existing scopes to impersonate.
-            </p>
-            <Select
-              isMulti
-              isLoading={isLoading}
-              className="text-sm"
-              placeholder="Select scopes..."
-              options={options}
-              value={selected}
-              formatOptionLabel={(option: ScopeOption) => (
-                <div className="flex items-center justify-between gap-2">
-                  <span>{option.scope.name}</span>
-                  {option.scope.namespace && (
-                    <span className="text-xs text-gray-500">
-                      {option.scope.namespace}
-                    </span>
-                  )}
-                </div>
+        <p className="text-sm text-gray-600">
+          Limit requests to resources in any of the selected scopes. Your
+          existing permissions still apply. Reset to remove the limit.
+        </p>
+        <Select
+          aria-label="Scopes"
+          isMulti
+          isLoading={isLoading}
+          className="text-sm"
+          menuPortalTarget={
+            typeof document !== "undefined" ? document.body : undefined
+          }
+          menuPosition="fixed"
+          menuShouldBlockScroll
+          styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+          placeholder="Select scopes..."
+          options={options}
+          value={options.filter((option) => selectedIds.includes(option.value))}
+          formatOptionLabel={(option: ScopeOption) => (
+            <div className="flex items-center justify-between gap-2">
+              <span>{option.scope.name}</span>
+              {option.scope.namespace && (
+                <span className="text-xs text-gray-500">
+                  {option.scope.namespace}
+                </span>
               )}
-              onChange={(opts) => setSelected([...opts])}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                onClick={handleReset}
-              >
-                Reset
-              </button>
-              <button
-                type="button"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                onClick={handleApplyScopes}
-              >
-                Apply
-              </button>
             </div>
-          </>
-        ) : (
-          <Formik<{ targets: ScopeTargetForm[] }>
-            initialValues={{ targets: initialTargets }}
-            onSubmit={(values) => {
-              setTargets(values.targets);
-              onClose();
-            }}
+          )}
+          onChange={(opts) =>
+            setSelectedIds(opts.map((option) => option.value))
+          }
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={handleReset}
           >
-            {({ submitForm }) => (
-              <Form className="flex flex-col gap-4">
-                <p className="text-sm text-gray-600">
-                  Define custom targets to impersonate.
-                </p>
-                <ScopeTargetsForm />
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    onClick={handleReset}
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                    onClick={submitForm}
-                  >
-                    Apply
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        )}
+            Reset
+          </button>
+          <button
+            type="button"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={handleApplyScopes}
+          >
+            Apply
+          </button>
+        </div>
       </div>
     </Modal>
   );
