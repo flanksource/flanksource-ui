@@ -50,7 +50,10 @@ import {
 } from "./context/UserAccessContext/UserAccessContext";
 import { tables } from "./context/UserAccessContext/permissions";
 import { useUser } from "./context";
-import { PERMISSIONS_TAB_RESOURCES } from "./components/Permissions/PermissionsTabsLinks";
+import {
+  canOpenPermissionsTab,
+  PERMISSIONS_TAB_RESOURCES
+} from "./components/Permissions/PermissionsTabsLinks";
 
 import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
@@ -844,7 +847,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           path="permissions/subjects"
           element={withAuthorizationAccessCheck(
             <PermissionsSubjectsPage />,
-            "subject-access",
+            tables.access_review,
             "read",
             true
           )}
@@ -1430,10 +1433,9 @@ export function App() {
 
 // The Permissions sidebar entry opens the first of its tabs the user may read.
 function PermissionsIndexRedirect() {
-  const { access } = useUser();
-  const tab = PERMISSIONS_TAB_RESOURCES.find(
-    ({ type }) =>
-      access?.[type]?.read === "all" || access?.[type]?.read === "some"
+  const { access, access_actions } = useUser();
+  const tab = PERMISSIONS_TAB_RESOURCES.find((tab) =>
+    canOpenPermissionsTab(tab, access, access_actions)
   );
   return (
     <Navigate to={tab?.path ?? "/settings/permissions/role-bindings"} replace />

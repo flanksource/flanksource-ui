@@ -5,6 +5,10 @@ import {
 } from "@flanksource-ui/ui/BreadcrumbNav";
 import { Head } from "@flanksource-ui/ui/Head";
 import { useUser } from "@flanksource-ui/context";
+import {
+  AccessActions,
+  AccessSummary
+} from "@flanksource-ui/api/services/users";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
@@ -32,8 +36,28 @@ export const PERMISSIONS_TAB_RESOURCES = [
     path: "/settings/permissions/scopes",
     type: "scope",
     resource: tables.scopes
+  },
+  {
+    label: "Subjects",
+    path: "/settings/permissions/subjects",
+    type: "access:review",
+    resource: tables.access_review
   }
 ] as const;
+
+// canOpenPermissionsTab reports whether the user may open a tab: its type's
+// listing, or for Subjects, access:review.
+export function canOpenPermissionsTab(
+  tab: (typeof PERMISSIONS_TAB_RESOURCES)[number],
+  access?: AccessSummary,
+  accessActions?: AccessActions
+) {
+  if (tab.type === "access:review") {
+    return accessActions?.[tab.type] === true;
+  }
+  const read = access?.[tab.type]?.read;
+  return read === "all" || read === "some";
+}
 
 type PermissionsTabsLinksProps = {
   activeTab: "Permissions" | "Subjects" | "Scopes" | "Roles" | "Role Bindings";
@@ -52,14 +76,13 @@ export default function PermissionsTabsLinks({
   loading = false,
   headerAction
 }: PermissionsTabsLinksProps) {
-  const { access } = useUser();
+  const { access, access_actions } = useUser();
 
   const tabLinks = useMemo(() => {
-    return PERMISSIONS_TAB_RESOURCES.filter(
-      ({ type }) =>
-        access?.[type]?.read === "all" || access?.[type]?.read === "some"
+    return PERMISSIONS_TAB_RESOURCES.filter((tab) =>
+      canOpenPermissionsTab(tab, access, access_actions)
     ).map(({ label, path }) => ({ label, path, key: label }));
-  }, [access]);
+  }, [access, access_actions]);
 
   return (
     <>
