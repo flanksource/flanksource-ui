@@ -1,34 +1,26 @@
 import { getRoles } from "@flanksource-ui/api/services/roles";
 import FormikCreatableMultiSelect from "@flanksource-ui/components/RoleBindings/Forms/FormikCreatableMultiSelect";
-import { useUser } from "@flanksource-ui/context";
 import { useQuery } from "@tanstack/react-query";
 
-/** Role references limit tokens without granting access or requiring Role-read permission. */
+/** Lists only the Roles the database lets the caller read; any other namespace/name can still be typed in. */
 export default function TokenRolesFieldsGroup({
   isMcpSetup = false
 }: {
   isMcpSetup?: boolean;
 }) {
-  const { access } = useUser();
-  const canReadRoles =
-    access?.role?.read === "all" || access?.role?.read === "some";
   const {
     data: roles = [],
     isFetching,
     isError
   } = useQuery({
     queryKey: ["roles"],
-    queryFn: getRoles,
-    enabled: canReadRoles
+    queryFn: getRoles
   });
-  const references = new Set([
-    "mission-control-builtin/viewer",
-    "mission-control-builtin/admin",
-    "mission-control-builtin/plugin-admin",
-    ...(canReadRoles ? roles : [])
+  const references = new Set(
+    roles
       .filter((role) => role.namespace)
       .map((role) => `${role.namespace}/${role.name}`)
-  ]);
+  );
 
   return (
     <div className="space-y-2">
@@ -39,11 +31,11 @@ export default function TokenRolesFieldsGroup({
           label: reference,
           value: reference
         }))}
-        isLoading={canReadRoles && isFetching}
+        isLoading={isFetching}
         placeholder="Select roles or enter namespace/name"
         hint="Select at least one role. You can enter a role from any namespace, even if you cannot browse it."
       />
-      {isError && canReadRoles && (
+      {isError && (
         <p role="status" className="text-sm text-orange-700">
           Unable to load roles. You can still enter namespace/name manually.
         </p>
