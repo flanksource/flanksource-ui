@@ -1135,7 +1135,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             index
             element={withAuthorizationAccessCheck(
               <ConfigScrapersPage />,
-              tables.config_scrapers,
+              tables.catalog,
               "read",
               true
             )}
@@ -1145,7 +1145,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path=":id"
             element={withAuthorizationAccessCheck(
               <ConfigScrapersEditPage />,
-              tables.config_scrapers,
+              tables.catalog,
               "read",
               true
             )}
