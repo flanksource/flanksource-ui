@@ -53,7 +53,9 @@ jobs:
         flanksource/${{ matrix.image }}:v${{ needs.semantic-release.outputs.version }}
         public.ecr.aws/k4y9r6y5/${{ matrix.image }}:latest
         public.ecr.aws/k4y9r6y5/${{ matrix.image }}:v${{ needs.semantic-release.outputs.version }}
-      build_args: ${{ matrix.build_args }}
+      build_args: |
+        ${{ matrix.build_args }}
+        APP_VERSION=${{ needs.semantic-release.outputs.version }}
     secrets:
       docker_username: ${{ secrets.DOCKER_USERNAME }}
       docker_password: ${{ secrets.DOCKER_PASSWORD }}
