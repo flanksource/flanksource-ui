@@ -1,6 +1,5 @@
 import FormikSelectDropdown from "@flanksource-ui/components/Forms/Formik/FormikSelectDropdown";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
-import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { FieldArray, useFormikContext } from "formik";
 import { useEffect } from "react";
@@ -31,17 +30,11 @@ const actionOptions = roleActions.map((action) => ({
 
 type RoleRuleFieldsProps = {
   index: number;
-  namespace?: string;
-  onScopeChange: (scope?: ScopeDisplay) => void;
+  namespace: string;
   onRemove?: () => void;
 };
 
-function RoleRuleFields({
-  index,
-  namespace,
-  onScopeChange,
-  onRemove
-}: RoleRuleFieldsProps) {
+function RoleRuleFields({ index, namespace, onRemove }: RoleRuleFieldsProps) {
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const rule = values.rules[index];
   const contract = getActionContract(rule.action);
@@ -151,7 +144,6 @@ function RoleRuleFields({
           contract={contract}
           input="resource"
           required
-          onScopeChange={onScopeChange}
         />
       ) : (
         <p className="text-xs text-gray-500">
@@ -169,7 +161,6 @@ function RoleRuleFields({
           namespace={namespace}
           contract={contract}
           input="target"
-          onScopeChange={onScopeChange}
         />
       )}
 
@@ -204,14 +195,11 @@ function resourceHint(contract?: RoleActionContract) {
 }
 
 type RoleRulesFormProps = {
-  namespace?: string;
-  onScopeChange: (scope?: ScopeDisplay) => void;
+  // The role's namespace, where a Scope entered without a namespace is
+  namespace: string;
 };
 
-export default function RoleRulesForm({
-  namespace,
-  onScopeChange
-}: RoleRulesFormProps) {
+export default function RoleRulesForm({ namespace }: RoleRulesFormProps) {
   const { values, errors } = useFormikContext<RoleFormValues>();
 
   return (
@@ -224,7 +212,6 @@ export default function RoleRulesForm({
               key={index}
               index={index}
               namespace={namespace}
-              onScopeChange={onScopeChange}
               onRemove={
                 values.rules.length > 1 ? () => remove(index) : undefined
               }

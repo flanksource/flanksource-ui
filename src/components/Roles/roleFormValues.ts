@@ -1,4 +1,10 @@
 import {
+  RBAC_DEFAULT_NAMESPACE,
+  absoluteRbacReference,
+  relativeRbacReference,
+  validateRbacNamespace
+} from "@flanksource-ui/api/types/rbacResources";
+import {
   RoleDisplay,
   RoleRule,
   RoleSpec
@@ -17,6 +23,8 @@ export type RoleRuleFormValues = {
   action: string;
   plugin: string;
   operation: string;
+  // Scope references as namespace/name, so they keep naming the same Scopes if the namespace changes.
+  // They're written as a bare name when the Scope is in the role's namespace.
   resource: string;
   target: string;
   // A deny rule stored before deny was rejected. It's never sent: the role can't be
@@ -26,29 +34,18 @@ export type RoleRuleFormValues = {
 
 export type RoleFormValues = {
   name: string;
-  // Taken from the Scopes picked: a Role can only reference Scopes in its own namespace
-  namespace?: string;
+  namespace: string;
   description: string;
   rules: RoleRuleFormValues[];
 };
-
-// Names the built-in roles use; a Role can't take one.
-export const RESERVED_ROLE_NAMES = [
-  "admin",
-  "everyone",
-  "guest",
-  "viewer",
-  "editor",
-  "commander",
-  "responder",
-  "agent"
-];
 
 export const LEGACY_DENY_MESSAGE =
   "Deny rules aren't supported: rules only allow. Remove this rule to save the role. Saving it as an allow rule would grant what it denied.";
 
 const MAX_RULES = 50;
 const dnsLabel = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
+const scopeReference =
+  /^([a-z0-9]([-a-z0-9]*[a-z0-9])?\/)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const dnsSubdomain =
   /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pluginPart = /^[^:*!, ]+$/;
@@ -64,7 +61,10 @@ export const emptyRule: RoleRuleFormValues = {
   legacyDeny: false
 };
 
-export function ruleToFormValues(rule: RoleRule): RoleRuleFormValues {
+export function ruleToFormValues(
+  rule: RoleRule,
+  namespace: string
+): RoleRuleFormValues {
   const isPlugin = rule.action.startsWith(PLUGIN_ACTION_PREFIX);
   const [plugin = "", operation = ""] = isPlugin
     ? rule.action.slice(PLUGIN_ACTION_PREFIX.length).split(":")
@@ -76,26 +76,39 @@ export function ruleToFormValues(rule: RoleRule): RoleRuleFormValues {
     action: isPlugin ? PLUGIN_ACTION : rule.action,
     plugin,
     operation,
-    resource: rule.resource?.scopeRef ?? "",
-    target: rule.target?.scopeRef ?? "",
+    resource: rule.resource?.scopeRef
+      ? absoluteRbacReference(namespace, rule.resource.scopeRef)
+      : "",
+    target: rule.target?.scopeRef
+      ? absoluteRbacReference(namespace, rule.target.scopeRef)
+      : "",
     legacyDeny: rule.deny === true
   };
 }
 
 export function roleToFormValues(role?: RoleDisplay): RoleFormValues {
   if (!role) {
-    return { name: "", description: "", rules: [{ ...emptyRule }] };
+    return {
+      name: "",
+      namespace: RBAC_DEFAULT_NAMESPACE,
+      description: "",
+      rules: [{ ...emptyRule }]
+    };
   }
 
+  const namespace = role.namespace || RBAC_DEFAULT_NAMESPACE;
   return {
     name: role.name,
-    namespace: role.namespace ?? undefined,
+    namespace,
     description: role.description ?? "",
-    rules: (role.rules ?? []).map(ruleToFormValues)
+    rules: (role.rules ?? []).map((rule) => ruleToFormValues(rule, namespace))
   };
 }
 
-export function formValuesToRule(values: RoleRuleFormValues): RoleRule {
+export function formValuesToRule(
+  values: RoleRuleFormValues,
+  namespace: string
+): RoleRule {
   const contract = getActionContract(values.action);
   const action =
     values.action === PLUGIN_ACTION
@@ -110,10 +123,16 @@ export function formValuesToRule(values: RoleRuleFormValues): RoleRule {
     action,
     // Fields the action doesn't take are dropped: the API rejects them. deny is never sent.
     ...(takesResource(contract)
-      ? { resource: { scopeRef: values.resource } }
+      ? {
+          resource: {
+            scopeRef: relativeRbacReference(namespace, values.resource)
+          }
+        }
       : {}),
     ...(values.target && contract?.targets.length
-      ? { target: { scopeRef: values.target } }
+      ? {
+          target: { scopeRef: relativeRbacReference(namespace, values.target) }
+        }
       : {})
   };
 }
@@ -123,7 +142,9 @@ export function formValuesToSpec(values: RoleFormValues): RoleSpec {
     ...(values.description.trim()
       ? { description: values.description.trim() }
       : {}),
-    rules: values.rules.map(formValuesToRule)
+    rules: values.rules.map((rule) =>
+      formValuesToRule(rule, values.namespace || RBAC_DEFAULT_NAMESPACE)
+    )
   };
 }
 
@@ -131,6 +152,7 @@ type RuleErrors = Partial<Record<keyof RoleRuleFormValues, string>>;
 
 export type RoleFormErrors = {
   name?: string;
+  namespace?: string;
   rules?: string | (RuleErrors | undefined)[];
 };
 
@@ -144,8 +166,11 @@ export function validateRoleForm(values: RoleFormValues): RoleFormErrors {
   } else if (values.name.length > 253 || !dnsSubdomain.test(values.name)) {
     errors.name =
       "Use lowercase letters, numbers, '-' and '.', starting and ending with a letter or number";
-  } else if (RESERVED_ROLE_NAMES.includes(values.name)) {
-    errors.name = `${values.name} is a built-in role`;
+  }
+
+  const namespaceError = validateRbacNamespace(values.namespace);
+  if (namespaceError) {
+    errors.namespace = namespaceError;
   }
 
   if (values.rules.length === 0) {
@@ -185,6 +210,11 @@ export function validateRoleForm(values: RoleFormValues): RoleFormErrors {
 
     if (!rule.resource && takesResource(getActionContract(rule.action))) {
       e.resource = "Scope is required";
+    } else if (rule.resource && !scopeReference.test(rule.resource)) {
+      e.resource = "Use a Scope name, or namespace/name";
+    }
+    if (rule.target && !scopeReference.test(rule.target)) {
+      e.target = "Use a Scope name, or namespace/name";
     }
 
     if (rule.legacyDeny) {
@@ -199,9 +229,4 @@ export function validateRoleForm(values: RoleFormValues): RoleFormErrors {
   }
 
   return errors;
-}
-
-// Whether a rule references a Scope. A new Role takes the namespace of the Scopes it references.
-export function hasScopeReference(values: RoleFormValues): boolean {
-  return values.rules.some((rule) => rule.resource || rule.target);
 }

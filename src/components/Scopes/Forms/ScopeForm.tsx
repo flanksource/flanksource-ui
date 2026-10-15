@@ -32,7 +32,8 @@ import {
 import {
   RBAC_DEFAULT_NAMESPACE,
   getRbacReadOnlyReason,
-  toRbacManifest
+  toRbacManifest,
+  validateRbacNamespace
 } from "@flanksource-ui/api/types/rbacResources";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import CanEditResource from "@flanksource-ui/components/Settings/CanEditResource";
@@ -170,16 +171,11 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
             errors.name = "Name is required";
           }
 
-          // The API requires a namespace that's a DNS label
+          // The API requires a namespace that's a DNS label, outside the shipped one
           if (!data) {
-            if (!values.namespace) {
-              errors.namespace = "Namespace is required";
-            } else if (
-              values.namespace.length > 63 ||
-              !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(values.namespace)
-            ) {
-              errors.namespace =
-                "Use lowercase letters, numbers and '-', starting and ending with a letter or number";
+            const namespaceError = validateRbacNamespace(values.namespace);
+            if (namespaceError) {
+              errors.namespace = namespaceError;
             }
           }
 
@@ -262,7 +258,7 @@ export default function ScopeForm({ isOpen, onClose, data }: ScopeFormProps) {
                   hint={
                     data
                       ? undefined
-                      : "Roles and role bindings can only use scopes in their own namespace."
+                      : "Roles and role bindings in any namespace can use the scope, as namespace/name."
                   }
                   // The API identifies a scope by namespace and name, so it can't be moved
                   disabled={!!data}

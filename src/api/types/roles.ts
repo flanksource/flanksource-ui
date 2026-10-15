@@ -1,6 +1,6 @@
 import { RbacStoredObject } from "./rbacResources";
 
-// A reference to a Scope in the Role's (or RoleBinding's) namespace
+// A reference to a Scope: its name, in the Role's (or RoleBinding's) namespace, or namespace/name
 export type ScopeReference = {
   scopeRef: string;
 };
@@ -19,6 +19,8 @@ export type RoleRule = {
 
 // A RoleBinding whose constraint can't narrow some of the role's rules, so they don't apply through it
 export type RoleBindingUnappliedRules = {
+  // The binding's namespace, which needn't be the role's
+  namespace?: string;
   name: string;
   rules: string[];
 };

@@ -1,4 +1,10 @@
 import {
+  RBAC_DEFAULT_NAMESPACE,
+  absoluteRbacReference,
+  relativeRbacReference,
+  validateRbacNamespace
+} from "@flanksource-ui/api/types/rbacResources";
+import {
   RoleBindingConstraint,
   RoleBindingDisplay,
   RoleBindingResourceSubject,
@@ -8,8 +14,8 @@ import {
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
 
-// spec.constraint: Scopes, in the binding's namespace, that every allow rule's
-// resource and target must also be in. Empty means that side isn't narrowed.
+// spec.constraint: Scopes that every allow rule's resource and target must also be in, as namespace/name.
+// Empty means that side isn't narrowed.
 export type ConstraintFormValues = {
   resource: string;
   target: string;
@@ -22,9 +28,10 @@ export type ResourceSubjectFormValues = {
 
 export type RoleBindingFormValues = {
   name: string;
-  // The namespace of the Role: a binding can only grant a Role in its own namespace
-  namespace?: string;
+  namespace: string;
   description: string;
+  // The Role as namespace/name. References are kept qualified so they keep naming the same objects if the
+  // namespace changes, and are written as a bare name when the object is in the binding's namespace.
   role: string;
   people: string[];
   teams: string[];
@@ -39,6 +46,8 @@ export type RoleBindingFormValues = {
 
 const dnsSubdomain =
   /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
+const reference =
+  /^([a-z0-9]([-a-z0-9]*[a-z0-9])?\/)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const email = /^[^\s@<>]+@[^\s@<>]+$/;
 const pattern = /[*!,]/;
 
@@ -60,18 +69,22 @@ export function roleBindingToFormValues(
     }));
   });
 
+  const namespace = binding?.namespace || RBAC_DEFAULT_NAMESPACE;
+  const absolute = (ref?: string) =>
+    ref ? absoluteRbacReference(namespace, ref) : "";
+
   return {
     name: binding?.name ?? "",
-    namespace: binding?.namespace ?? undefined,
+    namespace,
     description: binding?.description ?? "",
-    role: binding?.role ?? "",
+    role: absolute(binding?.role),
     people: subjects.people ?? [],
     teams: subjects.teams ?? [],
     oidc: (subjects.oidc ?? []).map((subject) => ({ ...subject })),
     resourceSubjects,
     constraint: {
-      resource: binding?.constraint?.resource?.scopeRef ?? "",
-      target: binding?.constraint?.target?.scopeRef ?? ""
+      resource: absolute(binding?.constraint?.resource?.scopeRef),
+      target: absolute(binding?.constraint?.target?.scopeRef)
     }
   };
 }
@@ -124,9 +137,14 @@ export function formValuesToConstraint(
     return undefined;
   }
 
+  const namespace = values.namespace || RBAC_DEFAULT_NAMESPACE;
   return {
-    ...(resource ? { resource: { scopeRef: resource } } : {}),
-    ...(target ? { target: { scopeRef: target } } : {})
+    ...(resource
+      ? { resource: { scopeRef: relativeRbacReference(namespace, resource) } }
+      : {}),
+    ...(target
+      ? { target: { scopeRef: relativeRbacReference(namespace, target) } }
+      : {})
   };
 }
 
@@ -138,7 +156,10 @@ export function formValuesToSpec(
     ...(values.description.trim()
       ? { description: values.description.trim() }
       : {}),
-    role: values.role,
+    role: relativeRbacReference(
+      values.namespace || RBAC_DEFAULT_NAMESPACE,
+      values.role
+    ),
     subjects: formValuesToSubjects(values),
     ...(constraint ? { constraint } : {})
   };
@@ -175,16 +196,13 @@ export function validateRoleBindingForm(
 
   if (!values.role) {
     errors.role = "Role is required";
-  } else if (values.role.includes("/") || /\s/.test(values.role)) {
-    errors.role = "Use a Role name in the binding's namespace";
+  } else if (!reference.test(values.role)) {
+    errors.role = "Use a Role name, or namespace/name";
   }
 
-  if (
-    values.namespace &&
-    (values.namespace.length > 63 ||
-      !/^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(values.namespace))
-  ) {
-    errors.namespace = "Use a lowercase DNS label of at most 63 characters";
+  const namespaceError = validateRbacNamespace(values.namespace);
+  if (namespaceError) {
+    errors.namespace = namespaceError;
   }
 
   const subjects = formValuesToSubjects(values);

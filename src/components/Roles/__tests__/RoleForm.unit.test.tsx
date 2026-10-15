@@ -61,7 +61,7 @@ beforeEach(() => {
   mockPost.mockResolvedValue({ data: { id: "new" } });
 });
 
-it("creates a role in the namespace of the scope it uses", async () => {
+it("creates a role that uses a scope in another namespace", async () => {
   renderForm({});
   await screen.findByText("Add Role");
 
@@ -82,23 +82,19 @@ it("creates a role in the namespace of the scope it uses", async () => {
   fireEvent.keyDown(resourceInput, { key: "ArrowDown" });
   fireEvent.click(await screen.findByText("monitoring-playbooks"));
 
-  expect(await screen.findByText(/created in the/)).toHaveTextContent(
-    "monitoring"
-  );
-
   fireEvent.click(screen.getByText("Create"));
 
   await waitFor(() =>
     expect(mockPost).toHaveBeenCalledWith("/roles", {
       apiVersion: "mission-control.flanksource.com/v1",
       kind: "Role",
-      metadata: { name: "ops", namespace: "monitoring" },
+      metadata: { name: "ops", namespace: "default" },
       spec: {
         rules: [
           {
             name: "run-monitoring",
             action: "playbook:run",
-            resource: { scopeRef: "monitoring-playbooks" }
+            resource: { scopeRef: "monitoring/monitoring-playbooks" }
           }
         ]
       }

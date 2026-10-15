@@ -11,6 +11,7 @@ import {
 function makeValues(overrides: Partial<RoleFormValues> = {}): RoleFormValues {
   return {
     name: "staging-operator",
+    namespace: "default",
     description: "",
     rules: [
       {
@@ -113,12 +114,6 @@ describe("formValuesToSpec", () => {
 describe("validateRoleForm", () => {
   it("accepts a valid role", () => {
     expect(validateRoleForm(makeValues())).toEqual({});
-  });
-
-  it("rejects built-in role names", () => {
-    expect(validateRoleForm(makeValues({ name: "viewer" })).name).toMatch(
-      /built-in/
-    );
   });
 
   it("rejects duplicate rule names, missing scopes and plugin patterns", () => {
