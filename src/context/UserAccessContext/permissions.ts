@@ -30,5 +30,6 @@ export const tables = {
   tokens: "tokens",
   jobs: "job:read",
   events: "event:read",
-  mcp: "mcp:use"
+  mcp: "mcp:use",
+  access_review: "access:review"
 };

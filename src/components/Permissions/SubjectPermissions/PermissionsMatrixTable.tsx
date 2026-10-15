@@ -2,6 +2,7 @@
  * Generic permissions matrix table that renders resources as rows, actions as
  * columns, and delegates each access cell to the caller.
  */
+import { ACTION_LABELS } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { Fragment, ReactNode } from "react";
 import { HiPuzzle } from "react-icons/hi";
@@ -44,9 +45,13 @@ export default function PermissionsMatrixTable<
             {actions.map((action) => (
               <th
                 key={action}
+                title={ACTION_LABELS[action]?.hint}
                 className="sticky top-0 z-10 whitespace-nowrap border-b border-gray-200 bg-white px-2 py-2 text-center text-xs font-semibold uppercase tracking-wide text-gray-500"
               >
-                {action}
+                {ACTION_LABELS[action]?.label ?? action}
+                {ACTION_LABELS[action]?.hint ? (
+                  <span className="ml-0.5 normal-case text-gray-400">*</span>
+                ) : null}
               </th>
             ))}
           </tr>

@@ -1,4 +1,7 @@
-import { fetchAllPermissionSubjects } from "@flanksource-ui/api/services/permissions";
+import {
+  fetchAccessReviewSubjects,
+  PermissionSubject
+} from "@flanksource-ui/api/services/permissions";
 import PermissionSubjectPanel, {
   PermissionSubjectGroup
 } from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
@@ -8,15 +11,11 @@ import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
 import { useIsFetching, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const SUBJECT_TYPE_ORDER = {
-  role: 0,
-  permission_subject_group: 1,
-  team: 2,
-  playbook: 3,
-  plugin: 4,
-  person: 5,
-  access_token_person: 6
-} as const;
+const SUBJECT_TYPE_ORDER: Partial<Record<PermissionSubject["type"], number>> = {
+  team: 0,
+  person: 1,
+  playbook: 2
+};
 
 export function PermissionsSubjectsPage() {
   const [subjectSearch, setSubjectSearch] = useState("");
@@ -34,8 +33,8 @@ export function PermissionsSubjectsPage() {
     isRefetching,
     refetch
   } = useQuery({
-    queryKey: ["permissions", "subjects", "all"],
-    queryFn: fetchAllPermissionSubjects
+    queryKey: ["permissions", "subjects", "access-review"],
+    queryFn: fetchAccessReviewSubjects
   });
 
   const sortedSubjects = useMemo(() => {
@@ -51,7 +50,7 @@ export function PermissionsSubjectsPage() {
       })
       .sort((a, b) => {
         const typeOrder =
-          SUBJECT_TYPE_ORDER[a.type] - SUBJECT_TYPE_ORDER[b.type];
+          (SUBJECT_TYPE_ORDER[a.type] ?? 0) - (SUBJECT_TYPE_ORDER[b.type] ?? 0);
         if (typeOrder !== 0) {
           return typeOrder;
         }

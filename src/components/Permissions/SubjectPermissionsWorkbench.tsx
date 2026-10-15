@@ -1,32 +1,21 @@
-import {
-  fetchSettingsManagedSubjectPermissions,
-  PermissionSubject
-} from "@flanksource-ui/api/services/permissions";
+import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import SubjectPermissionsHeader from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsHeader";
 import SubjectPermissionsMatrixContent from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsMatrixContent";
 import {
-  PermissionResource,
   RESOURCE_KIND_ORDER,
   ResourceKind,
-  getDirectAccessState,
-  getResourceActionKey,
-  groupResourcesByType,
-  isSamePermissionResource
+  groupResourcesByType
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import useEffectiveSubjectAccess from "@flanksource-ui/components/Permissions/SubjectPermissions/useEffectiveSubjectAccess";
 import usePermissionResources from "@flanksource-ui/components/Permissions/SubjectPermissions/usePermissionResources";
-import useSubjectPermissionAccess from "@flanksource-ui/components/Permissions/SubjectPermissions/useSubjectPermissionAccess";
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-// Some permissions (actions) do not make sense for some subjects.
-// This map contains the list of applicable permissions when the subject
+// Some actions do not make sense for some subjects.
+// This map contains the list of applicable actions when the subject
 // is a playbook.
 const PLAYBOOK_ALLOWED_ACTIONS: Record<ResourceKind, string[]> = {
   playbook: ["read", "playbook:run"],
-  view: ["read"],
-  connection: ["read"],
-  plugin: []
+  connection: ["read"]
 };
 
 function getVisibleActionsForSubject(
@@ -35,10 +24,6 @@ function getVisibleActionsForSubject(
   isPlaybookSubject: boolean
 ) {
   if (!isPlaybookSubject) {
-    return actions;
-  }
-
-  if (resourceKind === "plugin") {
     return actions;
   }
 
@@ -53,33 +38,13 @@ export default function SubjectPermissionsWorkbench({
   selectedSubject: PermissionSubject;
 }) {
   const [search, setSearch] = useState("");
-  const [selectedResource, setSelectedResource] =
-    useState<PermissionResource | null>(null);
-  const [activeResourceKind, setActiveResourceKind] = useState<ResourceKind>(
-    selectedSubject.type === "plugin" ? "connection" : "playbook"
-  );
+  const [activeResourceKind, setActiveResourceKind] =
+    useState<ResourceKind>("playbook");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { resources: allResources, isLoading: isLoadingResources } =
-    usePermissionResources();
+  const { resources: allResources, isLoading } = usePermissionResources();
 
   const isPlaybookSubject = selectedSubject.type === "playbook";
-  const isPluginSubject = selectedSubject.type === "plugin";
-  const visibleResourceKinds = useMemo(
-    () =>
-      RESOURCE_KIND_ORDER.filter((kind) => {
-        if (isPluginSubject) {
-          return kind !== "playbook" && kind !== "view";
-        }
-
-        if (isPlaybookSubject) {
-          return kind !== "plugin" && kind !== "view";
-        }
-
-        return true;
-      }),
-    [isPlaybookSubject, isPluginSubject]
-  );
   const resources = useMemo(
     () =>
       allResources.map((resource) => ({
@@ -92,36 +57,6 @@ export default function SubjectPermissionsWorkbench({
       })),
     [allResources, isPlaybookSubject]
   );
-
-  const {
-    data: permissions = [],
-    isLoading: isLoadingPermissions,
-    refetch: refetchPermissions
-  } = useQuery({
-    queryKey: [
-      "permissions-subjects",
-      "subject-managed-permissions",
-      selectedSubject.id
-    ],
-    queryFn: () => fetchSettingsManagedSubjectPermissions(selectedSubject.id),
-    keepPreviousData: true
-  });
-
-  const { isSubmitting, setPermissionAccess } = useSubjectPermissionAccess({
-    selectedSubject,
-    onPermissionsUpdated: refetchPermissions
-  });
-
-  const directAccessByResourceAction = useMemo(() => {
-    return Object.fromEntries(
-      resources.flatMap((resource) =>
-        resource.actions.map((action) => [
-          getResourceActionKey(resource, action),
-          getDirectAccessState(permissions, selectedSubject, resource, action)
-        ])
-      )
-    );
-  }, [permissions, resources, selectedSubject]);
 
   const normalizedSearch = search.trim().toLowerCase();
 
@@ -146,31 +81,17 @@ export default function SubjectPermissionsWorkbench({
     ) as Record<ResourceKind, number>;
   }, [filteredResources]);
 
-  const visibleActiveResourceKind = visibleResourceKinds.includes(
-    activeResourceKind
-  )
-    ? activeResourceKind
-    : (visibleResourceKinds[0] ?? "plugin");
-
   const activeResources = useMemo(
     () =>
       filteredResources.filter(
-        (resource) => resource.kind === visibleActiveResourceKind
+        (resource) => resource.kind === activeResourceKind
       ),
-    [filteredResources, visibleActiveResourceKind]
+    [filteredResources, activeResourceKind]
   );
 
   const groupedResources = useMemo(
-    () =>
-      groupResourcesByType(activeResources).map((group) => ({
-        ...group,
-        actions: getVisibleActionsForSubject(
-          group.kind,
-          group.actions,
-          isPlaybookSubject
-        )
-      })),
-    [activeResources, isPlaybookSubject]
+    () => groupResourcesByType(activeResources),
+    [activeResources]
   );
 
   const { effectiveAccessByAction, isCheckingEffectiveAccess } =
@@ -181,49 +102,7 @@ export default function SubjectPermissionsWorkbench({
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-    setSelectedResource(null);
-  }, [selectedSubject.id]);
-
-  useEffect(() => {
-    if (!visibleResourceKinds.includes(activeResourceKind)) {
-      setActiveResourceKind(visibleResourceKinds[0] ?? "plugin");
-    }
-  }, [activeResourceKind, visibleResourceKinds]);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-    setSelectedResource(null);
-  }, [visibleActiveResourceKind]);
-
-  useEffect(() => {
-    if (
-      selectedResource &&
-      !filteredResources.some((resource) =>
-        isSamePermissionResource(selectedResource, resource)
-      )
-    ) {
-      setSelectedResource(null);
-    }
-  }, [filteredResources, selectedResource]);
-
-  const handleToggleResource = useCallback((resource: PermissionResource) => {
-    setSelectedResource((current) =>
-      isSamePermissionResource(current, resource) ? null : resource
-    );
-  }, []);
-
-  const handlePermissionAccessChange = useCallback(
-    (
-      resource: PermissionResource,
-      action: string,
-      access: "allow" | "deny" | "default"
-    ) => {
-      void setPermissionAccess(resource, action, access);
-    },
-    [setPermissionAccess]
-  );
-
-  const loading = isLoadingResources || isLoadingPermissions;
+  }, [selectedSubject.id, activeResourceKind]);
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
@@ -234,20 +113,15 @@ export default function SubjectPermissionsWorkbench({
       />
 
       <SubjectPermissionsMatrixContent
-        loading={loading}
+        loading={isLoading}
         groupedResources={groupedResources}
-        activeResourceKind={visibleActiveResourceKind}
-        visibleResourceKinds={visibleResourceKinds}
+        activeResourceKind={activeResourceKind}
+        visibleResourceKinds={RESOURCE_KIND_ORDER}
         resourceKindCounts={resourceKindCounts}
         onSelectResourceKind={setActiveResourceKind}
-        selectedResource={selectedResource}
-        directAccessByResourceAction={directAccessByResourceAction}
         effectiveAccessByAction={effectiveAccessByAction}
         isCheckingEffectiveAccess={isCheckingEffectiveAccess}
-        isSubmitting={isSubmitting}
         scrollRef={scrollRef}
-        onToggleResource={handleToggleResource}
-        onPermissionAccessChange={handlePermissionAccessChange}
       />
     </div>
   );

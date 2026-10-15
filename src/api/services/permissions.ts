@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { apiBase, IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { PermissionsSummary, PermissionTable } from "../types/permissions";
@@ -315,6 +316,57 @@ async function fetchPermissionSubjectsWithOrder(order: string) {
   ]);
 
   return [...(response.data ?? []), ...plugins];
+}
+
+// listReadableSubjects lists one type of subject, or none when the reviewer may not read that type.
+async function listReadableSubjects<T>(
+  url: string,
+  toSubject: (row: T) => PermissionSubject
+) {
+  try {
+    const response = await IncidentCommander.get<T[] | null>(url);
+    return (response.data ?? []).map(toSubject);
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 403) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+// fetchAccessReviewSubjects lists the people, teams and playbooks whose access can be reviewed,
+// limited to those the reviewer may read.
+export async function fetchAccessReviewSubjects() {
+  const subjects = await Promise.all([
+    listReadableSubjects<{ id: string; name?: string; email?: string }>(
+      "/people?select=id,name,email&type=is.null&email=not.is.null&deleted_at=is.null&order=name.asc",
+      (person) => ({
+        id: person.id,
+        name: person.name || person.email || person.id,
+        type: "person"
+      })
+    ),
+    listReadableSubjects<{ id: string; name: string }>(
+      "/teams?select=id,name&deleted_at=is.null&order=name.asc",
+      (team) => ({ id: team.id, name: team.name, type: "team" })
+    ),
+    listReadableSubjects<{
+      id: string;
+      name: string;
+      title?: string;
+      icon?: string;
+    }>(
+      "/playbooks?select=id,name,title,icon&deleted_at=is.null&order=name.asc",
+      (playbook) => ({
+        id: playbook.id,
+        name: playbook.title || playbook.name,
+        type: "playbook",
+        icon: playbook.icon ?? null
+      })
+    )
+  ]);
+
+  return subjects.flat();
 }
 
 export async function fetchPermissionSubjects() {

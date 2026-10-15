@@ -6,8 +6,7 @@ import { fetchEffectiveSubjectResourceAccess } from "@flanksource-ui/api/service
 import {
   EffectiveAccessMap,
   PermissionResource,
-  ResourceKind,
-  getPermissionActionForResource
+  ResourceKind
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -22,20 +21,15 @@ export default function useEffectiveSubjectAccess({
   selectedSubjectId,
   resources
 }: UseEffectiveSubjectAccessProps) {
-  const resourcesToCheck = useMemo(
-    () => resources.filter((resource) => resource.kind !== "plugin"),
-    [resources]
-  );
-
   const scopeKey = useMemo(
     () =>
-      resourcesToCheck
+      resources
         .map(
           (resource) =>
             `${resource.kind}:${resource.id}:${resource.actions.join(",")}`
         )
         .join("|"),
-    [resourcesToCheck]
+    [resources]
   );
 
   const { data: effectiveAccessByAction = {}, isFetching } =
@@ -46,26 +40,22 @@ export default function useEffectiveSubjectAccess({
         selectedSubjectId,
         scopeKey
       ],
-      enabled: resourcesToCheck.length > 0,
+      enabled: resources.length > 0,
       queryFn: async () => {
         const byAction = new Map<
           string,
           Array<{ id: string; type: ResourceKind; displayAction: string }>
         >();
 
-        for (const resource of resourcesToCheck) {
+        for (const resource of resources) {
           for (const action of resource.actions) {
-            const permissionAction = getPermissionActionForResource(
-              resource,
-              action
-            );
-            const list = byAction.get(permissionAction) ?? [];
+            const list = byAction.get(action) ?? [];
             list.push({
               id: resource.id,
               type: resource.kind,
               displayAction: action
             });
-            byAction.set(permissionAction, list);
+            byAction.set(action, list);
           }
         }
 
