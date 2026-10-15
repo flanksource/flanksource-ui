@@ -12,6 +12,7 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
     header: "Name",
     id: "name",
     size: 100,
+    accessorFn: (row) => row.name,
     Cell: ({ row }) => {
       const { name, namespace } = row.original;
       return (
@@ -56,6 +57,8 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
     header: "Status",
     id: "status",
     size: 60,
+    // Sorts objects that are in effect before those that aren't
+    accessorFn: (row) => (row.error ? "Not in effect" : "Active"),
     Cell: ({ row }) => <RbacObjectStatus {...row.original} />
   },
   {

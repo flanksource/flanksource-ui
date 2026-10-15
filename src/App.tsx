@@ -1435,5 +1435,7 @@ function PermissionsIndexRedirect() {
     ({ type }) =>
       access?.[type]?.read === "all" || access?.[type]?.read === "some"
   );
-  return <Navigate to={tab?.path ?? "/settings/permissions/roles"} replace />;
+  return (
+    <Navigate to={tab?.path ?? "/settings/permissions/role-bindings"} replace />
+  );
 }

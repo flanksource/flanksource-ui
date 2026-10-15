@@ -16,10 +16,10 @@ import { ErrorBoundary } from "../ErrorBoundary";
 // The tabs of the Permissions page, in order, with the type each lists
 export const PERMISSIONS_TAB_RESOURCES = [
   {
-    label: "Scopes",
-    path: "/settings/permissions/scopes",
-    type: "scope",
-    resource: tables.scopes
+    label: "Role Bindings",
+    path: "/settings/permissions/role-bindings",
+    type: "roleBinding",
+    resource: tables.role_bindings
   },
   {
     label: "Roles",
@@ -28,10 +28,10 @@ export const PERMISSIONS_TAB_RESOURCES = [
     resource: tables.roles
   },
   {
-    label: "Role Bindings",
-    path: "/settings/permissions/role-bindings",
-    type: "roleBinding",
-    resource: tables.role_bindings
+    label: "Scopes",
+    path: "/settings/permissions/scopes",
+    type: "scope",
+    resource: tables.scopes
   }
 ] as const;
 
