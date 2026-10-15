@@ -66,7 +66,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
 
   async function removeTeamMember(user: User) {
     try {
-      const { error } = await removeUserFromTeam(user.id);
+      const { error } = await removeUserFromTeam(teamId, user.id);
       if (!error) {
         toastSuccess(`${user.name} removed from team successfully`);
         fetchTeamMembers(teamId);

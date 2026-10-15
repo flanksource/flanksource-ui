@@ -40,8 +40,10 @@ export const addUserToTeam = (teamId: string, userIds: string[]) => {
   );
 };
 
-export const removeUserFromTeam = (userId: string) => {
+export const removeUserFromTeam = (teamId: string, userId: string) => {
   return resolvePostGrestRequestWithPagination(
-    IncidentCommander.delete(`/team_members?person_id=eq.${userId}`)
+    IncidentCommander.delete(
+      `/team_members?team_id=eq.${teamId}&person_id=eq.${userId}`
+    )
   );
 };
