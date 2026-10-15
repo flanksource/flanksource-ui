@@ -50,7 +50,9 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
       setTeamMembers(data || []);
       setAllTeamMembers(
         (users || []).filter(
-          (user) => !data?.find((item) => item.id === user.id)
+          (user) =>
+            // Only human users; agents and other service accounts have a type
+            !user.type && !data?.find((item) => item.id === user.id)
         )
       );
       if (error) {
@@ -113,7 +115,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   }, [teamId]);
 
   return (
-    <div className="flex flex-col gap-4 py-4">
+    <div className="flex flex-col gap-4 px-8 py-4">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h3 className="text-base font-semibold text-gray-900">Members</h3>

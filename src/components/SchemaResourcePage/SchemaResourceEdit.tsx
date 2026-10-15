@@ -124,9 +124,8 @@ export function SchemaResourceEdit({
 
   const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
 
-  // The team spec only holds notification and responder settings, which
-  // aren't needed to create a team.
-  const showSpecEditor = !(table === "teams" && !id);
+  // Teams have no spec editor for now; any existing spec is kept on update.
+  const showSpecEditor = table !== "teams";
 
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -436,16 +435,11 @@ export function SchemaResourceEdit({
               namespace={namespace!}
               id={id!}
               agentId={agentId}
-              className="flex flex-row justify-end gap-2"
+              className={clsx("flex flex-row justify-end gap-2 rounded-b", {
+                "bg-gray-100": isModal
+              })}
             >
-              <div
-                className={clsx(
-                  "flex justify-end space-x-2 rounded-b px-10 py-4",
-                  {
-                    "bg-gray-100": isModal
-                  }
-                )}
-              >
+              <div className="flex justify-end space-x-2 px-10 py-4">
                 {!!id && (
                   <DeleteResource
                     resourceId={id}
