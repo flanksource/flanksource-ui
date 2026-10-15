@@ -46,7 +46,11 @@ export default function AddSchemaResourceModal({
           onClose();
         }}
         bodyClass="flex flex-col flex-1 overflow-y-auto"
-        title={`Add ${resourceInfo.name}`}
+        title={
+          resourceInfo.table === "teams"
+            ? "Add team"
+            : `Add ${resourceInfo.name}`
+        }
         helpLink={
           resourceInfo.table === "canaries" ? "/canary-checker" : undefined
         }
