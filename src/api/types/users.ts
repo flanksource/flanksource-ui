@@ -33,6 +33,8 @@ export type PeopleRoles = {
 
 export interface User extends NewUser {
   id: string;
+  // Empty for human users; set for agents and other service accounts
+  type?: string;
 }
 
 export type UserWithTeam = User & {

@@ -18,13 +18,21 @@ export const getTeams = async (): Promise<Team[]> => {
   return data || [];
 };
 
+export type TeamMember = User & {
+  // Where the membership came from, e.g. "UI", "KubernetesCRD" or "team-mapper"
+  source?: string;
+};
+
 export const getTeamMembers = async (
   teamId: string
-): Promise<{ data: User[] }> => {
-  const response = await IncidentCommander.get<{ person_id: User }[]>(
-    `/team_members?team_id=eq.${teamId}&select=*,person_id(*)`
-  );
-  const data: User[] = response.data.map(({ person_id }) => person_id);
+): Promise<{ data: TeamMember[] }> => {
+  const response = await IncidentCommander.get<
+    { person_id: User; source?: string }[]
+  >(`/team_members?team_id=eq.${teamId}&select=source,person_id(*)`);
+  const data = response.data.map(({ person_id, source }) => ({
+    ...person_id,
+    source
+  }));
   return { data };
 };
 
@@ -40,8 +48,10 @@ export const addUserToTeam = (teamId: string, userIds: string[]) => {
   );
 };
 
-export const removeUserFromTeam = (userId: string) => {
+export const removeUserFromTeam = (teamId: string, userId: string) => {
   return resolvePostGrestRequestWithPagination(
-    IncidentCommander.delete(`/team_members?person_id=eq.${userId}`)
+    IncidentCommander.delete(
+      `/team_members?team_id=eq.${teamId}&person_id=eq.${userId}`
+    )
   );
 };

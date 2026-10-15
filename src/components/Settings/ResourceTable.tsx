@@ -1,6 +1,7 @@
 import { SchemaResourceWithJobStatus } from "@flanksource-ui/api/schemaResources";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import Popover from "@flanksource-ui/ui/Popover/Popover";
@@ -136,7 +137,7 @@ const columns: MRT_ColumnDef<
     header: "Name",
     minSize: 150,
     Cell: ({ row }) => {
-      const { agent, name, spec, table } = row.original;
+      const { agent, name, spec, table, icon } = row.original;
 
       return (
         <div className="flex w-full flex-row items-center gap-2 truncate">
@@ -145,6 +146,7 @@ const columns: MRT_ColumnDef<
               <ConfigScrapperIcon spec={spec} />
             </div>
           )}
+          {table === "teams" && icon && <Icon name={icon} className="h-5" />}
           <div data-tip={name} className="block truncate">
             <span className="mr-1"> {name}</span>
             <AgentBadge agent={agent} />
@@ -268,7 +270,15 @@ const permanentlyHiddenColumnsForTableMap: Record<
   config_scrapers: ["schedule", "namespace"],
   applications: ["schedule", "namespace"],
   incident_rules: ["schedule", "namespace"],
-  teams: ["schedule", "namespace"],
+  // Teams don't run jobs and have no labels
+  teams: [
+    "schedule",
+    "namespace",
+    "jobStatus",
+    "last_runtime",
+    "job_last_failed",
+    "tags"
+  ],
   permissions: ["schedule", "namespace"],
   playbooks: [],
   views: [],
@@ -293,7 +303,7 @@ export default function ResourceTable({
     return columns.filter(
       (column) =>
         !permanentlyHiddenColumnsForTableMap[sqlTable].includes(
-          column.accessorKey!
+          (column.accessorKey ?? column.id)!
         )
     );
   }, [sqlTable]);

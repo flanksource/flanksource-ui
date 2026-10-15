@@ -75,16 +75,12 @@ export const schemaResourceTypes: SchemaResourceType[] = [
     resourceName: tables.teams,
     subNav: [
       {
-        label: "Spec",
-        value: "spec"
-      },
-      {
         label: "Members",
         value: "manageTeam"
       },
       {
-        label: "Job History",
-        value: "jobHistory"
+        label: "Settings",
+        value: "spec"
       }
     ],
     fields: [
