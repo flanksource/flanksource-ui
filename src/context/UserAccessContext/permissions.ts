@@ -23,7 +23,7 @@ export const tables = {
   roles: "role",
   role_bindings: "roleBinding",
   scopes: "scope",
-  views: "views",
+  views: "view",
   teams: "team",
   applications: "application",
   artifacts: "artifacts",
