@@ -2,15 +2,12 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Info, MapPin, Search } from "lucide-react";
 import { IoMdAirplane, IoMdDownload, IoMdSwap } from "react-icons/io";
-import { MdSecurity, MdTerminal } from "react-icons/md";
-import { useFeatureFlagsContext } from "../../context/FeatureFlagsContext";
+import { MdTerminal } from "react-icons/md";
 import { isNewUIPreferred, setNewUIPreference } from "../../utils/uiPreference";
-import { hasImpersonatedScopes } from "../Scopes/Impersonation/scopeImpersonationStore";
 import { KratosUserProfileDropdown } from "../Authentication/Kratos/KratosUserProfileDropdown";
 import { frontendVersion } from "../VersionInfo/VersionInfo";
 import useDetermineAuthSystem from "../Authentication/useDetermineAuthSystem";
 import AddKubeConfigModal from "../KubeConfig/AddKubeConfigModal";
-import ScopeImpersonationModal from "../Scopes/Impersonation/ScopeImpersonationModal";
 import SetupMcpModal from "./SetupMcpModal";
 import SetupMissionControlCliModal from "./SetupMissionControlCliModal";
 import { useNavigate } from "react-router-dom";
@@ -25,10 +22,6 @@ const LazyResourceSelectorSearchModal = lazy(() =>
 
 export function UserProfileDropdown() {
   const authSystem = useDetermineAuthSystem();
-  const { featureFlags } = useFeatureFlagsContext();
-  const isRLSEnabled = featureFlags.some(
-    (f) => f.name === "rls.enable" && f.value === "true"
-  );
   const [isDownloadKubeConfigModalOpen, setIsDownloadKubeConfigModalOpen] =
     useState(false);
   const [isMcpSetupModalOpen, setIsMcpSetupModalOpen] = useState(false);
@@ -37,8 +30,6 @@ export function UserProfileDropdown() {
     isResourceSelectorSearchModalOpen,
     setIsResourceSelectorSearchModalOpen
   ] = useState(false);
-  const [isScopeImpersonationModalOpen, setIsScopeImpersonationModalOpen] =
-    useState(false);
   const [newUIEnabled, setNewUIEnabled] = useState(false);
   const navigate = useNavigate();
   const openGettingStarted = () => navigate("/getting-started");
@@ -94,13 +85,6 @@ export function UserProfileDropdown() {
                 labelIcon={<Search className="h-4 w-4" />}
                 onClick={() => setIsResourceSelectorSearchModalOpen(true)}
               />
-              {isRLSEnabled && (
-                <UserButton.Action
-                  label={`Impersonate Scope${hasImpersonatedScopes() ? " (active)" : ""}`}
-                  labelIcon={<MdSecurity />}
-                  onClick={() => setIsScopeImpersonationModalOpen(true)}
-                />
-              )}
               <UserButton.Action
                 label={`UI Version: ${frontendVersion}`}
                 labelIcon={<Info className="h-4 w-4" />}
@@ -117,11 +101,7 @@ export function UserProfileDropdown() {
           openResourceSelectorSearchModal={() =>
             setIsResourceSelectorSearchModalOpen(true)
           }
-          openScopeImpersonationModal={() =>
-            setIsScopeImpersonationModalOpen(true)
-          }
           openGettingStarted={openGettingStarted}
-          showScopeImpersonation={isRLSEnabled}
         />
       )}
       <AddKubeConfigModal
@@ -144,10 +124,6 @@ export function UserProfileDropdown() {
           />
         </Suspense>
       )}
-      <ScopeImpersonationModal
-        isOpen={isScopeImpersonationModalOpen}
-        onClose={() => setIsScopeImpersonationModalOpen(false)}
-      />
     </>
   );
 }
