@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BsTrash } from "react-icons/bs";
+import { Plus, Trash2 } from "lucide-react";
 import { FaUsers } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import {
@@ -11,12 +11,10 @@ import { getPersons } from "../../api/services/users";
 import { User } from "../../api/types/users";
 import { useLoader } from "../../hooks";
 import { Avatar } from "../../ui/Avatar";
-import { IconButton } from "../../ui/Buttons/IconButton";
 import { TextInputClearable } from "../../ui/FormControls/TextInputClearable";
-import { Menu } from "../../ui/Menu";
 import { Modal } from "../../ui/Modal";
 import TableSkeletonLoader from "../../ui/SkeletonLoader/TableSkeletonLoader";
-import EmptyState from "../EmptyState";
+import { Button } from "../ui/button";
 import MultiSelectList from "../MultiSelectList/MultiSelectList";
 import { toastError, toastSuccess } from "../Toast/toast";
 
@@ -115,102 +113,69 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   }, [teamId]);
 
   return (
-    <div className="flex flex-col space-y-8 rounded bg-white p-4 pb-8 shadow">
-      {!teamMembers.length && !loading && (
-        <div className="flex flex-col">
-          <div className="text-center">
-            <EmptyState
-              header={
-                <>
-                  <FaUsers className="mx-auto h-12 w-12 text-gray-400" />
-                  <h2 className="mt-2 text-lg font-medium text-gray-900">
-                    Add team members
-                  </h2>
-                </>
-              }
-              title="You haven't added any team members to the team yet."
-            />
-            <button
-              type="submit"
-              className="btn-primary mt-4"
-              onClick={() => openAddMembersModal()}
-            >
-              Add Members
-            </button>
-          </div>
+    <div className="flex flex-col gap-4 py-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h3 className="text-base font-semibold text-gray-900">Members</h3>
+          <p className="text-sm text-gray-500">
+            {loading && !teamMembers.length
+              ? "Loading members..."
+              : `${teamMembers.length} ${
+                  teamMembers.length === 1 ? "member" : "members"
+                }`}
+          </p>
         </div>
-      )}
-      {!Boolean(teamMembers.length) && loading ? (
+        <Button onClick={openAddMembersModal}>
+          <Plus />
+          Add members
+        </Button>
+      </div>
+      {!teamMembers.length && loading ? (
         <TableSkeletonLoader className="mt-2" />
-      ) : (
-        <div className="flex flex-col space-y-4">
-          <div className="flex flex-row justify-end">
-            <button
-              type="submit"
-              className="btn-primary mt-4 w-36"
-              onClick={() => openAddMembersModal()}
-            >
-              Add Members
-            </button>
-          </div>
-          <ul className="divide-y divide-gray-200 border-b border-t border-gray-200">
-            {teamMembers.map((teamMember) => {
-              return (
-                <li
-                  key={teamMember.id}
-                  className="flex items-center justify-between space-x-3 py-4"
-                >
-                  <div className="flex min-w-0 flex-1 items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <Avatar user={teamMember} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900">
-                        {teamMember.name}
-                      </p>
-                      <p className="truncate text-sm font-medium text-gray-500">
-                        {teamMember.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <Menu>
-                      <Menu.VerticalIconButton />
-                      <Menu.Items className="w-72">
-                        <Menu.Item
-                          onClick={(e: any) => {
-                            removeTeamMember(teamMember);
-                          }}
-                        >
-                          <div className="flex w-full cursor-pointer">
-                            <IconButton
-                              className="flex items-center bg-transparent"
-                              ovalProps={{
-                                stroke: "blue",
-                                height: "18px",
-                                width: "18px",
-                                fill: "transparent"
-                              }}
-                              icon={
-                                <BsTrash
-                                  className="border-l-1 border-0 border-gray-200 text-gray-600"
-                                  size={18}
-                                />
-                              }
-                            />
-                            <span className="cursor-pionter block pl-2 text-sm">
-                              Remove user
-                            </span>
-                          </div>
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+      ) : !teamMembers.length ? (
+        <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-gray-300 px-4 py-12 text-center">
+          <FaUsers className="h-10 w-10 text-gray-300" />
+          <p className="mt-3 text-sm font-medium text-gray-900">
+            No members yet
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            Add people to this team to manage their access and notifications
+            together.
+          </p>
         </div>
+      ) : (
+        <ul className="divide-y divide-gray-200 rounded-md border border-gray-200">
+          {teamMembers.map((teamMember) => (
+            <li
+              key={teamMember.id}
+              className="flex items-center justify-between gap-3 px-4 py-3"
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <Avatar user={teamMember} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {teamMember.name}
+                  </p>
+                  {teamMember.email && (
+                    <p className="truncate text-sm text-gray-500">
+                      {teamMember.email}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Remove from team"
+                aria-label={`Remove ${teamMember.name} from team`}
+                className="text-gray-500 hover:text-red-600"
+                onClick={() => removeTeamMember(teamMember)}
+              >
+                <Trash2 />
+              </Button>
+            </li>
+          ))}
+        </ul>
       )}
       <Modal
         title={
@@ -269,14 +234,18 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
             }}
           />
           <div className="absolute bottom-0 left-0 flex w-full justify-end rounded bg-gray-100 px-4 py-2">
-            <button
-              className="btn-primary float-right"
+            <Button
+              disabled={!selectedMembers.length}
               onClick={() => {
                 addTeamMembers(selectedMembers);
               }}
             >
-              Add
-            </button>
+              {selectedMembers.length
+                ? `Add ${selectedMembers.length} ${
+                    selectedMembers.length === 1 ? "member" : "members"
+                  }`
+                : "Add members"}
+            </Button>
           </div>
         </div>
       </Modal>

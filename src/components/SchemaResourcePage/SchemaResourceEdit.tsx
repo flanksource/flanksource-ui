@@ -102,10 +102,15 @@ export function SchemaResourceEdit({
     if (!resourceType) {
       return [];
     }
+    // Members and job history need an existing resource, so creating only
+    // shows the form.
+    if (!id) {
+      return resourceType.subNav.filter((nav) => nav.value === "spec");
+    }
     return resourceType.subNav.filter(
       (nav) => nav.value !== "jobHistory" || canReadJobs
     );
-  }, [resourceName, canReadJobs]);
+  }, [resourceName, canReadJobs, id]);
 
   const table = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -118,6 +123,10 @@ export function SchemaResourceEdit({
   }, [resourceName]);
 
   const [activeTab, setActiveTab] = useState<string>(subNav[0]?.value);
+
+  // The team spec only holds notification and responder settings, which
+  // aren't needed to create a team.
+  const showSpecEditor = !(table === "teams" && !id);
 
   const formFields = useMemo(() => {
     const resourceType = schemaResourceTypes.find(
@@ -214,293 +223,286 @@ export function SchemaResourceEdit({
     return undefined;
   }, [table]);
 
+  const tabContent = (
+    <div className="flex flex-1 flex-col bg-white">
+      {hasSubNav("spec") &&
+        (table === "canaries" && !source ? (
+          <div className="flex flex-1 flex-col overflow-y-auto">
+            <HealthSpecEditor
+              onSubmit={(val) => doSubmit(val)}
+              resourceInfo={resourceInfo}
+              resourceValue={defaultValues}
+            />
+          </div>
+        ) : table === "config_scrapers" ? (
+          <div className="flex flex-1 flex-col overflow-y-auto">
+            <ConfigScrapperSpecEditor
+              onSubmit={(val) => doSubmit(val)}
+              resourceValue={defaultValues}
+              onDeleted={() => {
+                if (onCancel) {
+                  onCancel();
+                }
+              }}
+            />
+          </div>
+        ) : table === "topologies" ? (
+          <div className="flex flex-1 flex-col overflow-y-auto">
+            <EditTopologyResource
+              topologyResource={defaultValues as unknown as SchemaResourceI}
+              onSuccess={() => onCancel?.()}
+              onCancel={onCancel}
+            />
+          </div>
+        ) : (
+          <form
+            className="flex h-full flex-col"
+            onSubmit={handleSubmit(doSubmit)}
+          >
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
+              <div className="flex flex-col px-8 pt-4">
+                {!source ? (
+                  <>
+                    <Controller
+                      control={control}
+                      name="name"
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <TextInput
+                            label="Name"
+                            id="name"
+                            disabled={disabled || !!id}
+                            className="w-full"
+                            value={value || ""}
+                            onChange={onChange}
+                          />
+                        );
+                      }}
+                    />
+                    {supportsField("icon") && (
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="icon-picker"
+                          className="form-label pt-4"
+                        >
+                          Icon
+                        </label>
+
+                        <IconPicker
+                          icon={values.icon}
+                          onChange={(v) => setValue("icon", v.value)}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex justify-between">
+                    <h2 className="mr-3 flex items-center space-x-2 text-xl font-bold text-dark-gray">
+                      {supportsField("icon") && <Icon name={icon} />}
+                      <span>{name}</span>
+                    </h2>
+                  </div>
+                )}
+                {supportsField("namespace") && (
+                  <div className="mt-4">
+                    <Controller
+                      control={control}
+                      name="namespace"
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <TextInput
+                            label="Namespace"
+                            id="namespace"
+                            disabled={disabled || !!id}
+                            className="w-full"
+                            value={value || ""}
+                            onChange={onChange}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+                {supportsField("labels") && (
+                  <div className="py-4">
+                    <Controller
+                      control={control}
+                      name="labels"
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <div className="h-[100px]">
+                            <label className="form-label">Labels</label>
+                            <CodeEditor
+                              key={labelsKeyRef.current}
+                              readOnly={!!source || disabled}
+                              value={
+                                typeof values.labels === "object"
+                                  ? JSON.stringify(values.labels, null, 2)
+                                  : undefined
+                              }
+                              onChange={(val) => {
+                                setCodeEditorValueOnChange("labels", val);
+                              }}
+                              language="json"
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+
+                {supportsField("schedule") && (
+                  <div className="py-4">
+                    <Controller
+                      control={control}
+                      name="schedule"
+                      render={({ field: { onChange, value } }) => {
+                        return (
+                          <div className="space-y-2">
+                            <label className="form-label">Schedule</label>
+                            <AutoCompleteDropdown
+                              onChange={onChange}
+                              value={value}
+                              isDisabled={!!source || disabled}
+                              options={[
+                                {
+                                  label: "@every 30s",
+                                  value: "@every 30s"
+                                },
+                                {
+                                  label: "@every 1m",
+                                  value: "@every 1m"
+                                },
+                                {
+                                  label: "@every 5m",
+                                  value: "@every 5m"
+                                },
+                                {
+                                  label: "@every 30m",
+                                  value: "@every 30m"
+                                },
+                                {
+                                  label: "@hourly",
+                                  value: "@hourly"
+                                },
+                                {
+                                  label: "@every 6h",
+                                  value: "@every 6h"
+                                },
+                                {
+                                  label: "@daily",
+                                  value: "@daily"
+                                },
+                                {
+                                  label: "@weekly",
+                                  value: "@weekly"
+                                }
+                              ]}
+                            />
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              {showSpecEditor && (
+                <div className="space-y-2 px-8">
+                  <label htmlFor="icon-picker" className="form-label">
+                    Spec
+                  </label>
+                  <div className="flex h-[min(500px,calc(100vh-500px))] flex-col">
+                    <CodeEditor
+                      key={keyRef.current}
+                      readOnly={!!source || disabled}
+                      value={specValueToString(values.spec)}
+                      onChange={(val) => {
+                        setCodeEditorValueOnChange("spec", val);
+                      }}
+                      language="yaml"
+                      schemaFileName={jsonSchemaFilePrefix}
+                      enableSpecUnwrap
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            <CanEditResource
+              resourceType={table as keyof typeof resourceTypeMap}
+              agentName={agent?.name}
+              name={name!}
+              source={source}
+              namespace={namespace!}
+              id={id!}
+              agentId={agentId}
+              className="flex flex-row justify-end gap-2"
+            >
+              <div
+                className={clsx(
+                  "flex justify-end space-x-2 rounded-b px-10 py-4",
+                  {
+                    "bg-gray-100": isModal
+                  }
+                )}
+              >
+                {!!id && (
+                  <DeleteResource
+                    resourceId={id}
+                    resourceInfo={resourceInfo}
+                    onDeleted={() => {
+                      if (onCancel) {
+                        onCancel();
+                      }
+                    }}
+                  />
+                )}
+                <AuthorizationAccessCheck
+                  resource={resourceInfo.resourceName}
+                  action={id ? "update" : "create"}
+                >
+                  <Button
+                    type="submit"
+                    text={!!id ? "Update" : "Save"}
+                    className="btn-primary"
+                  />
+                </AuthorizationAccessCheck>
+              </div>
+            </CanEditResource>
+          </form>
+        ))}
+      {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
+      {hasSubNav("jobHistory") && (
+        <SchemaResourceJobsTab
+          resourceId={id!}
+          tableName={table as keyof typeof resourceTypeMap}
+        />
+      )}
+    </div>
+  );
+
   return (
     <>
       <Head prefix={`${name} - ${resourceName}`} />
       <div className="flex flex-1 flex-col overflow-y-auto">
-        <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
-          {subNav.map((nav) => {
-            return (
-              <Tab
-                className="flex flex-1 flex-col overflow-y-auto"
-                key={nav.label}
-                label={nav.label}
-                value={nav.value}
-              >
-                <div className="flex flex-1 flex-col bg-white">
-                  {hasSubNav("spec") &&
-                    (table === "canaries" && !source ? (
-                      <div className="flex flex-1 flex-col overflow-y-auto">
-                        <HealthSpecEditor
-                          onSubmit={(val) => doSubmit(val)}
-                          resourceInfo={resourceInfo}
-                          resourceValue={defaultValues}
-                        />
-                      </div>
-                    ) : table === "config_scrapers" ? (
-                      <div className="flex flex-1 flex-col overflow-y-auto">
-                        <ConfigScrapperSpecEditor
-                          onSubmit={(val) => doSubmit(val)}
-                          resourceValue={defaultValues}
-                          onDeleted={() => {
-                            if (onCancel) {
-                              onCancel();
-                            }
-                          }}
-                        />
-                      </div>
-                    ) : table === "topologies" ? (
-                      <div className="flex flex-1 flex-col overflow-y-auto">
-                        <EditTopologyResource
-                          topologyResource={
-                            defaultValues as unknown as SchemaResourceI
-                          }
-                          onSuccess={() => onCancel?.()}
-                          onCancel={onCancel}
-                        />
-                      </div>
-                    ) : (
-                      <form
-                        className="flex h-full flex-col"
-                        onSubmit={handleSubmit(doSubmit)}
-                      >
-                        <div className="flex flex-1 flex-col gap-4 overflow-y-auto pb-4">
-                          <div className="flex flex-col px-8 pt-4">
-                            {!source ? (
-                              <>
-                                <Controller
-                                  control={control}
-                                  name="name"
-                                  render={({ field: { onChange, value } }) => {
-                                    return (
-                                      <TextInput
-                                        label="Name"
-                                        id="name"
-                                        disabled={disabled || !!id}
-                                        className="w-full"
-                                        value={value || ""}
-                                        onChange={onChange}
-                                      />
-                                    );
-                                  }}
-                                />
-                                {supportsField("icon") && (
-                                  <div className="space-y-2">
-                                    <label
-                                      htmlFor="icon-picker"
-                                      className="form-label pt-4"
-                                    >
-                                      Icon
-                                    </label>
-
-                                    <IconPicker
-                                      icon={values.icon}
-                                      onChange={(v) =>
-                                        setValue("icon", v.value)
-                                      }
-                                    />
-                                  </div>
-                                )}
-                              </>
-                            ) : (
-                              <div className="flex justify-between">
-                                <h2 className="mr-3 flex items-center space-x-2 text-xl font-bold text-dark-gray">
-                                  {supportsField("icon") && (
-                                    <Icon name={icon} />
-                                  )}
-                                  <span>{name}</span>
-                                </h2>
-                              </div>
-                            )}
-                            {supportsField("namespace") && (
-                              <div className="mt-4">
-                                <Controller
-                                  control={control}
-                                  name="namespace"
-                                  render={({ field: { onChange, value } }) => {
-                                    return (
-                                      <TextInput
-                                        label="Namespace"
-                                        id="namespace"
-                                        disabled={disabled || !!id}
-                                        className="w-full"
-                                        value={value || ""}
-                                        onChange={onChange}
-                                      />
-                                    );
-                                  }}
-                                />
-                              </div>
-                            )}
-                            {supportsField("labels") && (
-                              <div className="py-4">
-                                <Controller
-                                  control={control}
-                                  name="labels"
-                                  render={({ field: { onChange, value } }) => {
-                                    return (
-                                      <div className="h-[100px]">
-                                        <label className="form-label">
-                                          Labels
-                                        </label>
-                                        <CodeEditor
-                                          key={labelsKeyRef.current}
-                                          readOnly={!!source || disabled}
-                                          value={
-                                            typeof values.labels === "object"
-                                              ? JSON.stringify(
-                                                  values.labels,
-                                                  null,
-                                                  2
-                                                )
-                                              : undefined
-                                          }
-                                          onChange={(val) => {
-                                            setCodeEditorValueOnChange(
-                                              "labels",
-                                              val
-                                            );
-                                          }}
-                                          language="json"
-                                        />
-                                      </div>
-                                    );
-                                  }}
-                                />
-                              </div>
-                            )}
-
-                            {supportsField("schedule") && (
-                              <div className="py-4">
-                                <Controller
-                                  control={control}
-                                  name="schedule"
-                                  render={({ field: { onChange, value } }) => {
-                                    return (
-                                      <div className="space-y-2">
-                                        <label className="form-label">
-                                          Schedule
-                                        </label>
-                                        <AutoCompleteDropdown
-                                          onChange={onChange}
-                                          value={value}
-                                          isDisabled={!!source || disabled}
-                                          options={[
-                                            {
-                                              label: "@every 30s",
-                                              value: "@every 30s"
-                                            },
-                                            {
-                                              label: "@every 1m",
-                                              value: "@every 1m"
-                                            },
-                                            {
-                                              label: "@every 5m",
-                                              value: "@every 5m"
-                                            },
-                                            {
-                                              label: "@every 30m",
-                                              value: "@every 30m"
-                                            },
-                                            {
-                                              label: "@hourly",
-                                              value: "@hourly"
-                                            },
-                                            {
-                                              label: "@every 6h",
-                                              value: "@every 6h"
-                                            },
-                                            {
-                                              label: "@daily",
-                                              value: "@daily"
-                                            },
-                                            {
-                                              label: "@weekly",
-                                              value: "@weekly"
-                                            }
-                                          ]}
-                                        />
-                                      </div>
-                                    );
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-2 px-8">
-                            <label htmlFor="icon-picker" className="form-label">
-                              Spec
-                            </label>
-                            <div className="flex h-[min(500px,calc(100vh-500px))] flex-col">
-                              <CodeEditor
-                                key={keyRef.current}
-                                readOnly={!!source || disabled}
-                                value={specValueToString(values.spec)}
-                                onChange={(val) => {
-                                  setCodeEditorValueOnChange("spec", val);
-                                }}
-                                language="yaml"
-                                schemaFileName={jsonSchemaFilePrefix}
-                                enableSpecUnwrap
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <CanEditResource
-                          resourceType={table as keyof typeof resourceTypeMap}
-                          agentName={agent?.name}
-                          name={name!}
-                          source={source}
-                          namespace={namespace!}
-                          id={id!}
-                          agentId={agentId}
-                          className="flex flex-row justify-end gap-2"
-                        >
-                          <div
-                            className={clsx(
-                              "flex justify-end space-x-2 rounded-b px-10 py-4",
-                              {
-                                "bg-gray-100": isModal
-                              }
-                            )}
-                          >
-                            {!!id && (
-                              <DeleteResource
-                                resourceId={id}
-                                resourceInfo={resourceInfo}
-                                onDeleted={() => {
-                                  if (onCancel) {
-                                    onCancel();
-                                  }
-                                }}
-                              />
-                            )}
-                            <AuthorizationAccessCheck
-                              resource={resourceInfo.resourceName}
-                              action={id ? "update" : "create"}
-                            >
-                              <Button
-                                type="submit"
-                                text={!!id ? "Update" : "Save"}
-                                className="btn-primary"
-                              />
-                            </AuthorizationAccessCheck>
-                          </div>
-                        </CanEditResource>
-                      </form>
-                    ))}
-                  {hasSubNav("manageTeam") && <TeamMembers teamId={id!} />}
-                  {hasSubNav("jobHistory") && (
-                    <SchemaResourceJobsTab
-                      resourceId={id!}
-                      tableName={table as keyof typeof resourceTypeMap}
-                    />
-                  )}
-                </div>
-              </Tab>
-            );
-          })}
-        </Tabs>
+        {subNav.length <= 1 ? (
+          tabContent
+        ) : (
+          <Tabs activeTab={activeTab} onSelectTab={(tab) => onSubNavClick(tab)}>
+            {subNav.map((nav) => {
+              return (
+                <Tab
+                  className="flex flex-1 flex-col overflow-y-auto"
+                  key={nav.label}
+                  label={nav.label}
+                  value={nav.value}
+                >
+                  {tabContent}
+                </Tab>
+              );
+            })}
+          </Tabs>
+        )}
       </div>
     </>
   );
