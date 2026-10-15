@@ -1,8 +1,10 @@
 import { useSettingsUpdateResource } from "@flanksource-ui/api/query-hooks/mutations/useSettingsResourcesMutations";
 import { getResource } from "@flanksource-ui/api/schemaResources";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
 import { ScraperJobHistory } from "./components/ScraperJobHistory";
 import ConfigScrapperSpecEditor from "@flanksource-ui/components/SpecEditor/ConfigScrapperSpecEditor";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -77,42 +79,49 @@ export default function ConfigScrapersEditPage() {
         contentClass="p-0 h-full"
       >
         <ConfigPageTabs activeTab="Scrapers">
-          <div className="flex flex-1 flex-col overflow-y-auto">
-            <div className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col overflow-y-auto p-4">
-              <Tabs
-                activeTab={activeTab}
-                onSelectTab={(value) => setActiveTab(value)}
-              >
-                <Tab
-                  className="flex flex-1 flex-col overflow-y-auto"
-                  label={"Spec"}
-                  value={"Spec"}
+          <AuthorizationAccessCheck
+            resource={tables.config_scrapers}
+            action="read"
+            showUnauthorizedMessage
+            hideNavbar
+          >
+            <div className="flex flex-1 flex-col overflow-y-auto">
+              <div className="mx-auto flex w-full max-w-screen-xl flex-1 flex-col overflow-y-auto p-4">
+                <Tabs
+                  activeTab={activeTab}
+                  onSelectTab={(value) => setActiveTab(value)}
                 >
-                  {isLoading || !data ? (
-                    <FormSkeletonLoader />
-                  ) : (
-                    <ConfigScrapperSpecEditor
-                      onSubmit={(val) => updateResource(val)}
-                      resourceValue={scrapper}
-                      onBack={() => {
-                        navigate(`/catalog/scrapers`);
-                      }}
-                      onDeleted={() => {
-                        navigate(`/catalog/scrapers`);
-                      }}
-                    />
-                  )}
-                </Tab>
-                <Tab
-                  className="flex flex-1 flex-col overflow-y-auto"
-                  label={"Job History"}
-                  value={"Job History"}
-                >
-                  <ScraperJobHistory resourceId={id!} />
-                </Tab>
-              </Tabs>
+                  <Tab
+                    className="flex flex-1 flex-col overflow-y-auto"
+                    label={"Spec"}
+                    value={"Spec"}
+                  >
+                    {isLoading || !data ? (
+                      <FormSkeletonLoader />
+                    ) : (
+                      <ConfigScrapperSpecEditor
+                        onSubmit={(val) => updateResource(val)}
+                        resourceValue={scrapper}
+                        onBack={() => {
+                          navigate(`/catalog/scrapers`);
+                        }}
+                        onDeleted={() => {
+                          navigate(`/catalog/scrapers`);
+                        }}
+                      />
+                    )}
+                  </Tab>
+                  <Tab
+                    className="flex flex-1 flex-col overflow-y-auto"
+                    label={"Job History"}
+                    value={"Job History"}
+                  >
+                    <ScraperJobHistory resourceId={id!} />
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
-          </div>
+          </AuthorizationAccessCheck>
         </ConfigPageTabs>
       </SearchLayout>
     </>

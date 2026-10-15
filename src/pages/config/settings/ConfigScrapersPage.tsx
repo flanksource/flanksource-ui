@@ -5,6 +5,7 @@ import {
 import AgentBadge from "@flanksource-ui/components/Agents/AgentBadge";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import AddSchemaResourceModal from "@flanksource-ui/components/SchemaResourcePage/AddSchemaResourceModal";
 import ConfigScrapperIcon from "@flanksource-ui/components/SchemaResourcePage/ConfigScrapperIcon";
 import {
@@ -277,15 +278,22 @@ export default function ConfigScrapersPage() {
         contentClass="p-0 h-full"
       >
         <ConfigPageTabs activeTab="Scrapers">
-          <div className="flex h-full flex-col overflow-y-hidden">
-            <MRTDataTable
-              data={dataWithTable}
-              columns={columns}
-              onRowClick={onRowClick}
-              isLoading={isLoading}
-              enableServerSideSorting
-            />
-          </div>
+          <AuthorizationAccessCheck
+            resource={tables.config_scrapers}
+            action="read"
+            showUnauthorizedMessage
+            hideNavbar
+          >
+            <div className="flex h-full flex-col overflow-y-hidden">
+              <MRTDataTable
+                data={dataWithTable}
+                columns={columns}
+                onRowClick={onRowClick}
+                isLoading={isLoading}
+                enableServerSideSorting
+              />
+            </div>
+          </AuthorizationAccessCheck>
         </ConfigPageTabs>
       </SearchLayout>
 
