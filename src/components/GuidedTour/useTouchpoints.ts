@@ -23,8 +23,8 @@ export function useCompletedTouchpoints() {
     queryKey: touchpointsKey(personId),
     enabled: !!personId,
     queryFn: async () => {
-      const { data } = await fetchPersonTouchpoints(personId!);
-      return new Set((data ?? []).map((row) => row.key));
+      const touchpoints = await fetchPersonTouchpoints();
+      return new Set(touchpoints.map((row) => row.key));
     }
   });
 }
@@ -52,7 +52,7 @@ export function useRecordTouchpoint() {
         return;
       }
       inFlight.add(guard);
-      recordPersonTouchpoint(personId, key)
+      recordPersonTouchpoint(key)
         .then(() => {
           queryClient.setQueryData<Set<string>>(
             touchpointsKey(personId),
