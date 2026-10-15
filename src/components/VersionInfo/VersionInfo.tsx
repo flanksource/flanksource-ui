@@ -3,8 +3,10 @@ import packageJson from "../../../package.json";
 import { useVersionInfo } from "../../api/query-hooks";
 import { VersionInfo as VersionInfoData } from "../../api/types/common";
 
-// This is static version from package.json and doesn't change after build
-export const frontendVersion = packageJson.version;
+// Release builds pass the semantic-release version via NEXT_PUBLIC_APP_VERSION,
+// because the image is built from the commit before package.json gets bumped.
+export const frontendVersion =
+  process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version;
 
 export const VersionInfo = forwardRef<HTMLDivElement>(
   function VersionInfo(_props, ref) {
