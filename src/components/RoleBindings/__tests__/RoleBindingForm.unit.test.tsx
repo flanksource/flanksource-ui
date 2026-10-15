@@ -103,7 +103,7 @@ beforeEach(() => {
   mockPost.mockResolvedValue({ data: { id: "new" } });
 });
 
-it("creates a binding with the role's namespace and its constraint", async () => {
+it("creates a binding of a role and constraint in another namespace", async () => {
   renderForm();
   await screen.findByText("Add Role Binding");
 
@@ -115,9 +115,6 @@ it("creates a binding with the role's namespace and its constraint", async () =>
   fireEvent.focus(roleInput);
   fireEvent.keyDown(roleInput, { key: "ArrowDown" });
   fireEvent.click(await screen.findByText("operator"));
-  expect(await screen.findByText(/created in the/)).toHaveTextContent(
-    "monitoring"
-  );
 
   // Only subjects that are added are shown
   expect(screen.queryByLabelText("Teams")).not.toBeInTheDocument();
@@ -150,11 +147,11 @@ it("creates a binding with the role's namespace and its constraint", async () =>
     expect(mockPost).toHaveBeenCalledWith("/role-bindings", {
       apiVersion: "mission-control.flanksource.com/v1",
       kind: "RoleBinding",
-      metadata: { name: "platform-operators", namespace: "monitoring" },
+      metadata: { name: "platform-operators", namespace: "default" },
       spec: {
-        role: "operator",
+        role: "monitoring/operator",
         subjects: { teams: ["platform"] },
-        constraint: { resource: { scopeRef: "tenant-a" } }
+        constraint: { resource: { scopeRef: "monitoring/tenant-a" } }
       }
     })
   );

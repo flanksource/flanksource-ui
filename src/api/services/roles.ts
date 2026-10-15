@@ -41,7 +41,8 @@ export async function updateRole(
   return updateRbacObject<RoleDB>("roles", manifest);
 }
 
-// The bindings that grant a Role: a RoleBinding's role names a Role in its own namespace.
+// The bindings that grant a Role, in any namespace: a RoleBinding's role is a name in its own namespace,
+// or namespace/name.
 export async function getRoleBindingNamesForRole(
   namespace: string,
   role: string
@@ -51,10 +52,9 @@ export async function getRoleBindingNamesForRole(
   >("/role_bindings", {
     params: {
       select: "name,namespace",
-      namespace: `eq.${namespace}`,
-      role: `eq.${role}`,
+      or: `(and(namespace.eq."${namespace}",role.eq."${role}"),role.eq."${namespace}/${role}")`,
       deleted_at: "is.null",
-      order: "name"
+      order: "namespace,name"
     }
   });
   return response.data;

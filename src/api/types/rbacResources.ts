@@ -3,9 +3,76 @@
 
 export const RBAC_API_VERSION = "mission-control.flanksource.com/v1";
 
-// Objects created from the UI go to this namespace. References (scopeRef, role) only
-// resolve within one namespace, so a Role and RoleBinding take the namespace of what they reference.
+// Objects created from the UI go to this namespace unless another one is chosen.
 export const RBAC_DEFAULT_NAMESPACE = "default";
+
+// Mission Control owns this namespace: it holds the shipped Scopes, Roles and RoleBindings,
+// and the API refuses every write in it.
+export const RBAC_SHIPPED_NAMESPACE = "mission-control-builtin";
+
+const dnsLabel = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
+const dnsSubdomain =
+  /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
+
+// Why a namespace can't hold a new Scope, Role or RoleBinding, or undefined when it can.
+export function validateRbacNamespace(namespace?: string): string | undefined {
+  if (!namespace) {
+    return "Namespace is required";
+  }
+  if (namespace.length > 63 || !dnsLabel.test(namespace)) {
+    return "Use lowercase letters, numbers and '-', starting and ending with a letter or number";
+  }
+  if (namespace === RBAC_SHIPPED_NAMESPACE) {
+    return `${RBAC_SHIPPED_NAMESPACE} is reserved for what ships with Mission Control`;
+  }
+  return undefined;
+}
+
+export type RbacObjectRef = { namespace: string; name: string };
+
+// A reference to a Scope (scopeRef) or Role (a binding's role) is `name`, in the namespace of the
+// object it's written in, or `namespace/name`. Returns undefined when it's malformed.
+export function parseRbacReference(
+  namespace: string,
+  ref: string
+): RbacObjectRef | undefined {
+  const parts = ref.split("/");
+  const [refNamespace, name] =
+    parts.length === 1 ? [namespace, parts[0]] : parts;
+  if (
+    parts.length > 2 ||
+    !dnsLabel.test(refNamespace) ||
+    !name ||
+    name.length > 253 ||
+    !dnsSubdomain.test(name)
+  ) {
+    return undefined;
+  }
+  return { namespace: refNamespace, name };
+}
+
+export function qualifiedRbacReference({ namespace, name }: RbacObjectRef) {
+  return `${namespace}/${name}`;
+}
+
+// The reference to write in an object in `namespace`: the bare name when the target is in the same namespace.
+// A malformed reference is returned as is, for the API to reject.
+export function relativeRbacReference(namespace: string, ref: string): string {
+  const target = parseRbacReference(namespace, ref);
+  if (!target) {
+    return ref;
+  }
+  return target.namespace === namespace
+    ? target.name
+    : qualifiedRbacReference(target);
+}
+
+// The `namespace/name` form of a reference written in an object in `namespace`, so it keeps naming the same
+// object whatever namespace the form ends up saving in. A malformed reference is returned as is.
+export function absoluteRbacReference(namespace: string, ref: string): string {
+  const target = parseRbacReference(namespace, ref);
+  return target ? qualifiedRbacReference(target) : ref;
+}
 
 export type RbacResource = "scopes" | "roles" | "role-bindings";
 
@@ -67,6 +134,10 @@ export function getRbacReadOnlyReason(
   }
 
   const label = rbacResourceKinds[resource].label.toLowerCase();
+
+  if (obj.namespace === RBAC_SHIPPED_NAMESPACE) {
+    return `This ${label} ships with Mission Control and can't be changed.`;
+  }
 
   // The API only changes objects created through it; others would be overwritten where they're defined.
   if (obj.source !== "UI") {

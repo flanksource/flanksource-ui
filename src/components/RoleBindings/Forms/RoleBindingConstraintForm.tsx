@@ -1,4 +1,8 @@
 import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
+import {
+  absoluteRbacReference,
+  qualifiedRbacReference
+} from "@flanksource-ui/api/types/rbacResources";
 import { RoleRule } from "@flanksource-ui/api/types/roles";
 import FormikRoleScopeSelect from "@flanksource-ui/components/Roles/Forms/FormikRoleScopeSelect";
 import { useUser } from "@flanksource-ui/context";
@@ -33,10 +37,10 @@ function SideEffect({ effect }: { effect: ConstraintSideEffect }) {
 // before the binding is saved. The server makes the final call, and reports such rules.
 function ConstraintEffects({
   rules,
-  namespace
+  roleNamespace
 }: {
   rules: RoleRule[];
-  namespace?: string;
+  roleNamespace: string;
 }) {
   const { values } = useFormikContext<RoleBindingFormValues>();
   const { access } = useUser();
@@ -45,14 +49,32 @@ function ConstraintEffects({
   const { data: scopes } = useScopesQuery(undefined, canRead);
 
   const effects = useMemo(() => {
-    // The Role's and the constraint's Scopes are all in the binding's namespace
-    const targetsByName = Object.fromEntries(
+    // Scopes by namespace/name: a bare Scope in a rule is in the Role's namespace, and the constraint's
+    // Scopes are already namespace/name in the form
+    const targetsByRef = Object.fromEntries(
       (canRead ? (scopes ?? []) : [])
-        .filter((scope) => scope.namespace === namespace)
-        .map((scope) => [scope.name, scope.targets])
+        .filter((scope) => scope.namespace)
+        .map((scope) => [
+          qualifiedRbacReference({
+            namespace: scope.namespace!,
+            name: scope.name
+          }),
+          scope.targets
+        ])
     );
-    return getConstraintEffects(rules, values.constraint, targetsByName);
-  }, [rules, values.constraint, scopes, namespace, canRead]);
+    const qualify = (ref?: { scopeRef: string }) =>
+      ref && { scopeRef: absoluteRbacReference(roleNamespace, ref.scopeRef) };
+    const qualifiedRules = rules.map((rule) => ({
+      ...rule,
+      resource: qualify(rule.resource),
+      target: qualify(rule.target)
+    }));
+    return getConstraintEffects(
+      qualifiedRules,
+      values.constraint,
+      targetsByRef
+    );
+  }, [rules, roleNamespace, values.constraint, scopes, canRead]);
 
   const denyRules = rules.filter((rule) => rule.deny);
 
@@ -122,14 +144,17 @@ function ConstraintEffects({
 }
 
 type RoleBindingConstraintFormProps = {
-  // Rules of the bound Role; undefined until a Role that exists is picked
+  // Rules of the bound Role, and its namespace; undefined until a Role that exists is picked
   rules?: RoleRule[];
-  namespace?: string;
+  roleNamespace?: string;
+  // The binding's namespace, where a Scope entered without a namespace is
+  namespace: string;
 };
 
 // spec.constraint: one constraint for the whole binding, narrowing every allow rule of the Role
 export default function RoleBindingConstraintForm({
   rules,
+  roleNamespace,
   namespace
 }: RoleBindingConstraintFormProps) {
   const { values, setFieldValue } = useFormikContext<RoleBindingFormValues>();
@@ -198,8 +223,8 @@ export default function RoleBindingConstraintForm({
           allowManual
         />
 
-        {isSet && rules && rules.length > 0 && (
-          <ConstraintEffects rules={rules} namespace={namespace} />
+        {isSet && roleNamespace && rules && rules.length > 0 && (
+          <ConstraintEffects rules={rules} roleNamespace={roleNamespace} />
         )}
       </div>
     </div>

@@ -49,6 +49,7 @@ export type RoleBindingConstraint = {
 // The spec of a RoleBinding, as sent to /api/rbac/role-bindings
 export type RoleBindingSpec = {
   description?: string;
+  // The Role's name, in the binding's namespace, or namespace/name
   role: string;
   subjects: RoleBindingSubjects;
   // Without a constraint, the binding grants the Role's rules as written

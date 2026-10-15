@@ -4,7 +4,10 @@ import {
 } from "@flanksource-ui/api/query-hooks/useRoleBindingsQuery";
 import { useRolesQuery } from "@flanksource-ui/api/query-hooks/useRolesQuery";
 import {
+  RBAC_DEFAULT_NAMESPACE,
+  RBAC_SHIPPED_NAMESPACE,
   getRbacReadOnlyReason,
+  parseRbacReference,
   toRbacManifest
 } from "@flanksource-ui/api/types/rbacResources";
 import {
@@ -110,11 +113,13 @@ export default function RoleBindingForm({
         onSubmit={handleSubmit}
         validate={validateRoleBindingForm}
       >
-        {({ values, setFieldValue, isSubmitting }) => {
-          // A binding grants a Role in its own namespace
-          const namespace = data?.namespace ?? values.namespace;
+        {({ values, isSubmitting }) => {
+          const namespace = values.namespace || RBAC_DEFAULT_NAMESPACE;
+          const roleRef = parseRbacReference(namespace, values.role);
           const role = (canReadRoles ? (roles ?? []) : []).find(
-            (item) => item.namespace === namespace && item.name === values.role
+            (item) =>
+              item.namespace === roleRef?.namespace &&
+              item.name === roleRef?.name
           );
 
           const fields = (
@@ -149,13 +154,25 @@ export default function RoleBindingForm({
                 />
               </div>
 
-              <FormikTextInput
-                name="namespace"
-                label="Binding Namespace"
-                placeholder="default"
-                hint="Role and constraint Scope names resolve in this namespace. Leave empty to use default, or select a Role to use its namespace."
-                disabled={isReadOnly || !!data}
-              />
+              <div
+                className={
+                  isReadOnly || data ? "pointer-events-none opacity-60" : ""
+                }
+              >
+                <FormikTextInput
+                  name="namespace"
+                  label="Namespace"
+                  required
+                  placeholder={RBAC_DEFAULT_NAMESPACE}
+                  hint={
+                    data
+                      ? undefined
+                      : `The binding can grant a role, and use scopes, from any namespace, e.g. ${RBAC_SHIPPED_NAMESPACE}/admin. It can't be in ${RBAC_SHIPPED_NAMESPACE}, which is reserved for what ships with Mission Control.`
+                  }
+                  // The API identifies a binding by namespace and name, so it can't be moved
+                  disabled={isReadOnly || !!data}
+                />
+              </div>
 
               <div
                 className={
@@ -164,24 +181,7 @@ export default function RoleBindingForm({
                     : "flex flex-col gap-1"
                 }
               >
-                <FormikBindingRoleSelect
-                  namespace={namespace || undefined}
-                  onRoleChange={(picked) => {
-                    if (!data && picked?.namespace) {
-                      setFieldValue("namespace", picked?.namespace);
-                    }
-                  }}
-                />
-                <p className="text-xs text-gray-500">
-                  {namespace ? (
-                    <>
-                      The binding is {data ? "in" : "created in"} the{" "}
-                      <code>{namespace}</code> namespace, with its role.
-                    </>
-                  ) : (
-                    "The binding is created in the namespace of its role."
-                  )}
-                </p>
+                <FormikBindingRoleSelect namespace={namespace} />
               </div>
 
               <div
@@ -205,7 +205,8 @@ export default function RoleBindingForm({
                 <RoleBindingSubjectsForm />
                 <RoleBindingConstraintForm
                   rules={role?.rules}
-                  namespace={namespace || "default"}
+                  roleNamespace={role?.namespace ?? undefined}
+                  namespace={namespace}
                 />
               </fieldset>
             </div>

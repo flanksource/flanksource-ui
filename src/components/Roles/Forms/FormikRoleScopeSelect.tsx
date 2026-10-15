@@ -1,4 +1,9 @@
 import { useScopesQuery } from "@flanksource-ui/api/query-hooks/useScopesQuery";
+import {
+  absoluteRbacReference,
+  parseRbacReference,
+  qualifiedRbacReference
+} from "@flanksource-ui/api/types/rbacResources";
 import { ScopeDisplay } from "@flanksource-ui/api/types/scopes";
 import { useUser } from "@flanksource-ui/context";
 import { useField } from "formik";
@@ -8,23 +13,24 @@ import CreatableSelect from "react-select/creatable";
 import { RoleActionContract, getScopeMismatch } from "../roleActions";
 
 type ScopeOption = {
+  // The Scope as namespace/name
   value: string;
   scope: ScopeDisplay;
 };
 
 type FormikRoleScopeSelectProps = {
-  // Path of the scopeRef (a Scope name) in the form
+  // Path of the scopeRef in the form, kept as namespace/name
   name: string;
   label: string;
   hint?: string;
-  // Only Scopes in this namespace can be referenced. Every namespace is offered when it's unset.
-  namespace?: string;
+  // Namespace of the Role or RoleBinding: a name entered without a namespace is in it.
+  // Scopes in every namespace can be referenced.
+  namespace: string;
   contract?: RoleActionContract;
   input: "resource" | "target";
   required?: boolean;
   disabled?: boolean;
   allowManual?: boolean;
-  onScopeChange?: (scope?: ScopeDisplay) => void;
 };
 
 export default function FormikRoleScopeSelect({
@@ -36,8 +42,7 @@ export default function FormikRoleScopeSelect({
   input,
   required = false,
   disabled = false,
-  allowManual = false,
-  onScopeChange = () => {}
+  allowManual = false
 }: FormikRoleScopeSelectProps) {
   const [field, meta, helpers] = useField<string>(name);
   const { access } = useUser();
@@ -55,20 +60,28 @@ export default function FormikRoleScopeSelect({
   const options = useMemo<ScopeOption[]>(
     () =>
       (canRead ? (scopes ?? []) : [])
-        // Scopes without a namespace can't be referenced by any Role
+        // Scopes without a namespace can't be referenced
         .filter((scope) => scope.namespace)
-        .filter((scope) => !namespace || scope.namespace === namespace)
-        .map((scope) => ({ value: scope.id, scope })),
-    [scopes, namespace, canRead]
+        .map((scope) => ({
+          value: qualifiedRbacReference({
+            namespace: scope.namespace!,
+            name: scope.name
+          }),
+          scope
+        })),
+    [scopes, canRead]
   );
 
   const selected = useMemo(
     () =>
       field.value
-        ? (options.find((option) => option.scope.name === field.value) ?? null)
+        ? (options.find((option) => option.value === field.value) ?? null)
         : null,
     [field.value, options]
   );
+  const reference = field.value
+    ? parseRbacReference(namespace, field.value)
+    : undefined;
 
   const mismatch = getScopeMismatch(contract, input, selected?.scope.targets);
 
@@ -89,7 +102,9 @@ export default function FormikRoleScopeSelect({
             : "Select a scope..."
         }
         formatCreateLabel={(value) => `Use Scope "${value}"`}
-        onCreateOption={(value) => helpers.setValue(value.trim())}
+        onCreateOption={(value) =>
+          helpers.setValue(absoluteRbacReference(namespace, value.trim()))
+        }
         options={options}
         // A saved reference to a Scope that doesn't exist is shown as is
         value={
@@ -98,8 +113,8 @@ export default function FormikRoleScopeSelect({
             ? ({
                 value: field.value,
                 scope: {
-                  name: field.value,
-                  namespace,
+                  name: reference?.name ?? field.value,
+                  namespace: reference?.namespace,
                   targets: []
                 }
               } as unknown as ScopeOption)
@@ -116,10 +131,7 @@ export default function FormikRoleScopeSelect({
             )}
           </div>
         )}
-        onChange={(option) => {
-          helpers.setValue(option?.scope.name ?? "");
-          onScopeChange(option?.scope);
-        }}
+        onChange={(option) => helpers.setValue(option?.value ?? "")}
         onBlur={() => helpers.setTouched(true)}
         className="text-sm"
         menuPortalTarget={
@@ -130,9 +142,9 @@ export default function FormikRoleScopeSelect({
       {hint && <p className="text-xs text-gray-500">{hint}</p>}
       {allowManual && (
         <p className="text-xs text-gray-500">
-          You can enter a Scope name without browsing it. It must be in the
-          binding&apos;s namespace; a missing or invalid Scope makes the binding
-          ineffective.
+          You can enter a Scope without browsing it: its name, in the
+          binding&apos;s namespace, or namespace/name. A missing or invalid
+          Scope makes the binding ineffective.
         </p>
       )}
       {canRead && isError && allowManual && (
@@ -143,9 +155,8 @@ export default function FormikRoleScopeSelect({
       {field.value && !selected && !(canRead && isFetching) && (
         <p className="text-xs text-yellow-700">
           Scope {field.value}{" "}
-          {allowManual ? "cannot be verified" : "doesn't exist"}
-          {namespace ? ` in ${namespace}` : ""}; what uses it won&apos;t be in
-          effect unless it exists and is valid.
+          {allowManual ? "cannot be verified" : "doesn't exist"}; what uses it
+          won&apos;t be in effect unless it exists and is valid.
         </p>
       )}
       {mismatch && <p className="text-xs text-yellow-700">{mismatch}</p>}

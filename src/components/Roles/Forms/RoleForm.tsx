@@ -6,7 +6,9 @@ import {
 } from "@flanksource-ui/api/query-hooks/useRolesQuery";
 import {
   RBAC_DEFAULT_NAMESPACE,
+  RBAC_SHIPPED_NAMESPACE,
   getRbacReadOnlyReason,
+  qualifiedRbacReference,
   toRbacManifest
 } from "@flanksource-ui/api/types/rbacResources";
 import {
@@ -36,55 +38,16 @@ import {
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { Modal } from "@flanksource-ui/ui/Modal";
-import { Form, Formik, useFormikContext } from "formik";
-import { useEffect } from "react";
+import { Form, Formik } from "formik";
 import { FaSpinner } from "react-icons/fa";
 import RoleRulesList from "../RoleRulesList";
 import {
   RoleFormValues,
   formValuesToSpec,
-  hasScopeReference,
   roleToFormValues,
   validateRoleForm
 } from "../roleFormValues";
 import RoleRulesForm from "./RoleRulesForm";
-
-// A Role can only reference Scopes in its own namespace, so a new Role takes the namespace
-// of the first Scope picked, and is free again once no rule references a Scope.
-function RoleNamespace({ fixed }: { fixed?: string | null }) {
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const referencesScope = hasScopeReference(values);
-
-  useEffect(() => {
-    if (!fixed && !referencesScope && values.namespace) {
-      setFieldValue("namespace", undefined);
-    }
-  }, [fixed, referencesScope, values.namespace, setFieldValue]);
-
-  if (fixed) {
-    return (
-      <div className="pointer-events-none opacity-60">
-        <FormikTextInput name="namespace" label="Namespace" disabled />
-      </div>
-    );
-  }
-
-  return (
-    <p className="text-sm text-gray-500">
-      {values.namespace ? (
-        <>
-          The role is created in the <code>{values.namespace}</code> namespace,
-          where its scopes are. Only scopes in that namespace can be used.
-        </>
-      ) : (
-        <>
-          The role is created in the namespace of the scopes it uses, or{" "}
-          <code>{RBAC_DEFAULT_NAMESPACE}</code>.
-        </>
-      )}
-    </p>
-  );
-}
 
 function RoleBindingsForRole({ role }: { role: RoleDisplay }) {
   const { data: bindings, isLoading } = useRoleBindingNamesForRoleQuery(
@@ -103,10 +66,10 @@ function RoleBindingsForRole({ role }: { role: RoleDisplay }) {
         <div className="flex flex-wrap gap-1">
           {bindings.map((binding) => (
             <span
-              key={binding.name}
+              key={`${binding.namespace}/${binding.name}`}
               className="rounded bg-gray-100 px-1.5 py-0.5 text-sm text-gray-700"
             >
-              {binding.name}
+              {bindingLabel(role.namespace, binding)}
             </span>
           ))}
         </div>
@@ -119,11 +82,26 @@ function RoleBindingsForRole({ role }: { role: RoleDisplay }) {
   );
 }
 
+// A binding in the role's namespace by its name, and one in another namespace as namespace/name
+function bindingLabel(
+  roleNamespace: string | null | undefined,
+  binding: { namespace?: string; name: string }
+) {
+  return binding.namespace && binding.namespace !== roleNamespace
+    ? qualifiedRbacReference({
+        namespace: binding.namespace,
+        name: binding.name
+      })
+    : binding.name;
+}
+
 // Rules a binding's constraint can't narrow don't apply through that binding. That's reported, and doesn't
 // make the role invalid, so it's shown apart from the role's status.
 function UnappliedRulesWarning({
+  roleNamespace,
   bindings
 }: {
+  roleNamespace?: string | null;
   bindings?: RoleBindingUnappliedRules[];
 }) {
   if (!bindings?.length) {
@@ -138,8 +116,12 @@ function UnappliedRulesWarning({
       </p>
       <ul className="mt-1 list-disc pl-5">
         {bindings.map((binding) => (
-          <li key={binding.name} className="break-words">
-            <code>{binding.name}</code>: {binding.rules.join(", ")}
+          <li
+            key={`${binding.namespace}/${binding.name}`}
+            className="break-words"
+          >
+            <code>{bindingLabel(roleNamespace, binding)}</code>:{" "}
+            {binding.rules.join(", ")}
           </li>
         ))}
       </ul>
@@ -150,17 +132,24 @@ function UnappliedRulesWarning({
 function RoleUnappliedRules({ role }: { role: RoleDisplay }) {
   const { data } = useRoleReportQuery(role.namespace, role.name);
   return (
-    <UnappliedRulesWarning bindings={data?.bindings_with_unapplied_rules} />
+    <UnappliedRulesWarning
+      roleNamespace={role.namespace}
+      bindings={data?.bindings_with_unapplied_rules}
+    />
   );
 }
 
-function notifyUnappliedRules(bindings?: RoleBindingUnappliedRules[]) {
+function notifyUnappliedRules(saved: RoleDB) {
+  const bindings = saved.bindings_with_unapplied_rules;
   if (!bindings?.length) {
     return;
   }
   toast(
     `Some rules don't apply through role bindings whose constraint can't narrow them: ${bindings
-      .map((binding) => `${binding.name} (${binding.rules.join(", ")})`)
+      .map(
+        (binding) =>
+          `${bindingLabel(saved.namespace, binding)} (${binding.rules.join(", ")})`
+      )
       .join("; ")}`,
     { icon: "⚠️", duration: 10000 }
   );
@@ -194,7 +183,7 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
     const mutationOptions = (verb: "created" | "updated") => ({
       onSuccess: (saved: RoleDB) => {
         notifyRbacSaved("roles", verb, saved);
-        notifyUnappliedRules(saved.bindings_with_unapplied_rules);
+        notifyUnappliedRules(saved);
         onClose();
       },
       onError: (error: unknown) => {
@@ -222,7 +211,7 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
         onSubmit={handleSubmit}
         validate={validateRoleForm}
       >
-        {({ values, setFieldValue, isSubmitting }) => {
+        {({ values, isSubmitting }) => {
           const fields = (
             <div className="flex flex-col space-y-4">
               {readOnlyReason && (
@@ -261,7 +250,25 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
                 />
               </div>
 
-              <RoleNamespace fixed={data?.namespace} />
+              <div
+                className={
+                  isReadOnly || data ? "pointer-events-none opacity-60" : ""
+                }
+              >
+                <FormikTextInput
+                  name="namespace"
+                  label="Namespace"
+                  required
+                  placeholder={RBAC_DEFAULT_NAMESPACE}
+                  hint={
+                    data
+                      ? undefined
+                      : `Rules can use scopes from any namespace, e.g. ${RBAC_SHIPPED_NAMESPACE}/all-configs. The role can't be in ${RBAC_SHIPPED_NAMESPACE}, which is reserved for what ships with Mission Control.`
+                  }
+                  // The API identifies a role by namespace and name, so it can't be moved
+                  disabled={isReadOnly || !!data}
+                />
+              </div>
 
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
@@ -277,12 +284,7 @@ export default function RoleForm({ isOpen, onClose, data }: RoleFormProps) {
                 <RoleRulesList rules={data?.rules ?? []} />
               ) : (
                 <RoleRulesForm
-                  namespace={data?.namespace ?? values.namespace}
-                  onScopeChange={(scope) => {
-                    if (!data && scope?.namespace && !values.namespace) {
-                      setFieldValue("namespace", scope.namespace);
-                    }
-                  }}
+                  namespace={values.namespace || RBAC_DEFAULT_NAMESPACE}
                 />
               )}
 
