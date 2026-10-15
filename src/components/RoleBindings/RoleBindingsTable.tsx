@@ -45,6 +45,7 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     header: "Name",
     id: "name",
     size: 100,
+    accessorFn: (row) => row.name,
     Cell: ({ row }) => {
       const { name, namespace } = row.original;
       return (
@@ -65,6 +66,7 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     header: "Subjects",
     id: "subjects",
     size: 150,
+    accessorFn: (row) => summarizeSubjects(row.subjects).join(", "),
     Cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {summarizeSubjects(row.original.subjects).map((label) => (
@@ -99,6 +101,8 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     header: "Status",
     id: "status",
     size: 60,
+    // Sorts objects that are in effect before those that aren't
+    accessorFn: (row) => (row.error ? "Not in effect" : "Active"),
     Cell: ({ row }) => <RbacObjectStatus {...row.original} />
   },
   {
