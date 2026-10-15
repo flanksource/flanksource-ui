@@ -8,7 +8,6 @@ import {
 import { Fragment, useEffect, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useUser } from "../../../context";
-import { hasImpersonatedScopes } from "../../../components/Scopes/Impersonation/scopeImpersonationStore";
 import { ClickableSvg } from "../../../ui/ClickableSvg/ClickableSvg";
 import {
   isNewUIPreferred,
@@ -22,9 +21,7 @@ type UserProfileDropdownProps = {
   openMcpTokenModal: () => void;
   openCliSetupModal: () => void;
   openResourceSelectorSearchModal: () => void;
-  openScopeImpersonationModal: () => void;
   openGettingStarted: () => void;
-  showScopeImpersonation?: boolean;
 };
 
 export function KratosUserProfileDropdown({
@@ -32,9 +29,7 @@ export function KratosUserProfileDropdown({
   openMcpTokenModal,
   openCliSetupModal,
   openResourceSelectorSearchModal,
-  openScopeImpersonationModal,
-  openGettingStarted,
-  showScopeImpersonation = false
+  openGettingStarted
 }: UserProfileDropdownProps) {
   const { user } = useUser();
   const userNavigation = [{ name: "Your Profile", href: "/profile-settings" }];
@@ -138,19 +133,6 @@ export function KratosUserProfileDropdown({
               Resource selector search
             </button>
           </MenuItem>
-          {showScopeImpersonation && (
-            <MenuItem>
-              <button
-                onClick={openScopeImpersonationModal}
-                className="block border-0 border-b border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-              >
-                Impersonate Scope
-                {hasImpersonatedScopes() && (
-                  <span className="ml-1 text-green-600">(active)</span>
-                )}
-              </button>
-            </MenuItem>
-          )}
           <MenuItem>
             <button
               onClick={toggleNewUI}

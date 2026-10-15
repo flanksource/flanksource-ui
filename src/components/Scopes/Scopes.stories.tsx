@@ -6,9 +6,7 @@ import {
 import { Meta, StoryObj } from "@storybook/react";
 import { mswLoader } from "msw-storybook-addon";
 import { HttpResponse, http } from "msw";
-import { ToasterWithCloseButton } from "@flanksource-ui/ui/ToasterWithCloseButton";
 import ScopeForm from "./Forms/ScopeForm";
-import ScopeImpersonationModal from "./Impersonation/ScopeImpersonationModal";
 import ScopesTable from "./ScopesTable";
 
 export default {
@@ -92,13 +90,4 @@ export const ConflictingTags: StoryObj<typeof ScopeForm> = {
 
 export const ScopeFromKubernetes: StoryObj<typeof ScopeForm> = {
   render: () => <ScopeForm isOpen onClose={() => {}} data={scopes[4]} />
-};
-
-export const ImpersonateScope: StoryObj<typeof ScopeImpersonationModal> = {
-  render: () => (
-    <>
-      <ToasterWithCloseButton />
-      <ScopeImpersonationModal isOpen onClose={() => {}} />
-    </>
-  )
 };
