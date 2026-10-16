@@ -39,7 +39,11 @@ export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
               <TooltipProvider key={binding.id} delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="cursor-help rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700 line-through">
+                    <span
+                      // Focusable so keyboard users can open the reason
+                      tabIndex={0}
+                      className="cursor-help rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700 line-through focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                    >
                       {binding.role}
                     </span>
                   </TooltipTrigger>
