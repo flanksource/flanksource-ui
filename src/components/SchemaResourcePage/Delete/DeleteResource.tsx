@@ -36,9 +36,9 @@ export default function DeleteResource({
 
   const onDeleteResource = useCallback(() => {
     setIsConfirmDialogOpen(false);
+    // onDeleted runs from onSuccess, so a failed delete doesn't leave the page
     deleteResource(resourceId);
-    onDeleted();
-  }, [deleteResource, onDeleted, resourceId]);
+  }, [deleteResource, resourceId]);
 
   return (
     <>
