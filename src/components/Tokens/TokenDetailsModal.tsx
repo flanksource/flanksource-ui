@@ -8,6 +8,7 @@ import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
+import { TokenRoleBindings } from "./TokenRoleBindings";
 
 type TokenDetailsModalProps = {
   token: Token;
@@ -67,29 +68,12 @@ export default function TokenDetailsModal({
 
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
-              Limiting Roles
+              Role Bindings
             </label>
-            <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border bg-gray-50 p-3">
-              {token.roles?.length ? (
-                token.roles.map((role) => (
-                  <div
-                    key={`${role.namespace}/${role.name}`}
-                    className="break-all text-sm text-gray-700"
-                  >
-                    {role.namespace}/{role.name}
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-orange-700">
-                  No limiting roles. Personal tokens without roles are not
-                  valid; create a replacement token.
-                </p>
-              )}
-            </div>
+            <TokenRoleBindings bindings={token.role_bindings} />
             <p className="text-sm text-gray-500">
-              Access is the intersection of your current grants and these roles,
-              not a fixed list of permissions. Missing or invalid roles grant
-              nothing.
+              The token can do what both your current access and these roles
+              allow. A binding never grants the token anything.
             </p>
           </div>
         </div>
