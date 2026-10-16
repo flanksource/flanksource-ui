@@ -31,6 +31,11 @@ export function IconPicker({
         onChange={onChange}
         name={name}
         options={iconList}
+        // Render the menu outside scrollable containers such as modal bodies, which would clip it
+        menuPortalTarget={
+          typeof document !== "undefined" ? document.body : undefined
+        }
+        styles={{ menuPortal: (base: object) => ({ ...base, zIndex: 9999 }) }}
       />
     </div>
   );
