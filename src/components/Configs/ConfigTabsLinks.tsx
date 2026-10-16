@@ -8,6 +8,7 @@ import {
   pluginTabPath
 } from "../../api/services/configPlugins";
 import { useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { ReactNode } from "react";
 import useConfigAccessSummaryQuery from "@flanksource-ui/api/query-hooks/useConfigAccessSummaryQuery";
@@ -32,7 +33,8 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   const {
     data: views = [],
     isLoading,
-    isError
+    isError,
+    error: viewsError
   } = useQuery({
     queryKey: ["views", id],
     queryFn: () => getViewsByConfigId(id!),
@@ -189,9 +191,14 @@ export function useConfigDetailsTabs(countSummary?: ConfigItem["summary"]): {
   );
 
   // Views lead the built-in tabs; plugin-contributed tabs trail them.
+  // A 403 on views only means the user can't see view tabs; the rest of the
+  // config page must still load.
+  const isViewsForbidden =
+    isAxiosError(viewsError) && viewsError.response?.status === 403;
+
   return {
     isLoading,
-    isError,
+    isError: isError && !isViewsForbidden,
     tabs: [...viewTabs, ...staticTabs, ...pluginTabs]
   };
 }
