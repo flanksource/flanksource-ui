@@ -19,7 +19,20 @@ export type Token = {
     properties: Record<string, any>;
   };
   person_id: string;
-  roles?: TokenRole[];
+  /** The RoleBindings created with the token, which limit what it may do. */
+  role_bindings?: TokenRoleBinding[];
+};
+
+/** A RoleBinding that limits a token, as its owner sees it. */
+export type TokenRoleBinding = {
+  id: string;
+  name: string;
+  /** The Role, as namespace/name */
+  role: string;
+  ready: boolean;
+  error_reason?: string;
+  /** Only present when the owner may read Roles */
+  error?: string;
 };
 
 export type TokensResponse = {

@@ -26,7 +26,7 @@ export default function TokenRolesFieldsGroup({
     <div className="space-y-2">
       <FormikCreatableMultiSelect
         name="roles"
-        label="Limiting Roles"
+        label="Role Bindings"
         options={Array.from(references).map((reference) => ({
           label: reference,
           value: reference
@@ -41,9 +41,9 @@ export default function TokenRolesFieldsGroup({
         </p>
       )}
       <p className="text-sm text-gray-500">
-        The token can only do what both your current access and the selected
-        roles allow. Changes to your access or these roles take effect on the
-        token. Missing or invalid roles grant nothing.
+        Each role you pick is bound to the token. The token can only do what
+        both your current access and these roles allow. You can't change them
+        later: create a new token instead.
       </p>
       <p className="text-xs text-gray-500">
         To retain all your current access, select both

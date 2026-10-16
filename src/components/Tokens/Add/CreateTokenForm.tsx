@@ -107,7 +107,7 @@ export function CreateTokenFormContent({
           errors.name = "Name is required";
         }
         if (values.roles.length === 0) {
-          errors.roles = "Select at least one limiting role";
+          errors.roles = "Select at least one role";
         } else if (
           values.roles.some((role) => !/^[^\s/]+\/[^\s/]+$/.test(role))
         ) {
