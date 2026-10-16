@@ -198,7 +198,11 @@ Select.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   // eslint-disable-next-line react/forbid-prop-types
-  value: PropTypes.any
+  value: PropTypes.any,
+  // eslint-disable-next-line react/forbid-prop-types,react/require-default-props
+  menuPortalTarget: PropTypes.any,
+  // eslint-disable-next-line react/forbid-prop-types,react/require-default-props
+  styles: PropTypes.object
 };
 
 Select.defaultProps = {
