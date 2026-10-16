@@ -10,6 +10,10 @@ export const RBAC_DEFAULT_NAMESPACE = "default";
 // and the API refuses every write in it.
 export const RBAC_SHIPPED_NAMESPACE = "mission-control-builtin";
 
+// Mission Control owns this namespace too: it holds access tokens' role bindings, which only limit their token,
+// so they're never listed with the others.
+export const RBAC_ACCESS_TOKENS_NAMESPACE = "mission-control-access-tokens";
+
 const dnsLabel = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 const dnsSubdomain =
   /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;

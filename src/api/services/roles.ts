@@ -1,6 +1,9 @@
 import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { IncidentCommander } from "../axios";
-import { RbacManifest } from "../types/rbacResources";
+import {
+  RBAC_ACCESS_TOKENS_NAMESPACE,
+  RbacManifest
+} from "../types/rbacResources";
 import { RoleDB, RoleDisplay, RoleSpec } from "../types/roles";
 import {
   createRbacObject,
@@ -54,6 +57,7 @@ export async function getRoleBindingNamesForRole(
       select: "name,namespace",
       or: `(and(namespace.eq."${namespace}",role.eq."${role}"),role.eq."${namespace}/${role}")`,
       deleted_at: "is.null",
+      namespace: `neq.${RBAC_ACCESS_TOKENS_NAMESPACE}`,
       order: "namespace,name"
     }
   });

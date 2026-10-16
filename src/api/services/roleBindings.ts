@@ -1,6 +1,9 @@
 import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { IncidentCommander } from "../axios";
-import { RbacManifest } from "../types/rbacResources";
+import {
+  RBAC_ACCESS_TOKENS_NAMESPACE,
+  RbacManifest
+} from "../types/rbacResources";
 import {
   RoleBindingDB,
   RoleBindingDisplay,
@@ -16,6 +19,7 @@ export async function getRoleBindings(): Promise<RoleBindingDisplay[]> {
       params: {
         select: `*,created_by(${AVATAR_INFO})`,
         deleted_at: "is.null",
+        namespace: `neq.${RBAC_ACCESS_TOKENS_NAMESPACE}`,
         order: "namespace,name"
       }
     }
