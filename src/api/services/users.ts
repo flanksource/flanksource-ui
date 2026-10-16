@@ -31,6 +31,14 @@ export const getPersons = () =>
     )
   );
 
+// Human users only: agents and external-provider users have a type, and can't be bound by email.
+export const getHumanPeople = () =>
+  resolvePostGrestRequestWithPagination<User[]>(
+    IncidentCommander.get<User[]>(
+      `/people?select=id,name,email&type=is.null&deleted_at=is.null&email=not.is.null&order=name.asc`
+    )
+  );
+
 export const getPersonWithEmail = (email: string) =>
   resolvePostGrestRequestWithPagination<User>(
     IncidentCommander.get(`/people?email=eq.${email}`)

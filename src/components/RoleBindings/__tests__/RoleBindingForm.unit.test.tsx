@@ -56,7 +56,7 @@ jest.mock("../../../api/services/scopes", () => ({
 }));
 
 jest.mock("../../../api/services/users", () => ({
-  fetchPeopleWithRoles: jest.fn().mockResolvedValue({ data: [] })
+  getHumanPeople: jest.fn().mockResolvedValue({ data: [] })
 }));
 
 jest.mock("../../../api/query-hooks/responders", () => ({

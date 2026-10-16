@@ -3,7 +3,7 @@ import {
   RoleBindingResourceSubjectKind,
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
-import { fetchPeopleWithRoles } from "@flanksource-ui/api/services/users";
+import { getHumanPeople } from "@flanksource-ui/api/services/users";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useQuery } from "@tanstack/react-query";
@@ -78,9 +78,10 @@ function hasValues(values: RoleBindingFormValues, kind: SubjectKind) {
 }
 
 function PeopleField() {
+  // people_roles only lists people with legacy role assignments, so read people directly
   const { data: people, isLoading } = useQuery(
-    ["people-roles", undefined],
-    async () => (await fetchPeopleWithRoles()).data ?? []
+    ["people", "human"],
+    async () => (await getHumanPeople()).data ?? []
   );
 
   // The wildcard is a distinct subject for all human users, not a placeholder for listed people.
