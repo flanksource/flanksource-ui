@@ -96,7 +96,7 @@ export function CreateTokenFormContent({
         name: "",
         expiry: "90d",
         auto_renew: false,
-        roles: isMcpSetup ? [] : ["mission-control-builtin/viewer"]
+        roles: []
       }}
       enableReinitialize
       validateOnMount

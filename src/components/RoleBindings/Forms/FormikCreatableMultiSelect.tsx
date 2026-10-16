@@ -59,6 +59,8 @@ export default function FormikCreatableMultiSelect({
         options={options}
         value={value}
         placeholder={placeholder}
+        // Typed values are only entered, never created, so "Create" would mislead
+        formatCreateLabel={(input) => `Use "${input}"`}
         formatOptionLabel={(option) => (
           <div className="flex items-center justify-between gap-2">
             <span>{option.label}</span>

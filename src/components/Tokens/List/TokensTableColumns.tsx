@@ -1,6 +1,12 @@
 import { MRT_ColumnDef } from "mantine-react-table";
 import { Token } from "../../../api/services/tokens";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@flanksource-ui/components/ui/tooltip";
 
 export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
   {
@@ -21,19 +27,33 @@ export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
       }
       return (
         <div className="flex flex-wrap gap-1">
-          {bindings.map((binding) => (
-            <span
-              key={binding.id}
-              title={binding.ready ? undefined : "Not in effect"}
-              className={`rounded px-1.5 py-0.5 text-xs ${
-                binding.ready
-                  ? "bg-gray-100 text-gray-700"
-                  : "bg-orange-50 text-orange-700 line-through"
-              }`}
-            >
-              {binding.role}
-            </span>
-          ))}
+          {bindings.map((binding) =>
+            binding.ready ? (
+              <span
+                key={binding.id}
+                className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700"
+              >
+                {binding.role}
+              </span>
+            ) : (
+              <TooltipProvider key={binding.id} delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700 line-through">
+                      {binding.role}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-sm">
+                    <div className="font-semibold">
+                      Not in effect
+                      {binding.error_reason ? `: ${binding.error_reason}` : ""}
+                    </div>
+                    {binding.error && <div>{binding.error}</div>}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )
+          )}
         </div>
       );
     }

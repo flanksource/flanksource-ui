@@ -1,6 +1,7 @@
 import { getRoles } from "@flanksource-ui/api/services/roles";
 import FormikCreatableMultiSelect from "@flanksource-ui/components/RoleBindings/Forms/FormikCreatableMultiSelect";
 import { useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 
 /** Lists only the Roles the database lets the caller read; any other namespace/name can still be typed in. */
 export default function TokenRolesFieldsGroup({
@@ -11,7 +12,7 @@ export default function TokenRolesFieldsGroup({
   const {
     data: roles = [],
     isFetching,
-    isError
+    error
   } = useQuery({
     queryKey: ["roles"],
     queryFn: getRoles
@@ -35,9 +36,12 @@ export default function TokenRolesFieldsGroup({
         placeholder="Select roles or enter namespace/name"
         hint="Select at least one role. You can enter a role from any namespace, even if you cannot browse it."
       />
-      {isError && (
+      {error instanceof Error && (
         <p role="status" className="text-sm text-orange-700">
-          Unable to load roles. You can still enter namespace/name manually.
+          {isAxiosError(error) && error.response?.status === 403
+            ? "You don't have read access to roles, so they can't be listed."
+            : `Unable to load roles: ${error.message}.`}{" "}
+          You can still enter namespace/name manually.
         </p>
       )}
       <p className="text-sm text-gray-500">
