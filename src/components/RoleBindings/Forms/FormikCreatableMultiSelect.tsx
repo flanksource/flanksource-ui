@@ -1,5 +1,6 @@
 import { useField } from "formik";
 import { useMemo } from "react";
+import { components, InputProps } from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 export type CreatableOption = {
@@ -18,6 +19,19 @@ type FormikCreatableMultiSelectProps = {
   // Keeps the label for screen readers when a heading above already names the field
   hideLabel?: boolean;
 };
+
+// Keeps password managers from treating the input as an identity field
+function NoAutofillInput(props: InputProps<CreatableOption, true>) {
+  return (
+    <components.Input
+      {...props}
+      autoComplete="off"
+      data-bwignore="true"
+      data-1p-ignore="true"
+      data-lpignore="true"
+    />
+  );
+}
 
 // A multi-select of string values that also accepts values that aren't listed,
 // e.g. the email of someone who hasn't signed in yet.
@@ -60,6 +74,7 @@ export default function FormikCreatableMultiSelect({
         value={value}
         placeholder={placeholder}
         // Typed values are only entered, never created, so "Create" would mislead
+        components={{ Input: NoAutofillInput }}
         formatCreateLabel={(input) => `Use "${input}"`}
         formatOptionLabel={(option) => (
           <div className="flex items-center justify-between gap-2">
