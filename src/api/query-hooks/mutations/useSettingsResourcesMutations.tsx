@@ -1,4 +1,8 @@
-import { UseMutationOptions, useMutation } from "@tanstack/react-query";
+import {
+  UseMutationOptions,
+  useMutation,
+  useQueryClient
+} from "@tanstack/react-query";
 import {
   SchemaApi,
   SchemaResourceType
@@ -16,17 +20,24 @@ export const useSettingsDeleteResource = (
   resourceInfo: Pick<SchemaResourceType, "name" | "table" | "api">,
   options: Omit<UseMutationOptions<void, Error, any>, "mutationFn"> = {}
 ) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (id: string) => {
-      await deleteResource(resourceInfo, id);
-    },
-    onSuccess: () => {
-      toastSuccess(`${resourceInfo.name} deleted successfully`);
-    },
     onError: (ex: any) => {
       toastError(ex);
     },
-    ...options
+    ...options,
+    mutationFn: async (id: string) => {
+      await deleteResource(resourceInfo, id);
+    },
+    // Callers' onSuccess replaces the toast, but the lists must refresh either way
+    onSuccess: (...args) => {
+      void queryClient.invalidateQueries({ queryKey: ["settings"] });
+      if (options.onSuccess) {
+        return options.onSuccess(...args);
+      }
+      toastSuccess(`${resourceInfo.name} deleted successfully`);
+    }
   });
 };
 
@@ -38,20 +49,26 @@ export const useSettingsUpdateResource = (
     "mutationFn"
   > = {}
 ) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
+    onError: (ex: any) => {
+      toastError(ex);
+    },
+    ...options,
     mutationFn: async (props: Partial<SchemaResourceI>) => {
       await updateResource(resourceInfo, {
         ...resource,
         ...props
       });
     },
-    onSuccess: () => {
+    onSuccess: (...args) => {
+      void queryClient.invalidateQueries({ queryKey: ["settings"] });
+      if (options.onSuccess) {
+        return options.onSuccess(...args);
+      }
       toastSuccess(`${resourceInfo.name} updated successfully`);
-    },
-    onError: (ex: any) => {
-      toastError(ex);
-    },
-    ...options
+    }
   });
 };
 
@@ -60,6 +77,7 @@ export const useSettingsCreateResource = (
   onSuccess = () => {}
 ) => {
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   return useMutation(
     async (data: Partial<SchemaResourceI>) => {
@@ -69,7 +87,10 @@ export const useSettingsCreateResource = (
       });
     },
     {
-      onSuccess: onSuccess,
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: ["settings"] });
+        onSuccess();
+      },
       onError: (ex: any) => {
         toastError(ex);
       }
