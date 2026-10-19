@@ -471,11 +471,11 @@ const settingsNav: SettingsNavigationItems = {
       resourceName: tables.mcp
     },
     {
-      name: "Feature Flags",
-      href: "/settings/feature-flags",
+      name: "Properties",
+      href: "/settings/properties",
       icon: BsToggles,
       featureName: features["settings.feature_flags"],
-      resourceName: tables.feature_flags
+      resourceName: tables.properties
     },
     {
       name: "Log Backends",
@@ -912,10 +912,10 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         />
 
         <Route
-          path="feature-flags"
+          path="properties"
           element={withAuthorizationAccessCheck(
             <FeatureFlagsPage />,
-            tables.feature_flags,
+            tables.properties,
             "read",
             true
           )}
@@ -1398,7 +1398,7 @@ function SidebarWrapper() {
     "topologies",
     "canaries",
     "connections",
-    "feature-flags",
+    "properties",
     "jobs"
   ];
   const checkPath = pathTrack.includes(path);

@@ -105,7 +105,7 @@ export default function JobHistorySummary({
             }}
           >
             <AuthorizationAccessCheck
-              resource={tables.feature_flags}
+              resource={tables.properties}
               action="write"
             >
               <Button

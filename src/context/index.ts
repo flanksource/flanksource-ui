@@ -27,14 +27,14 @@ export function createAuthorizer(ctx: WhoamiResponse["payload"]): Authorizer {
     }
     if (
       action === "read" &&
-      [tables.artifacts, tables.tokens, tables.feature_flags].includes(resource)
+      [tables.artifacts, tables.tokens].includes(resource)
     ) {
       return true;
     }
     if (resource === tables.people && action !== "read") {
       return ctx.access_actions?.["person:manage"] === true;
     }
-    if (resource === tables.feature_flags && action !== "read") {
+    if (resource === tables.properties) {
       return ctx.access_actions?.["property:manage"] === true;
     }
     if (resource in (ctx.access_actions ?? {})) {

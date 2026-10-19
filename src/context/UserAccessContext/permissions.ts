@@ -12,7 +12,7 @@ export const tables = {
   connections: "connection",
   kratos: "kratos",
   agents: "agent",
-  feature_flags: "properties",
+  properties: "properties",
   logging_backends: "logging_backends",
   integrations: "integrations",
   plugins: "plugins",

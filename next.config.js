@@ -38,6 +38,11 @@ const config = {
         permanent: true
       },
       {
+        source: "/settings/feature-flags",
+        destination: "/settings/properties",
+        permanent: true
+      },
+      {
         source: "/settings/notifications/:path*",
         destination: "/notifications/:path*",
         permanent: true
