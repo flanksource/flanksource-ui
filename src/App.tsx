@@ -1329,9 +1329,14 @@ function findDashboardView(
 
 function useDynamicNavigation() {
   const { featureFlags } = useFeatureFlagsContext();
+  const { access } = useUser();
+  // whoami tells us up front whether the user can read views at all.
+  const viewRead = access?.[tables.views]?.read;
+  const canReadViews = viewRead === "all" || viewRead === "some";
   const { data: views = [] } = useQuery<ViewSummary[]>({
     queryKey: ["views-sidebar"],
     queryFn: getViewsForSidebar,
+    enabled: canReadViews,
     staleTime: 5 * 60 * 1000
   });
 
