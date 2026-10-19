@@ -20,8 +20,24 @@ export default {
   parameters: { msw: { handlers: rbacHandlers } }
 } satisfies Meta;
 
+const denyBinding = {
+  ...roleBindings[0],
+  id: "deny-secrets",
+  name: "no-secrets-for-contractors",
+  deny: true
+};
+
 export const Table: StoryObj = {
-  render: () => <RoleBindingsTable data={roleBindings} isLoading={false} />
+  render: () => (
+    <RoleBindingsTable
+      data={[...roleBindings, denyBinding]}
+      isLoading={false}
+    />
+  )
+};
+
+export const DenyBinding: StoryObj<typeof RoleBindingForm> = {
+  render: () => <RoleBindingForm isOpen onClose={() => {}} data={denyBinding} />
 };
 
 export const AddRoleBinding: StoryObj<typeof RoleBindingForm> = {

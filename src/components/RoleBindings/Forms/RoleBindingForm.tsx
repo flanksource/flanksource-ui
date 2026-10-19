@@ -14,6 +14,7 @@ import {
   RoleBindingDB,
   RoleBindingDisplay
 } from "@flanksource-ui/api/types/roleBindings";
+import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
@@ -187,6 +188,19 @@ export default function RoleBindingForm({
               <div
                 className={isReadOnly ? "pointer-events-none opacity-60" : ""}
               >
+                <FormikCheckbox
+                  name="deny"
+                  label="Deny"
+                  inline
+                  checkboxStyle="toggle"
+                  disabled={isReadOnly}
+                  hint="Block this role for these subjects, even if another binding allows it."
+                />
+              </div>
+
+              <div
+                className={isReadOnly ? "pointer-events-none opacity-60" : ""}
+              >
                 <FormikTextArea
                   name="description"
                   label="Description"
@@ -231,7 +245,8 @@ export default function RoleBindingForm({
                           description: data.description || undefined,
                           role: data.role,
                           subjects: data.subjects,
-                          constraint: data.constraint ?? undefined
+                          constraint: data.constraint ?? undefined,
+                          deny: data.deny || undefined
                         })}
                       />
                     </TabsContent>
