@@ -2,7 +2,6 @@ import {
   toastError,
   toastSuccess
 } from "@flanksource-ui/components/Toast/toast";
-import { useUser } from "@flanksource-ui/context";
 import {
   FeatureFlag,
   PropertyDBObject
@@ -34,8 +33,8 @@ export function useGetPropertyFromDB(featureFlag?: FeatureFlag) {
   return useQuery({
     queryKey: ["properties", featureFlag],
     queryFn: async () => {
-      const res = await fetchProperty(featureFlag!.name, featureFlag!.value);
-      return res.data?.[0] ?? null;
+      const res = await fetchProperty(featureFlag!.name);
+      return res.data ?? null;
     },
     enabled: !!featureFlag,
     cacheTime: 0,
@@ -58,14 +57,9 @@ export function useGetFeatureFlagsFromAPI(options?: {
 }
 
 export function useAddFeatureFlag(onSuccess: () => void) {
-  const user = useUser();
-
   return useMutation({
     mutationFn: async (data: Partial<PropertyDBObject>) => {
-      const response = await saveProperty({
-        ...data,
-        created_by: user.user?.id
-      });
+      const response = await saveProperty(data);
       if (!response?.data) {
         throw new Error(response.error?.message);
       }
@@ -81,14 +75,9 @@ export function useAddFeatureFlag(onSuccess: () => void) {
 }
 
 export function useUpdateFeatureFlag(onSuccess: () => void) {
-  const user = useUser();
-
   return useMutation({
     mutationFn: async (data: Partial<PropertyDBObject>) => {
-      const response = await updateProperty({
-        ...data,
-        created_by: user.user?.id
-      });
+      const response = await updateProperty(data);
       if (!response?.data) {
         throw new Error(response.error?.message);
       }
@@ -106,10 +95,7 @@ export function useUpdateFeatureFlag(onSuccess: () => void) {
 export function useDeleteFeatureFlag(onSuccess: () => void) {
   return useMutation({
     mutationFn: async (data: Partial<PropertyDBObject>) => {
-      const response = await deleteProperty(data);
-      if (!response?.data) {
-        throw new Error(response.error?.message);
-      }
+      await deleteProperty(data);
     },
     onSuccess: () => {
       toastSuccess("Feature flag removed successfully");

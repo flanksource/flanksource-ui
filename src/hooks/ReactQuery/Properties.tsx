@@ -7,7 +7,7 @@ export function useUISnippets() {
     queryFn: async () => {
       const featureFlags = await fetchFeatureFlagsAPI();
       return featureFlags.data?.find((flag) => {
-        return flag.name === "flanksource.ui.snippets";
+        return flag.name === "public.flanksource.ui.snippets";
       });
     }
   });

@@ -27,7 +27,7 @@ describe("updateContentSecurityPolicy", () => {
 
   it("disables CSP only when the Mission Control property is false", () => {
     updateContentSecurityPolicy([
-      { name: "ui.content_security_policy", value: "false" }
+      { name: "public.ui.content_security_policy", value: "false" }
     ]);
 
     expect(document.head.querySelector(CSP_SELECTOR)).toBeNull();
@@ -35,7 +35,7 @@ describe("updateContentSecurityPolicy", () => {
 
   it("keeps CSP enabled when the Mission Control property is true", () => {
     updateContentSecurityPolicy([
-      { name: "ui.content_security_policy", value: "true" }
+      { name: "public.ui.content_security_policy", value: "true" }
     ]);
 
     expect(document.head.querySelector(CSP_SELECTOR)).not.toBeNull();
@@ -44,7 +44,7 @@ describe("updateContentSecurityPolicy", () => {
   it("removes the managed CSP meta tag when the property changes to false", () => {
     updateContentSecurityPolicy([]);
     updateContentSecurityPolicy([
-      { name: "ui.content_security_policy", value: false }
+      { name: "public.ui.content_security_policy", value: false }
     ]);
 
     expect(document.head.querySelector(CSP_SELECTOR)).toBeNull();

@@ -50,11 +50,11 @@ export default function useClerkAttachAuthInterceptorsToAxios() {
   // or not so we can set the base URL correctly
   const orgDirect = parseBoolean(organization?.publicMetadata.direct);
 
-  // Fetch the proxy.disable property from backend properties to allow
+  // Fetch the public.proxy.disable property from backend properties to allow
   // toggling direct mode without changing Clerk org metadata
   const { data: allProperties } = useGetFeatureFlagsFromAPI();
   const proxyDisableProperty = allProperties?.filter(
-    (p) => p.name === "proxy.disable"
+    (p) => p.name === "public.proxy.disable"
   );
 
   // Property overrides org metadata; fall back to org metadata if property

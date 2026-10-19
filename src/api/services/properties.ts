@@ -1,22 +1,19 @@
-import { AVATAR_INFO } from "@flanksource-ui/constants";
 import {
   FeatureFlag,
   PropertyDBObject
 } from "../../services/permissions/permissionsService";
-import { IncidentCommander, apiBase } from "../axios";
+import { apiBase } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 
 export const fetchProperties = () => {
   return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
-    IncidentCommander.get(`/properties?select=*,created_by(${AVATAR_INFO})`)
+    apiBase.get("/property")
   );
 };
 
-export const fetchProperty = (name: string, value: string) => {
-  return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
-    IncidentCommander.get(
-      `/properties?select=*,created_by(${AVATAR_INFO})&name=eq.${name}&value=eq.${value}`
-    )
+export const fetchProperty = (name: string) => {
+  return resolvePostGrestRequestWithPagination<PropertyDBObject>(
+    apiBase.get(`/property/${encodeURIComponent(name)}`)
   );
 };
 
@@ -27,19 +24,24 @@ export const fetchFeatureFlagsAPI = () => {
 };
 
 export const saveProperty = (property: Partial<PropertyDBObject>) => {
-  return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
-    IncidentCommander.post("/properties", property)
+  return resolvePostGrestRequestWithPagination<PropertyDBObject>(
+    apiBase.post("/property", {
+      name: property.name,
+      value: property.value
+    })
   );
 };
 
 export const updateProperty = (property: Partial<PropertyDBObject>) => {
-  return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
-    IncidentCommander.patch(`/properties?name=eq.${property.name}`, property)
+  return resolvePostGrestRequestWithPagination<PropertyDBObject>(
+    apiBase.put(`/property/${encodeURIComponent(property.name!)}`, {
+      value: property.value
+    })
   );
 };
 
 export const deleteProperty = (property: Partial<PropertyDBObject>) => {
-  return resolvePostGrestRequestWithPagination<PropertyDBObject[]>(
-    IncidentCommander.delete(`/properties?name=eq.${property.name}`)
+  return resolvePostGrestRequestWithPagination<void>(
+    apiBase.delete(`/property/${encodeURIComponent(property.name!)}`)
   );
 };
