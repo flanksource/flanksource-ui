@@ -65,7 +65,7 @@ export function useAddFeatureFlag(onSuccess: () => void) {
       }
     },
     onSuccess: () => {
-      toastSuccess("Feature flag added successfully");
+      toastSuccess("Property added successfully");
       onSuccess();
     },
     onError: (error) => {
@@ -83,7 +83,7 @@ export function useUpdateFeatureFlag(onSuccess: () => void) {
       }
     },
     onSuccess: () => {
-      toastSuccess("Feature flag updated successfully");
+      toastSuccess("Property updated successfully");
       onSuccess();
     },
     onError: (error) => {
@@ -98,7 +98,7 @@ export function useDeleteFeatureFlag(onSuccess: () => void) {
       await deleteProperty(data);
     },
     onSuccess: () => {
-      toastSuccess("Feature flag removed successfully");
+      toastSuccess("Property removed successfully");
       onSuccess();
     },
     onError: (error) => {

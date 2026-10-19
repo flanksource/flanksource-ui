@@ -30,7 +30,7 @@ export default function FeatureFlagForm({
 }: FeatureFlagFormProps) {
   return (
     <Modal
-      title="Add Feature Flag"
+      title="Add Property"
       size="very-small"
       onClose={() => {
         setIsOpen(false);
@@ -64,7 +64,7 @@ export default function FeatureFlagForm({
                 <div className="flex-1">
                   <FormikTextInput
                     name="name"
-                    label="Feature flag"
+                    label="Property"
                     className="flex flex-row items-center gap-2"
                   />
                 </div>
@@ -81,7 +81,7 @@ export default function FeatureFlagForm({
           <div className="flex items-center rounded-lg bg-gray-100 px-5 py-4">
             {Boolean(formValue?.created_at) && (
               <AuthorizationAccessCheck
-                resource={tables.feature_flags}
+                resource={tables.properties}
                 action="write"
               >
                 <Button
@@ -106,7 +106,7 @@ export default function FeatureFlagForm({
               </button>
               {source !== "local" && (
                 <AuthorizationAccessCheck
-                  resource={tables.feature_flags}
+                  resource={tables.properties}
                   action="write"
                 >
                   <Button

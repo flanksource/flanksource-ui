@@ -72,20 +72,17 @@ export function FeatureFlagsPage() {
 
   return (
     <>
-      <Head prefix="Feature Flags" />
+      <Head prefix="Properties" />
       <SearchLayout
         title={
           <BreadcrumbNav
             list={[
-              <BreadcrumbRoot
-                link="/settings/feature-flags"
-                key="feature-flags"
-              >
-                Feature Flags
+              <BreadcrumbRoot link="/settings/properties" key="properties">
+                Properties
               </BreadcrumbRoot>,
               <AuthorizationAccessCheck
                 key={"add-button"}
-                resource={tables.feature_flags}
+                resource={tables.properties}
                 action="write"
               >
                 <FeatureFlagAddButton
@@ -107,7 +104,7 @@ export function FeatureFlagsPage() {
             isLoading={isLoading}
             onRowClick={(val) => {
               if (val.source === "local") {
-                toastError("Cannot edit local feature flags");
+                toastError("Cannot edit local properties");
                 return;
               }
               setIsOpen(true);
