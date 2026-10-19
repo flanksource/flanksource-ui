@@ -24,7 +24,7 @@ class PermissionService {
   }
 
   isFeatureDisabled(featureName: string, properties: FeatureFlag[]): boolean {
-    const name = `${featureName}.disable`;
+    const name = `public.${featureName}.disable`;
     const parentResource =
       featureToParentMap[featureName as keyof typeof featureToParentMap];
     let isDisabled = Boolean(

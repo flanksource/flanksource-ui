@@ -1,3 +1,5 @@
+import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
+import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Button } from "@flanksource-ui/components/ui/button";
 import { JobHistorySummary as JobHistorySummaryType } from "@flanksource-ui/api/services/jobsHistory";
 import { MRTDateCell } from "@flanksource-ui/ui/MRTDataTable/Cells/MRTDateCells";
@@ -102,17 +104,22 @@ export default function JobHistorySummary({
               e.stopPropagation();
             }}
           >
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 px-2"
-              onClick={() => {
-                setSelectedJobName(row.original.name);
-                setIsOverridesDialogOpen(true);
-              }}
+            <AuthorizationAccessCheck
+              resource={tables.feature_flags}
+              action="write"
             >
-              Manage
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 px-2"
+                onClick={() => {
+                  setSelectedJobName(row.original.name);
+                  setIsOverridesDialogOpen(true);
+                }}
+              >
+                Manage
+              </Button>
+            </AuthorizationAccessCheck>
           </div>
         )
       }

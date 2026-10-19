@@ -38,5 +38,5 @@ export const featureToParentMap = {
 } as const;
 
 export const featuresList = Object.keys(features).map(
-  (item) => `${item}.disable`
+  (item) => `public.${item}.disable`
 );

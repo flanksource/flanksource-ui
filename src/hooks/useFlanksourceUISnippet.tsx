@@ -14,7 +14,10 @@ export function useFlanksourceUISnippet(
       return;
     }
     const snippets = (featureFlags ?? []).find((flag) => {
-      return flag.name === "flanksource.ui.snippets" && flag.source === "local";
+      return (
+        flag.name === "public.flanksource.ui.snippets" &&
+        flag.source === "local"
+      );
     });
 
     if (snippets && user) {

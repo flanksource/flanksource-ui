@@ -1,4 +1,4 @@
-const CSP_PROPERTY = "ui.content_security_policy";
+const CSP_PROPERTY = "public.ui.content_security_policy";
 const CSP_META_SELECTOR = 'meta[data-flanksource-csp="true"]';
 
 const CONTENT_SECURITY_POLICY = [

@@ -20,11 +20,9 @@ import {
   SelectValue
 } from "@flanksource-ui/components/ui/select";
 import { Switch } from "@flanksource-ui/components/ui/switch";
-import { useUser } from "@flanksource-ui/context";
 import {
   deleteProperty,
   fetchProperties,
-  saveProperty,
   updateProperty
 } from "@flanksource-ui/api/services/properties";
 import { formatJobName } from "@flanksource-ui/utils/common";
@@ -87,33 +85,9 @@ const overrideFields: OverrideField[] = [
 const supportedLogLevels = ["info", "debug", "trace", "warn", "error"] as const;
 const EMPTY_PROPERTIES: DisableProperty[] = [];
 
-const upsertProperty = async (
-  name: string,
-  value: string,
-  userID?: string
-): Promise<void> => {
-  const payload = {
-    name,
-    value,
-    created_by: userID
-  };
-
-  try {
-    await saveProperty(payload);
-    return;
-  } catch (error) {
-    const code = isAxiosError(error)
-      ? (error.response?.data as { code?: string } | undefined)?.code
-      : undefined;
-
-    // If the property already exists, update it instead.
-    if (code === "23505") {
-      await updateProperty(payload);
-      return;
-    }
-
-    throw error;
-  }
+// PUT /property/:name creates the property or replaces its value.
+const upsertProperty = async (name: string, value: string): Promise<void> => {
+  await updateProperty({ name, value });
 };
 
 const ignoreNotFound = (error: unknown) => {
@@ -128,8 +102,6 @@ export default function JobHistoryOverridesDialog({
   jobName,
   onOpenChange
 }: JobHistoryOverridesDialogProps) {
-  const user = useUser();
-
   const { data: properties } = useQuery({
     queryKey: ["job_history_overrides", "properties", jobName],
     queryFn: async () => {
@@ -198,7 +170,7 @@ export default function JobHistoryOverridesDialog({
               deleteProperty({ name: legacyDisabledName }).catch(ignoreNotFound)
             );
           } else {
-            operations.push(upsertProperty(disabledName, value, user.user?.id));
+            operations.push(upsertProperty(disabledName, value));
             operations.push(
               deleteProperty({ name: legacyDisabledName }).catch(ignoreNotFound)
             );
@@ -213,7 +185,7 @@ export default function JobHistoryOverridesDialog({
             deleteProperty({ name: propertyName }).catch(ignoreNotFound)
           );
         } else {
-          operations.push(upsertProperty(propertyName, value, user.user?.id));
+          operations.push(upsertProperty(propertyName, value));
         }
       }
 

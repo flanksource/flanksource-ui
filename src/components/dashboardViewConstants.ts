@@ -6,4 +6,4 @@ export const UUID_REGEX =
 
 export const FALLBACK_VIEW_NAME = "mission-control-dashboard";
 
-export const DASHBOARD_VIEW_PROPERTY = "defaults.dashboard_view";
+export const DASHBOARD_VIEW_PROPERTY = "public.defaults.dashboard_view";
