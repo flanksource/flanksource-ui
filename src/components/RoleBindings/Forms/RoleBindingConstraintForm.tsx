@@ -186,8 +186,8 @@ export default function RoleBindingConstraintForm({
           <label className="form-label">Constraint</label>
           <p className="text-xs text-gray-500">
             Limits where the role applies: the resource, or target, of every
-            operation the role allows must also be in these scopes. The whole
-            role is granted, and deny rules are never narrowed.
+            operation the role covers must also be in these scopes. The whole
+            role is granted, or with deny, refused.
           </p>
         </div>
         <button

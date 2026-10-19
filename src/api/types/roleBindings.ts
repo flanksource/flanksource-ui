@@ -54,6 +54,9 @@ export type RoleBindingSpec = {
   subjects: RoleBindingSubjects;
   // Without a constraint, the binding grants the Role's rules as written
   constraint?: RoleBindingConstraint;
+  // Refuses the Role's rules, narrowed by the constraint, to the subjects instead of granting them,
+  // whatever other bindings grant. It never covers RoleBindings.
+  deny?: boolean;
 };
 
 // Database model (from PostgREST)
@@ -62,6 +65,7 @@ export type RoleBindingDB = RbacStoredObject & {
   role: string;
   subjects: RoleBindingSubjects;
   constraint?: RoleBindingConstraint | null;
+  deny?: boolean;
   created_by?: string;
   created_at: string;
   updated_at: string;

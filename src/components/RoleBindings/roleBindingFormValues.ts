@@ -42,6 +42,7 @@ export type RoleBindingFormValues = {
   >;
   // With neither side set, there's no constraint and the binding grants the Role's rules as written
   constraint: ConstraintFormValues;
+  deny: boolean;
 };
 
 const dnsSubdomain =
@@ -85,7 +86,8 @@ export function roleBindingToFormValues(
     constraint: {
       resource: absolute(binding?.constraint?.resource?.scopeRef),
       target: absolute(binding?.constraint?.target?.scopeRef)
-    }
+    },
+    deny: binding?.deny ?? false
   };
 }
 
@@ -161,7 +163,8 @@ export function formValuesToSpec(
       values.role
     ),
     subjects: formValuesToSubjects(values),
-    ...(constraint ? { constraint } : {})
+    ...(constraint ? { constraint } : {}),
+    ...(values.deny ? { deny: true } : {})
   };
 }
 

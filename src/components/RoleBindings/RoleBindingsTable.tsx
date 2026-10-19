@@ -60,7 +60,17 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     header: "Role",
     id: "role",
     size: 80,
-    accessorFn: (row) => row.role
+    accessorFn: (row) => row.role,
+    Cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <span>{row.original.role}</span>
+        {row.original.deny && (
+          <span className="rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-800">
+            Deny
+          </span>
+        )}
+      </div>
+    )
   },
   {
     header: "Subjects",
