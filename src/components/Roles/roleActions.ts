@@ -148,13 +148,13 @@ export const roleActions: RoleActionContract[] = [
   ),
   resourceless(
     "kubernetes-proxy:read",
-    "Send Kubernetes API requests through the proxy as mission-control-reader",
-    "kubernetes-proxy:read can read Secrets in the namespaces the Helm chart grants mission-control-reader."
+    "Use the Kubernetes proxy, read-only",
+    "kubernetes-proxy:read sends requests as the Kubernetes user mission-control-reader, which can read Secrets in the namespaces the Helm chart grants it."
   ),
   resourceless(
     "kubernetes-proxy:write",
-    "Send Kubernetes API requests through the proxy as mission-control-writer, which includes reading",
-    "kubernetes-proxy:write can write Mission Control's resources, and Secrets in the namespaces the Helm chart grants mission-control-writer."
+    "Use the Kubernetes proxy, with write access",
+    "kubernetes-proxy:write sends requests as the Kubernetes user mission-control-writer, which can write Mission Control's resources, and Secrets in the namespaces the Helm chart grants it."
   )
 ];
 
