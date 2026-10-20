@@ -12,6 +12,7 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     header: "Name",
     id: "name",
     size: 100,
+    accessorFn: (row) => row.name,
     Cell: ({ row }) => {
       const { name, namespace } = row.original;
       return (
@@ -26,6 +27,7 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     header: "Targets",
     id: "targets",
     size: 80,
+    accessorFn: (row) => row.targets.length,
     Cell: ({ row }) => {
       const { targets } = row.original;
       return (
@@ -39,6 +41,8 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     header: "Status",
     id: "status",
     size: 60,
+    // Sorts objects that are in effect before those that aren't
+    accessorFn: (row) => (row.error ? "Not in effect" : "Active"),
     Cell: ({ row }) => <RbacObjectStatus {...row.original} />
   },
   {
@@ -52,6 +56,7 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     id: "created",
     size: 40,
     accessorFn: (row) => row.created_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
@@ -59,12 +64,18 @@ const scopesTableColumns: MRT_ColumnDef<ScopeDisplay>[] = [
     id: "updated",
     size: 40,
     accessorFn: (row) => row.updated_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
     header: "Created By",
     id: "createdBy",
     size: 40,
+    accessorFn: (row) =>
+      row.source?.toLowerCase() === "kubernetescrd"
+        ? row.source
+        : row.created_by?.name,
+    sortingFn: "text",
     Cell: ({ row }) => {
       const createdBy = row.original.created_by;
       const source = row.original.source;
