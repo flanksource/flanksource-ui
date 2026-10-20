@@ -12,12 +12,9 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { buildChatTools, truncateToolResultTransform } from "./tools";
 import { loadSkillTool } from "./skills";
 
-type LLMConnection = {
+type LLMProvider = {
   type: "anthropic" | "openai";
-  password?: string;
-  properties?: {
-    model?: string;
-  };
+  model?: string;
 };
 
 class HttpError extends Error {
@@ -71,8 +68,10 @@ function buildURL(base: string, endpoint: string) {
   return new URL(normalizedEndpoint, normalizedBase);
 }
 
-async function fetchLLMConnection(backendUrl: string, cookies: string) {
-  const url = buildURL(backendUrl, "/connection/llm").toString();
+// Mission Control calls the LLM provider on the chat's behalf and adds its credentials, so the chat only learns
+// which provider SDK and model to use.
+async function fetchLLMProvider(backendUrl: string, cookies: string) {
+  const url = buildURL(backendUrl, "/llm/provider").toString();
   const response = await fetch(url, {
     headers: {
       Cookie: cookies
@@ -83,61 +82,37 @@ async function fetchLLMConnection(backendUrl: string, cookies: string) {
   });
 
   if (!response.ok) {
-    const bodyText = await response.text();
-    if (response.status === 404) {
-      throw new HttpError("LLM connection not found", 404, bodyText);
-    }
-
     throw new HttpError(
-      `failed to load LLM config: ${response.status}`,
+      `failed to load the AI assistant: ${response.status}`,
       response.status,
-      bodyText
+      await response.text()
     );
   }
 
-  const contentType = response.headers.get("content-type") ?? "";
-  const bodyText = await response.text();
-  if (!contentType.includes("application/json")) {
-    const snippet = bodyText.slice(0, 2000);
-    throw new Error(
-      `LLM config response is not JSON (status ${response.status}, content-type ${contentType}). Body: ${snippet}`
-    );
-  }
-
-  try {
-    return JSON.parse(bodyText) as LLMConnection;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const snippet = bodyText.slice(0, 2000);
-    throw new Error(
-      `LLM config response is invalid JSON (status ${response.status}): ${message}. Body: ${snippet}`
-    );
-  }
+  return (await response.json()) as LLMProvider;
 }
 
-function resolveModelId(connection: LLMConnection) {
-  const model = connection.properties?.model;
-  return typeof model === "string" && model.length > 0 ? model : undefined;
-}
-
-function buildLLMModel(connection: LLMConnection): LanguageModelV3 {
-  const modelId = resolveModelId(connection);
-
-  switch (connection.type) {
-    case "anthropic": {
-      const anthropicProvider = createAnthropic({
-        apiKey: connection.password ?? ""
-      });
-      return anthropicProvider(modelId ?? "claude-haiku-4-5");
+function buildLLMModel(
+  provider: LLMProvider,
+  backendUrl: string,
+  cookies: string
+): LanguageModelV3 {
+  const settings = {
+    baseURL: buildURL(backendUrl, "/llm/proxy").toString(),
+    // Mission Control replaces it with the provider's key
+    apiKey: "mission-control",
+    headers: {
+      Cookie: cookies
     }
-    case "openai": {
-      const openaiProvider = createOpenAI({
-        apiKey: connection.password ?? ""
-      });
-      return openaiProvider(modelId ?? "gpt-4.1");
-    }
+  };
+
+  switch (provider.type) {
+    case "anthropic":
+      return createAnthropic(settings)(provider.model ?? "claude-haiku-4-5");
+    case "openai":
+      return createOpenAI(settings)(provider.model ?? "gpt-4.1");
     default:
-      throw new Error(`Unsupported LLM type: ${connection.type}`);
+      throw new Error(`Unsupported LLM type: ${provider.type}`);
   }
 }
 
@@ -215,13 +190,13 @@ export async function POST(req: Request) {
     const cookies = req.headers.get("cookie") ?? "";
     wideEvent.cookies = cookies.length;
 
-    const llmConnection = await fetchLLMConnection(backendUrl, cookies);
+    const llmProvider = await fetchLLMProvider(backendUrl, cookies);
     wideEvent.llm = {
-      model: llmConnection.properties?.model,
-      provider: llmConnection.type
+      model: llmProvider.model,
+      provider: llmProvider.type
     };
 
-    const model = buildLLMModel(llmConnection);
+    const model = buildLLMModel(llmProvider, backendUrl, cookies);
 
     mcpClient = await createMCPClient({
       transport: {
@@ -292,9 +267,7 @@ export async function POST(req: Request) {
         JSON.stringify({
           error:
             error instanceof Error ? error.message : "Internal Server Error",
-          detail: getErrorDetail(error),
-          provider: wideEvent.llm?.provider,
-          model: wideEvent.llm?.model
+          detail: getErrorDetail(error)
         })
     });
   } catch (error) {
@@ -312,7 +285,9 @@ export async function POST(req: Request) {
 
     console.error(JSON.stringify(wideEvent));
 
-    return new Response(JSON.stringify(wideEvent.error), {
+    // The provider and model are logged, not shown to the user
+    const { provider, model, ...userError } = wideEvent.error;
+    return new Response(JSON.stringify(userError), {
       status: error instanceof HttpError ? error.status : 500,
       headers: {
         "content-type": "application/json"
