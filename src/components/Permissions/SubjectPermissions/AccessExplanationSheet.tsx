@@ -25,7 +25,7 @@ import {
 } from "@flanksource-ui/components/ui/sheet";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { Ban, Check, CircleSlash, Info, X } from "lucide-react";
+import { Ban, Check, ChevronRight, CircleSlash, Info, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export type AccessCheck = {
@@ -196,11 +196,22 @@ export default function AccessExplanationSheet({
             ) : null}
 
             {notApplying.length > 0 ? (
-              <RuleSection
-                title="Doesn't apply here"
-                description={`Rules ${subject.name} holds for ${check?.action} that don't cover this.`}
-                rules={notApplying}
-              />
+              <details
+                key={`${subject.id}:${check?.action}`}
+                open={deciding.length === 0}
+                className="group flex flex-col gap-2"
+              >
+                <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700">
+                  <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" />
+                  Rules that don&apos;t apply here ({notApplying.length})
+                </summary>
+                <div className="mt-2">
+                  <RuleSection
+                    description={`Rules ${subject.name} holds for ${check?.action} that don't cover this.`}
+                    rules={notApplying}
+                  />
+                </div>
+              </details>
             ) : null}
 
             {rules.length === 0 ? (
@@ -299,16 +310,18 @@ function RuleSection({
   description,
   rules
 }: {
-  title: string;
+  title?: string;
   description?: string;
   rules: ReviewedRule[];
 }) {
   return (
     <section className="flex flex-col gap-2">
       <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-          {title}
-        </h4>
+        {title ? (
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+            {title}
+          </h4>
+        ) : null}
         {description ? (
           <p className="text-xs text-gray-500">{description}</p>
         ) : null}
