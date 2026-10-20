@@ -106,7 +106,7 @@ export default function SubjectPermissionsWorkbench({
       target: targetResource(target)
     });
 
-  // A run also needs read on its target, so a run the subject may start on a target they can't read is refused
+  // Running, approving and cancelling on a target also need read on it, which search counts: say why they're refused
   const { data: canReadTarget } = useQuery({
     queryKey: [
       "permissions-subjects",
@@ -124,18 +124,6 @@ export default function SubjectPermissionsWorkbench({
       return response.results?.[0]?.allowed === true;
     }
   });
-
-  const accessByAction = useMemo(() => {
-    if (!target || canReadTarget !== false) {
-      return effectiveAccessByAction;
-    }
-    return Object.fromEntries(
-      Object.entries(effectiveAccessByAction).map(([key, state]) => [
-        key,
-        key.endsWith(":playbook:run") && state === "allowed" ? "refused" : state
-      ])
-    ) as typeof effectiveAccessByAction;
-  }, [canReadTarget, effectiveAccessByAction, target]);
 
   const { globalAccess, isCheckingGlobalAccess, isLoadingGlobalAccess } =
     useGlobalSubjectAccess(selectedSubject.id, visibleTab === "global");
@@ -181,7 +169,7 @@ export default function SubjectPermissionsWorkbench({
         visibleTabs={visibleTabs}
         tabCounts={tabCounts}
         onSelectTab={setActiveTab}
-        effectiveAccessByAction={accessByAction}
+        effectiveAccessByAction={effectiveAccessByAction}
         globalAccess={globalAccess}
         isLoadingGlobalAccess={isLoadingGlobalAccess}
         isCheckingEffectiveAccess={
@@ -196,7 +184,7 @@ export default function SubjectPermissionsWorkbench({
         footnote={
           showsTargetActions
             ? target
-              ? `run, approve and cancel are checked on ${target.name}.${canReadTarget === false ? ` A run also needs read on ${target.name}, which they don't have, so runs marked ⚠ are refused.` : ""} Click a cell to see why.`
+              ? `run, approve and cancel are checked on ${target.name}.${canReadTarget === false ? ` They can't read ${target.name}, which running, approving and cancelling on it also need.` : ""} Click a cell to see why.`
               : "run, approve and cancel are checked without a target, so rules that only allow them on some configs, components or checks don't count. Pick a target to check them on one. Click a cell to see why."
             : "Click a cell to see why."
         }

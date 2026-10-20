@@ -387,12 +387,6 @@ function RuleCard({ rule }: { rule: ReviewedRule }) {
       ) : null}
 
       <HeldBy rule={rule} />
-
-      {!rule.matches && rule.reason ? (
-        <p className="text-xs italic text-gray-500">
-          Doesn&apos;t apply: {rule.reason}.
-        </p>
-      ) : null}
     </div>
   );
 }

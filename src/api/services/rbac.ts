@@ -120,8 +120,6 @@ export type ReviewedRule = {
   permission?: RBACObjectRef;
   direct?: boolean;
   through?: ReviewSubjectRef[];
-  // Why a rule that doesn't match doesn't.
-  reason?: string;
   // Set when the reviewer may not read what grants the rule.
   hidden?: boolean;
 };

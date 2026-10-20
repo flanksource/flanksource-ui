@@ -4,7 +4,6 @@
  */
 import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
 import { EffectiveState } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
-import { TriangleAlert } from "lucide-react";
 
 type EffectiveMatrixCellProps = {
   state: EffectiveState;
@@ -23,20 +22,12 @@ export default function EffectiveMatrixCell({
     return <span className="text-xs text-gray-500">Not checked</span>;
   }
 
-  const badge =
-    state === "refused" ? (
-      <span
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-50 text-amber-600"
-        title="Allowed, but the operation also needs read on the target"
-      >
-        <TriangleAlert className="h-3.5 w-3.5" />
-      </span>
-    ) : (
-      <EffectiveAccessBadge
-        state={state}
-        unknownReason="Failed to evaluate effective access. Showing unknown state."
-      />
-    );
+  const badge = (
+    <EffectiveAccessBadge
+      state={state}
+      unknownReason="Failed to evaluate effective access. Showing unknown state."
+    />
+  );
 
   if (!onClick) {
     return (

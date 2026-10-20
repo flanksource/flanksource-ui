@@ -7,8 +7,7 @@ import {
 } from "@flanksource-ui/api/services/rbac";
 
 export type ResourceKind = "playbook" | "view" | "connection";
-// refused is an allowed action whose operation is refused anyway, e.g. a run on a target the subject can't read.
-export type EffectiveState = "allowed" | "denied" | "unknown" | "refused";
+export type EffectiveState = "allowed" | "denied" | "unknown";
 
 export type PermissionResource = {
   id: string;
