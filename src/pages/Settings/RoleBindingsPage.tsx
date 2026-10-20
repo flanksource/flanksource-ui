@@ -5,6 +5,7 @@ import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/Permiss
 import AddRoleBindingButton from "@flanksource-ui/components/RoleBindings/Forms/AddRoleBindingButton";
 import RoleBindingForm from "@flanksource-ui/components/RoleBindings/Forms/RoleBindingForm";
 import RoleBindingsTable from "@flanksource-ui/components/RoleBindings/RoleBindingsTable";
+import { useRbacNamespaceFilter } from "@flanksource-ui/components/Permissions/Rbac/useRbacNamespaceFilter";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -17,6 +18,8 @@ export default function RoleBindingsPage() {
     error,
     refetch
   } = useRoleBindingsQuery();
+  const { filteredItems, namespaceFilter } =
+    useRbacNamespaceFilter(roleBindings);
   const [selectedRoleBinding, setSelectedRoleBinding] = useState<
     RoleBindingDisplay | undefined
   >();
@@ -55,7 +58,10 @@ export default function RoleBindingsPage() {
         }
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
-          <div className="flex h-full flex-col overflow-y-auto py-6">
+          <div className="flex flex-row items-center gap-2 pt-4">
+            {namespaceFilter}
+          </div>
+          <div className="flex h-full flex-col overflow-y-auto py-4">
             {isError ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
@@ -71,7 +77,7 @@ export default function RoleBindingsPage() {
               </div>
             ) : (
               <RoleBindingsTable
-                data={roleBindings || []}
+                data={filteredItems}
                 isLoading={isLoading}
                 handleRowClick={(row) => setSelectedRoleBinding(row)}
               />

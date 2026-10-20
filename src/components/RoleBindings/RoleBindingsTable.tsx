@@ -77,6 +77,7 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     id: "subjects",
     size: 150,
     accessorFn: (row) => summarizeSubjects(row.subjects).join(", "),
+    sortingFn: "text",
     Cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {summarizeSubjects(row.original.subjects).map((label) => (
@@ -94,6 +95,11 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     header: "Constraint",
     id: "constraint",
     size: 80,
+    accessorFn: ({ constraint }) =>
+      [constraint?.resource?.scopeRef, constraint?.target?.scopeRef]
+        .filter(Boolean)
+        .join(", "),
+    sortingFn: "text",
     Cell: ({ row }) => {
       const { resource, target } = row.original.constraint ?? {};
       if (!resource && !target) {
@@ -120,6 +126,7 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     id: "created",
     size: 40,
     accessorFn: (row) => row.created_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
@@ -127,12 +134,16 @@ const roleBindingsTableColumns: MRT_ColumnDef<RoleBindingDisplay>[] = [
     id: "updated",
     size: 40,
     accessorFn: (row) => row.updated_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
     header: "Created By",
     id: "createdBy",
     size: 40,
+    accessorFn: (row) =>
+      row.source !== "UI" ? row.source : row.created_by?.name,
+    sortingFn: "text",
     Cell: ({ row }) => {
       const { created_by, source, id } = row.original;
       if (source !== "UI") {

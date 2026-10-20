@@ -7,9 +7,11 @@ import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions
 import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import AddScopeButton from "@flanksource-ui/components/Scopes/Forms/AddScopeButton";
+import { useRbacNamespaceFilter } from "@flanksource-ui/components/Permissions/Rbac/useRbacNamespaceFilter";
 
 export default function ScopesPage() {
   const { data: scopes, isLoading, isError, error, refetch } = useScopesQuery();
+  const { filteredItems, namespaceFilter } = useRbacNamespaceFilter(scopes);
   const [selectedScope, setSelectedScope] = useState<
     ScopeDisplay | undefined
   >();
@@ -31,7 +33,10 @@ export default function ScopesPage() {
         }
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
-          <div className="flex h-full flex-col overflow-y-auto py-6">
+          <div className="flex flex-row items-center gap-2 pt-4">
+            {namespaceFilter}
+          </div>
+          <div className="flex h-full flex-col overflow-y-auto py-4">
             {isError ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-center">
@@ -47,7 +52,7 @@ export default function ScopesPage() {
               </div>
             ) : (
               <ScopesTable
-                data={scopes || []}
+                data={filteredItems}
                 isLoading={isLoading}
                 handleRowClick={(row) => setSelectedScope(row)}
               />

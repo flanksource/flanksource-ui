@@ -5,6 +5,7 @@ import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/Permiss
 import AddRoleButton from "@flanksource-ui/components/Roles/Forms/AddRoleButton";
 import RoleForm from "@flanksource-ui/components/Roles/Forms/RoleForm";
 import RolesTable from "@flanksource-ui/components/Roles/RolesTable";
+import { useRbacNamespaceFilter } from "@flanksource-ui/components/Permissions/Rbac/useRbacNamespaceFilter";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
   GroupByOptions,
@@ -17,6 +18,8 @@ export default function RolesPage() {
   const { data: roles, isLoading, isError, error, refetch } = useRolesQuery();
   const [selectedRole, setSelectedRole] = useState<RoleDisplay | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { filteredItems: namespaceRoles, namespaceFilter } =
+    useRbacNamespaceFilter(roles);
 
   // ?id= opens a role, e.g. from an access review
   const linkedID = searchParams.get("id");
@@ -55,12 +58,12 @@ export default function RolesPage() {
   // A role matches when any of its rules has one of the selected actions
   const filteredRoles = useMemo(() => {
     if (selectedActions.length === 0) {
-      return roles ?? [];
+      return namespaceRoles;
     }
-    return (roles ?? []).filter((role) =>
+    return namespaceRoles.filter((role) =>
       (role.rules ?? []).some((rule) => selectedActions.includes(rule.action))
     );
-  }, [roles, selectedActions]);
+  }, [namespaceRoles, selectedActions]);
 
   return (
     <>
@@ -79,7 +82,8 @@ export default function RolesPage() {
         }
       >
         <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
-          <div className="flex flex-row items-center pt-4">
+          <div className="flex flex-row items-center gap-2 pt-4">
+            {namespaceFilter}
             <MultiSelectDropdown
               label="Action"
               defaultValue="All"

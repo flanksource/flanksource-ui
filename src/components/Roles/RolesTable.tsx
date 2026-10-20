@@ -27,6 +27,11 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
     header: "Rules",
     id: "rules",
     size: 150,
+    accessorFn: (row) =>
+      Array.from(new Set((row.rules ?? []).map((rule) => rule.action))).join(
+        ", "
+      ),
+    sortingFn: "text",
     Cell: ({ row }) => {
       const rules = row.original.rules ?? [];
       const actions = Array.from(new Set(rules.map((rule) => rule.action)));
@@ -72,6 +77,7 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
     id: "created",
     size: 40,
     accessorFn: (row) => row.created_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
@@ -79,12 +85,16 @@ const rolesTableColumns: MRT_ColumnDef<RoleDisplay>[] = [
     id: "updated",
     size: 40,
     accessorFn: (row) => row.updated_at,
+    sortingFn: "datetime",
     Cell: MRTDateCell
   },
   {
     header: "Created By",
     id: "createdBy",
     size: 40,
+    accessorFn: (row) =>
+      row.source !== "UI" ? row.source : row.created_by?.name,
+    sortingFn: "text",
     Cell: ({ row }) => {
       const { created_by, source, id } = row.original;
       if (source !== "UI") {
