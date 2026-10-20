@@ -84,6 +84,8 @@ export type SubjectAccessReviewAction =
   | "property:manage"
   | "event:read"
   | "job:read"
+  | "kubernetes-proxy:read"
+  | "kubernetes-proxy:write"
   | `invoke:${string}:${string}`
   | "playbook:run"
   | "playbook:cancel"

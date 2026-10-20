@@ -120,6 +120,14 @@ export const GLOBAL_ACTIONS: Array<{
   {
     action: "job:read",
     description: "Read all job history"
+  },
+  {
+    action: "kubernetes-proxy:read",
+    description: "Use the Kubernetes proxy, read-only"
+  },
+  {
+    action: "kubernetes-proxy:write",
+    description: "Use the Kubernetes proxy, with write access"
   }
 ];
 
