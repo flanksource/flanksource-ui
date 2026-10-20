@@ -145,6 +145,16 @@ export const roleActions: RoleActionContract[] = [
     "job:read",
     "Read all job history",
     `job:read ${adminPrivilege} Job details and errors can mention resources the subject can't otherwise read.`
+  ),
+  resourceless(
+    "kubernetes-proxy:read",
+    "Use the Kubernetes proxy, read-only",
+    "kubernetes-proxy:read sends requests as the Kubernetes user mission-control-reader, which can read Secrets in the namespaces the Helm chart grants it."
+  ),
+  resourceless(
+    "kubernetes-proxy:write",
+    "Use the Kubernetes proxy, with write access",
+    "kubernetes-proxy:write sends requests as the Kubernetes user mission-control-writer, which can write Mission Control's resources, and Secrets in the namespaces the Helm chart grants it."
   )
 ];
 
