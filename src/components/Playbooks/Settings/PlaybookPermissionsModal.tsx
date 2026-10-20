@@ -106,7 +106,6 @@ export default function PlaybookPermissionsModal({
               <PermissionsView
                 hideResourceColumn
                 permissionRequest={inboundPermissionRequest}
-                showAddPermission
                 accessCheckConfig={{
                   resource: {
                     type: "playbook",
@@ -117,9 +116,6 @@ export default function PlaybookPermissionsModal({
                   title: "Playbook Access Check",
                   description:
                     "Select a subject and action to check access for this playbook."
-                }}
-                newPermissionData={{
-                  playbook_id: playbook.id
                 }}
               />
             )
@@ -132,11 +128,6 @@ export default function PlaybookPermissionsModal({
               <PermissionsView
                 hideSubjectColumn
                 permissionRequest={outboundPermissionRequest}
-                showAddPermission
-                newPermissionData={{
-                  subject: playbook.id,
-                  subject_type: "playbook"
-                }}
               />
             )
           }

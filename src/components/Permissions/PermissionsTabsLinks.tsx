@@ -9,9 +9,11 @@ import {
   AccessActions,
   AccessSummary
 } from "@flanksource-ui/api/services/users";
+import { fetchLegacyPermissionCounts } from "@flanksource-ui/api/services/permissions";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useMemo } from "react";
 import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
@@ -45,6 +47,21 @@ export const PERMISSIONS_TAB_RESOURCES = [
   }
 ] as const;
 
+// The tabs of the deprecated Permissions and Permission Groups. They're read
+// with read on role bindings, and only shown while some remain.
+export const LEGACY_PERMISSIONS_TABS = [
+  {
+    label: "Permissions",
+    path: "/settings/permissions/legacy-permissions",
+    count: "permissions"
+  },
+  {
+    label: "Permission Groups",
+    path: "/settings/permissions/legacy-permission-groups",
+    count: "permissionGroups"
+  }
+] as const;
+
 // canOpenPermissionsTab reports whether the user may open a tab: its type's
 // listing, or for Subjects, access:review.
 export function canOpenPermissionsTab(
@@ -60,7 +77,13 @@ export function canOpenPermissionsTab(
 }
 
 type PermissionsTabsLinksProps = {
-  activeTab: "Permissions" | "Subjects" | "Scopes" | "Roles" | "Role Bindings";
+  activeTab:
+    | "Permissions"
+    | "Permission Groups"
+    | "Subjects"
+    | "Scopes"
+    | "Roles"
+    | "Role Bindings";
   children: React.ReactNode;
   className?: string;
   onRefresh?: () => void;
@@ -78,11 +101,31 @@ export default function PermissionsTabsLinks({
 }: PermissionsTabsLinksProps) {
   const { access, access_actions } = useUser();
 
+  const canReadLegacy = access?.[tables.role_bindings]?.read === "all";
+  const { data: legacyCounts } = useQuery({
+    queryKey: ["legacy_permission_counts"],
+    queryFn: fetchLegacyPermissionCounts,
+    enabled: canReadLegacy
+  });
+
   const tabLinks = useMemo(() => {
-    return PERMISSIONS_TAB_RESOURCES.filter((tab) =>
+    const tabs = PERMISSIONS_TAB_RESOURCES.filter((tab) =>
       canOpenPermissionsTab(tab, access, access_actions)
     ).map(({ label, path }) => ({ label, path, key: label }));
-  }, [access, access_actions]);
+
+    const legacyTabs = canReadLegacy
+      ? LEGACY_PERMISSIONS_TABS.filter(
+          (tab) =>
+            (legacyCounts?.[tab.count] ?? 0) > 0 || tab.label === activeTab
+        ).map(({ label, path }) => ({
+          label: `${label} (deprecated)`,
+          path,
+          key: label
+        }))
+      : [];
+
+    return [...tabs, ...legacyTabs];
+  }, [access, access_actions, activeTab, canReadLegacy, legacyCounts]);
 
   return (
     <>

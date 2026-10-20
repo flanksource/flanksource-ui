@@ -66,6 +66,8 @@ import McpCheckAccessPage from "./pages/Settings/mcp/McpCheckAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import RolesPage from "./pages/Settings/RolesPage";
 import RoleBindingsPage from "./pages/Settings/RoleBindingsPage";
+import PermissionGroupsPage from "./pages/Settings/PermissionGroupsPage";
+import { PermissionsPage } from "./pages/Settings/PermissionsPage";
 import { features } from "./services/permissions/features";
 import { getViewsForSidebar, ViewSummary } from "./api/services/views";
 import { Head } from "./ui/Head";
@@ -870,6 +872,24 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           element={withAuthorizationAccessCheck(
             <RolesPage />,
             tables.roles,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path="permissions/legacy-permissions"
+          element={withAuthorizationAccessCheck(
+            <PermissionsPage />,
+            tables.role_bindings,
+            "read",
+            true
+          )}
+        />
+        <Route
+          path="permissions/legacy-permission-groups"
+          element={withAuthorizationAccessCheck(
+            <PermissionGroupsPage />,
+            tables.role_bindings,
             "read",
             true
           )}
