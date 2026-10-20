@@ -1,36 +1,31 @@
 import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
+import {
+  reviewSubjectAccess,
+  SubjectAccessReviewAction
+} from "@flanksource-ui/api/services/rbac";
+import AccessExplanationSheet, {
+  AccessCheck
+} from "@flanksource-ui/components/Permissions/SubjectPermissions/AccessExplanationSheet";
+import AccessTargetPicker from "@flanksource-ui/components/Permissions/SubjectPermissions/AccessTargetPicker";
 import SubjectPermissionsHeader from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsHeader";
 import SubjectPermissionsMatrixContent from "@flanksource-ui/components/Permissions/SubjectPermissions/SubjectPermissionsMatrixContent";
 import {
+  AccessTab,
+  AccessTarget,
+  GLOBAL_ACTIONS,
+  PermissionResource,
   RESOURCE_KIND_ORDER,
-  ResourceKind,
-  groupResourcesByType
+  TARGET_ACTIONS,
+  actionsForSubject,
+  groupResourcesByType,
+  tabsForSubject,
+  targetResource
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import useEffectiveSubjectAccess from "@flanksource-ui/components/Permissions/SubjectPermissions/useEffectiveSubjectAccess";
+import useGlobalSubjectAccess from "@flanksource-ui/components/Permissions/SubjectPermissions/useGlobalSubjectAccess";
 import usePermissionResources from "@flanksource-ui/components/Permissions/SubjectPermissions/usePermissionResources";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-
-// Some actions do not make sense for some subjects.
-// This map contains the list of applicable actions when the subject
-// is a playbook.
-const PLAYBOOK_ALLOWED_ACTIONS: Record<ResourceKind, string[]> = {
-  playbook: ["read", "playbook:run"],
-  connection: ["read"]
-};
-
-function getVisibleActionsForSubject(
-  resourceKind: ResourceKind,
-  actions: string[],
-  isPlaybookSubject: boolean
-) {
-  if (!isPlaybookSubject) {
-    return actions;
-  }
-
-  return actions.filter((action) =>
-    PLAYBOOK_ALLOWED_ACTIONS[resourceKind].includes(action)
-  );
-}
 
 export default function SubjectPermissionsWorkbench({
   selectedSubject
@@ -38,24 +33,34 @@ export default function SubjectPermissionsWorkbench({
   selectedSubject: PermissionSubject;
 }) {
   const [search, setSearch] = useState("");
-  const [activeResourceKind, setActiveResourceKind] =
-    useState<ResourceKind>("playbook");
+  const [activeTab, setActiveTab] = useState<AccessTab>("playbook");
+  const [target, setTarget] = useState<AccessTarget>();
+  const [explaining, setExplaining] = useState<AccessCheck>();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const visibleTabs = useMemo(
+    () => tabsForSubject(selectedSubject.type),
+    [selectedSubject.type]
+  );
+  const visibleTab = visibleTabs.includes(activeTab)
+    ? activeTab
+    : visibleTabs[0];
 
   const { resources: allResources, isLoading } = usePermissionResources();
 
-  const isPlaybookSubject = selectedSubject.type === "playbook";
   const resources = useMemo(
     () =>
-      allResources.map((resource) => ({
-        ...resource,
-        actions: getVisibleActionsForSubject(
-          resource.kind,
-          resource.actions,
-          isPlaybookSubject
-        )
-      })),
-    [allResources, isPlaybookSubject]
+      allResources
+        .map((resource) => ({
+          ...resource,
+          actions: actionsForSubject(
+            selectedSubject.type,
+            resource.kind,
+            resource.actions
+          )
+        }))
+        .filter((resource) => resource.actions.length > 0),
+    [allResources, selectedSubject.type]
   );
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -72,21 +77,21 @@ export default function SubjectPermissionsWorkbench({
     });
   }, [normalizedSearch, resources]);
 
-  const resourceKindCounts = useMemo(() => {
-    return Object.fromEntries(
-      RESOURCE_KIND_ORDER.map((kind) => [
-        kind,
-        filteredResources.filter((resource) => resource.kind === kind).length
-      ])
-    ) as Record<ResourceKind, number>;
+  const tabCounts = useMemo(() => {
+    const counts: Partial<Record<AccessTab, number>> = {
+      global: GLOBAL_ACTIONS.length
+    };
+    for (const kind of RESOURCE_KIND_ORDER) {
+      counts[kind] = filteredResources.filter(
+        (resource) => resource.kind === kind
+      ).length;
+    }
+    return counts;
   }, [filteredResources]);
 
   const activeResources = useMemo(
-    () =>
-      filteredResources.filter(
-        (resource) => resource.kind === activeResourceKind
-      ),
-    [filteredResources, activeResourceKind]
+    () => filteredResources.filter((resource) => resource.kind === visibleTab),
+    [filteredResources, visibleTab]
   );
 
   const groupedResources = useMemo(
@@ -97,12 +102,69 @@ export default function SubjectPermissionsWorkbench({
   const { effectiveAccessByAction, isCheckingEffectiveAccess } =
     useEffectiveSubjectAccess({
       selectedSubjectId: selectedSubject.id,
-      resources: activeResources
+      resources: activeResources,
+      target: targetResource(target)
     });
+
+  // A run also needs read on its target, so a run the subject may start on a target they can't read is refused
+  const { data: canReadTarget } = useQuery({
+    queryKey: [
+      "permissions-subjects",
+      "target-read",
+      selectedSubject.id,
+      target
+    ],
+    enabled: !!target,
+    queryFn: async () => {
+      const response = await reviewSubjectAccess({
+        resource: targetResource(target)!,
+        action: "read",
+        subjects: [selectedSubject.id]
+      });
+      return response.results?.[0]?.allowed === true;
+    }
+  });
+
+  const accessByAction = useMemo(() => {
+    if (!target || canReadTarget !== false) {
+      return effectiveAccessByAction;
+    }
+    return Object.fromEntries(
+      Object.entries(effectiveAccessByAction).map(([key, state]) => [
+        key,
+        key.endsWith(":playbook:run") && state === "allowed" ? "refused" : state
+      ])
+    ) as typeof effectiveAccessByAction;
+  }, [canReadTarget, effectiveAccessByAction, target]);
+
+  const { globalAccess, isCheckingGlobalAccess, isLoadingGlobalAccess } =
+    useGlobalSubjectAccess(selectedSubject.id, visibleTab === "global");
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [selectedSubject.id, activeResourceKind]);
+  }, [selectedSubject.id, visibleTab]);
+
+  useEffect(() => {
+    setExplaining(undefined);
+  }, [selectedSubject.id]);
+
+  const takesTarget = (action: string) => TARGET_ACTIONS.includes(action);
+  const showsTargetActions =
+    visibleTab === "playbook" &&
+    groupedResources.some((group) => group.actions.some(takesTarget));
+
+  const explainResource = (resource: PermissionResource, action: string) => {
+    setExplaining({
+      action: action as SubjectAccessReviewAction,
+      resource: { [resource.kind]: resource.id },
+      resourceLabel: resource.displayName,
+      target: takesTarget(action) ? target : undefined
+    });
+  };
+
+  const explainGlobal = (action: SubjectAccessReviewAction) => {
+    setExplaining({ action, resource: {} });
+  };
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
@@ -115,13 +177,37 @@ export default function SubjectPermissionsWorkbench({
       <SubjectPermissionsMatrixContent
         loading={isLoading}
         groupedResources={groupedResources}
-        activeResourceKind={activeResourceKind}
-        visibleResourceKinds={RESOURCE_KIND_ORDER}
-        resourceKindCounts={resourceKindCounts}
-        onSelectResourceKind={setActiveResourceKind}
-        effectiveAccessByAction={effectiveAccessByAction}
-        isCheckingEffectiveAccess={isCheckingEffectiveAccess}
+        activeTab={visibleTab}
+        visibleTabs={visibleTabs}
+        tabCounts={tabCounts}
+        onSelectTab={setActiveTab}
+        effectiveAccessByAction={accessByAction}
+        globalAccess={globalAccess}
+        isLoadingGlobalAccess={isLoadingGlobalAccess}
+        isCheckingEffectiveAccess={
+          isCheckingEffectiveAccess || isCheckingGlobalAccess
+        }
         scrollRef={scrollRef}
+        toolbar={
+          showsTargetActions ? (
+            <AccessTargetPicker value={target} onChange={setTarget} />
+          ) : null
+        }
+        footnote={
+          showsTargetActions
+            ? target
+              ? `run, approve and cancel are checked on ${target.name}.${canReadTarget === false ? ` A run also needs read on ${target.name}, which they don't have, so runs marked ⚠ are refused.` : ""} Click a cell to see why.`
+              : "run, approve and cancel are checked without a target, so rules that only allow them on some configs, components or checks don't count. Pick a target to check them on one. Click a cell to see why."
+            : "Click a cell to see why."
+        }
+        onExplainResource={explainResource}
+        onExplainGlobal={explainGlobal}
+      />
+
+      <AccessExplanationSheet
+        subject={selectedSubject}
+        check={explaining}
+        onClose={() => setExplaining(undefined)}
       />
     </div>
   );

@@ -6,7 +6,8 @@ import AddRoleBindingButton from "@flanksource-ui/components/RoleBindings/Forms/
 import RoleBindingForm from "@flanksource-ui/components/RoleBindings/Forms/RoleBindingForm";
 import RoleBindingsTable from "@flanksource-ui/components/RoleBindings/RoleBindingsTable";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export default function RoleBindingsPage() {
   const {
@@ -19,6 +20,23 @@ export default function RoleBindingsPage() {
   const [selectedRoleBinding, setSelectedRoleBinding] = useState<
     RoleBindingDisplay | undefined
   >();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // ?id= opens a role binding, e.g. from an access review
+  const linkedID = searchParams.get("id");
+  useEffect(() => {
+    const linked = roleBindings?.find((binding) => binding.id === linkedID);
+    if (linked) {
+      setSelectedRoleBinding(linked);
+      setSearchParams(
+        (params) => {
+          params.delete("id");
+          return params;
+        },
+        { replace: true }
+      );
+    }
+  }, [linkedID, roleBindings, setSearchParams]);
 
   return (
     <>

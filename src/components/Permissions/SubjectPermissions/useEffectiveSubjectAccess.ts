@@ -2,11 +2,15 @@
  * Hook that batches effective-access checks for the selected subject across all
  * visible resources and actions, returning a lookup keyed by resource/action.
  */
-import { fetchEffectiveSubjectResourceAccess } from "@flanksource-ui/api/services/rbac";
+import {
+  fetchEffectiveSubjectResourceAccess,
+  SubjectAccessReviewTarget
+} from "@flanksource-ui/api/services/rbac";
 import {
   EffectiveAccessMap,
   PermissionResource,
-  ResourceKind
+  ResourceKind,
+  TARGET_ACTIONS
 } from "@flanksource-ui/components/Permissions/SubjectPermissions/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -15,11 +19,14 @@ import toast from "react-hot-toast";
 type UseEffectiveSubjectAccessProps = {
   selectedSubjectId: string;
   resources: PermissionResource[];
+  // The resource the actions that take a target are checked on, if any.
+  target?: SubjectAccessReviewTarget;
 };
 
 export default function useEffectiveSubjectAccess({
   selectedSubjectId,
-  resources
+  resources,
+  target
 }: UseEffectiveSubjectAccessProps) {
   const scopeKey = useMemo(
     () =>
@@ -38,7 +45,8 @@ export default function useEffectiveSubjectAccess({
         "permissions-subjects",
         "effective-access",
         selectedSubjectId,
-        scopeKey
+        scopeKey,
+        target ?? null
       ],
       enabled: resources.length > 0,
       queryFn: async () => {
@@ -72,7 +80,10 @@ export default function useEffectiveSubjectAccess({
                   resources: actionResources.map(({ id, type }) => ({
                     id,
                     type
-                  }))
+                  })),
+                  target: TARGET_ACTIONS.includes(permissionAction)
+                    ? target
+                    : undefined
                 });
 
                 for (const result of response.results ?? []) {
