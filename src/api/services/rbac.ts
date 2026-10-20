@@ -59,20 +59,33 @@ export type SubjectAccessReviewResource = {
   playbook?: string;
   view?: string;
   connection?: string;
-  plugin?: string;
   config?: string;
+  component?: string;
   check?: string;
   global?: string;
-  [key: string]: string | undefined;
 };
+
+// A resource an action that takes a target is checked on, e.g. the config a playbook runs on.
+export type SubjectAccessReviewTarget = Pick<
+  SubjectAccessReviewResource,
+  "config" | "component" | "check"
+>;
 
 export type SubjectAccessReviewAction =
   | "read"
+  | "create"
   | "update"
   | "delete"
   | "mcp:run"
   | "mcp:use"
-  | `invoke:${string}:*`
+  | "connection:use"
+  | "person:manage"
+  | "access:review"
+  | "property:manage"
+  | "event:read"
+  | "job:read"
+  | "kubernetes-proxy:read"
+  | "kubernetes-proxy:write"
   | `invoke:${string}:${string}`
   | "playbook:run"
   | "playbook:cancel"
@@ -82,32 +95,61 @@ export type SubjectAccessReviewRequest = {
   resource: SubjectAccessReviewResource;
   action: SubjectAccessReviewAction;
   subjects: string[];
+  explain?: boolean;
 };
 
-export type SubjectAccessReviewMatchedPolicy = {
-  subject: string;
-  object: string;
-  action: string;
-  effect: "allow" | "deny";
-  condition?: string;
+export type RBACObjectRef = {
   id?: string;
+  namespace: string;
+  name: string;
+};
+
+export type ReviewSubjectRef = {
+  id?: string;
+  type: "team" | "plugin" | "other";
+  name?: string;
+};
+
+// A rule a subject holds for the reviewed action, and how it holds it.
+export type ReviewedRule = {
+  effect: "allow" | "deny";
+  // Whether the rule matches the check. One that doesn't is for the action, but not for this resource.
+  matches: boolean;
+  role_binding?: RBACObjectRef & { constrained?: boolean };
+  role?: RBACObjectRef;
+  rule?: string;
+  // A legacy Permission that grants the rule.
+  permission?: RBACObjectRef;
+  direct?: boolean;
+  through?: ReviewSubjectRef[];
+  // Set when the reviewer may not read what grants the rule.
+  hidden?: boolean;
+};
+
+// Another check an operation makes besides its action, e.g. read on a run's target.
+export type ReviewRequirement = {
+  action: string;
+  // The resource type, or the RBAC object, it's checked on.
+  on: string;
+  allowed: boolean;
 };
 
 export type SubjectAccessReviewResult = {
   subject: string;
+  // Whether the action itself is allowed. An operation also needs its requirements.
   allowed: boolean;
-  reason?: string;
-  trace?: {
-    allow_count: number;
-    deny_count: number;
-    matched_policies: SubjectAccessReviewMatchedPolicy[];
-  };
   error?: string;
+  rules?: ReviewedRule[];
+  requirements?: ReviewRequirement[];
 };
 
 export type SubjectAccessReviewResponse = {
   resource: SubjectAccessReviewResource;
   action: SubjectAccessReviewAction;
+  // The RBAC object the action was checked on, when it's checked on a whole type rather than the resource.
+  object?: string;
+  // What an operation checks besides the action, e.g. read on the target.
+  requires?: string;
   results: SubjectAccessReviewResult[];
 };
 
@@ -131,6 +173,7 @@ export type EffectiveSubjectResourceAccessRequest = {
   subject: string;
   action: SubjectAccessReviewAction;
   resources: EffectiveSubjectResourceAccessResource[];
+  target?: SubjectAccessReviewTarget;
 };
 
 export type EffectiveSubjectResourceAccessResult = {
@@ -148,23 +191,19 @@ export type EffectiveSubjectResourceAccessResponse = {
 type SubjectAccessSearchRequest = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types?: Array<"playbook" | "view" | "connection" | "plugin">;
-  search?: string;
-  namespace?: string;
+  resource_types?: Array<"playbook" | "view" | "connection">;
+  target?: SubjectAccessReviewTarget;
 };
 
 type SubjectAccessSearchResponse = {
   subject: string;
   action: SubjectAccessReviewAction;
-  resource_types: Array<"playbook" | "view" | "connection" | "plugin">;
+  resource_types: Array<"playbook" | "view" | "connection">;
+  target?: SubjectAccessReviewTarget;
   total: number;
-  limit: number;
-  offset: number;
   results: Array<{
     resource_type: "playbook" | "view" | "connection";
     id: string;
-    name: string;
-    namespace?: string;
   }>;
 };
 
@@ -173,6 +212,8 @@ export async function fetchEffectiveSubjectResourceAccess(
 ): Promise<EffectiveSubjectResourceAccessResponse> {
   const resourceTypes = Array.from(
     new Set(payload.resources.map((resource) => resource.type))
+  ).filter(
+    (type): type is "playbook" | "view" | "connection" => type !== "plugin"
   );
 
   const allowedResourceKeys = new Set<string>();
@@ -182,7 +223,8 @@ export async function fetchEffectiveSubjectResourceAccess(
     {
       subject: payload.subject,
       action: payload.action,
-      resource_types: resourceTypes
+      resource_types: resourceTypes,
+      target: payload.target
     } satisfies SubjectAccessSearchRequest
   );
 

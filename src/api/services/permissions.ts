@@ -334,7 +334,7 @@ async function listReadableSubjects<T>(
   }
 }
 
-// fetchAccessReviewSubjects lists the people, teams and playbooks whose access can be reviewed,
+// fetchAccessReviewSubjects lists the people, teams, playbooks and plugins whose access can be reviewed,
 // limited to those the reviewer may read.
 export async function fetchAccessReviewSubjects() {
   const subjects = await Promise.all([
@@ -362,6 +362,15 @@ export async function fetchAccessReviewSubjects() {
         name: playbook.title || playbook.name,
         type: "playbook",
         icon: playbook.icon ?? null
+      })
+    ),
+    // A plugin is a RoleBinding subject named plugin:<namespace>/<name>
+    listReadableSubjects<{ name: string; namespace: string }>(
+      "/plugins?select=name,namespace&deleted_at=is.null&order=namespace.asc,name.asc",
+      (plugin) => ({
+        id: `plugin:${plugin.namespace}/${plugin.name}`,
+        name: plugin.name,
+        type: "plugin"
       })
     )
   ]);

@@ -10,13 +10,29 @@ import {
   GroupByOptions,
   MultiSelectDropdown
 } from "@flanksource-ui/ui/Dropdowns/MultiSelectDropdown";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function RolesPage() {
   const { data: roles, isLoading, isError, error, refetch } = useRolesQuery();
   const [selectedRole, setSelectedRole] = useState<RoleDisplay | undefined>();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // ?id= opens a role, e.g. from an access review
+  const linkedID = searchParams.get("id");
+  useEffect(() => {
+    const linked = roles?.find((role) => role.id === linkedID);
+    if (linked) {
+      setSelectedRole(linked);
+      setSearchParams(
+        (params) => {
+          params.delete("id");
+          return params;
+        },
+        { replace: true }
+      );
+    }
+  }, [linkedID, roles, setSearchParams]);
 
   const selectedActions = useMemo(
     () => searchParams.get("actions")?.split(",").filter(Boolean) ?? [],
