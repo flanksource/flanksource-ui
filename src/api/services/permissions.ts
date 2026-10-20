@@ -143,21 +143,49 @@ export function deletePermission(id: string) {
   return IncidentCommander.delete(`/permissions?id=eq.${id}`);
 }
 
-export async function fetchPermissionById(id: string) {
-  const response = await IncidentCommander.get<PermissionTable[]>(
-    `/permissions?id=eq.${id}`
+export type PermissionGroup = {
+  id: string;
+  name: string;
+  namespace: string;
+  source?: string;
+  selectors?: Record<string, unknown>;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export function fetchPermissionGroups(options: {
+  pageSize: number;
+  pageIndex: number;
+}) {
+  const { pageSize, pageIndex } = options;
+  return resolvePostGrestRequestWithPagination(
+    IncidentCommander.get<PermissionGroup[]>(
+      `/permission_groups?select=*&deleted_at=is.null&order=namespace.asc,name.asc&limit=${pageSize}&offset=${pageIndex * pageSize}`,
+      { headers: { Prefer: "count=exact" } }
+    )
   );
-  return response.data[0];
 }
 
-/**
- * Re-checks/re-validates a permission by clearing its error field.
- * The backend will re-evaluate the permission and set a new error if validation fails.
- */
-export function recheckPermission(id: string) {
-  return IncidentCommander.patch<PermissionTable>(`/permissions?id=eq.${id}`, {
-    error: null
-  });
+export function deletePermissionGroup(id: string) {
+  return IncidentCommander.delete(`/permission_groups?id=eq.${id}`);
+}
+
+// fetchLegacyPermissionCounts returns how many Permissions and Permission
+// Groups are left, so their pages are only shown while some remain.
+export async function fetchLegacyPermissionCounts() {
+  const count = async (table: string) => {
+    const { totalEntries } = await resolvePostGrestRequestWithPagination(
+      IncidentCommander.get(`/${table}?select=id&deleted_at=is.null&limit=1`, {
+        headers: { Prefer: "count=exact" }
+      })
+    );
+    return totalEntries ?? 0;
+  };
+  const [permissions, permissionGroups] = await Promise.all([
+    count("permissions"),
+    count("permission_groups")
+  ]);
+  return { permissions, permissionGroups };
 }
 
 // Source marker used by settings UIs for permissions they create/manage.

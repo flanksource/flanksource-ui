@@ -168,10 +168,6 @@ export default function ConnectionFormModal({
                     permissionRequest={{
                       connectionId: formValue.id
                     }}
-                    showAddPermission
-                    newPermissionData={{
-                      connection_id: formValue.id
-                    }}
                   />
                 )
               }

@@ -1,5 +1,4 @@
-import { AuthorizationAccessCheck } from "@flanksource-ui/components/Permissions/AuthorizationAccessCheck";
-import AddPermissionButton from "@flanksource-ui/components/Permissions/ManagePermissions/Forms/AddPermissionButton";
+import LegacyPermissionsBanner from "@flanksource-ui/components/Permissions/LegacyPermissionsBanner";
 import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/PermissionsTabsLinks";
 import PermissionsView, {
   permissionsActionsList
@@ -61,17 +60,11 @@ export function PermissionsPage() {
       activeTab="Permissions"
       loading={isLoading}
       onRefresh={() => refetchFunctionRef.current?.()}
-      headerAction={
-        <AuthorizationAccessCheck
-          key={"add-button"}
-          resource="legacy-permissions"
-          action="write"
-        >
-          <AddPermissionButton />
-        </AuthorizationAccessCheck>
-      }
     >
       <div className="flex h-full flex-col overflow-y-auto px-6 pb-0">
+        <div className="pt-6">
+          <LegacyPermissionsBanner />
+        </div>
         <div className="flex flex-row items-center py-4">
           <ReactSelectDropdown
             name="permissions-action-filter"
@@ -94,6 +87,7 @@ export function PermissionsPage() {
         </div>
         <div className="flex h-full flex-col overflow-y-auto pb-6">
           <PermissionsView
+            hideBanner
             permissionRequest={{
               ...(rawActionFilter !== "all" ? { action: rawActionFilter } : {})
             }}
