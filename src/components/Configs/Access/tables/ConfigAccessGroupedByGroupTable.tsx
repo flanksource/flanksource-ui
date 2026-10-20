@@ -1,6 +1,6 @@
 import { useConfigAccessGroupedByGroupQuery } from "@flanksource-ui/api/query-hooks/useConfigAccessGroupedQuery";
 import { ConfigAccessSummaryByGroup } from "@flanksource-ui/api/types/configs";
-import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ErrorMessage } from "@flanksource-ui/components/InfoMessage";
 import {
   CATALOG_ACCESS_GROUP_GROUP_TABLE_PREFIX,
   useCatalogAccessUrlState
@@ -81,13 +81,7 @@ export function ConfigAccessGroupedByGroupTable() {
   );
 
   if (error) {
-    const errorMessage =
-      typeof error === "string"
-        ? error
-        : ((error as Record<string, string>)?.message ??
-          "Something went wrong");
-
-    return <InfoMessage message={errorMessage} />;
+    return <ErrorMessage error={error} />;
   }
 
   return (

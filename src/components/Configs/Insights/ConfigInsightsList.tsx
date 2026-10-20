@@ -2,7 +2,7 @@ import useFetchConfigInsights from "@flanksource-ui/api/query-hooks/useFetchConf
 import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { InfoMessage } from "../../InfoMessage";
+import { ErrorMessage } from "../../InfoMessage";
 import ConfigInsightsDetailsModal from "./ConfigAnalysisLink/ConfigInsightsDetailsModal";
 import { ConfigInsightsColumns as configInsightsColumns } from "./ConfigInsightsColumns";
 
@@ -46,7 +46,7 @@ export default function ConfigInsightsList({
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {error ? (
-        <InfoMessage message={error.message} />
+        <ErrorMessage error={error} />
       ) : (
         <MRTDataTable
           data={configInsights}
