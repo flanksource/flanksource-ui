@@ -4,7 +4,7 @@ import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/Co
 import { ConfigChangeFilters } from "@flanksource-ui/components/Configs/Changes/ConfigChangesFilters/ConfigChangesFilters";
 import ConfigPageTabs from "@flanksource-ui/components/Configs/ConfigPageTabs";
 import ConfigsTypeIcon from "@flanksource-ui/components/Configs/ConfigsTypeIcon";
-import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ErrorMessage } from "@flanksource-ui/components/InfoMessage";
 import {
   BreadcrumbChild,
   BreadcrumbNav,
@@ -155,11 +155,6 @@ export function ConfigChangesPage() {
     : (data?.total ?? 0);
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
-  const errorMessage =
-    typeof error === "string"
-      ? error
-      : ((error as Record<string, string>)?.message ?? "Something went wrong");
-
   return (
     <>
       <Head prefix="Catalog Changes" />
@@ -202,7 +197,7 @@ export function ConfigChangesPage() {
       >
         <ConfigPageTabs activeTab="Changes" configType={configType}>
           {error ? (
-            <InfoMessage message={errorMessage} />
+            <ErrorMessage error={error} />
           ) : (
             <>
               <ConfigChangeFilters

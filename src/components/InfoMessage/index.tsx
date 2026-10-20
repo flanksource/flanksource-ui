@@ -1,3 +1,5 @@
+import { UnauthorizedMessage } from "@flanksource-ui/components/Permissions/UnauthorizedPage";
+import { isAxiosError } from "axios";
 import clsx from "clsx";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 
@@ -20,4 +22,21 @@ export function InfoMessage({ message, className }: InfoMessageProps) {
       </div>
     </div>
   );
+}
+
+/**
+ * Renders a query error. A 403 shows the same unauthorized message as the
+ * client-side permission check, so both paths look identical.
+ */
+export function ErrorMessage({ error }: { error: unknown }) {
+  if (isAxiosError(error) && error.response?.status === 403) {
+    return <UnauthorizedMessage />;
+  }
+
+  const message =
+    typeof error === "string"
+      ? error
+      : ((error as { message?: string })?.message ?? "Something went wrong");
+
+  return <InfoMessage message={message} />;
 }

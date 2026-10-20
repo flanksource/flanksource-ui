@@ -7,7 +7,7 @@ import { ConfigAccessFlatTable } from "@flanksource-ui/components/Configs/Access
 import { ConfigAccessGroupedByCatalogTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByCatalogTable";
 import { ConfigAccessGroupedByGroupTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByGroupTable";
 import { ConfigAccessGroupedByUserTable } from "@flanksource-ui/components/Configs/Access/tables/ConfigAccessGroupedByUserTable";
-import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ErrorMessage } from "@flanksource-ui/components/InfoMessage";
 import { useCatalogAccessUrlState } from "@flanksource-ui/hooks/useCatalogAccessUrlState";
 import {
   BreadcrumbChild,
@@ -46,11 +46,6 @@ export function ConfigAccessPage() {
 
   const rows = flatAccessSummary?.data ?? [];
   const totalRecords = flatAccessSummary?.totalEntries ?? 0;
-
-  const errorMessage =
-    typeof error === "string"
-      ? error
-      : ((error as Record<string, string>)?.message ?? "Something went wrong");
 
   return (
     <>
@@ -102,7 +97,7 @@ export function ConfigAccessPage() {
       >
         <ConfigPageTabs activeTab="Access" configType={configType}>
           {!isGrouped && error ? (
-            <InfoMessage message={errorMessage} />
+            <ErrorMessage error={error} />
           ) : (
             <div className="flex h-full flex-1 flex-col overflow-y-auto">
               {isGrouped ? (

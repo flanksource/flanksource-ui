@@ -6,7 +6,7 @@ import {
   ExternalUserActionsMenu,
   MergeExternalUserDialog
 } from "@flanksource-ui/components/Configs/Access/ExternalUserActions";
-import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ErrorMessage } from "@flanksource-ui/components/InfoMessage";
 import { useUserAccessStateContext } from "@flanksource-ui/context/UserAccessContext/UserAccessContext";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
@@ -129,13 +129,7 @@ export function ConfigAccessGroupedByUserTable() {
   );
 
   if (error) {
-    const errorMessage =
-      typeof error === "string"
-        ? error
-        : ((error as Record<string, string>)?.message ??
-          "Something went wrong");
-
-    return <InfoMessage message={errorMessage} />;
+    return <ErrorMessage error={error} />;
   }
 
   return (

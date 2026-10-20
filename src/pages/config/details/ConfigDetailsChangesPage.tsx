@@ -3,7 +3,7 @@ import { ConfigChange } from "@flanksource-ui/api/types/configs";
 import { ConfigChangeTable } from "@flanksource-ui/components/Configs/Changes/ConfigChangeTable";
 import { ConfigRelatedChangesFilters } from "@flanksource-ui/components/Configs/Changes/ConfigsRelatedChanges/FilterBar/ConfigRelatedChangesFilters";
 import { ConfigDetailsTabs } from "@flanksource-ui/components/Configs/ConfigDetailsTabs";
-import { InfoMessage } from "@flanksource-ui/components/InfoMessage";
+import { ErrorMessage } from "@flanksource-ui/components/InfoMessage";
 import { Toggle } from "@flanksource-ui/ui/FormControls/Toggle";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -139,12 +139,7 @@ export function ConfigDetailsChangesPage() {
   const totalChangesPages = Math.ceil(totalChanges / parseInt(pageSize));
 
   if (error) {
-    const errorMessage =
-      typeof error === "symbol"
-        ? error
-        : ((error as any)?.message ?? "Something went wrong");
-
-    return <InfoMessage message={errorMessage} />;
+    return <ErrorMessage error={error} />;
   }
 
   return (
