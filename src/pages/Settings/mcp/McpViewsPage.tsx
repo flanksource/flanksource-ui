@@ -1,7 +1,9 @@
 import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import McpTabsLinks, {
+  MCP_ACCESS_READ_ONLY
+} from "@flanksource-ui/components/MCP/McpTabsLinks";
 import SubjectSelectorPanel, {
   SubjectAccess
 } from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
@@ -215,6 +217,7 @@ export default function McpViewsPage() {
                     action: "mcp:run"
                   }}
                   preselectedSubjectAccess={preselectedSubjectAccess}
+                  readOnly={MCP_ACCESS_READ_ONLY}
                   bulkAccess={
                     (globalOverrideByResource.get(selectedView.id) === "allow"
                       ? "allow"

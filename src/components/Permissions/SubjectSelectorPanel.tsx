@@ -97,6 +97,7 @@ type SubjectSelectorPanelProps = {
   preselectedSubjectAccess?: Record<string, "allow" | "deny">;
   isSubmitting?: boolean;
   isBulkSubmitting?: boolean;
+  readOnly?: boolean;
   mutatingSubjectId?: string | null;
   bulkAccess?: SubjectAccess;
   onSetBulkAccess?: (access: SubjectAccess) => Promise<void> | void;
@@ -133,6 +134,7 @@ export default function SubjectSelectorPanel({
   preselectedSubjectAccess = {},
   isSubmitting = false,
   isBulkSubmitting = false,
+  readOnly = false,
   mutatingSubjectId,
   headerEntity,
   bulkAccess,
@@ -501,11 +503,15 @@ export default function SubjectSelectorPanel({
 
           <div
             className={
-              isSubmitting || isBulkSubmitting || displayedSubjects.length === 0
+              readOnly ||
+              isSubmitting ||
+              isBulkSubmitting ||
+              displayedSubjects.length === 0
                 ? "pointer-events-none opacity-60"
                 : undefined
             }
             aria-disabled={
+              readOnly ||
               isSubmitting ||
               isBulkSubmitting ||
               displayedSubjects.length === 0 ||
@@ -519,6 +525,9 @@ export default function SubjectSelectorPanel({
               options={[...BULK_OPTIONS]}
               value={bulkOptionValue}
               onChange={(value) => {
+                if (readOnly) {
+                  return;
+                }
                 const access: SubjectAccess =
                   value === "Allow all"
                     ? "allow"
@@ -629,7 +638,9 @@ export default function SubjectSelectorPanel({
                                 selectedAccessById[subject.id] ?? "default"
                               }
                               disabled={
-                                isSubmitting || mutatingSubjectId === subject.id
+                                readOnly ||
+                                isSubmitting ||
+                                mutatingSubjectId === subject.id
                               }
                               onChange={(next) =>
                                 setSubjectAccess(subject, next)

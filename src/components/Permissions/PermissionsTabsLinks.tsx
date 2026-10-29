@@ -63,9 +63,9 @@ export const LEGACY_PERMISSIONS_TABS = [
 ] as const;
 
 // canOpenPermissionsTab reports whether the user may open a tab: its type's
-// listing, or for Subjects, access:review.
+// listing, or for subject tabs, access:review. The MCP tabs use it too.
 export function canOpenPermissionsTab(
-  tab: (typeof PERMISSIONS_TAB_RESOURCES)[number],
+  tab: { type: string },
   access?: AccessSummary,
   accessActions?: AccessActions
 ) {

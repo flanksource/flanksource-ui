@@ -33,6 +33,7 @@ type SubjectAccessCardProps = {
   access: AccessLevel;
   onChangeAccess: (access: AccessLevel) => void;
   isMutating?: boolean;
+  readOnly?: boolean;
 };
 
 export default function SubjectAccessCard({
@@ -41,8 +42,10 @@ export default function SubjectAccessCard({
   object,
   access,
   onChangeAccess,
-  isMutating = false
+  isMutating = false,
+  readOnly = false
 }: SubjectAccessCardProps) {
+  const disabled = isMutating || readOnly;
   return (
     <div className="w-full max-w-3xl">
       <div className="flex items-center gap-3">
@@ -70,14 +73,18 @@ export default function SubjectAccessCard({
           </div>
 
           <div
-            className={`shrink-0 ${isMutating ? "pointer-events-none opacity-60" : ""}`}
-            aria-disabled={isMutating || undefined}
+            className={`shrink-0 ${disabled ? "pointer-events-none opacity-60" : ""}`}
+            aria-disabled={disabled || undefined}
           >
             <Switch
               size="sm"
               options={SWITCH_OPTIONS}
               value={ACCESS_TO_OPTION[access]}
-              onChange={(option) => onChangeAccess(OPTION_TO_ACCESS[option])}
+              onChange={(option) => {
+                if (!disabled) {
+                  onChangeAccess(OPTION_TO_ACCESS[option]);
+                }
+              }}
               aria-label={`${action} on ${object} for ${user.name ?? user.id}`}
               getActiveItemClassName={(option) =>
                 option === "Allow"
