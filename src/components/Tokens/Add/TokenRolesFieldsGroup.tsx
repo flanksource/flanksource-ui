@@ -3,6 +3,11 @@ import FormikCreatableMultiSelect from "@flanksource-ui/components/RoleBindings/
 import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 
+// A token's own Roles must also allow mcp:use for it to reach /mcp, so the MCP
+// setup preselects the Role that grants only that. It adds nothing the owner
+// lacks.
+export const MCP_USER_ROLE = "mission-control-builtin/mcp-user";
+
 /** Lists only the Roles the database lets the caller read; any other namespace/name can still be typed in. */
 export default function TokenRolesFieldsGroup({
   isMcpSetup = false
@@ -55,9 +60,9 @@ export default function TokenRolesFieldsGroup({
       </p>
       {isMcpSetup && (
         <p className="rounded-md bg-blue-50 p-3 text-sm text-blue-800">
-          For MCP, select roles allowing mcp:use and the resources and
-          operations your tools need. Running playbooks through MCP also
-          requires mcp:run and playbook:run.
+          For MCP, keep {MCP_USER_ROLE}, which lets the token use MCP, and add
+          roles for the resources and operations your tools need. Running
+          playbooks through MCP also requires mcp:run and playbook:run.
         </p>
       )}
     </div>
