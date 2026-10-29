@@ -13,7 +13,7 @@ import { Modal } from "../../../ui/Modal";
 import FormikTextInput from "../../Forms/Formik/FormikTextInput";
 import FormikSelectDropdown from "../../Forms/Formik/FormikSelectDropdown";
 import { toastSuccess } from "../../Toast/toast";
-import TokenRolesFieldsGroup from "./TokenRolesFieldsGroup";
+import TokenRolesFieldsGroup, { MCP_USER_ROLE } from "./TokenRolesFieldsGroup";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 
@@ -96,7 +96,7 @@ export function CreateTokenFormContent({
         name: "",
         expiry: "90d",
         auto_renew: false,
-        roles: []
+        roles: isMcpSetup ? [MCP_USER_ROLE] : []
       }}
       enableReinitialize
       validateOnMount
