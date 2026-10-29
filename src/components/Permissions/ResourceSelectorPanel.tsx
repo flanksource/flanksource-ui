@@ -31,6 +31,7 @@ type ResourceSelectorPanelProps = {
   hasEffectiveAccessResults?: boolean;
   isCheckingEffectiveAccess?: boolean;
   isSubmitting?: boolean;
+  readOnly?: boolean;
   mutatingResourceIds?: Record<string, true>;
   onCheckEffectiveAccess?: () => void;
   onSetResourceAccess: (
@@ -112,6 +113,7 @@ export default function ResourceSelectorPanel({
   hasEffectiveAccessResults = false,
   isCheckingEffectiveAccess = false,
   isSubmitting = false,
+  readOnly = false,
   mutatingResourceIds = {},
   onCheckEffectiveAccess,
   onSetResourceAccess,
@@ -200,16 +202,20 @@ export default function ResourceSelectorPanel({
 
   const onSetPlaybookBulkAccess = useCallback(
     (access: ResourceAccess) => {
-      onSetManyResourceAccess(resourcesByType.playbooks, access);
+      if (!readOnly) {
+        onSetManyResourceAccess(resourcesByType.playbooks, access);
+      }
     },
-    [onSetManyResourceAccess, resourcesByType.playbooks]
+    [onSetManyResourceAccess, readOnly, resourcesByType.playbooks]
   );
 
   const onSetViewBulkAccess = useCallback(
     (access: ResourceAccess) => {
-      onSetManyResourceAccess(resourcesByType.views, access);
+      if (!readOnly) {
+        onSetManyResourceAccess(resourcesByType.views, access);
+      }
     },
-    [onSetManyResourceAccess, resourcesByType.views]
+    [onSetManyResourceAccess, readOnly, resourcesByType.views]
   );
 
   return (
@@ -265,7 +271,7 @@ export default function ResourceSelectorPanel({
               hasEffectiveAccessResults={hasEffectiveAccessResults}
               getResourceKey={getResourceKey}
               isListLocked={bulkAccessByKind.playbook !== "default"}
-              isSubmitting={isSubmitting}
+              isSubmitting={readOnly || isSubmitting}
               mutatingResourceIds={mutatingResourceIds}
               onSetResourceAccess={onSetResourceAccess}
             />
@@ -282,7 +288,7 @@ export default function ResourceSelectorPanel({
               hasEffectiveAccessResults={hasEffectiveAccessResults}
               getResourceKey={getResourceKey}
               isListLocked={bulkAccessByKind.view !== "default"}
-              isSubmitting={isSubmitting}
+              isSubmitting={readOnly || isSubmitting}
               mutatingResourceIds={mutatingResourceIds}
               onSetResourceAccess={onSetResourceAccess}
             />

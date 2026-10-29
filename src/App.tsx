@@ -54,6 +54,7 @@ import {
   canOpenPermissionsTab,
   PERMISSIONS_TAB_RESOURCES
 } from "./components/Permissions/PermissionsTabsLinks";
+import { MCP_TAB_RESOURCES } from "./components/MCP/McpTabsLinks";
 
 import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
@@ -470,7 +471,7 @@ const settingsNav: SettingsNavigationItems = {
         <Icon name="mcp" className={`${className} [&_path]:!fill-white`} />
       ),
       featureName: features["settings.mcp"],
-      resourceName: tables.mcp
+      resourceName: MCP_TAB_RESOURCES.map(({ resource }) => resource)
     },
     {
       name: "Properties",
@@ -1022,12 +1023,12 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
         </Route>
 
         <Route path="mcp">
-          <Route index element={<Navigate to="/settings/mcp/overview" />} />
+          <Route index element={<McpIndexRedirect />} />
           <Route
             path="overview"
             element={withAuthorizationAccessCheck(
               <McpOverviewPage />,
-              tables.mcp,
+              tables.role_bindings,
               "read",
               true
             )}
@@ -1036,7 +1037,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="playbooks"
             element={withAuthorizationAccessCheck(
               <McpPlaybooksPage />,
-              tables.mcp,
+              tables.role_bindings,
               "read",
               true
             )}
@@ -1045,7 +1046,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="views"
             element={withAuthorizationAccessCheck(
               <McpViewsPage />,
-              tables.mcp,
+              tables.role_bindings,
               "read",
               true
             )}
@@ -1054,7 +1055,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="subject-access"
             element={withAuthorizationAccessCheck(
               <McpSubjectAccessPage />,
-              tables.mcp,
+              tables.access_review,
               "read",
               true
             )}
@@ -1063,7 +1064,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="check-access"
             element={withAuthorizationAccessCheck(
               <McpCheckAccessPage />,
-              tables.mcp,
+              tables.access_review,
               "read",
               true
             )}
@@ -1465,4 +1466,13 @@ function PermissionsIndexRedirect() {
   return (
     <Navigate to={tab?.path ?? "/settings/permissions/role-bindings"} replace />
   );
+}
+
+// The MCP sidebar entry opens the first of its tabs the user may open.
+function McpIndexRedirect() {
+  const { access, access_actions } = useUser();
+  const tab = MCP_TAB_RESOURCES.find((tab) =>
+    canOpenPermissionsTab(tab, access, access_actions)
+  );
+  return <Navigate to={tab?.path ?? "/settings/mcp/overview"} replace />;
 }

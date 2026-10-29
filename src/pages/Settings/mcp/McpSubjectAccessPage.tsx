@@ -15,7 +15,9 @@ import {
 } from "@flanksource-ui/api/services/rbac";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import McpTabsLinks, {
+  MCP_ACCESS_READ_ONLY
+} from "@flanksource-ui/components/MCP/McpTabsLinks";
 import PermissionSubjectPanel from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
 import ResourceSelectorPanel, {
   McpSubjectResource,
@@ -550,6 +552,7 @@ export default function McpSubjectAccessPage() {
                   hasEffectiveAccessResults={hasEffectiveAccessResults}
                   isCheckingEffectiveAccess={isCheckingEffectiveAccess}
                   isSubmitting={isSubmitting}
+                  readOnly={MCP_ACCESS_READ_ONLY}
                   mutatingResourceIds={mutatingResourceIds}
                   onCheckEffectiveAccess={() => {
                     setHasTriggeredEffectiveAccessCheck(true);

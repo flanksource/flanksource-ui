@@ -10,7 +10,9 @@ import {
 } from "@flanksource-ui/api/services/permissions";
 import { useTokensListQuery } from "@flanksource-ui/api/query-hooks/useTokensQuery";
 import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import McpTabsLinks, {
+  MCP_ACCESS_READ_ONLY
+} from "@flanksource-ui/components/MCP/McpTabsLinks";
 import UserList from "@flanksource-ui/components/MCP/UserList";
 import TokensTable from "@flanksource-ui/components/Tokens/List/TokensTable";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
@@ -254,6 +256,7 @@ export default function McpOverviewPage() {
         groupedSubjects={groupedSubjects}
         permissionsByUser={permissionsByUser}
         mutatingSubjectId={mutatingSubjectId}
+        readOnly={MCP_ACCESS_READ_ONLY}
         onChangeAccess={(subject, access) => {
           setMutatingSubjectId(subject.id);
           setUserAccess(

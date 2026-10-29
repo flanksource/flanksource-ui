@@ -27,6 +27,7 @@ type Props = {
   groupedSubjects: GroupedSubject[];
   permissionsByUser: Map<string, PermissionsSummary[]>;
   mutatingSubjectId: string | null;
+  readOnly?: boolean;
   onChangeAccess: (
     subject: PermissionSubject,
     access: "allow" | "deny" | "default"
@@ -37,6 +38,7 @@ export default function UserList({
   groupedSubjects,
   permissionsByUser,
   mutatingSubjectId,
+  readOnly,
   onChangeAccess
 }: Props) {
   return (
@@ -73,6 +75,7 @@ export default function UserList({
                   object={MCP_OBJECT}
                   access={access}
                   isMutating={mutatingSubjectId === subject.id}
+                  readOnly={readOnly}
                   onChangeAccess={(access) => onChangeAccess(subject, access)}
                 />
               );
