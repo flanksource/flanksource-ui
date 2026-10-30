@@ -17,17 +17,9 @@ import { ErrorBoundary } from "../ErrorBoundary";
 import { canOpenPermissionsTab } from "../Permissions/PermissionsTabsLinks";
 
 // The tabs of the MCP settings, in order, with the grant each needs. These are
-// admin tools, so none of them is gated on mcp:use. Overview, Playbooks and
-// Views list the grants of mcp:use and mcp:run; Subjects and Check Access
-// answer what a subject may do through MCP.
+// admin tools, so none of them is gated on mcp:use. Playbooks and Views list
+// the grants of mcp:run; Subjects answers what a subject may do through MCP.
 export const MCP_TAB_RESOURCES = [
-  {
-    label: "Overview",
-    path: "/settings/mcp/overview",
-    key: "Overview",
-    type: "roleBinding",
-    resource: tables.role_bindings
-  },
   {
     label: "Subjects",
     path: "/settings/mcp/subject-access",
@@ -48,13 +40,6 @@ export const MCP_TAB_RESOURCES = [
     key: "Views",
     type: "roleBinding",
     resource: tables.role_bindings
-  },
-  {
-    label: "Check Access",
-    path: "/settings/mcp/check-access",
-    key: "Check Access",
-    type: "access:review",
-    resource: tables.access_review
   }
 ] as const;
 
@@ -64,12 +49,7 @@ export const MCP_TAB_RESOURCES = [
 export const MCP_ACCESS_READ_ONLY = true;
 
 type McpTabsLinksProps = {
-  activeTab:
-    | "Overview"
-    | "Playbooks"
-    | "Views"
-    | "Subject access"
-    | "Check Access";
+  activeTab: "Playbooks" | "Views" | "Subject access";
   children: React.ReactNode;
   className?: string;
   onRefresh?: () => void;
