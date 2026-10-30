@@ -3,20 +3,17 @@ import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import clsx from "clsx";
 import { IconType } from "react-icons";
-import {
-  HiBadgeCheck,
-  HiKey,
-  HiPuzzle,
-  HiUserGroup,
-  HiUsers
-} from "react-icons/hi";
+import { HiBadgeCheck, HiPuzzle, HiUserGroup } from "react-icons/hi";
 
-export type PermissionSubjectType = PermissionSubject["type"];
+// role is kept for the subjects of the deprecated Permissions
+export type PermissionSubjectType = PermissionSubject["type"] | "role";
 
 type SubjectAvatarSize = "xs" | "md";
 
 type SubjectAvatarProps = {
-  subject: Pick<PermissionSubject, "name" | "type" | "icon">;
+  subject: Pick<PermissionSubject, "name" | "icon"> & {
+    type: PermissionSubjectType;
+  };
   size?: SubjectAvatarSize;
   className?: string;
 };
@@ -32,10 +29,6 @@ const SUBJECT_TYPE_ICON_CONFIG: Record<
     Icon: HiUserGroup,
     colors: "bg-blue-100 text-blue-700"
   },
-  permission_subject_group: {
-    Icon: HiUsers,
-    colors: "bg-violet-100 text-violet-700"
-  },
   role: {
     Icon: HiBadgeCheck,
     colors: "bg-indigo-50 text-indigo-700"
@@ -43,10 +36,6 @@ const SUBJECT_TYPE_ICON_CONFIG: Record<
   plugin: {
     Icon: HiPuzzle,
     colors: "bg-amber-50 text-amber-700"
-  },
-  access_token_person: {
-    Icon: HiKey,
-    colors: "bg-indigo-50 text-indigo-700"
   }
 };
 

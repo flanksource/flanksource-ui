@@ -17,22 +17,16 @@ type PermissionSubjectPanelProps = {
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
-  access_token_person: "access token",
   team: "team",
-  role: "role",
   playbook: "playbook",
-  plugin: "plugin",
-  permission_subject_group: "group"
+  plugin: "plugin"
 };
 
 const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
-  role: 0,
-  permission_subject_group: 1,
-  team: 2,
-  person: 3,
-  access_token_person: 4,
-  playbook: 5,
-  plugin: 6
+  team: 0,
+  person: 1,
+  playbook: 2,
+  plugin: 3
 };
 
 function sortSubjectGroups(groups: PermissionSubjectGroup[]) {

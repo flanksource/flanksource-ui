@@ -11,18 +11,6 @@ export const EVERYONE_SUBJECT_TYPE = "group";
  * Map a PermissionSubject type to the subject_type used in permission records.
  */
 export function mapSubjectType(type: PermissionSubject["type"]) {
-  if (type === "permission_subject_group") {
-    return "group" as const;
-  }
-
-  if (type === "role") {
-    return "role" as const;
-  }
-
-  if (type === "access_token_person") {
-    return "person" as const;
-  }
-
   if (type === "plugin") {
     return "plugin" as const;
   }
