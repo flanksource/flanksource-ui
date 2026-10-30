@@ -34,13 +34,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
-  role: 0,
-  permission_subject_group: 1,
-  team: 2,
-  playbook: 3,
-  plugin: 4,
-  person: 5,
-  access_token_person: 6
+  team: 0,
+  playbook: 1,
+  plugin: 2,
+  person: 3
 };
 
 function getPermissionRefs(
@@ -137,10 +134,7 @@ export default function McpSubjectAccessPage() {
 
     return subjects
       .filter(
-        (subject) =>
-          subject.type !== "access_token_person" &&
-          subject.type !== "playbook" &&
-          subject.type !== "plugin"
+        (subject) => subject.type !== "playbook" && subject.type !== "plugin"
       )
       .filter((subject) => {
         if (!loweredSearch) {

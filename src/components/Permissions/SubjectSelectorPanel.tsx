@@ -32,22 +32,16 @@ import { useEffect, useMemo, useState } from "react";
 
 const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
-  access_token_person: "access token",
   team: "team",
-  role: "role",
   playbook: "playbook",
-  plugin: "plugin",
-  permission_subject_group: "group"
+  plugin: "plugin"
 };
 
 const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
-  role: 0,
-  permission_subject_group: 1,
-  team: 2,
-  playbook: 3,
-  plugin: 4,
-  person: 5,
-  access_token_person: 6
+  team: 0,
+  playbook: 1,
+  plugin: 2,
+  person: 3
 };
 
 function isMcpAssignableSubject(subject: PermissionSubject) {

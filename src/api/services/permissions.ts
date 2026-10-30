@@ -217,14 +217,7 @@ export async function fetchMcpRunPermissions() {
 export type PermissionSubject = {
   id: string;
   name: string;
-  type:
-    | "team"
-    | "permission_subject_group"
-    | "person"
-    | "role"
-    | "playbook"
-    | "plugin"
-    | "access_token_person";
+  type: "team" | "person" | "playbook" | "plugin";
   owner?: string | null;
   icon?: string | null;
 };
