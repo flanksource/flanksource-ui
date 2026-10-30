@@ -59,11 +59,10 @@ import { MCP_TAB_RESOURCES } from "./components/MCP/McpTabsLinks";
 import { GettingStartedPage } from "./pages/GettingStartedPage";
 import { ArtifactsPage } from "./pages/Settings/ArtifactsPage";
 import { PermissionsSubjectsPage } from "./pages/Settings/PermissionsSubjectsPage";
-import McpOverviewPage from "./pages/Settings/mcp/McpOverviewPage";
+import { PermissionsCheckAccessPage } from "./pages/Settings/PermissionsCheckAccessPage";
 import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
 import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
 import McpSubjectAccessPage from "./pages/Settings/mcp/McpSubjectAccessPage";
-import McpCheckAccessPage from "./pages/Settings/mcp/McpCheckAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import RolesPage from "./pages/Settings/RolesPage";
 import RoleBindingsPage from "./pages/Settings/RoleBindingsPage";
@@ -856,6 +855,15 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           )}
         />
         <Route
+          path="permissions/check-access"
+          element={withAuthorizationAccessCheck(
+            <PermissionsCheckAccessPage />,
+            tables.access_review,
+            "read",
+            true
+          )}
+        />
+        <Route
           path="permissions/scopes"
           element={withAuthorizationAccessCheck(
             <ScopesPage />,
@@ -1026,12 +1034,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           <Route index element={<McpIndexRedirect />} />
           <Route
             path="overview"
-            element={withAuthorizationAccessCheck(
-              <McpOverviewPage />,
-              tables.role_bindings,
-              "read",
-              true
-            )}
+            element={<Navigate to="/settings/mcp" replace />}
           />
           <Route
             path="playbooks"
@@ -1062,12 +1065,9 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
           />
           <Route
             path="check-access"
-            element={withAuthorizationAccessCheck(
-              <McpCheckAccessPage />,
-              tables.access_review,
-              "read",
-              true
-            )}
+            element={
+              <Navigate to="/settings/permissions/check-access" replace />
+            }
           />
         </Route>
 
@@ -1474,5 +1474,5 @@ function McpIndexRedirect() {
   const tab = MCP_TAB_RESOURCES.find((tab) =>
     canOpenPermissionsTab(tab, access, access_actions)
   );
-  return <Navigate to={tab?.path ?? "/settings/mcp/overview"} replace />;
+  return <Navigate to={tab?.path ?? "/settings/mcp/playbooks"} replace />;
 }

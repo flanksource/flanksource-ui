@@ -44,6 +44,12 @@ export const PERMISSIONS_TAB_RESOURCES = [
     path: "/settings/permissions/subjects",
     type: "access:review",
     resource: tables.access_review
+  },
+  {
+    label: "Check Access",
+    path: "/settings/permissions/check-access",
+    type: "access:review",
+    resource: tables.access_review
   }
 ] as const;
 
@@ -81,6 +87,7 @@ type PermissionsTabsLinksProps = {
     | "Permissions"
     | "Permission Groups"
     | "Subjects"
+    | "Check Access"
     | "Scopes"
     | "Roles"
     | "Role Bindings";
