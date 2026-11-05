@@ -19,6 +19,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
   useSidebar
@@ -340,6 +341,7 @@ const AppSidebarInner = React.memo(function AppSidebarInner({
           "read"
         )}
       </SidebarContent>
+      <SidebarRail />
     </Sidebar>
   );
 });
