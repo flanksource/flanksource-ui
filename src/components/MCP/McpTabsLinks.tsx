@@ -7,8 +7,8 @@ import { Head } from "@flanksource-ui/ui/Head";
 import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
-import { Loading } from "@flanksource-ui/ui/Loading";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
+import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -16,10 +16,17 @@ import ConfigSidebar from "../Configs/Sidebar/ConfigSidebar";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { canOpenPermissionsTab } from "../Permissions/PermissionsTabsLinks";
 
-// The tabs of the MCP settings, in order, with the grant each needs. These are
-// admin tools, so none of them is gated on mcp:use. Playbooks and Views list
-// the grants of mcp:run; Subjects answers what a subject may do through MCP.
+// The tabs of the MCP settings, in order. Each reviews the access the MCP server enforces, so each takes
+// access:review: Access lists who may use MCP (mcp:use), Subjects what one subject may use through it, and
+// Playbooks and Views who may use one of them through it.
 export const MCP_TAB_RESOURCES = [
+  {
+    label: "Access",
+    path: "/settings/mcp/access",
+    key: "Access",
+    type: "access:review",
+    resource: tables.access_review
+  },
   {
     label: "Subjects",
     path: "/settings/mcp/subject-access",
@@ -31,31 +38,22 @@ export const MCP_TAB_RESOURCES = [
     label: "Playbooks",
     path: "/settings/mcp/playbooks",
     key: "Playbooks",
-    type: "roleBinding",
-    resource: tables.role_bindings
+    type: "access:review",
+    resource: tables.access_review
   },
   {
     label: "Views",
     path: "/settings/mcp/views",
     key: "Views",
-    type: "roleBinding",
-    resource: tables.role_bindings
+    type: "access:review",
+    resource: tables.access_review
   }
 ] as const;
 
-// MCP_ACCESS_READ_ONLY disables the allow/deny switches on the MCP tabs. They
-// write legacy Permission rows, which must no longer be created; they show the
-// current state until they're changed to create Roles and RoleBindings.
-export const MCP_ACCESS_READ_ONLY = true;
-
 type McpTabsLinksProps = {
-  activeTab: "Playbooks" | "Views" | "Subject access";
+  activeTab: "Access" | "Playbooks" | "Views" | "Subject access";
   children: React.ReactNode;
   className?: string;
-  onRefresh?: () => void;
-  loading?: boolean;
-  isInitialLoading?: boolean;
-  loadingText?: string;
   headerAction?: React.ReactNode;
 };
 
@@ -63,14 +61,16 @@ export default function McpTabsLinks({
   activeTab,
   children,
   className,
-  onRefresh = () => {},
-  loading = false,
-  isInitialLoading = false,
-  loadingText = "Loading...",
   headerAction
 }: McpTabsLinksProps) {
   const [searchParams] = useSearchParams();
   const { access, access_actions } = useUser();
+  const queryClient = useQueryClient();
+  // Every query of the MCP tabs, and of the explanation sheet, is refreshed together
+  const loading =
+    useIsFetching({ queryKey: ["mcp"] }) +
+      useIsFetching({ queryKey: ["permissions-subjects"] }) >
+    0;
 
   const tabLinks = useMemo(() => {
     const query = searchParams.toString();
@@ -96,7 +96,10 @@ export default function McpTabsLinks({
             ]}
           />
         }
-        onRefresh={onRefresh}
+        onRefresh={() => {
+          queryClient.invalidateQueries({ queryKey: ["mcp"] });
+          queryClient.invalidateQueries({ queryKey: ["permissions-subjects"] });
+        }}
         loading={loading}
         contentClass="p-0 h-full overflow-y-hidden"
       >
@@ -110,13 +113,7 @@ export default function McpTabsLinks({
                 className
               )}
             >
-              <ErrorBoundary>
-                {isInitialLoading ? (
-                  <Loading className="h-full w-full py-8" text={loadingText} />
-                ) : (
-                  children
-                )}
-              </ErrorBoundary>
+              <ErrorBoundary>{children}</ErrorBoundary>
             </TabbedLinks>
           </div>
           <ConfigSidebar />

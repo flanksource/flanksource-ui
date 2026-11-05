@@ -188,24 +188,38 @@ export type EffectiveSubjectResourceAccessResponse = {
   results: EffectiveSubjectResourceAccessResult[];
 };
 
-type SubjectAccessSearchRequest = {
+export type SubjectAccessSearchRequest = {
   subject: string;
   action: SubjectAccessReviewAction;
   resource_types?: Array<"playbook" | "view" | "connection">;
   target?: SubjectAccessReviewTarget;
 };
 
-type SubjectAccessSearchResponse = {
+export type SubjectAccessSearchResponse = {
   subject: string;
   action: SubjectAccessReviewAction;
   resource_types: Array<"playbook" | "view" | "connection">;
   target?: SubjectAccessReviewTarget;
+  // What the operation also checks, e.g. mcp:use for mcp:run. When one isn't allowed, results are empty.
+  requirements?: ReviewRequirement[];
   total: number;
   results: Array<{
     resource_type: "playbook" | "view" | "connection";
     id: string;
   }>;
 };
+
+// searchSubjectAccess lists the resources of the types the subject may perform the action on.
+export async function searchSubjectAccess(
+  payload: SubjectAccessSearchRequest
+): Promise<SubjectAccessSearchResponse> {
+  const response = await Rback.post<SubjectAccessSearchResponse>(
+    "/subject-access-search",
+    payload
+  );
+
+  return response.data;
+}
 
 export async function fetchEffectiveSubjectResourceAccess(
   payload: EffectiveSubjectResourceAccessRequest
@@ -216,23 +230,16 @@ export async function fetchEffectiveSubjectResourceAccess(
     (type): type is "playbook" | "view" | "connection" => type !== "plugin"
   );
 
-  const allowedResourceKeys = new Set<string>();
+  const data = await searchSubjectAccess({
+    subject: payload.subject,
+    action: payload.action,
+    resource_types: resourceTypes,
+    target: payload.target
+  });
 
-  const response = await Rback.post<SubjectAccessSearchResponse>(
-    "/subject-access-search",
-    {
-      subject: payload.subject,
-      action: payload.action,
-      resource_types: resourceTypes,
-      target: payload.target
-    } satisfies SubjectAccessSearchRequest
+  const allowedResourceKeys = new Set(
+    (data.results ?? []).map((result) => `${result.resource_type}:${result.id}`)
   );
-
-  const data = response.data;
-
-  for (const result of data.results ?? []) {
-    allowedResourceKeys.add(`${result.resource_type}:${result.id}`);
-  }
 
   return {
     subject: payload.subject,
@@ -241,53 +248,6 @@ export async function fetchEffectiveSubjectResourceAccess(
       resourceId: resource.id,
       resourceType: resource.type,
       allowed: allowedResourceKeys.has(`${resource.type}:${resource.id}`)
-    }))
-  };
-}
-
-export type EffectiveResourceSubjectAccessRequest = {
-  resource: EffectiveSubjectResourceAccessResource;
-  action: SubjectAccessReviewAction;
-  subjects: string[];
-};
-
-export type EffectiveResourceSubjectAccessResult = {
-  subjectId: string;
-  allowed: boolean;
-};
-
-export type EffectiveResourceSubjectAccessResponse = {
-  resource: EffectiveSubjectResourceAccessResource;
-  action: SubjectAccessReviewAction;
-  results: EffectiveResourceSubjectAccessResult[];
-};
-
-export async function fetchEffectiveResourceSubjectAccess(
-  payload: EffectiveResourceSubjectAccessRequest
-): Promise<EffectiveResourceSubjectAccessResponse> {
-  const resource: SubjectAccessReviewResource =
-    payload.resource.type === "playbook"
-      ? { playbook: payload.resource.id }
-      : payload.resource.type === "view"
-        ? { view: payload.resource.id }
-        : { connection: payload.resource.id };
-
-  const response = await reviewSubjectAccess({
-    resource,
-    action: payload.action,
-    subjects: ["*"]
-  });
-
-  const allowedBySubject = new Map(
-    (response.results ?? []).map((result) => [result.subject, result.allowed])
-  );
-
-  return {
-    resource: payload.resource,
-    action: payload.action,
-    results: payload.subjects.map((subjectId) => ({
-      subjectId,
-      allowed: allowedBySubject.get(subjectId) === true
     }))
   };
 }

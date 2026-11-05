@@ -34,7 +34,8 @@ export function PermissionsSubjectsPage() {
     refetch
   } = useQuery({
     queryKey: ["permissions", "subjects", "access-review"],
-    queryFn: fetchAccessReviewSubjects
+    queryFn: fetchAccessReviewSubjects,
+    select: (data) => data.subjects
   });
 
   const sortedSubjects = useMemo(() => {

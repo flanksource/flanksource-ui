@@ -1,79 +1,29 @@
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
-import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
-import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks, {
-  MCP_ACCESS_READ_ONLY
-} from "@flanksource-ui/components/MCP/McpTabsLinks";
-import SubjectSelectorPanel, {
-  SubjectAccess
-} from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
+import McpSubjectAccessList from "@flanksource-ui/components/MCP/McpSubjectAccessList";
+import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { Input } from "@flanksource-ui/components/ui/input";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
-import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { useEffect, useMemo, useState } from "react";
-
-const getPlaybookRefs = (permission: PermissionsSummary) =>
-  permission.object_selector?.playbooks ?? [];
 
 export default function McpPlaybooksPage() {
   const {
     data: playbooks = [],
     isLoading,
-    refetch,
-    isRefetching
+    error
   } = useQuery({
     queryKey: ["mcp", "playbooks", "all"],
     queryFn: getAllPlaybookNames
   });
 
-  const {
-    globalOverrideByResource,
-    selectedResource: selectedPlaybook,
-    setSelectedResourceId,
-    mutatingResourceId,
-    setGlobalOverride,
-    setSelectiveSubjectAccess,
-    isSettingSelectiveSubjectAccess,
-    mutatingSubjectId,
-    allowSelectiveAccess,
-    isAllowingSelective,
-    loading,
-    isInitialLoading,
-    preselectedSubjectAccess,
-    refetch: refetchAll
-  } = useMcpResourcePermissions({
-    resources: playbooks,
-    isResourcesLoading: isLoading,
-    isResourcesRefetching: isRefetching,
-    refetchResources: refetch,
-    permissionsQueryKey: ["mcp", "playbooks", "permissions"],
-    fetchPermissions: fetchMcpRunPermissions,
-    getRefs: getPlaybookRefs,
-    objectSelectorKey: "playbooks"
-  });
+  const [selectedId, setSelectedResourceId] = useState<string | null>(null);
+  const selectedPlaybook = playbooks.find((item) => item.id === selectedId);
 
-  const [isSubjectPanelSwitching, setIsSubjectPanelSwitching] = useState(false);
   const [playbookSearch, setPlaybookSearch] = useState("");
 
   const debouncedSearch = useDebouncedValue(playbookSearch, 200) ?? "";
-
-  useEffect(() => {
-    if (!selectedPlaybook) {
-      setIsSubjectPanelSwitching(false);
-      return;
-    }
-
-    setIsSubjectPanelSwitching(true);
-    const timer = setTimeout(() => {
-      setIsSubjectPanelSwitching(false);
-    }, 220);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [selectedPlaybook?.id]);
 
   const groupedPlaybooks = useMemo(() => {
     const grouped = new Map<string, typeof playbooks>();
@@ -132,23 +82,8 @@ export default function McpPlaybooksPage() {
   }, [selectedPlaybook?.id, setSelectedResourceId, visiblePlaybooks]);
 
   return (
-    <McpTabsLinks
-      activeTab="Playbooks"
-      loading={loading}
-      isInitialLoading={isInitialLoading}
-      loadingText="Loading MCP playbooks..."
-      onRefresh={refetchAll}
-    >
+    <McpTabsLinks activeTab="Playbooks">
       <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            Playbook permissions
-          </h3>
-          <p className="text-sm text-gray-600">
-            Control which playbooks MCP clients can invoke through this gateway.
-          </p>
-        </div>
-
         <div className="flex min-h-0 flex-1 gap-4">
           <div className="flex w-[320px] shrink-0 flex-col">
             <Input
@@ -158,7 +93,15 @@ export default function McpPlaybooksPage() {
             />
 
             <div className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto">
-              {groupedPlaybooks.length === 0 ? (
+              {error ? (
+                <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {getErrorMessage(error)}
+                </div>
+              ) : isLoading ? (
+                <div className="px-2 py-1.5 text-sm text-gray-500">
+                  Loading...
+                </div>
+              ) : groupedPlaybooks.length === 0 ? (
                 <div className="px-2 py-1.5 text-sm text-gray-500">
                   No playbooks found
                 </div>
@@ -203,59 +146,33 @@ export default function McpPlaybooksPage() {
 
           <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
             {selectedPlaybook ? (
-              <div className="relative h-full">
-                <SubjectSelectorPanel
+              <div className="flex h-full min-h-0 flex-col">
+                <McpSubjectAccessList
                   key={selectedPlaybook.id}
-                  headerEntity={{
-                    name: selectedPlaybook.title || selectedPlaybook.name,
-                    icon: selectedPlaybook.icon || "playbook"
+                  check={{
+                    action: "mcp:run",
+                    resource: { playbook: selectedPlaybook.id },
+                    resourceLabel:
+                      selectedPlaybook.title || selectedPlaybook.name
                   }}
-                  effectiveAccessResource={{
-                    id: selectedPlaybook.id,
-                    type: "playbook",
-                    action: "mcp:run"
-                  }}
-                  preselectedSubjectAccess={preselectedSubjectAccess}
-                  readOnly={MCP_ACCESS_READ_ONLY}
-                  bulkAccess={
-                    (globalOverrideByResource.get(selectedPlaybook.id) ===
-                    "allow"
-                      ? "allow"
-                      : globalOverrideByResource.get(selectedPlaybook.id) ===
-                          "deny"
-                        ? "deny"
-                        : "default") as SubjectAccess
-                  }
-                  isSubmitting={
-                    isSettingSelectiveSubjectAccess || isAllowingSelective
-                  }
-                  isBulkSubmitting={mutatingResourceId === selectedPlaybook.id}
-                  mutatingSubjectId={mutatingSubjectId}
-                  onSetBulkAccess={(access) =>
-                    setGlobalOverride(
-                      selectedPlaybook,
-                      access === "allow"
-                        ? "allow"
-                        : access === "deny"
-                          ? "deny"
-                          : "none"
-                    )
-                  }
-                  onSetSubjectAccess={(subject, access) =>
-                    setSelectiveSubjectAccess(selectedPlaybook, subject, access)
-                  }
-                  onSetManySubjectAccess={(selections) =>
-                    allowSelectiveAccess(selectedPlaybook, selections)
+                  header={
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-700">
+                        <Icon
+                          name={selectedPlaybook.icon || "playbook"}
+                          className="h-4 w-4"
+                        />
+                      </span>
+                      <div className="truncate text-sm font-semibold text-gray-900">
+                        {selectedPlaybook.title || selectedPlaybook.name}
+                      </div>
+                    </div>
                   }
                 />
-
-                {isSubjectPanelSwitching ? (
-                  <div className="pointer-events-none absolute inset-0 z-10 rounded-md bg-white/20 backdrop-blur-[1.5px]" />
-                ) : null}
               </div>
-            ) : (
+            ) : error || isLoading ? null : (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
-                Select a playbook row to manage custom subject access.
+                Select a playbook to see who may run it through MCP.
               </div>
             )}
           </div>

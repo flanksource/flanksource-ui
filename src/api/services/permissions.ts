@@ -192,23 +192,11 @@ export async function fetchLegacyPermissionCounts() {
 export const INTERACTIVE_SETTINGS_PERMISSION_SOURCE =
   "interactive_settings" as const;
 
-export function isSettingsManagedPermissionSource(source?: string | null) {
-  return source === INTERACTIVE_SETTINGS_PERMISSION_SOURCE;
-}
-
 export async function fetchSettingsManagedSubjectPermissions(
   subjectId: string
 ) {
   const response = await IncidentCommander.get<PermissionsSummary[] | null>(
     `/permissions_summary?select=*&subject=eq.${subjectId}&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
-  );
-
-  return response.data ?? [];
-}
-
-export async function fetchMcpRunPermissions() {
-  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    `/permissions_summary?select=*&action=eq.mcp:run&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
   );
 
   return response.data ?? [];
@@ -338,7 +326,7 @@ async function fetchPermissionSubjectsWithOrder(order: string) {
   return [...(response.data ?? []), ...plugins];
 }
 
-// listReadableSubjects lists one type of subject, or none when the reviewer may not read that type.
+// listReadableSubjects lists one type of subject, or null when the reviewer may not read that type.
 async function listReadableSubjects<T>(
   url: string,
   toSubject: (row: T) => PermissionSubject
@@ -348,16 +336,17 @@ async function listReadableSubjects<T>(
     return (response.data ?? []).map(toSubject);
   } catch (error) {
     if (isAxiosError(error) && error.response?.status === 403) {
-      return [];
+      return null;
     }
     throw error;
   }
 }
 
 // fetchAccessReviewSubjects lists the people, teams, playbooks and plugins whose access can be reviewed,
-// limited to those the reviewer may read.
+// limited to those the reviewer may read. Forbidden are the types the reviewer may not read, so none are listed.
 export async function fetchAccessReviewSubjects() {
-  const subjects = await Promise.all([
+  const types = ["person", "team", "playbook", "plugin"] as const;
+  const lists = await Promise.all([
     listReadableSubjects<{ id: string; name?: string; email?: string }>(
       "/people?select=id,name,email&type=is.null&email=not.is.null&deleted_at=is.null&order=name.asc",
       (person) => ({
@@ -395,7 +384,10 @@ export async function fetchAccessReviewSubjects() {
     )
   ]);
 
-  return subjects.flat();
+  return {
+    subjects: lists.flatMap((list) => list ?? []),
+    forbidden: types.filter((_, i) => lists[i] === null)
+  };
 }
 
 export async function fetchPermissionSubjects() {
@@ -403,16 +395,4 @@ export async function fetchPermissionSubjects() {
   return subjects.sort((a, b) =>
     a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
   );
-}
-
-export async function fetchAllPermissionSubjects() {
-  const subjects = await fetchPermissionSubjectsWithOrder("type.asc,name.asc");
-  return subjects.sort((a, b) => {
-    const typeDiff = a.type.localeCompare(b.type);
-    if (typeDiff !== 0) {
-      return typeDiff;
-    }
-
-    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-  });
 }
