@@ -1,8 +1,6 @@
-import FlatTabs from "@flanksource-ui/ui/Tabs/FlatTabs";
 import React, { useEffect, useState } from "react";
 import { Icon } from "../../ui/Icons/Icon";
 import { Modal } from "../../ui/Modal";
-import PermissionsView from "../Permissions/PermissionsView";
 import ConnectionForm from "./ConnectionForm";
 import ConnectionListView from "./ConnectionListView";
 import ConnectionSpecEditor from "./ConnectionSpecEditor";
@@ -92,8 +90,6 @@ export default function ConnectionFormModal({
     ConnectionType | undefined
   >(() => connectionTypes.find((item) => item.title === formValue?.type));
 
-  const [activeTab, setActiveTab] = useState<"form" | "permissions">("form");
-
   useEffect(() => {
     let connection = connectionTypes.find(
       (item) => item.value === formValue?.type
@@ -136,57 +132,18 @@ export default function ConnectionFormModal({
       containerClassName="h-full overflow-auto"
     >
       {type ? (
-        formValue?.id ? (
-          <FlatTabs
-            activeTab={activeTab}
-            setActiveTab={(label) => setActiveTab(label)}
-            tabs={[
-              {
-                label: "Edit",
-                key: "form",
-                current: activeTab === "form",
-                content: (
-                  <ConnectionForm
-                    handleBack={() => setConnectionType(undefined)}
-                    connectionType={type}
-                    onConnectionSubmit={onConnectionSubmit}
-                    onConnectionDelete={onConnectionDelete}
-                    formValue={formValue}
-                    className={className}
-                    isSubmitting={isSubmitting}
-                    isDeleting={isDeleting}
-                  />
-                )
-              },
-              {
-                label: "Permissions",
-                key: "permissions",
-                current: activeTab === "permissions",
-                content: (
-                  <PermissionsView
-                    hideResourceColumn
-                    permissionRequest={{
-                      connectionId: formValue.id
-                    }}
-                  />
-                )
-              }
-            ]}
+        <div className="px-4 pb-4">
+          <ConnectionForm
+            handleBack={() => setConnectionType(undefined)}
+            connectionType={type}
+            onConnectionSubmit={onConnectionSubmit}
+            onConnectionDelete={onConnectionDelete}
+            formValue={formValue}
+            className={className}
+            isSubmitting={isSubmitting}
+            isDeleting={isDeleting}
           />
-        ) : (
-          <div className="px-4 pb-4">
-            <ConnectionForm
-              handleBack={() => setConnectionType(undefined)}
-              connectionType={type}
-              onConnectionSubmit={onConnectionSubmit}
-              onConnectionDelete={onConnectionDelete}
-              formValue={formValue}
-              className={className}
-              isSubmitting={isSubmitting}
-              isDeleting={isDeleting}
-            />
-          </div>
-        )
+        </div>
       ) : formValue?.id ? (
         <div className="px-4 pb-4">
           <ConnectionSpecEditor

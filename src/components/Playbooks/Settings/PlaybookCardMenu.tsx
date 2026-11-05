@@ -1,13 +1,12 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BsTrash } from "react-icons/bs";
-import { MdEdit, MdSecurity, MdVisibility } from "react-icons/md";
+import { MdEdit, MdVisibility } from "react-icons/md";
 import { IconButton } from "../../../ui/Buttons/IconButton";
 
 type PlaybookCardMenuDropdownProps = {
   onDeletePlaybook?: () => void;
   onEditPlaybook?: () => void;
-  onManagePermissions?: () => void;
   onHistory?: () => void;
   isReadOnly?: boolean;
 };
@@ -15,7 +14,6 @@ type PlaybookCardMenuDropdownProps = {
 export default function PlaybookCardMenuDropdown({
   onDeletePlaybook = () => {},
   onEditPlaybook = () => {},
-  onManagePermissions = () => {},
   isReadOnly = false
 }: PlaybookCardMenuDropdownProps) {
   return (
@@ -62,21 +60,6 @@ export default function PlaybookCardMenuDropdown({
               }
             />
             <span>{isReadOnly ? "View" : "Edit"}</span>
-          </>
-        </MenuItem>
-        <MenuItem
-          as="div"
-          className="flex w-full cursor-pointer items-center gap-2 px-3 py-1.5 text-sm leading-5 text-gray-700 hover:bg-gray-200"
-          onClick={() => {
-            onManagePermissions();
-          }}
-        >
-          <>
-            <MdSecurity
-              className="border-l-1 border-0 border-gray-200 text-gray-600"
-              size={16}
-            />
-            <span>Permissions</span>
           </>
         </MenuItem>
         {!isReadOnly && (
