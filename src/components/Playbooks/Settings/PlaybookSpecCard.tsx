@@ -19,7 +19,6 @@ import { Icon } from "../../../ui/Icons/Icon";
 import { toastError, toastSuccess } from "../../Toast/toast";
 import SubmitPlaybookRunForm from "../Runs/Submit/SubmitPlaybookRunForm";
 import PlaybookCardMenu from "./PlaybookCardMenu";
-import PlaybookPermissionsModal from "./PlaybookPermissionsModal";
 import PlaybookSpecFormModal from "./PlaybookSpecFormModal";
 
 type PlaybookSpecCardProps = {
@@ -34,14 +33,10 @@ export default function PlaybookSpecCard({
   const [isEditPlaybookFormOpen, setIsEditPlaybookFormOpen] = useState(false);
   const [isSubmitPlaybookRunFormOpen, setIsSubmitPlaybookRunFormOpen] =
     useState(false);
-  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const { data: playbookSpec } = useGetPlaybookSpecsDetails(playbook.id, {
-    enabled:
-      isEditPlaybookFormOpen ||
-      isSubmitPlaybookRunFormOpen ||
-      isPermissionsModalOpen
+    enabled: isEditPlaybookFormOpen || isSubmitPlaybookRunFormOpen
   });
 
   // Only playbooks created in the UI can be changed from here, everything else
@@ -86,7 +81,6 @@ export default function PlaybookSpecCard({
             <PlaybookCardMenu
               isReadOnly={isReadOnly}
               onEditPlaybook={() => setIsEditPlaybookFormOpen(true)}
-              onManagePermissions={() => setIsPermissionsModalOpen(true)}
               onDeletePlaybook={() => setIsDeleteConfirmOpen(true)}
             />
           </AuthorizationAccessCheck>
@@ -126,14 +120,6 @@ export default function PlaybookSpecCard({
             setIsEditPlaybookFormOpen(false);
           }}
           refresh={refetch}
-          playbook={playbookSpec}
-        />
-      )}
-
-      {playbookSpec && (
-        <PlaybookPermissionsModal
-          isOpen={isPermissionsModalOpen}
-          onClose={() => setIsPermissionsModalOpen(false)}
           playbook={playbookSpec}
         />
       )}

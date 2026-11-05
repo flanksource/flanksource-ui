@@ -10,13 +10,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { toastError } from "@flanksource-ui/components/Toast/toast";
 import { useEffect, useState } from "react";
-import { Button } from "..";
 import { FormikSelectDropdownOption } from "../Forms/Formik/FormikSelectDropdown";
 import LegacyPermissionDetails from "./LegacyPermissionDetails";
 import LegacyPermissionsBanner from "./LegacyPermissionsBanner";
-import PermissionAccessCheckModal, {
-  PermissionAccessCheckConfig
-} from "./PermissionAccessCheckModal";
 import PermissionsTable from "./PermissionsTable";
 
 // Source: github.com/flanksource/duty/rbac/policy/policy.go
@@ -37,28 +33,21 @@ export const permissionsActionsList: FormikSelectDropdownOption[] = [
 type PermissionsViewProps = {
   permissionRequest: FetchPermissionsInput;
   setIsLoading?: (isLoading: boolean) => void;
-  hideResourceColumn?: boolean;
-  hideSubjectColumn?: boolean;
   // hideBanner hides the deprecation banner, for a page that shows its own.
   hideBanner?: boolean;
   onRefetch?: (refetch: () => void) => void;
-  accessCheckConfig?: PermissionAccessCheckConfig;
 };
 
 export default function PermissionsView({
   permissionRequest,
   setIsLoading = () => {},
-  hideResourceColumn = false,
-  hideSubjectColumn = false,
   hideBanner = false,
-  onRefetch,
-  accessCheckConfig
+  onRefetch
 }: PermissionsViewProps) {
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionsSummary>();
   const { pageSize, pageIndex } = useReactTablePaginationState();
   const [sortState] = useReactTableSortState();
-  const [isAccessCheckModalOpen, setIsAccessCheckModalOpen] = useState(false);
 
   const mappedSortBy =
     sortState[0]?.id === "created"
@@ -113,18 +102,6 @@ export default function PermissionsView({
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col gap-2">
       {!hideBanner && <LegacyPermissionsBanner />}
-      {accessCheckConfig ? (
-        <div className="flex shrink-0 flex-row items-center py-2">
-          <Button
-            className="btn-secondary"
-            onClick={() => {
-              setIsAccessCheckModalOpen(true);
-            }}
-          >
-            Check Access
-          </Button>
-        </div>
-      ) : null}
       <div className="flex min-h-0 flex-1 flex-col">
         <PermissionsTable
           permissions={permissions}
@@ -132,8 +109,6 @@ export default function PermissionsView({
           pageCount={pageCount}
           totalEntries={totalEntries}
           handleRowClick={(row) => setSelectedPermission(row)}
-          hideResourceColumn={hideResourceColumn}
-          hideSubjectColumn={hideSubjectColumn}
         />
       </div>
       {selectedPermission && (
@@ -147,13 +122,6 @@ export default function PermissionsView({
           }}
         />
       )}
-      {accessCheckConfig ? (
-        <PermissionAccessCheckModal
-          open={isAccessCheckModalOpen}
-          onOpenChange={setIsAccessCheckModalOpen}
-          config={accessCheckConfig}
-        />
-      ) : null}
     </div>
   );
 }

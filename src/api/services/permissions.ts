@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import { apiBase, IncidentCommander } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
-import { PermissionsSummary, PermissionTable } from "../types/permissions";
+import { PermissionsSummary } from "../types/permissions";
 import { AVATAR_INFO } from "@flanksource-ui/constants";
 import { tristateOutputToQueryParamValue } from "@flanksource-ui/ui/Dropdowns/TristateReactSelect";
 
@@ -128,17 +128,6 @@ export function fetchPermissions(
   );
 }
 
-export function addPermission(permission: PermissionTable) {
-  return IncidentCommander.post<PermissionTable>("/permissions", permission);
-}
-
-export function updatePermission(permission: PermissionTable) {
-  return IncidentCommander.patch<PermissionTable>(
-    `/permissions?id=eq.${permission.id}`,
-    permission
-  );
-}
-
 export function deletePermission(id: string) {
   return IncidentCommander.delete(`/permissions?id=eq.${id}`);
 }
@@ -188,20 +177,6 @@ export async function fetchLegacyPermissionCounts() {
   return { permissions, permissionGroups };
 }
 
-// Source marker used by settings UIs for permissions they create/manage.
-export const INTERACTIVE_SETTINGS_PERMISSION_SOURCE =
-  "interactive_settings" as const;
-
-export async function fetchSettingsManagedSubjectPermissions(
-  subjectId: string
-) {
-  const response = await IncidentCommander.get<PermissionsSummary[] | null>(
-    `/permissions_summary?select=*&subject=eq.${subjectId}&source=eq.${INTERACTIVE_SETTINGS_PERMISSION_SOURCE}&deleted_at=is.null&limit=5000`
-  );
-
-  return response.data ?? [];
-}
-
 export type PermissionSubject = {
   id: string;
   name: string;
@@ -216,44 +191,6 @@ export type PermissionSubject = {
   owner?: string | null;
   icon?: string | null;
 };
-
-export async function fetchPermissionSubjectsPaginated({
-  search = "",
-  pageIndex = 0,
-  pageSize = 20
-}: {
-  search?: string;
-  pageIndex?: number;
-  pageSize?: number;
-}) {
-  const query = search.trim();
-
-  let url =
-    "/permission_subjects?select=id,name,type,owner,icon&order=name.asc";
-  url += `&limit=${pageSize}&offset=${pageIndex * pageSize}`;
-
-  if (query) {
-    url += `&name=ilike.*${encodeURIComponent(query)}*`;
-  }
-
-  return resolvePostGrestRequestWithPagination<PermissionSubject[]>(
-    IncidentCommander.get(url, {
-      headers: {
-        Prefer: "count=exact"
-      }
-    })
-  );
-}
-
-export async function fetchPermissionSubjectsByIds(ids: string[]) {
-  if (ids.length === 0) {
-    return [];
-  }
-  const response = await IncidentCommander.get<PermissionSubject[] | null>(
-    `/permission_subjects?select=id,name,type,owner,icon&id=in.(${ids.join(",")})&limit=${ids.length}`
-  );
-  return response.data ?? [];
-}
 
 export type PluginOperationDefinition = {
   name?: string;
@@ -290,9 +227,7 @@ export async function fetchPluginPermissionListings(): Promise<
     : (response.data.plugins ?? response.data.data ?? []);
 }
 
-export async function fetchPluginPermissionSubjects(): Promise<
-  PermissionSubject[]
-> {
+async function fetchPluginPermissionSubjects(): Promise<PermissionSubject[]> {
   const plugins = await fetchPluginPermissionListings();
 
   return plugins

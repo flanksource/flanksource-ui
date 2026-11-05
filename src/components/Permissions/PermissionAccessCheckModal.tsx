@@ -10,13 +10,6 @@ import { getAllViews } from "@flanksource-ui/api/services/views";
 import { Badge } from "@flanksource-ui/components/ui/badge";
 import { Button } from "@flanksource-ui/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from "@flanksource-ui/components/ui/dialog";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -50,12 +43,6 @@ export type PermissionAccessCheckConfig = {
   resourceOverrideByAction?: Partial<
     Record<SubjectAccessReviewAction, SubjectAccessReviewResource>
   >;
-};
-
-type PermissionAccessCheckModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  config: PermissionAccessCheckConfig;
 };
 
 type PermissionAccessCheckFormValues = {
@@ -568,31 +555,5 @@ export function PermissionAccessCheckForm({
         );
       }}
     </Formik>
-  );
-}
-
-export default function PermissionAccessCheckModal({
-  open,
-  onOpenChange,
-  config
-}: PermissionAccessCheckModalProps) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{config.title ?? "Permission Access Check"}</DialogTitle>
-          <DialogDescription>
-            {config.description ??
-              "Select a subject and action to check access for this resource."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <PermissionAccessCheckForm
-          config={config}
-          isActive={open}
-          onCancel={() => onOpenChange(false)}
-        />
-      </DialogContent>
-    </Dialog>
   );
 }

@@ -213,8 +213,6 @@ type PermissionsTableProps = {
   pageCount: number;
   totalEntries: number;
   handleRowClick?: (row: PermissionsSummary) => void;
-  hideResourceColumn?: boolean;
-  hideSubjectColumn?: boolean;
 };
 
 export default function PermissionsTable({
@@ -222,19 +220,10 @@ export default function PermissionsTable({
   isLoading,
   pageCount,
   totalEntries,
-  hideResourceColumn = false,
-  hideSubjectColumn = false,
   handleRowClick = () => {}
 }: PermissionsTableProps) {
-  const hiddenColumns = [
-    ...(hideResourceColumn ? ["Resource"] : []),
-    ...(hideSubjectColumn ? ["subject"] : [])
-  ];
-  const tableKey = hiddenColumns.join("|") || "none";
-
   return (
     <MRTDataTable
-      key={tableKey}
       columns={permissionsTableColumns}
       data={permissions}
       isLoading={isLoading}
@@ -243,7 +232,6 @@ export default function PermissionsTable({
       enableServerSidePagination
       enableServerSideSorting
       onRowClick={handleRowClick}
-      hiddenColumns={hiddenColumns}
     />
   );
 }
