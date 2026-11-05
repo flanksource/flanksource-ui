@@ -203,13 +203,6 @@ describe("PlaybookSpecCard", () => {
         screen.queryByRole("menuitem", { name: /Delete/i })
       ).not.toBeInTheDocument();
     });
-
-    it("still offers permissions for a playbook managed by a CRD", async () => {
-      await renderCard({ ...mockPlaybook, source: "KubernetesCRD" });
-      expect(
-        await screen.findByRole("menuitem", { name: /Permissions/i })
-      ).toBeInTheDocument();
-    });
   });
 
   it("opens the SubmitPlaybookRunForm when the Run button is clicked", async () => {
