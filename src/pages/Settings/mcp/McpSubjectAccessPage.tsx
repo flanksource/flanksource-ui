@@ -1,581 +1,332 @@
 import { getAllPlaybookNames } from "@flanksource-ui/api/services/playbooks";
+import { PermissionSubject } from "@flanksource-ui/api/services/permissions";
 import {
-  addPermission,
-  deletePermission,
-  fetchAllPermissionSubjects,
-  fetchMcpRunPermissions,
-  INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
-  isSettingsManagedPermissionSource,
-  PermissionSubject,
-  updatePermission
-} from "@flanksource-ui/api/services/permissions";
-import {
-  fetchEffectiveSubjectResourceAccess,
-  EffectiveSubjectResourceAccessResult
+  searchSubjectAccess,
+  SubjectAccessReviewAction
 } from "@flanksource-ui/api/services/rbac";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { getAllViews } from "@flanksource-ui/api/services/views";
-import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks, {
-  MCP_ACCESS_READ_ONLY
-} from "@flanksource-ui/components/MCP/McpTabsLinks";
-import PermissionSubjectPanel from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
-import ResourceSelectorPanel, {
-  McpSubjectResource,
-  ResourceAccess
-} from "@flanksource-ui/components/Permissions/ResourceSelectorPanel";
 import {
-  toastError,
-  toastSuccess
-} from "@flanksource-ui/components/Toast/toast";
-import { useUser } from "@flanksource-ui/context";
-import { mapSubjectType } from "@flanksource-ui/lib/permissions/mcpPermissionCardMappings";
+  ForbiddenSubjectsNotice,
+  useMcpSubjects
+} from "@flanksource-ui/components/MCP/McpSubjectAccessList";
+import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
+import EffectiveAccessBadge from "@flanksource-ui/components/Permissions/EffectiveAccessBadge";
+import PermissionSubjectPanel from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
+import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
+import AccessExplanationSheet, {
+  AccessCheck
+} from "@flanksource-ui/components/Permissions/SubjectPermissions/AccessExplanationSheet";
+import { Input } from "@flanksource-ui/components/ui/input";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
+import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
+import { Info } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
-  role: 0,
-  permission_subject_group: 1,
-  team: 2,
-  playbook: 3,
-  plugin: 4,
-  person: 5,
-  access_token_person: 6
+type McpResource = {
+  id: string;
+  kind: "playbook" | "view";
+  name: string;
+  icon: string;
 };
 
-function getPermissionRefs(
-  permission: PermissionsSummary,
-  kind: "playbook" | "view"
-) {
-  return kind === "playbook"
-    ? (permission.object_selector?.playbooks ?? [])
-    : (permission.object_selector?.views ?? []);
+// What the MCP server checks to use each kind of resource: mcp:run to run a playbook, read to use a view.
+const ACTIONS: Record<McpResource["kind"], SubjectAccessReviewAction> = {
+  playbook: "mcp:run",
+  view: "read"
+};
+
+const byName = (a: { name: string }, b: { name: string }) =>
+  a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+
+function ErrorBox({ error }: { error: unknown }) {
+  return (
+    <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      {getErrorMessage(error)}
+    </div>
+  );
 }
 
-function permissionMatchesResource(
-  permission: PermissionsSummary,
-  resource: McpSubjectResource
-) {
-  const refs = getPermissionRefs(permission, resource.kind);
-
-  return refs.some((ref) => {
-    if (!ref?.name || ref.name === "*") {
-      return false;
-    }
-
-    if (ref.namespace) {
-      return ref.namespace === resource.namespace && ref.name === resource.name;
-    }
-
-    return ref.name === resource.name;
-  });
-}
-
+// McpSubjectAccessPage shows which playbooks and views one subject may use through MCP.
 export default function McpSubjectAccessPage() {
-  const { user } = useUser();
   const [subjectSearch, setSubjectSearch] = useState("");
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(
     null
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mutatingResourceIds, setMutatingResourceIds] = useState<
-    Record<string, true>
-  >({});
-  const [isResourcePanelSwitching, setIsResourcePanelSwitching] =
-    useState(false);
-  const [
-    hasTriggeredEffectiveAccessCheck,
-    setHasTriggeredEffectiveAccessCheck
-  ] = useState(false);
+  const debouncedSearch =
+    useDebouncedValue(subjectSearch, 200)?.trim().toLowerCase() ?? "";
 
-  const debouncedSearch = useDebouncedValue(subjectSearch, 200) ?? "";
+  const { data, isLoading, error } = useMcpSubjects();
+  const subjects = useMemo(() => data?.subjects ?? [], [data?.subjects]);
 
-  const {
-    data: subjects = [],
-    isLoading: isSubjectsLoading,
-    isRefetching: isSubjectsRefetching,
-    refetch: refetchSubjects
-  } = useQuery({
-    queryKey: ["mcp", "subject-access", "subjects"],
-    queryFn: fetchAllPermissionSubjects
-  });
-
-  const {
-    data: playbooks = [],
-    isLoading: isPlaybooksLoading,
-    isRefetching: isPlaybooksRefetching,
-    refetch: refetchPlaybooks
-  } = useQuery({
-    queryKey: ["mcp", "subject-access", "playbooks"],
-    queryFn: getAllPlaybookNames
-  });
-
-  const {
-    data: viewsResponse,
-    isLoading: isViewsLoading,
-    isRefetching: isViewsRefetching,
-    refetch: refetchViews
-  } = useQuery({
-    queryKey: ["mcp", "subject-access", "views"],
-    queryFn: async () => getAllViews([{ id: "name", desc: false }], 0, 1000)
-  });
-
-  const {
-    data: permissions = [],
-    isLoading: isPermissionsLoading,
-    isRefetching: isPermissionsRefetching,
-    refetch: refetchPermissions
-  } = useQuery({
-    queryKey: ["mcp", "subject-access", "permissions"],
-    queryFn: fetchMcpRunPermissions
-  });
-
-  const views = useMemo(() => viewsResponse?.data ?? [], [viewsResponse?.data]);
-
-  const sortedSubjects = useMemo(() => {
-    const loweredSearch = debouncedSearch.trim().toLowerCase();
-
-    return subjects
-      .filter(
-        (subject) =>
-          subject.type !== "access_token_person" &&
-          subject.type !== "playbook" &&
-          subject.type !== "plugin"
-      )
-      .filter((subject) => {
-        if (!loweredSearch) {
-          return true;
-        }
-
-        return subject.name.toLowerCase().includes(loweredSearch);
-      })
-      .sort((a, b) => {
-        const typeOrder =
-          SUBJECT_TYPE_ORDER[a.type] - SUBJECT_TYPE_ORDER[b.type];
-        if (typeOrder !== 0) {
-          return typeOrder;
-        }
-
-        return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-      });
-  }, [debouncedSearch, subjects]);
-
-  const groupedSubjects = useMemo(() => {
-    const grouped = new Map<PermissionSubject["type"], PermissionSubject[]>();
-
-    for (const subject of sortedSubjects) {
-      const list = grouped.get(subject.type) ?? [];
-      list.push(subject);
-      grouped.set(subject.type, list);
-    }
-
-    return Array.from(grouped.entries()).map(([type, list]) => ({
-      type,
-      list
-    }));
-  }, [sortedSubjects]);
-
-  useEffect(() => {
-    if (
-      selectedSubjectId &&
-      sortedSubjects.some((subject) => subject.id === selectedSubjectId)
-    ) {
-      return;
-    }
-
-    setSelectedSubjectId(sortedSubjects[0]?.id ?? null);
-  }, [selectedSubjectId, sortedSubjects]);
-
-  const selectedSubject = useMemo(
+  const filteredSubjects = useMemo(
     () =>
-      sortedSubjects.find((subject) => subject.id === selectedSubjectId) ??
-      null,
-    [selectedSubjectId, sortedSubjects]
+      subjects
+        .filter((subject) =>
+          subject.name.toLowerCase().includes(debouncedSearch)
+        )
+        .sort(byName),
+    [debouncedSearch, subjects]
+  );
+
+  const groupedSubjects = useMemo(
+    () =>
+      (["team", "person"] as const)
+        .map((type) => ({
+          type,
+          list: filteredSubjects.filter((subject) => subject.type === type)
+        }))
+        .filter((group) => group.list.length > 0),
+    [filteredSubjects]
   );
 
   useEffect(() => {
-    if (!selectedSubject) {
-      setIsResourcePanelSwitching(false);
-      return;
+    if (
+      !selectedSubjectId ||
+      !filteredSubjects.some((subject) => subject.id === selectedSubjectId)
+    ) {
+      setSelectedSubjectId(groupedSubjects[0]?.list[0]?.id ?? null);
     }
+  }, [filteredSubjects, groupedSubjects, selectedSubjectId]);
 
-    setIsResourcePanelSwitching(true);
-    const timer = setTimeout(() => {
-      setIsResourcePanelSwitching(false);
-    }, 220);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [selectedSubject]);
-
-  const resources = useMemo<McpSubjectResource[]>(() => {
-    const playbookResources = playbooks
-      .map((playbook) => ({
-        id: playbook.id,
-        kind: "playbook" as const,
-        name: playbook.name,
-        displayName: playbook.title || playbook.name,
-        namespace: playbook.namespace,
-        icon: playbook.icon || "playbook",
-        subtitle: playbook.namespace
-          ? `${playbook.namespace} · playbook`
-          : "playbook"
-      }))
-      .sort((a, b) =>
-        (a.displayName || a.name).localeCompare(
-          b.displayName || b.name,
-          undefined,
-          {
-            sensitivity: "base"
-          }
-        )
-      );
-
-    const viewResources = views
-      .map((view) => ({
-        id: view.id,
-        kind: "view" as const,
-        name: view.name,
-        displayName: view.spec?.title || view.name,
-        namespace: view.namespace,
-        icon: view.spec?.icon || "workflow",
-        subtitle: view.namespace ? `${view.namespace} · view` : "view"
-      }))
-      .sort((a, b) =>
-        (a.displayName || a.name).localeCompare(
-          b.displayName || b.name,
-          undefined,
-          {
-            sensitivity: "base"
-          }
-        )
-      );
-
-    return [...playbookResources, ...viewResources];
-  }, [playbooks, views]);
-
-  const {
-    data: effectiveAccessResponse,
-    isFetching: isCheckingEffectiveAccess,
-    refetch: refetchEffectiveAccess
-  } = useQuery({
-    queryKey: [
-      "mcp",
-      "subject-access",
-      "effective-access",
-      selectedSubject?.id ?? "none",
-      resources.length
-    ],
-    enabled: false,
-    queryFn: async () => {
-      if (!selectedSubject) {
-        return {
-          subject: "",
-          action: "mcp:run" as const,
-          results: [] as EffectiveSubjectResourceAccessResult[]
-        };
-      }
-
-      return fetchEffectiveSubjectResourceAccess({
-        subject: selectedSubject.id,
-        action: "mcp:run",
-        resources: resources.map((resource) => ({
-          id: resource.id,
-          type: resource.kind
-        }))
-      });
-    }
-  });
-
-  const effectiveAccessByResourceKey = useMemo(() => {
-    const map: Record<string, boolean> = {};
-
-    for (const result of effectiveAccessResponse?.results ?? []) {
-      map[`${result.resourceType}:${result.resourceId}`] = result.allowed;
-    }
-
-    return map;
-  }, [effectiveAccessResponse?.results]);
-
-  const hasEffectiveAccessResults =
-    hasTriggeredEffectiveAccessCheck &&
-    (effectiveAccessResponse?.results?.length ?? 0) > 0;
-
-  useEffect(() => {
-    setHasTriggeredEffectiveAccessCheck(false);
-  }, [selectedSubject?.id]);
-
-  const loading =
-    isSubjectsLoading ||
-    isPlaybooksLoading ||
-    isViewsLoading ||
-    isPermissionsLoading ||
-    isSubjectsRefetching ||
-    isPlaybooksRefetching ||
-    isViewsRefetching ||
-    isPermissionsRefetching ||
-    isSubmitting;
-
-  const isInitialLoading =
-    (isSubjectsLoading ||
-      isPlaybooksLoading ||
-      isViewsLoading ||
-      isPermissionsLoading) &&
-    resources.length === 0;
-
-  const setResourceAccess = async (
-    subject: PermissionSubject,
-    targetResource: McpSubjectResource,
-    access: ResourceAccess,
-    latestPermissions?: PermissionsSummary[]
-  ) => {
-    const currentPermissions =
-      latestPermissions ?? (await fetchMcpRunPermissions());
-    const subjectType = mapSubjectType(subject.type);
-
-    const matchingPermissions = currentPermissions.filter(
-      (permission) =>
-        permission.action === "mcp:run" &&
-        isSettingsManagedPermissionSource(permission.source) &&
-        permission.subject === subject.id &&
-        permission.subject_type === subjectType &&
-        permission.id &&
-        permissionMatchesResource(permission, targetResource)
-    );
-
-    if (access === "default") {
-      await Promise.all(
-        matchingPermissions.map((permission) =>
-          deletePermission(permission.id!)
-        )
-      );
-      return;
-    }
-
-    const deny = access === "deny";
-    const [primaryPermission, ...duplicates] = matchingPermissions;
-
-    if (!primaryPermission) {
-      await addPermission({
-        action: "mcp:run",
-        object_selector: {
-          [targetResource.kind === "playbook" ? "playbooks" : "views"]: [
-            { name: targetResource.name, namespace: targetResource.namespace }
-          ]
-        },
-        subject: subject.id,
-        subject_type: subjectType,
-        deny,
-        source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
-        created_by: user?.id
-      } as any);
-      return;
-    }
-
-    await Promise.all([
-      ...(primaryPermission.deny === deny
-        ? []
-        : [
-            updatePermission({
-              id: primaryPermission.id,
-              deny
-            } as any)
-          ]),
-      ...duplicates.map((permission) => deletePermission(permission.id!))
-    ]);
-  };
-
-  const applyAccess = async (
-    targetResources: McpSubjectResource[],
-    access: ResourceAccess
-  ) => {
-    if (!selectedSubject || targetResources.length === 0) {
-      return;
-    }
-
-    const subjectType = mapSubjectType(selectedSubject.type);
-    const targetKinds = [
-      ...new Set(targetResources.map((resource) => resource.kind))
-    ];
-
-    setIsSubmitting(true);
-    setMutatingResourceIds(
-      Object.fromEntries(targetResources.map((resource) => [resource.id, true]))
-    );
-
-    try {
-      const latestPermissions = await fetchMcpRunPermissions();
-
-      if (targetResources.length > 1) {
-        for (const kind of targetKinds) {
-          const selectorKey = kind === "playbook" ? "playbooks" : "views";
-
-          const existingForKind = latestPermissions.filter((permission) => {
-            if (
-              permission.action !== "mcp:run" ||
-              !isSettingsManagedPermissionSource(permission.source) ||
-              permission.subject !== selectedSubject.id ||
-              permission.subject_type !== subjectType ||
-              !permission.id
-            ) {
-              return false;
-            }
-
-            return getPermissionRefs(permission, kind).length > 0;
-          });
-
-          if (access === "default") {
-            await Promise.all(
-              existingForKind.map((permission) =>
-                deletePermission(permission.id!)
-              )
-            );
-            continue;
-          }
-
-          const deny = access === "deny";
-          const wildcardPermissions = existingForKind.filter((permission) =>
-            getPermissionRefs(permission, kind).some(
-              (ref) => ref?.name === "*" && !ref?.namespace
-            )
-          );
-
-          const [primaryWildcard, ...duplicateWildcards] = wildcardPermissions;
-
-          if (!primaryWildcard) {
-            await addPermission({
-              action: "mcp:run",
-              object_selector: {
-                [selectorKey]: [{ name: "*" }]
-              },
-              subject: selectedSubject.id,
-              subject_type: subjectType,
-              deny,
-              source: INTERACTIVE_SETTINGS_PERMISSION_SOURCE,
-              created_by: user?.id
-            } as any);
-          } else if (primaryWildcard.deny !== deny) {
-            await updatePermission({
-              id: primaryWildcard.id,
-              deny
-            } as any);
-          }
-
-          const wildcardIdsToKeep = new Set(
-            primaryWildcard?.id ? [primaryWildcard.id] : []
-          );
-
-          const permissionIdsToDelete = [
-            ...duplicateWildcards.map((permission) => permission.id!),
-            ...existingForKind
-              .filter((permission) => !wildcardIdsToKeep.has(permission.id!))
-              .filter(
-                (permission) =>
-                  !wildcardPermissions.some(
-                    (wildcard) => wildcard.id === permission.id
-                  )
-              )
-              .map((permission) => permission.id!)
-          ];
-
-          if (permissionIdsToDelete.length > 0) {
-            await Promise.all(
-              permissionIdsToDelete.map((id) => deletePermission(id))
-            );
-          }
-        }
-
-        toastSuccess("Updated subject access");
-      } else {
-        await setResourceAccess(
-          selectedSubject,
-          targetResources[0],
-          access,
-          latestPermissions
-        );
-        toastSuccess("Updated subject access");
-      }
-    } catch (error) {
-      toastError(error as any);
-    } finally {
-      setMutatingResourceIds({});
-      setIsSubmitting(false);
-      refetchPermissions();
-    }
-  };
+  const selectedSubject = subjects.find(
+    (subject) => subject.id === selectedSubjectId
+  );
 
   return (
-    <McpTabsLinks
-      activeTab="Subject access"
-      loading={loading}
-      isInitialLoading={isInitialLoading}
-      loadingText="Loading MCP subject access..."
-      onRefresh={() => {
-        refetchSubjects();
-        refetchPlaybooks();
-        refetchViews();
-        refetchPermissions();
-      }}
-    >
-      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-6 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            Subject access
-          </h3>
-          <p className="text-sm text-gray-600">
-            See all playbooks and views a specific user, role, or group can
-            access through this gateway.
-          </p>
-        </div>
-
+    <McpTabsLinks activeTab="Subject access">
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col gap-4 p-6 pb-3">
         <div className="flex min-h-0 flex-1 gap-4">
-          <div className="w-[320px] shrink-0">
-            <PermissionSubjectPanel
-              subjectSearch={subjectSearch}
-              onSubjectSearchChange={setSubjectSearch}
-              groupedSubjects={groupedSubjects}
-              selectedSubjectId={selectedSubjectId}
-              onSelectSubject={setSelectedSubjectId}
-            />
-          </div>
-
-          <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
-            {selectedSubject ? (
-              <div className="relative h-full">
-                <ResourceSelectorPanel
-                  key={selectedSubject.id}
-                  selectedSubject={selectedSubject}
-                  resources={resources}
-                  permissions={permissions}
-                  effectiveAccessByResourceKey={effectiveAccessByResourceKey}
-                  hasEffectiveAccessResults={hasEffectiveAccessResults}
-                  isCheckingEffectiveAccess={isCheckingEffectiveAccess}
-                  isSubmitting={isSubmitting}
-                  readOnly={MCP_ACCESS_READ_ONLY}
-                  mutatingResourceIds={mutatingResourceIds}
-                  onCheckEffectiveAccess={() => {
-                    setHasTriggeredEffectiveAccessCheck(true);
-                    refetchEffectiveAccess();
-                  }}
-                  onSetResourceAccess={(resource, access) =>
-                    applyAccess([resource], access)
-                  }
-                  onSetManyResourceAccess={applyAccess}
-                />
-
-                {isResourcePanelSwitching ? (
-                  <div className="pointer-events-none absolute inset-0 z-10 rounded-md bg-white/20 backdrop-blur-[1.5px]" />
-                ) : null}
+          <div className="flex w-[320px] shrink-0 flex-col gap-3">
+            <ForbiddenSubjectsNotice forbidden={data?.forbidden} />
+            {error ? (
+              <ErrorBox error={error} />
+            ) : isLoading ? (
+              <div className="px-2 py-1.5 text-sm text-gray-500">
+                Loading subjects...
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
-                Select a subject to inspect MCP resource access.
-              </div>
+              <PermissionSubjectPanel
+                subjectSearch={subjectSearch}
+                onSubjectSearchChange={setSubjectSearch}
+                groupedSubjects={groupedSubjects}
+                selectedSubjectId={selectedSubjectId}
+                onSelectSubject={setSelectedSubjectId}
+              />
             )}
+          </div>
+
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col lg:max-w-3xl">
+            {selectedSubject ? (
+              <SubjectResources
+                key={selectedSubject.id}
+                subject={selectedSubject}
+              />
+            ) : !error && !isLoading ? (
+              <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
+                {subjects.length === 0
+                  ? "No people or teams found."
+                  : "Select a subject."}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
     </McpTabsLinks>
+  );
+}
+
+function SubjectResources({ subject }: { subject: PermissionSubject }) {
+  const [search, setSearch] = useState("");
+  const [explaining, setExplaining] = useState<AccessCheck>();
+
+  const playbooksQuery = useQuery({
+    queryKey: ["mcp", "playbooks", "all"],
+    queryFn: getAllPlaybookNames
+  });
+
+  const viewsQuery = useQuery({
+    queryKey: ["mcp", "views", "all"],
+    queryFn: async () => getAllViews([{ id: "name", desc: false }], 0, 1000)
+  });
+
+  const playbookSearch = useQuery({
+    queryKey: ["mcp", "search", subject.id, "mcp:run"],
+    queryFn: () =>
+      searchSubjectAccess({
+        subject: subject.id,
+        action: "mcp:run",
+        resource_types: ["playbook"]
+      })
+  });
+
+  const viewSearch = useQuery({
+    queryKey: ["mcp", "search", subject.id, "read", "view"],
+    queryFn: () =>
+      searchSubjectAccess({
+        subject: subject.id,
+        action: "read",
+        resource_types: ["view"]
+      })
+  });
+
+  const queries = [playbooksQuery, viewsQuery, playbookSearch, viewSearch];
+  const error = queries.find((query) => query.error)?.error;
+  const isLoading = queries.some((query) => query.isLoading);
+
+  // Every MCP request takes mcp:use, and the search for mcp:run reports it as a requirement
+  const mcpUse = playbookSearch.data?.requirements?.find(
+    (requirement) => requirement.action === "mcp:use"
+  );
+  const canUseMcp = mcpUse?.allowed !== false;
+
+  const allowed = useMemo(
+    () =>
+      new Set(
+        [
+          ...(playbookSearch.data?.results ?? []),
+          ...(viewSearch.data?.results ?? [])
+        ].map((result) => `${result.resource_type}:${result.id}`)
+      ),
+    [playbookSearch.data, viewSearch.data]
+  );
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const sections = useMemo(() => {
+    const playbooks: McpResource[] = (playbooksQuery.data ?? []).map(
+      (playbook) => ({
+        id: playbook.id,
+        kind: "playbook",
+        name: playbook.title || playbook.name,
+        icon: playbook.icon || "playbook"
+      })
+    );
+    const views: McpResource[] = (viewsQuery.data?.data ?? []).map((view) => ({
+      id: view.id,
+      kind: "view",
+      name: view.spec?.title || view.name,
+      icon: view.spec?.icon || "workflow"
+    }));
+
+    return [
+      { title: "Playbooks", resources: playbooks },
+      { title: "Views", resources: views }
+    ].map((section) => ({
+      ...section,
+      resources: section.resources
+        .filter((resource) =>
+          resource.name.toLowerCase().includes(normalizedSearch)
+        )
+        .sort(byName)
+    }));
+  }, [normalizedSearch, playbooksQuery.data, viewsQuery.data]);
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
+      <div className="flex min-w-0 items-center gap-2">
+        <SubjectAvatar subject={subject} size="md" />
+        <div className="truncate text-sm font-semibold text-gray-900">
+          {subject.name}
+        </div>
+      </div>
+
+      {!canUseMcp ? (
+        <button
+          type="button"
+          onClick={() => setExplaining({ action: "mcp:use", resource: {} })}
+          className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-left text-sm text-amber-800 hover:bg-amber-100"
+        >
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            {subject.name} may not use MCP (
+            <code className="text-xs">mcp:use</code>), so they can&apos;t use
+            any playbook or view through it.
+          </span>
+        </button>
+      ) : null}
+
+      <Input
+        placeholder="Search playbooks and views..."
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      />
+
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pb-3">
+        {error ? (
+          <ErrorBox error={error} />
+        ) : isLoading ? (
+          <div className="flex items-center gap-2 p-2 text-sm text-gray-500">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+            Reviewing access...
+          </div>
+        ) : (
+          sections.map((section) => {
+            const count = section.resources.filter(
+              (resource) =>
+                canUseMcp && allowed.has(`${resource.kind}:${resource.id}`)
+            ).length;
+
+            return (
+              <div key={section.title} className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  <span>{section.title}</span>
+                  <span className="font-normal normal-case">
+                    {count} of {section.resources.length} allowed
+                  </span>
+                </div>
+                {section.resources.length === 0 ? (
+                  <div className="p-2 text-sm text-gray-500">
+                    No {section.title.toLowerCase()} found
+                  </div>
+                ) : (
+                  <div className="overflow-hidden rounded-md border border-gray-200">
+                    {section.resources.map((resource) => (
+                      <button
+                        key={resource.id}
+                        type="button"
+                        onClick={() =>
+                          // Without mcp:use, that is what refuses every resource
+                          setExplaining(
+                            canUseMcp
+                              ? {
+                                  action: ACTIONS[resource.kind],
+                                  resource: { [resource.kind]: resource.id },
+                                  resourceLabel: resource.name
+                                }
+                              : { action: "mcp:use", resource: {} }
+                          )
+                        }
+                        className="flex w-full items-center gap-2 border-b border-gray-200 p-3 text-left last:border-b-0 hover:bg-gray-50"
+                      >
+                        <Icon
+                          name={resource.icon}
+                          className="h-4 w-4 text-gray-500"
+                        />
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-900">
+                          {resource.name}
+                        </span>
+                        <EffectiveAccessBadge
+                          isAllowed={
+                            canUseMcp &&
+                            allowed.has(`${resource.kind}:${resource.id}`)
+                          }
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <AccessExplanationSheet
+        subject={subject}
+        check={explaining}
+        onClose={() => setExplaining(undefined)}
+      />
+    </div>
   );
 }

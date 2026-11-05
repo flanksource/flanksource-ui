@@ -63,6 +63,7 @@ import { PermissionsCheckAccessPage } from "./pages/Settings/PermissionsCheckAcc
 import McpPlaybooksPage from "./pages/Settings/mcp/McpPlaybooksPage";
 import McpViewsPage from "./pages/Settings/mcp/McpViewsPage";
 import McpSubjectAccessPage from "./pages/Settings/mcp/McpSubjectAccessPage";
+import McpAccessPage from "./pages/Settings/mcp/McpAccessPage";
 import ScopesPage from "./pages/Settings/ScopesPage";
 import RolesPage from "./pages/Settings/RolesPage";
 import RoleBindingsPage from "./pages/Settings/RoleBindingsPage";
@@ -1037,10 +1038,19 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={<Navigate to="/settings/mcp" replace />}
           />
           <Route
+            path="access"
+            element={withAuthorizationAccessCheck(
+              <McpAccessPage />,
+              tables.access_review,
+              "read",
+              true
+            )}
+          />
+          <Route
             path="playbooks"
             element={withAuthorizationAccessCheck(
               <McpPlaybooksPage />,
-              tables.role_bindings,
+              tables.access_review,
               "read",
               true
             )}
@@ -1049,7 +1059,7 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             path="views"
             element={withAuthorizationAccessCheck(
               <McpViewsPage />,
-              tables.role_bindings,
+              tables.access_review,
               "read",
               true
             )}
@@ -1474,5 +1484,5 @@ function McpIndexRedirect() {
   const tab = MCP_TAB_RESOURCES.find((tab) =>
     canOpenPermissionsTab(tab, access, access_actions)
   );
-  return <Navigate to={tab?.path ?? "/settings/mcp/playbooks"} replace />;
+  return <Navigate to={tab?.path ?? "/settings/mcp/access"} replace />;
 }

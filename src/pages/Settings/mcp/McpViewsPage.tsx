@@ -1,28 +1,18 @@
-import { fetchMcpRunPermissions } from "@flanksource-ui/api/services/permissions";
 import { getAllViews } from "@flanksource-ui/api/services/views";
-import { PermissionsSummary } from "@flanksource-ui/api/types/permissions";
-import McpTabsLinks, {
-  MCP_ACCESS_READ_ONLY
-} from "@flanksource-ui/components/MCP/McpTabsLinks";
-import SubjectSelectorPanel, {
-  SubjectAccess
-} from "@flanksource-ui/components/Permissions/SubjectSelectorPanel";
+import McpSubjectAccessList from "@flanksource-ui/components/MCP/McpSubjectAccessList";
+import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
 import { Input } from "@flanksource-ui/components/ui/input";
 import useDebouncedValue from "@flanksource-ui/hooks/useDebounce";
-import { useMcpResourcePermissions } from "@flanksource-ui/lib/permissions/useMcpResourcePermissions";
 import { Icon } from "@flanksource-ui/ui/Icons/Icon";
 import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { useEffect, useMemo, useState } from "react";
-
-const getViewRefs = (permission: PermissionsSummary) =>
-  permission.object_selector?.views ?? [];
 
 export default function McpViewsPage() {
   const {
     isLoading,
     data: viewsResponse,
-    refetch,
-    isRefetching
+    error
   } = useQuery({
     queryKey: ["mcp", "views", "all"],
     queryFn: async () => getAllViews([{ id: "name", desc: false }], 0, 1000)
@@ -30,54 +20,12 @@ export default function McpViewsPage() {
 
   const views = useMemo(() => viewsResponse?.data ?? [], [viewsResponse?.data]);
 
-  const {
-    globalOverrideByResource,
-    selectedResource: selectedView,
-    setSelectedResourceId,
-    mutatingResourceId,
-    setGlobalOverride,
-    setSelectiveSubjectAccess,
-    isSettingSelectiveSubjectAccess,
-    mutatingSubjectId,
-    allowSelectiveAccess,
-    isAllowingSelective,
-    loading,
-    isInitialLoading,
-    preselectedSubjectAccess,
-    refetch: refetchAll
-  } = useMcpResourcePermissions({
-    resources: views,
-    isResourcesLoading: isLoading,
-    isResourcesRefetching: isRefetching,
-    refetchResources: refetch,
-    permissionsQueryKey: ["mcp", "views", "permissions"],
-    fetchPermissions: fetchMcpRunPermissions,
-    getRefs: getViewRefs,
-    objectSelectorKey: "views"
-  });
+  const [selectedId, setSelectedResourceId] = useState<string | null>(null);
+  const selectedView = views.find((item) => item.id === selectedId);
 
-  const [isSubjectPanelSwitching, setIsSubjectPanelSwitching] = useState(false);
   const [viewSearch, setViewSearch] = useState("");
 
   const debouncedSearch = useDebouncedValue(viewSearch, 200) ?? "";
-
-  useEffect(() => {
-    if (!selectedView) {
-      setIsSubjectPanelSwitching(false);
-      return;
-    }
-
-    // SubjectSelectorPanel remounts when the selected view changes (key={selectedView.id}).
-    // Keep this overlay on briefly so the switch feels intentional instead of a flicker.
-    setIsSubjectPanelSwitching(true);
-    const timer = setTimeout(() => {
-      setIsSubjectPanelSwitching(false);
-    }, 220);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [selectedView?.id]);
 
   const groupedViews = useMemo(() => {
     const grouped = new Map<string, typeof views>();
@@ -132,23 +80,8 @@ export default function McpViewsPage() {
   }, [selectedView?.id, setSelectedResourceId, visibleViews]);
 
   return (
-    <McpTabsLinks
-      activeTab="Views"
-      loading={loading}
-      isInitialLoading={isInitialLoading}
-      loadingText="Loading MCP views..."
-      onRefresh={refetchAll}
-    >
+    <McpTabsLinks activeTab="Views">
       <div className="flex h-full w-full flex-1 flex-col gap-4 p-6 pb-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            View permissions
-          </h3>
-          <p className="text-sm text-gray-600">
-            Control which views MCP clients can invoke through this gateway.
-          </p>
-        </div>
-
         <div className="flex min-h-0 flex-1 gap-4">
           <div className="flex w-[320px] shrink-0 flex-col">
             <Input
@@ -158,7 +91,15 @@ export default function McpViewsPage() {
             />
 
             <div className="mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto">
-              {groupedViews.length === 0 ? (
+              {error ? (
+                <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {getErrorMessage(error)}
+                </div>
+              ) : isLoading ? (
+                <div className="px-2 py-1.5 text-sm text-gray-500">
+                  Loading...
+                </div>
+              ) : groupedViews.length === 0 ? (
                 <div className="px-2 py-1.5 text-sm text-gray-500">
                   No views found
                 </div>
@@ -204,57 +145,33 @@ export default function McpViewsPage() {
           {/* Keep a stable right-column width/height for both states so layout doesn't jump. */}
           <div className="min-h-0 min-w-0 flex-1 lg:max-w-3xl">
             {selectedView ? (
-              <div className="relative h-full">
-                <SubjectSelectorPanel
+              <div className="flex h-full min-h-0 flex-col">
+                <McpSubjectAccessList
                   key={selectedView.id}
-                  headerEntity={{
-                    name: selectedView.spec?.title || selectedView.name,
-                    icon: selectedView.spec?.icon || "workflow"
+                  check={{
+                    action: "read",
+                    resource: { view: selectedView.id },
+                    resourceLabel: selectedView.spec?.title || selectedView.name
                   }}
-                  effectiveAccessResource={{
-                    id: selectedView.id,
-                    type: "view",
-                    action: "mcp:run"
-                  }}
-                  preselectedSubjectAccess={preselectedSubjectAccess}
-                  readOnly={MCP_ACCESS_READ_ONLY}
-                  bulkAccess={
-                    (globalOverrideByResource.get(selectedView.id) === "allow"
-                      ? "allow"
-                      : globalOverrideByResource.get(selectedView.id) === "deny"
-                        ? "deny"
-                        : "default") as SubjectAccess
-                  }
-                  isSubmitting={
-                    isSettingSelectiveSubjectAccess || isAllowingSelective
-                  }
-                  isBulkSubmitting={mutatingResourceId === selectedView.id}
-                  mutatingSubjectId={mutatingSubjectId}
-                  onSetBulkAccess={(access) =>
-                    setGlobalOverride(
-                      selectedView,
-                      access === "allow"
-                        ? "allow"
-                        : access === "deny"
-                          ? "deny"
-                          : "none"
-                    )
-                  }
-                  onSetSubjectAccess={(subject, access) =>
-                    setSelectiveSubjectAccess(selectedView, subject, access)
-                  }
-                  onSetManySubjectAccess={(selections) =>
-                    allowSelectiveAccess(selectedView, selections)
+                  requireMcpUse
+                  header={
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-700">
+                        <Icon
+                          name={selectedView.spec?.icon || "workflow"}
+                          className="h-4 w-4"
+                        />
+                      </span>
+                      <div className="truncate text-sm font-semibold text-gray-900">
+                        {selectedView.spec?.title || selectedView.name}
+                      </div>
+                    </div>
                   }
                 />
-
-                {isSubjectPanelSwitching ? (
-                  <div className="pointer-events-none absolute inset-0 z-10 rounded-md bg-white/20 backdrop-blur-[1.5px]" />
-                ) : null}
               </div>
-            ) : (
+            ) : error || isLoading ? null : (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
-                Select a view row to manage custom subject access.
+                Select a view to see who may use it through MCP.
               </div>
             )}
           </div>
