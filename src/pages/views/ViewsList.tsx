@@ -5,6 +5,7 @@ import MRTDataTable from "@flanksource-ui/ui/MRTDataTable/MRTDataTable";
 import clsx from "clsx";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { View } from "@flanksource-ui/api/services/views";
+import { Link } from "react-router-dom";
 
 type ViewsListProps = {
   data: View[];
@@ -17,7 +18,13 @@ type ViewsListProps = {
 const NameCell = ({ row, renderedCellValue: getValue }: MRTCellProps<View>) => {
   return (
     <div className="flex flex-row items-center space-x-2">
-      <div className="text-sm font-medium">{getValue}</div>
+      <Link
+        to={`/views/${row.original.id}`}
+        className="text-sm font-medium text-blue-600 hover:underline"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {getValue}
+      </Link>
     </div>
   );
 };
