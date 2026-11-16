@@ -13,8 +13,6 @@ export type ServiceAccount = {
   id: string;
   name: string;
   created_at: string;
-  /** Whoever created it, recorded for audit only. */
-  created_by?: PersonInfo | null;
 };
 
 export type ServiceAccountDetail = ServiceAccount & {

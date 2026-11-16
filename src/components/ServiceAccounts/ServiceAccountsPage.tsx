@@ -8,7 +8,6 @@ import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { toastSuccess } from "@flanksource-ui/components/Toast/toast";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
 import {
   BreadcrumbNav,
   BreadcrumbRoot
@@ -171,18 +170,6 @@ export default function ServiceAccountsPage() {
   const columns = useMemo<MRT_ColumnDef<ServiceAccount>[]>(
     () => [
       { header: "Name", accessorKey: "name", size: 200 },
-      {
-        header: "Created By",
-        id: "created_by",
-        accessorFn: (row) => row.created_by?.name,
-        size: 100,
-        Cell: ({ row }) =>
-          row.original.created_by ? (
-            <Avatar user={row.original.created_by} showName />
-          ) : (
-            <span className="text-gray-500">Not recorded</span>
-          )
-      },
       {
         header: "Created",
         accessorKey: "created_at",

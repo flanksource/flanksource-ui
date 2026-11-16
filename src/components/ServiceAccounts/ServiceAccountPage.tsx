@@ -8,7 +8,6 @@ import { summarizeSubjects } from "@flanksource-ui/components/RoleBindings/RoleB
 import { useUser } from "@flanksource-ui/context";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import { Age } from "@flanksource-ui/ui/Age";
-import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Badge } from "@flanksource-ui/ui/Badge/Badge";
 import {
   BreadcrumbChild,
@@ -133,14 +132,6 @@ function ServiceAccountOverview({
         <dt className="text-gray-500">Created</dt>
         <dd>
           <Age from={account.created_at} suffix />
-        </dd>
-        <dt className="text-gray-500">Created By</dt>
-        <dd>
-          {account.created_by ? (
-            <Avatar user={account.created_by} showName />
-          ) : (
-            <span className="text-gray-500">Not recorded</span>
-          )}
         </dd>
       </dl>
 
