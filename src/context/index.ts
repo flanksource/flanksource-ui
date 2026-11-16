@@ -107,6 +107,7 @@ export const FakeUser = (
   };
   const access_actions = {
     "person:manage": true,
+    "service-account:manage": true,
     "property:manage": true,
     "mcp:use": true,
     "event:read": true,

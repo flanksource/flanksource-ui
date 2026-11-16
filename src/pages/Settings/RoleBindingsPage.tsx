@@ -6,6 +6,7 @@ import PermissionsTabsLinks from "@flanksource-ui/components/Permissions/Permiss
 import AddRoleBindingButton from "@flanksource-ui/components/RoleBindings/Forms/AddRoleBindingButton";
 import RoleBindingForm from "@flanksource-ui/components/RoleBindings/Forms/RoleBindingForm";
 import RoleBindingsTable from "@flanksource-ui/components/RoleBindings/RoleBindingsTable";
+import { useRoleBindingSubjectFilter } from "@flanksource-ui/components/RoleBindings/useRoleBindingSubjectFilter";
 import { useRbacNamespaceFilter } from "@flanksource-ui/components/Permissions/Rbac/useRbacNamespaceFilter";
 import { tables } from "@flanksource-ui/context/UserAccessContext/permissions";
 import {
@@ -16,13 +17,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function RoleBindingsPage() {
+  const { subject, subjectFilter, subjectNote } = useRoleBindingSubjectFilter();
   const {
     data: roleBindings,
     isLoading,
     isError,
     error,
     refetch
-  } = useRoleBindingsQuery();
+  } = useRoleBindingsQuery(subject);
   const { filteredItems, namespaceFilter } =
     useRbacNamespaceFilter(roleBindings);
   const [selectedRoleBinding, setSelectedRoleBinding] = useState<
@@ -82,7 +84,7 @@ export default function RoleBindingsPage() {
             resource={tables.role_bindings}
             action="create"
           >
-            <AddRoleBindingButton />
+            <AddRoleBindingButton subject={subject} />
           </AuthorizationAccessCheck>
         }
       >
@@ -112,7 +114,9 @@ export default function RoleBindingsPage() {
               minMenuWidth="250px"
               dropDownClassNames="w-auto min-w-[250px]"
             />
+            {subjectFilter}
           </div>
+          {subjectNote && <div className="pt-2">{subjectNote}</div>}
           <div className="flex h-full flex-col overflow-y-auto py-4">
             {isError ? (
               <div className="flex flex-col items-center justify-center py-12">

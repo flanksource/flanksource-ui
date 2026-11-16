@@ -4,6 +4,7 @@ import {
   roleBindingResourceSubjectKinds
 } from "@flanksource-ui/api/types/roleBindings";
 import { getHumanPeople } from "@flanksource-ui/api/services/users";
+import { getServiceAccountNames } from "@flanksource-ui/api/services/serviceAccounts";
 import FormikTextInput from "@flanksource-ui/components/Forms/Formik/FormikTextInput";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
 import { useQuery } from "@tanstack/react-query";
@@ -23,18 +24,28 @@ import {
 import FormikCreatableMultiSelect from "./FormikCreatableMultiSelect";
 
 // The fields of spec.subjects
-type SubjectKind = "people" | "teams" | "oidc" | RoleBindingResourceSubjectKind;
+type SubjectKind =
+  | "people"
+  | "teams"
+  | "serviceAccounts"
+  | "oidc"
+  | RoleBindingResourceSubjectKind;
 
 const subjectKinds: { kind: SubjectKind; label: string; hint: string }[] = [
   {
     kind: "people",
     label: "People",
-    hint: 'Mission Control human users, by verified email. Select "All human users" to send the standalone * wildcard. Agents and external-provider users do not match.'
+    hint: 'Mission Control human users, by verified email. Select "All human users" to send the standalone * wildcard. Agents, service accounts and external-provider users do not match.'
   },
   {
     kind: "teams",
     label: "Teams",
     hint: "Every member of the teams, as members join and leave."
+  },
+  {
+    kind: "serviceAccounts",
+    label: "Service Accounts",
+    hint: "Service accounts, by exact name. A name that no service account has yet selects the account once it's created."
   },
   {
     kind: "oidc",
@@ -132,6 +143,29 @@ function TeamsField() {
       options={options}
       isLoading={isLoading}
       placeholder="Select teams..."
+    />
+  );
+}
+
+function ServiceAccountsField() {
+  const { data: names, isLoading } = useQuery(
+    ["people", "service-accounts"],
+    getServiceAccountNames
+  );
+
+  const options = useMemo(
+    () => (names ?? []).map((name) => ({ value: name, label: name })),
+    [names]
+  );
+
+  return (
+    <FormikCreatableMultiSelect
+      name="serviceAccounts"
+      label="Service Accounts"
+      hideLabel
+      options={options}
+      isLoading={isLoading}
+      placeholder="Select service accounts or type a name..."
     />
   );
 }
@@ -241,6 +275,8 @@ function SubjectField({ kind }: { kind: SubjectKind }) {
       return <PeopleField />;
     case "teams":
       return <TeamsField />;
+    case "serviceAccounts":
+      return <ServiceAccountsField />;
     case "oidc":
       return <OIDCField />;
     default:

@@ -35,6 +35,7 @@ export type RoleBindingFormValues = {
   role: string;
   people: string[];
   teams: string[];
+  serviceAccounts: string[];
   oidc: { provider: string; match: string }[];
   resourceSubjects: Record<
     RoleBindingResourceSubjectKind,
@@ -50,6 +51,8 @@ const dnsSubdomain =
 const reference =
   /^([a-z0-9]([-a-z0-9]*[a-z0-9])?\/)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const email = /^[^\s@<>]+@[^\s@<>]+$/;
+// A service account's name is a DNS-1123 label
+const dnsLabel = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 const pattern = /[*!,]/;
 
 function emptyResourceSubjects(): RoleBindingFormValues["resourceSubjects"] {
@@ -81,6 +84,7 @@ export function roleBindingToFormValues(
     role: absolute(binding?.role),
     people: subjects.people ?? [],
     teams: subjects.teams ?? [],
+    serviceAccounts: subjects.serviceAccounts ?? [],
     oidc: (subjects.oidc ?? []).map((subject) => ({ ...subject })),
     resourceSubjects,
     constraint: {
@@ -101,6 +105,7 @@ export function formValuesToSubjects(
   const subjects: RoleBindingSubjects = {
     people: nonEmpty(values.people),
     teams: nonEmpty(values.teams),
+    serviceAccounts: nonEmpty(values.serviceAccounts),
     oidc: nonEmpty(
       values.oidc.map((subject) => ({
         provider: subject.provider.trim(),
@@ -174,6 +179,7 @@ export type RoleBindingFormErrors = {
   role?: string;
   subjects?: string;
   people?: string;
+  serviceAccounts?: string;
   oidc?: ({ provider?: string; match?: string } | undefined)[];
   resourceSubjects?: Partial<
     Record<
@@ -220,6 +226,13 @@ export function validateRoleBindingForm(
     errors.people = '"All human users" cannot be combined with email addresses';
   } else if (invalidPerson) {
     errors.people = `${invalidPerson} isn't an email address`;
+  }
+
+  const invalidServiceAccount = values.serviceAccounts.find(
+    (name) => name.length > 63 || !dnsLabel.test(name)
+  );
+  if (invalidServiceAccount) {
+    errors.serviceAccounts = `${invalidServiceAccount} isn't a service account name: use an exact name of lowercase letters, numbers and '-', with no "*"`;
   }
 
   const oidcErrors = values.oidc.map((subject) => {

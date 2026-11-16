@@ -1,8 +1,14 @@
+import { RoleBindingNamedSubject } from "@flanksource-ui/api/types/roleBindings";
 import { useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import RoleBindingForm from "./RoleBindingForm";
 
-export default function AddRoleBindingButton() {
+export default function AddRoleBindingButton({
+  subject
+}: {
+  // Filled in as the new binding's subject
+  subject?: RoleBindingNamedSubject;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -15,7 +21,11 @@ export default function AddRoleBindingButton() {
         <AiFillPlusCircle size={32} className="text-blue-600" />
       </button>
       {isOpen && (
-        <RoleBindingForm isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <RoleBindingForm
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          subject={subject}
+        />
       )}
     </>
   );

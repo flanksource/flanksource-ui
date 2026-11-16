@@ -27,6 +27,9 @@ export function summarizeSubjects(subjects: RoleBindingSubjects = {}) {
     labels.push(plural(people.length, "person").replace("persons", "people"));
   }
   (subjects.teams ?? []).forEach((team) => labels.push(`team ${team}`));
+  (subjects.serviceAccounts ?? []).forEach((name) =>
+    labels.push(`service account ${name}`)
+  );
   (subjects.roles ?? []).forEach((role) => labels.push(`unsupported: ${role}`));
   (subjects.oidc ?? []).forEach((subject) =>
     labels.push(`${subject.provider} users`)

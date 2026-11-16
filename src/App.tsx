@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import { IconType } from "react-icons";
 import { AiFillHeart } from "react-icons/ai";
-import { BsLink, BsToggles } from "react-icons/bs";
+import { BsLink, BsRobot, BsToggles } from "react-icons/bs";
 import { FaArchive, FaBell, FaPlug, FaTasks } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
 import { ImLifebuoy } from "react-icons/im";
@@ -321,6 +321,14 @@ const AgentsPage = dynamic(
   () => import("@flanksource-ui/components/Agents/AgentPage")
 );
 
+const ServiceAccountsPage = dynamic(
+  () => import("@flanksource-ui/components/ServiceAccounts/ServiceAccountsPage")
+);
+
+const ServiceAccountPage = dynamic(
+  () => import("@flanksource-ui/components/ServiceAccounts/ServiceAccountPage")
+);
+
 const TokensPage = dynamic(
   () => import("@flanksource-ui/components/Tokens/TokensPage")
 );
@@ -500,6 +508,13 @@ const settingsNav: SettingsNavigationItems = {
       icon: MdOutlineSupportAgent,
       featureName: features.agents,
       resourceName: tables.agents
+    },
+    {
+      name: "Service Accounts",
+      href: "/settings/service-accounts",
+      icon: BsRobot,
+      featureName: features["settings.permissions"],
+      resourceName: tables.service_accounts
     },
     {
       name: "Personal access tokens",
@@ -967,6 +982,36 @@ export function IncidentManagerRoutes({ sidebar }: { sidebar: ReactNode }) {
             element={withAuthorizationAccessCheck(
               <AgentsPage />,
               tables.agents,
+              "read",
+              true
+            )}
+          />
+        </Route>
+
+        <Route path="service-accounts">
+          <Route
+            index
+            element={withAuthorizationAccessCheck(
+              <ServiceAccountsPage />,
+              tables.service_accounts,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path=":name"
+            element={withAuthorizationAccessCheck(
+              <ServiceAccountPage tab="Overview" />,
+              tables.service_accounts,
+              "read",
+              true
+            )}
+          />
+          <Route
+            path=":name/tokens"
+            element={withAuthorizationAccessCheck(
+              <ServiceAccountPage tab="Tokens" />,
+              tables.service_accounts,
               "read",
               true
             )}

@@ -8,81 +8,93 @@ import {
   TooltipTrigger
 } from "@flanksource-ui/components/ui/tooltip";
 
-export const tokensTableColumns: MRT_ColumnDef<Token>[] = [
-  {
-    header: "Name",
-    accessorKey: "name",
-    size: 200,
-    enableSorting: true
-  },
-  {
-    header: "Role Bindings",
-    id: "role_bindings",
-    size: 200,
-    enableSorting: false,
-    Cell: ({ row }) => {
-      const bindings = row.original.role_bindings ?? [];
-      if (bindings.length === 0) {
-        return <span className="text-sm text-orange-700">None</span>;
-      }
-      return (
-        <div className="flex flex-wrap gap-1">
-          {bindings.map((binding) =>
-            binding.ready ? (
-              <span
-                key={binding.id}
-                className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700"
-              >
-                {binding.role}
-              </span>
-            ) : (
-              <TooltipProvider key={binding.id} delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span
-                      // Focusable so keyboard users can open the reason
-                      tabIndex={0}
-                      className="cursor-help rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700 line-through focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
-                    >
-                      {binding.role}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-sm">
-                    <div className="font-semibold">
-                      Not in effect
-                      {binding.error_reason ? `: ${binding.error_reason}` : ""}
-                    </div>
-                    {binding.error && <div>{binding.error}</div>}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )
-          )}
-        </div>
-      );
-    }
-  },
-  {
-    header: "Created",
-    accessorKey: "created_at",
-    Cell: MRTDateCell,
-    sortingFn: "datetime",
-    maxSize: 50
-  },
-  {
-    header: "Expires At",
-    accessorKey: "expires_at",
-    Cell: (props) => {
-      const expiresAt = props.row.original.expires_at;
-      return expiresAt ? (
-        <MRTDateCell {...props} />
-      ) : expiresAt === null ? (
-        "Never"
-      ) : (
-        "Not provided"
-      );
+/** What every listed token has, whoever it signs in as. */
+export type ListedToken = Pick<
+  Token,
+  "id" | "name" | "created_at" | "expires_at" | "role_bindings"
+>;
+
+export function tokenColumns<T extends ListedToken>(): MRT_ColumnDef<T>[] {
+  return [
+    {
+      header: "Name",
+      accessorKey: "name",
+      size: 200,
+      enableSorting: true
     },
-    sortingFn: "datetime",
-    maxSize: 50
-  }
-];
+    {
+      header: "Role Bindings",
+      id: "role_bindings",
+      size: 200,
+      enableSorting: false,
+      Cell: ({ row }) => {
+        const bindings = row.original.role_bindings ?? [];
+        if (bindings.length === 0) {
+          return <span className="text-sm text-orange-700">None</span>;
+        }
+        return (
+          <div className="flex flex-wrap gap-1">
+            {bindings.map((binding) =>
+              binding.ready ? (
+                <span
+                  key={binding.id}
+                  className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700"
+                >
+                  {binding.role}
+                </span>
+              ) : (
+                <TooltipProvider key={binding.id} delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        // Focusable so keyboard users can open the reason
+                        tabIndex={0}
+                        className="cursor-help rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700 line-through focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                      >
+                        {binding.role}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-sm">
+                      <div className="font-semibold">
+                        Not in effect
+                        {binding.error_reason
+                          ? `: ${binding.error_reason}`
+                          : ""}
+                      </div>
+                      {binding.error && <div>{binding.error}</div>}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )
+            )}
+          </div>
+        );
+      }
+    },
+    {
+      header: "Created",
+      accessorKey: "created_at",
+      Cell: MRTDateCell,
+      sortingFn: "datetime",
+      maxSize: 50
+    },
+    {
+      header: "Expires At",
+      accessorKey: "expires_at",
+      Cell: (props) => {
+        const expiresAt = props.row.original.expires_at;
+        return expiresAt ? (
+          <MRTDateCell {...props} />
+        ) : expiresAt === null ? (
+          "Never"
+        ) : (
+          "Not provided"
+        );
+      },
+      sortingFn: "datetime",
+      maxSize: 50
+    }
+  ];
+}
+
+export const tokensTableColumns = tokenColumns<Token>();

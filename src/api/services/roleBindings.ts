@@ -7,12 +7,16 @@ import {
 import {
   RoleBindingDB,
   RoleBindingDisplay,
+  RoleBindingNamedSubject,
   RoleBindingSpec
 } from "../types/roleBindings";
 import { createRbacObject, updateRbacObject } from "./rbacResources";
 
 // Role bindings are read through PostgREST, which can join their author.
-export async function getRoleBindings(): Promise<RoleBindingDisplay[]> {
+// With a subject, only the bindings whose subjects list it, by JSON containment on subjects.
+export async function getRoleBindings(
+  subject?: RoleBindingNamedSubject
+): Promise<RoleBindingDisplay[]> {
   const response = await IncidentCommander.get<RoleBindingDisplay[]>(
     "/role_bindings",
     {
@@ -20,6 +24,11 @@ export async function getRoleBindings(): Promise<RoleBindingDisplay[]> {
         select: `*,created_by(${AVATAR_INFO})`,
         deleted_at: "is.null",
         namespace: `neq.${RBAC_ACCESS_TOKENS_NAMESPACE}`,
+        ...(subject
+          ? {
+              subjects: `cs.${JSON.stringify({ [subject.field]: [subject.name] })}`
+            }
+          : {}),
         order: "namespace,name"
       }
     }
