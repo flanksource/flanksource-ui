@@ -1,14 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { RoleBindingNamedSubject } from "../types/roleBindings";
 import {
   createRoleBinding,
   getRoleBindings,
   updateRoleBinding
 } from "../services/roleBindings";
 
-export function useRoleBindingsQuery() {
+export function useRoleBindingsQuery(subject?: RoleBindingNamedSubject) {
   return useQuery({
-    queryKey: ["role-bindings"],
-    queryFn: getRoleBindings
+    queryKey: ["role-bindings", subject?.field, subject?.name],
+    queryFn: () => getRoleBindings(subject)
   });
 }
 

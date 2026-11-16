@@ -3,6 +3,7 @@ import {
   ServiceAccountDetail
 } from "@flanksource-ui/api/services/serviceAccounts";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
+import { roleBindingsPathForSubject } from "@flanksource-ui/api/types/roleBindings";
 import { RbacObjectStatus } from "@flanksource-ui/components/Permissions/Rbac/RbacObjectStatus";
 import { summarizeSubjects } from "@flanksource-ui/components/RoleBindings/RoleBindingsTable";
 import { useUser } from "@flanksource-ui/context";
@@ -21,7 +22,7 @@ import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLo
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaUserShield } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ServiceAccountKubeconfigModal, {
@@ -44,18 +45,14 @@ function ServiceAccountRoleBindings({
   account: ServiceAccountDetail;
 }) {
   const bindings = account.role_bindings ?? [];
+  const filteredPath = roleBindingsPathForSubject({
+    field: "serviceAccounts",
+    name: account.name
+  });
 
   return (
     <section className="flex flex-col gap-2">
-      <div className="flex flex-row items-center justify-between">
-        <h3 className="text-base font-semibold text-gray-900">Role Bindings</h3>
-        <Link
-          to="/settings/permissions/role-bindings"
-          className="text-sm text-blue-600 hover:underline"
-        >
-          Manage role bindings
-        </Link>
-      </div>
+      <h3 className="text-base font-semibold text-gray-900">Role Bindings</h3>
       <p className="text-sm text-gray-500">
         {account.name} can do what these bindings grant. To change its access,
         edit or add a RoleBinding that names it in serviceAccounts.
@@ -79,7 +76,8 @@ function ServiceAccountRoleBindings({
               <tr key={binding.id} className="border-b border-gray-100">
                 <td className="px-2 py-2">
                   <Link
-                    to={`/settings/permissions/role-bindings?id=${binding.id}`}
+                    // Opens the binding over the bindings that name the account
+                    to={`${filteredPath}&id=${binding.id}`}
                     className="flex items-center gap-2 text-blue-600 hover:underline"
                   >
                     {binding.name}
@@ -201,12 +199,29 @@ export default function ServiceAccountPage({
         }
         extra={
           account && (
-            <Button
-              text="Delete"
-              icon={<FaTrash />}
-              className="btn-danger"
-              onClick={() => setIsDeleteOpen(true)}
-            />
+            <div className="flex flex-row gap-2">
+              {canReadRoleBindings && (
+                <Button
+                  text="Manage role bindings"
+                  icon={<FaUserShield />}
+                  className="btn-white"
+                  onClick={() =>
+                    navigate(
+                      roleBindingsPathForSubject({
+                        field: "serviceAccounts",
+                        name: account.name
+                      })
+                    )
+                  }
+                />
+              )}
+              <Button
+                text="Delete"
+                icon={<FaTrash />}
+                className="btn-danger"
+                onClick={() => setIsDeleteOpen(true)}
+              />
+            </div>
           )
         }
         onRefresh={() =>

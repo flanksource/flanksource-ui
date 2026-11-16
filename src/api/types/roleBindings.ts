@@ -40,6 +40,33 @@ export type RoleBindingSubjects = {
   Record<RoleBindingResourceSubjectKind, RoleBindingResourceSubject[]>
 >;
 
+// A subject as a binding names it: an email in people, a team name in teams, or a service account name
+// in serviceAccounts. A binding names it only when that field lists it exactly; "*" doesn't name anyone.
+export type RoleBindingNamedSubject = {
+  field: "people" | "teams" | "serviceAccounts";
+  name: string;
+};
+
+// The search param of /settings/permissions/role-bindings that filters by each kind of subject
+export const roleBindingSubjectParams: Record<
+  RoleBindingNamedSubject["field"],
+  string
+> = {
+  people: "person",
+  teams: "team",
+  serviceAccounts: "serviceAccount"
+};
+
+export function roleBindingsPathForSubject({
+  field,
+  name
+}: RoleBindingNamedSubject) {
+  const params = new URLSearchParams({
+    [roleBindingSubjectParams[field]]: name
+  });
+  return `/settings/permissions/role-bindings?${params}`;
+}
+
 // Narrows every allow rule of the Role for the binding's subjects, one side at a time:
 // an operation's resource (or target) must also be in the constraint's Scope.
 // At least one of resource and target is set. Deny rules are never narrowed.

@@ -12,7 +12,8 @@ import {
 } from "@flanksource-ui/api/types/rbacResources";
 import {
   RoleBindingDB,
-  RoleBindingDisplay
+  RoleBindingDisplay,
+  RoleBindingNamedSubject
 } from "@flanksource-ui/api/types/roleBindings";
 import FormikCheckbox from "@flanksource-ui/components/Forms/Formik/FormikCheckbox";
 import FormikTextArea from "@flanksource-ui/components/Forms/Formik/FormikTextArea";
@@ -53,12 +54,15 @@ type RoleBindingFormProps = {
   isOpen: boolean;
   onClose: () => void;
   data?: RoleBindingDisplay;
+  // A new binding starts with this subject
+  subject?: RoleBindingNamedSubject;
 };
 
 export default function RoleBindingForm({
   isOpen,
   onClose,
-  data
+  data,
+  subject
 }: RoleBindingFormProps) {
   const readOnlyReason = getRbacReadOnlyReason("role-bindings", data);
   const isReadOnly = !!readOnlyReason;
@@ -110,7 +114,14 @@ export default function RoleBindingForm({
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
       <Formik<RoleBindingFormValues>
-        initialValues={roleBindingToFormValues(data)}
+        initialValues={
+          !data && subject
+            ? {
+                ...roleBindingToFormValues(),
+                [subject.field]: [subject.name]
+              }
+            : roleBindingToFormValues(data)
+        }
         onSubmit={handleSubmit}
         validate={validateRoleBindingForm}
       >
