@@ -20,7 +20,7 @@ import { Head } from "@flanksource-ui/ui/Head";
 import { SearchLayout } from "@flanksource-ui/ui/Layout/SearchLayout";
 import FormSkeletonLoader from "@flanksource-ui/ui/SkeletonLoader/FormSkeletonLoader";
 import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
@@ -173,6 +173,7 @@ export default function ServiceAccountPage({
 }) {
   const { name = "" } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { access } = useUser();
   const roleBindingsRead = access?.[tables.role_bindings]?.read;
   const canReadRoleBindings =
@@ -185,8 +186,7 @@ export default function ServiceAccountPage({
     data: account,
     isLoading,
     isRefetching,
-    error,
-    refetch
+    error
   } = useQuery({
     queryKey: ["service-accounts", name],
     queryFn: () => getServiceAccount(name)
@@ -218,7 +218,9 @@ export default function ServiceAccountPage({
             />
           )
         }
-        onRefresh={refetch}
+        onRefresh={() =>
+          queryClient.invalidateQueries(["service-accounts", name])
+        }
         loading={isLoading || isRefetching}
         contentClass="p-0 h-full overflow-y-hidden"
       >
