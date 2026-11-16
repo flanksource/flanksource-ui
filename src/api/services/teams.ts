@@ -1,5 +1,4 @@
-import { IncidentCommander } from "../axios";
-import { resolvePostGrestRequestWithPagination } from "../resolve";
+import { apiBase, IncidentCommander } from "../axios";
 import { Team, User } from "../types/users";
 
 export const getTeam = async (id: string): Promise<Team | null> => {
@@ -36,22 +35,9 @@ export const getTeamMembers = async (
   return { data };
 };
 
-export const addUserToTeam = (teamId: string, userIds: string[]) => {
-  const payload = userIds.map((userId) => {
-    return {
-      team_id: teamId,
-      person_id: userId
-    };
-  });
-  return resolvePostGrestRequestWithPagination(
-    IncidentCommander.post(`/team_members`, payload)
-  );
-};
+// Members are written through /teams/:id/members, which only accepts people who can be team members; /db/team_members is read-only
+export const addUserToTeam = (teamId: string, personIds: string[]) =>
+  apiBase.post(`/teams/${teamId}/members`, { personIds });
 
-export const removeUserFromTeam = (teamId: string, userId: string) => {
-  return resolvePostGrestRequestWithPagination(
-    IncidentCommander.delete(
-      `/team_members?team_id=eq.${teamId}&person_id=eq.${userId}`
-    )
-  );
-};
+export const removeUserFromTeam = (teamId: string, personId: string) =>
+  apiBase.delete(`/teams/${teamId}/members/${personId}`);

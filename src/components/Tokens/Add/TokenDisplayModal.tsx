@@ -14,6 +14,8 @@ type TokenDisplayContentProps = {
   tokenResponse: CreateTokenResponse;
   formValues?: TokenFormValues;
   isMcp?: boolean;
+  /** Whose access the token is limited to; the caller's by default */
+  accessOwner?: string;
 };
 
 type Props = {
@@ -24,7 +26,8 @@ type Props = {
 export function TokenDisplayContent({
   tokenResponse,
   formValues,
-  isMcp = false
+  isMcp = false,
+  accessOwner
 }: TokenDisplayContentProps) {
   const [showToken, setShowToken] = useState(false);
 
@@ -67,7 +70,9 @@ export function TokenDisplayContent({
             ))}
           </div>
           <p className="text-sm text-gray-500">
-            This token is limited by both your current access and these roles.
+            This token is limited by both{" "}
+            {accessOwner ? `${accessOwner}'s access` : "your current access"}{" "}
+            and these roles.
           </p>
         </div>
       )}
@@ -144,7 +149,8 @@ export default function TokenDisplayModal({
   onClose,
   tokenResponse,
   formValues,
-  isMcp = false
+  isMcp = false,
+  accessOwner
 }: Props) {
   return (
     <Modal
@@ -158,6 +164,7 @@ export default function TokenDisplayModal({
           tokenResponse={tokenResponse}
           formValues={formValues}
           isMcp={isMcp}
+          accessOwner={accessOwner}
         />
       </div>
 

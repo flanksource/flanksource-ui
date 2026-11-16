@@ -94,11 +94,7 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   async function removeTeamMember(member: TeamMember) {
     setIsRemoving(true);
     try {
-      const { error } = await removeUserFromTeam(teamId, member.id);
-      if (error) {
-        toastError(error.message);
-        return;
-      }
+      await removeUserFromTeam(teamId, member.id);
       toastSuccess(`Removed ${member.name} from the team`);
       setMemberToRemove(undefined);
       fetchTeamMembers(teamId);
@@ -112,14 +108,10 @@ export function TeamMembers({ teamId }: TeamMembersProps) {
   async function addTeamMembers(people: User[]) {
     setIsAdding(true);
     try {
-      const { error } = await addUserToTeam(
+      await addUserToTeam(
         teamId,
         people.map((person) => person.id)
       );
-      if (error) {
-        toastError(error.message);
-        return;
-      }
       toastSuccess(
         people.length === 1
           ? `Added ${people[0].name} to the team`

@@ -31,5 +31,6 @@ export const tables = {
   jobs: "job:read",
   events: "event:read",
   mcp: "mcp:use",
-  access_review: "access:review"
+  access_review: "access:review",
+  service_accounts: "service-account:manage"
 };

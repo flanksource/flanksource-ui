@@ -21,16 +21,6 @@ export type TokenFormValues = Omit<CreateTokenRequest, "roles"> & {
   roles: string[];
 };
 
-type CreateTokenFormProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSuccess?: (
-    response: CreateTokenResponse,
-    formValues: TokenFormValues
-  ) => void;
-  isMcpSetup?: boolean;
-};
-
 type CreateTokenFormContentProps = {
   onSuccess?: (
     response: CreateTokenResponse,
@@ -39,9 +29,21 @@ type CreateTokenFormContentProps = {
   isMcpSetup?: boolean;
   showFooter?: boolean;
   formId?: string;
+  /** Creates the token; the caller's own by default */
+  createToken?: (request: CreateTokenRequest) => Promise<CreateTokenResponse>;
+  /** Whose access the token is limited to, e.g. a service account's */
+  accessOwner?: string;
 };
 
-const expiryOptions = [
+type CreateTokenFormProps = Omit<
+  CreateTokenFormContentProps,
+  "showFooter" | "formId"
+> & {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export const expiryOptions = [
   { label: "30 days", value: "30d" },
   { label: "90 days", value: "90d" },
   { label: "180 days", value: "180d" },
@@ -53,12 +55,14 @@ export function CreateTokenFormContent({
   onSuccess = () => {},
   isMcpSetup = false,
   showFooter = true,
-  formId
+  formId,
+  createToken: create = createToken,
+  accessOwner
 }: CreateTokenFormContentProps) {
   const [submitError, setSubmitError] = useState<unknown>(null);
 
   const { mutate: createTokenMutation, isLoading } = useMutation({
-    mutationFn: createToken,
+    mutationFn: create,
     onSuccess: () => {
       setSubmitError(null);
       toastSuccess("Token created successfully");
@@ -144,7 +148,10 @@ export function CreateTokenFormContent({
                   checkboxStyle="toggle"
                 />
 
-                <TokenRolesFieldsGroup isMcpSetup={isMcpSetup} />
+                <TokenRolesFieldsGroup
+                  isMcpSetup={isMcpSetup}
+                  accessOwner={accessOwner}
+                />
               </div>
             </div>
           </div>
@@ -177,8 +184,7 @@ export function CreateTokenFormContent({
 export default function CreateTokenForm({
   isOpen,
   onClose,
-  onSuccess = () => {},
-  isMcpSetup = false
+  ...props
 }: CreateTokenFormProps) {
   return (
     <Modal
@@ -187,7 +193,7 @@ export default function CreateTokenForm({
       open={isOpen}
       bodyClass="flex flex-col w-full flex-1 h-full overflow-y-auto"
     >
-      <CreateTokenFormContent onSuccess={onSuccess} isMcpSetup={isMcpSetup} />
+      <CreateTokenFormContent {...props} />
     </Modal>
   );
 }

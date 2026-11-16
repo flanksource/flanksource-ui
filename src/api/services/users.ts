@@ -10,13 +10,7 @@ import {
 } from "../axios";
 import { resolvePostGrestRequestWithPagination } from "../resolve";
 import { VersionInfo } from "../types/common";
-import {
-  NewUser,
-  PeopleRoles,
-  RegisteredUser,
-  Team,
-  User
-} from "../types/users";
+import { PeopleRoles, RegisteredUser, Team, User } from "../types/users";
 
 export const getPerson = (id: string) =>
   resolvePostGrestRequestWithPagination<User[]>(
@@ -44,26 +38,33 @@ export const getPersonWithEmail = (email: string) =>
     IncidentCommander.get(`/people?email=eq.${email}`)
   );
 
-export const createPerson = ({ name, email, avatar }: NewUser) =>
-  resolvePostGrestRequestWithPagination<User>(
-    IncidentCommander.post("/people", { name, email, avatar })
-  );
-
 export const fetchPeopleRoles = (personIds: string[]) =>
   resolvePostGrestRequestWithPagination<PeopleRoles[]>(
     IncidentCommander.get(`/people_roles?id=in.(${personIds.toString()})`)
   );
 
-export const fetchPeopleWithRoles = (roles?: string[]) => {
+// Notification recipients and playbook people parameters accept humans and users of external identity providers.
+// people_roles has no type, so it's narrowed to the ids of people of those types.
+export const fetchPeopleWithRoles = async (roles?: string[]) => {
   let query = `/people_roles?order=name.asc`;
 
   if (roles && roles.length > 0) {
     query += `&roles=cs.{${roles.join(",")}}`;
   }
 
-  return resolvePostGrestRequestWithPagination<PeopleRoles[]>(
-    IncidentCommander.get(query)
-  );
+  const [peopleRoles, accepted] = await Promise.all([
+    resolvePostGrestRequestWithPagination<PeopleRoles[]>(
+      IncidentCommander.get(query)
+    ),
+    IncidentCommander.get<{ id: string }[]>(
+      `/people?select=id&deleted_at=is.null&or=(type.is.null,type.eq.federated)`
+    )
+  ]);
+  const acceptedIds = new Set(accepted.data.map(({ id }) => id));
+  return {
+    ...peopleRoles,
+    data: (peopleRoles.data ?? []).filter(({ id }) => acceptedIds.has(id))
+  };
 };
 
 export const getPeopleLastLogin = (personIds: string[]) => {

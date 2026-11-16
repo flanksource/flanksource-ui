@@ -10,9 +10,12 @@ export const MCP_USER_ROLE = "mission-control-builtin/mcp-user";
 
 /** Lists only the Roles the database lets the caller read; any other namespace/name can still be typed in. */
 export default function TokenRolesFieldsGroup({
-  isMcpSetup = false
+  isMcpSetup = false,
+  accessOwner
 }: {
   isMcpSetup?: boolean;
+  /** Whose access the token is limited to; the caller's by default */
+  accessOwner?: string;
 }) {
   const {
     data: roles = [],
@@ -51,12 +54,14 @@ export default function TokenRolesFieldsGroup({
       )}
       <p className="text-sm text-gray-500">
         Each role you pick is bound to the token. The token can only do what
-        both your current access and these roles allow. You can't change them
-        later: create a new token instead.
+        both {accessOwner ? `${accessOwner}'s access` : "your current access"}{" "}
+        and these roles allow. You can't change them later: create a new token
+        instead.
       </p>
       <p className="text-xs text-gray-500">
-        To retain all your current access, select both
-        mission-control-builtin/admin and mission-control-builtin/plugin-admin.
+        To retain all {accessOwner ? `of ${accessOwner}'s` : "your current"}{" "}
+        access, select both mission-control-builtin/admin and
+        mission-control-builtin/plugin-admin.
       </p>
       {isMcpSetup && (
         <p className="rounded-md bg-blue-50 p-3 text-sm text-blue-800">

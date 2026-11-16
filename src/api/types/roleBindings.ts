@@ -31,6 +31,8 @@ export type RoleBindingSubjects = {
   people?: string[];
   // Team names
   teams?: string[];
+  // Exact service account names, without "*". A name may be of an account that doesn't exist yet.
+  serviceAccounts?: string[];
   // Legacy stored subjects only; the API rejects nonempty roles on write.
   roles?: string[];
   oidc?: RoleBindingOIDCSubject[];
