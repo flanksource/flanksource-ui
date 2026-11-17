@@ -15,10 +15,16 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue
 } from "@flanksource-ui/components/ui/select";
 import SubjectAvatar from "@flanksource-ui/components/Permissions/SubjectAvatar";
+import {
+  PermissionSubjectGroup,
+  sortSubjectGroups,
+  TYPE_LABELS
+} from "@flanksource-ui/components/Permissions/PermissionSubjectPanel";
 import { Switch } from "@flanksource-ui/ui/FormControls/Switch";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
@@ -313,6 +319,23 @@ export function PermissionAccessCheckForm({
     enabled: isActive
   });
 
+  const groupedSubjects = useMemo(() => {
+    const grouped = new Map<
+      PermissionSubjectGroup["type"],
+      PermissionSubjectGroup["list"]
+    >();
+
+    for (const subject of subjects) {
+      const list = grouped.get(subject.type) ?? [];
+      list.push(subject);
+      grouped.set(subject.type, list);
+    }
+
+    return sortSubjectGroups(
+      Array.from(grouped, ([type, list]) => ({ type, list }))
+    );
+  }, [subjects]);
+
   const { mutateAsync: checkAccess, isLoading: isCheckingAccess } = useMutation(
     {
       mutationFn: reviewSubjectAccess
@@ -454,13 +477,21 @@ export function PermissionAccessCheckForm({
                   )}
                 </SelectTrigger>
                 <SelectContent>
-                  {subjects.map((subject) => (
-                    <SelectItem key={subject.id} value={subject.id}>
-                      <div className="flex items-center gap-2">
-                        <SubjectAvatar subject={subject} size="xs" />
-                        <span>{subject.name}</span>
-                      </div>
-                    </SelectItem>
+                  {groupedSubjects.map((group, index) => (
+                    <SelectGroup key={group.type}>
+                      {index > 0 ? <SelectSeparator /> : null}
+                      <SelectLabel className="text-xs uppercase tracking-wide text-gray-500">
+                        {TYPE_LABELS[group.type] ?? group.type}
+                      </SelectLabel>
+                      {group.list.map((subject) => (
+                        <SelectItem key={subject.id} value={subject.id}>
+                          <div className="flex items-center gap-2">
+                            <SubjectAvatar subject={subject} size="xs" />
+                            <span>{subject.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   ))}
                 </SelectContent>
               </Select>

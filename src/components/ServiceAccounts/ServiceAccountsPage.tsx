@@ -81,12 +81,11 @@ function CreateServiceAccountModal({
                 name="name"
                 label="Name"
                 required
-                hint="Names it in RoleBindings. It can't be changed later."
+                hint="It can't be changed later."
               />
               <p className="text-sm text-gray-500">
-                A new service account can do nothing until a RoleBinding names
-                it in serviceAccounts. RoleBindings that already name it apply
-                at once.
+                A new service account has no permissions. Grant it access by
+                adding it to a role binding.
               </p>
               {error != null && <ErrorViewer error={error} />}
             </div>
