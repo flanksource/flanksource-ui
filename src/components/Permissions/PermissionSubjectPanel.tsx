@@ -15,7 +15,7 @@ type PermissionSubjectPanelProps = {
   onSelectSubject: (subjectId: string) => void;
 };
 
-const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
+export const TYPE_LABELS: Record<PermissionSubject["type"], string> = {
   person: "person",
   access_token_person: "access token",
   service_account: "service account",
@@ -37,7 +37,7 @@ const SUBJECT_TYPE_ORDER: Record<PermissionSubject["type"], number> = {
   plugin: 7
 };
 
-function sortSubjectGroups(groups: PermissionSubjectGroup[]) {
+export function sortSubjectGroups(groups: PermissionSubjectGroup[]) {
   return [...groups].sort((left, right) => {
     const leftOrder = SUBJECT_TYPE_ORDER[left.type] ?? Number.MAX_SAFE_INTEGER;
     const rightOrder =
