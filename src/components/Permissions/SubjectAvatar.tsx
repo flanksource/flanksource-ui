@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { IconType } from "react-icons";
 import {
   HiBadgeCheck,
+  HiChip,
   HiKey,
   HiPuzzle,
   HiUserGroup,
@@ -47,6 +48,10 @@ const SUBJECT_TYPE_ICON_CONFIG: Record<
   access_token_person: {
     Icon: HiKey,
     colors: "bg-indigo-50 text-indigo-700"
+  },
+  service_account: {
+    Icon: HiChip,
+    colors: "bg-slate-100 text-slate-700"
   }
 };
 

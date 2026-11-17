@@ -187,7 +187,8 @@ export type PermissionSubject = {
     | "role"
     | "playbook"
     | "plugin"
-    | "access_token_person";
+    | "access_token_person"
+    | "service_account";
   owner?: string | null;
   icon?: string | null;
 };
