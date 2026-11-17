@@ -23,11 +23,7 @@ import TabbedLinks from "@flanksource-ui/ui/Tabs/TabbedLinks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { FaTrash, FaUserShield } from "react-icons/fa";
-import { IoMdDownload } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ServiceAccountKubeconfigModal, {
-  KubernetesProxyWarning
-} from "./ServiceAccountKubeconfigModal";
 import { DeleteServiceAccountDialog } from "./ServiceAccountsPage";
 import ServiceAccountTokensTab from "./ServiceAccountTokensTab";
 
@@ -113,15 +109,11 @@ function ServiceAccountRoleBindings({
 
 function ServiceAccountOverview({
   account,
-  canReadRoleBindings,
-  onDownloadKubeconfig
+  canReadRoleBindings
 }: {
   account: ServiceAccountDetail;
   canReadRoleBindings: boolean;
-  onDownloadKubeconfig: () => void;
 }) {
-  const canUseProxy = canUseKubernetesProxy(account);
-
   return (
     <div className="flex flex-col gap-6 p-4">
       <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 text-sm">
@@ -132,23 +124,6 @@ function ServiceAccountOverview({
           <Age from={account.created_at} suffix />
         </dd>
       </dl>
-
-      <section className="flex flex-col gap-2">
-        <h3 className="text-base font-semibold text-gray-900">Kubeconfig</h3>
-        <p className="text-sm text-gray-500">
-          A kubeconfig for the Kubernetes proxy, signed in as {account.name}.
-          Each download issues a new token.
-        </p>
-        {!canUseProxy && <KubernetesProxyWarning account={account.name} />}
-        <div>
-          <Button
-            text="Download kubeconfig"
-            icon={<IoMdDownload />}
-            className="btn-white"
-            onClick={onDownloadKubeconfig}
-          />
-        </div>
-      </section>
 
       {canReadRoleBindings && <ServiceAccountRoleBindings account={account} />}
     </div>
@@ -168,7 +143,6 @@ export default function ServiceAccountPage({
   const canReadRoleBindings =
     roleBindingsRead === "all" || roleBindingsRead === "some";
 
-  const [isKubeconfigOpen, setIsKubeconfigOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const {
@@ -245,25 +219,19 @@ export default function ServiceAccountPage({
               <ErrorViewer error={error} />
             </div>
           ) : tab === "Tokens" ? (
-            <ServiceAccountTokensTab account={account.name} />
+            <ServiceAccountTokensTab
+              account={account.name}
+              canUseProxy={canUseKubernetesProxy(account)}
+            />
           ) : (
             <ServiceAccountOverview
               account={account}
               canReadRoleBindings={canReadRoleBindings}
-              onDownloadKubeconfig={() => setIsKubeconfigOpen(true)}
             />
           )}
         </TabbedLinks>
       </SearchLayout>
 
-      {account && (
-        <ServiceAccountKubeconfigModal
-          account={account.name}
-          canUseProxy={canUseKubernetesProxy(account)}
-          isOpen={isKubeconfigOpen}
-          onClose={() => setIsKubeconfigOpen(false)}
-        />
-      )}
       <DeleteServiceAccountDialog
         account={isDeleteOpen ? name : undefined}
         onClose={() => setIsDeleteOpen(false)}

@@ -19,7 +19,7 @@ type Props = {
   onClose: () => void;
 };
 
-export function KubernetesProxyWarning({ account }: { account: string }) {
+function KubernetesProxyWarning({ account }: { account: string }) {
   return (
     <p
       role="note"

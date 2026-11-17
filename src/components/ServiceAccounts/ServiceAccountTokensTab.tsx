@@ -23,15 +23,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo, useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
+import ServiceAccountKubeconfigModal from "./ServiceAccountKubeconfigModal";
 
 export default function ServiceAccountTokensTab({
-  account
+  account,
+  canUseProxy
 }: {
   account: string;
+  canUseProxy: boolean;
 }) {
   const queryClient = useQueryClient();
   const queryKey = ["service-accounts", account, "tokens"];
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isKubeconfigOpen, setIsKubeconfigOpen] = useState(false);
   const [issued, setIssued] = useState<{
     token: string;
     formValues: TokenFormValues;
@@ -125,12 +130,20 @@ export default function ServiceAccountTokensTab({
           Each token signs in as {account}, limited to the Roles it was issued
           with. Token values are only shown when a token is issued.
         </p>
-        <Button
-          text="Issue token"
-          icon={<FaPlus />}
-          className="btn-primary shrink-0"
-          onClick={() => setIsCreateOpen(true)}
-        />
+        <div className="flex shrink-0 flex-row gap-2">
+          <Button
+            text="Download kubeconfig"
+            icon={<IoMdDownload />}
+            className="btn-white"
+            onClick={() => setIsKubeconfigOpen(true)}
+          />
+          <Button
+            text="Issue token"
+            icon={<FaPlus />}
+            className="btn-primary"
+            onClick={() => setIsCreateOpen(true)}
+          />
+        </div>
       </div>
 
       {error ? (
@@ -144,6 +157,13 @@ export default function ServiceAccountTokensTab({
           enableServerSideSorting={false}
         />
       )}
+
+      <ServiceAccountKubeconfigModal
+        account={account}
+        canUseProxy={canUseProxy}
+        isOpen={isKubeconfigOpen}
+        onClose={() => setIsKubeconfigOpen(false)}
+      />
 
       <CreateTokenForm
         isOpen={isCreateOpen}
