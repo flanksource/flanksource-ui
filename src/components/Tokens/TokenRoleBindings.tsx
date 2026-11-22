@@ -1,10 +1,16 @@
 import { TokenRoleBinding } from "@flanksource-ui/api/services/tokens";
+import { FaTrash } from "react-icons/fa";
 
-/** Lists the RoleBindings created with an access token, with the Role each limits it to. */
+/** Lists the RoleBindings that limit an access token, with the Role each limits it to. */
 export function TokenRoleBindings({
-  bindings = []
+  bindings = [],
+  onRemove,
+  disabled = false
 }: {
   bindings?: TokenRoleBinding[];
+  /** Shows a button on each binding that removes it */
+  onRemove?: (binding: TokenRoleBinding) => void;
+  disabled?: boolean;
 }) {
   if (bindings.length === 0) {
     return (
@@ -22,12 +28,26 @@ export function TokenRoleBindings({
             <span className="break-all text-sm font-medium text-gray-900">
               {binding.role}
             </span>
-            {!binding.ready && (
-              <span className="shrink-0 text-xs text-orange-700">
-                Not in effect
-                {binding.error_reason ? `: ${binding.error_reason}` : ""}
-              </span>
-            )}
+            <div className="flex shrink-0 items-center gap-3">
+              {!binding.ready && (
+                <span className="text-xs text-orange-700">
+                  Not in effect
+                  {binding.error_reason ? `: ${binding.error_reason}` : ""}
+                </span>
+              )}
+              {onRemove && (
+                <button
+                  type="button"
+                  disabled={disabled}
+                  aria-label={`Remove ${binding.role}`}
+                  title={`Remove ${binding.role}`}
+                  className="text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={() => onRemove(binding)}
+                >
+                  <FaTrash />
+                </button>
+              )}
+            </div>
           </div>
           {binding.error && (
             <span className="break-all text-xs text-gray-600">

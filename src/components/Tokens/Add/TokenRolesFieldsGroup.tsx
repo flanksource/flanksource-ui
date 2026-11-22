@@ -55,8 +55,8 @@ export default function TokenRolesFieldsGroup({
       <p className="text-sm text-gray-500">
         Each role you pick is bound to the token. The token can only do what
         both {accessOwner ? `${accessOwner}'s access` : "your current access"}{" "}
-        and these roles allow. You can't change them later: create a new token
-        instead.
+        and these roles allow. You can add or remove roles later from the
+        token's details.
       </p>
       <p className="text-xs text-gray-500">
         To retain all {accessOwner ? `of ${accessOwner}'s` : "your current"}{" "}
