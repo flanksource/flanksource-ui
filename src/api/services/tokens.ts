@@ -19,7 +19,7 @@ export type Token = {
     properties: Record<string, any>;
   };
   person_id: string;
-  /** The RoleBindings created with the token, which limit what it may do. */
+  /** The RoleBindings that select the token, which limit what it may do. */
   role_bindings?: TokenRoleBinding[];
 };
 
@@ -71,4 +71,16 @@ export async function getTokensList(): Promise<Token[]> {
 
 export async function deleteToken(id: string): Promise<void> {
   await apiBase.delete(`/auth/token/${id}`);
+}
+
+/** Binds one of the caller's tokens to a Role. Adding a Role it's already bound to changes nothing. */
+export async function addTokenRole(id: string, role: TokenRole) {
+  await apiBase.post(`/auth/token/${id}/roles`, role);
+}
+
+/** Removes the binding of one of the caller's tokens to a Role. */
+export async function removeTokenRole(id: string, role: TokenRole) {
+  await apiBase.delete(
+    `/auth/token/${id}/roles/${encodeURIComponent(role.namespace)}/${encodeURIComponent(role.name)}`
+  );
 }

@@ -2,13 +2,20 @@ import { useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteToken, Token } from "../../api/services/tokens";
+import {
+  addTokenRole,
+  deleteToken,
+  removeTokenRole,
+  Token,
+  TokenRole
+} from "../../api/services/tokens";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
 import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
 import { TokenRoleBindings } from "./TokenRoleBindings";
+import { AddTokenRole } from "./AddTokenRole";
 
 type TokenDetailsModalProps = {
   token: Token;
@@ -34,6 +41,24 @@ export default function TokenDetailsModal({
     onError: (error: any) => {
       toastError(error?.message || "Failed to delete token");
     }
+  });
+
+  const { mutate: changeRole, isLoading: isChangingRole } = useMutation({
+    mutationFn: ({ role, add }: { role: TokenRole; add: boolean }) =>
+      add ? addTokenRole(token.id, role) : removeTokenRole(token.id, role),
+    onSuccess: (_, { role, add }) => {
+      toastSuccess(
+        `${add ? "Added" : "Removed"} ${role.namespace}/${role.name}`
+      );
+    },
+    onError: (error: any) => {
+      toastError(
+        error?.response?.data?.error ||
+          error?.message ||
+          "Failed to change the token's roles"
+      );
+    },
+    onSettled: () => queryClient.invalidateQueries(["tokens", "list"])
   });
 
   const formattedCreatedAt = useMemo(() => {
@@ -70,10 +95,23 @@ export default function TokenDetailsModal({
             <label className="text-sm font-medium text-gray-700">
               Role Bindings
             </label>
-            <TokenRoleBindings bindings={token.role_bindings} />
+            <TokenRoleBindings
+              bindings={token.role_bindings}
+              disabled={isChangingRole}
+              onRemove={(binding) => {
+                const [namespace, name] = binding.role.split("/");
+                changeRole({ role: { namespace, name }, add: false });
+              }}
+            />
+            <AddTokenRole
+              boundRoles={(token.role_bindings ?? []).map((b) => b.role)}
+              disabled={isChangingRole}
+              onAdd={(role) => changeRole({ role, add: true })}
+            />
             <p className="text-sm text-gray-500">
               The token can do what both your current access and these roles
-              allow. A binding never grants the token anything.
+              allow. A binding never grants the token anything. Changes apply to
+              the token's next request.
             </p>
           </div>
         </div>
