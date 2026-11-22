@@ -1,14 +1,8 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  addTokenRole,
-  deleteToken,
-  removeTokenRole,
-  Token,
-  TokenRole
-} from "../../api/services/tokens";
+import { deleteToken, setTokenRoles, Token } from "../../api/services/tokens";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
@@ -43,22 +37,36 @@ export default function TokenDetailsModal({
     }
   });
 
-  const { mutate: changeRole, isLoading: isChangingRole } = useMutation({
-    mutationFn: ({ role, add }: { role: TokenRole; add: boolean }) =>
-      add ? addTokenRole(token.id, role) : removeTokenRole(token.id, role),
-    onSuccess: (_, { role, add }) => {
-      toastSuccess(
-        `${add ? "Added" : "Removed"} ${role.namespace}/${role.name}`
-      );
+  const savedRoles = useMemo(
+    () => (token.role_bindings ?? []).map((binding) => binding.role),
+    [token.role_bindings]
+  );
+  const [roles, setRoles] = useState(savedRoles);
+  useEffect(() => setRoles(savedRoles), [savedRoles]);
+  const isDirty =
+    roles.length !== savedRoles.length ||
+    roles.some((role) => !savedRoles.includes(role));
+
+  const { mutate: saveRoles, isLoading: isSaving } = useMutation({
+    mutationFn: () =>
+      setTokenRoles(
+        token.id,
+        roles.map((role) => {
+          const [namespace, name] = role.split("/");
+          return { namespace, name };
+        })
+      ),
+    onSuccess: () => {
+      toastSuccess("Token roles saved");
+      queryClient.invalidateQueries(["tokens", "list"]);
     },
     onError: (error: any) => {
       toastError(
         error?.response?.data?.error ||
           error?.message ||
-          "Failed to change the token's roles"
+          "Failed to save the token's roles"
       );
-    },
-    onSettled: () => queryClient.invalidateQueries(["tokens", "list"])
+    }
   });
 
   const formattedCreatedAt = useMemo(() => {
@@ -97,29 +105,27 @@ export default function TokenDetailsModal({
             </label>
             <TokenRoleBindings
               bindings={token.role_bindings}
-              disabled={isChangingRole}
-              onRemove={(binding) => {
-                const [namespace, name] = binding.role.split("/");
-                changeRole({ role: { namespace, name }, add: false });
-              }}
+              roles={roles}
+              onChange={setRoles}
+              disabled={isSaving}
             />
             <AddTokenRole
-              boundRoles={(token.role_bindings ?? []).map((b) => b.role)}
-              disabled={isChangingRole}
-              onAdd={(role) => changeRole({ role, add: true })}
+              boundRoles={roles}
+              disabled={isSaving}
+              onAdd={(role) => setRoles([...roles, role])}
             />
             <p className="text-sm text-gray-500">
               The token can do what both your current access and these roles
-              allow. A binding never grants the token anything. Changes apply to
-              the token's next request.
+              allow. A binding never grants the token anything. Saved changes
+              apply to the token's next request.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center justify-end bg-gray-100 px-6 py-4">
+        <div className="flex items-center justify-between bg-gray-100 px-6 py-4">
           <Button
             text="Delete"
-            disabled={isDeleting}
+            disabled={isDeleting || isSaving}
             icon={
               !isDeleting ? (
                 <FaTrash />
@@ -130,6 +136,25 @@ export default function TokenDetailsModal({
             className="btn-danger"
             onClick={() => setShowDeleteConfirm(true)}
           />
+          <div className="flex items-center gap-2">
+            <Button
+              text="Cancel"
+              className="btn-white"
+              disabled={!isDirty || isSaving}
+              onClick={() => setRoles(savedRoles)}
+            />
+            <Button
+              text={isSaving ? "Saving..." : "Save"}
+              className="btn-primary"
+              disabled={!isDirty || isSaving}
+              icon={
+                isSaving ? (
+                  <FaCircleNotch className="animate-spin" />
+                ) : undefined
+              }
+              onClick={() => saveRoles()}
+            />
+          </div>
         </div>
       </Modal>
 

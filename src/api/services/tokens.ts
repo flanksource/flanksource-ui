@@ -73,14 +73,7 @@ export async function deleteToken(id: string): Promise<void> {
   await apiBase.delete(`/auth/token/${id}`);
 }
 
-/** Binds one of the caller's tokens to a Role. Adding a Role it's already bound to changes nothing. */
-export async function addTokenRole(id: string, role: TokenRole) {
-  await apiBase.post(`/auth/token/${id}/roles`, role);
-}
-
-/** Removes the binding of one of the caller's tokens to a Role. */
-export async function removeTokenRole(id: string, role: TokenRole) {
-  await apiBase.delete(
-    `/auth/token/${id}/roles/${encodeURIComponent(role.namespace)}/${encodeURIComponent(role.name)}`
-  );
+/** Sets the whole list of Roles one of the caller's tokens is bound to. */
+export async function setTokenRoles(id: string, roles: TokenRole[]) {
+  await apiBase.put(`/auth/token/${id}/roles`, { roles });
 }
