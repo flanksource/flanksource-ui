@@ -1,6 +1,7 @@
 import { IconType } from "@flanksource/icons";
 import { IconMap as Icons } from "@flanksource/icons/mi";
 import { isEmpty } from "lodash";
+import { cloneElement, isValidElement } from "react";
 
 type IconMap = Record<string, string>;
 export const aliases: IconMap = {
@@ -934,6 +935,7 @@ export type IconProps = {
   prefix?: any;
   size?: any;
   iconWithColor?: string;
+  fallback?: React.ReactNode;
 };
 
 type IconCache = {
@@ -995,6 +997,7 @@ export function Icon({
   alt = "",
   prefix,
   iconWithColor,
+  fallback,
   ...props
 }: IconProps) {
   if (name && (name.startsWith("http:") || name.startsWith("https://"))) {
@@ -1005,7 +1008,30 @@ export function Icon({
   const Icon = findIcon(name, secondary, iconWithColor);
 
   if (!Icon || !Icon.SVG) {
-    return null;
+    if (!fallback) {
+      return null;
+    }
+
+    if (isValidElement(fallback)) {
+      const fallbackElement = fallback as React.ReactElement<{
+        className?: string;
+      }>;
+      return (
+        <>
+          {prefix}{" "}
+          {cloneElement(fallbackElement, {
+            ...props,
+            className: `inline-block fill-current object-center ${className} ${fallbackElement.props.className ?? ""}`
+          })}
+        </>
+      );
+    }
+
+    return (
+      <>
+        {prefix} {fallback}
+      </>
+    );
   }
 
   return (
