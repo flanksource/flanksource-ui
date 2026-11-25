@@ -8,6 +8,7 @@ import { getErrorMessage } from "@flanksource-ui/api/types/error";
 import { getAllViews } from "@flanksource-ui/api/services/views";
 import {
   ForbiddenSubjectsNotice,
+  MCP_SUBJECT_TYPES,
   useMcpSubjects
 } from "@flanksource-ui/components/MCP/McpSubjectAccessList";
 import McpTabsLinks from "@flanksource-ui/components/MCP/McpTabsLinks";
@@ -72,12 +73,10 @@ export default function McpSubjectAccessPage() {
 
   const groupedSubjects = useMemo(
     () =>
-      (["team", "person"] as const)
-        .map((type) => ({
-          type,
-          list: filteredSubjects.filter((subject) => subject.type === type)
-        }))
-        .filter((group) => group.list.length > 0),
+      MCP_SUBJECT_TYPES.map((type) => ({
+        type,
+        list: filteredSubjects.filter((subject) => subject.type === type)
+      })).filter((group) => group.list.length > 0),
     [filteredSubjects]
   );
 
@@ -126,7 +125,7 @@ export default function McpSubjectAccessPage() {
             ) : !error && !isLoading ? (
               <div className="flex h-full items-center justify-center rounded-md border border-dashed border-gray-200 p-4 text-sm text-gray-500">
                 {subjects.length === 0
-                  ? "No people or teams found."
+                  ? "No people, teams or service accounts found."
                   : "Select a subject."}
               </div>
             ) : null}

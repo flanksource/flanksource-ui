@@ -24,6 +24,12 @@ const people = [
   { id: dan, name: "Dan Developer", email: "dan@acme.io" },
   { id: erin, name: "Erin Analyst", email: "erin@acme.io" }
 ];
+const ciBot = "66666666-6666-4666-8666-666666666666";
+const reportBot = "77777777-7777-4777-8777-777777777777";
+const serviceAccounts = [
+  { id: ciBot, name: "ci-bot" },
+  { id: reportBot, name: "report-bot" }
+];
 const teams = [
   { id: sre, name: "SRE" },
   { id: finance, name: "Finance" }
@@ -100,7 +106,8 @@ const policy: Record<string, Record<string, Grant>> = {
       allowed: false,
       rules: [binding("no-contractors", "deny"), binding("platform-admins")]
     },
-    [erin]: { allowed: true, rules: [binding("finance-mcp")] }
+    [erin]: { allowed: true, rules: [binding("finance-mcp")] },
+    [ciBot]: { allowed: true, rules: [binding("ci-mcp")] }
   },
   "mcp:run": {
     [alice]: { allowed: true, rules: [binding("platform-admins")] },
@@ -110,7 +117,8 @@ const policy: Record<string, Record<string, Grant>> = {
     },
     [sre]: { allowed: true, rules: [binding("sre-playbooks")] },
     [carol]: { allowed: true, rules: [binding("platform-admins")] },
-    [dan]: { allowed: true, rules: [binding("developers")] }
+    [dan]: { allowed: true, rules: [binding("developers")] },
+    [ciBot]: { allowed: true, rules: [binding("ci-mcp")] }
   },
   read: {
     [alice]: { allowed: true, rules: [binding("platform-admins")] },
@@ -128,7 +136,8 @@ const searchable: Record<string, string[]> = {
   [carol]: [views[0].id],
   [dan]: [playbooks[0].id],
   [erin]: [views[1].id],
-  [finance]: [views[1].id]
+  [finance]: [views[1].id],
+  [ciBot]: [playbooks[0].id]
 };
 
 const mcpUseRequirement = (subject: string) => ({
@@ -138,7 +147,13 @@ const mcpUseRequirement = (subject: string) => ({
 });
 
 const handlers = [
-  http.get("*/api/db/people", () => HttpResponse.json(people)),
+  http.get("*/api/db/people", ({ request }) =>
+    HttpResponse.json(
+      new URL(request.url).searchParams.get("type") === "eq.service_account"
+        ? serviceAccounts
+        : people
+    )
+  ),
   http.get("*/api/db/teams", () => HttpResponse.json(teams)),
   http.get("*/api/db/playbook_names", () => HttpResponse.json(playbooks)),
   http.get("*/api/db/views", () => HttpResponse.json(views)),
