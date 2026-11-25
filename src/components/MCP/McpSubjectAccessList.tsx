@@ -24,10 +24,18 @@ import { Link } from "react-router-dom";
 // A review explains at most this many subjects at once (MaxExplainedSubjects in mission-control).
 const MAX_EXPLAINED_SUBJECTS = 50;
 
-const MCP_SUBJECT_TYPES = ["person", "team"] as const;
+// The kinds of subject listed, in the order they're grouped.
+export const MCP_SUBJECT_TYPES = ["team", "person", "service_account"] as const;
 
-// useMcpSubjects lists the people and teams whose MCP access can be reviewed, and those types the reviewer may not
-// read, so none of them are listed.
+const SUBJECT_TYPE_LABELS: Record<(typeof MCP_SUBJECT_TYPES)[number], string> =
+  {
+    team: "Teams",
+    person: "People",
+    service_account: "Service Accounts"
+  };
+
+// useMcpSubjects lists the people, service accounts and teams whose MCP access can be reviewed, and those types the
+// reviewer may not read, so none of them are listed.
 export function useMcpSubjects() {
   return useQuery({
     queryKey: ["mcp", "subjects"],
@@ -54,7 +62,11 @@ export function ForbiddenSubjectsNotice({
   if (forbidden.length === 0) {
     return null;
   }
-  const names = forbidden.map((type) => (type === "team" ? "teams" : "people"));
+  const names = forbidden.map((type) =>
+    (
+      SUBJECT_TYPE_LABELS[type as (typeof MCP_SUBJECT_TYPES)[number]] ?? type
+    ).toLowerCase()
+  );
   return (
     <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
       You may not read {names.join(" or ")}, so they aren&apos;t listed.
@@ -248,12 +260,10 @@ export default function McpSubjectAccessList({
     (row) => filter === "All" || row.allowed === (filter === "Allowed")
   );
 
-  const groups = (["team", "person"] as const)
-    .map((type) => ({
-      type,
-      rows: shownRows.filter((row) => row.subject.type === type)
-    }))
-    .filter((group) => group.rows.length > 0);
+  const groups = MCP_SUBJECT_TYPES.map((type) => ({
+    type,
+    rows: shownRows.filter((row) => row.subject.type === type)
+  })).filter((group) => group.rows.length > 0);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -264,7 +274,7 @@ export default function McpSubjectAccessList({
       <div className="flex items-center gap-3">
         <Input
           className="flex-1"
-          placeholder="Search people and teams..."
+          placeholder="Search people, teams and service accounts..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
@@ -293,14 +303,14 @@ export default function McpSubjectAccessList({
         ) : groups.length === 0 ? (
           <div className="p-2 text-sm text-gray-500">
             {rows.length === 0
-              ? "No people or teams found"
-              : `No ${filter.toLowerCase()} people or teams`}
+              ? "No people, teams or service accounts found"
+              : `No ${filter.toLowerCase()} people, teams or service accounts`}
           </div>
         ) : (
           groups.map((group) => (
             <div key={group.type} className="space-y-2">
               <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                {group.type === "team" ? "Teams" : "People"}
+                {SUBJECT_TYPE_LABELS[group.type]}
               </div>
               <div className="overflow-hidden rounded-md border border-gray-200">
                 {group.rows.map((row) => (

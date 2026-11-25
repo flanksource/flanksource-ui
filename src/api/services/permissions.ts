@@ -278,10 +278,17 @@ async function listReadableSubjects<T>(
   }
 }
 
-// fetchAccessReviewSubjects lists the people, teams, playbooks and plugins whose access can be reviewed,
-// limited to those the reviewer may read. Forbidden are the types the reviewer may not read, so none are listed.
+// fetchAccessReviewSubjects lists the people, service accounts, teams, playbooks and plugins whose access can be
+// reviewed, limited to those the reviewer may read. Forbidden are the types the reviewer may not read, so none are
+// listed.
 export async function fetchAccessReviewSubjects() {
-  const types = ["person", "team", "playbook", "plugin"] as const;
+  const types = [
+    "person",
+    "service_account",
+    "team",
+    "playbook",
+    "plugin"
+  ] as const;
   const lists = await Promise.all([
     listReadableSubjects<{ id: string; name?: string; email?: string }>(
       "/people?select=id,name,email&type=is.null&email=not.is.null&deleted_at=is.null&order=name.asc",
@@ -289,6 +296,14 @@ export async function fetchAccessReviewSubjects() {
         id: person.id,
         name: person.name || person.email || person.id,
         type: "person"
+      })
+    ),
+    listReadableSubjects<{ id: string; name: string }>(
+      "/people?select=id,name&type=eq.service_account&deleted_at=is.null&order=name.asc",
+      (account) => ({
+        id: account.id,
+        name: account.name,
+        type: "service_account"
       })
     ),
     listReadableSubjects<{ id: string; name: string }>(
