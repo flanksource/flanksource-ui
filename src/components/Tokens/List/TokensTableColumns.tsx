@@ -23,7 +23,7 @@ export function tokenColumns<T extends ListedToken>(): MRT_ColumnDef<T>[] {
       enableSorting: true
     },
     {
-      header: "Role Bindings",
+      header: "Roles",
       id: "role_bindings",
       size: 200,
       enableSorting: false,

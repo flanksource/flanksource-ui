@@ -95,6 +95,18 @@ export async function revokeServiceAccountToken(name: string, id: string) {
   );
 }
 
+/** Sets the whole list of Roles a token of the service account is bound to. */
+export async function setServiceAccountTokenRoles(
+  name: string,
+  id: string,
+  roles: TokenRole[]
+) {
+  await apiBase.put(
+    `/service-accounts/${encodeURIComponent(name)}/tokens/${id}/roles`,
+    { roles }
+  );
+}
+
 /** Issues a new token of the service account, bound to the kubernetes-proxy Role, and returns a kubeconfig that uses it. */
 export async function downloadServiceAccountKubeconfig(
   serviceAccount: string,
