@@ -1,8 +1,12 @@
 import { useEffect, useMemo } from "react";
 import { FaCircleNotch, FaTrash } from "react-icons/fa";
 import { Age } from "@flanksource-ui/ui/Age";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteToken, setTokenRoles, Token } from "../../api/services/tokens";
+import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  deleteToken,
+  setTokenRoles,
+  TokenRole
+} from "../../api/services/tokens";
 import { Button } from "../../ui/Buttons/Button";
 import { Modal } from "../../ui/Modal";
 import { ConfirmationPromptDialog } from "../../ui/AlertDialog/ConfirmationPromptDialog";
@@ -10,26 +14,38 @@ import { toastError, toastSuccess } from "../Toast/toast";
 import { useState } from "react";
 import { TokenRoleBindings } from "./TokenRoleBindings";
 import { AddTokenRole } from "./AddTokenRole";
+import { ListedToken } from "./List/TokensTableColumns";
 
 type TokenDetailsModalProps = {
-  token: Token;
+  token: ListedToken;
   isOpen: boolean;
   onClose: () => void;
+  /** Whose access the token signs in with, when it isn't the caller's own */
+  accessOwner?: string;
+  /** Defaults to the caller's own token routes */
+  saveTokenRoles?: (id: string, roles: TokenRole[]) => Promise<void>;
+  removeToken?: (id: string) => Promise<void>;
+  /** The token list to refresh after a change */
+  queryKey?: QueryKey;
 };
 
 export default function TokenDetailsModal({
   token,
   isOpen,
-  onClose
+  onClose,
+  accessOwner,
+  saveTokenRoles = setTokenRoles,
+  removeToken = deleteToken,
+  queryKey = ["tokens", "list"]
 }: TokenDetailsModalProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const queryClient = useQueryClient();
 
   const { mutate: deleteTokenMutation, isLoading: isDeleting } = useMutation({
-    mutationFn: deleteToken,
+    mutationFn: removeToken,
     onSuccess: () => {
       toastSuccess("Token deleted successfully");
-      queryClient.invalidateQueries(["tokens", "list"]);
+      queryClient.invalidateQueries(queryKey);
       onClose();
     },
     onError: (error: any) => {
@@ -49,7 +65,7 @@ export default function TokenDetailsModal({
 
   const { mutate: saveRoles, isLoading: isSaving } = useMutation({
     mutationFn: () =>
-      setTokenRoles(
+      saveTokenRoles(
         token.id,
         roles.map((role) => {
           const [namespace, name] = role.split("/");
@@ -58,7 +74,7 @@ export default function TokenDetailsModal({
       ),
     onSuccess: () => {
       toastSuccess("Token roles saved");
-      queryClient.invalidateQueries(["tokens", "list"]);
+      queryClient.invalidateQueries(queryKey);
     },
     onError: (error: any) => {
       toastError(
@@ -100,9 +116,7 @@ export default function TokenDetailsModal({
           </div>
 
           <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Role Bindings
-            </label>
+            <label className="text-sm font-medium text-gray-700">Roles</label>
             <TokenRoleBindings
               bindings={token.role_bindings}
               roles={roles}
@@ -115,9 +129,10 @@ export default function TokenDetailsModal({
               onAdd={(role) => setRoles([...roles, role])}
             />
             <p className="text-sm text-gray-500">
-              The token can do what both your current access and these roles
-              allow. A binding never grants the token anything. Saved changes
-              apply to the token's next request.
+              The token can do what both{" "}
+              {accessOwner ? `${accessOwner}'s access` : "your current access"}{" "}
+              and these roles allow. A binding never grants the token anything.
+              Saved changes apply to the token's next request.
             </p>
           </div>
         </div>

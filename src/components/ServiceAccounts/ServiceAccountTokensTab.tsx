@@ -2,7 +2,8 @@ import {
   createServiceAccountToken,
   getServiceAccountTokens,
   revokeServiceAccountToken,
-  ServiceAccountToken
+  ServiceAccountToken,
+  setServiceAccountTokenRoles
 } from "@flanksource-ui/api/services/serviceAccounts";
 import { CreateTokenRequest } from "@flanksource-ui/api/services/tokens";
 import { ErrorViewer } from "@flanksource-ui/components/ErrorViewer";
@@ -15,6 +16,7 @@ import CreateTokenForm, {
 } from "@flanksource-ui/components/Tokens/Add/CreateTokenForm";
 import TokenDisplayModal from "@flanksource-ui/components/Tokens/Add/TokenDisplayModal";
 import { tokenColumns } from "@flanksource-ui/components/Tokens/List/TokensTableColumns";
+import TokenDetailsModal from "@flanksource-ui/components/Tokens/TokenDetailsModal";
 import { ConfirmationPromptDialog } from "@flanksource-ui/ui/AlertDialog/ConfirmationPromptDialog";
 import { Avatar } from "@flanksource-ui/ui/Avatar";
 import { Button } from "@flanksource-ui/ui/Buttons/Button";
@@ -42,6 +44,7 @@ export default function ServiceAccountTokensTab({
     formValues: TokenFormValues;
   }>();
   const [tokenToRevoke, setTokenToRevoke] = useState<ServiceAccountToken>();
+  const [selectedTokenId, setSelectedTokenId] = useState<string>();
 
   const {
     data: tokens = [],
@@ -53,6 +56,7 @@ export default function ServiceAccountTokensTab({
     queryFn: () => getServiceAccountTokens(account),
     staleTime: 0
   });
+  const selectedToken = tokens.find((token) => token.id === selectedTokenId);
 
   const { mutate: revoke, isLoading: isRevoking } = useMutation({
     mutationFn: (id: string) => revokeServiceAccountToken(account, id),
@@ -81,8 +85,8 @@ export default function ServiceAccountTokensTab({
   };
 
   const columns = useMemo<MRT_ColumnDef<ServiceAccountToken>[]>(() => {
-    // The personal token columns, narrowed to make room for the issuer
-    const [name, ...rest] = tokenColumns<ServiceAccountToken>().map(
+    // The personal token columns, narrowed to make room for the issuer after the roles
+    const [name, roles, ...rest] = tokenColumns<ServiceAccountToken>().map(
       (column) => ({
         ...column,
         size: column.id === "role_bindings" ? 160 : 100,
@@ -91,6 +95,7 @@ export default function ServiceAccountTokensTab({
     );
     return [
       name,
+      roles,
       {
         header: "Issued By",
         id: "issuer",
@@ -113,7 +118,11 @@ export default function ServiceAccountTokensTab({
             <button
               type="button"
               className="text-red-600 hover:text-red-800"
-              onClick={() => setTokenToRevoke(row.original)}
+              onClick={(e) => {
+                // Don't open the details modal behind the confirmation
+                e.stopPropagation();
+                setTokenToRevoke(row.original);
+              }}
             >
               Revoke
             </button>
@@ -155,6 +164,21 @@ export default function ServiceAccountTokensTab({
           isLoading={isLoading}
           isRefetching={isRefetching}
           enableServerSideSorting={false}
+          onRowClick={(token) => setSelectedTokenId(token.id)}
+        />
+      )}
+
+      {selectedToken && (
+        <TokenDetailsModal
+          token={selectedToken}
+          isOpen
+          onClose={() => setSelectedTokenId(undefined)}
+          accessOwner={account}
+          saveTokenRoles={(id, roles) =>
+            setServiceAccountTokenRoles(account, id, roles)
+          }
+          removeToken={(id) => revokeServiceAccountToken(account, id)}
+          queryKey={queryKey}
         />
       )}
 

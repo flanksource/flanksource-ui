@@ -35,7 +35,7 @@ export default function TokenRolesFieldsGroup({
     <div className="space-y-2">
       <FormikCreatableMultiSelect
         name="roles"
-        label="Role Bindings"
+        label="Roles"
         options={Array.from(references).map((reference) => ({
           label: reference,
           value: reference
